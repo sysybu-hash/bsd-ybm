@@ -82,6 +82,13 @@ export function proxy(request: NextRequest) {
 /** Default export for tooling / hosts that expect `export default` (named `proxy` is the canonical Next 16 API). */
 export default proxy;
 
+/**
+ * מקביל ל־`middleware.ts` בדוגמה שלך — אבל ב־Next 16 זה חי ב־`proxy.ts`.
+ * - לא מריצים proxy על `/en/legal` (למשל דף משפטי סטטי ללא כותרות/עוגיות מיותרות).
+ * - לא משללים `api` כאן — ה־proxy מטפל ב־CORS ל־`/api/*`.
+ */
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|en/legal|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
 };

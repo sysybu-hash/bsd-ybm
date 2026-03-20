@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# Android Firebase config must not live under Next.js src/ (wrong project + leak risk)
+src/**/google-services.json
+
 # debug
 npm-debug.log*
 yarn-debug.log*
