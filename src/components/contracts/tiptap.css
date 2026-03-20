@@ -1,0 +1,31 @@
+/* TipTap — minimal RTL-friendly surface (BSD-YBM) */
+.bsd-tiptap-editor p {
+  margin: 0.5rem 0;
+}
+.bsd-tiptap-editor h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #001a4d;
+  margin: 1rem 0 0.5rem;
+}
+.bsd-tiptap-editor h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0.75rem 0 0.35rem;
+}
+.bsd-tiptap-editor ul,
+.bsd-tiptap-editor ol {
+  padding-right: 1.25rem;
+  margin: 0.35rem 0;
+}
+.bsd-tiptap-editor a {
+  color: #ff7f00;
+  text-decoration: underline;
+}
+.bsd-tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  float: right;
+  pointer-events: none;
+  height: 0;
+}

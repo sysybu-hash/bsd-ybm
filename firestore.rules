@@ -1,0 +1,370 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDocPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function userSystemRole(uid) {
+      return exists(userDocPath(uid)) && 'systemRole' in get(userDocPath(uid)).data
+        ? get(userDocPath(uid)).data.systemRole
+        : null;
+    }
+
+    function isDeveloper() {
+      return isSignedIn() && userSystemRole(request.auth.uid) == 'developer';
+    }
+
+    function isGlobalManager() {
+      return isSignedIn() && userSystemRole(request.auth.uid) == 'global_manager';
+    }
+
+    /** Master admin: SYSYBU@GMAIL.COM (normalized in token) or explicit systemRole. */
+    function isMasterAdminEmailClaim() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email == 'sysybu@gmail.com';
+    }
+
+    function isMasterAdmin() {
+      return isMasterAdminEmailClaim() || userSystemRole(request.auth.uid) == 'master_admin';
+    }
+
+    function isGlobalStaff() {
+      return isDeveloper() || isGlobalManager() || isMasterAdmin();
+    }
+
+    function memberDoc(companyId) {
+      return /databases/$(database)/documents/companies/$(companyId)/members/$(request.auth.uid);
+    }
+
+    function isCompanyMember(companyId) {
+      return isSignedIn() && exists(memberDoc(companyId));
+    }
+
+    function memberRole(companyId) {
+      return get(memberDoc(companyId)).data.role;
+    }
+
+    function isCompanyAdmin(companyId) {
+      return isCompanyMember(companyId) && memberRole(companyId) == 'admin';
+    }
+
+    function isClientMember(companyId) {
+      return isCompanyMember(companyId) && memberRole(companyId) == 'client';
+    }
+
+    function clientAllowedProjects(companyId) {
+      return get(memberDoc(companyId)).data.get('allowedProjectIds', []);
+    }
+
+    function clientMayAccessProject(companyId, projectId) {
+      return isClientMember(companyId) && clientAllowedProjects(companyId).hasAny([projectId]);
+    }
+
+    function isCompanyCreator(companyId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/companies/$(companyId))
+        && get(/databases/$(database)/documents/companies/$(companyId)).data.createdByUid == request.auth.uid;
+    }
+
+    function canManageCompany(companyId) {
+      return isCompanyAdmin(companyId) || isGlobalStaff();
+    }
+
+    /** Phase 33 — only owner email may toggle company “free forever”. */
+    function ownerVaultFreeForeverGuard(companyId) {
+      return request.resource == null
+        || !('ownerVaultFreeForever' in request.resource.data)
+        || request.resource.data.ownerVaultFreeForever == resource.data.get('ownerVaultFreeForever', false)
+        || isMasterAdminEmailClaim();
+    }
+
+    /** Phase 33 — developers cannot change their own subscription / trial fields. */
+    function developerSelfSubscriptionUnchanged() {
+      return request.resource.data.get('accountTier', null) == resource.data.get('accountTier', null)
+        && request.resource.data.get('isTrialUser', false) == resource.data.get('isTrialUser', false)
+        && request.resource.data.get('trialExpiresAt', null) == resource.data.get('trialExpiresAt', null)
+        && request.resource.data.get('scanQuota', null) == resource.data.get('scanQuota', null)
+        && request.resource.data.get('scansUsed', null) == resource.data.get('scansUsed', null)
+        && request.resource.data.get('trialLeadId', null) == resource.data.get('trialLeadId', null);
+    }
+
+    // --- leads (trial / marketing — writes via Admin SDK only) ---
+    match /leads/{leadId} {
+      allow read: if isGlobalStaff();
+      allow create, update, delete: if false;
+    }
+
+    // --- users/{uid} (global profile + systemRole) ---
+    match /users/{uid} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == uid
+        || isGlobalStaff()
+        || resource.data.get('approvedBy', '') == request.auth.uid
+      );
+
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && (!('systemRole' in request.resource.data))
+        && !('isTrialUser' in request.resource.data)
+        && !('trialLeadId' in request.resource.data)
+        && !('accountTier' in request.resource.data)
+        && !('trialExpiresAt' in request.resource.data)
+        && !('scanQuota' in request.resource.data)
+        && !('scansUsed' in request.resource.data);
+
+      allow update: if (isDeveloper() && request.auth.uid != uid)
+        || (isDeveloper() && request.auth.uid == uid && developerSelfSubscriptionUnchanged())
+        || (
+          request.auth.uid == uid
+          && (!('systemRole' in request.resource.data)
+            || request.resource.data.systemRole == resource.data.get('systemRole', null))
+          && request.resource.data.get('approvedBy', null) == resource.data.get('approvedBy', null)
+          && request.resource.data.get('approvedAt', null) == resource.data.get('approvedAt', null)
+          && (!('isTrialUser' in request.resource.data)
+            || request.resource.data.isTrialUser == resource.data.get('isTrialUser', false))
+          && (!('trialLeadId' in request.resource.data)
+            || request.resource.data.trialLeadId == resource.data.get('trialLeadId', null))
+          && (!('accountTier' in request.resource.data)
+            || request.resource.data.accountTier == resource.data.get('accountTier', null))
+          && (!('trialExpiresAt' in request.resource.data)
+            || request.resource.data.trialExpiresAt == resource.data.get('trialExpiresAt', null))
+          && (!('scanQuota' in request.resource.data)
+            || request.resource.data.scanQuota == resource.data.get('scanQuota', null))
+          && (!('scansUsed' in request.resource.data)
+            || request.resource.data.scansUsed == resource.data.get('scansUsed', null))
+        );
+
+      allow delete: if isDeveloper();
+
+      match /companies/{companyId} {
+        allow read: if isSignedIn() && (
+          request.auth.uid == uid
+          || isGlobalStaff()
+        );
+
+        allow create: if isSignedIn()
+          && request.auth.uid == uid
+          && request.resource.data.companyId == companyId
+          && request.resource.data.role == 'admin';
+
+        allow create, update: if isSignedIn()
+          && isCompanyAdmin(companyId)
+          && request.resource.data.companyId == companyId;
+
+        allow create, update: if isSignedIn()
+          && isGlobalStaff()
+          && request.resource.data.companyId == companyId;
+
+        allow update, delete: if isSignedIn()
+          && request.auth.uid == uid
+          && isCompanyMember(companyId);
+      }
+    }
+
+    match /companies/{companyId} {
+      allow create: if isSignedIn()
+        && request.resource.data.createdByUid == request.auth.uid
+        && (isDeveloper() || isMasterAdmin());
+
+      allow read: if isCompanyMember(companyId) || isGlobalStaff();
+
+      allow update, delete: if canManageCompany(companyId) && ownerVaultFreeForeverGuard(companyId);
+
+      match /settings/{docId} {
+        // API keys (integrations, BYOK ai) — admins/global only; other settings docs stay member-readable.
+        allow read: if (docId == 'integrations' || docId == 'ai')
+          ? (canManageCompany(companyId) || isGlobalStaff())
+          : (isCompanyMember(companyId) || isGlobalStaff());
+        allow create, update, delete: if canManageCompany(companyId);
+      }
+
+      match /branding/{docId} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+        allow create, update, delete: if canManageCompany(companyId);
+      }
+
+      /** Phase 15.5 — contract HTML templates (e.g. templates/contract). Clients read for signing room. */
+      match /templates/{docId} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+        allow create, update, delete: if canManageCompany(companyId);
+      }
+
+      /** Phase 20 — quotes (draft → awaiting_signature → approved via API + PDF). */
+      match /quotes/{quoteId} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+        allow create, update, delete: if canManageCompany(companyId);
+      }
+
+      match /members/{uid} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+
+        allow create, update, delete: if canManageCompany(companyId);
+
+        allow create: if isSignedIn()
+          && uid == request.auth.uid
+          && isCompanyCreator(companyId)
+          && request.resource.data.role == 'admin';
+      }
+
+      match /projects/{projectId} {
+        allow read: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client')
+          || clientMayAccessProject(companyId, projectId);
+
+        allow create, update: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+
+        allow delete: if canManageCompany(companyId);
+
+        match /communications/{commId} {
+          allow read: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client')
+            || clientMayAccessProject(companyId, projectId);
+
+          allow create: if isSignedIn()
+            && request.resource.data.createdByUid == request.auth.uid
+            && request.resource.data.keys().hasAll(['kind', 'body', 'createdByUid'])
+            && (
+              isGlobalStaff()
+              || (isCompanyMember(companyId) && memberRole(companyId) != 'client')
+              || clientMayAccessProject(companyId, projectId)
+            )
+            && (
+              !isClientMember(companyId)
+              || request.resource.data.get('internal', false) != true
+            );
+
+          allow update, delete: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        }
+
+        match /milestones/{milestoneId} {
+          allow read: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client')
+            || clientMayAccessProject(companyId, projectId);
+
+          allow create, update, delete: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        }
+
+        match /boqDrafts/{draftId} {
+          allow read: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client')
+            || clientMayAccessProject(companyId, projectId);
+
+          allow create, update, delete: if isGlobalStaff()
+            || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        }
+      }
+
+      match /team/{docId} {
+        allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
+        allow delete: if canManageCompany(companyId);
+      }
+
+      match /finances/{docId} {
+        allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
+        allow delete: if canManageCompany(companyId);
+      }
+
+      match /attendance/{docId} {
+        allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
+        allow delete: if canManageCompany(companyId);
+      }
+
+      match /scans/{docId} {
+        allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
+        allow delete: if canManageCompany(companyId);
+      }
+
+      match /clients/{docId} {
+        allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
+        allow delete: if canManageCompany(companyId);
+      }
+
+      match /registrationQueue/{queueId} {
+        allow read: if isSignedIn() && (
+          request.auth.uid == resource.data.get('applicantUid', '')
+          || isCompanyMember(companyId)
+          || isGlobalStaff()
+        );
+
+        allow create: if isSignedIn()
+          && queueId == request.auth.uid
+          && request.resource.data.applicantUid == request.auth.uid
+          && request.resource.data.status == 'pending'
+          && !exists(memberDoc(companyId));
+
+        allow update: if canManageCompany(companyId) || isGlobalStaff();
+
+        allow delete: if canManageCompany(companyId)
+          || isGlobalStaff()
+          || (
+            isSignedIn()
+            && request.auth.uid == resource.data.get('applicantUid', '')
+            && resource.data.status == 'pending'
+          );
+      }
+
+      match /presence/{puid} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+        allow create, update: if isSignedIn() && request.auth.uid == puid && isCompanyMember(companyId);
+        allow delete: if canManageCompany(companyId) || (isSignedIn() && request.auth.uid == puid);
+      }
+
+      match /runtimeErrors/{docId} {
+        allow read: if isCompanyMember(companyId) || isGlobalStaff();
+        allow create: if isCompanyMember(companyId)
+          && request.resource.data.createdByUid == request.auth.uid
+          && request.resource.data.keys().hasAll(['createdByUid', 'at', 'message', 'source']);
+        allow update: if false;
+        allow delete: if canManageCompany(companyId);
+      }
+
+      /** Phase 14 — BOQ vs invoice anomaly signals (written by Admin API; staff read). */
+      match /anomalySignals/{signalId} {
+        allow read: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        allow create, update, delete: if false;
+      }
+
+      /** Phase 15.6 — Drive/OCR archive index (ingest via Admin API / webhooks only). */
+      match /archiveIndex/{docId} {
+        allow read: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        allow create, update, delete: if false;
+      }
+    }
+
+    /** Phase 33 — global landing (public read; owner email write). */
+    match /globalLandingBranding/{docId} {
+      allow read: if true;
+      allow write: if isMasterAdminEmailClaim();
+    }
+
+    /** Phase 33 — developer self-log for Owner Vault (owner reads). */
+    match /developerChangeLog/{entryId} {
+      allow read: if isMasterAdminEmailClaim();
+      allow create: if isDeveloper()
+        && request.resource.data.keys().hasAll(['message', 'actorEmail', 'actorUid', 'createdAt'])
+        && request.resource.data.message is string
+        && request.resource.data.actorEmail == request.auth.token.email
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.createdAt is timestamp;
+      allow update, delete: if false;
+    }
+
+    /** Phase 36 — Sentinel / AI orchestrator timeline (Admin SDK writes; owner reads). */
+    match /sentinelTimeline/{entryId} {
+      allow read: if isMasterAdminEmailClaim();
+      allow create, update, delete: if false;
+    }
+  }
+}

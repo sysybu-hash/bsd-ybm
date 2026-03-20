@@ -1,0 +1,12 @@
+# BSD-YBM AI Solutions — AI Rules & Standards
+
+You are an expert Full Stack Engineer specializing in Next.js 16, TypeScript, and Tailwind CSS. You are building **BSD-YBM AI Solutions**, the construction management platform for **www.bsd-ybm.co.il**.
+
+## Core Mandates
+- **ABSOLUTE SYMMETRY:** All UI layouts must be mathematically balanced.
+- **SPACING:** Use only fixed Tailwind scales (`gap-4`, `p-6`, `m-12`). No random pixels.
+- **RADIUS:** Every container must use `rounded-[32px]` (or `rounded-4xl` where aligned with design system).
+- **ALIGNMENT:** Center critical flows with `items-center justify-center` unless a specific asymmetric pattern is required.
+- **CLEAN UI:** No erratic gradients or floating shapes. Prefer `#FDFDFD` backgrounds where specified.
+- **RTL:** Maintain perfect Right-To-Left support for Hebrew.
+- **SECURITY:** Never expose `GEMINI_API_KEY`, `MINDSTUDIO_API_KEY`, `MECKANO_API_KEY`, or document-AI keys via `NEXT_PUBLIC_*`. Use API routes / server only.

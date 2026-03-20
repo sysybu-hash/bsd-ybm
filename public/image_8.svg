@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Golden Helix">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F4E4BC"/>
+      <stop offset="50%" style="stop-color:#D4AF37"/>
+      <stop offset="100%" style="stop-color:#8B6914"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="#FDFDFD"/>
+  <path d="M28 88c12-28 28-52 52-68 8-5 16-8 24-8-18 22-32 48-40 76h-18c-6-18-10-36-18-0z" fill="url(#g)" opacity="0.95"/>
+  <path d="M44 32c22 8 40 26 52 48-14 6-28 10-44 10-4-20-4-40-8-58z" fill="url(#g)" opacity="0.88"/>
+  <path d="M60 60c10 0 20 4 28 12-10 14-24 24-40 28 4-14 8-28 12-40z" fill="#001A4D" opacity="0.92"/>
+  <circle cx="24" cy="24" r="5" fill="#FF7F00"/>
+  <circle cx="96" cy="22" r="4" fill="#00A3A1"/>
+</svg>

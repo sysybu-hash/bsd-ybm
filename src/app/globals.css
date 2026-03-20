@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfdfd;
+  --foreground: #1a1a1a;
+  /* Tenant branding (overridden from Firestore per company) */
+  --brand-primary: #004694;
+  --brand-secondary: #c9a227;
+  --brand-accent: #ff8c00;
+  --brand-glow: rgba(0, 70, 148, 0.45);
+  /* Phase 13.5 — Meuhedet / BSD-YBM shell (reference palette) */
+  --bsd-royal-blue: #001a4d;
+  --bsd-royal-blue-mid: #002b6b;
+  --bsd-accent-orange: #ff7f00;
+  --bsd-accent-teal: #00a3a1;
+  --bsd-content-bg: #f4f5f7;
+  --bsd-content-bg-soft: #fafbfc;
+  --bsd-icon-well: #e8ecf2;
+  --bsd-icon-well-border: #dce1e8;
 }
 
 @theme inline {
@@ -12,15 +26,196 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Meuhedet / BSD-YBM: keep UI light across system dark mode for consistency */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fdfdfd;
+    --foreground: #1a1a1a;
   }
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+html[dir="ltr"] body,
+html[data-locale="en"] body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html[dir="rtl"] body,
+html[data-locale="he"] body {
+  font-family: var(--font-heebo), var(--font-assistant), "Assistant", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* iOS / PWA safe areas */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.px-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Phase 20 — gold shimmer accent for dashboard insight surfaces */
+@keyframes empire-gold-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.empire-shimmer-gold {
+  position: relative;
+  background-image: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(201, 162, 39, 0.12) 40%,
+    rgba(244, 228, 188, 0.35) 50%,
+    rgba(201, 162, 39, 0.12) 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  animation: empire-gold-shimmer 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empire-shimmer-gold {
+    animation: none;
+  }
+}
+
+.dashboard-tile-shimmer {
+  box-shadow:
+    0 0 0 1px rgba(201, 162, 39, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.08);
+  border-color: rgba(201, 162, 39, 0.35);
+}
+
+/* Phase 23 — primary CTAs (gold shimmer, fixed radii) */
+.btn-primary-empire {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+    120deg,
+    rgba(201, 162, 39, 0.15) 0%,
+    rgba(255, 140, 0, 0.2) 45%,
+    rgba(244, 228, 188, 0.35) 50%,
+    rgba(255, 140, 0, 0.2) 55%,
+    rgba(201, 162, 39, 0.12) 100%
+  );
+  background-size: 200% 100%;
+  animation: empire-gold-shimmer 5s ease-in-out infinite;
+  box-shadow:
+    0 0 0 1px rgba(201, 162, 39, 0.35),
+    0 8px 24px rgba(0, 26, 77, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary-empire {
+    animation: none;
+  }
+}
+
+/* Phase 32 — Empire landing: midnight base, gold radial mood, slow helix trail */
+.empire-landing-engine {
+  background-color: #00050a;
+  color: #e8dcc4;
+}
+
+.empire-landing-glows {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 15% 25%, rgba(201, 162, 39, 0.09), transparent 58%),
+    radial-gradient(ellipse 70% 45% at 88% 78%, rgba(201, 162, 39, 0.06), transparent 52%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(0, 70, 148, 0.06), transparent 55%);
+}
+
+.empire-landing-helix {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160vmax;
+  height: 160vmax;
+  margin-left: -80vmax;
+  margin-top: -80vmax;
+  background: conic-gradient(
+    from 210deg at 50% 50%,
+    transparent 0deg,
+    rgba(201, 162, 39, 0.04) 38deg,
+    transparent 76deg,
+    rgba(244, 228, 188, 0.06) 118deg,
+    transparent 156deg,
+    rgba(201, 162, 39, 0.035) 198deg,
+    transparent 240deg,
+    rgba(201, 162, 39, 0.05) 292deg,
+    transparent 360deg
+  );
+  opacity: 0.55;
+  animation: empire-helix-drift 140s linear infinite;
+}
+
+@keyframes empire-helix-drift {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes enter-gold-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.btn-enter-empire {
+  background-image: linear-gradient(
+    105deg,
+    #c9a227 0%,
+    #e8d48a 18%,
+    #fff4d0 32%,
+    #c9a227 48%,
+    #a67c1a 62%,
+    #e8d48a 78%,
+    #c9a227 100%
+  );
+  background-size: 220% 100%;
+  animation: enter-gold-shimmer 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empire-landing-helix {
+    animation: none;
+  }
+  .btn-enter-empire {
+    animation: none;
+  }
 }
