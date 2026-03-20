@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.41",
     "@aws-sdk/client-textract": "^3.1012.0",
     "@google/generative-ai": "^0.24.1",
     "@hebcal/core": "^6.0.8",
@@ -19,6 +20,7 @@
     "@tiptap/pm": "^3.20.4",
     "@tiptap/react": "^3.20.4",
     "@tiptap/starter-kit": "^3.20.4",
+    "ai": "^6.0.116",
     "clsx": "^2.1.1",
     "firebase": "^12.10.0",
     "firebase-admin": "^13.7.0",
@@ -32,7 +34,8 @@
     "react-dom": "19.2.4",
     "recharts": "^3.8.0",
     "tailwind-merge": "^3.5.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -9,6 +9,7 @@ export type SentinelTimelineKind =
   | 'hotfix_proposed'
   | 'hotfix_pushed'
   | 'ai_coder'
+  | 'owner_terminal'
   | 'sentinel_idle';
 
 export async function appendSentinelEvent(
