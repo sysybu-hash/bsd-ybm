@@ -18,18 +18,22 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   /** Production canonical (Phase 23 — Vercel / SEO). Runtime URLs still use `@/lib/site` in client code. */
-  metadataBase: new URL("https://www.bsd-ybm.co.il"),
-  title: "BSD-YBM AI Solutions | ניהול ובקרה חכמה לענף הבנייה",
+  metadataBase: new URL("https://bsd-ybm.co.il"),
+  title: "BSD-YBM | ניהול ובקרה חכמה לענף הבנייה",
   description:
     "מערכת הבינה המלאכותית של חיים אדלר לניהול פרויקטים, ניתוח גרמושקות ובקרת תקציב.",
-  applicationName: "BSD-YBM AI Solutions",
+  applicationName: "BSD-YBM",
   formatDetection: {
     telephone: false,
   },
   appleWebApp: {
     capable: true,
-    title: "BSD-YBM AI Solutions",
+    title: "BSD-YBM",
     statusBarStyle: "default",
+  },
+  /** Renders: <meta name="google-site-verification" content="..." /> (Search Console HTML method) */
+  verification: {
+    google: "86H7leciCzHrQDNWj85fj5BWj2Tn2IVnOSs1qVHgQ9k",
   },
 };
 
