@@ -16,7 +16,7 @@ export type SendTransactionalHtmlParams = {
  */
 export async function sendTransactionalHtml(params: SendTransactionalHtmlParams): Promise<void> {
   const from =
-    process.env.EMAIL_FROM?.trim() || 'BSD-YBM AI Solutions <no-reply@bsd-ybm.co.il>';
+    process.env.EMAIL_FROM?.trim() || 'BSD-YBM <no-reply@bsd-ybm.co.il>';
   const replyTo = resolveEmailReplyTo(params.replyTo);
 
   const host = (process.env.EMAIL_SERVER_HOST || process.env.SMTP_HOST || '').trim();

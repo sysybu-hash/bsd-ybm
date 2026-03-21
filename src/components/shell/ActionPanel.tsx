@@ -89,7 +89,7 @@ export default function ActionPanel() {
       style={{ boxShadow: '0 10px 48px rgba(0, 26, 77, 0.11)' }}
     >
       <h2 id="action-panel-title" className="sr-only">
-        פעולות מהירות BSD-YBM AI Solutions
+        פעולות מהירות BSD-YBM
       </h2>
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="grid w-full grid-cols-2 justify-items-center gap-4 sm:grid-cols-5">

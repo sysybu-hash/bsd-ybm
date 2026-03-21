@@ -185,7 +185,7 @@ export default function QuoteGenerator({ projectId }: { projectId: string }) {
         ip,
         signerEmail: user.email ?? undefined,
         projectName,
-        companyDisplayName: branding.legalName || branding.displayName || 'BSD-YBM AI Solutions',
+        companyDisplayName: branding.legalName || branding.displayName || 'BSD-YBM',
         headerLogoUrl: branding.logoUrl,
       };
 

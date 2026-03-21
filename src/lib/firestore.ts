@@ -68,6 +68,27 @@ export function companyFinancesRef(companyId: string): CollectionReference {
   return companyCollectionRef('finances', companyId);
 }
 
+/** ERP v6 — payroll lines (worker rates, hours, tax). */
+export function companyPayrollEntriesRef(companyId: string): CollectionReference {
+  return companyCollectionRef('payrollEntries', companyId);
+}
+
+/** ERP v6 — materials & subcontractor invoice log. */
+export function companyExpenseLogsRef(companyId: string): CollectionReference {
+  return companyCollectionRef('expenseLogs', companyId);
+}
+
+/** Global ERP config doc (Firestore rules: master admin only). */
+export function bsdErpBrainConfigRef(): DocumentReference {
+  return doc(getDb(), 'bsdErpBrain', 'config');
+}
+
+/** Per-company ERP defaults (tax %, reference daily rate). */
+export function companyErpSettingsBrainRef(companyId: string): DocumentReference {
+  const cid = requireCompanyId(companyId);
+  return doc(getDb(), 'companies', cid, 'erpSettings', 'brain');
+}
+
 export function companyAttendanceRef(companyId: string): CollectionReference {
   return companyCollectionRef('attendance', companyId);
 }

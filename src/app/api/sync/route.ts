@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { isDatabaseConfigured } from '@/lib/databaseConfig';
 import { getDailyAttendance } from '@/services/meckanoService';
@@ -61,9 +62,25 @@ export async function POST() {
   }
 
   const allOk = results.db === 'מחובר' && results.meckano === 'עודכן';
+  const message = allOk ? 'סינכרון הושלם' : 'סינכרון הושלם עם הערות';
+
+  try {
+    await prisma.syncRun.create({
+      data: {
+        ok: allOk,
+        message,
+        dbStatus: results.db,
+        meckanoStatus: results.meckano,
+        ...(pipeline != null ? { pipelineJson: pipeline as Prisma.InputJsonValue } : {}),
+      },
+    });
+  } catch {
+    // טבלת SyncRun עדיין לא נפרסה — לא לשבור את תגובת ה-API
+  }
+
   return NextResponse.json({
     ok: allOk,
-    message: allOk ? 'סינכרון הושלם' : 'סינכרון הושלם עם הערות',
+    message,
     results,
     pipeline,
     timestamp: new Date().toISOString(),

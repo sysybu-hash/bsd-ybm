@@ -4,8 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bot, Github } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import AddFromFileButton from '@/components/ui/AddFromFileButton';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { IS_OWNER } from '@/lib/ownerVault';
+
+const MAX_INSTRUCTION = 12_000;
 
 export default function OwnerAiCoderPage() {
   const { user } = useAuth();
@@ -15,6 +18,8 @@ export default function OwnerAiCoderPage() {
   const [reply, setReply] = useState<string | null>(null);
   const [githubMeta, setGithubMeta] = useState<{ branch: string; htmlUrl: string } | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [loadingFile, setLoadingFile] = useState(false);
 
   const allowed = IS_OWNER(user?.email);
 
@@ -22,6 +27,7 @@ export default function OwnerAiCoderPage() {
     if (!allowed || !user || !instruction.trim()) return;
     setBusy(true);
     setErr(null);
+    setNotice(null);
     setReply(null);
     setGithubMeta(null);
     try {
@@ -44,17 +50,44 @@ export default function OwnerAiCoderPage() {
         error?: string;
         githubError?: string;
         warning?: string;
+        warnings?: string[];
       };
-      if (!res.ok) throw new Error(j.error || `HTTP ${res.status}`);
+      if (!res.ok) {
+        const raw = j.error || `HTTP ${res.status}`;
+        if (raw === 'server_not_configured') {
+          throw new Error('שרת: Firebase Admin לא מוגדר — הגדרו מפתח שירות בשרת (או השתמשו בגרסת API המעודכנת).');
+        }
+        throw new Error(raw);
+      }
       setReply(j.reply ?? '');
       if (j.github?.htmlUrl) setGithubMeta({ branch: j.github.branch, htmlUrl: j.github.htmlUrl });
       if (j.githubError) setErr(j.githubError);
-      if (j.warning) setErr(j.warning);
+      const parts = [...(j.warnings ?? []), j.warning].filter(Boolean) as string[];
+      if (parts.length) setNotice(parts.join('\n'));
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'שגיאה');
     } finally {
       setBusy(false);
     }
+  };
+
+  const onInstructionFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setLoadingFile(true);
+    setErr(null);
+    const r = new FileReader();
+    r.onload = () => {
+      const t = typeof r.result === 'string' ? r.result : '';
+      setInstruction(t.slice(0, MAX_INSTRUCTION));
+      setLoadingFile(false);
+    };
+    r.onerror = () => {
+      setErr('קריאת הקובץ נכשלה');
+      setLoadingFile(false);
+    };
+    r.readAsText(file, 'UTF-8');
   };
 
   if (!allowed) return null;
@@ -84,16 +117,28 @@ export default function OwnerAiCoderPage() {
       </header>
 
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-6">
-        <label className="flex w-full flex-col items-center justify-center gap-4 text-sm font-bold text-gray-800">
-          הוראה למודל
-          <textarea
-            value={instruction}
-            onChange={(e) => setInstruction(e.target.value)}
-            rows={8}
-            className="min-h-48 w-full rounded-4xl border border-gray-200 bg-white p-4 text-sm font-normal leading-relaxed shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[#FF8C00]"
-            placeholder="למשל: הוסף אימות שדה X בטופס הרשמה, או שפר הודעת שגיאה ב-API Y…"
+        <div className="flex w-full flex-col items-center justify-center gap-4">
+          <label className="flex w-full flex-col items-center justify-center gap-4 text-sm font-bold text-gray-800">
+            הוראה למודל
+            <textarea
+              value={instruction}
+              onChange={(e) => setInstruction(e.target.value.slice(0, MAX_INSTRUCTION))}
+              rows={8}
+              className="min-h-48 w-full rounded-4xl border border-gray-200 bg-white p-4 text-sm font-normal leading-relaxed shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[#FF8C00]"
+              placeholder="למשל: הוסף אימות שדה X בטופס הרשמה, או שפר הודעת שגיאה ב-API Y…"
+            />
+          </label>
+          <AddFromFileButton
+            accept=".txt,.md,text/plain,.markdown"
+            uploading={loadingFile}
+            uploadingLabel="טוען קובץ…"
+            labelOverride="הוספה מקובץ (טקסט / הוראות)"
+            disabled={busy}
+            onChange={onInstructionFile}
+            className="max-w-md"
           />
-        </label>
+          <p className="text-center text-xs text-gray-500">עד {MAX_INSTRUCTION.toLocaleString('he-IL')} תווים · קבצי .txt / .md</p>
+        </div>
 
         <label className="flex items-center justify-center gap-4 text-sm font-bold text-gray-700">
           <input
@@ -116,6 +161,15 @@ export default function OwnerAiCoderPage() {
         >
           {busy ? 'מעבד…' : 'שליחה ל-AI'}
         </button>
+
+        {notice ? (
+          <p
+            className="w-full rounded-4xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-900"
+            role="status"
+          >
+            {notice}
+          </p>
+        ) : null}
 
         {err ? (
           <p className="text-center text-sm font-bold text-red-600" role="alert">

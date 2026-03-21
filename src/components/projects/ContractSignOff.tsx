@@ -92,7 +92,7 @@ export default function ContractSignOff({ projectId }: { projectId: string }) {
       projectBudget: budget,
       projectStartDate: String(project.startDate ?? '—'),
       projectEndDate: String(project.endDate ?? project.targetEndDate ?? '—'),
-      companyName: branding.legalName || branding.displayName || 'BSD-YBM AI Solutions',
+      companyName: branding.legalName || branding.displayName || 'BSD-YBM',
       clientName: user?.displayName || user?.email || '—',
     });
     setFilled(html);
@@ -145,7 +145,7 @@ export default function ContractSignOff({ projectId }: { projectId: string }) {
         ip,
         signerEmail: user.email ?? undefined,
         projectName: String(project?.name ?? projectId),
-        companyDisplayName: branding.legalName || branding.displayName || 'BSD-YBM AI Solutions',
+        companyDisplayName: branding.legalName || branding.displayName || 'BSD-YBM',
         headerLogoUrl: branding.logoUrl,
       };
 
@@ -241,7 +241,7 @@ export default function ContractSignOff({ projectId }: { projectId: string }) {
             className="h-16 max-w-[200px] object-contain"
           />
         ) : (
-          <span className="text-sm font-black text-[#001A4D]">{branding.displayName || 'BSD-YBM AI Solutions'}</span>
+          <span className="text-sm font-black text-[#001A4D]">{branding.displayName || 'BSD-YBM'}</span>
         )}
         <h2 className="text-xl font-black text-[#001A4D]">חדר חתימה דיגיטלית</h2>
       </div>

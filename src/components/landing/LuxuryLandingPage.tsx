@@ -140,7 +140,7 @@ export default function LuxuryLandingPage({ showroomMode = false }: { showroomMo
         </>
       )}
 
-      <div className="relative z-10 flex min-h-dvh flex-col items-center justify-center gap-8 px-6 pb-32 pt-28">
+      <div className="relative z-10 flex min-h-dvh flex-col items-center justify-center gap-8 px-6 pb-40 pt-28">
         <div className="flex flex-col items-center justify-center gap-6">
           <div className="relative flex h-36 w-36 items-center justify-center rounded-4xl border border-[#c9a227]/35 bg-[#000814]/60 p-6 shadow-[0_0_48px_rgba(201,162,39,0.18)] backdrop-blur-sm sm:h-44 sm:w-44">
             <Image
@@ -159,7 +159,18 @@ export default function LuxuryLandingPage({ showroomMode = false }: { showroomMo
               {LEGAL_BRAND_NAME}
             </h1>
             <p className="max-w-md text-center text-xs font-extralight leading-relaxed tracking-wide text-[#8a9aaa] sm:text-sm">
-              יוחנן בוקשפן · BSD-YBM AI Solutions
+              יוחנן בוקשפן · BSD-YBM
+            </p>
+            <p className="max-w-md text-center text-[11px] font-extralight tracking-wide text-[#7a8a9c] sm:text-xs">
+              <Link href="/en/legal" className="underline underline-offset-4 hover:text-[#c9a227]">
+                מדיניות פרטיות / Privacy Policy
+              </Link>
+              <span className="mx-2 text-[#5c6b7c]" aria-hidden>
+                ·
+              </span>
+              <Link href="/en/terms" className="underline underline-offset-4 hover:text-[#c9a227]">
+                תנאי שימוש / Terms
+              </Link>
             </p>
           </div>
         </div>
@@ -189,7 +200,7 @@ export default function LuxuryLandingPage({ showroomMode = false }: { showroomMo
       {isAdminUser ? (
         <Link
           href="/dashboard"
-          className="fixed bottom-8 left-1/2 z-30 flex min-h-12 -translate-x-1/2 items-center justify-center rounded-4xl border border-[#c9a227]/35 bg-[#000814]/90 px-8 py-3 text-xs font-light tracking-wide text-[#e8dcc4] shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-colors hover:border-[#c9a227]/55 hover:text-[#fff8e8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c9a227]"
+          className="fixed bottom-32 left-1/2 z-30 flex min-h-12 -translate-x-1/2 items-center justify-center rounded-4xl border border-[#c9a227]/35 bg-[#000814]/90 px-8 py-3 text-xs font-light tracking-wide text-[#e8dcc4] shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-colors hover:border-[#c9a227]/55 hover:text-[#fff8e8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c9a227]"
         >
           חזרה לניהול המערכת
         </Link>

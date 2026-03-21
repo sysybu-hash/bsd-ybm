@@ -49,7 +49,6 @@ export default function BsybmLogoMark({ className = '' }: { className?: string }
       </svg>
       <div className="flex flex-col items-start justify-center leading-none">
         <span className="text-[15px] font-bold tracking-tight text-white sm:text-[17px]">BSD-YBM</span>
-        <span className="mt-0.5 text-[10px] font-semibold text-white/80 sm:text-[11px]">AI Solutions</span>
       </div>
     </div>
   );

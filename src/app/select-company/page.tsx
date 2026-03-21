@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export default function SelectCompanyPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, allowlistPending } = useAuth();
   const {
     companyOptions,
     loading,
@@ -22,22 +22,22 @@ export default function SelectCompanyPage() {
   const { t, dir } = useLocale();
 
   useEffect(() => {
-    if (authLoading || loading) return;
+    if (authLoading || allowlistPending || loading) return;
     if (!user) return;
     if (!requiresCompanySelection && companyOptions.length > 0) {
       router.replace('/dashboard');
     }
-  }, [authLoading, loading, user, requiresCompanySelection, companyOptions.length, router]);
+  }, [authLoading, allowlistPending, loading, user, requiresCompanySelection, companyOptions.length, router]);
 
   useEffect(() => {
-    if (authLoading || loading || !user) return;
+    if (authLoading || allowlistPending || loading || !user) return;
     if (companyOptions.length === 1) {
       setCompanyId(companyOptions[0].companyId);
       router.replace('/dashboard');
     }
-  }, [authLoading, loading, user, companyOptions, setCompanyId, router]);
+  }, [authLoading, allowlistPending, loading, user, companyOptions, setCompanyId, router]);
 
-  if (authLoading || loading) {
+  if (authLoading || allowlistPending || loading) {
     return (
       <div
         className="flex min-h-dvh items-center justify-center bg-[#FDFDFD] p-6 pt-safe pb-safe px-safe"

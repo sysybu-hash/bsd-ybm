@@ -47,6 +47,7 @@ export default function Dashboard() {
   const showHeatmap = Boolean(companyId && (isGlobalStaff || !isClient));
   const [syncBusy, setSyncBusy] = useState(false);
   const [counts, setCounts] = useState({ projects: 0, finance: 0 });
+  const [erpLive, setErpLive] = useState({ payrollMonth: 0, expensesMonth: 0 });
 
   useEffect(() => {
     if (!companyId || !isFirebaseConfigured()) {
@@ -67,6 +68,43 @@ export default function Dashboard() {
     };
   }, [companyId]);
 
+  useEffect(() => {
+    if (!companyId || !isFirebaseConfigured() || isClient) {
+      setErpLive({ payrollMonth: 0, expensesMonth: 0 });
+      return;
+    }
+    const n = new Date();
+    const y = n.getFullYear();
+    const m = n.getMonth();
+    const from = `${y}-${String(m + 1).padStart(2, '0')}-01`;
+    const last = new Date(y, m + 1, 0).getDate();
+    const to = `${y}-${String(m + 1).padStart(2, '0')}-${String(last).padStart(2, '0')}`;
+    const db = getDb();
+    const base = ['companies', companyId] as const;
+    const unsubPay = onSnapshot(collection(db, ...base, 'payrollEntries'), (snap) => {
+      let t = 0;
+      snap.forEach((d) => {
+        const row = d.data() as { workDate?: string; netPay?: number };
+        const w = row.workDate;
+        if (typeof w === 'string' && w >= from && w <= to) t += Number(row.netPay) || 0;
+      });
+      setErpLive((e) => ({ ...e, payrollMonth: t }));
+    });
+    const unsubEx = onSnapshot(collection(db, ...base, 'expenseLogs'), (snap) => {
+      let t = 0;
+      snap.forEach((d) => {
+        const row = d.data() as { expenseDate?: string; amount?: number };
+        const x = row.expenseDate;
+        if (typeof x === 'string' && x >= from && x <= to) t += Number(row.amount) || 0;
+      });
+      setErpLive((e) => ({ ...e, expensesMonth: t }));
+    });
+    return () => {
+      unsubPay();
+      unsubEx();
+    };
+  }, [companyId, isClient]);
+
   const runGlobalSync = async () => {
     setSyncBusy(true);
     try {
@@ -85,10 +123,21 @@ export default function Dashboard() {
   return (
     <div className="min-h-full bg-[#FFFFFF] p-4 pb-12 pt-4 sm:p-8 md:p-12">
       <header className="mb-8 flex flex-col items-stretch justify-center gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-center text-3xl font-black text-[#1a1a1a] sm:text-left sm:text-4xl">
-          Workshop Dashboard
-        </h1>
+        <div className="flex flex-col items-center gap-2 sm:items-start">
+          <h1 className="text-center text-3xl font-black text-[#1a1a1a] sm:text-left sm:text-4xl">
+            bsd-ybm · Workshop
+          </h1>
+          <p className="text-center text-xs font-bold text-slate-500 sm:text-left">Live Firestore ERP summaries</p>
+        </div>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          {companyId && !isClient && (
+            <Link
+              href="/dashboard/projects/new"
+              className="inline-flex min-h-12 items-center justify-center rounded-4xl border-2 border-[#004694]/30 bg-white px-6 py-3 text-sm font-black text-[#004694] shadow-sm transition-colors hover:bg-[#004694]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8C00]"
+            >
+              + פרויקט חדש
+            </Link>
+          )}
           <div
             className="flex items-center justify-center gap-2 rounded-4xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
             title={
@@ -134,6 +183,54 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
+
+      {companyId && !isClient && dataMode === 'real' && (
+        <section className="mx-auto mb-8 grid w-full max-w-6xl grid-cols-1 gap-4 px-4 sm:grid-cols-3 sm:gap-6 sm:px-8">
+          {/* Monthly Payroll — white Meuhedet-style tile */}
+          <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50">
+                <Wallet className="h-5 w-5 text-emerald-600" aria-hidden />
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">שכר חודשי (נטו)</span>
+            </div>
+            <span className="text-3xl font-black text-emerald-700">
+              {erpLive.payrollMonth.toLocaleString()} ₪
+            </span>
+            <Link href="/en/payroll" className="text-xs font-bold text-[#004694] hover:underline">
+              מרכז שכר מקאנו ←
+            </Link>
+          </div>
+          {/* Active Projects tile */}
+          <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
+                <FolderKanban className="h-5 w-5 text-[#004694]" aria-hidden />
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">פרויקטים פעילים</span>
+            </div>
+            <span className="text-3xl font-black text-[#004694]">{counts.projects}</span>
+            <Link href="/dashboard/projects" className="text-xs font-bold text-[#004694] hover:underline">
+              כל הפרויקטים ←
+            </Link>
+          </div>
+          {/* Monthly Expenses tile */}
+          <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50">
+                <Users className="h-5 w-5 text-[#FF8C00]" aria-hidden />
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">הוצאות חודשיות</span>
+            </div>
+            <span className="text-3xl font-black text-[#FF8C00]">
+              {erpLive.expensesMonth.toLocaleString()} ₪
+            </span>
+            <Link href="/dashboard/finance/expenses" className="text-xs font-bold text-[#004694] hover:underline">
+              יומן הוצאות ←
+            </Link>
+          </div>
+        </section>
+      )}
 
       {companyId && dataMode === 'real' && (
         <div className="mx-auto mb-8 w-full max-w-6xl px-4 sm:px-8">

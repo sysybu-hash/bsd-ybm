@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -23,7 +23,7 @@ type ScanDoc = {
   [key: string]: unknown;
 };
 
-export default function ScanBatchResultPage() {
+function ScanBatchResultInner() {
   const params = useParams();
   const searchParams = useSearchParams();
   const batchId = typeof params?.batchId === 'string' ? params.batchId : '';
@@ -149,5 +149,19 @@ export default function ScanBatchResultPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ScanBatchResultPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center bg-[#FFFFFF] p-12 text-sm text-gray-500" dir="rtl">
+          טוען…
+        </div>
+      }
+    >
+      <ScanBatchResultInner />
+    </Suspense>
   );
 }

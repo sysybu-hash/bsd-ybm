@@ -10,7 +10,7 @@ export async function GET() {
       db: 'not_configured',
       siteUrl: PUBLIC_SITE_URL,
       apiUrl: PUBLIC_API_URL,
-      brand: 'BSD-YBM AI Solutions',
+      brand: 'BSD-YBM',
       timestamp: new Date().toISOString(),
     });
   }
@@ -22,7 +22,7 @@ export async function GET() {
       db: 'connected',
       siteUrl: PUBLIC_SITE_URL,
       apiUrl: PUBLIC_API_URL,
-      brand: 'BSD-YBM AI Solutions',
+      brand: 'BSD-YBM',
       timestamp: new Date().toISOString(),
     });
   } catch (err) {

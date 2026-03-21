@@ -84,7 +84,7 @@ export default function FloatingChat() {
             dir="rtl"
           >
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 sm:px-5 sm:py-4">
-              <h3 className="truncate font-bold text-[#1a1a1a]">BSD-YBM Assistant</h3>
+              <h3 className="truncate font-bold text-[#1a1a1a]">BSD-YBM</h3>
               <span className="max-w-[40%] truncate text-xs text-gray-500">{pathname}</span>
             </div>
 

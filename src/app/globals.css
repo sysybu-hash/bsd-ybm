@@ -219,3 +219,27 @@ html[data-locale="he"] body {
     animation: none;
   }
 }
+
+@layer components {
+  /* דף הבית היוקרתי של BSD-YBM */
+  .bsd-landing-bg {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      url("https://images.unsplash.com/photo-1547039906-3850f847627a?q=80&w=2071&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100dvh;
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bsd-landing-bg {
+      background-attachment: scroll;
+    }
+  }
+
+  .glass-morphism-card {
+    @apply rounded-[32px] border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl;
+  }
+}

@@ -18,13 +18,18 @@ type Body = {
 /**
  * Phase 36 — Owner-only AI development hub. Requires Firebase ID token + sysybu@gmail.com.
  */
+function tryGetAdminDb() {
+  if (!isFirebaseAdminConfigured()) return null;
+  try {
+    return getAdminFirestore();
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
   const gate = await requireOwnerBearer(req);
   if (!gate.ok) return gate.response;
-
-  if (!isFirebaseAdminConfigured()) {
-    return NextResponse.json({ error: 'server_not_configured' }, { status: 503 });
-  }
 
   let body: Body;
   try {
@@ -59,19 +64,26 @@ If the user asks for GitHub operations, still output patch text they can apply; 
     );
   }
 
-  const db = getAdminFirestore();
-  await appendSentinelEvent(db, {
-    kind: 'ai_coder',
-    title: 'AI Coder — הוראה',
-    detail: instruction.slice(0, 800),
-    meta: { replyLength: reply.length },
-  });
+  const db = tryGetAdminDb();
+  const warnings: string[] = [];
+  if (!db) {
+    warnings.push(
+      'firebase_admin_skipped: ללא Firebase Admin — התשובה הוחזרה בלי רישום ב-Sentinel. להפעלה מלאה הגדרו FIREBASE_SERVICE_ACCOUNT_PATH או GOOGLE_APPLICATION_CREDENTIALS בשרת.'
+    );
+  } else {
+    await appendSentinelEvent(db, {
+      kind: 'ai_coder',
+      title: 'AI Coder — הוראה',
+      detail: instruction.slice(0, 800),
+      meta: { replyLength: reply.length },
+    });
+  }
 
   let github: { branch: string; htmlUrl: string } | null = null;
   if (applyGithub) {
     if (!process.env.GITHUB_TOKEN?.trim()) {
       return NextResponse.json(
-        { ok: true, reply, github: null, warning: 'GITHUB_TOKEN not set' },
+        { ok: true, reply, github: null, warning: 'GITHUB_TOKEN not set', warnings },
         { status: 200 }
       );
     }
@@ -80,7 +92,7 @@ If the user asks for GitHub operations, still output patch text they can apply; 
         patchBody: reply,
         analysisSummary: `Owner AI Coder instruction:\n${instruction.slice(0, 2000)}`,
       });
-      if (github) {
+      if (github && db) {
         await appendSentinelEvent(db, {
           kind: 'hotfix_pushed',
           title: 'AI Coder — hotfix branch',
@@ -89,20 +101,28 @@ If the user asks for GitHub operations, still output patch text they can apply; 
         });
       }
     } catch (e) {
-      await appendSentinelEvent(db, {
-        kind: 'hotfix_proposed',
-        title: 'AI Coder — GitHub נכשל',
-        detail: e instanceof Error ? e.message : 'error',
-        meta: {},
-      });
+      if (db) {
+        await appendSentinelEvent(db, {
+          kind: 'hotfix_proposed',
+          title: 'AI Coder — GitHub נכשל',
+          detail: e instanceof Error ? e.message : 'error',
+          meta: {},
+        });
+      }
       return NextResponse.json({
         ok: true,
         reply,
         github: null,
         githubError: e instanceof Error ? e.message : 'github_failed',
+        warnings,
       });
     }
   }
 
-  return NextResponse.json({ ok: true, reply, github });
+  return NextResponse.json({
+    ok: true,
+    reply,
+    github,
+    ...(warnings.length ? { warnings } : {}),
+  });
 }

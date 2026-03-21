@@ -207,7 +207,7 @@ export default function OwnerZonePage() {
         </div>
         <div>
           <h1 className="text-2xl font-black text-[#001A4D]">אזור בעלים (Owner Vault)</h1>
-          <p className="mt-2 max-w-xl text-sm text-gray-600">יוחנן בוקשפן · BSD-YBM AI Solutions — ניהול פלטפורמה בלבד.</p>
+          <p className="mt-2 max-w-xl text-sm text-gray-600">יוחנן בוקשפן · BSD-YBM — ניהול פלטפורמה בלבד.</p>
         </div>
         <Link
           href="/dashboard/owner-only/ai-coder"

@@ -5,8 +5,8 @@ import type { MetadataRoute } from 'next';
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'BSD-YBM AI Solutions',
-    short_name: 'BSD-YBM AI',
+    name: 'BSD-YBM',
+    short_name: 'BSD-YBM',
     description: 'מערכת ניהול בנייה מתקדמת',
     start_url: '/',
     scope: '/',

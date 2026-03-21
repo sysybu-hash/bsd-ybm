@@ -1,5 +1,5 @@
 /**
- * BSD-YBM AI Solutions — WhatsApp Cloud API (Meta) notifications.
+ * BSD-YBM — WhatsApp Cloud API (Meta) notifications.
  * Configure: WHATSAPP_CLOUD_ACCESS_TOKEN, WHATSAPP_CLOUD_PHONE_NUMBER_ID, WHATSAPP_CLOUD_API_VERSION (default v21.0)
  */
 
@@ -29,7 +29,7 @@ export const WhatsAppService = {
       return { ok: false, reason: 'bad_phone' };
     }
 
-    const body = `היי — הצעת מחיר "${input.quoteTitle}" אושרה ונחתמה לפרויקט "${input.projectName}" (${input.companyDisplayName}). זמן: ${input.signedAtIso} · BSD-YBM AI Solutions`;
+    const body = `היי — הצעת מחיר "${input.quoteTitle}" אושרה ונחתמה לפרויקט "${input.projectName}" (${input.companyDisplayName}). זמן: ${input.signedAtIso} · BSD-YBM`;
 
     try {
       const url = `https://graph.facebook.com/${version}/${phoneNumberId}/messages`;
@@ -76,7 +76,7 @@ export const WhatsAppService = {
       return { ok: false, reason: 'bad_phone' };
     }
 
-    const body = `היי — לקוח חתם על הסכם בפרויקט "${input.projectName}" (${input.companyDisplayName}). זמן: ${input.signedAtIso} · BSD-YBM AI Solutions`;
+    const body = `היי — לקוח חתם על הסכם בפרויקט "${input.projectName}" (${input.companyDisplayName}). זמן: ${input.signedAtIso} · BSD-YBM`;
 
     try {
       const url = `https://graph.facebook.com/${version}/${phoneNumberId}/messages`;

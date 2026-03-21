@@ -78,7 +78,7 @@ service cloud.firestore {
     }
 
     /** Phase 33 — only owner email may toggle company “free forever”. */
-    function ownerVaultFreeForeverGuard(companyId) {
+    function ownerVaultFreeForeverGuard() {
       return request.resource == null
         || !('ownerVaultFreeForever' in request.resource.data)
         || request.resource.data.ownerVaultFreeForever == resource.data.get('ownerVaultFreeForever', false)
@@ -93,6 +93,11 @@ service cloud.firestore {
         && request.resource.data.get('scanQuota', null) == resource.data.get('scanQuota', null)
         && request.resource.data.get('scansUsed', null) == resource.data.get('scansUsed', null)
         && request.resource.data.get('trialLeadId', null) == resource.data.get('trialLeadId', null);
+    }
+
+    /** bsd-ybm ERP brain — login whitelist + global defaults (master admin only). */
+    match /bsdErpBrain/{docId} {
+      allow read, write: if isMasterAdmin();
     }
 
     // --- leads (trial / marketing — writes via Admin SDK only) ---
@@ -175,7 +180,7 @@ service cloud.firestore {
 
       allow read: if isCompanyMember(companyId) || isGlobalStaff();
 
-      allow update, delete: if canManageCompany(companyId) && ownerVaultFreeForeverGuard(companyId);
+      allow update, delete: if canManageCompany(companyId) && ownerVaultFreeForeverGuard();
 
       match /settings/{docId} {
         // API keys (integrations, BYOK ai) — admins/global only; other settings docs stay member-readable.
@@ -274,6 +279,27 @@ service cloud.firestore {
         allow delete: if canManageCompany(companyId);
       }
 
+      /** ERP v6 — payroll worksheet rows (non-clients). */
+      match /payrollEntries/{entryId} {
+        allow read, create, update: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        allow delete: if canManageCompany(companyId);
+      }
+
+      /** ERP v6 — expense / invoice log (non-clients). */
+      match /expenseLogs/{entryId} {
+        allow read, create, update: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        allow delete: if canManageCompany(companyId);
+      }
+
+      /** ERP — per-company tax / rate defaults (non-clients read; admins write). */
+      match /erpSettings/{docId} {
+        allow read: if isGlobalStaff()
+          || (isCompanyMember(companyId) && memberRole(companyId) != 'client');
+        allow write: if canManageCompany(companyId);
+      }
+
       match /attendance/{docId} {
         allow read, create, update: if isCompanyMember(companyId) || isGlobalStaff();
         allow delete: if canManageCompany(companyId);
@@ -347,6 +373,12 @@ service cloud.firestore {
     match /globalLandingBranding/{docId} {
       allow read: if true;
       allow write: if isMasterAdminEmailClaim();
+    }
+
+    /** Public tenant chrome for Chameleon / luxury landing (branding + module tiles only). */
+    match /tenants/{tenantId} {
+      allow read: if true;
+      allow write: if isMasterAdmin();
     }
 
     /** Phase 33 — developer self-log for Owner Vault (owner reads). */

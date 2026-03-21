@@ -84,11 +84,11 @@ export default proxy;
 
 /**
  * מקביל ל־`middleware.ts` בדוגמה שלך — אבל ב־Next 16 זה חי ב־`proxy.ts`.
- * - לא מריצים proxy על `/en/legal` (למשל דף משפטי סטטי ללא כותרות/עוגיות מיותרות).
+ * - לא מריצים proxy על `/en/legal`, `/en/terms`, `/en/denied` (דפים סטטיים).
  * - לא משללים `api` כאן — ה־proxy מטפל ב־CORS ל־`/api/*`.
  */
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|en/legal|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|en/legal|en/terms|en/denied|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

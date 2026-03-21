@@ -43,7 +43,7 @@ export function buildInviteEmailHtml(params: InviteEmailParams): string {
             <td style="padding:0;background:linear-gradient(135deg, ${NAVY} 0%, #0f2744 100%);text-align:center;">
               <div style="padding:28px 24px 20px;">
                 <div style="display:inline-block;width:56px;height:56px;border-radius:32px;border:2px solid ${GOLD};background:rgba(212,175,55,0.12);line-height:52px;font-size:28px;color:${GOLD};font-weight:800;">◎</div>
-                <p style="margin:16px 0 0;font-size:11px;letter-spacing:0.2em;color:${GOLD};font-weight:700;">BSD-YBM · Golden Helix</p>
+                <p style="margin:16px 0 0;font-size:11px;letter-spacing:0.2em;color:${GOLD};font-weight:700;">BSD-YBM</p>
                 <h1 style="margin:12px 0 0;font-size:20px;font-weight:800;color:#ffffff;line-height:1.35;">${LEGAL_BRAND_NAME}</h1>
               </div>
             </td>
@@ -93,7 +93,7 @@ export function buildInviteEmailHtml(params: InviteEmailParams): string {
 export const INVITE_EMAIL_SUBJECT = `הזמנה להצטרפות למערכת הניהול - ${LEGAL_BRAND_NAME}`;
 
 /** Phase 26.1 — multi-tenant portal invite (fixed portal URL). */
-export const SEND_INVITE_EMAIL_SUBJECT = 'הזמנה אישית לניהול בפורטל BSD-YBM AI Solutions';
+export const SEND_INVITE_EMAIL_SUBJECT = 'הזמנה אישית לניהול בפורטל BSD-YBM';
 
 export type SendInviteEmailParams = {
   inviterDisplayName: string;
@@ -123,7 +123,7 @@ export function buildSendInviteEmailHtml(params: SendInviteEmailParams): string 
             <td style="padding:0;background:linear-gradient(135deg, ${NAVY} 0%, #0f2744 100%);text-align:center;">
               <div style="padding:28px 24px 20px;">
                 <div style="display:inline-block;width:56px;height:56px;border-radius:32px;border:2px solid ${GOLD};background:rgba(212,175,55,0.12);line-height:52px;font-size:28px;color:${GOLD};font-weight:800;">◎</div>
-                <p style="margin:16px 0 0;font-size:11px;letter-spacing:0.2em;color:${GOLD};font-weight:700;">BSD-YBM · Golden Helix</p>
+                <p style="margin:16px 0 0;font-size:11px;letter-spacing:0.2em;color:${GOLD};font-weight:700;">BSD-YBM</p>
                 <h1 style="margin:12px 0 0;font-size:18px;font-weight:800;color:#ffffff;line-height:1.35;">${LEGAL_BRAND_NAME}</h1>
               </div>
             </td>

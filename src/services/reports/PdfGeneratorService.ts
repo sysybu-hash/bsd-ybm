@@ -1,5 +1,5 @@
 /**
- * BSD-YBM AI Solutions — PDF / export utilities (tenant colors from payload / CSS).
+ * BSD-YBM — PDF / export utilities (tenant colors from payload / CSS).
  * Uses jsPDF + html2canvas (via jsPDF html plugin) for RTL Hebrew via DOM + system fonts.
  */
 
@@ -26,7 +26,6 @@ function reportHeaderLogoBlock(headerLogoUrl?: string | null): string {
   <img src="/image_8.svg" width="48" height="48" alt="" style="object-fit:contain;flex-shrink:0" />
   <div style="text-align:center">
     <div style="font-size:13px;font-weight:800;color:${BRAND_BLUE}">${PLATFORM_BRANDING.legalName}</div>
-    <div style="font-size:10px;font-weight:700;color:${BRAND_ORANGE};margin-top:2px">AI Solutions</div>
   </div>
 </div>`;
 }
@@ -194,7 +193,7 @@ export function buildSignedContractPdfHtml(m: SignedContractPdfMeta): string {
   return buildShell(
     inner,
     'הסכם פרויקט חתום',
-    'מסמך משפטי — שמור לצורכי ביקורת · BSD-YBM AI Solutions',
+    'מסמך משפטי — שמור לצורכי ביקורת · BSD-YBM',
     m.headerLogoUrl
   );
 }
@@ -243,7 +242,7 @@ export function buildQuoteSignedPdfHtml(m: QuoteSignedPdfMeta): string {
       <p style="margin:4px 0 0;font-size:11px;color:#64748b">IP: ${escapeAttr(m.ip)}${m.signerEmail ? ` · ${escapeAttr(m.signerEmail)}` : ''}</p>
     </div>
   </div>`;
-  return buildShell(inner, 'הצעת מחיר חתומה', 'מסמך משפטי — BSD-YBM AI Solutions', m.headerLogoUrl);
+  return buildShell(inner, 'הצעת מחיר חתומה', 'מסמך משפטי — BSD-YBM', m.headerLogoUrl);
 }
 
 export async function renderQuoteSignedPdfBlob(m: QuoteSignedPdfMeta): Promise<Blob> {

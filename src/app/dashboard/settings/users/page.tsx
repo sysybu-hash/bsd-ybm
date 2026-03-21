@@ -271,7 +271,7 @@ export default function UsersApprovalPage() {
           <h2 className="text-center text-lg font-black text-[#1a1a1a]">הזמנת משתמש / מנהל (מייל)</h2>
           <p className="max-w-md text-center text-sm text-gray-500">
             הוספת אימייל לשדות <strong>admins</strong> / <strong>users</strong> במסמך החברה ושליחת הזמנה אוטומטית
-            (Golden Helix).
+            (BSD-YBM).
           </p>
           <button
             type="button"

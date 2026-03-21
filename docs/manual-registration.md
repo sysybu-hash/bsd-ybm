@@ -28,7 +28,7 @@
 | `NEXT_PUBLIC_REGISTRATION_COMPANY_ID` | Target company for public registrations (default: seed company id). |
 | `NEXT_PUBLIC_SITE_URL` | Used in the welcome email login link. |
 | `RESEND_API_KEY` | Send welcome email with temporary password. |
-| `EMAIL_FROM` | e.g. `BSD-YBM AI Solutions <no-reply@bsd-ybm.co.il>` (domain must be verified in Resend). |
+| `EMAIL_FROM` | e.g. `BSD-YBM <no-reply@bsd-ybm.co.il>` (domain must be verified in Resend). |
 
 If **Resend** is not configured, the user is still created and the API returns **`temporaryPassword`** once — the admin UI shows a modal to copy it.
 

@@ -46,7 +46,7 @@ export async function sendWelcomeEmailWithTempPassword(params: WelcomeEmailParam
   try {
     await sendTransactionalHtml({
       to: params.to,
-      subject: 'BSD-YBM AI Solutions — פרטי כניסה (אושר על ידי מנהל)',
+      subject: 'BSD-YBM — פרטי כניסה (אושר על ידי מנהל)',
       html,
     });
     return true;

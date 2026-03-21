@@ -133,7 +133,7 @@ export default function FleetDashboardPage() {
 
       <header className="mb-10 flex flex-col items-center justify-center gap-2 text-center">
         <h1 className="text-2xl font-black sm:text-3xl" style={{ color: MEUHEDET.blue }}>
-          BSD-YBM AI Solutions — צי ארגוני
+          BSD-YBM — צי ארגוני
         </h1>
         <p className="max-w-xl text-sm text-gray-600">
           מבט עליון לנורות מצב; אזור Pro (רווחיות גלובלית, אנומליות, מתגי מודולים) — למנהל־על בלבד.

@@ -7,7 +7,7 @@ export const MASTER_ADMIN_EMAIL_NORMALIZED = 'sysybu@gmail.com';
 
 /** Display / PDF branding (Phase 13 branding enforcer uses these). */
 export const PLATFORM_BRANDING = {
-  legalName: 'BSD-YBM AI Solutions',
+  legalName: 'BSD-YBM',
   chairman: 'Yohanan Bukshpan',
   chairmanPhone: '+972525640021',
   website: 'https://www.bsd-ybm.co.il',

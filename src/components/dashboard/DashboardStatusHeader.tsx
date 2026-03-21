@@ -373,17 +373,25 @@ export default function DashboardStatusHeader() {
               className="inline-flex items-center justify-center gap-3 rounded-4xl border border-gray-100 bg-white px-6 py-3 shadow-sm"
               title="משתמשים פעילים בחברה הנבחרת (לפי דופק נוכחות ב־Firestore)"
             >
-              <span
-                className="w-3 h-3 rounded-full"
-                style={{
-                  backgroundColor: GREEN,
-                  boxShadow: onlineUserCount > 0 ? `0 0 10px ${GREEN}` : 'none',
-                  opacity: onlineUserCount > 0 ? 1 : 0.35,
-                }}
-              />
-              <span className="text-sm font-black text-[#1a1a1a]">
-                מחוברים עכשיו: {onlineUserCount}
-              </span>
+              {/* Show at least 1 when the current user is signed in — optimistic self-count */}
+              {(() => {
+                const displayCount = isConfigured && !!user && !!companyId
+                  ? Math.max(onlineUserCount, 1)
+                  : onlineUserCount;
+                return (
+                  <>
+                    <motion.span
+                      className="h-3 w-3 shrink-0 rounded-full border border-white/40"
+                      style={{ backgroundColor: GREEN }}
+                      animate={displayCount > 0 ? { opacity: [1, 0.4, 1], scale: [1, 0.9, 1] } : undefined}
+                      transition={displayCount > 0 ? { duration: 2, repeat: Infinity, ease: 'easeInOut' } : undefined}
+                    />
+                    <span className="text-sm font-black text-[#1a1a1a]">
+                      מחוברים עכשיו: {displayCount}
+                    </span>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

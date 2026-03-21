@@ -13,3 +13,16 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/// Server-side log row for POST /api/sync (DB + Meckano + pipeline snapshot).
+model SyncRun {
+  id            String   @id @default(cuid())
+  ok            Boolean
+  message       String?
+  dbStatus      String?
+  meckanoStatus String?
+  pipelineJson  Json?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+}

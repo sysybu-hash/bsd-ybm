@@ -9,6 +9,13 @@ import { readHostTenantLock } from '@/lib/companyCookie';
 const ORANGE = '#FF8C00';
 const BRAND = '#004694';
 
+function postLoginPath(): string {
+  if (typeof window === 'undefined') return '/dashboard';
+  const raw = new URLSearchParams(window.location.search).get('next');
+  if (raw?.startsWith('/') && !raw.startsWith('//')) return raw;
+  return '/dashboard';
+}
+
 type TenantLoginBrand = {
   displayName: string;
   companyLogoUrl: string | null;
@@ -27,7 +34,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace('/dashboard');
+      router.replace(postLoginPath());
     }
   }, [loading, user, router]);
 
@@ -58,7 +65,7 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await signInWithEmailPassword(email, password);
-      router.replace('/dashboard');
+      router.replace(postLoginPath());
     } catch (e: unknown) {
       const code = e && typeof e === 'object' && 'code' in e ? String((e as { code: string }).code) : '';
       setErr(
@@ -71,14 +78,39 @@ export default function LoginPage() {
     }
   };
 
+  const firebaseErrorToHebrew = (e: unknown): string => {
+    const code =
+      e && typeof e === 'object' && 'code' in e ? String((e as { code: string }).code) : '';
+    switch (code) {
+      case 'auth/unauthorized-domain':
+        return 'הדומיין של האתר לא מורשה ב-Firebase. ב-Firebase Console → Authentication → Settings → Authorized domains הוסיפו: bsd-ybm.co.il ו-www.bsd-ybm.co.il';
+      case 'auth/operation-not-allowed':
+        return 'כניסה עם Google לא הופעלה בפרויקט. ב-Firebase Console → Authentication → Sign-in method הפעילו Google.';
+      case 'auth/popup-blocked':
+        return 'הדפדפן חסם חלון קופץ. אפשרו חלונות קופצים לאתר זה ונסו שוב.';
+      case 'auth/popup-closed-by-user':
+        return 'חלון ההתחברות נסגר לפני הסיום. נסו שוב.';
+      case 'auth/cancelled-popup-request':
+        return 'בקשת התחברות בוטלה (לרוב בגלל לחיצה כפולה). נסו שוב פעם אחת.';
+      case 'auth/network-request-failed':
+        return 'בעיית רשת. בדקו חיבור לאינטרנט ונסו שוב.';
+      default:
+        return 'התחברות Google נכשלה. ודאו שב-Google Cloud → Credentials → OAuth client מוגדרים JavaScript origins ל-https://bsd-ybm.co.il ו-https://www.bsd-ybm.co.il';
+    }
+  };
+
   const onGoogle = async () => {
     setErr(null);
     setBusy(true);
     try {
       await signInWithGoogle();
-      router.replace('/dashboard');
-    } catch {
-      setErr('התחברות Google נכשלה');
+      router.replace(postLoginPath());
+    } catch (e: unknown) {
+      setErr(firebaseErrorToHebrew(e));
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('[login Google]', e);
+      }
     } finally {
       setBusy(false);
     }
@@ -105,7 +137,7 @@ export default function LoginPage() {
             כניסה
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            {tenantBrand?.displayName ? `${tenantBrand.displayName} · ` : ''}BSD-YBM AI Solutions
+            {tenantBrand?.displayName ? `${tenantBrand.displayName} · ` : ''}BSD-YBM
           </p>
         </header>
 

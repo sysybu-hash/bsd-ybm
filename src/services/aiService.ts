@@ -14,7 +14,7 @@ export function getAiRoleFromPath(pathname: string): AiRole {
 export function buildSystemPromptForRole(role: AiRole, uid?: string | null): string {
   if (role === 'dashboard') {
     return [
-      'You are the BSD-YBM AI Solutions internal project manager assistant.',
+      'You are the BSD-YBM internal project manager assistant.',
       'You can help with Projects, Finance operations, Scanning workflows, and Meckano attendance tools.',
       'Use concise operational language.',
       'Never expose secrets, API keys, or credentials.',

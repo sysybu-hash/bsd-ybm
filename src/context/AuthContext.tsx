@@ -16,6 +16,7 @@ import {
 } from 'firebase/auth';
 import type { Timestamp } from 'firebase/firestore';
 import { logAuthDomainSetupOnce } from '@/lib/authConsoleHints';
+import { isEmailAllowedForLogin } from '@/lib/loginAllowlist';
 
 /** `full` = production; `trial` = time/scan limits; `demo` = mock-data-only lock. */
 export type AccountTier = 'full' | 'trial' | 'demo';
@@ -23,6 +24,8 @@ export type AccountTier = 'full' | 'trial' | 'demo';
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
+  /** True while verifying login allowlist for a signed-in user (block dashboard until false). */
+  allowlistPending: boolean;
   /** Legacy demo flag — prefer `accountTier === 'demo'`. */
   isTrialUser: boolean;
   accountTier: AccountTier;
@@ -44,6 +47,7 @@ export function useAuth(): AuthContextValue {
     return {
       user: null,
       loading: false,
+      allowlistPending: false,
       isTrialUser: false,
       accountTier: 'full',
       trialExpiresAtMs: null,
@@ -61,6 +65,7 @@ export function useAuth(): AuthContextValue {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [allowlistPending, setAllowlistPending] = useState(false);
   const [isTrialUser, setIsTrialUser] = useState(false);
   const [accountTier, setAccountTier] = useState<AccountTier>('full');
   const [trialExpiresAtMs, setTrialExpiresAtMs] = useState<number | null>(null);
@@ -91,6 +96,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       unsub();
     };
   }, [isConfigured]);
+
+  /** Whitelist: sign out + redirect if email not allowed (server-verified when Admin is configured). */
+  useEffect(() => {
+    if (!isConfigured) {
+      setAllowlistPending(false);
+      return;
+    }
+    if (!user) {
+      setAllowlistPending(false);
+      return;
+    }
+
+    const email = user.email;
+    if (!email) {
+      void (async () => {
+        await firebaseSignOut(getFirebaseAuth());
+        if (typeof window !== 'undefined') window.location.assign('/en/denied');
+      })();
+      return;
+    }
+
+    let cancelled = false;
+    setAllowlistPending(true);
+
+    void (async () => {
+      try {
+        const token = await user.getIdToken();
+        const r = await fetch('/api/auth/login-allowlist', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const j = (await r.json()) as { allowed?: boolean | null; reason?: string };
+
+        if (cancelled) return;
+
+        if (j.allowed === null && j.reason === 'admin_not_configured') {
+          if (!isEmailAllowedForLogin(email)) {
+            await firebaseSignOut(getFirebaseAuth());
+            window.location.assign('/en/denied');
+            return;
+          }
+          setAllowlistPending(false);
+          return;
+        }
+
+        if (!r.ok || j.allowed !== true) {
+          await firebaseSignOut(getFirebaseAuth());
+          window.location.assign('/en/denied');
+          return;
+        }
+
+        setAllowlistPending(false);
+      } catch {
+        if (!cancelled) {
+          await firebaseSignOut(getFirebaseAuth());
+          window.location.assign('/en/denied');
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isConfigured, user]);
 
   useEffect(() => {
     if (!isConfigured || !user?.uid) {
@@ -169,6 +237,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value: AuthContextValue = {
     user,
     loading,
+    allowlistPending,
     isTrialUser,
     accountTier,
     trialExpiresAtMs,

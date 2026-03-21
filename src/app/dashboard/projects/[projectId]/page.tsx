@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowRight, HardHat } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { ArrowRight, HardHat, LayoutDashboard } from 'lucide-react';
 import { useCompany } from '@/context/CompanyContext';
 import ProjectHistoryLog from '@/components/projects/ProjectHistoryLog';
 import ProjectMilestones from '@/components/project/ProjectMilestones';
@@ -15,6 +16,8 @@ import { useLocale } from '@/context/LocaleContext';
 import MeckanoProjectReport from '@/components/project/MeckanoProjectReport';
 import ProjectBoqDraftsPanel from '@/components/projects/ProjectBoqDraftsPanel';
 import { ProjectContractBadge } from '@/components/projects/ProjectContractBadge';
+import { getDb } from '@/lib/firestore';
+import { isFirebaseConfigured } from '@/lib/firebase';
 
 const ContractSignOff = dynamic(() => import('@/components/projects/ContractSignOff'), {
   ssr: false,
@@ -46,6 +49,17 @@ const ProjectGenerateReportButton = dynamic(
   }
 );
 
+type ProjectErpFields = {
+  name?: string;
+  siteAddress?: string;
+  location?: string;
+  client?: string;
+  totalContractValue?: number;
+  budget?: number;
+  startDate?: string;
+  estimatedFinishDate?: string;
+};
+
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = typeof params?.projectId === 'string' ? params.projectId : '';
@@ -53,19 +67,47 @@ export default function ProjectDetailPage() {
   const { hasFeature, meckanoModuleEnabled } = useSubscription();
   const { terminology, moduleEnabled } = useSectorUi();
   const { dir, locale } = useLocale();
+  const [erp, setErp] = useState<ProjectErpFields | null>(null);
+
+  useEffect(() => {
+    if (!companyId || !projectId || !isFirebaseConfigured()) {
+      setErp(null);
+      return;
+    }
+    const ref = doc(getDb(), 'companies', companyId, 'projects', projectId);
+    return onSnapshot(ref, (snap) => {
+      setErp(snap.exists() ? (snap.data() as ProjectErpFields) : null);
+    });
+  }, [companyId, projectId]);
+
+  const displayName = erp?.name || projectId || '—';
+  const contract =
+    typeof erp?.totalContractValue === 'number'
+      ? erp.totalContractValue
+      : typeof erp?.budget === 'number'
+        ? erp.budget
+        : null;
 
   const entityTitle = terminology('entitySingular');
   const backLabel =
     locale === 'he' ? `חזרה ל${terminology('entityPlural')}` : `Back to ${terminology('entityPlural')}`;
+  const dashboardBackLabel = locale === 'he' ? 'חזרה ללוח הבקרה' : 'Back to dashboard';
 
   return (
     <div className="min-h-full bg-[#FDFDFD] p-6 pb-28 pt-safe px-safe sm:p-8 md:p-12" dir={dir}>
-      <div className="mb-8 flex items-center justify-center gap-4">
+      <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-12 items-center justify-center gap-4 rounded-[32px] border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:border-[#FF8C00]/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8C00]"
+        >
+          <LayoutDashboard className="h-4 w-4 shrink-0" aria-hidden />
+          {dashboardBackLabel}
+        </Link>
         <Link
           href="/dashboard/projects"
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[32px] px-3 text-sm font-bold text-gray-500 transition-colors hover:text-[#1a1a1a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8C00]"
+          className="inline-flex min-h-12 items-center justify-center gap-4 rounded-[32px] px-4 py-3 text-sm font-bold text-gray-500 transition-colors hover:text-[#1a1a1a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8C00]"
         >
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
           {backLabel}
         </Link>
       </div>
@@ -80,13 +122,50 @@ export default function ProjectDetailPage() {
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="flex flex-wrap items-center justify-center gap-4">
             <h1 className="text-2xl font-black text-[#1a1a1a] sm:text-3xl" style={{ color: 'var(--brand-primary, #004694)' }}>
-              {entityTitle}
+              {displayName}
             </h1>
             {projectId ? <ProjectContractBadge projectId={projectId} /> : null}
           </div>
+          <p className="mt-1 text-xs font-medium text-gray-400">bsd-ybm · {entityTitle}</p>
           <p className="mt-1 font-mono text-sm text-gray-500">{projectId || '—'}</p>
         </div>
       </header>
+
+      {companyId && projectId && erp && (
+        <section className="mx-auto mb-8 flex w-full max-w-3xl flex-col items-center justify-center gap-4 rounded-[32px] border border-gray-200 bg-white p-6 text-center shadow-sm">
+          <h2 className="text-sm font-black uppercase tracking-wide text-gray-400">
+            {locale === 'he' ? 'פרטי ERP' : 'ERP core'}
+          </h2>
+          <dl className="grid w-full grid-cols-1 gap-4 text-sm sm:grid-cols-2 sm:gap-6">
+            {(erp.siteAddress || erp.location) && (
+              <div>
+                <dt className="font-bold text-gray-500">{locale === 'he' ? 'כתובת אתר' : 'Site'}</dt>
+                <dd className="text-gray-900">{erp.siteAddress || erp.location}</dd>
+              </div>
+            )}
+            {erp.client && (
+              <div>
+                <dt className="font-bold text-gray-500">{locale === 'he' ? 'לקוח' : 'Client'}</dt>
+                <dd className="text-gray-900">{erp.client}</dd>
+              </div>
+            )}
+            {contract != null && (
+              <div>
+                <dt className="font-bold text-gray-500">{locale === 'he' ? 'שווי חוזה' : 'Contract value'}</dt>
+                <dd className="font-black text-[#004694]">{contract.toLocaleString()} ₪</dd>
+              </div>
+            )}
+            {(erp.startDate || erp.estimatedFinishDate) && (
+              <div>
+                <dt className="font-bold text-gray-500">{locale === 'he' ? 'לוח זמנים' : 'Schedule'}</dt>
+                <dd className="text-gray-900">
+                  {erp.startDate || '—'} → {erp.estimatedFinishDate || '—'}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </section>
+      )}
 
       {!companyId && (
         <p className="text-center text-gray-500">בחר חברה מהמתג כדי לראות את יומן הפרויקט.</p>
