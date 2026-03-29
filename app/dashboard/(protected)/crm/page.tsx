@@ -7,6 +7,7 @@ import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
 import CrmClient from "./CrmClient";
 import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
+import { dedupeOrganizationsForCrmDisplay } from "./dedupe-organizations";
 
 async function loadContactsProjects(orgId: string) {
   const [contacts, projects] = await Promise.all([
@@ -55,7 +56,12 @@ export default async function CRMPage() {
           id: true,
           name: true,
           plan: true,
-          users: { take: 1, select: { email: true } },
+          createdAt: true,
+          users: {
+            take: 1,
+            orderBy: { createdAt: "asc" },
+            select: { email: true },
+          },
         },
         orderBy: { createdAt: "desc" },
       }),
@@ -75,13 +81,10 @@ export default async function CRMPage() {
       invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
     );
 
-    organizations = organizationsRaw.map((o) => ({
-      id: o.id,
-      name: o.name,
-      plan: o.plan,
-      users: o.users,
-      invoiceTotalAmount: totalByOrgId.get(o.id) ?? 0,
-    }));
+    organizations = dedupeOrganizationsForCrmDisplay(
+      organizationsRaw,
+      totalByOrgId,
+    );
 
     if (orgId) {
       const loaded = await loadContactsProjects(orgId);
