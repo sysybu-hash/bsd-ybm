@@ -64,6 +64,8 @@
     "mission": "Контроль задач",
     "intelligence": "Intelligence",
     "executive": "Executive / графики",
+    "executiveSubscriptions": "Подписки и приглашения по почте",
+    "executiveManageSubscriptions": "Расширенное управление подписками",
     "meckano": "Meckano",
     "logout": "Выход",
     "smartArchiveHint": "Умный архив (OCR) — поиск по всем документам и сводкам"

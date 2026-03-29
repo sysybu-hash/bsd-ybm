@@ -15,6 +15,7 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:wipe:keep-owner": "dotenv -e .env.local -- node scripts/wipe-postgres-keep-owner.mjs",
+    "db:delete-user": "dotenv -e .env.local -- node scripts/delete-user-by-email.mjs",
     "vercel:env:pull": "vercel env pull .env.vercel.pull --yes",
     "vercel:env:push": "node scripts/vercel-push-env-from-local.mjs",
     "vercel:env:push:core": "node scripts/vercel-push-env-from-local.mjs --only=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,GOOGLE_GENERATIVE_AI_API_KEY,NEXT_PUBLIC_VAT_RATE",

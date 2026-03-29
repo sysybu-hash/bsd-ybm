@@ -17,6 +17,8 @@ import {
   Briefcase,
   BarChart3,
   MapPinned,
+  MailPlus,
+  Crown,
 } from "lucide-react";
 import DashboardGlobalSearch from "@/components/DashboardGlobalSearch";
 import DashboardBottomDock from "@/components/DashboardBottomDock";
@@ -29,6 +31,7 @@ import {
   canAccessIntelligenceDashboard,
 } from "@/lib/intelligence-access";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
+import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-super-admin";
 
 const navClass =
   "flex w-full min-w-0 items-center gap-3 p-3 rounded-xl transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-950 text-start";
@@ -62,6 +65,10 @@ export default function DashboardLayoutClient({
   const showMeckanoLink = isSpecialClient;
   const meckanoOperatorMinimalNav = isSpecialClient;
   const showAdminLink = showAdminNav && !isSpecialClient;
+  const showExecutiveSubscriptions =
+    !meckanoOperatorMinimalNav && canAccessExecutiveSuite(userRole, effectiveEmail);
+  const showExecutiveSuperManage =
+    showExecutiveSubscriptions && isExecutiveSubscriptionSuperAdmin(effectiveEmail);
 
   const drawerClosedTransform =
     dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";
@@ -115,6 +122,30 @@ export default function DashboardLayoutClient({
         <Link href="/dashboard/executive" className={navClass} onClick={onNavigate}>
           <BarChart3 size={20} className="text-emerald-600" />{" "}
           <span>{t("dashboard.executive")}</span>
+        </Link>
+      ) : null}
+      {showExecutiveSubscriptions ? (
+        <Link
+          href="/dashboard/executive/subscriptions"
+          className={`${navClass} ring-1 ring-indigo-100 bg-indigo-50/50 hover:bg-indigo-50`}
+          onClick={onNavigate}
+        >
+          <MailPlus size={20} className="text-indigo-600" />{" "}
+          <span className="font-semibold text-slate-900">
+            {t("dashboard.executiveSubscriptions")}
+          </span>
+        </Link>
+      ) : null}
+      {showExecutiveSuperManage ? (
+        <Link
+          href="/dashboard/executive/manage-subscriptions"
+          className={`${navClass} border border-violet-200 bg-violet-50/70 hover:bg-violet-50`}
+          onClick={onNavigate}
+        >
+          <Crown size={20} className="text-violet-700" />{" "}
+          <span className="font-semibold text-violet-950">
+            {t("dashboard.executiveManageSubscriptions")}
+          </span>
         </Link>
       ) : null}
       {showMeckanoLink ? (

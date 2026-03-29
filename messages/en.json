@@ -67,6 +67,8 @@
     "mission": "Mission control",
     "intelligence": "Intelligence",
     "executive": "Executive / charts",
+    "executiveSubscriptions": "Subscriptions & email invites",
+    "executiveManageSubscriptions": "Advanced subscription admin",
     "meckano": "Meckano (workforce)",
     "logout": "Sign out",
     "smartArchiveHint": "Smart archive (OCR) — search across all documents and summaries"

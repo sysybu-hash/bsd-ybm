@@ -65,6 +65,10 @@ export type MessageTree = {
     mission: string;
     intelligence: string;
     executive: string;
+    /** מנויים, PayPal והזמנת לקוח במייל + רמת מנוי */
+    executiveSubscriptions: string;
+    /** SuperAdmin בלבד — הזמנות טוקן, יתרות סריקה */
+    executiveManageSubscriptions: string;
     meckano: string;
     logout: string;
     smartArchiveHint: string;
