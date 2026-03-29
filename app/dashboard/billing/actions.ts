@@ -92,19 +92,6 @@ export async function createIssuedDocument(
   }
 }
 
-const DOC_TYPE_CSV: Record<DocType, string> = {
-  INVOICE: "חשבונית מס",
-  RECEIPT: "קבלה",
-  INVOICE_RECEIPT: "חשבונית מס קבלה",
-  CREDIT_NOTE: "חשבונית זיכוי",
-};
-
-const DOC_STATUS_CSV: Record<DocStatus, string> = {
-  PAID: "שולם במלואו",
-  PENDING: "בהמתנה לתשלום",
-  CANCELLED: "מבוטל",
-};
-
 function csvCell(value: string | number): string {
   const s = String(value);
   if (/[",\n\r]/.test(s)) {
@@ -123,7 +110,7 @@ export async function exportMonthlyReport(
 ): Promise<ExportMonthlyReportResult> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId) {
-    return { ok: false, error: "לא מורשה" };
+    return { ok: false, error: "גישה נדחתה" };
   }
 
   const m = Number(month);
@@ -138,35 +125,37 @@ export async function exportMonthlyReport(
   const startDate = new Date(y, m - 1, 1, 0, 0, 0, 0);
   const endDate = new Date(y, m, 0, 23, 59, 59, 999);
 
-  const documents = await prisma.issuedDocument.findMany({
+  const docs = await prisma.issuedDocument.findMany({
     where: {
       organizationId: session.user.organizationId,
       date: { gte: startDate, lte: endDate },
     },
-    orderBy: [{ date: "asc" }, { type: "asc" }, { number: "asc" }],
+    orderBy: { number: "asc" },
   });
 
-  if (documents.length === 0) {
-    return { ok: false, error: "לא נמצאו מסמכים לתקופה זו" };
+  if (docs.length === 0) {
+    return { ok: false, error: "לא נמצאו מסמכים לחודש זה" };
   }
 
   const headers = ["מספר", "תאריך", "לקוח", "סוג", "נטו", "מע״מ", "סה״כ", "סטטוס"];
-  const rows = documents.map((doc) => [
-    csvCell(doc.number),
-    csvCell(new Date(doc.date).toLocaleDateString("he-IL")),
-    csvCell(doc.clientName),
-    csvCell(DOC_TYPE_CSV[doc.type]),
-    csvCell(doc.amount.toFixed(2)),
-    csvCell(doc.vat.toFixed(2)),
-    csvCell(doc.total.toFixed(2)),
-    csvCell(DOC_STATUS_CSV[doc.status]),
+  const csvRows = docs.map((d) => [
+    csvCell(d.number),
+    csvCell(new Date(d.date).toLocaleDateString("he-IL")),
+    csvCell(d.clientName),
+    csvCell(d.type),
+    csvCell(d.amount.toFixed(2)),
+    csvCell(d.vat.toFixed(2)),
+    csvCell(d.total.toFixed(2)),
+    csvCell(d.status),
   ]);
 
-  const csvContent = [headers.map(csvCell).join(","), ...rows.map((r) => r.join(","))].join("\n");
+  const csvContent = [headers.map(csvCell).join(","), ...csvRows.map((r) => r.join(","))].join(
+    "\n",
+  );
 
   return {
     ok: true,
     csv: csvContent,
-    fileName: `bsd_ybm_issued_${y}_${String(m).padStart(2, "0")}.csv`,
+    fileName: `BSD-YBM-Report-${m}-${y}.csv`,
   };
 }
