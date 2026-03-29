@@ -61,8 +61,15 @@ export async function POST(req: Request) {
   }
 
   let newRole: UserRole = "EMPLOYEE";
-  if (body.role === "ORG_ADMIN" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+  const r = String(body.role ?? "").trim();
+  if (r === "ORG_ADMIN" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
     newRole = "ORG_ADMIN";
+  } else if (r === "PROJECT_MGR" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+    newRole = "PROJECT_MGR";
+  } else if (r === "CLIENT" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+    newRole = "CLIENT";
+  } else if (r === "EMPLOYEE") {
+    newRole = "EMPLOYEE";
   }
 
   try {

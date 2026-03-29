@@ -15,6 +15,7 @@ export async function POST(req: Request) {
       organizationName?: string;
       orgType?: string;
       inviteToken?: string;
+      orgInviteToken?: string;
     };
 
     const emailRaw = String(body.email ?? "").trim();
@@ -22,19 +23,101 @@ export async function POST(req: Request) {
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
     const inviteToken = String(body.inviteToken ?? "").trim();
+    const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 
     if (!EMAIL_RE.test(emailRaw)) {
       return NextResponse.json({ error: "אימייל לא תקין" }, { status: 400 });
     }
+
+    const normalized = emailRaw.toLowerCase();
+
+    /** הזמנה לצוות — הצטרפות לארגון קיים עם תפקיד; לא נוצר ארגון חדש */
+    if (orgInviteToken) {
+      const inv = await prisma.organizationInvite.findUnique({
+        where: { token: orgInviteToken },
+      });
+      if (!inv) {
+        return NextResponse.json({ error: "קישור הזמנה לא תקף" }, { status: 400 });
+      }
+      if (inv.usedAt) {
+        return NextResponse.json({ error: "ההזמנה כבר נוצלה" }, { status: 409 });
+      }
+      if (inv.expiresAt.getTime() < Date.now()) {
+        return NextResponse.json({ error: "תוקף ההזמנה פג" }, { status: 400 });
+      }
+      if (inv.email.toLowerCase() !== normalized) {
+        return NextResponse.json(
+          { error: "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה" },
+          { status: 400 },
+        );
+      }
+
+      const existing = await prisma.user.findFirst({
+        where: { email: { equals: normalized, mode: "insensitive" } },
+      });
+
+      if (existing?.organizationId && existing.organizationId !== inv.organizationId) {
+        return NextResponse.json(
+          {
+            error:
+              "האימייל כבר משויך לארגון אחר. יש לפנות למנהל או להשתמש באימייל אחר.",
+          },
+          { status: 409 },
+        );
+      }
+
+      try {
+        await prisma.$transaction(async (tx) => {
+          if (existing) {
+            await tx.user.update({
+              where: { id: existing.id },
+              data: {
+                organizationId: inv.organizationId,
+                role: inv.role,
+                accountStatus: AccountStatus.ACTIVE,
+                ...(name ? { name } : {}),
+              },
+            });
+          } else {
+            await tx.user.create({
+              data: {
+                email: normalized,
+                name,
+                organizationId: inv.organizationId,
+                role: inv.role,
+                accountStatus: AccountStatus.ACTIVE,
+              },
+            });
+          }
+          await tx.organizationInvite.update({
+            where: { id: inv.id },
+            data: { usedAt: new Date() },
+          });
+        });
+      } catch (e) {
+        console.error("register orgInvite", e);
+        return NextResponse.json({ error: "שגיאה בשמירת המשתמש" }, { status: 500 });
+      }
+
+      void sendWelcomeEmail(normalized, name).catch((err) =>
+        console.error("sendWelcomeEmail after register (orgInvite)", err),
+      );
+
+      return NextResponse.json({
+        ok: true,
+        message:
+          "ההרשמה הושלמה. התחברו עם Google באותו אימייל — התפקיד שנקבע בהזמנה הוחל.",
+      });
+    }
+
     if (organizationName.length < 2) {
       return NextResponse.json({ error: "נא למלא שם ארגון או עסק" }, { status: 400 });
     }
 
-    const normalized = emailRaw.toLowerCase();
-    const existing = await prisma.user.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: { email: { equals: normalized, mode: "insensitive" } },
     });
-    if (existing) {
+    if (existingUser) {
       return NextResponse.json(
         { error: "כתובת האימייל כבר רשומה במערכת" },
         { status: 409 },
@@ -45,6 +128,7 @@ export async function POST(req: Request) {
       ? (typeRaw as CustomerType)
       : CustomerType.COMPANY;
 
+    /** הזמנת מנוי (Executive) — נפתח ארגון חדש; הנרשם הוא מנהל הארגון */
     if (inviteToken) {
       const inv = await prisma.subscriptionInvitation.findUnique({
         where: { token: inviteToken },
@@ -102,7 +186,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         ok: true,
         message:
-          "ההרשמה הושלמה. ניתן להתחבר עם האימייל (הגדרת סיסמה דרך התחברות או מנהל המערכת).",
+          "ההרשמה הושלמה — נוצר ארגון חדש ואתם מנהליו. ניתן להתחבר עם Google באותו אימייל.",
       });
     }
 

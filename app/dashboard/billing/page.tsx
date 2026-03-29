@@ -1,9 +1,7 @@
 import type { Prisma, SubscriptionTier } from "@prisma/client";
-import { UserRole } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { canAccessExecutiveSuite } from "@/lib/intelligence-access";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
 import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
@@ -12,7 +10,6 @@ import PayPalBundleCheckoutLazy from "@/components/billing/PayPalBundleCheckoutL
 import BillingOnboardingCallout from "@/components/billing/BillingOnboardingCallout";
 import BillingQuickPayments from "@/components/billing/BillingQuickPayments";
 import BillingWorkspaceEditor from "@/components/billing/BillingWorkspaceEditor";
-import BillingDefinitionsHub from "@/components/billing/BillingDefinitionsHub";
 import SubscriptionPricingTable from "@/components/billing/SubscriptionPricingTable";
 import ScanUsageRadialCharts from "@/components/billing/ScanUsageRadialCharts";
 import { parseBillingWorkspace } from "@/lib/billing-workspace";
@@ -37,7 +34,6 @@ function monthStart(d: Date) {
 
 const orgSelectBilling = {
   name: true,
-  type: true,
   subscriptionTier: true,
   subscriptionStatus: true,
   cheapScansRemaining: true,
@@ -47,8 +43,6 @@ const orgSelectBilling = {
   taxId: true,
   address: true,
   isReportable: true,
-  isVip: true,
-  trialEndsAt: true,
   paypalMerchantEmail: true,
   paypalMeSlug: true,
   liveDataTier: true,
@@ -69,7 +63,6 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
       where: { id: orgId },
       select: {
         name: true,
-        type: true,
         subscriptionTier: true,
         subscriptionStatus: true,
         cheapScansRemaining: true,
@@ -79,8 +72,6 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
         taxId: true,
         address: true,
         isReportable: true,
-        isVip: true,
-        trialEndsAt: true,
       },
     });
     if (!minimal) return null;
@@ -247,35 +238,17 @@ export default async function BillingPage() {
                   : "בסיסי"}
             </span>
             {" — "}
-            עריכה מלאה של לוח מס, PayPal ורמת נתונים — בקטע למטה בדף זה או ב־
+            לוח מס, PayPal, הזמנת צוות ותפקידים — ב־
+            <a href="/dashboard/settings?tab=account" className="font-bold text-sky-400 underline">
+              הגדרות › חשבון
+            </a>
+            {" "}ו־
             <a href="/dashboard/settings?tab=billing" className="font-bold text-sky-400 underline">
-              הגדרות › מנויים
+              מנויים
             </a>
             .
           </p>
         </div>
-
-        <BillingDefinitionsHub
-          initial={{
-            name: org.name,
-            type: org.type,
-            companyType: org.companyType,
-            taxId: org.taxId,
-            address: org.address,
-            isReportable: org.isReportable,
-            paypalMerchantEmail: org.paypalMerchantEmail,
-            paypalMeSlug: org.paypalMeSlug,
-            liveDataTier: org.liveDataTier,
-            subscriptionTier: org.subscriptionTier,
-            isVip: org.isVip,
-            trialEndsAt: org.trialEndsAt,
-          }}
-          canEditOrgBilling={
-            session?.user?.role === UserRole.ORG_ADMIN ||
-            session?.user?.role === UserRole.SUPER_ADMIN
-          }
-          showExecutiveInvite={canAccessExecutiveSuite(session?.user?.role, session?.user?.email)}
-        />
       </div>
 
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">

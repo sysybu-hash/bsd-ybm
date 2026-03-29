@@ -123,6 +123,26 @@ model Organization {
   liveDataTier          String                @default("basic")
   /// טיוטת הוצאות לביטוח, המלצות חברים, טקסט לשיחה לפני הרשמה — JSON (ממשק חיוב)
   billingWorkspaceJson  Json?
+  /// הזמנות להצטרפות לארגון קיים (תפקיד נבחר — לא ארגון חדש)
+  organizationInvites OrganizationInvite[]
+}
+
+/// הזמנה להצטרף לארגון קיים — אחרי הרשמה המשתמש מקבל את התפקיד שנבחר (ברירת מחדל: עובד)
+model OrganizationInvite {
+  id               String       @id @default(cuid())
+  token            String       @unique
+  email            String
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role             UserRole     @default(EMPLOYEE)
+  expiresAt        DateTime
+  usedAt           DateTime?
+  createdAt        DateTime     @default(now())
+  createdByEmail   String?
+
+  @@index([email])
+  @@index([organizationId])
+  @@index([expiresAt])
 }
 
 /// הגדרות גבייה גלובליות (מחירי מנוי / חבילות) — שורת singleton id=default

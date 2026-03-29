@@ -7,11 +7,14 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ invite?: string }>;
+  searchParams: Promise<{ invite?: string; orgInvite?: string }>;
 };
 
 export default async function RegisterPage({ searchParams }: Props) {
   const sp = await searchParams;
   const inviteToken = sp.invite?.trim() || undefined;
-  return <RegisterClient inviteToken={inviteToken} />;
+  const orgInviteToken = sp.orgInvite?.trim() || undefined;
+  return (
+    <RegisterClient inviteToken={inviteToken} orgInviteToken={orgInviteToken} />
+  );
 }

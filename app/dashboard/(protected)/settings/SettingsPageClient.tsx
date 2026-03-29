@@ -31,6 +31,7 @@ import {
   updateTenantPortalAction,
   updateBillingConnectionsAction,
 } from "@/app/actions/org-settings";
+import { createOrganizationInviteAction } from "@/app/actions/organization-invite";
 import CloudBackupPanel from "@/components/CloudBackupPanel";
 import TenantCalendarMini from "@/components/TenantCalendarMini";
 import QuickPaymentPresetsSettings from "@/components/settings/QuickPaymentPresetsSettings";
@@ -127,11 +128,13 @@ export default function SettingsPageClient({
   const [prefsMsg, setPrefsMsg] = useState<string | null>(null);
 
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<"EMPLOYEE" | "ORG_ADMIN">("EMPLOYEE");
+  const [inviteRole, setInviteRole] = useState("EMPLOYEE");
   const [status, setStatus] = useState<{
     type: "success" | "error";
     msg: string;
   } | null>(null);
+  const [teamInviteMsg, setTeamInviteMsg] = useState<string | null>(null);
+  const [pendingTeamInvite, startTeamInvite] = useTransition();
   const [orgMsg, setOrgMsg] = useState<string | null>(null);
   const [pendingOrg, startOrgTransition] = useTransition();
   const [portalMsg, setPortalMsg] = useState<string | null>(null);
@@ -193,7 +196,7 @@ export default function SettingsPageClient({
       body: JSON.stringify({
         email: inviteEmail,
         organizationId: session?.user?.organizationId,
-        role: inviteRole,
+        role: inviteRole as "EMPLOYEE" | "ORG_ADMIN" | "PROJECT_MGR" | "CLIENT",
       }),
     });
 
@@ -579,24 +582,86 @@ export default function SettingsPageClient({
                   <UserPlus size={22} /> ניהול צוות
                 </h4>
                 <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  הזמינו משתמשים (Google) לפני השיוך. לאחר התחברות ראשונה — שייכו לארגון. רק מנהלי
-                  ארגון נותנים כאן הרשאות.
+                  <strong className="text-slate-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
+                  תפקיד מראש, והנרשם <strong>לא</strong> מקבל ארגון משלו ולא הופך אוטומטית למנהל, אלא
+                  מצטרף <strong>רק</strong> לארגון שלכם.
                 </p>
+
+                <div className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5">
+                  <p className="text-sm font-bold text-emerald-900 mb-3">1 — הזמנת צוות במייל (קישור)</p>
+                  <form
+                    className="flex flex-col gap-3"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setTeamInviteMsg(null);
+                      const fd = new FormData(e.currentTarget);
+                      startTeamInvite(async () => {
+                        const r = await createOrganizationInviteAction(fd);
+                        if (r.ok) {
+                          setTeamInviteMsg(`נשלח מייל עם קישור הרשמה. ניתן גם להעתיק: ${r.registerUrl}`);
+                          (e.target as HTMLFormElement).reset();
+                        } else {
+                          setTeamInviteMsg(`שגיאה: ${r.error}`);
+                        }
+                      });
+                    }}
+                  >
+                    <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="אימייל מוזמן"
+                        className="flex-1 min-w-[200px] bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm text-slate-900"
+                        required
+                      />
+                      <select
+                        name="role"
+                        defaultValue="EMPLOYEE"
+                        className="sm:w-56 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900"
+                        aria-label="תפקיד בהזמנה"
+                      >
+                        <option value="EMPLOYEE">עובד / צוות</option>
+                        <option value="PROJECT_MGR">מנהל פרויקטים</option>
+                        <option value="CLIENT">לקוח / צופה</option>
+                        <option value="ORG_ADMIN">מנהל ארגון (שימוש זהיר)</option>
+                      </select>
+                      <input type="hidden" name="validDays" value="14" />
+                      <button
+                        type="submit"
+                        disabled={pendingTeamInvite}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-2xl font-bold disabled:opacity-50"
+                      >
+                        {pendingTeamInvite ? "שולח…" : "שליחת קישור במייל"}
+                      </button>
+                    </div>
+                  </form>
+                  {teamInviteMsg && (
+                    <p className="mt-3 text-xs text-emerald-900 whitespace-pre-wrap break-all">
+                      {teamInviteMsg}
+                    </p>
+                  )}
+                </div>
+
                 <details className="mb-4 text-sm text-slate-600 bg-white/80 rounded-2xl border border-slate-100 px-4 py-3">
                   <summary className="cursor-pointer font-bold text-slate-800">
                     מה ההבדל בין תפקידים?
                   </summary>
                   <ul className="mt-2 space-y-2 list-disc list-inside pe-2">
                     <li>
-                      <strong>עובד / צוות (EMPLOYEE)</strong> — גישה לשגרה; בדרך כלל בלי ניהול צוות
-                      וללא שינוי הגדרות ארגון.
+                      <strong>עובד / צוות</strong> — שגרה; בלי ניהול צוות והגדרות ארגון.
                     </li>
                     <li>
-                      <strong>מנהל ארגון (ORG_ADMIN)</strong> — ניהול שיוך משתמשים, הגדרות, ותצוגות
-                      ניהול רחבות יותר.
+                      <strong>מנהל פרויקטים / לקוח</strong> — רמות גישה מצומצמות יותר לפי המערכת.
+                    </li>
+                    <li>
+                      <strong>מנהל ארגון</strong> — שיוך משתמשים והגדרות.
                     </li>
                   </ul>
                 </details>
+
+                <p className="text-slate-600 text-sm mb-3 font-bold text-slate-800">
+                  2 — שיוך ידני (רק אחרי שכבר נכנסו פעם אחת עם Google)
+                </p>
                 <form onSubmit={handleInvite} className="flex flex-col gap-3">
                   <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
                     <input
@@ -609,13 +674,13 @@ export default function SettingsPageClient({
                     />
                     <select
                       value={inviteRole}
-                      onChange={(e) =>
-                        setInviteRole(e.target.value === "ORG_ADMIN" ? "ORG_ADMIN" : "EMPLOYEE")
-                      }
+                      onChange={(e) => setInviteRole(e.target.value)}
                       className="sm:w-56 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900"
                       aria-label="תפקיד משתמש"
                     >
                       <option value="EMPLOYEE">תפקיד: עובד / צוות</option>
+                      <option value="PROJECT_MGR">תפקיד: מנהל פרויקטים</option>
+                      <option value="CLIENT">תפקיד: לקוח / צופה</option>
                       <option value="ORG_ADMIN">תפקיד: מנהל ארגון</option>
                     </select>
                     <button

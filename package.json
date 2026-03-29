@@ -12,6 +12,7 @@
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:execute:subscription-v2": "dotenv -e .env.local -- prisma db execute --file prisma/migrations/manual_subscription_v2.sql --schema prisma/schema.prisma",
     "db:execute:rename-scans": "dotenv -e .env.local -- prisma db execute --file prisma/migrations/rename_scans_remaining_and_invitations.sql --schema prisma/schema.prisma",
+    "db:execute:org-invite": "dotenv -e .env.local -- prisma db execute --file prisma/migrations/add_organization_invite.sql --schema prisma/schema.prisma",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:wipe:keep-owner": "dotenv -e .env.local -- node scripts/wipe-postgres-keep-owner.mjs",

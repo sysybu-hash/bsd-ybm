@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Building2, Loader2, ArrowRight, UserPlus } from "lucide-react";
+import { Building2, Loader2, ArrowRight, UserPlus, Users } from "lucide-react";
 
 const ORG_TYPES = [
   { value: "HOME", label: "משק בית" },
@@ -12,14 +12,69 @@ const ORG_TYPES = [
   { value: "ENTERPRISE", label: "ארגון" },
 ];
 
-type Props = {
-  inviteToken?: string;
+const ROLE_LABELS: Record<string, string> = {
+  EMPLOYEE: "עובד / צוות",
+  ORG_ADMIN: "מנהל ארגון",
+  PROJECT_MGR: "מנהל פרויקטים",
+  CLIENT: "לקוח / צופה",
 };
 
-export default function RegisterClient({ inviteToken }: Props) {
+type Preview = { orgName: string; role: string; emailHint: string };
+
+type Props = {
+  /** הזמנת מנוי (Executive) — נפתח ארגון חדש */
+  inviteToken?: string;
+  /** הזמנת צוות — הצטרפות לארגון קיים עם תפקיד */
+  orgInviteToken?: string;
+};
+
+export default function RegisterClient({ inviteToken, orgInviteToken }: Props) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(!!orgInviteToken);
+  const [previewErr, setPreviewErr] = useState<string | null>(null);
+
+  const isOrgTeam = !!orgInviteToken;
+  const isNewOrgInvite = !!inviteToken && !isOrgTeam;
+
+  useEffect(() => {
+    if (!orgInviteToken) return;
+    let cancelled = false;
+    (async () => {
+      setPreviewLoading(true);
+      setPreviewErr(null);
+      try {
+        const res = await fetch(
+          `/api/org-invite/preview?token=${encodeURIComponent(orgInviteToken)}`,
+        );
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (!cancelled) {
+            setPreviewErr(typeof data.error === "string" ? data.error : "הזמנה לא תקפה");
+          }
+          return;
+        }
+        if (!cancelled) {
+          setPreview({
+            orgName: String(data.orgName ?? ""),
+            role: String(data.role ?? "EMPLOYEE"),
+            emailHint: String(data.emailHint ?? ""),
+          });
+        }
+      } catch {
+        if (!cancelled) setPreviewErr("שגיאת רשת בטעינת ההזמנה");
+      } finally {
+        if (!cancelled) setPreviewLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orgInviteToken]);
+
+  const showOrgFields = !isOrgTeam;
 
   return (
     <div
@@ -48,16 +103,40 @@ export default function RegisterClient({ inviteToken }: Props) {
           className="w-full max-w-md rounded-[2rem] border border-slate-100 bg-white p-10 shadow-2xl shadow-slate-200/60"
         >
           <div className="mb-6 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
-              <UserPlus className="h-8 w-8 text-blue-500" />
+            <div
+              className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
+                isOrgTeam ? "bg-teal-50" : "bg-blue-50"
+              }`}
+            >
+              {isOrgTeam ? (
+                <Users className="h-8 w-8 text-teal-600" />
+              ) : (
+                <UserPlus className="h-8 w-8 text-blue-500" />
+              )}
             </div>
           </div>
-          <h1 className="text-center text-2xl font-black italic text-slate-900">הרשמה לאתר</h1>
+          <h1 className="text-center text-2xl font-black italic text-slate-900">
+            {isOrgTeam ? "הצטרפות לצוות" : "הרשמה לאתר"}
+          </h1>
           <p className="mt-2 text-center text-sm text-slate-500 leading-relaxed">
-            {inviteToken ? (
+            {isOrgTeam ? (
+              previewLoading ? (
+                "טוען פרטי הזמנה…"
+              ) : preview ? (
+                <>
+                  הוזמנתם להצטרף ל־<strong className="text-slate-800">{preview.orgName}</strong> בתפקיד{" "}
+                  <strong className="text-slate-800">
+                    {ROLE_LABELS[preview.role] ?? preview.role}
+                  </strong>
+                  . לא נפתח ארגון נפרד — רק חיבור לצוות המזמין. האימייל חייב להתאים להזמנה.
+                </>
+              ) : (
+                previewErr || "לא ניתן לטעון את ההזמנה."
+              )
+            ) : isNewOrgInvite ? (
               <>
-                הוזמנתם עם קישור ייעודי — לאחר השלמה תקבלו גישה פעילה לפי רמת המנוי שהוקצתה (האימייל חייב
-                להתאים להזמנה).
+                הוזמנתם לרמת מנוי — <strong className="text-slate-700">ייווצר ארגון חדש</strong> ואתם
+                תהיו מנהליו. האימייל חייב להתאים להזמנה.
               </>
             ) : (
               <>
@@ -67,90 +146,103 @@ export default function RegisterClient({ inviteToken }: Props) {
             )}
           </p>
 
-          <form
-            className="mt-8 space-y-4"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setErr(null);
-              setMsg(null);
-              setLoading(true);
-              const fd = new FormData(e.currentTarget);
-              try {
-                const res = await fetch("/api/register", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    email: fd.get("email"),
-                    name: fd.get("name"),
-                    organizationName: fd.get("organizationName"),
-                    orgType: fd.get("orgType"),
-                    inviteToken: inviteToken || undefined,
-                  }),
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) {
-                  setErr(typeof data.error === "string" ? data.error : "שגיאה");
-                } else {
-                  setMsg(
-                    typeof data.message === "string"
-                      ? data.message
-                      : "הבקשה נקלטה בהצלחה.",
-                  );
-                  (e.target as HTMLFormElement).reset();
+          {!previewErr && (isOrgTeam ? preview && !previewLoading : true) ? (
+            <form
+              className="mt-8 space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setErr(null);
+                setMsg(null);
+                setLoading(true);
+                const fd = new FormData(e.currentTarget);
+                try {
+                  const res = await fetch("/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email: fd.get("email"),
+                      name: fd.get("name"),
+                      organizationName: showOrgFields ? fd.get("organizationName") : "—",
+                      orgType: showOrgFields ? fd.get("orgType") : "COMPANY",
+                      inviteToken: isNewOrgInvite ? inviteToken : undefined,
+                      orgInviteToken: isOrgTeam ? orgInviteToken : undefined,
+                    }),
+                  });
+                  const data = await res.json().catch(() => ({}));
+                  if (!res.ok) {
+                    setErr(typeof data.error === "string" ? data.error : "שגיאה");
+                  } else {
+                    setMsg(
+                      typeof data.message === "string"
+                        ? data.message
+                        : "הבקשה נקלטה בהצלחה.",
+                    );
+                    (e.target as HTMLFormElement).reset();
+                  }
+                } catch {
+                  setErr("שגיאת רשת");
+                } finally {
+                  setLoading(false);
                 }
-              } catch {
-                setErr("שגיאת רשת");
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">אימייל</label>
-              <input
-                name="email"
-                type="email"
-                required
-                className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">שם מלא</label>
-              <input name="name" className="w-full rounded-xl border border-slate-200 px-4 py-2.5" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1">
-                <Building2 size={14} /> שם ארגון / עסק
-              </label>
-              <input
-                name="organizationName"
-                required
-                className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">סוג</label>
-              <select
-                name="orgType"
-                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white"
-                defaultValue="COMPANY"
-              >
-                {ORG_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-2xl bg-blue-600 hover:bg-blue-500 text-white py-4 text-sm font-bold disabled:opacity-60 flex items-center justify-center gap-2"
+              }}
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : null}
-              {inviteToken ? "השלמת הרשמה" : "שליחת בקשת הרשמה"}
-            </button>
-          </form>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">אימייל</label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  readOnly={isOrgTeam && !!preview?.emailHint}
+                  defaultValue={preview?.emailHint ?? ""}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-2.5 read-only:bg-slate-50 read-only:text-slate-700"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">שם מלא</label>
+                <input name="name" className="w-full rounded-xl border border-slate-200 px-4 py-2.5" />
+              </div>
+              {showOrgFields ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1">
+                      <Building2 size={14} /> שם ארגון / עסק
+                    </label>
+                    <input
+                      name="organizationName"
+                      required
+                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">סוג</label>
+                    <select
+                      name="orgType"
+                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white"
+                      defaultValue="COMPANY"
+                    >
+                      {ORG_TYPES.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              ) : null}
+              <button
+                type="submit"
+                disabled={loading || (isOrgTeam && (!preview || !!previewErr))}
+                className={`w-full rounded-2xl py-4 text-sm font-bold text-white disabled:opacity-60 flex items-center justify-center gap-2 ${
+                  isOrgTeam
+                    ? "bg-teal-600 hover:bg-teal-500"
+                    : "bg-blue-600 hover:bg-blue-500"
+                }`}
+              >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : null}
+                {isOrgTeam ? "השלמת הצטרפות לצוות" : isNewOrgInvite ? "השלמת הרשמה" : "שליחת בקשת הרשמה"}
+              </button>
+            </form>
+          ) : null}
 
           {err && (
             <p className="mt-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
@@ -166,7 +258,7 @@ export default function RegisterClient({ inviteToken }: Props) {
                 href="/login?registered=1"
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-500/25 hover:bg-blue-500"
               >
-                {inviteToken ? "מעבר לכניסה" : "המשך לכניסה (אחרי אישור מנוי)"}
+                {isOrgTeam || isNewOrgInvite ? "מעבר לכניסה (Google)" : "המשך לכניסה (אחרי אישור מנוי)"}
               </Link>
             </div>
           )}
