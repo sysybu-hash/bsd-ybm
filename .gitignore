@@ -1,43 +1,39 @@
 .vercel
-.env*.local
 .env.vercel.pull
 
-# Auto-generated entries
-# Dependencies
+# תלות ובנייה
 node_modules/
+.next/
+
+# סביבה — לא לעלות ל־Git (כולל סודות)
+.env
+.env.local
+.env*.local
+!.env.example
+
+# לוגים ופלט בנייה
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Build outputs
 dist/
 build/
 *.log
 
-# Environment files
-.env
-.env.*
-!.env.example
-
-# IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS files
+# מערכת הפעלה
 .DS_Store
 Thumbs.db
 
-# Temporary files
+# זמני
 *.tmp
 *.temp
 .cache/
 
-# Sensitive files (auto-detected)
-.env
-.env.example
-.env.local
-node_modules
+# TypeScript
 tsconfig.tsbuildinfo
-
+*.tsbuildinfo

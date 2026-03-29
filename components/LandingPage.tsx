@@ -124,7 +124,7 @@ export default function LandingPage() {
             גלה עוד
           </Link>
           <Link
-            href="#pricing"
+            href="/register"
             className="bg-white text-blue-700 font-black px-12 py-4 rounded-[2rem] text-lg shadow-2xl shadow-white/20 hover:scale-[1.03] transition-all flex items-center gap-2"
           >
             התחל עכשיו <ChevronLeft size={20} />
