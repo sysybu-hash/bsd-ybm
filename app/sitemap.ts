@@ -10,6 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/login",
     "/register",
     "/tutorial",
+    "/about",
+    "/contact",
     "/privacy",
     "/terms",
     "/legal",

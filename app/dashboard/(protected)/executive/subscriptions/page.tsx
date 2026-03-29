@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureDefaultScanBundles } from "@/lib/ensure-scan-bundles";
 import ExecutiveSubscriptionsPanel from "@/components/executive/ExecutiveSubscriptionsPanel";
 import { ArrowRight } from "lucide-react";
+import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-super-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -28,8 +29,8 @@ export default async function ExecutiveSubscriptionsPage() {
         name: true,
         subscriptionTier: true,
         subscriptionStatus: true,
-        cheapScansLeft: true,
-        premiumScansLeft: true,
+        cheapScansRemaining: true,
+        premiumScansRemaining: true,
         maxCompanies: true,
         trialEndsAt: true,
         users: {
@@ -53,12 +54,14 @@ export default async function ExecutiveSubscriptionsPage() {
     name: o.name,
     subscriptionTier: o.subscriptionTier,
     subscriptionStatus: o.subscriptionStatus,
-    cheapScansLeft: o.cheapScansLeft,
-    premiumScansLeft: o.premiumScansLeft,
+    cheapScansRemaining: o.cheapScansRemaining,
+    premiumScansRemaining: o.premiumScansRemaining,
     maxCompanies: o.maxCompanies,
     trialEndsAt: o.trialEndsAt,
     primaryEmail: o.users[0]?.email ?? null,
   }));
+
+  const showSuperManage = isExecutiveSubscriptionSuperAdmin(email);
 
   return (
     <div className="space-y-8 pb-16" dir="rtl">
@@ -70,13 +73,24 @@ export default async function ExecutiveSubscriptionsPage() {
             ממשק בלעדי לבעלי הפלטפורמה: רמות מנוי, מחירי PayPal, חבילות סריקה והזמנות במייל.
           </p>
         </div>
-        <Link
-          href="/dashboard/executive"
-          className="inline-flex items-center gap-2 self-start rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-emerald-200 hover:text-emerald-700 transition-colors"
-        >
-          <ArrowRight size={18} />
-          חזרה לדוח Executive
-        </Link>
+        <div className="flex flex-wrap gap-3 self-start">
+          {showSuperManage ? (
+            <Link
+              href="/dashboard/executive/manage-subscriptions"
+              className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-bold text-violet-900 shadow-sm hover:border-violet-300 transition-colors"
+            >
+              <ArrowRight size={18} />
+              ניהול מנויים מתקדם (SuperAdmin)
+            </Link>
+          ) : null}
+          <Link
+            href="/dashboard/executive"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-emerald-200 hover:text-emerald-700 transition-colors"
+          >
+            <ArrowRight size={18} />
+            חזרה לדוח Executive
+          </Link>
+        </div>
       </header>
 
       <ExecutiveSubscriptionsPanel

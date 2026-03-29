@@ -131,8 +131,8 @@ export async function POST(req: Request) {
         await tx.organization.update({
           where: { id: orgIdSession },
           data: {
-            cheapScansLeft: { increment: bundle.cheapAdds },
-            premiumScansLeft: { increment: bundle.premiumAdds },
+            cheapScansRemaining: { increment: bundle.cheapAdds },
+            premiumScansRemaining: { increment: bundle.premiumAdds },
           },
         });
 
@@ -182,8 +182,8 @@ export async function POST(req: Request) {
           data: {
             subscriptionTier: tier,
             subscriptionStatus: "ACTIVE",
-            cheapScansLeft: balances.cheapScansLeft,
-            premiumScansLeft: balances.premiumScansLeft,
+            cheapScansRemaining: balances.cheapScansRemaining,
+            premiumScansRemaining: balances.premiumScansRemaining,
             maxCompanies: balances.maxCompanies,
           },
         });

@@ -153,7 +153,7 @@
   "landing": {
     "registerQuick": "Быстрая регистрация",
     "heroTitle": "Аллея, которая соединяет всех",
-    "heroSubtitle": "BSD-YBM Intelligence объединяет финансы, CRM и денежный поток в одном умном пространстве.",
+    "heroSubtitle": "BSD-YBM AI solutions",
     "ctaDiscover": "Узнать больше",
     "ctaStart": "Начать сейчас",
     "pricingBadge": "Тарифы",
@@ -201,6 +201,32 @@
     "tutorial3Title": "Центр сканирования — мульти-движок AI",
     "tutorial3Body": "Загрузка файлов, выбор движка AI и OCR — структурированные данные идут в ERP.",
     "tutorialCta": "Смотреть уроки"
+  },
+  "marketingDrawer": {
+    "home": "Главная",
+    "about": "О нас",
+    "contact": "Контакты",
+    "subscribe": "Присоединиться к аллее",
+    "billingLink": "Оплата в системе (для входа)",
+    "brandQuote": "Наводим порядок в прошлом, строим будущее",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню",
+    "contactAddress": "ул. Аэтрог 99, Гиват-Зеэв",
+    "contactPhone": "052-5640021",
+    "contactEmail": "sysybu@gmail.com",
+    "whatsappQuick": "Быстрый WhatsApp",
+    "navAria": "Навигация BSD-YBM"
+  },
+  "aboutPage": {
+    "title": "О нас",
+    "body": "BSD-YBM — результат более чем 20 лет управления офисами, бухгалтерии и работы с горами бумаг. Йоханан Букшпан сжал два десятилетия операционного опыта в умную AI-систему, которая превращает офисный хаос в точную управленческую аллею."
+  },
+  "contactPage": {
+    "title": "Контакты",
+    "intro": "Будем рады связи — реквизиты ниже или быстрый WhatsApp.",
+    "addressLabel": "Адрес",
+    "phoneLabel": "Телефон",
+    "emailLabel": "Email"
   },
   "executive": {
     "kicker": "Исполнительный отчёт",

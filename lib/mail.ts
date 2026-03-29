@@ -251,6 +251,35 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/** הזמנת רמת מנוי עם קישור הרשמה וטוקן (Executive SuperAdmin) */
+export async function sendSubscriptionTierInvitationEmail(
+  toEmail: string,
+  params: { tierLabel: string; registerUrl: string; expiresNote?: string },
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const note = params.expiresNote?.trim()
+    ? `<p style="margin:16px 0 0;color:#94a3b8;font-size:13px;text-align:center;">${escapeHtml(params.expiresNote)}</p>`
+    : "";
+  const inner = `
+    <h1 style="margin:0 0 12px;font-size:22px;font-weight:800;color:#f8fafc;text-align:center;">הוזמנתם ל-BSD-YBM</h1>
+    <p style="margin:0 0 12px;color:#cbd5e1;font-size:15px;text-align:center;line-height:1.75;">
+      הוקצתה לכם רמת מנוי: <strong style="color:#fff;">${escapeHtml(params.tierLabel)}</strong>.
+      השלימו הרשמה בקישור הבא (האימייל חייב להתאים להזמנה).
+    </p>
+    ${note}
+    <p style="text-align:center;margin:28px 0 0;">
+      <a href="${escapeHtml(params.registerUrl)}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#2563eb);color:#fff;font-weight:800;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 12px 24px rgba(37,99,235,0.35);">
+        השלמת הרשמה
+      </a>
+    </p>`;
+  const r = await sendTransactionalEmail(
+    toEmail.trim().toLowerCase(),
+    `BSD-YBM — הזמנת מנוי (${params.tierLabel})`,
+    inner,
+  );
+  if (!r.ok) return { ok: false, error: r.error };
+  return { ok: true };
+}
+
 export async function sendMeckanoOperatorLoginWelcomeEmail(toEmail: string): Promise<void> {
   const inner = `
     <h1 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#f8fafc;text-align:center;">ברוכים הבאים ל־BSD-YBM</h1>

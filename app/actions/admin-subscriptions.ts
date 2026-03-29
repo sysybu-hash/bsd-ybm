@@ -56,8 +56,8 @@ export async function approveOrganizationAction(
         data: {
           subscriptionStatus: "ACTIVE",
           subscriptionTier: tier,
-          cheapScansLeft: balances.cheapScansLeft,
-          premiumScansLeft: balances.premiumScansLeft,
+          cheapScansRemaining: balances.cheapScansRemaining,
+          premiumScansRemaining: balances.premiumScansRemaining,
           maxCompanies: balances.maxCompanies,
         },
       }),
@@ -121,8 +121,8 @@ export async function approvePendingRegistrationAction(
         data: {
           subscriptionStatus: "ACTIVE",
           subscriptionTier: tier,
-          cheapScansLeft: balances.cheapScansLeft,
-          premiumScansLeft: balances.premiumScansLeft,
+          cheapScansRemaining: balances.cheapScansRemaining,
+          premiumScansRemaining: balances.premiumScansRemaining,
           maxCompanies: balances.maxCompanies,
         },
       }),

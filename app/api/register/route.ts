@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { sendWelcomeEmail } from "@/lib/mail";
+import { defaultScanBalancesForTier } from "@/lib/subscription-tier-config";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -13,12 +14,14 @@ export async function POST(req: Request) {
       name?: string;
       organizationName?: string;
       orgType?: string;
+      inviteToken?: string;
     };
 
     const emailRaw = String(body.email ?? "").trim();
     const name = String(body.name ?? "").trim() || null;
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
+    const inviteToken = String(body.inviteToken ?? "").trim();
 
     if (!EMAIL_RE.test(emailRaw)) {
       return NextResponse.json({ error: "אימייל לא תקין" }, { status: 400 });
@@ -42,6 +45,69 @@ export async function POST(req: Request) {
       ? (typeRaw as CustomerType)
       : CustomerType.COMPANY;
 
+    if (inviteToken) {
+      const inv = await prisma.subscriptionInvitation.findUnique({
+        where: { token: inviteToken },
+      });
+      if (!inv) {
+        return NextResponse.json({ error: "קישור הזמנה לא תקף" }, { status: 400 });
+      }
+      if (inv.usedAt) {
+        return NextResponse.json({ error: "ההזמנה כבר נוצלה" }, { status: 409 });
+      }
+      if (inv.expiresAt.getTime() < Date.now()) {
+        return NextResponse.json({ error: "תוקף ההזמנה פג" }, { status: 400 });
+      }
+      if (inv.email.toLowerCase() !== normalized) {
+        return NextResponse.json(
+          { error: "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה" },
+          { status: 400 },
+        );
+      }
+
+      const balances = defaultScanBalancesForTier(inv.subscriptionTier);
+
+      await prisma.$transaction(async (tx) => {
+        await tx.organization.create({
+          data: {
+            name: organizationName,
+            type: orgType,
+            subscriptionTier: inv.subscriptionTier,
+            subscriptionStatus: "ACTIVE",
+            cheapScansRemaining: balances.cheapScansRemaining,
+            premiumScansRemaining: balances.premiumScansRemaining,
+            maxCompanies: balances.maxCompanies,
+            trialEndsAt:
+              inv.subscriptionTier === "FREE" ? trialEndsAtFromNow() : null,
+            users: {
+              create: {
+                email: normalized,
+                name,
+                role: "ORG_ADMIN",
+                accountStatus: AccountStatus.ACTIVE,
+              },
+            },
+          },
+        });
+        await tx.subscriptionInvitation.update({
+          where: { id: inv.id },
+          data: { usedAt: new Date() },
+        });
+      });
+
+      void sendWelcomeEmail(normalized, name).catch((err) =>
+        console.error("sendWelcomeEmail after register (invite)", err),
+      );
+
+      return NextResponse.json({
+        ok: true,
+        message:
+          "ההרשמה הושלמה. ניתן להתחבר עם האימייל (הגדרת סיסמה דרך התחברות או מנהל המערכת).",
+      });
+    }
+
+    const freeB = defaultScanBalancesForTier("FREE");
+
     await prisma.organization.create({
       data: {
         name: organizationName,
@@ -49,9 +115,9 @@ export async function POST(req: Request) {
         subscriptionTier: "FREE",
         trialEndsAt: trialEndsAtFromNow(),
         subscriptionStatus: "PENDING_APPROVAL",
-        cheapScansLeft: 0,
-        premiumScansLeft: 0,
-        maxCompanies: 1,
+        cheapScansRemaining: freeB.cheapScansRemaining,
+        premiumScansRemaining: freeB.premiumScansRemaining,
+        maxCompanies: freeB.maxCompanies,
         users: {
           create: {
             email: normalized,

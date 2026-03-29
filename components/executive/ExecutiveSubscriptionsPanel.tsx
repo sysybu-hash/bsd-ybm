@@ -55,7 +55,7 @@ export default function ExecutiveSubscriptionsPanel({
         HOUSEHOLD: 59.9,
         DEALER: 99.9,
         COMPANY: 159.9,
-        CORPORATE: 399.9,
+        CORPORATE: 299.9,
       },
       null,
       2,
@@ -273,7 +273,7 @@ export default function ExecutiveSubscriptionsPanel({
                     {o.subscriptionTier} · {o.subscriptionStatus}
                   </td>
                   <td className="py-3 px-2 text-xs whitespace-nowrap">
-                    זול {o.cheapScansLeft} / פרימיום {o.premiumScansLeft}
+                    זול {o.cheapScansRemaining} / פרימיום {o.premiumScansRemaining}
                   </td>
                   <td className="py-3 px-2">
                     <select

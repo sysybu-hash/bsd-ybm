@@ -158,7 +158,7 @@
   "landing": {
     "registerQuick": "Quick sign-up",
     "heroTitle": "The avenue that connects everyone",
-    "heroSubtitle": "BSD-YBM Intelligence unifies your financial management, CRM and cash flow in one smart, designed workspace.",
+    "heroSubtitle": "BSD-YBM AI solutions",
     "ctaDiscover": "Discover more",
     "ctaStart": "Start now",
     "pricingBadge": "Plans",
@@ -206,6 +206,32 @@
     "tutorial3Title": "Scan hub — multi-engine AI",
     "tutorial3Body": "Upload files, pick an AI engine and run OCR — structured data flows straight into ERP.",
     "tutorialCta": "Watch tutorials"
+  },
+  "marketingDrawer": {
+    "home": "Home",
+    "about": "About us",
+    "contact": "Contact",
+    "subscribe": "Join the avenue",
+    "billingLink": "Billing in the app (signed in)",
+    "brandQuote": "We organise the past, we build the future",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close menu",
+    "contactAddress": "99 HaEtrog St., Givat Zeev",
+    "contactPhone": "052-5640021",
+    "contactEmail": "sysybu@gmail.com",
+    "whatsappQuick": "Quick WhatsApp",
+    "navAria": "BSD-YBM site navigation"
+  },
+  "aboutPage": {
+    "title": "About us",
+    "body": "BSD-YBM is the product of over 20 years running offices, accounting and piles of paperwork. Yohanan Bukshpan distilled two decades of operational know-how into a smart AI system that turns office chaos into a precise management avenue."
+  },
+  "contactPage": {
+    "title": "Contact",
+    "intro": "We would love to hear from you — details below or quick WhatsApp.",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email"
   },
   "executive": {
     "kicker": "Executive report",

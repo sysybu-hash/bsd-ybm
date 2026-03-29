@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { getGeminiModelId } from "@/lib/gemini-model";
 import { isGeminiConfigured } from "@/lib/ai-providers";
 import { NextResponse } from "next/server";
+import { subscriptionTiersPromptBlockHe } from "@/lib/subscription-tier-config";
 
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LEN = 8000;
@@ -49,15 +50,24 @@ export async function POST(req: Request) {
     const displayName =
       session?.user?.name?.trim() || session?.user?.email?.trim() || "משתמש";
 
+    const tiersHe = subscriptionTiersPromptBlockHe();
     const systemPrompt = !session
       ? `אתה העוזר החכם של BSD-YBM. תפקידך להסביר למבקרים על המערכת (CRM, ERP, Billing), 
 על היתרונות של ניתוח מחירים ב-AI, ועל האפשרות לנהל חברות מבוקרות ואישיות. 
 אל תחשוף נתונים פנימיים, מפתחות API או פרטי ארגונים. אם שואלים איך נרשמים, הפנה לכפתור הרישום ל-30 יום ניסיון.
 הפתגם שלך: 'BSD-YBM - השדרה שמחברת בין כולם'.
+
+${tiersHe}
+כשמשתמש מתאר את עצמו (למשל „אני סוחר”, „משפחה”, „חברה עם שני סניפים”), המלץ לרמת המנוי המתאימה (FREE / HOUSEHOLD / DEALER / COMPANY / CORPORATE) והסבר בקצרה למה.
+
 ענה בעברית, בקצרה ובבהירות אלא אם המשתמש מבקש פירוט.`
       : `אתה העוזר האישי של ${displayName} במערכת BSD-YBM. 
 עזור לו לנהל את העסק ביעילות — CRM, ERP, חיובים ובינה מלאכותית.
 אל תמציא נתונים ספציפיים שלא סופקו בשיחה; אם נדרש מידע מדויק מהמערכת, הצע לבדוק בדשבורד או במסכים הרלוונטיים.
+
+${tiersHe}
+אם נשאלת על מחירון או מכסות סריקה, השתמש במידע למעלה והמלץ לרמה לפי הצורך.
+
 ענה בעברית.`;
 
     const apiKey = (

@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import {
-  isPlatformDeveloperEmail,
-  PLATFORM_UNLIMITED_CREDITS,
-} from "@/lib/platform-developers";
+import { decrementScan, type ScanUsageWarningId } from "@/lib/decrement-scan";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import type { ScanCreditKind } from "@/lib/scan-credit-kind";
 
@@ -54,10 +52,6 @@ export async function resolveOrganizationForUser(
   return created;
 }
 
-function isUnlimitedScans(n: number): boolean {
-  return n >= 1_000_000_000 || n === PLATFORM_UNLIMITED_CREDITS;
-}
-
 /**
  * בודק ומנכה יתרת סריקה לפי סוג מנוע (זול / פרימיום).
  * QUOTA_EXCEEDED → הפניה ל־/dashboard/billing לרכישת בנדל.
@@ -67,7 +61,11 @@ export async function checkAndDeductScanCredit(
   userId: string,
   kind: ScanCreditKind,
 ): Promise<
-  | { allowed: true; organizationId: string }
+  | {
+      allowed: true;
+      organizationId: string;
+      usageWarnings?: ScanUsageWarningId[];
+    }
   | { allowed: false; error: string; code?: "QUOTA_EXCEEDED" }
 > {
   const userRow = await prisma.user.findUnique({
@@ -87,39 +85,20 @@ export async function checkAndDeductScanCredit(
     return { allowed: false, error: "משתמש לא נמצא במערכת." };
   }
 
-  const org = await prisma.organization.findUnique({
-    where: { id: resolved.id },
-    select: { cheapScansLeft: true, premiumScansLeft: true },
-  });
-
-  if (!org) {
-    return { allowed: false, error: "ארגון לא נמצא." };
-  }
-
-  const field = kind === "premium" ? "premiumScansLeft" : "cheapScansLeft";
-  const balance = kind === "premium" ? org.premiumScansLeft : org.cheapScansLeft;
-
-  if (isUnlimitedScans(balance)) {
-    return { allowed: true, organizationId: resolved.id };
-  }
-
-  if (balance <= 0) {
+  const scanType = kind === "premium" ? "PREMIUM" : "CHEAP";
+  const dec = await decrementScan(resolved.id, scanType);
+  if (!dec.ok) {
     return {
       allowed: false,
-      code: "QUOTA_EXCEEDED",
-      error:
-        kind === "premium"
-          ? "נגמרה מכסת הסריקות הפרימיום. ניתן לרכוש בנדל או לשדרג מנוי בדף החיוב."
-          : "נגמרה מכסת הסריקות. ניתן לרכוש בנדל סריקות או לשדרג מנוי בדף החיוב.",
+      error: dec.error,
+      code: dec.code,
     };
   }
-
-  await prisma.organization.update({
-    where: { id: resolved.id },
-    data: { [field]: { decrement: 1 } },
-  });
-
-  return { allowed: true, organizationId: resolved.id };
+  return {
+    allowed: true,
+    organizationId: resolved.id,
+    usageWarnings: dec.usageWarnings?.length ? dec.usageWarnings : undefined,
+  };
 }
 
 /** @deprecated השתמשו ב־checkAndDeductScanCredit עם סוג מנוע */

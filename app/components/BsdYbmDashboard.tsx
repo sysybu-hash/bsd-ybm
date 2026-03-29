@@ -19,6 +19,7 @@ type ProcessDocumentResult = {
   success: boolean;
   data?: {
     aiData?: ScanResult;
+    _usageWarnings?: ("cheap_80" | "premium_80")[];
   };
   error?: string;
   code?: string;
@@ -56,6 +57,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [scanQuotaRedirect, setScanQuotaRedirect] = useState(false);
+  const [scanUsageNotice, setScanUsageNotice] = useState<string | null>(null);
 
   const {
     monthTitle,
@@ -74,6 +76,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
     setIsUploading(true);
     setUploadError(null);
     setScanQuotaRedirect(false);
+    setScanUsageNotice(null);
 
     try {
       if (status !== "authenticated" || !session?.user?.id || !session?.user?.organizationId) {
@@ -98,6 +101,17 @@ export default function BsdYbmDashboard({ homeData }: Props) {
       }
 
       setScanResult(result.data?.aiData ?? null);
+      const w = result.data?._usageWarnings;
+      if (w?.length) {
+        const parts: string[] = [];
+        if (w.includes("cheap_80")) {
+          parts.push("ניצלתם כ־80% ממכסת הסריקות הזולות — שקלו בנדל או שדרוג בדף החיוב.");
+        }
+        if (w.includes("premium_80")) {
+          parts.push("ניצלתם כ־80% ממכסת הסריקות הפרימיום — שקלו בנדל או שדרוג.");
+        }
+        setScanUsageNotice(parts.join(" "));
+      }
     } catch {
       setScanResult(null);
       setUploadError("אירעה תקלה בזמן העלאת הקובץ. נסה שוב.");
@@ -191,6 +205,19 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           </label>
         </div>
       </div>
+
+      {scanUsageNotice ? (
+        <div
+          className="rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950"
+          role="status"
+        >
+          <p className="font-bold text-amber-900 mb-1">יתרת סריקות</p>
+          <p>{scanUsageNotice}</p>
+          <Link href="/dashboard/billing" className="mt-2 inline-block text-sm font-bold text-amber-800 underline">
+            דף חיוב ורכישת בנדלים
+          </Link>
+        </div>
+      ) : null}
 
       {monthlySeries.length > 0 ? (
         <DashboardRevenueChart data={monthlySeries} />

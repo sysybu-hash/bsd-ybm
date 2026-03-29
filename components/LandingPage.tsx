@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { Zap, Target, BarChart3, ChevronLeft, Bot, Palette, Play } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Zap, Target, BarChart3, ChevronLeft, Bot, Palette, Play, Menu } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LandingTutorialSection from "@/components/landing/LandingTutorialSection";
+import LandingHeroMetallicTitle from "@/components/landing/LandingHeroMetallicTitle";
+import LandingNavDrawer from "@/components/landing/LandingNavDrawer";
+import PricingSection from "@/components/landing/PricingSection";
 
 export default function LandingPage() {
   const { t, dir } = useI18n();
+  const [navOpen, setNavOpen] = useState(false);
 
   const featureCards = useMemo(
     () => [
@@ -31,84 +35,35 @@ export default function LandingPage() {
     [t],
   );
 
-  const pricingTiers = useMemo(
-    () => [
-      {
-        plan: t("landing.planFreeLabel"),
-        price: t("landing.planFreePrice"),
-        sub: t("landing.planFreeSub"),
-        features: [
-          t("landing.planFreeF1"),
-          t("landing.planFreeF2"),
-          t("landing.planFreeF3"),
-          t("landing.planFreeF4"),
-        ],
-        popular: false,
-        badgeClass: "bg-slate-100 text-slate-700",
-        cardClass:
-          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100",
-        zapClass: "text-slate-400",
-        ctaClass:
-          "mt-12 w-full block bg-gradient-to-tr from-slate-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-slate-300/50 text-center hover:scale-[1.03] transition-all text-lg",
-      },
-      {
-        plan: t("landing.planProLabel"),
-        price: t("landing.planProPrice"),
-        sub: t("landing.planProSub"),
-        features: [
-          t("landing.planProF1"),
-          t("landing.planProF2"),
-          t("landing.planProF3"),
-          t("landing.planProF4"),
-          t("landing.planProF5"),
-        ],
-        popular: true,
-        badgeClass: "bg-blue-100 text-blue-700",
-        cardClass:
-          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-blue-200/40 border-4 border-blue-200 ring-4 ring-blue-100 relative",
-        zapClass: "text-blue-500",
-        ctaClass:
-          "mt-12 w-full block bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-blue-200/50 text-center hover:scale-[1.03] transition-all text-lg",
-      },
-      {
-        plan: t("landing.planEntLabel"),
-        price: t("landing.planEntPrice"),
-        sub: t("landing.planEntSub"),
-        features: [
-          t("landing.planEntF1"),
-          t("landing.planEntF2"),
-          t("landing.planEntF3"),
-          t("landing.planEntF4"),
-          t("landing.planEntF5"),
-        ],
-        popular: false,
-        badgeClass: "bg-indigo-100 text-indigo-700",
-        cardClass:
-          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-indigo-200/40 border border-indigo-100",
-        zapClass: "text-indigo-500",
-        ctaClass:
-          "mt-12 w-full block bg-gradient-to-tr from-indigo-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-indigo-200/50 text-center hover:scale-[1.03] transition-all text-lg",
-      },
-    ],
-    [t],
-  );
-
   return (
     <div
-      className="relative min-h-screen font-[var(--font-heading)] overflow-hidden text-right"
+      className="relative min-h-screen font-[var(--font-heading)] overflow-x-hidden text-right"
       dir={dir}
     >
       <div
         className="fixed inset-0 z-0 bg-slate-950 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/jerusalem-bg.jpg')` }}
+        style={{ backgroundImage: `url('/jerusalem-street.jpg')` }}
       />
-      <div className="fixed inset-0 z-10 bg-black/60 backdrop-blur-md" />
+      {/* ללא טשטוש — רק עמעום קל לקריאות טקסט על השמש/בהירות */}
+      <div
+        className="pointer-events-none fixed inset-0 z-10 bg-gradient-to-b from-black/45 via-black/25 to-black/55"
+        aria-hidden
+      />
 
-      <header className="relative z-50 p-6 flex justify-between items-center bg-black/20 border-b border-white/10">
+      <header className="relative z-50 flex items-center justify-between gap-3 px-6 py-5 sm:px-8 bg-black/25 border-b border-white/10">
         <h1 className="text-3xl font-black text-white italic tracking-tighter">
           BSD-<span className="text-blue-400">YBM</span>
         </h1>
-        <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-end">
+        <div className="flex flex-wrap gap-2 sm:gap-4 items-center justify-end">
+          <button
+            type="button"
+            onClick={() => setNavOpen(true)}
+            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 p-2.5 text-white transition hover:bg-white/15 md:p-2"
+            aria-label={t("marketingDrawer.openMenu")}
+            aria-expanded={navOpen}
+          >
+            <Menu className="h-6 w-6" aria-hidden />
+          </button>
           <LanguageSwitcher tone="dark" showLabel />
           <Link
             href="/login"
@@ -125,20 +80,19 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main className="relative z-30 pt-32 pb-24 flex flex-col items-center justify-center text-center px-4">
-        <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-300/30 mb-10 border-4 border-white/20 animate-pulse">
-          <Palette className="text-white" size={36} />
+      <LandingNavDrawer open={navOpen} onClose={setNavOpen} />
+
+      {/* גובה מסך מלא פחות הכותרת — הכפתורים בתחתית המסך (לא תחתית העמוד) */}
+      <main className="relative z-30 flex min-h-[calc(100svh-5.75rem)] flex-col px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-8 text-center md:min-h-[calc(100svh-6rem)] md:pb-[max(1.5rem,env(safe-area-inset-bottom))] md:pt-10">
+        <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center px-1">
+          <LandingHeroMetallicTitle text={t("landing.heroTitle")} />
+
+          <p className="mt-8 max-w-2xl text-xl font-medium leading-relaxed text-slate-200 md:text-2xl">
+            {t("landing.heroSubtitle")}
+          </p>
         </div>
 
-        <h2 className="text-6xl md:text-7xl font-black text-white leading-none tracking-tighter max-w-4xl mx-auto">
-          {t("landing.heroTitle")}
-        </h2>
-
-        <p className="max-w-2xl text-xl md:text-2xl text-slate-200 mt-8 leading-relaxed font-medium">
-          {t("landing.heroSubtitle")}
-        </p>
-
-        <div className="flex gap-4 mt-16 flex-wrap justify-center">
+        <div className="flex w-full shrink-0 flex-wrap justify-center gap-4 pt-6">
           <Link
             href="#features"
             className="bg-white/10 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all text-lg"
@@ -184,49 +138,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section
-        id="pricing"
-        className="relative z-30 bg-slate-50 rounded-[4rem] p-16 md:p-24 mx-4 md:mx-10 mb-24 shadow-2xl shadow-black/10 text-right border border-white"
-        dir={dir}
-      >
-        <div className="text-center mb-16">
-          <span className="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-            {t("landing.pricingBadge")}
-          </span>
-          <h3 className="text-5xl font-black text-slate-900 tracking-tighter mt-4">
-            {t("landing.pricingHeadline")}
-          </h3>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-16 items-start">
-          {pricingTiers.map((tier) => (
-            <div key={tier.plan} className={tier.cardClass}>
-              {tier.popular ? (
-                <span className="absolute -top-4 left-10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
-                  {t("landing.pricingPopular")}
-                </span>
-              ) : null}
-              <span
-                className={`inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${tier.badgeClass}`}
-              >
-                {tier.plan}
-              </span>
-              <h4 className="text-5xl font-black text-slate-900 mt-6 leading-none">{tier.price}</h4>
-              <p className="text-sm text-slate-400 mt-1 font-medium">{tier.sub}</p>
-              <ul className="mt-10 space-y-5 text-slate-600 font-medium text-lg">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-center gap-3">
-                    <Zap size={16} className={`shrink-0 ${tier.zapClass}`} /> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/register" className={tier.ctaClass}>
-                {t("landing.pricingChoose")}
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div dir={dir}>
+        <PricingSection />
+      </div>
 
       <footer className="relative z-50 p-10 text-center text-slate-400 text-[10px] bg-black/60 border-t border-white/5">
         <p className="font-bold uppercase tracking-widest italic flex items-center justify-center gap-3 flex-wrap">

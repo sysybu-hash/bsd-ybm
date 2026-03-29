@@ -11,7 +11,7 @@ import BillingOnboardingCallout from "@/components/billing/BillingOnboardingCall
 import BillingQuickPayments from "@/components/billing/BillingQuickPayments";
 import BillingWorkspaceEditor from "@/components/billing/BillingWorkspaceEditor";
 import SubscriptionPricingTable from "@/components/billing/SubscriptionPricingTable";
-import ScanUsageProgress from "@/components/billing/ScanUsageProgress";
+import ScanUsageRadialCharts from "@/components/billing/ScanUsageRadialCharts";
 import { parseBillingWorkspace } from "@/lib/billing-workspace";
 import { ShieldCheck } from "lucide-react";
 import { tierAllowance, tierLabelHe, ADMIN_SUBSCRIPTION_TIER_OPTIONS } from "@/lib/subscription-tier-config";
@@ -36,8 +36,8 @@ const orgSelectBilling = {
   name: true,
   subscriptionTier: true,
   subscriptionStatus: true,
-  cheapScansLeft: true,
-  premiumScansLeft: true,
+  cheapScansRemaining: true,
+  premiumScansRemaining: true,
   maxCompanies: true,
   companyType: true,
   taxId: true,
@@ -65,8 +65,8 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
         name: true,
         subscriptionTier: true,
         subscriptionStatus: true,
-        cheapScansLeft: true,
-        premiumScansLeft: true,
+        cheapScansRemaining: true,
+        premiumScansRemaining: true,
         maxCompanies: true,
         companyType: true,
         taxId: true,
@@ -200,35 +200,37 @@ export default async function BillingPage() {
   }));
 
   return (
-    <div className="min-h-0 bg-[#f8fafc] font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-950 font-sans text-slate-100">
       <div className="max-w-[1600px] mx-auto px-4 pt-8 sm:px-8">
-        <div className="mb-8 rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-lg shadow-slate-200/40 text-sm text-slate-600">
-          <p className="text-slate-900 font-bold mb-1 flex items-center gap-2">
-            <ShieldCheck size={18} className="text-emerald-500 shrink-0" />
+        <div className="mb-8 rounded-[1.5rem] border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6 shadow-xl shadow-black/30 text-sm text-slate-300">
+          <p className="text-white font-bold mb-1 flex items-center gap-2">
+            <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
             {org.name}
           </p>
           <p>
             מנוי:{" "}
-            <span className="font-medium text-slate-800">
+            <span className="font-medium text-white">
               {tierLabelHe(org.subscriptionTier)} ({org.subscriptionTier})
             </span>
             {" · "}
-            סטטוס: <span className="font-medium text-slate-800">{org.subscriptionStatus}</span>
+            סטטוס: <span className="font-medium text-white">{org.subscriptionStatus}</span>
             {" · "}
-            סיווג מס: <span className="font-medium text-slate-800">{org.companyType}</span>
+            סיווג מס: <span className="font-medium text-white">{org.companyType}</span>
             {" · "}
-            חברות מקס׳: <span className="font-medium text-slate-800">{org.maxCompanies}</span>
+            חברות מקס׳: <span className="font-medium text-white">{org.maxCompanies}</span>
           </p>
           <p className="mt-1">
             סריקות זולות נותרו:{" "}
-            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.cheapScansLeft)}</span>
+            <span className="font-medium text-sky-300">{formatCreditsForDisplay(org.cheapScansRemaining)}</span>
             {" · "}
             פרימיום נותרו:{" "}
-            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.premiumScansLeft)}</span>
+            <span className="font-medium text-violet-300">
+              {formatCreditsForDisplay(org.premiumScansRemaining)}
+            </span>
           </p>
           <p className="mt-2 text-xs text-slate-500">
             רמת נתונים חיים:{" "}
-            <span className="font-bold text-slate-700">
+            <span className="font-bold text-slate-300">
               {org.liveDataTier === "premium"
                 ? "פרימיום"
                 : org.liveDataTier === "standard"
@@ -237,7 +239,7 @@ export default async function BillingPage() {
             </span>
             {" — "}
             ניתן לשנות ב־
-            <a href="/dashboard/settings?tab=billing" className="font-bold text-blue-700 underline">
+            <a href="/dashboard/settings?tab=billing" className="font-bold text-sky-400 underline">
               הגדרות › מנויים
             </a>
             .
@@ -246,14 +248,14 @@ export default async function BillingPage() {
       </div>
 
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
-        <SubscriptionPricingTable tierPricesIls={tierPricesForTable} />
+        <SubscriptionPricingTable tierPricesIls={tierPricesForTable} variant="glass" />
       </div>
 
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
-        <ScanUsageProgress
-          cheapLeft={org.cheapScansLeft}
+        <ScanUsageRadialCharts
+          cheapLeft={org.cheapScansRemaining}
           cheapIncluded={tierAllow.cheapScans}
-          premiumLeft={org.premiumScansLeft}
+          premiumLeft={org.premiumScansRemaining}
           premiumIncluded={tierAllow.premiumScans}
         />
       </div>

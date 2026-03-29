@@ -158,7 +158,7 @@
   "landing": {
     "registerQuick": "הרשמה מהירה",
     "heroTitle": "השדרה שמחברת בין כולם",
-    "heroSubtitle": "מערכת BSD-YBM Intelligence מאחדת את הניהול הפיננסי, ה-CRM והתזרים שלך למקום אחד חכם, מעוצב ומניע לפעולה.",
+    "heroSubtitle": "BSD-YBM AI solutions",
     "ctaDiscover": "גלה עוד",
     "ctaStart": "התחל עכשיו",
     "pricingBadge": "תוכניות מנוי",
@@ -206,6 +206,32 @@
     "tutorial3Title": "לוח הסריקה — בינה מלאכותית רב־מנועית",
     "tutorial3Body": "העלאת קבצים, בחירת מנוע AI והרצת OCR — הנתונים המובנים זורמים ישירות ל־ERP.",
     "tutorialCta": "לצפייה בהדרכות"
+  },
+  "marketingDrawer": {
+    "home": "בית",
+    "about": "מי אנחנו",
+    "contact": "צור קשר",
+    "subscribe": "הצטרפות לשדרה",
+    "billingLink": "מנוי ותשלומים במערכת (מחוברים)",
+    "brandQuote": "מסדרים את העבר, בונים את העתיד",
+    "openMenu": "פתיחת תפריט ניווט",
+    "closeMenu": "סגירת תפריט",
+    "contactAddress": "האתרוג 99, גבעת זאב",
+    "contactPhone": "052-5640021",
+    "contactEmail": "sysybu@gmail.com",
+    "whatsappQuick": "וואטסאפ מהיר",
+    "navAria": "ניווט אתר BSD-YBM"
+  },
+  "aboutPage": {
+    "title": "מי אנחנו",
+    "body": "BSD-YBM היא פרי ניסיון של למעלה מ-20 שנה בניהול משרדים, חשבונאות והתמודדות עם ערימות ניירת. יוחנן בוקשפן זיקק שני עשורים של ידע תפעולי לכדי מערכת AI חכמה ההופכת כאוס משרדי לשדרה ניהולית מדויקת."
+  },
+  "contactPage": {
+    "title": "צור קשר",
+    "intro": "נשמח לשמוע מכם — פרטים למטה או וואטסאפ מהיר.",
+    "addressLabel": "כתובת",
+    "phoneLabel": "טלפון",
+    "emailLabel": "אימייל"
   },
   "executive": {
     "kicker": "Executive Report",

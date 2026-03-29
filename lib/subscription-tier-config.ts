@@ -15,12 +15,19 @@ export const ADMIN_SUBSCRIPTION_TIER_OPTIONS: SubscriptionTierKey[] = [
   "CORPORATE",
 ];
 
+/** חברות „ללא הגבלה” מעשית לרמת תאגיד */
+export const CORPORATE_MAX_COMPANIES_EFFECTIVE = 999_999;
+
 export type TierAllowance = {
   cheapScans: number;
   premiumScans: number;
   maxCompanies: number;
-  /** מחיר מנוי חודשי בשקלים; null = צור קשר / התאמה אישית */
+  /** מחיר מנוי חודשי בשקלים; null = צור קשר */
   monthlyPriceIls: number | null;
+  /** תווית „מומלץ” בגריד מחירים */
+  recommended?: boolean;
+  /** להצגה: חברות ללא הגבלה */
+  unlimitedCompanies?: boolean;
 };
 
 const TIER_ALLOWANCES: Record<SubscriptionTierKey, TierAllowance> = {
@@ -38,21 +45,23 @@ const TIER_ALLOWANCES: Record<SubscriptionTierKey, TierAllowance> = {
   },
   DEALER: {
     cheapScans: 100,
-    premiumScans: 20,
+    premiumScans: 15,
     maxCompanies: 1,
     monthlyPriceIls: 99.9,
+    recommended: true,
   },
   COMPANY: {
     cheapScans: 200,
-    premiumScans: 50,
+    premiumScans: 40,
     maxCompanies: 2,
     monthlyPriceIls: 159.9,
   },
   CORPORATE: {
     cheapScans: 500,
-    premiumScans: 50,
-    maxCompanies: 99,
-    monthlyPriceIls: 399.9,
+    premiumScans: 100,
+    maxCompanies: CORPORATE_MAX_COMPANIES_EFFECTIVE,
+    monthlyPriceIls: 299.9,
+    unlimitedCompanies: true,
   },
 };
 
@@ -117,21 +126,30 @@ export function paypalPurchasableTiers(): SubscriptionTierKey[] {
 }
 
 export function defaultScanBalancesForTier(tier: SubscriptionTierKey | string): {
-  cheapScansLeft: number;
-  premiumScansLeft: number;
+  cheapScansRemaining: number;
+  premiumScansRemaining: number;
   maxCompanies: number;
 } {
   const t = parseSubscriptionTier(tier) ?? "FREE";
   const a = TIER_ALLOWANCES[t];
   return {
-    cheapScansLeft: a.cheapScans,
-    premiumScansLeft: a.premiumScans,
+    cheapScansRemaining: a.cheapScans,
+    premiumScansRemaining: a.premiumScans,
     maxCompanies: a.maxCompanies,
   };
 }
 
-/** מיפוי ישן לרמה חדשה (מיגרציית נתונים / תצוגה) */
-/** לטפסי אדמין — ערך + תווית עברית */
+/** טקסט ל-AI / תיעוד — מחירון BSD-YBM */
+export function subscriptionTiersPromptBlockHe(): string {
+  return `מחירון מנוי BSD-YBM (ILS, סריקה זולה=Gemini, פרימיום=OpenAI/Claude):
+- FREE: 0 ₪, 10 סריקות זולות, 0 פרימיום, ניסיון חודש.
+- HOUSEHOLD: 59.90 ₪, 50 זולות, 5 פרימיום.
+- DEALER (מומלץ לעוסקים): 99.90 ₪, 100 זולות, 15 פרימיום.
+- COMPANY: 159.90 ₪, 200 זולות, 40 פרימיום, עד 2 חברות.
+- CORPORATE: 299.90 ₪, 500 זולות, 100 פרימיום, חברות ללא הגבלה מעשית.
+המלץ לרמה לפי תיאור המשתמש (למשל "אני עוסק" → DEALER, "חברה" → COMPANY).`;
+}
+
 export function executiveTierOptionsForSelect(): { value: string; label: string }[] {
   return ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((t) => ({
     value: t,

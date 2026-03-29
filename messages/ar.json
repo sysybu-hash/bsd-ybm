@@ -149,7 +149,7 @@
   "landing": {
     "registerQuick": "تسجيل سريع",
     "heroTitle": "الجادة التي تربط الجميع",
-    "heroSubtitle": "توحّد BSD-YBM Intelligence إدارتك المالية وCRM والتدفق النقدي في مكان واحد ذكي.",
+    "heroSubtitle": "BSD-YBM AI solutions",
     "ctaDiscover": "اكتشف المزيد",
     "ctaStart": "ابدأ الآن",
     "pricingBadge": "الخطط",
@@ -197,6 +197,32 @@
     "tutorial3Title": "مركز المسح — ذكاء اصطناعي متعدد المحركات",
     "tutorial3Body": "رفع الملفات واختيار المحرك وتشغيل OCR — تتدفق البيانات المنظمة مباشرة إلى ERP.",
     "tutorialCta": "شاهد الدروس"
+  },
+  "marketingDrawer": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "subscribe": "الانضمام إلى الجادة",
+    "billingLink": "الفوترة في النظام (للمسجلين)",
+    "brandQuote": "نرتب الماضي، نبني المستقبل",
+    "openMenu": "فتح قائمة التنقل",
+    "closeMenu": "إغلاق القائمة",
+    "contactAddress": "هآتروغ 99، جيفعات زئيف",
+    "contactPhone": "052-5640021",
+    "contactEmail": "sysybu@gmail.com",
+    "whatsappQuick": "واتساب سريع",
+    "navAria": "تنقل موقع BSD-YBM"
+  },
+  "aboutPage": {
+    "title": "من نحن",
+    "body": "BSD-YBM ثمرة أكثر من 20 عامًا في إدارة المكاتب والمحاسبة والتعامل مع أكوام من الأوراق. يوهانان بوكشبان قطر عقدين من المعرفة التشغيلية في نظام ذكاء اصطناعي ذكي يحوّل فوضى المكتب إلى جادة إدارية دقيقة."
+  },
+  "contactPage": {
+    "title": "اتصل بنا",
+    "intro": "يسعدنا تواصلكم — التفاصيل أدناه أو واتساب سريع.",
+    "addressLabel": "العنوان",
+    "phoneLabel": "الهاتف",
+    "emailLabel": "البريد"
   },
   "executive": {
     "kicker": "تقرير تنفيذي",

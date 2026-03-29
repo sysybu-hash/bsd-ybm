@@ -13,6 +13,7 @@ import {
 import { getServerTranslator } from "@/lib/i18n/server";
 import { isRtlLocale } from "@/lib/i18n/config";
 import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
+import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-super-admin";
 import { ArrowRight, Building2, TrendingDown, TrendingUp, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,7 @@ export default async function ExecutiveDashboardPage() {
   if (!canAccessExecutiveSuite(role, email)) {
     redirect("/dashboard");
   }
+  const showSuperManage = isExecutiveSubscriptionSuperAdmin(email);
 
   const { t, locale } = await getServerTranslator();
   const dir = isRtlLocale(locale) ? "rtl" : "ltr";
@@ -55,6 +57,15 @@ export default async function ExecutiveDashboardPage() {
           <p className="mt-2 text-slate-500 font-medium max-w-xl">{t("executive.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-3 self-start">
+          {showSuperManage ? (
+            <Link
+              href="/dashboard/executive/manage-subscriptions"
+              className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-bold text-violet-900 shadow-sm hover:border-violet-300 transition-colors"
+            >
+              <ArrowRight size={18} />
+              ניהול מנויים מתקדם
+            </Link>
+          ) : null}
           <Link
             href="/dashboard/executive/subscriptions"
             className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-800 shadow-sm hover:border-emerald-300 transition-colors"

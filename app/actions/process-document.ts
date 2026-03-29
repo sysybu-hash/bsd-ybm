@@ -25,6 +25,7 @@ import {
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
 import {
@@ -176,6 +177,7 @@ export async function processDocumentAction(
 
     let aiData: Record<string, unknown>;
     let fromCache = false;
+    let usageWarnings: ScanUsageWarningId[] | undefined;
 
     if (cached?.resultJson && typeof cached.resultJson === "object") {
       aiData = cached.resultJson as Record<string, unknown>;
@@ -189,6 +191,9 @@ export async function processDocumentAction(
           error: quota.error,
           code: "QUOTA_EXCEEDED",
         };
+      }
+      if (quota.usageWarnings?.length) {
+        usageWarnings = quota.usageWarnings;
       }
 
       if (isTextLikeMime(mimeType)) {
@@ -285,6 +290,7 @@ export async function processDocumentAction(
         _requestedProvider: requested,
         _fromCache: fromCache,
         _providerAdjusted: providerAdjusted,
+        _usageWarnings: usageWarnings,
       },
     };
   } catch (error) {

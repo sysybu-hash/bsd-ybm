@@ -127,7 +127,7 @@ export default function LandingTutorialSection() {
   return (
     <section
       id="tutorial-videos"
-      className="relative z-30 mx-4 mb-24 rounded-[4rem] border border-white/10 bg-slate-900/85 p-12 shadow-2xl shadow-black/40 backdrop-blur-xl md:mx-10 md:p-20"
+      className="relative z-20 mx-4 mt-2 mb-24 scroll-mt-6 rounded-[4rem] border border-white/15 bg-slate-950/45 p-12 shadow-lg shadow-black/25 backdrop-blur-md md:mx-10 md:p-20"
       dir={dir}
     >
       <div className="mx-auto max-w-6xl text-center">
@@ -150,7 +150,7 @@ export default function LandingTutorialSection() {
           return (
             <article
               key={kind}
-              className="flex flex-col rounded-[2rem] border border-white/10 bg-black/25 p-6 shadow-xl md:p-7"
+              className="flex flex-col rounded-[2rem] border border-white/10 bg-black/20 p-6 shadow-md backdrop-blur-sm md:p-7"
             >
               <div className="mb-4 flex items-center justify-center gap-2 text-blue-300 md:justify-start">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20">

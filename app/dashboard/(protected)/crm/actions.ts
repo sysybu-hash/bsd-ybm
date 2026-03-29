@@ -185,8 +185,8 @@ export async function updateOrgPlan(id: string, tierRaw: string) {
       where: { id },
       data: {
         subscriptionTier: tier,
-        cheapScansLeft: balances.cheapScansLeft,
-        premiumScansLeft: balances.premiumScansLeft,
+        cheapScansRemaining: balances.cheapScansRemaining,
+        premiumScansRemaining: balances.premiumScansRemaining,
         maxCompanies: balances.maxCompanies,
       },
     });

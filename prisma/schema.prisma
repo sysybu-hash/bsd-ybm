@@ -82,11 +82,13 @@ model Organization {
   subscriptionTier     SubscriptionTier @default(FREE)
   subscriptionStatus   String         @default("INACTIVE")
   /// יתרת סריקות „זולות” (מנוע Gemini)
-  cheapScansLeft       Int            @default(0)
+  cheapScansRemaining  Int            @default(10)
   /// יתרת סריקות „פרימיום” (OpenAI / Anthropic)
-  premiumScansLeft     Int            @default(0)
-  /// מקסימום ישויות/חברות תחת המנוי (רלוונטי לרמת COMPANY ומעלה)
+  premiumScansRemaining Int           @default(0)
+  /// מקסימום ישויות/חברות תחת המנוי (CORPORATE = ערך גבוה = ללא הגבלה מעשית)
   maxCompanies         Int            @default(1)
+  /// מנוי VIP — דילוג על ניכוי סריקות (ניהול ידני)
+  isVip                Boolean        @default(false)
   stripeCustomerId     String?        @unique
   stripeSubscriptionId String?
   users                User[]
@@ -148,6 +150,21 @@ model ScanBundle {
   updatedAt   DateTime @updatedAt
 
   @@index([isActive, sortOrder])
+}
+
+/// הזמנת מנוי מטעם Executive — קישור עם טוקן לרישום
+model SubscriptionInvitation {
+  id               String           @id @default(cuid())
+  token            String           @unique
+  email            String
+  subscriptionTier SubscriptionTier
+  expiresAt        DateTime
+  usedAt           DateTime?
+  createdAt        DateTime         @default(now())
+  createdByEmail   String?
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 /// פרויקט / עסק תחת ארגון — לשיוך לקוחות ומעקב

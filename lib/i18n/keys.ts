@@ -205,6 +205,32 @@ export type MessageTree = {
     tutorial3Body: string;
     tutorialCta: string;
   };
+  marketingDrawer: {
+    home: string;
+    about: string;
+    contact: string;
+    subscribe: string;
+    billingLink: string;
+    brandQuote: string;
+    openMenu: string;
+    closeMenu: string;
+    contactAddress: string;
+    contactPhone: string;
+    contactEmail: string;
+    whatsappQuick: string;
+    navAria: string;
+  };
+  aboutPage: {
+    title: string;
+    body: string;
+  };
+  contactPage: {
+    title: string;
+    intro: string;
+    addressLabel: string;
+    phoneLabel: string;
+    emailLabel: string;
+  };
   executive: {
     kicker: string;
     title: string;

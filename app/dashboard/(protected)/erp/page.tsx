@@ -142,8 +142,8 @@ export default async function ErpPage({
     ? await prisma.organization.findUnique({
         where: { id: orgId },
         select: {
-          cheapScansLeft: true,
-          premiumScansLeft: true,
+          cheapScansRemaining: true,
+          premiumScansRemaining: true,
           subscriptionTier: true,
         },
       })
@@ -153,7 +153,7 @@ export default async function ErpPage({
     orgQuota != null
       ? (() => {
           const a = tierAllowance(orgQuota.subscriptionTier);
-          return `זולות ${formatCreditsForDisplay(orgQuota.cheapScansLeft)} / ${a.cheapScans} · פרימיום ${formatCreditsForDisplay(orgQuota.premiumScansLeft)} / ${a.premiumScans}`;
+          return `זולות ${formatCreditsForDisplay(orgQuota.cheapScansRemaining)} / ${a.cheapScans} · פרימיום ${formatCreditsForDisplay(orgQuota.premiumScansRemaining)} / ${a.premiumScans}`;
         })()
       : null;
 

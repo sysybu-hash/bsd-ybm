@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 import {
+  CORPORATE_MAX_COMPANIES_EFFECTIVE,
   defaultScanBalancesForTier,
   parseSubscriptionTier,
   tierLabelHe,
@@ -28,8 +29,8 @@ export type ExecutiveOrgRow = {
   name: string;
   subscriptionTier: SubscriptionTier;
   subscriptionStatus: string;
-  cheapScansLeft: number;
-  premiumScansLeft: number;
+  cheapScansRemaining: number;
+  premiumScansRemaining: number;
   maxCompanies: number;
   trialEndsAt: Date | null;
   primaryEmail: string | null;
@@ -48,8 +49,8 @@ export async function executiveListOrganizationsAction(): Promise<
       name: true,
       subscriptionTier: true,
       subscriptionStatus: true,
-      cheapScansLeft: true,
-      premiumScansLeft: true,
+      cheapScansRemaining: true,
+      premiumScansRemaining: true,
       maxCompanies: true,
       trialEndsAt: true,
       users: {
@@ -65,8 +66,8 @@ export async function executiveListOrganizationsAction(): Promise<
     name: o.name,
     subscriptionTier: o.subscriptionTier,
     subscriptionStatus: o.subscriptionStatus,
-    cheapScansLeft: o.cheapScansLeft,
-    premiumScansLeft: o.premiumScansLeft,
+    cheapScansRemaining: o.cheapScansRemaining,
+    premiumScansRemaining: o.premiumScansRemaining,
     maxCompanies: o.maxCompanies,
     trialEndsAt: o.trialEndsAt,
     primaryEmail: o.users[0]?.email ?? null,
@@ -94,6 +95,7 @@ export async function executiveApplyManualSubscriptionAction(
         data: {
           subscriptionTier: "FREE",
           subscriptionStatus: "ACTIVE",
+          isVip: false,
           trialEndsAt: trialEndsAtFromNow(),
           ...defaultScanBalancesForTier("FREE"),
         },
@@ -104,9 +106,10 @@ export async function executiveApplyManualSubscriptionAction(
         data: {
           subscriptionTier: "CORPORATE",
           subscriptionStatus: "ACTIVE",
-          cheapScansLeft: PLATFORM_UNLIMITED_CREDITS,
-          premiumScansLeft: PLATFORM_UNLIMITED_CREDITS,
-          maxCompanies: 999,
+          isVip: true,
+          cheapScansRemaining: PLATFORM_UNLIMITED_CREDITS,
+          premiumScansRemaining: PLATFORM_UNLIMITED_CREDITS,
+          maxCompanies: CORPORATE_MAX_COMPANIES_EFFECTIVE,
         },
       });
     } else {
@@ -116,13 +119,15 @@ export async function executiveApplyManualSubscriptionAction(
         data: {
           subscriptionTier: tier,
           subscriptionStatus: "ACTIVE",
-          cheapScansLeft: b.cheapScansLeft,
-          premiumScansLeft: b.premiumScansLeft,
+          isVip: false,
+          cheapScansRemaining: b.cheapScansRemaining,
+          premiumScansRemaining: b.premiumScansRemaining,
           maxCompanies: b.maxCompanies,
         },
       });
     }
     revalidatePath("/dashboard/executive/subscriptions");
+    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     revalidatePath("/dashboard/crm");
     return { ok: true };
@@ -163,6 +168,7 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
       },
     });
     revalidatePath("/dashboard/executive/subscriptions");
+    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {
@@ -221,6 +227,7 @@ export async function executiveUpdateBundlePriceAction(
       data: { priceIls },
     });
     revalidatePath("/dashboard/executive/subscriptions");
+    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {

@@ -46,9 +46,9 @@ export async function ensurePlatformDeveloperAccount(
   if (user.role === "SUPER_ADMIN" && user.organizationId) {
     const orgQuick = await prisma.organization.findUnique({
       where: { id: user.organizationId },
-      select: { cheapScansLeft: true },
+      select: { cheapScansRemaining: true },
     });
-    if (orgQuick && orgQuick.cheapScansLeft >= 1_000_000_000) {
+    if (orgQuick && orgQuick.cheapScansRemaining >= 1_000_000_000) {
       return {
         id: user.id,
         role: user.role,
@@ -66,8 +66,8 @@ export async function ensurePlatformDeveloperAccount(
         type: "ENTERPRISE",
         subscriptionTier: "CORPORATE",
         subscriptionStatus: "ACTIVE",
-        cheapScansLeft: PLATFORM_UNLIMITED_CREDITS,
-        premiumScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        cheapScansRemaining: PLATFORM_UNLIMITED_CREDITS,
+        premiumScansRemaining: PLATFORM_UNLIMITED_CREDITS,
         maxCompanies: 999,
       },
       select: { id: true },
@@ -77,8 +77,8 @@ export async function ensurePlatformDeveloperAccount(
     await prisma.organization.update({
       where: { id: orgId },
       data: {
-        cheapScansLeft: PLATFORM_UNLIMITED_CREDITS,
-        premiumScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        cheapScansRemaining: PLATFORM_UNLIMITED_CREDITS,
+        premiumScansRemaining: PLATFORM_UNLIMITED_CREDITS,
         maxCompanies: 999,
         subscriptionTier: "CORPORATE",
         subscriptionStatus: "ACTIVE",

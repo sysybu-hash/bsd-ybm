@@ -12,7 +12,11 @@ const ORG_TYPES = [
   { value: "ENTERPRISE", label: "ארגון" },
 ];
 
-export default function RegisterClient() {
+type Props = {
+  inviteToken?: string;
+};
+
+export default function RegisterClient({ inviteToken }: Props) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -50,8 +54,17 @@ export default function RegisterClient() {
           </div>
           <h1 className="text-center text-2xl font-black italic text-slate-900">הרשמה לאתר</h1>
           <p className="mt-2 text-center text-sm text-slate-500 leading-relaxed">
-            מלאו פרטים — מנהל המערכת יאשר את המנוי ויישלח אליכם פרטי כניסה או תועברו להתחברות עם
-            Google לאחר האישור.
+            {inviteToken ? (
+              <>
+                הוזמנתם עם קישור ייעודי — לאחר השלמה תקבלו גישה פעילה לפי רמת המנוי שהוקצתה (האימייל חייב
+                להתאים להזמנה).
+              </>
+            ) : (
+              <>
+                מלאו פרטים — מנהל המערכת יאשר את המנוי ויישלח אליכם פרטי כניסה או תועברו להתחברות עם
+                Google לאחר האישור.
+              </>
+            )}
           </p>
 
           <form
@@ -71,6 +84,7 @@ export default function RegisterClient() {
                     name: fd.get("name"),
                     organizationName: fd.get("organizationName"),
                     orgType: fd.get("orgType"),
+                    inviteToken: inviteToken || undefined,
                   }),
                 });
                 const data = await res.json().catch(() => ({}));
@@ -134,7 +148,7 @@ export default function RegisterClient() {
               className="w-full rounded-2xl bg-blue-600 hover:bg-blue-500 text-white py-4 text-sm font-bold disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : null}
-              שליחת בקשת הרשמה
+              {inviteToken ? "השלמת הרשמה" : "שליחת בקשת הרשמה"}
             </button>
           </form>
 
@@ -152,7 +166,7 @@ export default function RegisterClient() {
                 href="/login?registered=1"
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-500/25 hover:bg-blue-500"
               >
-                המשך לכניסה (אחרי אישור מנוי)
+                {inviteToken ? "מעבר לכניסה" : "המשך לכניסה (אחרי אישור מנוי)"}
               </Link>
             </div>
           )}
