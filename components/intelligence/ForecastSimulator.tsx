@@ -11,6 +11,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
+import RechartsBounded from "@/components/RechartsBounded";
 import { BrainCircuit } from "lucide-react";
 
 const baseData = [
@@ -81,7 +82,7 @@ export default function ForecastSimulator() {
         </motion.div>
       ) : null}
 
-      <div className="h-[300px] w-full">
+      <RechartsBounded height={300}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={displayData}>
             <defs>
@@ -115,7 +116,7 @@ export default function ForecastSimulator() {
             <ReferenceLine y={15000} stroke="#ef4444" strokeDasharray="3 3" />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+      </RechartsBounded>
     </div>
   );
 }

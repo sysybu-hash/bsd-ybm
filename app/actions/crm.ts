@@ -10,14 +10,11 @@ async function getOrgContext() {
   if (!session?.user?.id) {
     return { error: "נדרשת התחברות" as const };
   }
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { organizationId: true },
-  });
-  if (!user?.organizationId) {
+  const orgId = session.user.organizationId ?? null;
+  if (!orgId) {
     return { error: "אין ארגון משויך. עבור להגדרות או התחבר מחדש." as const };
   }
-  return { orgId: user.organizationId, userId: session.user.id };
+  return { orgId, userId: session.user.id };
 }
 
 export async function createContactAction(formData: FormData) {

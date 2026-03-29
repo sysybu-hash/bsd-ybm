@@ -2,10 +2,15 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { canAccessMeckanoPage } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { freeTrialDaysRemaining } from "@/lib/trial";
 import DashboardLayoutClient from "@/components/DashboardLayoutClient";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+
+/** מניעת מטמון RSC/CDN לתפריט לפי משתמש */
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function DashboardLayout({
   children,
@@ -16,6 +21,11 @@ export default async function DashboardLayout({
   if (!session?.user?.id) {
     redirect("/login");
   }
+
+  const email = session.user.email;
+  /** חדר מצב / מאסטר — רק בעלי פלטפורמה מפורשים (PLATFORM_DEVELOPER_EMAILS). לא מספיק SUPER_ADMIN ב-DB. */
+  const showAdminNav =
+    Boolean(email) && !hasMeckanoAccess(email) && isPlatformDeveloperEmail(email);
 
   let trialBannerDaysLeft: number | null = null;
   const orgId = session.user.organizationId;
@@ -36,13 +46,10 @@ export default async function DashboardLayout({
   return (
     <DashboardLayoutClient
       orgId={session?.user?.organizationId || ""}
-      showAdminLink={session?.user?.email === "sysybu@gmail.com"}
       userRole={session.user.role}
-      showMeckanoLink={canAccessMeckanoPage(
-        session.user.role,
-        session.user.email,
-      )}
+      userEmail={session.user.email ?? null}
       trialBannerDaysLeft={trialBannerDaysLeft}
+      showAdminNav={showAdminNav}
     >
       {children}
     </DashboardLayoutClient>

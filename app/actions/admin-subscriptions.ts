@@ -8,11 +8,19 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword, generateProvisionPassword } from "@/lib/password";
 import { planDefaultCredits, ADMIN_PLAN_OPTIONS } from "@/lib/subscription-plans";
 import { sendProvisionCredentialsEmail } from "@/app/actions/send-credentials-email";
+import {
+  sendAccessApprovedAdminNotify,
+  sendAccessApprovedEmail,
+} from "@/lib/mail";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 
-async function requireSuperAdmin() {
+/** אישור מנויים / ניהול לקוחות — רק PLATFORM_DEVELOPER_EMAILS */
+async function requirePlatformOwner() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "SUPER_ADMIN") {
+  if (!session?.user?.id || !session.user.email) {
+    return null;
+  }
+  if (!isPlatformDeveloperEmail(session.user.email)) {
     return null;
   }
   return session;
@@ -22,7 +30,7 @@ export async function approveOrganizationAction(
   organizationId: string,
   plan: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  const session = await requireSuperAdmin();
+  const session = await requirePlatformOwner();
   if (!session) {
     return { ok: false, error: "אין הרשאה" };
   }
@@ -70,7 +78,7 @@ export async function approvePendingRegistrationAction(
   role: string,
   plan: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  const session = await requireSuperAdmin();
+  const session = await requirePlatformOwner();
   if (!session) return { ok: false, error: "אין הרשאה" };
   if (!userId) return { ok: false, error: "חסר מזהה משתמש" };
 
@@ -84,7 +92,7 @@ export async function approvePendingRegistrationAction(
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, organizationId: true, accountStatus: true, email: true },
+    select: { id: true, organizationId: true, accountStatus: true, email: true, name: true },
   });
   if (!user?.organizationId) {
     return { ok: false, error: "משתמש/ארגון לא נמצא" };
@@ -111,6 +119,12 @@ export async function approvePendingRegistrationAction(
       }),
     ]);
     revalidatePath("/dashboard/admin");
+
+    void Promise.all([
+      sendAccessApprovedEmail(user.email),
+      sendAccessApprovedAdminNotify(user.email, user.name),
+    ]).catch((err) => console.error("access-approved emails", err));
+
     return { ok: true };
   } catch {
     return { ok: false, error: "אישור הרשמה נכשל" };
@@ -121,7 +135,7 @@ export async function provisionUserAction(formData: FormData): Promise<
   | { ok: true; password?: string; emailed: boolean }
   | { ok: false; error: string }
 > {
-  const session = await requireSuperAdmin();
+  const session = await requirePlatformOwner();
   if (!session) {
     return { ok: false, error: "אין הרשאה" };
   }

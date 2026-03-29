@@ -1,27 +1,44 @@
-import type { AiProviderId } from "./ai-providers";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getGeminiModelId } from "@/lib/gemini-model";
+import type { AiProviderId } from "@/lib/ai-providers";
 
-const ALL_PROVIDERS: AiProviderId[] = ["gemini", "openai", "anthropic", "groq"];
+/** ספקים שתומכים בסריקת מסמך (לא כולל Groq) */
+const DOCUMENT_SCAN_PROVIDERS: AiProviderId[] = ["gemini", "openai", "anthropic"];
+
+/** מנועים מותרים לפי תוכנית — FREE רק Gemini; מנויים משלמים / מנהלים — כל ספקי הסריקה */
+export function getAllowedAiProvidersForPlan(
+  plan: string,
+  elevated: boolean,
+): AiProviderId[] {
+  if (elevated) return [...DOCUMENT_SCAN_PROVIDERS];
+  const normalized = (plan || "FREE").trim().toUpperCase();
+  if (normalized === "FREE") return ["gemini"];
+  return [...DOCUMENT_SCAN_PROVIDERS];
+}
 
 /**
- * מנועים לפי תוכנית ארגון — מקביל לדוגמת Python (Basic / Pro / Business).
- * אינטגרציות עתידיות: Document AI, מנוע חיצוני ייעודי — יתווספו כאן כשיהיו בקוד.
+ * תשובת טקסט קצרה מ־Gemini — לניתוחי ERP / השוואות מחיר.
+ * ללא מפתח — מחזיר הודעת גיבוי ללא זריקת שגיאה.
  */
-export function getAllowedAiProvidersForPlan(
-  plan: string | null | undefined,
-  isSuperAdmin: boolean,
-): AiProviderId[] {
-  if (isSuperAdmin) {
-    return ALL_PROVIDERS;
+export async function generateAiResponse(prompt: string): Promise<string> {
+  const apiKey =
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
+    process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    return "מומלץ לעקוב אחר מגמת המחיר מול ספקים חלופיים ולוודא שההזמנה עומדת בתקציב.";
   }
 
-  switch (plan) {
-    case "PRO":
-      return ["gemini", "openai", "groq"];
-    case "BUSINESS":
-    case "ENTERPRISE":
-      return ALL_PROVIDERS;
-    case "FREE":
-    default:
-      return ["gemini"];
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
+    const result = await model.generateContent(
+      `ענה בעברית בלבד, בפסקה אחת קצרה (עד 4 משפטים), בלי כותרות:\n\n${prompt}`,
+    );
+    const text = result.response.text()?.trim();
+    return text && text.length > 0
+      ? text
+      : "לא התקבלה תשובה מהמודל — נסו שוב מאוחר יותר.";
+  } catch {
+    return "ניתוח AI זמנית לא זמין. השוו מחירים ידנית מול היסטוריית הרכישות.";
   }
 }

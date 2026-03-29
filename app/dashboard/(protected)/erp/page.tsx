@@ -5,13 +5,21 @@ import FinancialCharts from "@/components/FinancialCharts";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
 import SupplierPriceBoard from "@/components/SupplierPriceBoard";
 import ErpScrollToHash from "@/components/ErpScrollToHash";
+import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout";
 import ERPDashboard, { type ErpStatCard } from "@/components/ERPDashboard";
 import ErpDocumentsManager from "@/components/ErpDocumentsManager";
+import PriceComparisonChart from "@/components/PriceComparisonChart";
+import { getErpPriceComparisonForOrg } from "@/lib/erp-price-comparison-data";
 import {
   buildMonthlyExpenseSeries,
   sumExpensesInCalendarMonth,
   formatExpenseTrendVsPrevious,
 } from "@/lib/erp-stats";
+import { getPriceSpikeAlerts } from "@/lib/erp-price-spikes";
+import { getServerTranslator } from "@/lib/i18n/server";
+import { isRtlLocale } from "@/lib/i18n/config";
+import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
+import { DocStatus } from "@prisma/client";
 import type { Document } from "@prisma/client";
 
 type SearchParams = { q?: string };
@@ -21,6 +29,10 @@ export default async function ErpPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const { t, locale } = await getServerTranslator();
+  const intlTag = intlLocaleForApp(locale);
+  const pageDir = isRtlLocale(locale) ? "rtl" : "ltr";
+
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId || "";
   const sp = await searchParams;
@@ -67,26 +79,57 @@ export default async function ErpPage({
 
   const stats: ErpStatCard[] = [
     {
-      label: "הוצאות החודש הנוכחי",
-      value: `₪${expenseThisMonth.toLocaleString()}`,
-      trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth),
+      label: t("erpPage.statMonthExpenses"),
+      value: `₪${expenseThisMonth.toLocaleString(intlTag)}`,
+      trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t),
       valueClass: "text-blue-600",
     },
     {
-      label: "מסמכים בתצוגה",
+      label: t("erpPage.statDocsInView"),
       value: String(docs.length),
-      trend: q ? `חיפוש: "${q}"` : "כל המסמכים בארגון (ללא סינון חיפוש)",
+      trend: q ? t("erpPage.trendSearch", { q }) : t("erpPage.trendAllDocs"),
       valueClass: "text-slate-900",
     },
     {
-      label: "ממוצע לחשבונית",
-      value: docs.length ? `₪${avgPerDoc.toLocaleString()}` : "—",
-      trend: "מחושב מסה״כ הוצאות בתצוגה",
+      label: t("erpPage.statAvgInvoice"),
+      value: docs.length ? `₪${avgPerDoc.toLocaleString(intlTag)}` : "—",
+      trend: t("erpPage.statAvgTrend"),
       valueClass: "text-emerald-600",
     },
   ];
 
-  const chartData = buildMonthlyExpenseSeries(docs, 6);
+  const chartData = buildMonthlyExpenseSeries(docs, 6, locale);
+
+  let flowSummary: {
+    totalItems: number;
+    totalIssued: number;
+    totalExpenses: number;
+  } | null = null;
+  let priceSpikes: Awaited<ReturnType<typeof getPriceSpikeAlerts>> = [];
+
+  if (orgId) {
+    const [distinctLineKeys, issuedIncomeSum, spikes] = await Promise.all([
+      prisma.documentLineItem.findMany({
+        where: { organizationId: orgId },
+        distinct: ["normalizedKey"],
+        select: { normalizedKey: true },
+      }),
+      prisma.issuedDocument.aggregate({
+        where: {
+          organizationId: orgId,
+          status: { not: DocStatus.CANCELLED },
+        },
+        _sum: { total: true },
+      }),
+      getPriceSpikeAlerts(orgId, 8),
+    ]);
+    priceSpikes = spikes;
+    flowSummary = {
+      totalItems: distinctLineKeys.length,
+      totalIssued: issuedIncomeSum._sum.total ?? 0,
+      totalExpenses,
+    };
+  }
 
   const geminiConfigured = !!(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
@@ -100,10 +143,12 @@ export default async function ErpPage({
       })
     : null;
 
+  const priceComparison = orgId ? await getErpPriceComparisonForOrg(orgId) : null;
+
   return (
     <div
       className="animate-in fade-in duration-500 rounded-[2rem] bg-[#f8fafc] text-slate-900 border border-slate-200/90 shadow-inner p-6 md:p-8 space-y-10"
-      dir="rtl"
+      dir={pageDir}
     >
       <ErpScrollToHash />
       {!geminiConfigured && (
@@ -111,9 +156,9 @@ export default async function ErpPage({
           className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"
           role="alert"
         >
-          <strong>סריקת AI לא פעילה:</strong> חסר מפתח Gemini בשרת. הגדר{" "}
-          <code className="bg-red-100 px-1 rounded">GOOGLE_GENERATIVE_AI_API_KEY</code> בקובץ
-          .env.local וב-Vercel (Environment Variables), ואז הפעל מחדש את השרת.
+          <strong>{t("erpPage.geminiTitle")}</strong> {t("erpPage.geminiBody")}{" "}
+          <code className="bg-red-100 px-1 rounded">GOOGLE_GENERATIVE_AI_API_KEY</code>{" "}
+          {t("erpPage.geminiCode")}
         </div>
       )}
 
@@ -122,18 +167,29 @@ export default async function ErpPage({
         chartData={chartData}
         creditsRemaining={orgQuota?.creditsRemaining ?? null}
         creditsAllowance={orgQuota?.monthlyAllowance ?? null}
+        flowSummary={flowSummary}
+        priceSpikes={priceSpikes}
       />
 
       {q && (
         <p className="text-sm text-slate-500 -mt-4">
-          תוצאות חיפוש עבור: &quot;{q}&quot; ({docs.length}) · סה״כ הוצאות בתצוגה: ₪
-          {totalExpenses.toLocaleString()}
+          {t("erpPage.searchHint", {
+            q,
+            count: String(docs.length),
+            total: totalExpenses.toLocaleString(intlTag),
+          })}
         </p>
       )}
+
+      {orgId ? <ErpHistoricalImportCallout /> : null}
 
       <MultiEngineScanner variant="light" />
 
       {orgId ? <SupplierPriceBoard /> : null}
+
+      {priceComparison ? (
+        <PriceComparisonChart data={priceComparison.data} productName={priceComparison.productName} />
+      ) : null}
 
       <FinancialCharts data={docs as unknown as any[]} variant="light" />
 

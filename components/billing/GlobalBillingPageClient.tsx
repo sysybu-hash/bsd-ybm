@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, useTransition, type ReactNode } from "react";
 import { CompanyType, DocType, type DocStatus } from "@prisma/client";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import {
@@ -19,6 +19,7 @@ import CreateIssuedDocumentModal, {
 } from "@/components/billing/CreateIssuedDocumentModal";
 import DocumentPrintTemplate from "@/components/billing/DocumentPrintTemplate";
 import ReportingCenter from "@/components/billing/ReportingCenter";
+import { exportAccountantMonthCsvAction } from "@/app/dashboard/billing/export-accountant-csv";
 
 export type IssuedDocRow = {
   id: string;
@@ -39,7 +40,8 @@ export type BillingHubStats = {
   monthVat: number;
   pendingAmount: number;
   pendingInvoiceCount: number;
-  netAfterPayPlusMonth: number;
+  /** סכום גולמי של חשבוניות שסומנו כשולמו החודש */
+  paidMonthGross: number;
 };
 
 const DOC_TYPE_LABEL: Record<DocType, string> = {
@@ -86,10 +88,12 @@ type Props = {
   orgAddress: string | null;
   companyType: CompanyType;
   taxId: string | null;
+  /** false = מסמכים כמזכר פנימי ללא מע״מ */
+  isReportable: boolean;
   issuedRows: IssuedDocRow[];
   stats: BillingHubStats;
   contacts: CrmContactOption[];
-  payPlusBlock?: ReactNode;
+  paymentBlock?: ReactNode;
 };
 
 export default function GlobalBillingPageClient({
@@ -97,15 +101,34 @@ export default function GlobalBillingPageClient({
   orgAddress,
   companyType,
   taxId,
+  isReportable,
   issuedRows,
   stats,
   contacts,
-  payPlusBlock,
+  paymentBlock,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tab, setTab] = useState<TabKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [printRow, setPrintRow] = useState<IssuedDocRow | null>(null);
+  const [exportPending, startExport] = useTransition();
+
+  const handleExportAccountantCsv = () => {
+    startExport(async () => {
+      const r = await exportAccountantMonthCsvAction();
+      if (!r.ok) {
+        window.alert(r.error);
+        return;
+      }
+      const blob = new Blob([r.csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = r.filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  };
 
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
@@ -121,8 +144,9 @@ export default function GlobalBillingPageClient({
     });
   }, [issuedRows, searchTerm, tab]);
 
-  const vatHint =
-    companyType === CompanyType.EXEMPT_DEALER
+  const vatHint = !isReportable
+    ? "ארגון אישי — מזכר פנימי ללא מע״מ"
+    : companyType === CompanyType.EXEMPT_DEALER
       ? "עוסק פטור — ללא מע״מ"
       : `מבוסס על ${Math.round(VAT_RATE * 100)}% (מורשה / חברה)`;
 
@@ -177,7 +201,7 @@ export default function GlobalBillingPageClient({
             icon: <ShieldCheck className="w-6 h-6" />,
           },
           {
-            title: "תשלומים בהמתנה (PayPlus)",
+            title: "תשלומים בהמתנה (PayPal)",
             value: formatMoney(stats.pendingAmount),
             sub:
               stats.pendingInvoiceCount > 0
@@ -188,9 +212,9 @@ export default function GlobalBillingPageClient({
             icon: <History className="w-6 h-6" />,
           },
           {
-            title: "נטו אחרי PayPlus (חודש)",
-            value: formatMoney(stats.netAfterPayPlusMonth),
-            sub: "חשבוניות ששולמו החודש — אחרי 1.2% + ‎₪1.20",
+            title: "שולם החודש (גולמי)",
+            value: formatMoney(stats.paidMonthGross),
+            sub: "סכום חשבוניות שסומנו כשולמו — לפני עמלות PayPal",
             color: "text-emerald-600",
             bg: "bg-emerald-50/50",
             icon: <CheckCircle2 className="w-6 h-6" />,
@@ -216,6 +240,18 @@ export default function GlobalBillingPageClient({
       </div>
 
       <ReportingCenter />
+
+      <div className="flex flex-wrap justify-end gap-3">
+        <button
+          type="button"
+          onClick={() => handleExportAccountantCsv()}
+          disabled={exportPending}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-black text-slate-800 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+        >
+          <Download size={18} aria-hidden />
+          {exportPending ? "מייצא…" : "ייצוא לרואה חשבון (CSV)"}
+        </button>
+      </div>
 
       <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/40 border border-slate-50 overflow-hidden">
         <div className="p-8 border-b border-slate-50 flex flex-wrap justify-between items-center gap-4">
@@ -332,13 +368,14 @@ export default function GlobalBillingPageClient({
         </div>
       </div>
 
-      {payPlusBlock ? <div className="space-y-6">{payPlusBlock}</div> : null}
+      {paymentBlock ? <div className="space-y-6">{paymentBlock}</div> : null}
 
       <CreateIssuedDocumentModal
         isOpen={createOpen}
         onClose={() => setCreateOpen(false)}
         contacts={contacts}
         companyType={companyType}
+        isReportable={isReportable}
       />
 
       {printRow ? (
@@ -382,6 +419,7 @@ export default function GlobalBillingPageClient({
                 address: orgAddress,
                 taxId,
                 companyType,
+                isReportable,
               }}
             />
           </div>

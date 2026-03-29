@@ -9,17 +9,77 @@
   --background-end-rgb: 248, 250, 252;
   --primary-color: #3b82f6;
   --heading-color: #3b82f6;
+  color-scheme: light dark;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  min-height: 100vh;
+/* ---- תאימות דפדפנים (Chrome, Firefox, Safari, Edge, מובייל) ---- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* מניעת גלילה אופקית “שבורה” מרכיבים רחבים */
+    overflow-x: hidden;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+        to bottom,
+        rgb(var(--background-start-rgb)),
+        rgb(var(--background-end-rgb))
+      )
+      rgb(var(--background-start-rgb));
+    /* vh → iOS (fill-available) → dvh במודרני */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.12);
+  }
+
+  img,
+  video,
+  canvas,
+  svg:not([width]):not([height]) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    min-width: 0;
+    font: inherit;
+  }
+
+  fieldset {
+    min-width: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --foreground-rgb: 0, 0, 0;
+    }
+  }
+
+  ::selection {
+    background-color: rgba(59, 130, 246, 0.22);
+    color: inherit;
+  }
 }
 
 /* צבע כותרות גלובלי — מתעדכן יחד עם בחירת צבע נושא */
@@ -83,12 +143,161 @@ html.high-contrast {
   }
 }
 
+/* Recharts — מניעת רוחב/גוביין חריגים ב-RTL ובתוך flex (ResponsiveContainer) */
+.recharts-bounded .recharts-responsive-container,
+.recharts-responsive-container {
+  max-width: 100% !important;
+}
+
+.recharts-bounded .recharts-wrapper {
+  max-width: 100% !important;
+}
+
 /* Tailwind Overrides for RTL spacing */
 .flex-row-reverse-rtl {
   flex-direction: row-reverse;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* הסתרת פס גלילה — כרום/ספארי/אדג׳ + פיירפוקס */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+  width: 0;
+  height: 0;
+}
+
+/* דף הבית — הדרכות (לולאה ~10 שניות; גיבוי כשאין MP4 ב־/public/tutorials/) */
+@keyframes bsd-tut-crm-pulse {
+  0%,
+  6% {
+    opacity: 0.45;
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+  10%,
+  30% {
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.55);
+    transform: scale(1.02);
+  }
+  34%,
+  100% {
+    opacity: 0.45;
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+}
+
+.bsd-tut-crm-row:nth-child(2) {
+  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
+}
+.bsd-tut-crm-row:nth-child(3) {
+  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
+  animation-delay: 3.15s;
+}
+.bsd-tut-crm-row:nth-child(4) {
+  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
+  animation-delay: 6.3s;
+}
+
+@keyframes bsd-tut-erp-h {
+  0%,
+  10% {
+    height: 22%;
+  }
+  25%,
+  40% {
+    height: 88%;
+  }
+  55%,
+  70% {
+    height: 48%;
+  }
+  85%,
+  100% {
+    height: 72%;
+  }
+}
+
+.bsd-tut-erp-bar {
+  min-height: 12%;
+  height: 22%;
+  align-self: flex-end;
+  animation: bsd-tut-erp-h 10s ease-in-out infinite;
+}
+
+.bsd-tut-erp-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+.bsd-tut-erp-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.bsd-tut-erp-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.bsd-tut-erp-bar:nth-child(4) {
+  animation-delay: 0.55s;
+}
+
+@keyframes bsd-tut-scan-move {
+  0% {
+    top: 8%;
+    opacity: 0.5;
+  }
+  50% {
+    top: 82%;
+    opacity: 1;
+  }
+  100% {
+    top: 8%;
+    opacity: 0.5;
+  }
+}
+
+.bsd-tut-scan-line {
+  animation: bsd-tut-scan-move 10s ease-in-out infinite;
+}
+
+@keyframes bsd-tut-scan-file {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  20%,
+  35% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.bsd-tut-scan-file {
+  animation: bsd-tut-scan-file 10s ease-in-out infinite;
+}
+
+@keyframes bsd-tut-scan-prog {
+  0% {
+    width: 0%;
+    opacity: 0.6;
+  }
+  40% {
+    width: 72%;
+    opacity: 1;
+  }
+  70% {
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 0%;
+    opacity: 0.5;
+  }
+}
+
+.bsd-tut-scan-progress {
+  animation: bsd-tut-scan-prog 10s ease-in-out infinite;
 }

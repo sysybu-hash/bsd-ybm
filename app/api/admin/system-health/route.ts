@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { hasPlatformPayPalConfigured } from "@/lib/platform-paypal";
 
 type ServiceStatus = {
   name: string;
@@ -11,7 +13,7 @@ type ServiceStatus = {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "SUPER_ADMIN") {
+  if (!isPlatformDeveloperEmail(session?.user?.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -35,10 +37,20 @@ export async function GET() {
     detail: "בדיקת מפתחות API",
   });
 
+  const payplusOk = Boolean(
+    process.env.PAYPLUS_API_KEY?.trim() &&
+      process.env.PAYPLUS_SECRET_KEY?.trim() &&
+      process.env.PAYPLUS_PAYMENT_PAGE_UID?.trim(),
+  );
+  const platformPaypal = hasPlatformPayPalConfigured();
   statuses.push({
-    name: "Stripe",
-    ok: Boolean(process.env.STRIPE_SECRET_KEY?.trim()),
-    detail: process.env.STRIPE_SECRET_KEY?.trim() ? "מוגדר" : "לא מוגדר",
+    name: "תשלומים (PayPal)",
+    ok: true,
+    detail: [
+      "ארגונים: PayPal לפי הגדרות DB",
+      platformPaypal ? "פלטפורמה: ENV מוגדר" : "פלטפורמה: ENV לא מוגדר",
+      payplusOk ? "PayPlus API ברקע" : "ללא PayPlus API",
+    ].join(" · "),
   });
 
   statuses.push({

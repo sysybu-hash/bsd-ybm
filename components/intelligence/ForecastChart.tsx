@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import RechartsBounded from "@/components/RechartsBounded";
 import { BrainCircuit, AlertTriangle } from "lucide-react";
 
 const forecastData = [
@@ -75,7 +76,7 @@ export default function ForecastChart() {
         </div>
       </div>
 
-      <div className="h-[400px] w-full font-mono">
+      <RechartsBounded height={400} className="font-mono">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartRows}
@@ -152,7 +153,7 @@ export default function ForecastChart() {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </RechartsBounded>
     </div>
   );
 }

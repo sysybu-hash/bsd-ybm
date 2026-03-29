@@ -15,7 +15,7 @@
 - **Frontend:** Next.js 15, Tailwind CSS, Shadcn/UI, Lucide.
 - **Backend:** Node.js, Server Actions, NextAuth (Google).
 - **Database:** PostgreSQL (Neon) via Prisma 6.
-- **Payments:** Stripe Checkout & Webhooks.
+- **Payments:** Pay Plus (ישראל), PayPal (הגדרות בארגון); ללא Stripe.
 - **Mobile:** Progressive Web App (PWA) support.
 
 ## 🔐 הגנה ואוטומציה
@@ -26,16 +26,16 @@
 
 ## 📂 מבנה בסיסי
 
-- `app/` – ניתוב (App Router), דשבורד, API (`/api/ai`, `/api/stripe`, `/api/webhooks/stripe` וכו').
+- `app/` – ניתוב (App Router), דשבורד, API (`/api/ai`, `/api/payplus`, webhooks וכו').
 - `app/actions/` – Server Actions (למשל עיבוד מסמכים).
 - `components/` – רכיבי UI.
-- `lib/` – Prisma, Auth, Stripe, בדיקות מכסה (קרדיטים).
+- `lib/` – Prisma, Auth, בדיקות מכסה (קרדיטים).
 - `prisma/` – סכמה ומיגרציות.
 
 ## 🚀 הרצה מקומית (סיכום)
 
 1. `npm install`
-2. קובץ `.env.local` עם לפחות: `DATABASE_URL`, `AUTH_SECRET`, `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, מפתחות Gemini, ובפרודקשן/בדיקות גם Stripe.
+2. קובץ `.env.local` עם לפחות: `DATABASE_URL`, `AUTH_SECRET`, `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, מפתחות Gemini; לתשלומים — Pay Plus / PayPal לפי הצורך.
 3. `npx prisma db push` (או מיגרציות לפי הסביבה).
 4. `npm run dev`
 

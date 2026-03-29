@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import { Zap, Shield, Briefcase, Building2, Brain, CheckCircle2, Star } from "lucide-react";
 import Link from "next/link";
-import AiBubble from "@/components/AiBubble";
-import AccessibilityMenu from "@/components/AccessibilityMenu";
 import SiteTutorialShowcase from "@/components/SiteTutorialShowcase";
 import EuComplianceStrip from "@/components/EuComplianceStrip";
 import LandingVideoTutorials from "@/components/LandingVideoTutorials";
@@ -52,9 +50,6 @@ export default function LandingMarketing() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 overflow-hidden font-sans" dir="rtl">
-      <AiBubble />
-      <AccessibilityMenu />
-
       <main className="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-6">
         <section
           id="ai-solutions"

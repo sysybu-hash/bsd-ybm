@@ -1,10 +1,11 @@
+import type { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
-import { calculatePayPlusNet } from "@/lib/billing-calculations";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
-import PayPlusInvoicesSection from "@/components/billing/PayPlusInvoicesSection";
+import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
+import PayPalSubscriptionCheckoutLazy from "@/components/billing/PayPalSubscriptionCheckoutLazy";
 import { ShieldCheck } from "lucide-react";
 
 function formatInvoiceDate(d: Date) {
@@ -22,18 +23,60 @@ function monthStart(d: Date) {
   return t;
 }
 
+const orgSelectBilling = {
+  name: true,
+  plan: true,
+  subscriptionStatus: true,
+  creditsRemaining: true,
+  monthlyAllowance: true,
+  isPayAsYouGo: true,
+  companyType: true,
+  taxId: true,
+  address: true,
+  isReportable: true,
+  paypalMerchantEmail: true,
+  paypalMeSlug: true,
+  liveDataTier: true,
+} as const;
+
+type OrgBilling = Prisma.OrganizationGetPayload<{ select: typeof orgSelectBilling }>;
+
+async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
+  try {
+    return await prisma.organization.findUnique({
+      where: { id: orgId },
+      select: orgSelectBilling,
+    });
+  } catch (e) {
+    console.warn("[billing] שאילתת ארגון מלאה נכשלה (אולי עמודות חסרות ב-DB) — נסיון מצומצם", e);
+    const minimal = await prisma.organization.findUnique({
+      where: { id: orgId },
+      select: {
+        name: true,
+        plan: true,
+        subscriptionStatus: true,
+        creditsRemaining: true,
+        monthlyAllowance: true,
+        isPayAsYouGo: true,
+        companyType: true,
+        taxId: true,
+        address: true,
+        isReportable: true,
+      },
+    });
+    if (!minimal) return null;
+    return {
+      ...minimal,
+      paypalMerchantEmail: null,
+      paypalMeSlug: null,
+      liveDataTier: "basic",
+    };
+  }
+}
+
 export default async function BillingPage() {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
-
-  const payplusConfigured = Boolean(
-    process.env.PAYPLUS_API_KEY?.trim() &&
-      process.env.PAYPLUS_SECRET_KEY?.trim() &&
-      process.env.PAYPLUS_PAYMENT_PAGE_UID?.trim(),
-  );
-
-  const mockPaymentAllowed =
-    process.env.NODE_ENV === "development" || process.env.PAYPLUS_ALLOW_MOCK === "true";
 
   if (!orgId) {
     return (
@@ -47,20 +90,7 @@ export default async function BillingPage() {
 
   const [org, dbInvoices, issuedDocuments, issuedThisMonth, paidInvoicesMonth, crmContacts] =
     await Promise.all([
-    prisma.organization.findUnique({
-      where: { id: orgId },
-      select: {
-        name: true,
-        plan: true,
-        subscriptionStatus: true,
-        creditsRemaining: true,
-        monthlyAllowance: true,
-        isPayAsYouGo: true,
-        companyType: true,
-        taxId: true,
-        address: true,
-      },
-    }),
+    fetchOrgForBilling(orgId),
     prisma.invoice.findMany({
       where: { organizationId: orgId },
       orderBy: { createdAt: "desc" },
@@ -99,10 +129,7 @@ export default async function BillingPage() {
   const monthVat = issuedThisMonth.reduce((s, d) => s + d.vat, 0);
   const pendingInvoices = dbInvoices.filter((i) => i.status !== "PAID");
   const pendingAmount = pendingInvoices.reduce((s, i) => s + (i.amount ?? 0), 0);
-  let netAfterPayPlusMonth = 0;
-  for (const inv of paidInvoicesMonth) {
-    netAfterPayPlusMonth += calculatePayPlusNet(inv.amount ?? 0).net;
-  }
+  const paidMonthGross = paidInvoicesMonth.reduce((s, i) => s + (i.amount ?? 0), 0);
 
   const payRows = dbInvoices.map((inv) => ({
     id: inv.id,
@@ -154,14 +181,73 @@ export default async function BillingPage() {
               <span className="text-emerald-600 mr-2 font-medium"> · Pay-as-you-go פעיל</span>
             ) : null}
           </p>
+          <p className="mt-2 text-xs text-slate-500">
+            רמת נתונים חיים:{" "}
+            <span className="font-bold text-slate-700">
+              {org.liveDataTier === "premium"
+                ? "פרימיום"
+                : org.liveDataTier === "standard"
+                  ? "מתקדם"
+                  : "בסיסי"}
+            </span>
+            {" — "}
+            ניתן לשנות ב־
+            <a href="/dashboard/settings?tab=billing" className="font-bold text-blue-700 underline">
+              הגדרות › מנויים
+            </a>
+            .
+          </p>
         </div>
       </div>
+
+      <div className="mx-auto mb-8 max-w-[1600px] px-4 sm:px-8">
+        <PayPalSubscriptionCheckoutLazy
+          clientId={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? ""}
+          currentPlan={org.plan}
+          subscriptionStatus={org.subscriptionStatus}
+        />
+      </div>
+
+      {org.paypalMeSlug || org.paypalMerchantEmail ? (
+        <div className="mx-auto mb-6 max-w-[1600px] px-4 sm:px-8">
+          <div
+            className="rounded-2xl border border-[#0070ba]/30 bg-gradient-to-r from-[#0070ba]/5 to-sky-50 p-5 text-sm text-slate-800"
+            dir="rtl"
+          >
+            <p className="font-bold text-slate-900 mb-2">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
+            <p className="text-xs text-slate-500 mb-2">
+              זה חשבון <strong>של הארגון</strong> להפניית לקוחות — לא חשבון מפעיל הפלטפורמה.
+            </p>
+            {org.paypalMerchantEmail ? (
+              <p className="text-slate-600">
+                חשבון PayPal:{" "}
+                <span className="font-mono font-medium" dir="ltr">
+                  {org.paypalMerchantEmail}
+                </span>
+              </p>
+            ) : null}
+            {org.paypalMeSlug ? (
+              <p className="mt-2">
+                <a
+                  href={`https://paypal.me/${encodeURIComponent(org.paypalMeSlug)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0070ba] px-4 py-2.5 font-bold text-white hover:bg-[#005ea6]"
+                >
+                  פתיחת PayPal.Me לתשלום
+                </a>
+              </p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <GlobalBillingPageClient
         organizationName={org.name}
         orgAddress={org.address}
         companyType={org.companyType}
         taxId={org.taxId}
+        isReportable={org.isReportable}
         contacts={crmContacts}
         issuedRows={issuedRows}
         stats={{
@@ -169,13 +255,13 @@ export default async function BillingPage() {
           monthVat,
           pendingAmount,
           pendingInvoiceCount: pendingInvoices.length,
-          netAfterPayPlusMonth,
+          paidMonthGross,
         }}
-        payPlusBlock={
-          <PayPlusInvoicesSection
+        paymentBlock={
+          <PayPalInvoicesSection
             invoices={payRows}
-            payplusConfigured={payplusConfigured}
-            mockPaymentAllowed={mockPaymentAllowed}
+            paypalMeSlug={org.paypalMeSlug}
+            paypalMerchantEmail={org.paypalMerchantEmail}
           />
         }
       />

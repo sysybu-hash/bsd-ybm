@@ -4,71 +4,101 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
 import CrmClient from "./CrmClient";
 import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
+
+async function loadContactsProjects(orgId: string) {
+  const [contacts, projects] = await Promise.all([
+    prisma.contact.findMany({
+      where: { organizationId: orgId },
+      include: { project: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.project.findMany({
+      where: { organizationId: orgId },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+  return { contacts, projects };
+}
 
 export default async function CRMPage() {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email?.trim().toLowerCase() ?? "";
-  if (!session?.user?.id || !isPlatformDeveloperEmail(email)) {
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const platformDev = isPlatformDeveloperEmail(email);
+  const meckanoOp = hasMeckanoAccess(session.user.email);
+
+  if (!platformDev && !meckanoOp) {
     redirect("/dashboard");
   }
 
-  const userId = session.user.id;
+  let orgId: string | null = null;
+  let organizations: CrmAdminOrganizationRow[] = [];
+  type Loaded = Awaited<ReturnType<typeof loadContactsProjects>>;
+  let contacts: Loaded["contacts"] = [];
+  let projects: Loaded["projects"] = [];
 
-  const [dbUser, organizationsRaw] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { organizationId: true },
-    }),
-    prisma.organization.findMany({
-      select: {
-        id: true,
-        name: true,
-        plan: true,
-        users: { take: 1, select: { email: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-  ]);
+  if (platformDev) {
+    const userId = session.user.id;
+    const [dbUser, organizationsRaw] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { organizationId: true },
+      }),
+      prisma.organization.findMany({
+        select: {
+          id: true,
+          name: true,
+          plan: true,
+          users: { take: 1, select: { email: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
 
-  const orgId = dbUser?.organizationId ?? null;
+    orgId = dbUser?.organizationId ?? null;
+    const orgIds = organizationsRaw.map((o) => o.id);
+    const invoiceSums =
+      orgIds.length > 0
+        ? await prisma.invoice.groupBy({
+            by: ["organizationId"],
+            where: { organizationId: { in: orgIds } },
+            _sum: { amount: true },
+          })
+        : [];
+    const totalByOrgId = new Map(
+      invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
+    );
+
+    organizations = organizationsRaw.map((o) => ({
+      id: o.id,
+      name: o.name,
+      plan: o.plan,
+      users: o.users,
+      invoiceTotalAmount: totalByOrgId.get(o.id) ?? 0,
+    }));
+
+    if (orgId) {
+      const loaded = await loadContactsProjects(orgId);
+      contacts = loaded.contacts;
+      projects = loaded.projects;
+    }
+  } else {
+    orgId = session.user.organizationId ?? null;
+    if (orgId) {
+      const loaded = await loadContactsProjects(orgId);
+      contacts = loaded.contacts;
+      projects = loaded.projects;
+    }
+    organizations = [];
+  }
+
   const hasOrganization = Boolean(orgId);
-
-  const [contacts, projects] = orgId
-    ? await Promise.all([
-        prisma.contact.findMany({
-          where: { organizationId: orgId },
-          include: { project: { select: { id: true, name: true } } },
-          orderBy: { createdAt: "desc" },
-        }),
-        prisma.project.findMany({
-          where: { organizationId: orgId },
-          orderBy: { createdAt: "desc" },
-        }),
-      ])
-    : [[], []];
-
-  const orgIds = organizationsRaw.map((o) => o.id);
-  const invoiceSums =
-    orgIds.length > 0
-      ? await prisma.invoice.groupBy({
-          by: ["organizationId"],
-          where: { organizationId: { in: orgIds } },
-          _sum: { amount: true },
-        })
-      : [];
-  const totalByOrgId = new Map(
-    invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
-  );
-
-  const organizations: CrmAdminOrganizationRow[] = organizationsRaw.map((o) => ({
-    id: o.id,
-    name: o.name,
-    plan: o.plan,
-    users: o.users,
-    invoiceTotalAmount: totalByOrgId.get(o.id) ?? 0,
-  }));
 
   return (
     <div className="min-h-screen bg-[#f8fafc] p-6 md:p-10" dir="rtl">

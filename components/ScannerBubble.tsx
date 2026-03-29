@@ -10,8 +10,15 @@ type Variant = "dark" | "light";
 /**
  * כפתור צף → מסך סריקה מלא (לא פופאפ קטן) — סגירה רק ב־X, בלי לחיצת רקע,
  * כדי למנוע פתיחה/סגירה חוזרת בטעות.
+ * dock: ללא מעטפת fixed — לשימוש ב־DashboardBottomDock
  */
-export default function ScannerBubble({ variant = "dark" }: { variant?: Variant }) {
+export default function ScannerBubble({
+  variant = "dark",
+  dock = false,
+}: {
+  variant?: Variant;
+  dock?: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const isLight = variant === "light";
 
@@ -32,11 +39,12 @@ export default function ScannerBubble({ variant = "dark" }: { variant?: Variant 
   const overlayBg = isLight ? "bg-slate-100/95 backdrop-blur-md" : "bg-slate-950/95 backdrop-blur-md";
   const headerBorder = isLight ? "border-slate-200 bg-white/90" : "border-white/10 bg-slate-900/80";
 
+  const wrapClass = dock
+    ? "relative z-[2] inline-block"
+    : "fixed bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-4 z-[100] sm:bottom-8 sm:right-8";
+
   return (
-    <div
-      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-4 z-[100] sm:bottom-8 sm:right-8"
-      dir="rtl"
-    >
+    <div className={wrapClass} dir="rtl">
       {!isOpen ? (
         <motion.button
           type="button"

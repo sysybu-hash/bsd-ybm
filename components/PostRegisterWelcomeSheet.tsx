@@ -1,0 +1,98 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { LogOut, Wifi, WifiOff } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+
+const STORAGE_KEY = "bsd_welcome_sheet_done";
+
+/**
+ * חלונית לאחר הרשמה / כניסה ראשונה — תמונה, סטטוס חיבור, התנתקות.
+ */
+export default function PostRegisterWelcomeSheet() {
+  const { data: session, status } = useSession();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || status !== "authenticated") return;
+    if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
+    const u = new URL(window.location.href);
+    if (u.searchParams.get("welcome") === "1") {
+      setOpen(true);
+      u.searchParams.delete("welcome");
+      const qs = u.searchParams.toString();
+      window.history.replaceState({}, "", `${u.pathname}${qs ? `?${qs}` : ""}`);
+    }
+  }, [status]);
+
+  const close = () => {
+    sessionStorage.setItem(STORAGE_KEY, "1");
+    setOpen(false);
+  };
+
+  if (!open || !session?.user) return null;
+
+  const connected = status === "authenticated";
+  const img = session.user.image;
+  const name = session.user.name ?? "משתמש";
+  const email = session.user.email ?? "";
+
+  return (
+    <div
+      className="fixed inset-0 z-[250] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bsd-welcome-title"
+    >
+      <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white p-8 shadow-2xl" dir="rtl">
+        <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-slate-900">
+          ברוך הבא ל־BSD-YBM
+        </h2>
+        <p className="mt-2 text-center text-sm text-slate-500">החשבון שלך מחובר ומוכן לעבודה</p>
+
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-blue-100 bg-slate-100 shadow-inner">
+            {img ? (
+              <Image src={img} alt="" fill className="object-cover" sizes="96px" unoptimized />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-3xl font-black text-blue-300">
+                {name.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold text-slate-900">{name}</p>
+            <p className="text-sm text-slate-500">{email}</p>
+          </div>
+          <div
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold ${
+              connected ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"
+            }`}
+          >
+            {connected ? <Wifi size={16} aria-hidden /> : <WifiOff size={16} aria-hidden />}
+            {connected ? "מחובר למערכת" : "בודק חיבור…"}
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-red-100 bg-red-50 py-3.5 text-sm font-black text-red-700 transition hover:bg-red-100"
+          >
+            <LogOut size={18} aria-hidden />
+            התנתק
+          </button>
+          <button
+            type="button"
+            onClick={close}
+            className="w-full rounded-2xl bg-blue-600 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-500/25 hover:bg-blue-500"
+          >
+            המשך לדשבורד
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

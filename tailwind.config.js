@@ -7,7 +7,16 @@ module.exports = {
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      minHeight: {
+        /** תאימות מובייל: dvh כשזמין, גיבוי ל-vh */
+        screen: "100vh",
+        "screen-dvh": "100dvh",
+      },
+      height: {
+        "screen-dvh": "100dvh",
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
 };

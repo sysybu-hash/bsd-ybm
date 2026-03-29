@@ -1,13 +1,18 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 import MissionControl from "@/components/MissionControl";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export default async function AdminMissionPage() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "SUPER_ADMIN") {
+  if (hasMeckanoAccess(session?.user?.email)) {
+    redirect("/dashboard");
+  }
+  if (!isPlatformDeveloperEmail(session?.user?.email)) {
     redirect("/dashboard");
   }
 

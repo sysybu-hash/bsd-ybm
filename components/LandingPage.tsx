@@ -1,80 +1,102 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, Target, BarChart3, ChevronLeft, Bot, Palette } from "lucide-react";
-import AiBubble from "@/components/AiBubble";
-
-const featureCards = [
-  {
-    title: "CRM חכם",
-    icon: <Bot className="text-blue-600" />,
-    desc: "ניהול מנויים ולקוחות רדומים בעזרת AI.",
-  },
-  {
-    title: "הפקת מסמכים",
-    icon: <Target className="text-green-600" />,
-    desc: "חשבוניות לכל סוגי העסקים בסטנדרט Kano.",
-  },
-  {
-    title: "ניתוח תזרים",
-    icon: <BarChart3 className="text-purple-600" />,
-    desc: "סיכומים כספיים עם חישובי PayPlus.",
-  },
-] as const;
-
-const pricingTiers = [
-  {
-    plan: "FREE / ניסיון",
-    price: "₪0",
-    sub: "עד 30 יום | משתמש בודד",
-    features: ["1 CRM ארגון", "ניתוח AI בסיסי", "מונה סריקות", "5 מסמכי IssuedDocument"],
-    popular: false,
-    badgeClass: "bg-slate-100 text-slate-700",
-    cardClass:
-      "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100",
-    zapClass: "text-slate-400",
-    ctaClass:
-      "mt-12 w-full block bg-gradient-to-tr from-slate-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-slate-300/50 text-center hover:scale-[1.03] transition-all text-lg",
-  },
-  {
-    plan: "PRO",
-    price: "₪99",
-    sub: "לחודש | עד 5 משתמשים",
-    features: [
-      "כל הפיצ'רים",
-      "ניתוח AI מתקדם",
-      "ניהול מנויים",
-      "100 מסמכי IssuedDocument",
-      "חתימה דיגיטלית",
-    ],
-    popular: true,
-    badgeClass: "bg-blue-100 text-blue-700",
-    cardClass:
-      "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-blue-200/40 border-4 border-blue-200 ring-4 ring-blue-100 relative",
-    zapClass: "text-blue-500",
-    ctaClass:
-      "mt-12 w-full block bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-blue-200/50 text-center hover:scale-[1.03] transition-all text-lg",
-  },
-  {
-    plan: "ENTERPRISE",
-    price: "דבר איתנו",
-    sub: "להתאמה מלאה לארגון",
-    features: ["תשתית גלובלית", "מודל AI ייעודי", "API פתוח", "תמיכה 24/7", "סוכן ניתוח ERP"],
-    popular: false,
-    badgeClass: "bg-indigo-100 text-indigo-700",
-    cardClass:
-      "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-indigo-200/40 border border-indigo-100",
-    zapClass: "text-indigo-500",
-    ctaClass:
-      "mt-12 w-full block bg-gradient-to-tr from-indigo-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-indigo-200/50 text-center hover:scale-[1.03] transition-all text-lg",
-  },
-] as const;
+import { useMemo } from "react";
+import { Zap, Target, BarChart3, ChevronLeft, Bot, Palette, Play } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LandingTutorialSection from "@/components/landing/LandingTutorialSection";
 
 export default function LandingPage() {
+  const { t, dir } = useI18n();
+
+  const featureCards = useMemo(
+    () => [
+      {
+        title: t("landing.featureCrmTitle"),
+        icon: <Bot className="text-blue-600" />,
+        desc: t("landing.featureCrmDesc"),
+      },
+      {
+        title: t("landing.featureInvTitle"),
+        icon: <Target className="text-green-600" />,
+        desc: t("landing.featureInvDesc"),
+      },
+      {
+        title: t("landing.featureFlowTitle"),
+        icon: <BarChart3 className="text-purple-600" />,
+        desc: t("landing.featureFlowDesc"),
+      },
+    ],
+    [t],
+  );
+
+  const pricingTiers = useMemo(
+    () => [
+      {
+        plan: t("landing.planFreeLabel"),
+        price: t("landing.planFreePrice"),
+        sub: t("landing.planFreeSub"),
+        features: [
+          t("landing.planFreeF1"),
+          t("landing.planFreeF2"),
+          t("landing.planFreeF3"),
+          t("landing.planFreeF4"),
+        ],
+        popular: false,
+        badgeClass: "bg-slate-100 text-slate-700",
+        cardClass:
+          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100",
+        zapClass: "text-slate-400",
+        ctaClass:
+          "mt-12 w-full block bg-gradient-to-tr from-slate-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-slate-300/50 text-center hover:scale-[1.03] transition-all text-lg",
+      },
+      {
+        plan: t("landing.planProLabel"),
+        price: t("landing.planProPrice"),
+        sub: t("landing.planProSub"),
+        features: [
+          t("landing.planProF1"),
+          t("landing.planProF2"),
+          t("landing.planProF3"),
+          t("landing.planProF4"),
+          t("landing.planProF5"),
+        ],
+        popular: true,
+        badgeClass: "bg-blue-100 text-blue-700",
+        cardClass:
+          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-blue-200/40 border-4 border-blue-200 ring-4 ring-blue-100 relative",
+        zapClass: "text-blue-500",
+        ctaClass:
+          "mt-12 w-full block bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-blue-200/50 text-center hover:scale-[1.03] transition-all text-lg",
+      },
+      {
+        plan: t("landing.planEntLabel"),
+        price: t("landing.planEntPrice"),
+        sub: t("landing.planEntSub"),
+        features: [
+          t("landing.planEntF1"),
+          t("landing.planEntF2"),
+          t("landing.planEntF3"),
+          t("landing.planEntF4"),
+          t("landing.planEntF5"),
+        ],
+        popular: false,
+        badgeClass: "bg-indigo-100 text-indigo-700",
+        cardClass:
+          "bg-white p-12 rounded-[3.5rem] shadow-2xl shadow-indigo-200/40 border border-indigo-100",
+        zapClass: "text-indigo-500",
+        ctaClass:
+          "mt-12 w-full block bg-gradient-to-tr from-indigo-700 to-indigo-600 text-white px-8 py-5 rounded-2xl font-black shadow-lg shadow-indigo-200/50 text-center hover:scale-[1.03] transition-all text-lg",
+      },
+    ],
+    [t],
+  );
+
   return (
     <div
       className="relative min-h-screen font-[var(--font-heading)] overflow-hidden text-right"
-      dir="rtl"
+      dir={dir}
     >
       <div
         className="fixed inset-0 z-0 bg-slate-950 bg-cover bg-center bg-no-repeat"
@@ -86,18 +108,19 @@ export default function LandingPage() {
         <h1 className="text-3xl font-black text-white italic tracking-tighter">
           BSD-<span className="text-blue-400">YBM</span>
         </h1>
-        <div className="flex gap-3 items-center">
+        <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-end">
+          <LanguageSwitcher tone="dark" showLabel />
           <Link
             href="/login"
             className="text-white/80 font-bold hover:text-white transition-colors text-sm"
           >
-            כניסה
+            {t("nav.login")}
           </Link>
           <Link
             href="/register"
             className="bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg shadow-blue-200/50 hover:scale-105 transition-all text-sm flex items-center gap-2"
           >
-            הרשמה מהירה <Zap size={14} />
+            {t("landing.registerQuick")} <Zap size={14} />
           </Link>
         </div>
       </header>
@@ -108,12 +131,11 @@ export default function LandingPage() {
         </div>
 
         <h2 className="text-6xl md:text-7xl font-black text-white leading-none tracking-tighter max-w-4xl mx-auto">
-          השדרה שמחברת בין כולם
+          {t("landing.heroTitle")}
         </h2>
 
         <p className="max-w-2xl text-xl md:text-2xl text-slate-200 mt-8 leading-relaxed font-medium">
-          מערכת <span className="text-yellow-400 font-bold">BSD-YBM Intelligence</span> מאחדת את
-          הניהול הפיננסי, ה-CRM והתזרים שלך למקום אחד חכם, מעוצב ומניע לפעולה.
+          {t("landing.heroSubtitle")}
         </p>
 
         <div className="flex gap-4 mt-16 flex-wrap justify-center">
@@ -121,20 +143,30 @@ export default function LandingPage() {
             href="#features"
             className="bg-white/10 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all text-lg"
           >
-            גלה עוד
+            {t("landing.ctaDiscover")}
+          </Link>
+          <Link
+            href="#tutorial-videos"
+            className="inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/10 transition-all text-lg"
+          >
+            <Play size={20} className="opacity-90" aria-hidden />
+            {t("landing.tutorialCta")}
           </Link>
           <Link
             href="/register"
             className="bg-white text-blue-700 font-black px-12 py-4 rounded-[2rem] text-lg shadow-2xl shadow-white/20 hover:scale-[1.03] transition-all flex items-center gap-2"
           >
-            התחל עכשיו <ChevronLeft size={20} />
+            {t("landing.ctaStart")} <ChevronLeft size={20} />
           </Link>
         </div>
       </main>
 
+      <LandingTutorialSection />
+
       <section
         id="features"
         className="relative z-30 bg-white rounded-[4rem] p-16 md:p-24 mx-4 md:mx-10 mb-24 shadow-2xl shadow-black/20 text-right"
+        dir={dir}
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {featureCards.map((feat) => (
@@ -155,13 +187,14 @@ export default function LandingPage() {
       <section
         id="pricing"
         className="relative z-30 bg-slate-50 rounded-[4rem] p-16 md:p-24 mx-4 md:mx-10 mb-24 shadow-2xl shadow-black/10 text-right border border-white"
+        dir={dir}
       >
         <div className="text-center mb-16">
           <span className="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-            תוכניות מנוי
+            {t("landing.pricingBadge")}
           </span>
           <h3 className="text-5xl font-black text-slate-900 tracking-tighter mt-4">
-            מצאו את המסלול שלכם
+            {t("landing.pricingHeadline")}
           </h3>
         </div>
 
@@ -170,7 +203,7 @@ export default function LandingPage() {
             <div key={tier.plan} className={tier.cardClass}>
               {tier.popular ? (
                 <span className="absolute -top-4 left-10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
-                  הכי פופולרי
+                  {t("landing.pricingPopular")}
                 </span>
               ) : null}
               <span
@@ -188,19 +221,16 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link href="/register" className={tier.ctaClass}>
-                בחירה בתוכנית
+                {t("landing.pricingChoose")}
               </Link>
             </div>
           ))}
         </div>
       </section>
 
-      <AiBubble />
-
       <footer className="relative z-50 p-10 text-center text-slate-400 text-[10px] bg-black/60 border-t border-white/5">
         <p className="font-bold uppercase tracking-widest italic flex items-center justify-center gap-3 flex-wrap">
-          <Palette size={12} /> BSD-YBM Intelligence System | {new Date().getFullYear()} | השדרה שמחברת
-          בין כולם
+          <Palette size={12} /> {t("landing.footerTagline")} | {new Date().getFullYear()}
         </p>
       </footer>
     </div>

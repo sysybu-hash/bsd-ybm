@@ -16,6 +16,25 @@ export function calculateTotals(netAmount: number, type: CompanyType) {
   };
 }
 
+/** מסמך מונפק — ארגון לא־מדווח: ללא מע״מ, סה״כ = נטו (מזכר פנימי) */
+export function calculateIssuedDocumentTotals(
+  netAmount: number,
+  companyType: CompanyType,
+  isReportable: boolean,
+) {
+  if (!isReportable) {
+    return {
+      net: netAmount,
+      vat: 0,
+      total: netAmount,
+      isExempt: true,
+      isInternalMemo: true as const,
+    };
+  }
+  const base = calculateTotals(netAmount, companyType);
+  return { ...base, isInternalMemo: false as const };
+}
+
 /** עמלת PayPlus: 1.2% + ‎₪1.20 — אותה לוגיקה כמו ב-CRM (עיגול אגורות) */
 export function calculatePayPlusNet(grossAmount: number) {
   return payPlusFeeIls(grossAmount);

@@ -1,14 +1,23 @@
-﻿import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
 import { Users, Building, CreditCard, ArrowUpRight, Clock, ShieldCheck } from "lucide-react";
+import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
+import PlatformPayPalOwnerCard from "@/components/admin/PlatformPayPalOwnerCard";
 
 export default async function AdminDashboard() {
   const session = await getServerSession(authOptions);
 
-  // אבטחה ברזל: רק יוחנן (הבעלים) יכול לראות את הדף הזה
-  if (!session || session.user?.email !== "sysybu@gmail.com") {
+  if (hasMeckanoAccess(session?.user?.email)) {
+    redirect("/dashboard");
+  }
+
+  // אבטחה: רק PLATFORM_DEVELOPER_EMAILS (לא SUPER_ADMIN ב-DB בלבד)
+  const allowed = isPlatformDeveloperEmail(session?.user?.email);
+  if (!session || !allowed) {
     redirect("/dashboard");
   }
 
@@ -52,6 +61,8 @@ export default async function AdminDashboard() {
           </p>
         </div>
       </header>
+
+      <PlatformPayPalOwnerCard />
 
       {/* שורת כרטיסיות נתונים (KPIs) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -158,6 +169,8 @@ export default async function AdminDashboard() {
           </table>
         </div>
       </div>
+
+      <AdminBroadcastNotifications />
 
     </div>
   );

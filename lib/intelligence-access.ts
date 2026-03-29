@@ -1,3 +1,6 @@
+import { isSpecialClientEmail } from "@/lib/meckano-access";
+import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+
 /** רכיבי Intelligence לפי תפקיד — ניתן להרחיב כאן מפת מודולים */
 
 export type IntelligenceModuleId =
@@ -64,16 +67,14 @@ export function canAccessIntelligenceDashboard(role: string | undefined): boolea
   return intelligenceModulesForRole(role).length > 0;
 }
 
-/** דף Executive + גרפים */
-export function canAccessExecutiveSuite(role: string | undefined): boolean {
-  return (
-    role === "SUPER_ADMIN" || role === "ORG_ADMIN" || role === "PROJECT_MGR"
-  );
-}
-
-/** אינטגרציית מקאנו (נוכחות / עובדים) */
-export function canAccessMeckano(role: string | undefined): boolean {
-  return (
-    role === "SUPER_ADMIN" || role === "ORG_ADMIN" || role === "PROJECT_MGR"
-  );
+/**
+ * דוח Executive גלובלי — רק בעלי פלטפורמה (PLATFORM_DEVELOPER_EMAILS), ללא מקאנו.
+ */
+export function canAccessExecutiveSuite(
+  _role: string | undefined,
+  email?: string | null | undefined,
+): boolean {
+  void _role;
+  if (isSpecialClientEmail(email)) return false;
+  return isPlatformDeveloperEmail(email);
 }

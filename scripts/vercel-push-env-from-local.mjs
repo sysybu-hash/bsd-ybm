@@ -1,7 +1,6 @@
 /**
  * דוחף משתנים מ־.env.local ל־Vercel — **production** בלבד.
- * stdin לערכים (מתאים ל-& ב-DATABASE_URL ולסיסמאות ב-Windows).
- * Preview: בפרויקט ללא Git מחובר ה-CLI דורש branch — להגדיר בדשבורד או לחבר מאגר.
+ * אופציה: --only=KEY1,KEY2,... (ערכים מקומיים בלבד, ללא הדפסת סודות).
  */
 import { readFileSync, existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -17,7 +16,13 @@ const envPath = resolve(root, ".env.local");
 const SKIP_KEYS = new Set(["VERCEL_OIDC_TOKEN"]);
 const ENVIRONMENTS = ["production"];
 const DELAY_MS = 650;
-const NEVER_SENSITIVE = new Set(["NEXTAUTH_URL", "AUTH_URL"]);
+const NEVER_SENSITIVE = new Set([
+  "NEXTAUTH_URL",
+  "AUTH_URL",
+  "GOOGLE_CLIENT_ID",
+  "NEXT_PUBLIC_SITE_URL",
+]);
+const PRODUCTION_NEXTAUTH_URL = "https://bsd-ybm.co.il";
 
 function sleepSync(ms) {
   const until = performance.now() + ms;
@@ -72,6 +77,51 @@ function pushOne(key, val, environment) {
   return { ok: success, msg: out.trim().slice(-800) };
 }
 
+function parseOnlyArg() {
+  const arg = process.argv.find((a) => a.startsWith("--only="));
+  if (!arg) return null;
+  return arg
+    .slice("--only=".length)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function resolveValueForOnlyKey(key, byKey) {
+  if (key === "NEXTAUTH_URL" || key === "AUTH_URL") {
+    const fromFile = byKey.AUTH_URL || byKey.NEXT_PUBLIC_SITE_URL;
+    if (fromFile && String(fromFile).trim()) {
+      return String(fromFile).trim().replace(/\/$/, "");
+    }
+    return PRODUCTION_NEXTAUTH_URL.replace(/\/$/, "");
+  }
+  if (key === "NEXTAUTH_SECRET") {
+    const v = byKey.NEXTAUTH_SECRET || byKey.AUTH_SECRET;
+    if (!v) {
+      console.error("חסר NEXTAUTH_SECRET או AUTH_SECRET ב-.env.local");
+      process.exit(1);
+    }
+    return v;
+  }
+  if (key === "GOOGLE_GENERATIVE_AI_API_KEY") {
+    const v =
+      byKey.GOOGLE_GENERATIVE_AI_API_KEY || byKey.GEMINI_API_KEY;
+    if (!v) {
+      console.error(
+        "חסר GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY ב-.env.local",
+      );
+      process.exit(1);
+    }
+    return v;
+  }
+  const v = byKey[key];
+  if (v == null || v === "") {
+    console.error(`חסר ${key} ב-.env.local`);
+    process.exit(1);
+  }
+  return v;
+}
+
 function main() {
   if (!existsSync(envPath)) {
     console.error("חסר קובץ .env.local");
@@ -80,12 +130,7 @@ function main() {
 
   const pairs = parseDotenv(readFileSync(envPath, "utf8"));
   const byKey = Object.fromEntries(pairs.map((p) => [p.key, p.val]));
-  const authUrl = byKey.AUTH_URL || byKey.NEXT_PUBLIC_SITE_URL || "https://bsd-ybm.co.il";
-  const filtered = pairs.filter((p) => p.key !== "NEXTAUTH_URL");
-
-  console.log(
-    `מעלה ${filtered.length} משתנים ל־production (+ NEXTAUTH_URL). Preview: דרך דשבורד.\n`,
-  );
+  const onlyKeys = parseOnlyArg();
 
   let ok = 0;
   let fail = 0;
@@ -102,14 +147,36 @@ function main() {
     sleepSync(DELAY_MS);
   }
 
-  for (const { key, val } of filtered) {
-    for (const env of ENVIRONMENTS) {
-      run(key, val, env);
+  if (onlyKeys?.length) {
+    console.log(
+      `מצב --only: ${onlyKeys.length} משתנים → production (NEXTAUTH_URL קבוע לפרודקשן).\n`,
+    );
+    for (const key of onlyKeys) {
+      const val = resolveValueForOnlyKey(key, byKey);
+      for (const env of ENVIRONMENTS) {
+        run(key, val, env);
+      }
     }
-  }
+  } else {
+    const authUrl =
+      byKey.AUTH_URL ||
+      byKey.NEXT_PUBLIC_SITE_URL ||
+      PRODUCTION_NEXTAUTH_URL;
+    const filtered = pairs.filter((p) => p.key !== "NEXTAUTH_URL");
 
-  for (const env of ENVIRONMENTS) {
-    run("NEXTAUTH_URL", authUrl.replace(/\/$/, ""), env);
+    console.log(
+      `מעלה ${filtered.length} משתנים ל־production (+ NEXTAUTH_URL). Preview: דרך דשבורד.\n`,
+    );
+
+    for (const { key, val } of filtered) {
+      for (const env of ENVIRONMENTS) {
+        run(key, val, env);
+      }
+    }
+
+    for (const env of ENVIRONMENTS) {
+      run("NEXTAUTH_URL", authUrl.replace(/\/$/, ""), env);
+    }
   }
 
   console.log(`\nסיום: ${ok} הצלחות, ${fail} כשלונות`);

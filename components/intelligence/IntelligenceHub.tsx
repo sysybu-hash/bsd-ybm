@@ -23,6 +23,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import RechartsBounded from "@/components/RechartsBounded";
 
 const forecastData = [
   { day: "01/04", balance: 52000, type: "actual" as const },
@@ -105,7 +106,7 @@ export default function IntelligenceHub() {
               </button>
             </div>
 
-            <div className="h-[300px] w-full">
+            <RechartsBounded height={300}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={forecastData}>
                   <defs>
@@ -149,7 +150,7 @@ export default function IntelligenceHub() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            </div>
+            </RechartsBounded>
             {isSimulating ? (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}

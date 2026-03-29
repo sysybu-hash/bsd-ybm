@@ -12,18 +12,24 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      role: true,
-      email: true,
-      organization: { select: { plan: true } },
-    },
-  });
+  const [userEmailRow, orgPlan] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { email: true },
+    }),
+    session.user.organizationId
+      ? prisma.organization.findUnique({
+          where: { id: session.user.organizationId },
+          select: { plan: true },
+        })
+      : Promise.resolve(null),
+  ]);
 
-  const plan = user?.organization?.plan ?? "FREE";
-  const superAdmin = user?.role === "SUPER_ADMIN";
-  const dev = !!(user?.email && isPlatformDeveloperEmail(user.email));
+  const plan = orgPlan?.plan ?? "FREE";
+  const superAdmin = session.user.role === "SUPER_ADMIN";
+  const dev = !!(
+    userEmailRow?.email && isPlatformDeveloperEmail(userEmailRow.email)
+  );
   const allowedIds = getAllowedAiProvidersForPlan(plan, superAdmin || dev);
 
   const providers = getAiProvidersPublic().map((p) => ({

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
+import { sendWelcomeEmail } from "@/lib/mail";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,6 +61,10 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    void sendWelcomeEmail(normalized, name).catch((err) =>
+      console.error("sendWelcomeEmail after register", err),
+    );
 
     return NextResponse.json({
       ok: true,

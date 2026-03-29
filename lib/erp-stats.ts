@@ -1,4 +1,7 @@
 import type { Document } from "@prisma/client";
+import type { AppLocale } from "@/lib/i18n/config";
+import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export type MonthlyExpensePoint = { name: string; value: number };
 
@@ -24,12 +27,14 @@ export function sumExpensesInCalendarMonth(
 export function buildMonthlyExpenseSeries(
   docs: Document[],
   monthsBack = 6,
+  appLocale: AppLocale = "en",
 ): MonthlyExpensePoint[] {
+  const tag = intlLocaleForApp(appLocale);
   const now = new Date();
   const points: MonthlyExpensePoint[] = [];
   for (let i = monthsBack - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const label = d.toLocaleDateString("he-IL", { month: "short" });
+    const label = d.toLocaleDateString(tag, { month: "short" });
     const value = sumExpensesInCalendarMonth(docs, d.getFullYear(), d.getMonth());
     points.push({ name: label, value });
   }
@@ -39,9 +44,13 @@ export function buildMonthlyExpenseSeries(
 export function formatExpenseTrendVsPrevious(
   current: number,
   previous: number,
+  t: TFunction,
 ): string {
-  if (previous <= 0) return current > 0 ? "חודש ראשון עם נתונים" : "—";
+  if (previous <= 0) {
+    return current > 0 ? t("erpStats.trendFirst") : t("erpStats.trendDash");
+  }
   const pct = Math.round(((current - previous) / previous) * 100);
-  if (pct === 0) return "0% לעומת חודש קודם";
-  return `${pct > 0 ? "+" : ""}${pct}% לעומת חודש קודם`;
+  if (pct === 0) return t("erpStats.trendZero");
+  const sign = pct > 0 ? "+" : "";
+  return t("erpStats.trendVsPrev", { sign, pct: String(pct) });
 }

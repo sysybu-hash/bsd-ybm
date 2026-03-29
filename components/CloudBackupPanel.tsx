@@ -154,6 +154,11 @@ export default function CloudBackupPanel() {
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
           </p>
+          <p className="mt-2 text-slate-600 border-t border-blue-200/60 pt-2">
+            <strong>מסמכים ישנים מהמחשב:</strong> העלאה ופענוח אצלנו ב־ERP דרך &quot;סורק ה־AI&quot;
+            (גרירה של כמה קבצים). חיבור ענן כאן מתאים בעיקר לגיבוי וסנכרון שוטפים אחרי שכבר עובדים
+            במערכת.
+          </p>
         </div>
       </div>
 

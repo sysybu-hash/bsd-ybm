@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { CompanyType, DocType } from "@prisma/client";
 import { createIssuedDocument } from "@/app/dashboard/billing/actions";
-import { calculateTotals, VAT_RATE } from "@/lib/billing-calculations";
+import { calculateIssuedDocumentTotals, VAT_RATE } from "@/lib/billing-calculations";
 
 export type CrmContactOption = { id: string; name: string };
 
@@ -25,6 +25,7 @@ type Props = {
   onClose: () => void;
   contacts: CrmContactOption[];
   companyType: CompanyType;
+  isReportable: boolean;
 };
 
 export default function CreateIssuedDocumentModal({
@@ -32,6 +33,7 @@ export default function CreateIssuedDocumentModal({
   onClose,
   contacts,
   companyType,
+  isReportable,
 }: Props) {
   const router = useRouter();
   const [clientName, setClientName] = useState("");
@@ -41,8 +43,8 @@ export default function CreateIssuedDocumentModal({
 
   const totals = useMemo(() => {
     const netAmount = items.reduce((sum, item) => sum + item.qty * item.price, 0);
-    return calculateTotals(netAmount, companyType);
-  }, [items, companyType]);
+    return calculateIssuedDocumentTotals(netAmount, companyType, isReportable);
+  }, [items, companyType, isReportable]);
 
   if (!isOpen) return null;
 
@@ -110,9 +112,11 @@ export default function CreateIssuedDocumentModal({
                 הפקת מסמך חדש
               </h2>
               <p className="text-blue-100 text-xs font-bold uppercase tracking-widest mt-1">
-                {companyType === CompanyType.EXEMPT_DEALER
-                  ? "עוסק פטור (ללא מע״מ)"
-                  : "עוסק מורשה / חברה (17% מע״מ)"}
+                {!isReportable
+                  ? "מזכר פנימי — ללא דיווח מס"
+                  : companyType === CompanyType.EXEMPT_DEALER
+                    ? "עוסק פטור (ללא מע״מ)"
+                    : "עוסק מורשה / חברה (17% מע״מ)"}
               </p>
             </div>
           </div>
@@ -142,6 +146,13 @@ export default function CreateIssuedDocumentModal({
                 <option value={DocType.RECEIPT}>קבלה</option>
                 <option value={DocType.CREDIT_NOTE}>חשבונית זיכוי</option>
               </select>
+              <p className="text-xs text-slate-500 leading-relaxed mt-2">
+                כל סוגי המסמכים הללו זמינים לכל ארגון לפי{" "}
+                <strong>סיווג המס והדיווח</strong> שהגדיר מנהל הארגון בהגדרות. מע״מ וניסוח המסמך
+                מחושבים אוטומטית לפי הסיווג. גבייה מהלקוח — בדף{" "}
+                <span className="font-semibold text-slate-700">מנוי ותשלומים</span> (PayPal), לפי
+                תוכנית ומגבלות המנוי.
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -229,10 +240,12 @@ export default function CreateIssuedDocumentModal({
               <span>סה״כ לפני מע״מ:</span>
               <span>₪{totals.net.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between text-slate-400 font-medium">
-              <span>מע״מ ({vatPercentLabel}):</span>
-              <span>₪{totals.vat.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
-            </div>
+            {isReportable ? (
+              <div className="flex justify-between text-slate-400 font-medium">
+                <span>מע״מ ({vatPercentLabel}):</span>
+                <span>₪{totals.vat.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
+              </div>
+            ) : null}
             <div className="flex justify-between text-2xl font-black text-slate-900 pt-3 border-t border-slate-200">
               <span>סה״כ לתשלום:</span>
               <span className="italic">
@@ -260,7 +273,7 @@ export default function CreateIssuedDocumentModal({
               "מפיק מסמך..."
             ) : (
               <>
-                <Check size={20} /> הפק מסמך רשמי
+                <Check size={20} /> {isReportable ? "הפק מסמך רשמי" : "הפק מזכר פנימי"}
               </>
             )}
           </button>

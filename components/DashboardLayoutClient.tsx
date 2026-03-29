@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -17,16 +18,17 @@ import {
   BarChart3,
   MapPinned,
 } from "lucide-react";
-import FinancialAssistant from "@/components/FinancialAssistant";
 import DashboardGlobalSearch from "@/components/DashboardGlobalSearch";
-import AccessibilityMenu from "@/components/AccessibilityMenu";
-import ScannerBubble from "@/components/ScannerBubble";
+import DashboardBottomDock from "@/components/DashboardBottomDock";
+import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
+import DashboardNotificationBell from "@/components/DashboardNotificationBell";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   canAccessExecutiveSuite,
   canAccessIntelligenceDashboard,
 } from "@/lib/intelligence-access";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
 
 const navClass =
   "flex w-full min-w-0 items-center gap-3 p-3 rounded-xl transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-950 text-start";
@@ -34,23 +36,32 @@ const navClass =
 type Props = {
   children: ReactNode;
   orgId: string;
-  showAdminLink: boolean;
   userRole: string;
-  showMeckanoLink: boolean;
+  /** אימייל מהשרת (גיבוי לפני הידרציית Session בצד לקוח) */
+  userEmail: string | null;
   /** מספר ימים שנותרו בניסיון FREE — null אם אין באנר */
   trialBannerDaysLeft: number | null;
+  /** מחושב בשרת — ללא מסתמכות על SUPER_ADMIN בלבד בצד לקוח */
+  showAdminNav: boolean;
 };
 
 export default function DashboardLayoutClient({
   children,
   orgId,
-  showAdminLink,
   userRole,
-  showMeckanoLink,
+  userEmail,
   trialBannerDaysLeft,
+  showAdminNav,
 }: Props) {
   const { t, dir } = useI18n();
+  const { data: sessionData } = useSession();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const effectiveEmail = (sessionData?.user?.email ?? userEmail ?? "").trim();
+  const isSpecialClient = hasMeckanoAccess(effectiveEmail);
+  const showMeckanoLink = isSpecialClient;
+  const meckanoOperatorMinimalNav = isSpecialClient;
+  const showAdminLink = showAdminNav && !isSpecialClient;
 
   const drawerClosedTransform =
     dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";
@@ -84,21 +95,23 @@ export default function DashboardLayoutClient({
       <Link href="/dashboard/erp" className={navClass} onClick={onNavigate}>
         <FileText size={20} /> <span>{t("dashboard.erp")}</span>
       </Link>
-      <Link
-        href="/dashboard/ai"
-        className={`${navClass} ring-1 ring-blue-100 bg-blue-50/40 hover:bg-blue-50`}
-        onClick={onNavigate}
-      >
-        <Sparkles size={20} className="text-[var(--primary-color,#3b82f6)]" />{" "}
-        <span className="font-semibold text-slate-900">{t("dashboard.aiHub")}</span>
-      </Link>
-      {canAccessIntelligenceDashboard(userRole) ? (
+      {!meckanoOperatorMinimalNav ? (
+        <Link
+          href="/dashboard/ai"
+          className={`${navClass} ring-1 ring-blue-100 bg-blue-50/40 hover:bg-blue-50`}
+          onClick={onNavigate}
+        >
+          <Sparkles size={20} className="text-[var(--primary-color,#3b82f6)]" />{" "}
+          <span className="font-semibold text-slate-900">{t("dashboard.aiHub")}</span>
+        </Link>
+      ) : null}
+      {!meckanoOperatorMinimalNav && canAccessIntelligenceDashboard(userRole) ? (
         <Link href="/dashboard/intelligence" className={navClass} onClick={onNavigate}>
           <Briefcase size={20} className="text-[var(--primary-color,#3b82f6)]" />{" "}
           <span>{t("dashboard.intelligence")}</span>
         </Link>
       ) : null}
-      {canAccessExecutiveSuite(userRole) ? (
+      {!meckanoOperatorMinimalNav && canAccessExecutiveSuite(userRole, effectiveEmail) ? (
         <Link href="/dashboard/executive" className={navClass} onClick={onNavigate}>
           <BarChart3 size={20} className="text-emerald-600" />{" "}
           <span>{t("dashboard.executive")}</span>
@@ -222,7 +235,7 @@ export default function DashboardLayoutClient({
       </aside>
 
       <main
-        className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 p-4 sm:p-6 md:p-8 relative overflow-y-auto overflow-x-hidden pb-[max(5.5rem,env(safe-area-inset-bottom,0px))] md:pb-8"
+        className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-4 pb-[max(6.5rem,env(safe-area-inset-bottom,0px))] sm:p-6 sm:pb-[max(6.5rem,env(safe-area-inset-bottom,0px))] md:p-8 md:pb-10"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* סרגל עליון מובייל — תפריט נסתר עד לפתיחה */}
@@ -246,35 +259,35 @@ export default function DashboardLayoutClient({
           </Link>
         </div>
 
-        <AccessibilityMenu />
         {trialBannerDaysLeft !== null ? (
           <div
             className="rounded-2xl border border-amber-200/90 bg-gradient-to-r from-amber-50 via-orange-50/80 to-amber-50 px-4 py-3 text-center shadow-sm sm:text-start"
             role="status"
           >
             <p className="text-sm font-bold text-amber-950">
-              נותרו{" "}
-              <span className="tabular-nums text-amber-900">
-                {trialBannerDaysLeft}
-              </span>{" "}
-              {trialBannerDaysLeft === 1 ? "יום" : "ימים"} בניסיון החינמי.{" "}
+              {trialBannerDaysLeft === 1
+                ? t("layout.trialBannerOne")
+                : t("layout.trialBannerMany", { days: String(trialBannerDaysLeft) })}{" "}
               <Link
                 href="/dashboard/billing"
                 className="font-black text-blue-700 underline decoration-2 underline-offset-2 hover:text-blue-900"
               >
-                שדרגו ל‑Pro
+                {t("layout.trialUpgrade")}
               </Link>{" "}
-              כדי לשמור על גישה מלאה לכלים.
+              {t("layout.trialSuffix")}
             </p>
           </div>
         ) : null}
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
           <p className="text-sm text-slate-500 hidden md:block">{t("dashboard.smartArchiveHint")}</p>
-          <DashboardGlobalSearch />
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-end w-full md:w-auto">
+            <DashboardNotificationBell />
+            <DashboardGlobalSearch />
+          </div>
         </div>
-        <div className="min-h-0 flex-1">{children}</div>
-        <FinancialAssistant orgId={orgId} />
-        <ScannerBubble variant="light" />
+        <div className="min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden">{children}</div>
+        <DashboardBottomDock orgId={orgId} />
+        <PostRegisterWelcomeSheet />
       </main>
     </div>
   );

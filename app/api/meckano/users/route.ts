@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { canAccessMeckanoPage } from "@/lib/meckano-access";
+import { hasMeckanoAccess } from "@/lib/meckano-access";
 
 const DEFAULT_MECKANO_USERS_URL = "https://app.meckano.co.il/rest/users";
 
@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canAccessMeckanoPage(session.user.role, session.user.email)) {
+    if (!hasMeckanoAccess(session.user.email)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, type FormEvent, type KeyboardEvent } 
 import { motion } from "framer-motion";
 import { Zap, Clock, Send, ShieldCheck, RefreshCw } from "lucide-react";
 
-const SYSTEMS = ["API", "Database", "Stripe", "AI Engine"] as const;
+const SYSTEMS = ["API", "Database", "תשלומים (PayPal)", "AI Engine"] as const;
 
 export default function MissionControl() {
   const [repairTime, setRepairTime] = useState("02:00");
@@ -41,7 +41,7 @@ export default function MissionControl() {
         setLiveStatuses([
           { name: "API", ok: false, detail: "שגיאת תקשורת" },
           { name: "Database", ok: false, detail: "לא זמין" },
-          { name: "Stripe", ok: false, detail: "לא זמין" },
+          { name: "תשלומים (PayPal)", ok: false, detail: "לא זמין" },
           { name: "AI Engine", ok: false, detail: "לא זמין" },
         ]);
       }

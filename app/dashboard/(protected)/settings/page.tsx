@@ -30,9 +30,16 @@ export default async function SettingsPage({
     companyType: string;
     taxId: string | null;
     address: string | null;
+    isReportable: boolean;
+    calendarGoogleEnabled: boolean;
+    tenantPublicDomain: string | null;
+    tenantSiteBrandingJson: string;
+    paypalMerchantEmail: string | null;
+    paypalMeSlug: string | null;
+    liveDataTier: string;
   } | null = null;
   if (session?.user?.organizationId) {
-    org = await prisma.organization.findUnique({
+    const row = await prisma.organization.findUnique({
       where: { id: session.user.organizationId },
       select: {
         name: true,
@@ -40,8 +47,24 @@ export default async function SettingsPage({
         companyType: true,
         taxId: true,
         address: true,
+        isReportable: true,
+        calendarGoogleEnabled: true,
+        tenantPublicDomain: true,
+        tenantSiteBrandingJson: true,
+        paypalMerchantEmail: true,
+        paypalMeSlug: true,
+        liveDataTier: true,
       },
     });
+    if (row) {
+      org = {
+        ...row,
+        tenantSiteBrandingJson:
+          row.tenantSiteBrandingJson != null
+            ? JSON.stringify(row.tenantSiteBrandingJson, null, 2)
+            : "",
+      };
+    }
   }
 
   return <SettingsPageClient initialOrg={org} initialTab={initialTab} />;

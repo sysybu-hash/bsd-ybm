@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { CompanyType, DocType, DocStatus } from "@prisma/client";
 import { Receipt, Building2, User2, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { VAT_RATE } from "@/lib/billing-calculations";
+import { getDocumentHeader } from "@/lib/document-header";
 
 export type IssuedDocumentPrintModel = {
   type: DocType;
@@ -22,6 +23,8 @@ export type OrganizationPrintModel = {
   address: string | null;
   taxId: string | null;
   companyType: CompanyType;
+  /** false = מזכר פנימי ללא דיווח מס */
+  isReportable: boolean;
 };
 
 const DOC_TYPE_TITLE: Record<DocType, string> = {
@@ -74,6 +77,16 @@ type Props = {
 };
 
 export default function DocumentPrintTemplate({ doc, org }: Props) {
+  const internalMemo = !org.isReportable;
+  const headerMeta = useMemo(
+    () =>
+      getDocumentHeader({
+        isReportable: org.isReportable,
+        companyType: org.companyType,
+        taxId: org.taxId,
+      }),
+    [org.isReportable, org.companyType, org.taxId],
+  );
   const isExempt = org.companyType === CompanyType.EXEMPT_DEALER;
   const lines = useMemo(() => lineItemsFromJson(doc.items), [doc.items]);
   const badge = statusBadge(doc.status);
@@ -113,8 +126,11 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
         </div>
         <div className="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 min-w-[12rem] shrink-0 w-full md:w-auto">
           <h2 className="text-3xl font-black text-blue-600 tracking-tight">
-            {DOC_TYPE_TITLE[doc.type]}
+            {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
           </h2>
+          {internalMemo ? (
+            <p className="text-sm font-bold text-amber-700 mt-2">{headerMeta.subTitle}</p>
+          ) : null}
           <p className="text-xl font-bold text-slate-800 mt-1">מספר: {doc.number}</p>
           <p className="text-sm text-slate-500 italic mt-1 font-medium">תאריך: {dateLabel}</p>
         </div>
@@ -140,7 +156,9 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
             <StatusIcon size={14} />
             {DOC_STATUS_LABEL[doc.status]}
           </div>
-          <p className="text-sm text-slate-500 mt-2 font-medium">אנא שמרו מסמך זה לצרכי מס</p>
+          <p className="text-sm text-slate-500 mt-2 font-medium">
+            {internalMemo ? "מסמך פנימי — ללא ערך לדיווח מס" : "אנא שמרו מסמך זה לצרכי מס"}
+          </p>
         </div>
       </div>
 
@@ -188,7 +206,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
             <span>סה״כ לפני מע״מ:</span>
             <span>₪{money(doc.amount)}</span>
           </div>
-          {!isExempt ? (
+          {!internalMemo && !isExempt ? (
             <div className="flex justify-between text-slate-400 font-medium">
               <span>מע״מ ({vatPercentLabel}):</span>
               <span>₪{money(doc.vat)}</span>
@@ -206,7 +224,9 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
           BSD-YBM Intelligence System | השדרה שמחברת בין כולם
         </p>
         <p className="text-[11px] text-slate-500 font-bold bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
-          מסמך ממוחשב — שמירה לצרכי תיעוד ומס באחריות המוציא
+          {internalMemo
+            ? "מזכר פנימי — לשימוש ארגוני בלבד"
+            : "מסמך ממוחשב — שמירה לצרכי תיעוד ומס באחריות המוציא"}
         </p>
       </div>
     </div>

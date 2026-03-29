@@ -144,9 +144,17 @@ export default function RegisterClient() {
             </p>
           )}
           {msg && (
-            <p className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-800">
-              {msg}
-            </p>
+            <div className="mt-4 space-y-3">
+              <p className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-800">
+                {msg}
+              </p>
+              <Link
+                href="/login?registered=1"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-500/25 hover:bg-blue-500"
+              >
+                המשך לכניסה (אחרי אישור מנוי)
+              </Link>
+            </div>
           )}
 
           <Link

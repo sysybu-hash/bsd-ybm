@@ -319,8 +319,8 @@ export default function MultiEngineScanner({
                 isLight ? "text-slate-400 text-sm font-medium" : "text-slate-400 text-sm mt-1"
               }
             >
-              {SCAN_ACCEPT_SUMMARY}. בחר מנוע אחד, כמה מנועים, או כולם — לאחר מכן תוצג השוואה
-              בעברית והמלצה.
+              {SCAN_ACCEPT_SUMMARY}. ניתן להעלות <strong>מספר קבצים יחד</strong> (ארכיון מהמחשב).
+              בחר מנוע אחד, כמה מנועים, או כולם — לאחר מכן תוצג השוואה בעברית והמלצה.
             </p>
           </div>
         </div>

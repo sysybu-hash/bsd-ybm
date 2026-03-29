@@ -21,10 +21,18 @@ import {
   Sparkles,
   ExternalLink,
   Cloud,
+  CalendarDays,
+  Globe,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
-import { updateOrganizationAction } from "@/app/actions/org-settings";
+import {
+  updateOrganizationAction,
+  updateTenantPortalAction,
+  updateBillingConnectionsAction,
+} from "@/app/actions/org-settings";
 import CloudBackupPanel from "@/components/CloudBackupPanel";
+import TenantCalendarMini from "@/components/TenantCalendarMini";
 import { useI18n } from "@/components/I18nProvider";
 
 const ORG_TYPE_VALUES = [
@@ -93,6 +101,13 @@ export default function SettingsPageClient({
     companyType: string;
     taxId: string | null;
     address: string | null;
+    isReportable: boolean;
+    calendarGoogleEnabled: boolean;
+    tenantPublicDomain: string | null;
+    tenantSiteBrandingJson: string;
+    paypalMerchantEmail: string | null;
+    paypalMeSlug: string | null;
+    liveDataTier: string;
   } | null;
   initialTab?: string;
 }) {
@@ -115,6 +130,11 @@ export default function SettingsPageClient({
   } | null>(null);
   const [orgMsg, setOrgMsg] = useState<string | null>(null);
   const [pendingOrg, startOrgTransition] = useTransition();
+  const [portalMsg, setPortalMsg] = useState<string | null>(null);
+  const [pendingPortal, startPortalTransition] = useTransition();
+  const [calendarConnectHint, setCalendarConnectHint] = useState<string | null>(null);
+  const [paymentConnMsg, setPaymentConnMsg] = useState<string | null>(null);
+  const [pendingPayment, startPaymentTransition] = useTransition();
 
   useEffect(() => {
     try {
@@ -360,11 +380,65 @@ export default function SettingsPageClient({
                             placeholder="כתובת להצגה במסמכים"
                           />
                         </div>
+                        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 space-y-2">
+                          <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-slate-800">
+                            <input
+                              type="checkbox"
+                              name="isReportable"
+                              defaultChecked={initialOrg.isReportable}
+                              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span>
+                              ארגון מדווח למס (חשבוניות והפקות רשמיות)
+                              <span className="block text-xs font-normal text-slate-500 mt-1">
+                                כבו את הסימון לניהול אישי בלבד — מסמכים יוצגו כמזכר פנימי ללא חישוב מע״מ.
+                              </span>
+                            </span>
+                          </label>
+                        </div>
+                        <div className="rounded-xl border border-sky-100 bg-sky-50/60 px-4 py-3 text-sm text-slate-700 leading-relaxed">
+                          <p className="font-bold text-slate-900 mb-1">הפקת מסמכים ותשלומים</p>
+                          <p>
+                            לפי הסיווג והדיווח שמגדירים כאן (מנהל ארגון), ניתן להפיק בדף{" "}
+                            <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                              מנוי ותשלומים
+                            </Link>{" "}
+                            את <strong>כל סוגי המסמכים</strong> שבמערכת: חשבונית מס, קבלה, חשבונית
+                            מס־קבלה וזיכוי. מע״מ וחישובים תואמים את סוג העוסק. גבייה מהלקוחות מתבצעת
+                            לפי הגדרות התשלום (PayPal של הארגון בלשונית מנויים) והמנוי.
+                          </p>
+                          <p className="mt-2 text-xs text-slate-600">
+                            חשבון PayPal של <strong>מפעיל האתר</strong> מוגדר בשרת בלבד (משתני סביבה) ומוצג
+                            בדף אדמין — לא כאן.
+                          </p>
+                          <p className="mt-2 text-xs text-slate-600">
+                            מסמכים סרוקים ישנים מהמחשב נכנסים דרך{" "}
+                            <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">
+                              תפעול וכספים (ERP)
+                            </Link>{" "}
+                            — סורק ה־AI עם העלאה מרובת־קבצים; חיבור ענן — בלשונית{" "}
+                            <Link href="/dashboard/settings?tab=cloud" className="font-bold text-blue-700 underline">
+                              גיבוי ענן
+                            </Link>
+                            .
+                          </p>
+                        </div>
                       </>
                     ) : (
                       <p className="text-sm text-slate-500 bg-white border border-slate-100 rounded-xl px-4 py-3">
                         פרטי מס וכתובת (ח.פ, סיווג עוסק) ניתנים לעדכון על ידי{" "}
                         <strong>מנהל ארגון</strong> בלבד. לשינוי — בקשו ממנהל הארגון או פנו לתמיכה.
+                        <span className="block mt-2 text-slate-600">
+                          הפקת כל סוגי המסמכים ותשלומי לקוחות — ב־
+                          <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                            מנוי ותשלומים
+                          </Link>
+                          ; ייבוא סריקות ישנות — ב־
+                          <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">
+                            ERP
+                          </Link>
+                          .
+                        </span>
                       </p>
                     )}
                   </form>
@@ -377,6 +451,118 @@ export default function SettingsPageClient({
                       {orgMsg}
                     </p>
                   )}
+                </div>
+              )}
+
+              {initialOrg && canEditTaxProfile && (
+                <div className="p-6 md:p-8 bg-slate-50 rounded-2xl border border-slate-100">
+                  <h4 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
+                    <Globe size={22} className="text-[var(--primary-color,#3b82f6)]" />
+                    פורטל המנוי, דף הבית ודומיין
+                  </h4>
+                  <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                    דומיין ציבורי (לאחר הגדרת DNS ב־Vercel), מיתוג JSON לעמוד הנחיתה, ולוח שנה עם סנכרון Google
+                    — כאן מגדירים את חוויית האתר של הארגון.
+                  </p>
+                  <form
+                    action={(fd) => {
+                      setPortalMsg(null);
+                      startPortalTransition(async () => {
+                        const r = await updateTenantPortalAction(fd);
+                        setPortalMsg(r.ok ? "✓ הגדרות הפורטל נשמרו" : r.error || "שגיאה");
+                        if (r.ok) router.refresh();
+                      });
+                    }}
+                    className="space-y-4 max-w-2xl"
+                  >
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        דומיין ציבורי (ללא https)
+                      </label>
+                      <input
+                        name="tenantPublicDomain"
+                        type="text"
+                        dir="ltr"
+                        defaultValue={initialOrg.tenantPublicDomain ?? ""}
+                        placeholder="app.example.co.il"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                      />
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                      <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-slate-800">
+                        <input
+                          type="checkbox"
+                          name="calendarGoogleEnabled"
+                          defaultChecked={initialOrg.calendarGoogleEnabled}
+                          className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="flex items-center gap-2">
+                          <CalendarDays size={16} className="text-blue-600 shrink-0" aria-hidden />
+                          הצגת לוח שנה בדשבורד והכנה לסנכרון Google Calendar
+                        </span>
+                      </label>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        מיתוג אתר (JSON — אופציונלי)
+                      </label>
+                      <textarea
+                        name="tenantSiteBrandingJson"
+                        rows={6}
+                        dir="ltr"
+                        defaultValue={initialOrg.tenantSiteBrandingJson}
+                        placeholder='{ "landingTitle": "...", "tagline": "...", "primaryColor": "#2563eb" }'
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white resize-y min-h-[8rem] font-mono text-xs"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={pendingPortal}
+                      className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-black disabled:opacity-50"
+                    >
+                      {pendingPortal ? "שומר…" : "שמור הגדרות פורטל"}
+                    </button>
+                  </form>
+                  {portalMsg && (
+                    <p
+                      className={`mt-3 text-sm ${
+                        portalMsg.startsWith("✓") ? "text-emerald-700" : "text-red-600"
+                      }`}
+                    >
+                      {portalMsg}
+                    </p>
+                  )}
+                  {initialOrg.calendarGoogleEnabled ? (
+                    <div className="mt-8 space-y-4 border-t border-slate-200 pt-8">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-sm font-bold text-slate-800">לוח שנה</p>
+                        <button
+                          type="button"
+                          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:bg-slate-50"
+                          onClick={async () => {
+                            setCalendarConnectHint(null);
+                            try {
+                              const res = await fetch("/api/integrations/google-calendar");
+                              const data = (await res.json()) as { message?: string };
+                              setCalendarConnectHint(
+                                data.message ?? "לא ניתן לטעון סטטוס חיבור.",
+                              );
+                            } catch {
+                              setCalendarConnectHint("שגיאת רשת בבדיקת החיבור.");
+                            }
+                          }}
+                        >
+                          בדיקת סטטוס חיבור Google
+                        </button>
+                      </div>
+                      {calendarConnectHint ? (
+                        <p className="text-sm text-slate-600 bg-white border border-slate-100 rounded-xl px-4 py-3">
+                          {calendarConnectHint}
+                        </p>
+                      ) : null}
+                      <TenantCalendarMini />
+                    </div>
+                  ) : null}
                 </div>
               )}
 
@@ -460,6 +646,95 @@ export default function SettingsPageClient({
 
           {activeTab !== "account" && activeTab !== "cloud" && (
             <div className="grid grid-cols-1 gap-6">
+              {activeTab === "billing" && initialOrg && canEditTaxProfile && (
+                <div className="p-6 md:p-8 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-sky-50/50">
+                  <h4 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
+                    <Wallet size={22} className="text-[#0070ba]" aria-hidden />
+                    PayPal של הארגון + רמת נתונים חיים
+                  </h4>
+                  <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                    Stripe הוסר מהמערכת (לא מתאים לישראל). השדות למטה הם ל־<strong>לקוחות הארגון</strong>{" "}
+                    (לא חשבון מפעיל האתר). בממשק המנויים תשלומי קצה מוצגים ב־PayPal לפי מה שמוגדר כאן —
+                    ראו{" "}
+                    <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                      דף המנויים
+                    </Link>
+                    . כאן מגדירים את חשבון PayPal: מייל לקבלה ואופציונלית PayPal.Me לקישורי תשלום.
+                  </p>
+                  <form
+                    action={(fd) => {
+                      setPaymentConnMsg(null);
+                      startPaymentTransition(async () => {
+                        const r = await updateBillingConnectionsAction(fd);
+                        setPaymentConnMsg(r.ok ? "✓ נשמר" : r.error || "שגיאה");
+                        if (r.ok) router.refresh();
+                      });
+                    }}
+                    className="space-y-4 max-w-xl"
+                  >
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        מייל חשבון PayPal (לקבלת תשלומים)
+                      </label>
+                      <input
+                        name="paypalMerchantEmail"
+                        type="email"
+                        dir="ltr"
+                        defaultValue={initialOrg.paypalMerchantEmail ?? ""}
+                        placeholder="your-paypal@email.com"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        שם משתמש PayPal.Me (אופציונלי)
+                      </label>
+                      <input
+                        name="paypalMeSlug"
+                        type="text"
+                        dir="ltr"
+                        defaultValue={initialOrg.paypalMeSlug ?? ""}
+                        placeholder="למשל: MyBusiness"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                      />
+                      <p className="mt-1 text-xs text-slate-500">
+                        רק השם — יוצג קישור ל־paypal.me/… לשיתוף עם לקוחות.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        רמת נתונים חיים / הכנה לביטוח ושירותים
+                      </label>
+                      <select
+                        name="liveDataTier"
+                        defaultValue={initialOrg.liveDataTier || "basic"}
+                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-slate-900 text-sm font-medium"
+                      >
+                        <option value="basic">בסיסי — ללא הזנת נתונים חיצוניים</option>
+                        <option value="standard">מתקדם — מוכן לחיבור ספקים</option>
+                        <option value="premium">פרימיום — נתונים חיים + ביטוח (הרחבה עתידית)</option>
+                      </select>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={pendingPayment}
+                      className="rounded-2xl bg-[#0070ba] px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-[#005ea6] disabled:opacity-50"
+                    >
+                      {pendingPayment ? "שומר…" : "שמור הגדרות תשלום ונתונים"}
+                    </button>
+                  </form>
+                  {paymentConnMsg && (
+                    <p
+                      className={`mt-3 text-sm ${
+                        paymentConnMsg.startsWith("✓") ? "text-emerald-700" : "text-red-600"
+                      }`}
+                    >
+                      {paymentConnMsg}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {(activeTab === "ai" || activeTab === "billing") && (
                 <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 flex flex-wrap items-center gap-3">
                   <Sparkles className="text-blue-600 shrink-0" size={22} />

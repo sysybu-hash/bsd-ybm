@@ -26,7 +26,6 @@ const authMiddleware = withAuth(
       pathname.startsWith("/api/crm") ||
       pathname.startsWith("/api/erp") ||
       pathname.startsWith("/api/assign-user") ||
-      pathname.startsWith("/api/stripe") ||
       pathname.startsWith("/api/integrations");
 
     if (protectedApi && (!token || !token.id)) {

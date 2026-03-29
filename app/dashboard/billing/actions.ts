@@ -6,7 +6,7 @@ import type { Prisma } from "@prisma/client";
 import { DocStatus, DocType } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { calculateTotals } from "@/lib/billing-calculations";
+import { calculateIssuedDocumentTotals } from "@/lib/billing-calculations";
 
 export type CreateIssuedDocumentInput = {
   type: DocType;
@@ -52,14 +52,18 @@ export async function createIssuedDocument(
 
   const org = await prisma.organization.findUnique({
     where: { id: orgId },
-    select: { companyType: true },
+    select: { companyType: true, isReportable: true },
   });
 
   if (!org) {
     return { ok: false, error: "הארגון לא נמצא." };
   }
 
-  const { vat, total } = calculateTotals(netAmount, org.companyType);
+  const { vat, total } = calculateIssuedDocumentTotals(
+    netAmount,
+    org.companyType,
+    org.isReportable,
+  );
 
   const lastDoc = await prisma.issuedDocument.findFirst({
     where: { organizationId: orgId, type: data.type },

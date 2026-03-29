@@ -44,12 +44,18 @@ const errorMessages: Record<string, string> = {
 const reasonMessages: Record<string, string> = {
   no_account: "אין חשבון פעיל עבור אימייל זה. נא להירשם או לפנות למנהל המערכת.",
   pending: "החשבון ממתין לאישור מנוי על ידי מנהל המערכת.",
+  blocked: "התחברות חסומה עבור כתובת זו. פנו למנהל המערכת.",
+  allowlist: "כתובת זו אינה ברשימת ההתרה להתחברות. רק חשבונות מורשים יכולים להיכנס.",
 };
 
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const registered = searchParams.get("registered");
+  const callbackUrl =
+    registered === "1"
+      ? "/dashboard?welcome=1"
+      : searchParams.get("callbackUrl") || "/dashboard";
   const errorCode = searchParams.get("error");
   const reason = searchParams.get("reason");
   const oauthError = errorCode ? errorMessages[errorCode] ?? errorMessages.Default : null;

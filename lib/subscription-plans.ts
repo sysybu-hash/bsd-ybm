@@ -31,3 +31,21 @@ export function planLabelHe(plan: string): string {
       return plan;
   }
 }
+
+/** מחיר מנוי חודשי בשקלים לתשלום PayPal (Live) — עדכן לפי המחירון שלך */
+export function planPriceIls(plan: string): number | null {
+  switch (plan) {
+    case "PRO":
+      return 199;
+    case "BUSINESS":
+      return 299;
+    case "ENTERPRISE":
+      return null;
+    default:
+      return null;
+  }
+}
+
+export function isPlanPayPalPurchasable(plan: string): boolean {
+  return planPriceIls(plan) != null;
+}

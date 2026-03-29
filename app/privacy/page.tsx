@@ -32,8 +32,7 @@ export default function PrivacyPage() {
             <strong>נתוני שימוש:</strong> מסמכים שהועלו, פעולות במערכת (לוגים), תוצאות AI.
           </li>
           <li>
-            <strong>תשלומים:</strong> [להשלים: Stripe מעבד תשלומים — ציון שמספק העיבוד הוא Stripe
-            ולאחרים לפי מדיניותם.]
+            <strong>תשלומים:</strong> PayPal בממשק האתר (לפי פרטי החשבון שמוגדרים בארגון); ללא Stripe.
           </li>
           <li>
             <strong>טכניים:</strong> כתובת IP, סוג דפדפן, עוגיות — ראו גם{" "}
