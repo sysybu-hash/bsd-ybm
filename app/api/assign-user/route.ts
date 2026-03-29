@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
 import type { UserRole } from "@prisma/client";
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     select: { organizationId: true, role: true },
   });
 
-  const isPlatformOwner = isPlatformDeveloperEmail(session.user.email);
+  const isPlatformOwner = isAdmin(session.user.email);
 
   if (!caller) {
     return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 403 });
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "אסור לשייך מחוץ לארגון שלך" }, { status: 403 });
   }
 
-  if (isPlatformDeveloperEmail(email)) {
+  if (isAdmin(email)) {
     return NextResponse.json(
       { error: "לא ניתן לשנות שיוך ארגון למשתמשי מפתח פלטפורמה." },
       { status: 403 },

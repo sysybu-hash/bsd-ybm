@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import MissionControl from "@/components/MissionControl";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -12,7 +12,7 @@ export default async function AdminMissionPage() {
   if (hasMeckanoAccess(session?.user?.email)) {
     redirect("/dashboard");
   }
-  if (!isPlatformDeveloperEmail(session?.user?.email)) {
+  if (!isAdmin(session?.user?.email)) {
     redirect("/dashboard");
   }
 

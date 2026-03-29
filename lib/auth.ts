@@ -4,10 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AccountStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import {
-  ensurePlatformDeveloperAccount,
-  isPlatformDeveloperEmail,
-} from "@/lib/platform-developers";
+import { ensurePlatformDeveloperAccount } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { verifyPassword } from "@/lib/password";
 import { hasMeckanoAccess, meckanoManagedOrganizationId } from "@/lib/meckano-access";
 import { isLoginBlockedEmail } from "@/lib/login-blocklist";
@@ -195,7 +193,7 @@ export const authOptions: NextAuthOptions = {
       token.organizationId = dbUser.organizationId;
 
       // SUPER_ADMIN ב-DB בלי רשימת בעלי פלטפורמה — לא מקבלים הרשאות מאסטר גלובלי בטוקן
-      if (dbUser.role === "SUPER_ADMIN" && !isPlatformDeveloperEmail(email)) {
+      if (dbUser.role === "SUPER_ADMIN" && !isAdmin(email)) {
         token.role = "ORG_ADMIN";
       }
 

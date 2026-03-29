@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { freeTrialDaysRemaining } from "@/lib/trial";
 import DashboardLayoutClient from "@/components/DashboardLayoutClient";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 
 /** מניעת מטמון RSC/CDN לתפריט לפי משתמש */
 export const dynamic = "force-dynamic";
@@ -23,9 +23,8 @@ export default async function DashboardLayout({
   }
 
   const email = session.user.email;
-  /** חדר מצב / מאסטר — רק בעלי פלטפורמה מפורשים (PLATFORM_DEVELOPER_EMAILS). לא מספיק SUPER_ADMIN ב-DB. */
-  const showAdminNav =
-    Boolean(email) && !hasMeckanoAccess(email) && isPlatformDeveloperEmail(email);
+  /** חדר מצב / מאסטר — רק Steel Admin (sysybu@gmail.com). לא מספיק SUPER_ADMIN ב-DB. */
+  const showAdminNav = Boolean(email) && !hasMeckanoAccess(email) && isAdmin(email);
 
   let trialBannerDaysLeft: number | null = null;
   const orgId = session.user.organizationId;
@@ -48,6 +47,7 @@ export default async function DashboardLayout({
       orgId={session?.user?.organizationId || ""}
       userRole={session.user.role}
       userEmail={session.user.email ?? null}
+      userImage={session.user.image ?? null}
       trialBannerDaysLeft={trialBannerDaysLeft}
       showAdminNav={showAdminNav}
     >

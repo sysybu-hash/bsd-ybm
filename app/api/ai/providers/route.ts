@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAiProvidersPublic } from "@/lib/ai-providers";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -28,7 +28,7 @@ export async function GET() {
   const plan = orgPlan?.subscriptionTier ?? "FREE";
   const superAdmin = session.user.role === "SUPER_ADMIN";
   const dev = !!(
-    userEmailRow?.email && isPlatformDeveloperEmail(userEmailRow.email)
+    userEmailRow?.email && isAdmin(userEmailRow.email)
   );
   const allowedIds = getAllowedAiProvidersForPlan(plan, superAdmin || dev);
 

@@ -11,19 +11,19 @@ import {
   sendAccessApprovedAdminNotify,
   sendAccessApprovedEmail,
 } from "@/lib/mail";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import {
   defaultScanBalancesForTier,
   parseSubscriptionTier,
 } from "@/lib/subscription-tier-config";
 
-/** אישור מנויים / ניהול לקוחות — רק PLATFORM_DEVELOPER_EMAILS */
+/** אישור מנויים / ניהול לקוחות — רק Steel Admin */
 async function requirePlatformOwner() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || !session.user.email) {
     return null;
   }
-  if (!isPlatformDeveloperEmail(session.user.email)) {
+  if (!isAdmin(session.user.email)) {
     return null;
   }
   return session;
@@ -109,8 +109,8 @@ export async function approvePendingRegistrationAction(
   if (!user?.organizationId) {
     return { ok: false, error: "משתמש/ארגון לא נמצא" };
   }
-  if (isPlatformDeveloperEmail(user.email)) {
-    return { ok: false, error: "לא ניתן לאשר משתמש מפתח פלטפורמה" };
+  if (isAdmin(user.email)) {
+    return { ok: false, error: "לא ניתן לאשר משתמש מנהל פלטפורמה" };
   }
 
   const balances = defaultScanBalancesForTier(tier);
@@ -165,8 +165,8 @@ export async function provisionUserAction(formData: FormData): Promise<
   if (!emailRaw || !organizationId) {
     return { ok: false, error: "חסר אימייל או ארגון" };
   }
-  if (isPlatformDeveloperEmail(emailRaw)) {
-    return { ok: false, error: "לא ניתן לספק סיסמה למשתמשי פלטפורמה" };
+  if (isAdmin(emailRaw)) {
+    return { ok: false, error: "לא ניתן לספק סיסמה למנהל הפלטפורמה" };
   }
 
   const role = PROVISION_ROLES.includes(roleStr as UserRole) ? (roleStr as UserRole) : "EMPLOYEE";

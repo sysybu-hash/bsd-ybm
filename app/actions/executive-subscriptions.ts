@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { Prisma, type SubscriptionTier } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import {
   CORPORATE_MAX_COMPANIES_EFFECTIVE,
   defaultScanBalancesForTier,
@@ -18,7 +18,7 @@ import { PLATFORM_UNLIMITED_CREDITS } from "@/lib/platform-developers";
 
 async function requireExecutive() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email || !isPlatformDeveloperEmail(session.user.email)) {
+  if (!session?.user?.email || !isAdmin(session.user.email)) {
     return null;
   }
   return session;
@@ -126,8 +126,6 @@ export async function executiveApplyManualSubscriptionAction(
         },
       });
     }
-    revalidatePath("/dashboard/executive/subscriptions");
-    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     revalidatePath("/dashboard/crm");
     return { ok: true };
@@ -167,8 +165,6 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
         tierMonthlyPricesJson,
       },
     });
-    revalidatePath("/dashboard/executive/subscriptions");
-    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {
@@ -226,8 +222,6 @@ export async function executiveUpdateBundlePriceAction(
       where: { id: bundleId },
       data: { priceIls },
     });
-    revalidatePath("/dashboard/executive/subscriptions");
-    revalidatePath("/dashboard/executive/manage-subscriptions");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {

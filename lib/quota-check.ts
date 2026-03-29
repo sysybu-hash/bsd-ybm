@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { decrementScan, type ScanUsageWarningId } from "@/lib/decrement-scan";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import type { ScanCreditKind } from "@/lib/scan-credit-kind";
 
@@ -72,7 +72,7 @@ export async function checkAndDeductScanCredit(
     where: { id: userId },
     select: { email: true },
   });
-  if (userRow?.email && isPlatformDeveloperEmail(userRow.email)) {
+  if (userRow?.email && isAdmin(userRow.email)) {
     const resolved = await resolveOrganizationForUser(orgId, userId);
     if (!resolved) {
       return { allowed: false, error: "משתמש לא נמצא במערכת." };

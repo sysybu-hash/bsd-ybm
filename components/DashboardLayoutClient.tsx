@@ -17,13 +17,12 @@ import {
   Briefcase,
   BarChart3,
   MapPinned,
-  MailPlus,
-  Crown,
 } from "lucide-react";
 import DashboardGlobalSearch from "@/components/DashboardGlobalSearch";
 import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
 import DashboardNotificationBell from "@/components/DashboardNotificationBell";
+import UserBadge from "@/components/UserBadge";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
@@ -31,8 +30,6 @@ import {
   canAccessIntelligenceDashboard,
 } from "@/lib/intelligence-access";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
-import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-super-admin";
-
 const navClass =
   "flex w-full min-w-0 items-center gap-3 p-3 rounded-xl transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-950 text-start";
 
@@ -46,6 +43,7 @@ type Props = {
   trialBannerDaysLeft: number | null;
   /** מחושב בשרת — ללא מסתמכות על SUPER_ADMIN בלבד בצד לקוח */
   showAdminNav: boolean;
+  userImage: string | null;
 };
 
 export default function DashboardLayoutClient({
@@ -55,6 +53,7 @@ export default function DashboardLayoutClient({
   userEmail,
   trialBannerDaysLeft,
   showAdminNav,
+  userImage,
 }: Props) {
   const { t, dir } = useI18n();
   const { data: sessionData } = useSession();
@@ -65,10 +64,8 @@ export default function DashboardLayoutClient({
   const showMeckanoLink = isSpecialClient;
   const meckanoOperatorMinimalNav = isSpecialClient;
   const showAdminLink = showAdminNav && !isSpecialClient;
-  const showExecutiveSubscriptions =
+  const showExecutiveDashboard =
     !meckanoOperatorMinimalNav && canAccessExecutiveSuite(userRole, effectiveEmail);
-  const showExecutiveSuperManage =
-    showExecutiveSubscriptions && isExecutiveSubscriptionSuperAdmin(effectiveEmail);
 
   const drawerClosedTransform =
     dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";
@@ -118,34 +115,10 @@ export default function DashboardLayoutClient({
           <span>{t("dashboard.intelligence")}</span>
         </Link>
       ) : null}
-      {!meckanoOperatorMinimalNav && canAccessExecutiveSuite(userRole, effectiveEmail) ? (
+      {!meckanoOperatorMinimalNav && showExecutiveDashboard ? (
         <Link href="/dashboard/executive" className={navClass} onClick={onNavigate}>
           <BarChart3 size={20} className="text-emerald-600" />{" "}
           <span>{t("dashboard.executive")}</span>
-        </Link>
-      ) : null}
-      {showExecutiveSubscriptions ? (
-        <Link
-          href="/dashboard/executive/subscriptions"
-          className={`${navClass} ring-1 ring-indigo-100 bg-indigo-50/50 hover:bg-indigo-50`}
-          onClick={onNavigate}
-        >
-          <MailPlus size={20} className="text-indigo-600" />{" "}
-          <span className="font-semibold text-slate-900">
-            {t("dashboard.executiveSubscriptions")}
-          </span>
-        </Link>
-      ) : null}
-      {showExecutiveSuperManage ? (
-        <Link
-          href="/dashboard/executive/manage-subscriptions"
-          className={`${navClass} border border-violet-200 bg-violet-50/70 hover:bg-violet-50`}
-          onClick={onNavigate}
-        >
-          <Crown size={20} className="text-violet-700" />{" "}
-          <span className="font-semibold text-violet-950">
-            {t("dashboard.executiveManageSubscriptions")}
-          </span>
         </Link>
       ) : null}
       {showMeckanoLink ? (
@@ -185,7 +158,7 @@ export default function DashboardLayoutClient({
 
   return (
     <div
-      className="flex min-h-[100dvh] min-h-screen max-w-[100vw] bg-slate-50 text-slate-900 overflow-x-hidden"
+      className="flex min-h-app max-w-[100vw] bg-slate-50 text-slate-900 overflow-x-hidden"
       dir={dir}
     >
       {/* תפריט צד — שולחן עבודה בלבד */}
@@ -314,6 +287,7 @@ export default function DashboardLayoutClient({
           <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-end w-full md:w-auto">
             <DashboardNotificationBell />
             <DashboardGlobalSearch />
+            <UserBadge fallbackEmail={userEmail} fallbackImage={userImage} />
           </div>
         </div>
         <div className="min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden">{children}</div>

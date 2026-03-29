@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
 import CrmClient from "./CrmClient";
 import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
@@ -31,7 +31,7 @@ export default async function CRMPage() {
     redirect("/login");
   }
 
-  const platformDev = isPlatformDeveloperEmail(email);
+  const platformDev = isAdmin(email);
   const meckanoOp = hasMeckanoAccess(session.user.email);
 
   if (!platformDev && !meckanoOp) {

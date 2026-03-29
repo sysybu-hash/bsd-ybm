@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* גובה מלא חוצה-דפדפנים (Safari iOS, Chrome, Edge) */
+@layer utilities {
+  .min-h-app {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+  }
+}
+
 :root {
   /* ברירת מחדל: מסך בהיר — דף הבית והדשבורד באותה שפה ויזואלית */
   --foreground-rgb: 15, 23, 42;

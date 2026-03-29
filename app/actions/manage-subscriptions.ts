@@ -149,8 +149,7 @@ export async function manageSubsCreateManualUserAction(
       console.error("sendProvisionCredentialsEmail manage-subscriptions", err),
     );
 
-    revalidatePath("/dashboard/executive/manage-subscriptions");
-    revalidatePath("/dashboard/executive/subscriptions");
+    revalidatePath("/dashboard/billing");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch (e) {
@@ -189,7 +188,7 @@ export async function manageSubsAdjustScansAction(
       },
     });
 
-    revalidatePath("/dashboard/executive/manage-subscriptions");
+    revalidatePath("/dashboard/billing");
     revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {
@@ -238,7 +237,7 @@ export async function manageSubsSendTierInviteAction(
     });
     if (!mail.ok) return { ok: false, error: mail.error };
 
-    revalidatePath("/dashboard/executive/manage-subscriptions");
+    revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsSendTierInviteAction", e);

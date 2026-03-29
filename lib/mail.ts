@@ -5,6 +5,14 @@ import { listMeckanoOperatorEmails } from "@/lib/meckano-access";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://bsd-ybm.co.il";
 const TAGLINE = "BSD-YBM - השדרה שמחברת בין כולם";
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function wrapBrandedHtml(innerBody: string): string {
   return `
 <!DOCTYPE html>
@@ -121,6 +129,53 @@ export async function sendWelcomeEmail(toEmail: string, name: string | null): Pr
   const r = await sendTransactionalEmail(toEmail.trim().toLowerCase(), "ברוכים הבאים ל־BSD-YBM", inner);
   if (!r.ok) {
     console.warn("sendWelcomeEmail:", r.error);
+  }
+}
+
+/** מייל ברוכים הבאים אחרי הרשמה — כולל רמת מנוי נוכחית (מותג BSD-YBM) */
+export async function sendRegistrationWelcomeEmail(
+  toEmail: string,
+  name: string | null,
+  params: {
+    tierLabelHe: string;
+    tierKey: string;
+    accountActive: boolean;
+    extraNote?: string;
+  },
+): Promise<void> {
+  const greeting = name?.trim() ? `שלום ${name.trim()},` : "שלום,";
+  const statusLine = params.accountActive
+    ? "החשבון שלך פעיל — ניתן להתחבר עם Google באותו אימייל."
+    : "החשבון ממתין לאישור מנהל המערכת; לאחר האישור תוכלו להתחבר.";
+  const extra = params.extraNote?.trim()
+    ? `<p style="margin:12px 0 0;color:#94a3b8;font-size:13px;text-align:center;line-height:1.6;">${escapeHtml(params.extraNote)}</p>`
+    : "";
+  const inner = `
+    <h1 style="margin:0 0 12px;font-size:24px;font-weight:800;background:linear-gradient(135deg,#fde68a,#e2e8f0);-webkit-background-clip:text;background-clip:text;color:transparent;text-align:center;">
+      Welcome to BSD-YBM
+    </h1>
+    <p style="margin:0 0 8px;color:#f8fafc;font-size:16px;text-align:center;font-weight:700;">ברוכים הבאים ל־BSD-YBM</p>
+    <p style="margin:0 0 16px;color:#cbd5e1;font-size:15px;text-align:center;">${greeting}</p>
+    <p style="margin:0 0 12px;color:#e2e8f0;font-size:15px;text-align:center;line-height:1.75;">
+      אתם כעת על רמת המנוי: <strong style="color:#fde68a;">${escapeHtml(params.tierLabelHe)}</strong>
+      <span style="color:#94a3b8;"> (${escapeHtml(params.tierKey)})</span>.
+    </p>
+    <p style="margin:0 0 20px;color:#94a3b8;font-size:14px;text-align:center;line-height:1.6;">
+      ${escapeHtml(statusLine)}
+    </p>
+    ${extra}
+    <p style="text-align:center;margin:28px 0 0;">
+      <a href="${SITE_URL}/login" style="display:inline-block;background:linear-gradient(135deg,#b45309,#ca8a04);color:#0f172a;font-weight:800;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 8px 24px rgba(180,83,9,0.35);">
+        כניסה למערכת
+      </a>
+    </p>`;
+  const r = await sendTransactionalEmail(
+    toEmail.trim().toLowerCase(),
+    "ברוכים הבאים ל־BSD-YBM — הרשמה הושלמה",
+    inner,
+  );
+  if (!r.ok) {
+    console.warn("sendRegistrationWelcomeEmail:", r.error);
   }
 }
 
@@ -241,14 +296,6 @@ export async function sendSubscriptionJoinInviteEmail(
     return { ok: false, error: r.error };
   }
   return { ok: true };
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 /** הזמנה להצטרף לארגון קיים (תפקיד שנבחר — לא יצירת ארגון חדש) */

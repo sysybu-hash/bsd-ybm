@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
 import { Users, Building, CreditCard, ArrowUpRight, Clock, ShieldCheck } from "lucide-react";
 import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
@@ -15,8 +15,8 @@ export default async function AdminDashboard() {
     redirect("/dashboard");
   }
 
-  // אבטחה: רק PLATFORM_DEVELOPER_EMAILS (לא SUPER_ADMIN ב-DB בלבד)
-  const allowed = isPlatformDeveloperEmail(session?.user?.email);
+  // אבטחה: רק Steel Admin — לא מספיק SUPER_ADMIN ב-DB בלבד
+  const allowed = isAdmin(session?.user?.email);
   if (!session || !allowed) {
     redirect("/dashboard");
   }
@@ -47,7 +47,10 @@ export default async function AdminDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-8 md:p-12 font-sans text-slate-900" dir="rtl">
+    <div
+      className="min-h-app bg-[#f8fafc] p-8 md:p-12 font-sans text-slate-900"
+      dir="rtl"
+    >
       
       {/* כותרת מנהל */}
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -128,8 +131,8 @@ export default async function AdminDashboard() {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-right">
+        <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+          <table className="w-full min-w-[640px] text-right">
             <thead>
               <tr className="border-b border-slate-100 text-slate-400 text-sm">
                 <th className="pb-4 font-medium">שם הלקוח / חברה</th>

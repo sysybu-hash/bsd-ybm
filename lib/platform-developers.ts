@@ -1,42 +1,30 @@
 import type { UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-
-/** מפתחי פלטפורמה — הרשאות מלאות (ברירת מחדל). ניתן לעקוף ב־PLATFORM_DEVELOPER_EMAILS (מופרד בפסיקים). */
-const DEFAULT_PLATFORM_DEVELOPER_EMAILS = [
-  "sysybu@gmail.com",
-  "yb@bsd-ybm.co.il",
-] as const;
+import { isAdmin, STEEL_ADMIN_EMAIL } from "@/lib/is-admin";
 
 /** PostgreSQL INT — ערך גבוה ללא ניכוי מעשי */
 export const PLATFORM_UNLIMITED_CREDITS = 2_147_483_647;
 
+/** רשימת בעלי פלטפורמה — מסונכרן עם isAdmin (Steel Lock) */
 export function getPlatformDeveloperEmails(): string[] {
-  const raw = process.env.PLATFORM_DEVELOPER_EMAILS?.trim();
-  if (raw) {
-    return raw
-      .split(",")
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean);
-  }
-  return [...DEFAULT_PLATFORM_DEVELOPER_EMAILS];
+  return [STEEL_ADMIN_EMAIL];
 }
 
+/** @deprecated השתמשו ב־isAdmin מ־lib/is-admin.ts */
 export function isPlatformDeveloperEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  const n = email.trim().toLowerCase();
-  return getPlatformDeveloperEmails().includes(n);
+  return isAdmin(email);
 }
 
 /**
  * מעדכן משתמש מפתח: SUPER_ADMIN, ארגון עם מכסה מקסימימלית.
- * מחזיר נתונים לטוקן אם האימייל ברשימה; אחרת null.
+ * רק sysybu@gmail.com (isAdmin).
  */
 export async function ensurePlatformDeveloperAccount(
   rawEmail: string | null | undefined,
 ): Promise<{ id: string; role: UserRole; organizationId: string | null } | null> {
   if (!rawEmail) return null;
   const normalized = rawEmail.trim().toLowerCase();
-  if (!isPlatformDeveloperEmail(normalized)) return null;
+  if (!isAdmin(normalized)) return null;
 
   const user = await prisma.user.findFirst({
     where: { email: { equals: normalized, mode: "insensitive" } },

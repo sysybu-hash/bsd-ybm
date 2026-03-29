@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import type { Prisma, SubscriptionTier } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isAdmin } from "@/lib/is-admin";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
 import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
@@ -12,10 +16,19 @@ import BillingQuickPayments from "@/components/billing/BillingQuickPayments";
 import BillingWorkspaceEditor from "@/components/billing/BillingWorkspaceEditor";
 import SubscriptionPricingTable from "@/components/billing/SubscriptionPricingTable";
 import ScanUsageRadialCharts from "@/components/billing/ScanUsageRadialCharts";
+import BillingUnifiedTabsClient from "@/components/billing/BillingUnifiedTabsClient";
 import { parseBillingWorkspace } from "@/lib/billing-workspace";
 import { ShieldCheck } from "lucide-react";
 import { tierAllowance, tierLabelHe, ADMIN_SUBSCRIPTION_TIER_OPTIONS } from "@/lib/subscription-tier-config";
 import { getEffectiveTierMonthlyPriceIls, getPayPalClientIdPublic } from "@/lib/billing-pricing";
+import { ensureDefaultScanBundles } from "@/lib/ensure-scan-bundles";
+import ExecutiveSubscriptionsPanel from "@/components/executive/ExecutiveSubscriptionsPanel";
+import ManageSubscriptionsPanel from "@/components/executive/ManageSubscriptionsPanel";
+
+export const metadata: Metadata = {
+  title: "מנויים ותשלומים | BSD-YBM Intelligence",
+  description: "דוחות, שימוש במנוי, תשלומים וניהול מנויים",
+};
 
 function formatInvoiceDate(d: Date) {
   return new Intl.DateTimeFormat("he-IL", {
@@ -85,9 +98,17 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
   }
 }
 
-export default async function BillingPage() {
+type SearchParams = Promise<{ tab?: string }>;
+
+export default async function BillingPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
+  const sp = await searchParams;
+  const isSteelAdmin = isAdmin(session?.user?.email);
+  const tabRaw = sp.tab?.trim();
+  if (!isSteelAdmin && (tabRaw === "manage" || tabRaw === "advanced")) {
+    redirect("/dashboard/billing");
+  }
 
   if (!orgId) {
     return (
@@ -99,6 +120,40 @@ export default async function BillingPage() {
 
   const start = monthStart(new Date());
 
+  const adminFetches = isSteelAdmin
+    ? (async () => {
+        await ensureDefaultScanBundles();
+        const [orgs, bundles, billingConfig] = await Promise.all([
+          prisma.organization.findMany({
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              name: true,
+              subscriptionTier: true,
+              subscriptionStatus: true,
+              cheapScansRemaining: true,
+              premiumScansRemaining: true,
+              maxCompanies: true,
+              trialEndsAt: true,
+              users: {
+                take: 1,
+                orderBy: { createdAt: "asc" },
+                select: { email: true },
+              },
+            },
+          }),
+          prisma.scanBundle.findMany({
+            where: { isActive: true },
+            orderBy: { sortOrder: "asc" },
+          }),
+          prisma.platformBillingConfig.findUnique({
+            where: { id: "default" },
+          }),
+        ]);
+        return { orgs, bundles, billingConfig };
+      })()
+    : Promise.resolve(null);
+
   const [
     org,
     dbInvoices,
@@ -108,6 +163,7 @@ export default async function BillingPage() {
     crmContacts,
     scanBundles,
     paypalClientId,
+    adminPack,
   ] = await Promise.all([
     fetchOrgForBilling(orgId),
     prisma.invoice.findMany({
@@ -140,6 +196,7 @@ export default async function BillingPage() {
       select: { id: true, name: true, priceIls: true, cheapAdds: true, premiumAdds: true },
     }),
     getPayPalClientIdPublic(),
+    adminFetches,
   ]);
 
   if (!org) {
@@ -199,9 +256,24 @@ export default async function BillingPage() {
     items: d.items,
   }));
 
-  return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-100">
-      <div className="max-w-[1600px] mx-auto px-4 pt-8 sm:px-8">
+  const initialOrgs =
+    adminPack?.orgs.map((o) => ({
+      id: o.id,
+      name: o.name,
+      subscriptionTier: o.subscriptionTier,
+      subscriptionStatus: o.subscriptionStatus,
+      cheapScansRemaining: o.cheapScansRemaining,
+      premiumScansRemaining: o.premiumScansRemaining,
+      maxCompanies: o.maxCompanies,
+      trialEndsAt: o.trialEndsAt,
+      primaryEmail: o.users[0]?.email ?? null,
+    })) ?? [];
+
+  const manageOrgs = initialOrgs;
+
+  const overview = (
+    <>
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
         <div className="mb-8 rounded-[1.5rem] border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6 shadow-xl shadow-black/30 text-sm text-slate-300">
           <p className="text-white font-bold mb-1 flex items-center gap-2">
             <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
@@ -221,7 +293,9 @@ export default async function BillingPage() {
           </p>
           <p className="mt-1">
             סריקות זולות נותרו:{" "}
-            <span className="font-medium text-sky-300">{formatCreditsForDisplay(org.cheapScansRemaining)}</span>
+            <span className="font-medium text-sky-300">
+              {formatCreditsForDisplay(org.cheapScansRemaining)}
+            </span>
             {" · "}
             פרימיום נותרו:{" "}
             <span className="font-medium text-violet-300">
@@ -238,7 +312,7 @@ export default async function BillingPage() {
                   : "בסיסי"}
             </span>
             {" — "}
-            לוח מס, PayPal, הזמנת צוות ותפקידים — ב־
+            לוח מס, PayPal והזמנת צוות — ב־
             <a href="/dashboard/settings?tab=account" className="font-bold text-sky-400 underline">
               הגדרות › חשבון
             </a>
@@ -287,7 +361,7 @@ export default async function BillingPage() {
           >
             <p className="font-bold text-slate-900 mb-2">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
             <p className="text-xs text-slate-500 mb-2">
-              זה חשבון <strong>של הארגון</strong> להפניית לקוחות — לא חשבון מפעיל הפלטפורמה.
+              זה חשבון <strong>של הארגון</strong> להפניית לקוחות — לא חשבון מפעיל האתר.
             </p>
             {org.paypalMerchantEmail ? (
               <p className="text-slate-600">
@@ -340,6 +414,67 @@ export default async function BillingPage() {
           paypalMerchantEmail={org.paypalMerchantEmail}
         />
       </div>
-    </div>
+    </>
+  );
+
+  const managePanel =
+    isSteelAdmin && adminPack ? (
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-6">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 p-4 sm:p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-1">
+            מנהל פלטפורמה
+          </p>
+          <p className="text-sm text-slate-600">
+            ניהול ארגונים, מחירי PayPal, חבילות סריקה והזמנות — רק לחשבון המורשה.
+          </p>
+        </div>
+        <ExecutiveSubscriptionsPanel
+          initialOrgs={initialOrgs}
+          bundles={adminPack.bundles}
+          billingConfig={
+            adminPack.billingConfig
+              ? {
+                  paypalClientIdPublic: adminPack.billingConfig.paypalClientIdPublic,
+                  tierMonthlyPricesJson: adminPack.billingConfig.tierMonthlyPricesJson,
+                }
+              : null
+          }
+        />
+      </div>
+    ) : null;
+
+  const advancedPanel =
+    isSteelAdmin && adminPack ? (
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 p-4 sm:p-6 shadow-sm mb-6">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">
+            הגדרות מתקדמות
+          </p>
+          <p className="text-sm text-slate-600">
+            יצירת משתמשים, הזמנות טוקן והתאמות יתרה — גישה מוגבלת.
+          </p>
+        </div>
+        <ManageSubscriptionsPanel initialOrgs={manageOrgs} />
+      </div>
+    ) : null;
+
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm font-medium"
+          dir="rtl"
+        >
+          טוען מנויים ותשלומים…
+        </div>
+      }
+    >
+      <BillingUnifiedTabsClient
+        isSteelAdmin={isSteelAdmin}
+        childrenOverview={overview}
+        childrenManage={managePanel}
+        childrenAdvanced={advancedPanel}
+      />
+    </Suspense>
   );
 }

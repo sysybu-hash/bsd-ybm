@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
-import { sendWelcomeEmail } from "@/lib/mail";
-import { defaultScanBalancesForTier } from "@/lib/subscription-tier-config";
+import { sendRegistrationWelcomeEmail } from "@/lib/mail";
+import { defaultScanBalancesForTier, tierLabelHe } from "@/lib/subscription-tier-config";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -99,9 +99,18 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "שגיאה בשמירת המשתמש" }, { status: 500 });
       }
 
-      void sendWelcomeEmail(normalized, name).catch((err) =>
-        console.error("sendWelcomeEmail after register (orgInvite)", err),
-      );
+      const joinedOrg = await prisma.organization.findUnique({
+        where: { id: inv.organizationId },
+        select: { subscriptionTier: true },
+      });
+      const tier = joinedOrg?.subscriptionTier ?? "FREE";
+      void sendRegistrationWelcomeEmail(normalized, name, {
+        tierLabelHe: tierLabelHe(tier),
+        tierKey: tier,
+        accountActive: true,
+        extraNote:
+          "הצטרפתם לארגון קיים כחברי צוות. Welcome to BSD-YBM — הרשאות לפי ההזמנה.",
+      }).catch((err) => console.error("sendRegistrationWelcomeEmail (orgInvite)", err));
 
       return NextResponse.json({
         ok: true,
@@ -179,9 +188,15 @@ export async function POST(req: Request) {
         });
       });
 
-      void sendWelcomeEmail(normalized, name).catch((err) =>
-        console.error("sendWelcomeEmail after register (invite)", err),
-      );
+      void sendRegistrationWelcomeEmail(normalized, name, {
+        tierLabelHe: tierLabelHe(inv.subscriptionTier),
+        tierKey: inv.subscriptionTier,
+        accountActive: true,
+        extraNote:
+          inv.subscriptionTier === "FREE"
+            ? "Welcome to BSD-YBM! You are currently on the FREE tier with an active trial window where applicable."
+            : undefined,
+      }).catch((err) => console.error("sendRegistrationWelcomeEmail (invite)", err));
 
       return NextResponse.json({
         ok: true,
@@ -213,9 +228,13 @@ export async function POST(req: Request) {
       },
     });
 
-    void sendWelcomeEmail(normalized, name).catch((err) =>
-      console.error("sendWelcomeEmail after register", err),
-    );
+    void sendRegistrationWelcomeEmail(normalized, name, {
+      tierLabelHe: tierLabelHe("FREE"),
+      tierKey: "FREE",
+      accountActive: false,
+      extraNote:
+        "Welcome to BSD-YBM! You are currently on the FREE tier pending admin approval — you will receive full access once approved.",
+    }).catch((err) => console.error("sendRegistrationWelcomeEmail (free signup)", err));
 
     return NextResponse.json({
       ok: true,

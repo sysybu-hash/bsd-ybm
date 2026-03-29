@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import type { Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
 
 const TITLE_MAX = 160;
@@ -14,7 +14,7 @@ function canBroadcast(session: Session | null): boolean {
   const u = session?.user as { email?: string | null } | undefined;
   if (!u?.email) return false;
   if (hasMeckanoAccess(u.email)) return false;
-  return isPlatformDeveloperEmail(u.email);
+  return isAdmin(u.email);
 }
 
 export async function POST(req: Request) {

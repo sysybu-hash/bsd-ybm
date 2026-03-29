@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import { hasPlatformPayPalConfigured } from "@/lib/platform-paypal";
 
 type ServiceStatus = {
@@ -13,7 +13,7 @@ type ServiceStatus = {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!isPlatformDeveloperEmail(session?.user?.email)) {
+  if (!isAdmin(session?.user?.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

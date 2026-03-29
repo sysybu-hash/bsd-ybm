@@ -24,7 +24,7 @@ import {
 } from "@/lib/quota-check";
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
@@ -136,7 +136,7 @@ export async function processDocumentAction(
     const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
     const superAdmin = accessUser?.role === "SUPER_ADMIN";
     const devBypass =
-      !!accessUser?.email && isPlatformDeveloperEmail(accessUser.email);
+      !!accessUser?.email && isAdmin(accessUser.email);
     const allowedProviders = getAllowedAiProvidersForPlan(
       orgPlan,
       superAdmin || devBypass,

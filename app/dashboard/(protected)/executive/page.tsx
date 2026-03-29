@@ -59,19 +59,19 @@ export default async function ExecutiveDashboardPage() {
         <div className="flex flex-wrap gap-3 self-start">
           {showSuperManage ? (
             <Link
-              href="/dashboard/executive/manage-subscriptions"
+              href="/dashboard/billing?tab=advanced"
               className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-bold text-violet-900 shadow-sm hover:border-violet-300 transition-colors"
             >
               <ArrowRight size={18} />
-              ניהול מנויים מתקדם
+              הגדרות מתקדמות (מנויים)
             </Link>
           ) : null}
           <Link
-            href="/dashboard/executive/subscriptions"
+            href="/dashboard/billing?tab=manage"
             className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-800 shadow-sm hover:border-emerald-300 transition-colors"
           >
             <ArrowRight size={18} />
-            ניהול מנויים וגבייה
+            ניהול ועריכת מנויים
           </Link>
           <Link
             href="/dashboard/intelligence"

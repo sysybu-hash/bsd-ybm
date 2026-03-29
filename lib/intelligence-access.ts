@@ -1,5 +1,4 @@
-import { isSpecialClientEmail } from "@/lib/meckano-access";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import { isAdmin } from "@/lib/is-admin";
 
 /** רכיבי Intelligence לפי תפקיד — ניתן להרחיב כאן מפת מודולים */
 
@@ -68,13 +67,12 @@ export function canAccessIntelligenceDashboard(role: string | undefined): boolea
 }
 
 /**
- * דוח Executive גלובלי — רק בעלי פלטפורמה (PLATFORM_DEVELOPER_EMAILS), ללא מקאנו.
+ * דוח Executive גלובלי — רק Steel Admin (sysybu@gmail.com).
  */
 export function canAccessExecutiveSuite(
   _role: string | undefined,
   email?: string | null | undefined,
 ): boolean {
   void _role;
-  if (isSpecialClientEmail(email)) return false;
-  return isPlatformDeveloperEmail(email);
+  return isAdmin(email);
 }

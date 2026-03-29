@@ -1,7 +1,7 @@
 /**
  * מחיקת משתמש לפי אימייל + ניקוי ארגון אם הוא היחיד בארגון (בדיקות / דמו).
  *
- * לא מוחק מפתחי פלטפורמה (PLATFORM_DEVELOPER_EMAILS / ברירת מחדל).
+ * לא מוחק את מנהל הפלטפורמה (Steel Admin: sysybu@gmail.com).
  *
  * דמה:
  *   npm run db:delete-user -- --email=jbuildgca@gmail.com --dry-run
@@ -20,15 +20,8 @@ config({ path: resolve(process.cwd(), ".env") });
 
 const prisma = new PrismaClient();
 
-function platformEmails() {
-  const raw = process.env.PLATFORM_DEVELOPER_EMAILS?.trim();
-  if (raw) {
-    return raw
-      .split(",")
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean);
-  }
-  return ["sysybu@gmail.com", "yb@bsd-ybm.co.il"];
+function steelAdminEmails() {
+  return ["sysybu@gmail.com"];
 }
 
 function parseArgs() {
@@ -67,8 +60,8 @@ async function main() {
     process.exit(1);
   }
 
-  if (platformEmails().includes(email)) {
-    console.error("אסור למחוק אימייל מפתח פלטפורמה:", email);
+  if (steelAdminEmails().includes(email)) {
+    console.error("אסור למחוק את מנהל הפלטפורמה:", email);
     process.exit(1);
   }
 
