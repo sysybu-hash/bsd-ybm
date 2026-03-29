@@ -1,0 +1,363 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum CustomerType {
+  HOME
+  FREELANCER
+  COMPANY
+  ENTERPRISE
+}
+
+/// סוג ישות עסקית למע״מ (עוסק פטור / מורשה / חברה בע״מ) — נפרד מ־CustomerType
+enum CompanyType {
+  EXEMPT_DEALER // עוסק פטור (0% מע״מ)
+  LICENSED_DEALER // עוסק מורשה (17% מע״מ)
+  LTD_COMPANY // חברה בע״מ (17% מע״מ)
+}
+
+/// סוג מסמך מס שהונפק על ידי הארגון (לא מסמכי סריקה ב־Document)
+enum DocType {
+  INVOICE // חשבונית מס
+  RECEIPT // קבלה
+  INVOICE_RECEIPT // חשבונית מס קבלה
+  CREDIT_NOTE // זיכוי
+}
+
+enum DocStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+/// תפקידים במערכת — אין כאן USER/ADMIN גנרי:
+/// CLIENT = משתמש קצה (ברירת מחדל), EMPLOYEE/PROJECT_MGR = צוות,
+/// ORG_ADMIN = מנהל ארגון, SUPER_ADMIN = מנהל פלטפורמה בלבד.
+enum UserRole {
+  SUPER_ADMIN
+  ORG_ADMIN
+  PROJECT_MGR
+  EMPLOYEE
+  CLIENT
+}
+
+enum AccountStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+}
+
+/// ספקי ענן לגיבוי / סריקה אוטונומית (הרשאות OAuth יתווספו בהמשך)
+enum CloudProvider {
+  GOOGLE_DRIVE
+  ONEDRIVE
+  DROPBOX
+  ICLOUD
+  S3_COMPATIBLE
+}
+
+model Organization {
+  id                   String         @id @default(cuid())
+  name                 String
+  type                 CustomerType   @default(HOME)
+  /// סיווג מס עבור חישובי מע״מ והצגה (ברירת מחדל: עוסק מורשה)
+  companyType          CompanyType    @default(LICENSED_DEALER)
+  /// ח.פ / ע.מ
+  taxId                String?
+  address              String?
+  plan                 String         @default("FREE")
+  subscriptionStatus   String         @default("INACTIVE")
+  creditsRemaining     Int            @default(5)
+  monthlyAllowance     Int            @default(5)
+  isPayAsYouGo         Boolean        @default(false)
+  stripeCustomerId     String?        @unique
+  stripeSubscriptionId String?
+  users                User[]
+  documents       Document[]
+  contacts        Contact[]
+  quotes          Quote[]
+  financialInsight FinancialInsight?
+  activityLogs     ActivityLog[]
+  projects         Project[]
+  cloudIntegrations   CloudIntegration[]
+  documentScanCaches  DocumentScanCache[]
+  documentLineItems   DocumentLineItem[]
+  productPriceObservations ProductPriceObservation[]
+  invoices         Invoice[]
+  issuedDocuments  IssuedDocument[]
+  createdAt        DateTime       @default(now())
+  /// סיום ניסיון לתוכנית FREE — null = ארגונים ישנים לפני השדה (ללא הגבלת ניסיון)
+  trialEndsAt      DateTime?
+}
+
+/// פרויקט / עסק תחת ארגון — לשיוך לקוחות ומעקב
+model Project {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contacts       Contact[]
+  /// פרויקט פעיל — מופיע בברירות מחדל; כבוי = ארכיון / לא ממשיך
+  isActive       Boolean      @default(true)
+  /// תחילת תקופת עבודה / זמינות (אופציונלי)
+  activeFrom     DateTime?
+  /// סיום תקופה מתוכננת (אופציונלי) — לתכנון משאבים
+  activeTo       DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([organizationId, isActive])
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String?
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
+  /// ברירת מחדל CLIENT — לא מנהל; יוצר ארגון ב־register מקבל ORG_ADMIN במפורש בקוד
+  role           UserRole        @default(CLIENT)
+  accountStatus  AccountStatus   @default(ACTIVE)
+  /// סיסמה מגובה bcrypt — התחברות מייל/סיסמה; משתמשי Google בלבד יכולים להשאיר ריק
+  passwordHash   String?
+  organizationId String?
+  organization   Organization?   @relation(fields: [organizationId], references: [id])
+  accounts       Account[]
+  sessions       Session[]
+  documents      Document[]
+  activityLogs   ActivityLog[]
+  createdAt      DateTime        @default(now())
+}
+
+model CloudIntegration {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  provider       CloudProvider
+  displayName    String?
+  accessToken    String?          @db.Text
+  refreshToken   String?          @db.Text
+  tokenExpiresAt DateTime?
+  autoScan       Boolean          @default(false)
+  backupExports  Boolean          @default(false)
+  folderPath     String?
+  lastSyncAt     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([organizationId, provider])
+  @@index([organizationId])
+}
+
+/// OAuth / NextAuth — נדרש עבור PrismaAdapter (התחברות Google)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Contact {
+  id             String       @id @default(cuid())
+  name           String
+  email          String?
+  status         String       @default("LEAD")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  projectId      String?
+  project        Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  quotes         Quote[]
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([projectId])
+}
+
+/// תובנות AI יומיות (מצב חיסכון) – רשומה אחת לכל ארגון
+model FinancialInsight {
+  id               String       @id @default(cuid())
+  organizationId   String       @unique
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  content          String       @db.Text
+  updatedAt        DateTime     @updatedAt
+}
+
+/// מסמכי מס שהארגון מנפיק (חשבונית / קבלה וכו׳) — לא כמו מודל Document של קבצים סרוקים ב־ERP
+model IssuedDocument {
+  id             String       @id @default(cuid())
+  type           DocType
+  /// מספר מסמך רץ בתוך הארגון (לפי סוג)
+  number         Int
+  date           DateTime     @default(now())
+  dueDate        DateTime?
+  clientName     String
+  /// סכום לפני מע״מ
+  amount         Float
+  vat            Float
+  total          Float
+  status         DocStatus    @default(PENDING)
+  /// פריטים: [{ desc, qty, price }, ...]
+  items          Json
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  /// מספר מסמך ייחודי לכל סוג בתוך הארגון (למשל חשבונית #1001 וקבלה #1001 — שניהם חוקיים)
+  @@unique([organizationId, type, number])
+  @@index([organizationId])
+}
+
+/// חשבונית / תשלום — עדכון סטטוס מ־PayPlus (או ספקים אחרים) דרך webhook
+model Invoice {
+  id                   String       @id @default(cuid())
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  status               String       @default("PENDING")
+  amount               Float?
+  currency             String       @default("ILS")
+  /// תיאור להצגה בדשבורד / במייל
+  description          String?
+  /// מספר חשבונית להצגה (לא חובה = מזהה קצר)
+  invoiceNumber        String?
+  customerName         String?
+  customerEmail        String?
+  /// מזהה עסקה ב־PayPlus (uid) לאחר אישור
+  payplusTransactionId String?      @unique
+  paidAt               DateTime?
+  lastWebhookPayload   Json?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+/// הצעת מחיר לחתימה דיגיטלית
+model Quote {
+  id               String       @id @default(cuid())
+  token            String       @unique
+  amount           Float
+  signatureBase64  String?
+  status           String       @default("PENDING")
+  contactId        String
+  contact          Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Document {
+  id             String       @id @default(cuid())
+  fileName       String
+  type           String
+  status         String       @default("PROCESSED")
+  aiData         Json?
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  lineItems              DocumentLineItem[]
+  productPriceObservations ProductPriceObservation[]
+}
+
+/// תוצאת סריקת AI לפי גיבוב קובץ — חיסכון במכסה ובעלות API
+model DocumentScanCache {
+  id               String       @id @default(cuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contentSha256    String
+  providerUsed     String
+  locale           String
+  schemaVersion    Int          @default(2)
+  resultJson       Json
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@unique([organizationId, contentSha256, providerUsed, locale, schemaVersion])
+  @@index([organizationId])
+}
+
+/// שורות מוצר/שירות מחשבוניות, קבלות והצעות — ללוח ספקים והשוואת מחירים
+model DocumentLineItem {
+  id               String       @id @default(cuid())
+  documentId       String
+  document         Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplierName     String?
+  description      String
+  normalizedKey    String
+  quantity         Float?
+  unitPrice        Float?
+  lineTotal        Float?
+  currency         String       @default("ILS")
+  sku              String?
+  createdAt        DateTime     @default(now())
+
+  @@index([organizationId, normalizedKey])
+  @@index([documentId])
+}
+
+/// צילום מחיר היסטורי לשורה — לאיתור ספק זול יותר
+model ProductPriceObservation {
+  id               String       @id @default(cuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documentId       String?
+  document         Document?    @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  normalizedKey    String
+  description      String
+  supplierName     String?
+  unitPrice        Float
+  currency         String       @default("ILS")
+  observedAt       DateTime     @default(now())
+
+  @@index([organizationId, normalizedKey, observedAt])
+}
+
+model ActivityLog {
+  id             String       @id @default(cuid())
+  action         String
+  details        String?
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+}

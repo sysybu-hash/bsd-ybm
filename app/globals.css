@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ברירת מחדל: מסך בהיר — דף הבית והדשבורד באותה שפה ויזואלית */
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 248, 250, 252;
+  --primary-color: #3b82f6;
+  --heading-color: #3b82f6;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+/* צבע כותרות גלובלי — מתעדכן יחד עם בחירת צבע נושא */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color, var(--primary-color, #3b82f6)) !important;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Custom Animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px var(--primary-color);
+  }
+
+  .bg-glow {
+    background: radial-gradient(circle at center, var(--primary-color) 0%, transparent 70%);
+    filter: blur(100px);
+    opacity: 0.15;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-slate-900/40 backdrop-blur-xl border border-white/5 shadow-2xl;
+  }
+
+  .glass-card-light {
+    @apply bg-white/95 backdrop-blur-xl border border-slate-200 shadow-2xl shadow-slate-200/40;
+  }
+}
+
+html.font-large {
+  font-size: 110%;
+}
+
+html.high-contrast {
+  filter: contrast(1.15) saturate(1.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tailwind Overrides for RTL spacing */
+.flex-row-reverse-rtl {
+  flex-direction: row-reverse;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

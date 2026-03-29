@@ -1,0 +1,172 @@
+"use client";
+
+import { motion } from "framer-motion";
+import {
+  TrendingUp,
+  ShoppingCart,
+  PenTool,
+  Map,
+  Clock,
+  ShieldCheck,
+  GraduationCap,
+  ArrowUpRight,
+  Globe2,
+} from "lucide-react";
+
+export default function ExecutiveSuite() {
+  const primaryColor = "var(--primary-color, #3b82f6)";
+
+  return (
+    <div className="min-h-screen bg-white p-6 md:p-10 font-sans text-slate-900" dir="rtl">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12 p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm"
+      >
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg">
+            <Clock size={24} aria-hidden />
+          </div>
+          <div>
+            <h2 className="text-xl font-black italic">סיכום יום BSD Intelligence</h2>
+            <p className="text-sm text-slate-500 font-medium">
+              היום נכנסו ₪12,400. יש 4 חוזים שממתינים לחתימה דיגיטלית.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="text-xs font-black uppercase tracking-tighter text-blue-600 hover:underline self-start sm:self-center"
+        >
+          לדוח המלא
+        </button>
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="space-y-8">
+          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl relative overflow-hidden group">
+            <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50" />
+            <div className="relative z-10">
+              <div className="flex justify-between mb-6">
+                <div className="p-3 bg-blue-50 rounded-2xl">
+                  <TrendingUp style={{ color: primaryColor }} size={24} />
+                </div>
+                <span className="text-emerald-500 font-black text-xs flex items-center gap-1">
+                  <ArrowUpRight size={14} /> 14%
+                </span>
+              </div>
+              <h4 className="text-slate-400 text-[10px] font-black uppercase mb-1">
+                שווי עסק מוערך
+              </h4>
+              <p className="text-4xl font-black italic tracking-tighter">₪1,250,000</p>
+              <p className="mt-4 text-[10px] text-slate-400 italic">
+                מבוסס על רווח וצמיחה ב-CRM.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 p-8 rounded-[3rem] border border-slate-100">
+            <h4 className="font-black italic mb-4 flex items-center gap-2 text-sm">
+              <ShoppingCart size={18} aria-hidden /> עוזר רכש AI
+            </h4>
+            <div className="p-4 bg-white rounded-2xl border border-slate-200 text-xs space-y-2 shadow-sm">
+              <p className="font-bold text-rose-500">מלאי &quot;נייר טיוטה&quot; נמוך!</p>
+              <p className="text-slate-500">נמצא ספק זול ב-12% מ-OfficeDepot.</p>
+              <button
+                type="button"
+                className="w-full mt-2 py-2 bg-slate-900 text-white rounded-lg font-bold"
+              >
+                צור הזמנה
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl min-h-[350px] relative">
+            <h4 className="font-black italic mb-6 flex items-center gap-2">
+              <Map className="text-emerald-500" aria-hidden /> פריסת לקוחות גאוגרפית (Heatmap)
+            </h4>
+            <div className="w-full min-h-[220px] bg-slate-50 rounded-3xl flex items-center justify-center text-slate-300 font-bold italic border border-slate-100">
+              [הדמיית מפה אינטראקטיבית — פוקוס: מרכז הארץ]
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-blue-600 p-8 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+              <Globe2
+                className="absolute top-[-20px] left-[-20px] text-white/10"
+                size={120}
+                aria-hidden
+              />
+              <h4 className="font-black italic mb-4">Marketing AI</h4>
+              <p className="text-xs text-blue-100 mb-6">
+                ה-AI זיהה זינוק במכירות &quot;משק בית&quot;. רוצה לייצר קמפיין פייסבוק ממוקד?
+              </p>
+              <button
+                type="button"
+                className="bg-white text-blue-600 px-6 py-2 rounded-xl text-xs font-black"
+              >
+                צור פוסטים
+              </button>
+            </div>
+
+            <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-lg">
+              <h4 className="font-black italic mb-4 flex items-center gap-2">
+                <PenTool className="text-purple-500" aria-hidden /> חתימה דיגיטלית
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl gap-2">
+                  <span className="text-[10px] font-bold">חוזה שירות — אקווה</span>
+                  <span className="text-[10px] text-amber-500 font-black italic shrink-0">ממתין</span>
+                </div>
+                <button
+                  type="button"
+                  className="w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-[10px] font-bold text-slate-400"
+                >
+                  שלח מסמך חדש
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl">
+            <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-6">
+              סטטוס בנקים מאוחד
+            </h4>
+            <div className="space-y-4">
+              <div className="flex justify-between border-b border-white/5 pb-2">
+                <span className="text-xs">בנק הפועלים (842)</span>
+                <span className="text-xs font-bold">₪42,100</span>
+              </div>
+              <div className="flex justify-between border-b border-white/5 pb-2">
+                <span className="text-xs">כרטיס עסקי Platinum</span>
+                <span className="text-xs font-bold text-rose-400">-₪8,400</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-emerald-50 p-8 rounded-[3rem] border border-emerald-100">
+            <h4 className="font-black italic text-emerald-900 mb-2 flex items-center gap-2">
+              <ShieldCheck size={18} aria-hidden /> יועץ מס AI
+            </h4>
+            <p className="text-[10px] text-emerald-700 leading-relaxed font-medium">
+              &quot;יוחנן, מצאתי ₪4,200 בהוצאות רכב שניתן להכיר בהן. להוסיף לדיווח הרבעוני?&quot;
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-lg text-center">
+            <GraduationCap className="mx-auto text-blue-500 mb-4" size={32} />
+            <h4 className="text-sm font-black italic">איך קוראים דוח P&amp;L?</h4>
+            <p className="text-[10px] text-slate-400 mb-4">מדריך קצר של 2 דקות מותאם לעסק שלך.</p>
+            <button type="button" className="text-xs font-bold text-blue-600">
+              צפה עכשיו
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
