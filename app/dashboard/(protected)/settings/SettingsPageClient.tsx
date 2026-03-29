@@ -33,6 +33,8 @@ import {
 } from "@/app/actions/org-settings";
 import CloudBackupPanel from "@/components/CloudBackupPanel";
 import TenantCalendarMini from "@/components/TenantCalendarMini";
+import QuickPaymentPresetsSettings from "@/components/settings/QuickPaymentPresetsSettings";
+import type { BillingWorkspaceV1 } from "@/lib/billing-workspace";
 import { useI18n } from "@/components/I18nProvider";
 
 const ORG_TYPE_VALUES = [
@@ -93,6 +95,7 @@ const PLACEHOLDER_FIELDS: Record<
 
 export default function SettingsPageClient({
   initialOrg,
+  initialBillingWorkspace,
   initialTab,
 }: {
   initialOrg: {
@@ -109,6 +112,7 @@ export default function SettingsPageClient({
     paypalMeSlug: string | null;
     liveDataTier: string;
   } | null;
+  initialBillingWorkspace: BillingWorkspaceV1 | null;
   initialTab?: string;
 }) {
   const { t, dir } = useI18n();
@@ -734,6 +738,13 @@ export default function SettingsPageClient({
                   )}
                 </div>
               )}
+
+              {activeTab === "billing" && initialBillingWorkspace && canEditTaxProfile ? (
+                <QuickPaymentPresetsSettings
+                  key={JSON.stringify(initialBillingWorkspace.quickPaymentPresets)}
+                  workspace={initialBillingWorkspace}
+                />
+              ) : null}
 
               {(activeTab === "ai" || activeTab === "billing") && (
                 <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 flex flex-wrap items-center gap-3">

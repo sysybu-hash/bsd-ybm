@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { parseBillingWorkspace } from "@/lib/billing-workspace";
+import type { BillingWorkspaceV1 } from "@/lib/billing-workspace";
 import SettingsPageClient from "./SettingsPageClient";
 
 const VALID_TABS = new Set([
@@ -38,6 +40,7 @@ export default async function SettingsPage({
     paypalMeSlug: string | null;
     liveDataTier: string;
   } | null = null;
+  let billingWorkspace: BillingWorkspaceV1 | null = null;
   if (session?.user?.organizationId) {
     const row = await prisma.organization.findUnique({
       where: { id: session.user.organizationId },
@@ -54,18 +57,27 @@ export default async function SettingsPage({
         paypalMerchantEmail: true,
         paypalMeSlug: true,
         liveDataTier: true,
+        billingWorkspaceJson: true,
       },
     });
     if (row) {
+      const { billingWorkspaceJson: bwRaw, ...rest } = row;
       org = {
-        ...row,
+        ...rest,
         tenantSiteBrandingJson:
           row.tenantSiteBrandingJson != null
             ? JSON.stringify(row.tenantSiteBrandingJson, null, 2)
             : "",
       };
+      billingWorkspace = parseBillingWorkspace(bwRaw);
     }
   }
 
-  return <SettingsPageClient initialOrg={org} initialTab={initialTab} />;
+  return (
+    <SettingsPageClient
+      initialOrg={org}
+      initialBillingWorkspace={billingWorkspace}
+      initialTab={initialTab}
+    />
+  );
 }

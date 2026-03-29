@@ -5,7 +5,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
-import type { BillingWorkspaceV1, InsuranceExpenseLine } from "@/lib/billing-workspace";
+import type {
+  BillingWorkspaceV1,
+  InsuranceExpenseLine,
+  QuickPaymentPreset,
+} from "@/lib/billing-workspace";
 
 function canEdit(role: string): boolean {
   return role === UserRole.ORG_ADMIN || role === UserRole.SUPER_ADMIN;
@@ -41,12 +45,28 @@ export async function saveBillingWorkspaceAction(
       ? ref
       : "none";
 
+  const cleanPresets: QuickPaymentPreset[] = (workspace.quickPaymentPresets ?? [])
+    .slice(0, 10)
+    .map((p) => ({
+      label: String(p.label ?? "").trim().slice(0, 120),
+      amountNis: Math.round(Number(p.amountNis) * 100) / 100,
+      invoiceDescription: String(p.invoiceDescription ?? "").trim().slice(0, 300) || undefined,
+    }))
+    .filter(
+      (p) =>
+        p.label.length > 0 &&
+        Number.isFinite(p.amountNis) &&
+        p.amountNis >= 1 &&
+        p.amountNis <= 100_000,
+    );
+
   const payload: BillingWorkspaceV1 = {
     v: 1,
     insuranceLines: cleanLines,
     referralLevel,
     referralNotes: String(workspace.referralNotes ?? "").slice(0, 4000),
     onboardingFreePitch: String(workspace.onboardingFreePitch ?? "").slice(0, 4000),
+    quickPaymentPresets: cleanPresets,
   };
 
   try {

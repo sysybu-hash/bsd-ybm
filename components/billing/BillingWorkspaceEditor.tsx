@@ -54,6 +54,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
       referralLevel,
       referralNotes: referralNotes.trim(),
       onboardingFreePitch: pitch.trim(),
+      quickPaymentPresets: initial.quickPaymentPresets,
     };
     startTransition(async () => {
       const r = await saveBillingWorkspaceAction(payload);

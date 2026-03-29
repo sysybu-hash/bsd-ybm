@@ -211,7 +211,7 @@ export default async function BillingPage() {
 
       <div className="mx-auto mb-6 max-w-[1600px] space-y-6 px-4 sm:px-8">
         <BillingOnboardingCallout text={billingWorkspace.onboardingFreePitch} />
-        <BillingQuickPayments />
+        <BillingQuickPayments presets={billingWorkspace.quickPaymentPresets} />
       </div>
 
       <div className="mx-auto mb-8 max-w-[1600px] px-4 sm:px-8">

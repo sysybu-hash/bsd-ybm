@@ -2,11 +2,16 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Zap, ArrowDown } from "lucide-react";
 import { createQuickPaymentInvoiceAction } from "@/app/actions/billing-invoice";
-import { planPriceIls } from "@/lib/subscription-plans";
+import type { QuickPaymentPreset } from "@/lib/billing-workspace";
 
-export default function BillingQuickPayments() {
+type Props = {
+  presets: QuickPaymentPreset[];
+};
+
+export default function BillingQuickPayments({ presets }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [custom, setCustom] = useState("");
@@ -22,9 +27,6 @@ export default function BillingQuickPayments() {
   const scrollToPayPalSubscribe = () => {
     document.getElementById("paypal-subscription")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  const pro = planPriceIls("PRO");
-  const bus = planPriceIls("BUSINESS");
 
   const applyCustom = () => {
     const n = Number(String(custom).replace(",", ".").trim());
@@ -51,46 +53,34 @@ export default function BillingQuickPayments() {
         <div>
           <h2 className="text-xl font-black text-slate-900">אפשרויות תשלום וגבייה</h2>
           <p className="text-sm text-slate-600 mt-1 leading-relaxed">
-            <strong>בקשות גבייה</strong> (₪10 / סכום מותאם / סכום כמו מחירון) נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me
-            אם הגדרתם אותו. <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal בשלב &quot;הפעלת מנוי&quot; למטה (לא
-            אותה פעולה כמו בקשת גבייה).
+            <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
+            <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
+            <Link href="/dashboard/settings?tab=billing" className="font-bold text-indigo-700 underline">
+              הגדרות › מנויים
+            </Link>
+            .
           </p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-5">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => run(10, "תשלום חד-פעמי ₪10")}
-          className={`${btn} border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-50`}
-        >
-          ₪10 — בקשת גבייה
-        </button>
-        {pro != null ? (
+        {presets.map((p, i) => (
           <button
+            key={`${p.amountNis}-${p.label}-${i}`}
             type="button"
             disabled={pending}
             onClick={() =>
-              run(pro, `בקשת תשלום חד-פעמית בסכום מחירון Pro (₪${pro}) — לא מנוי מחודש`)
+              run(
+                p.amountNis,
+                p.invoiceDescription?.trim() ||
+                  `בקשת תשלום — ${p.label} (₪${p.amountNis.toLocaleString("he-IL")})`,
+              )
             }
-            className={`${btn} border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100`}
+            className={`${btn} border-indigo-200 bg-white text-indigo-900 hover:bg-indigo-50`}
           >
-            ₪{pro.toLocaleString("he-IL")} — כמו Pro (חד-פעמי)
+            {p.label}
           </button>
-        ) : null}
-        {bus != null ? (
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() =>
-              run(bus, `בקשת תשלום חד-פעמית בסכום מחירון Business (₪${bus}) — לא מנוי מחודש`)
-            }
-            className={`${btn} border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100`}
-          >
-            ₪{bus.toLocaleString("he-IL")} — כמו Business (חד-פעמי)
-          </button>
-        ) : null}
+        ))}
         <button
           type="button"
           disabled={pending}
