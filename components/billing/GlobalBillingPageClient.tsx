@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CompanyType, DocType, type DocStatus } from "@prisma/client";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import {
@@ -12,6 +12,7 @@ import {
   History,
   MoreVertical,
   CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import CreateIssuedDocumentModal, {
@@ -19,7 +20,9 @@ import CreateIssuedDocumentModal, {
 } from "@/components/billing/CreateIssuedDocumentModal";
 import DocumentPrintTemplate from "@/components/billing/DocumentPrintTemplate";
 import ReportingCenter from "@/components/billing/ReportingCenter";
+import type { PayPalInvoiceRow } from "@/components/billing/PayPalInvoicesSection";
 import { exportAccountantMonthCsvAction } from "@/app/dashboard/billing/export-accountant-csv";
+import { paypalMeUrlWithAmount } from "@/lib/paypal-me-payment";
 
 export type IssuedDocRow = {
   id: string;
@@ -83,6 +86,49 @@ function docMatchesTab(type: DocType, tab: TabKey): boolean {
   return true;
 }
 
+type UnifiedRow =
+  | { kind: "issued"; doc: IssuedDocRow; sortTs: number }
+  | { kind: "paypal"; inv: PayPalInvoiceRow; sortTs: number };
+
+function rowMatchesTab(row: UnifiedRow, tab: TabKey): boolean {
+  if (row.kind === "paypal") {
+    return tab === "all" || tab === "invoices";
+  }
+  return docMatchesTab(row.doc.docType, tab);
+}
+
+function rowMatchesSearch(row: UnifiedRow, q: string): boolean {
+  if (!q) return true;
+  if (row.kind === "issued") {
+    const d = row.doc;
+    const num = String(d.number);
+    return (
+      d.clientName.toLowerCase().includes(q) ||
+      num.includes(q) ||
+      DOC_TYPE_LABEL[d.docType].toLowerCase().includes(q)
+    );
+  }
+  const inv = row.inv;
+  return (
+    inv.customerName.toLowerCase().includes(q) ||
+    inv.description.toLowerCase().includes(q) ||
+    String(inv.number).toLowerCase().includes(q) ||
+    inv.customerEmail.toLowerCase().includes(q)
+  );
+}
+
+function paypalStatusClass(status: string) {
+  if (status === "PAID") return "bg-emerald-100 text-emerald-700";
+  if (status === "PENDING") return "bg-orange-100 text-orange-700";
+  return "bg-slate-100 text-slate-600";
+}
+
+function paypalStatusLabel(status: string) {
+  if (status === "PAID") return "שולם";
+  if (status === "PENDING") return "בהמתנה";
+  return status;
+}
+
 type Props = {
   organizationName: string;
   orgAddress: string | null;
@@ -91,9 +137,12 @@ type Props = {
   /** false = מסמכים כמזכר פנימי ללא מע״מ */
   isReportable: boolean;
   issuedRows: IssuedDocRow[];
+  /** חשבוניות עסקה / גבייה PayPal (מודל Invoice) */
+  paypalRows?: PayPalInvoiceRow[];
+  paypalMeSlug?: string | null;
+  paypalMerchantEmail?: string | null;
   stats: BillingHubStats;
   contacts: CrmContactOption[];
-  paymentBlock?: ReactNode;
 };
 
 export default function GlobalBillingPageClient({
@@ -103,9 +152,11 @@ export default function GlobalBillingPageClient({
   taxId,
   isReportable,
   issuedRows,
+  paypalRows = [],
+  paypalMeSlug = null,
+  paypalMerchantEmail = null,
   stats,
   contacts,
-  paymentBlock,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tab, setTab] = useState<TabKey>("all");
@@ -130,19 +181,28 @@ export default function GlobalBillingPageClient({
     });
   };
 
+  const unifiedRows = useMemo((): UnifiedRow[] => {
+    const paypal: UnifiedRow[] = paypalRows.map((inv) => ({
+      kind: "paypal",
+      inv,
+      sortTs: new Date(inv.createdAtIso).getTime(),
+    }));
+    const issued: UnifiedRow[] = issuedRows.map((doc) => ({
+      kind: "issued",
+      doc,
+      sortTs: new Date(doc.dateIso).getTime(),
+    }));
+    return [...paypal, ...issued].sort((a, b) => b.sortTs - a.sortTs);
+  }, [paypalRows, issuedRows]);
+
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    return issuedRows.filter((row) => {
-      if (!docMatchesTab(row.docType, tab)) return false;
-      if (!q) return true;
-      const num = String(row.number);
-      return (
-        row.clientName.toLowerCase().includes(q) ||
-        num.includes(q) ||
-        DOC_TYPE_LABEL[row.docType].toLowerCase().includes(q)
-      );
-    });
-  }, [issuedRows, searchTerm, tab]);
+    return unifiedRows.filter(
+      (row) => rowMatchesTab(row, tab) && rowMatchesSearch(row, q),
+    );
+  }, [unifiedRows, searchTerm, tab]);
+
+  const hasAnyRows = issuedRows.length > 0 || paypalRows.length > 0;
 
   const vatHint = !isReportable
     ? "ארגון אישי — מזכר פנימי ללא מע״מ"
@@ -295,10 +355,10 @@ export default function GlobalBillingPageClient({
           <table className="w-full text-right min-w-[720px]">
             <thead className="bg-slate-50/30 text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100">
               <tr>
-                <th className="p-6 sm:p-8">סוג מסמך #</th>
+                <th className="p-6 sm:p-8">סוג / מקור #</th>
                 <th className="p-6 sm:p-8">לקוח / חברה</th>
                 <th className="p-6 sm:p-8 text-center">סטטוס</th>
-                <th className="p-6 sm:p-8 text-left">סה״כ (כולל מע״מ)</th>
+                <th className="p-6 sm:p-8 text-left">סכום</th>
                 <th className="p-6 sm:p-8 w-24" />
               </tr>
             </thead>
@@ -306,69 +366,136 @@ export default function GlobalBillingPageClient({
               {filtered.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-12 text-center text-slate-500 font-medium">
-                    {issuedRows.length === 0
-                      ? "אין עדיין מסמכים שהונפקו — לחצו על ״הפקת מסמך״ למעלה."
+                    {!hasAnyRows
+                      ? "אין עדיין מסמכים שהונפקו או בקשות תשלום PayPal — לחצו על ״הפקת מסמך״ או צרו חשבונית בדיקה בסעיף PayPal למטה."
                       : "אין תוצאות לסינון הנוכחי."}
                   </td>
                 </tr>
               ) : (
-                filtered.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="p-6 sm:p-8">
-                      <div className="flex items-center gap-4 sm:gap-5">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-50 rounded-[1.25rem] flex items-center justify-center text-blue-600 font-black shadow-sm italic shrink-0 text-sm sm:text-base">
-                          #{doc.number}
+                filtered.map((row) =>
+                  row.kind === "issued" ? (
+                    <tr key={`i-${row.doc.id}`} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="p-6 sm:p-8">
+                        <div className="flex items-center gap-4 sm:gap-5">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-50 rounded-[1.25rem] flex items-center justify-center text-blue-600 font-black shadow-sm italic shrink-0 text-sm sm:text-base">
+                            #{row.doc.number}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-900 text-base sm:text-lg">
+                              {DOC_TYPE_LABEL[row.doc.docType]}
+                            </p>
+                            <p className="text-[10px] text-blue-400 font-black uppercase tracking-wider leading-none mt-1">
+                              {COMPANY_BADGE[companyType]}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-black text-slate-900 text-base sm:text-lg">{DOC_TYPE_LABEL[doc.docType]}</p>
-                          <p className="text-[10px] text-blue-400 font-black uppercase tracking-wider leading-none mt-1">
-                            {COMPANY_BADGE[companyType]}
+                      </td>
+                      <td className="p-6 sm:p-8">
+                        <p className="font-bold text-slate-700">{row.doc.clientName}</p>
+                        <p className="text-xs text-slate-400">{row.doc.dateLabel}</p>
+                      </td>
+                      <td className="p-6 sm:p-8 text-center">
+                        <span
+                          className={`${STATUS_STYLE[row.doc.status]} px-4 sm:px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-sm tracking-tighter inline-block`}
+                        >
+                          {STATUS_LABEL[row.doc.status]}
+                        </span>
+                      </td>
+                      <td className="p-6 sm:p-8 text-left font-black text-slate-900 text-lg sm:text-xl tracking-tight italic">
+                        {formatMoney(row.doc.total)}
+                      </td>
+                      <td className="p-6 sm:p-8">
+                        <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            title="הדפסה / תצוגה להדפסה"
+                            onClick={() => setPrintRow(row.doc)}
+                            className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm text-slate-600"
+                          >
+                            <Download size={18} />
+                          </button>
+                          <button
+                            type="button"
+                            title="עוד"
+                            className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-slate-100 transition-all shadow-sm text-slate-400"
+                          >
+                            <MoreVertical size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={`p-${row.inv.id}`} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="p-6 sm:p-8">
+                        <div className="flex items-center gap-4 sm:gap-5">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#0070ba]/10 rounded-[1.25rem] flex items-center justify-center text-[#0070ba] font-black shadow-sm italic shrink-0 text-xs sm:text-sm">
+                            #{row.inv.number}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-900 text-base sm:text-lg">{row.inv.description}</p>
+                            <p className="text-[10px] text-[#0070ba] font-black uppercase tracking-wider leading-none mt-1">
+                              PayPal · בקשת תשלום
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-6 sm:p-8">
+                        <p className="font-bold text-slate-700">{row.inv.customerName}</p>
+                        <p className="text-xs text-slate-400">{row.inv.date}</p>
+                        {row.inv.customerEmail ? (
+                          <p className="text-[11px] text-slate-400 font-mono mt-0.5" dir="ltr">
+                            {row.inv.customerEmail}
                           </p>
+                        ) : null}
+                      </td>
+                      <td className="p-6 sm:p-8 text-center">
+                        <span
+                          className={`${paypalStatusClass(row.inv.status)} px-4 sm:px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-sm tracking-tighter inline-block`}
+                        >
+                          {paypalStatusLabel(row.inv.status)}
+                        </span>
+                      </td>
+                      <td className="p-6 sm:p-8 text-left font-black text-slate-900 text-lg sm:text-xl tracking-tight italic">
+                        {formatMoney(row.inv.amount)}
+                      </td>
+                      <td className="p-6 sm:p-8">
+                        <div className="flex flex-col items-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                          {row.inv.status !== "PAID" && paypalMeSlug?.trim() ? (
+                            <a
+                              href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 rounded-xl bg-[#0070ba] px-3 py-2 text-xs font-black text-white shadow-sm hover:bg-[#005ea6]"
+                            >
+                              <ExternalLink size={14} aria-hidden />
+                              תשלום
+                            </a>
+                          ) : null}
+                          {row.inv.status !== "PAID" &&
+                          paypalMerchantEmail?.trim() &&
+                          !paypalMeSlug?.trim() ? (
+                            <span className="text-[10px] text-slate-500 max-w-[140px] text-right" dir="ltr">
+                              {paypalMerchantEmail.trim()}
+                            </span>
+                          ) : null}
+                          {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
+                            <Link
+                              href="/dashboard/settings?tab=billing"
+                              className="text-[10px] font-bold text-[#0070ba] underline"
+                            >
+                              הגדרת PayPal
+                            </Link>
+                          ) : null}
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-6 sm:p-8">
-                      <p className="font-bold text-slate-700">{doc.clientName}</p>
-                      <p className="text-xs text-slate-400">{doc.dateLabel}</p>
-                    </td>
-                    <td className="p-6 sm:p-8 text-center">
-                      <span
-                        className={`${STATUS_STYLE[doc.status]} px-4 sm:px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-sm tracking-tighter inline-block`}
-                      >
-                        {STATUS_LABEL[doc.status]}
-                      </span>
-                    </td>
-                    <td className="p-6 sm:p-8 text-left font-black text-slate-900 text-lg sm:text-xl tracking-tight italic">
-                      {formatMoney(doc.total)}
-                    </td>
-                    <td className="p-6 sm:p-8">
-                      <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                        <button
-                          type="button"
-                          title="הדפסה / תצוגה להדפסה"
-                          onClick={() => setPrintRow(doc)}
-                          className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm text-slate-600"
-                        >
-                          <Download size={18} />
-                        </button>
-                        <button
-                          type="button"
-                          title="עוד"
-                          className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-slate-100 transition-all shadow-sm text-slate-400"
-                        >
-                          <MoreVertical size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  ),
+                )
               )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {paymentBlock ? <div className="space-y-6">{paymentBlock}</div> : null}
 
       <CreateIssuedDocumentModal
         isOpen={createOpen}

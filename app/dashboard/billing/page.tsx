@@ -137,6 +137,7 @@ export default async function BillingPage() {
     amount: inv.amount ?? 0,
     status: inv.status,
     date: formatInvoiceDate(inv.createdAt),
+    createdAtIso: inv.createdAt.toISOString(),
     description: inv.description ?? "חשבונית",
     customerName: inv.customerName ?? session?.user?.name ?? "לקוח",
     customerEmail: inv.customerEmail ?? session?.user?.email ?? "",
@@ -250,6 +251,9 @@ export default async function BillingPage() {
         isReportable={org.isReportable}
         contacts={crmContacts}
         issuedRows={issuedRows}
+        paypalRows={payRows}
+        paypalMeSlug={org.paypalMeSlug}
+        paypalMerchantEmail={org.paypalMerchantEmail}
         stats={{
           monthGross,
           monthVat,
@@ -257,14 +261,14 @@ export default async function BillingPage() {
           pendingInvoiceCount: pendingInvoices.length,
           paidMonthGross,
         }}
-        paymentBlock={
-          <PayPalInvoicesSection
-            invoices={payRows}
-            paypalMeSlug={org.paypalMeSlug}
-            paypalMerchantEmail={org.paypalMerchantEmail}
-          />
-        }
       />
+
+      <div className="mx-auto max-w-[1600px] px-4 pb-10 sm:px-8">
+        <PayPalInvoicesSection
+          paypalMeSlug={org.paypalMeSlug}
+          paypalMerchantEmail={org.paypalMerchantEmail}
+        />
+      </div>
     </div>
   );
 }
