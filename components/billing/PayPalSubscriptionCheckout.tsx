@@ -100,24 +100,28 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
 
   if (!clientId?.trim()) {
     return (
-      <div
-        className="rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-900"
-        dir="rtl"
-      >
-        להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
-        <code className="text-xs">.env</code> וב־Vercel.
+      <div id="paypal-subscription" className="scroll-mt-24">
+        <div
+          className="rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-900"
+          dir="rtl"
+        >
+          להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
+          <code className="text-xs">.env</code> וב־Vercel.
+        </div>
       </div>
     );
   }
 
   if (available.length === 0) {
     return (
-      <div
-        className="rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900"
-        dir="rtl"
-      >
-        המנוי הנוכחי ({planLabelHe(currentPlan)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג Enterprise
-        פנו לתמיכה.
+      <div id="paypal-subscription" className="scroll-mt-24">
+        <div
+          className="rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900"
+          dir="rtl"
+        >
+          המנוי הנוכחי ({planLabelHe(currentPlan)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג Enterprise
+          פנו לתמיכה.
+        </div>
       </div>
     );
   }
@@ -126,13 +130,19 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
 
   return (
     <section
-      className="rounded-[2rem] border border-[#0070ba]/25 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/40"
+      id="paypal-subscription"
+      className="scroll-mt-24 rounded-[2rem] border border-[#0070ba]/25 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/40"
       dir="rtl"
     >
       <h2 className="text-xl font-black text-slate-900 mb-2">הפעלת מנוי — PayPal (Live)</h2>
-      <p className="text-sm text-slate-600 mb-6">
+      <p className="text-sm text-slate-600 mb-4">
         בחרו תוכנית, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
       </p>
+      <div className="mb-6 rounded-xl border border-sky-100 bg-sky-50/90 px-4 py-3 text-xs text-slate-700 leading-relaxed">
+        <strong className="text-slate-900">חשבון חינם:</strong> תוכנית FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
+        <strong>רק</strong> לשדרוג ל־Pro / Business. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; בטבלה ו־PayPal.Me של
+        הארגון בהגדרות.
+      </div>
 
       {successMsg ? (
         <div className="mb-6 rounded-2xl border border-emerald-300 bg-gradient-to-br from-emerald-50 to-sky-50 px-5 py-6 text-center">

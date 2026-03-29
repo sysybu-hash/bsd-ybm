@@ -6,6 +6,10 @@ import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
 import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
 import PayPalSubscriptionCheckoutLazy from "@/components/billing/PayPalSubscriptionCheckoutLazy";
+import BillingOnboardingCallout from "@/components/billing/BillingOnboardingCallout";
+import BillingQuickPayments from "@/components/billing/BillingQuickPayments";
+import BillingWorkspaceEditor from "@/components/billing/BillingWorkspaceEditor";
+import { parseBillingWorkspace } from "@/lib/billing-workspace";
 import { ShieldCheck } from "lucide-react";
 
 function formatInvoiceDate(d: Date) {
@@ -37,6 +41,7 @@ const orgSelectBilling = {
   paypalMerchantEmail: true,
   paypalMeSlug: true,
   liveDataTier: true,
+  billingWorkspaceJson: true,
 } as const;
 
 type OrgBilling = Prisma.OrganizationGetPayload<{ select: typeof orgSelectBilling }>;
@@ -70,6 +75,7 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
       paypalMerchantEmail: null,
       paypalMeSlug: null,
       liveDataTier: "basic",
+      billingWorkspaceJson: null,
     };
   }
 }
@@ -124,6 +130,8 @@ export default async function BillingPage() {
       </div>
     );
   }
+
+  const billingWorkspace = parseBillingWorkspace(org.billingWorkspaceJson);
 
   const monthGross = issuedThisMonth.reduce((s, d) => s + d.total, 0);
   const monthVat = issuedThisMonth.reduce((s, d) => s + d.vat, 0);
@@ -201,6 +209,11 @@ export default async function BillingPage() {
         </div>
       </div>
 
+      <div className="mx-auto mb-6 max-w-[1600px] space-y-6 px-4 sm:px-8">
+        <BillingOnboardingCallout text={billingWorkspace.onboardingFreePitch} />
+        <BillingQuickPayments />
+      </div>
+
       <div className="mx-auto mb-8 max-w-[1600px] px-4 sm:px-8">
         <PayPalSubscriptionCheckoutLazy
           clientId={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? ""}
@@ -263,7 +276,8 @@ export default async function BillingPage() {
         }}
       />
 
-      <div className="mx-auto max-w-[1600px] px-4 pb-10 sm:px-8">
+      <div className="mx-auto max-w-[1600px] space-y-8 px-4 pb-10 sm:px-8">
+        <BillingWorkspaceEditor initial={billingWorkspace} />
         <PayPalInvoicesSection
           paypalMeSlug={org.paypalMeSlug}
           paypalMerchantEmail={org.paypalMerchantEmail}

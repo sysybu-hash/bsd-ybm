@@ -107,6 +107,8 @@ model Organization {
   paypalMeSlug          String?
   /// רמת נתונים חיים / יעילות — basic | standard | premium (הרחבות ביטוח ועתיד)
   liveDataTier          String                @default("basic")
+  /// טיוטת הוצאות לביטוח, המלצות חברים, טקסט לשיחה לפני הרשמה — JSON (ממשק חיוב)
+  billingWorkspaceJson  Json?
 }
 
 /// פרויקט / עסק תחת ארגון — לשיוך לקוחות ומעקב
