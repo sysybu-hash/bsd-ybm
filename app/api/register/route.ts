@@ -46,11 +46,12 @@ export async function POST(req: Request) {
       data: {
         name: organizationName,
         type: orgType,
-        plan: "FREE",
+        subscriptionTier: "FREE",
         trialEndsAt: trialEndsAtFromNow(),
         subscriptionStatus: "PENDING_APPROVAL",
-        creditsRemaining: 0,
-        monthlyAllowance: 0,
+        cheapScansLeft: 0,
+        premiumScansLeft: 0,
+        maxCompanies: 1,
         users: {
           create: {
             email: normalized,

@@ -213,6 +213,36 @@ export async function sendPayPalSubscriptionConfirmationEmail(
   }
 }
 
+/** הזמנת הצטרפות / שדרוג — מייל מעוצב (טקסט גוף בלבד, ללא HTML חיצוני) */
+export async function sendSubscriptionJoinInviteEmail(
+  toEmail: string,
+  params: { headline: string; bodyText: string; ctaLabel?: string; ctaPath?: string },
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const ctaLabel = params.ctaLabel?.trim() || "כניסה ל-BSD-YBM";
+  const path = params.ctaPath?.trim().startsWith("/") ? params.ctaPath.trim() : "/login";
+  const ctaHref = `${SITE_URL.replace(/\/$/, "")}${path}`;
+  const bodySafe = escapeHtml(params.bodyText).replace(/\n/g, "<br/>");
+  const inner = `
+    <h1 style="margin:0 0 12px;font-size:22px;font-weight:800;color:#f8fafc;text-align:center;">${escapeHtml(params.headline)}</h1>
+    <div style="margin:0 0 24px;color:#cbd5e1;font-size:15px;line-height:1.75;text-align:center;">
+      ${bodySafe}
+    </div>
+    <p style="text-align:center;margin:0;">
+      <a href="${escapeHtml(ctaHref)}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#2563eb);color:#fff;font-weight:800;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 12px 24px rgba(37,99,235,0.35);">
+        ${escapeHtml(ctaLabel)}
+      </a>
+    </p>`;
+  const r = await sendTransactionalEmail(
+    toEmail.trim().toLowerCase(),
+    "BSD-YBM — הזמנה להצטרפות למערכת",
+    inner,
+  );
+  if (!r.ok) {
+    return { ok: false, error: r.error };
+  }
+  return { ok: true };
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")

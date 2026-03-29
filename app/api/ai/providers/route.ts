@@ -20,12 +20,12 @@ export async function GET() {
     session.user.organizationId
       ? prisma.organization.findUnique({
           where: { id: session.user.organizationId },
-          select: { plan: true },
+          select: { subscriptionTier: true },
         })
       : Promise.resolve(null),
   ]);
 
-  const plan = orgPlan?.plan ?? "FREE";
+  const plan = orgPlan?.subscriptionTier ?? "FREE";
   const superAdmin = session.user.role === "SUPER_ADMIN";
   const dev = !!(
     userEmailRow?.email && isPlatformDeveloperEmail(userEmailRow.email)
@@ -40,6 +40,7 @@ export async function GET() {
   return NextResponse.json({
     providers,
     plan,
+    subscriptionTier: plan,
     allowedProviderIds: allowedIds,
   });
 }

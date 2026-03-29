@@ -54,7 +54,11 @@ export async function POST(req: NextRequest) {
     if (!result.success) {
       const status = result.code === "QUOTA_EXCEEDED" ? 403 : 500;
       return NextResponse.json(
-        { error: result.error ?? "אירעה שגיאה בפענוח המסמך" },
+        {
+          error: result.error ?? "אירעה שגיאה בפענוח המסמך",
+          code: result.code,
+          billingUrl: result.code === "QUOTA_EXCEEDED" ? "/dashboard/billing" : undefined,
+        },
         { status },
       );
     }

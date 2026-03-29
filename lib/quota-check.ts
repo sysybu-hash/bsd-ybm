@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import {
+  isPlatformDeveloperEmail,
+  PLATFORM_UNLIMITED_CREDITS,
+} from "@/lib/platform-developers";
 import { trialEndsAtFromNow } from "@/lib/trial";
+import type { ScanCreditKind } from "@/lib/scan-credit-kind";
 
 /**
  * מוודא שיש orgId תקף: אם חסר בטוקן — נטען מהמשתמש במסד.
  * אם אין ארגון בכלל — נוצר ארגון אישי (מכסה מהסכימה).
  */
-/** פותח/מאמת ארגון למשתמש — לשימוש בסריקה וקאש בלי חיוב מכסה */
 export async function resolveOrganizationForUser(
   orgId: string,
   userId: string,
@@ -51,7 +54,22 @@ export async function resolveOrganizationForUser(
   return created;
 }
 
-export async function checkAndDeductCredit(orgId: string, userId: string) {
+function isUnlimitedScans(n: number): boolean {
+  return n >= 1_000_000_000 || n === PLATFORM_UNLIMITED_CREDITS;
+}
+
+/**
+ * בודק ומנכה יתרת סריקה לפי סוג מנוע (זול / פרימיום).
+ * QUOTA_EXCEEDED → הפניה ל־/dashboard/billing לרכישת בנדל.
+ */
+export async function checkAndDeductScanCredit(
+  orgId: string,
+  userId: string,
+  kind: ScanCreditKind,
+): Promise<
+  | { allowed: true; organizationId: string }
+  | { allowed: false; error: string; code?: "QUOTA_EXCEEDED" }
+> {
   const userRow = await prisma.user.findUnique({
     where: { id: userId },
     select: { email: true },
@@ -59,36 +77,52 @@ export async function checkAndDeductCredit(orgId: string, userId: string) {
   if (userRow?.email && isPlatformDeveloperEmail(userRow.email)) {
     const resolved = await resolveOrganizationForUser(orgId, userId);
     if (!resolved) {
-      return { allowed: false as const, error: "משתמש לא נמצא במערכת." };
+      return { allowed: false, error: "משתמש לא נמצא במערכת." };
     }
-    return { allowed: true as const, organizationId: resolved.id };
+    return { allowed: true, organizationId: resolved.id };
   }
 
   const resolved = await resolveOrganizationForUser(orgId, userId);
   if (!resolved) {
-    return { allowed: false as const, error: "משתמש לא נמצא במערכת." };
+    return { allowed: false, error: "משתמש לא נמצא במערכת." };
   }
 
   const org = await prisma.organization.findUnique({
     where: { id: resolved.id },
-    select: { creditsRemaining: true, isPayAsYouGo: true },
+    select: { cheapScansLeft: true, premiumScansLeft: true },
   });
 
   if (!org) {
-    return { allowed: false as const, error: "ארגון לא נמצא." };
+    return { allowed: false, error: "ארגון לא נמצא." };
   }
 
-  if (org.creditsRemaining <= 0 && !org.isPayAsYouGo) {
+  const field = kind === "premium" ? "premiumScansLeft" : "cheapScansLeft";
+  const balance = kind === "premium" ? org.premiumScansLeft : org.cheapScansLeft;
+
+  if (isUnlimitedScans(balance)) {
+    return { allowed: true, organizationId: resolved.id };
+  }
+
+  if (balance <= 0) {
     return {
-      allowed: false as const,
-      error: "נגמרה מכסת הסריקות. נא לשדרג חבילה או לפנות לתמיכה.",
+      allowed: false,
+      code: "QUOTA_EXCEEDED",
+      error:
+        kind === "premium"
+          ? "נגמרה מכסת הסריקות הפרימיום. ניתן לרכוש בנדל או לשדרג מנוי בדף החיוב."
+          : "נגמרה מכסת הסריקות. ניתן לרכוש בנדל סריקות או לשדרג מנוי בדף החיוב.",
     };
   }
 
   await prisma.organization.update({
     where: { id: resolved.id },
-    data: { creditsRemaining: { decrement: 1 } },
+    data: { [field]: { decrement: 1 } },
   });
 
-  return { allowed: true as const, organizationId: resolved.id };
+  return { allowed: true, organizationId: resolved.id };
+}
+
+/** @deprecated השתמשו ב־checkAndDeductScanCredit עם סוג מנוע */
+export async function checkAndDeductCredit(orgId: string, userId: string) {
+  return checkAndDeductScanCredit(orgId, userId, "cheap");
 }

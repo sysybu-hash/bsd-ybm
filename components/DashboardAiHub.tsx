@@ -68,7 +68,13 @@ export default function DashboardAiHub({ orgId }: { orgId: string }) {
       const res = await fetch("/api/ai/providers");
       const data = await res.json();
       if (data.providers) setProviders(data.providers);
-      if (typeof data.plan === "string") setOrgPlan(data.plan);
+      const tier =
+        typeof data.subscriptionTier === "string"
+          ? data.subscriptionTier
+          : typeof data.plan === "string"
+            ? data.plan
+            : null;
+      if (tier) setOrgPlan(tier);
       const firstScan = data.providers?.find(
         (p: ProviderRow) =>
           p.configured && p.supportsDocumentScan && p.allowedByPlan !== false,

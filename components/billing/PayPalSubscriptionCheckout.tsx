@@ -4,33 +4,34 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import confetti from "canvas-confetti";
-import { planLabelHe, planPriceIls } from "@/lib/subscription-plans";
+import { purchasableTierKeysAbove, planLabelHe, planPriceIls } from "@/lib/subscription-plans";
+import type { SubscriptionTierKey } from "@/lib/subscription-tier-config";
 
-const TIER_RANK: Record<string, number> = {
-  FREE: 0,
-  PRO: 1,
-  BUSINESS: 2,
-  ENTERPRISE: 3,
-};
+type TierPriceMap = Partial<Record<SubscriptionTierKey, number>>;
 
 type Props = {
   clientId: string;
-  currentPlan: string;
+  currentTier: string;
   subscriptionStatus: string;
+  /** מחירים אפקטיביים מהשרת (עוקפים את ברירת המחדל בקוד) */
+  tierPricesIls?: TierPriceMap | null;
 };
 
-function purchasablePlans(currentPlan: string): string[] {
-  const cur = (currentPlan || "FREE").toUpperCase();
-  const rank = TIER_RANK[cur] ?? 0;
-  return (["PRO", "BUSINESS"] as const).filter((p) => {
-    if ((TIER_RANK[p] ?? 0) <= rank) return false;
-    return planPriceIls(p) != null;
-  });
+function priceForTier(tier: string, map?: TierPriceMap | null): number | null {
+  const t = tier.toUpperCase() as SubscriptionTierKey;
+  const fromMap = map?.[t];
+  if (typeof fromMap === "number" && Number.isFinite(fromMap)) return fromMap;
+  return planPriceIls(tier);
 }
 
-export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subscriptionStatus }: Props) {
+export default function PayPalSubscriptionCheckout({
+  clientId,
+  currentTier,
+  subscriptionStatus,
+  tierPricesIls,
+}: Props) {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [selectedTier, setSelectedTier] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -43,34 +44,37 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
     [clientId],
   );
 
-  const available = useMemo(() => purchasablePlans(currentPlan), [currentPlan]);
+  const available = useMemo(
+    () => purchasableTierKeysAbove(currentTier),
+    [currentTier],
+  );
 
   useEffect(() => {
     if (available.length === 0) {
-      setSelectedPlan("");
+      setSelectedTier("");
       return;
     }
-    setSelectedPlan((prev) => (available.includes(prev) ? prev : available[0]));
+    setSelectedTier((prev) => (available.includes(prev as SubscriptionTierKey) ? prev : available[0]));
   }, [available]);
 
-  const effectivePlan = selectedPlan || available[0] || "";
+  const effectiveTier = selectedTier || available[0] || "";
 
   const createOrder = useCallback(async () => {
     setErrorMsg(null);
-    const plan = effectivePlan;
-    if (!plan) throw new Error("אין תוכנית לבחירה");
+    const tier = effectiveTier;
+    if (!tier) throw new Error("אין רמה לבחירה");
 
     const res = await fetch("/api/paypal/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
+      body: JSON.stringify({ tier }),
     });
     const data = (await res.json()) as { id?: string; error?: string };
     if (!res.ok || !data.id) {
       throw new Error(data.error || "יצירת הזמנת PayPal נכשלה");
     }
     return data.id;
-  }, [effectivePlan]);
+  }, [effectiveTier]);
 
   const onApprove = useCallback(
     async (data: { orderID?: string }) => {
@@ -106,7 +110,7 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
           dir="rtl"
         >
           להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
-          <code className="text-xs">.env</code> וב־Vercel.
+          <code className="text-xs">.env</code> או הגדירו מזהה בלוח הבקרה לבעלי פלטפורמה.
         </div>
       </div>
     );
@@ -119,14 +123,14 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
           className="rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900"
           dir="rtl"
         >
-          המנוי הנוכחי ({planLabelHe(currentPlan)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג Enterprise
-          פנו לתמיכה.
+          המנוי הנוכחי ({planLabelHe(currentTier)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג נוסף פנו
+          לתמיכה.
         </div>
       </div>
     );
   }
 
-  const price = planPriceIls(effectivePlan);
+  const price = priceForTier(effectiveTier, tierPricesIls ?? undefined);
 
   return (
     <section
@@ -136,12 +140,12 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
     >
       <h2 className="text-xl font-black text-slate-900 mb-2">הפעלת מנוי — PayPal (Live)</h2>
       <p className="text-sm text-slate-600 mb-4">
-        בחרו תוכנית, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
+        בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
       </p>
       <div className="mb-6 rounded-xl border border-sky-100 bg-sky-50/90 px-4 py-3 text-xs text-slate-700 leading-relaxed">
-        <strong className="text-slate-900">חשבון חינם:</strong> תוכנית FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
-        <strong>רק</strong> לשדרוג ל־Pro / Business. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; בטבלה ו־PayPal.Me של
-        הארגון בהגדרות.
+        <strong className="text-slate-900">חשבון חינם:</strong> רמת FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
+        <strong>רק</strong> לשדרוג למשק בית / עוסק / חברה / תאגיד. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; ו־
+        PayPal.Me של הארגון בהגדרות.
       </div>
 
       {successMsg ? (
@@ -158,20 +162,20 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
       ) : null}
 
       <div className="mb-6 flex flex-wrap gap-3">
-        {available.map((p) => {
-          const pr = planPriceIls(p);
+        {available.map((t) => {
+          const pr = priceForTier(t, tierPricesIls ?? undefined);
           return (
             <button
-              key={p}
+              key={t}
               type="button"
-              onClick={() => setSelectedPlan(p)}
+              onClick={() => setSelectedTier(t)}
               className={`rounded-2xl border px-4 py-3 text-sm font-bold transition-all ${
-                effectivePlan === p
+                effectiveTier === t
                   ? "border-[#0070ba] bg-[#0070ba]/10 text-[#005ea6] ring-2 ring-[#0070ba]/30"
                   : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"
               }`}
             >
-              {planLabelHe(p)} — ₪{pr?.toLocaleString("he-IL")}
+              {planLabelHe(t)} — ₪{pr?.toLocaleString("he-IL")}
             </button>
           );
         })}
@@ -190,7 +194,7 @@ export default function PayPalSubscriptionCheckout({ clientId, currentPlan, subs
         <PayPalScriptProvider options={options}>
           <PayPalButtons
             style={{ layout: "vertical", shape: "rect", label: "pay" }}
-            disabled={Boolean(successMsg) || !effectivePlan}
+            disabled={Boolean(successMsg) || !effectiveTier}
             createOrder={createOrder}
             onApprove={(data) =>
               onApprove(data).catch((e) => {

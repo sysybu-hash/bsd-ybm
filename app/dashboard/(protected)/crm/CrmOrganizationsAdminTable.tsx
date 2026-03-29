@@ -175,9 +175,11 @@ export default function CrmOrganizationsAdminTable({
                   }}
                   className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-xl text-[10px] font-black border-none outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer transition-all disabled:opacity-50"
                 >
-                  <option value="FREE">FREE</option>
-                  <option value="PRO">PRO</option>
-                  <option value="ENTERPRISE">ENTERPRISE</option>
+                  <option value="FREE">FREE — חינם</option>
+                  <option value="HOUSEHOLD">HOUSEHOLD</option>
+                  <option value="DEALER">DEALER</option>
+                  <option value="COMPANY">COMPANY</option>
+                  <option value="CORPORATE">CORPORATE</option>
                 </select>
               </td>
               <td className="px-8 py-6 font-black text-slate-900">

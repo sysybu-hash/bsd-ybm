@@ -26,7 +26,7 @@ export default async function ProtectedDashboardSectionLayout({
 
   const org = await prisma.organization.findUnique({
     where: { id: orgId },
-    select: { plan: true, trialEndsAt: true },
+    select: { subscriptionTier: true, trialEndsAt: true },
   });
 
   if (

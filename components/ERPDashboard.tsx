@@ -46,8 +46,8 @@ export type ErpFlowSummary = {
 type Props = {
   stats: ErpStatCard[];
   chartData: { name: string; value: number }[];
-  creditsRemaining: number | null;
-  creditsAllowance: number | null;
+  /** תיאור מכסות סריקה (זולות / פרימיום) */
+  scanQuotaSummary: string | null;
   flowSummary: ErpFlowSummary | null;
   priceSpikes: PriceSpikeAlert[];
 };
@@ -55,18 +55,14 @@ type Props = {
 export default function ERPDashboard({
   stats,
   chartData,
-  creditsRemaining,
-  creditsAllowance,
+  scanQuotaSummary,
   flowSummary,
   priceSpikes,
 }: Props) {
   const { t, dir, locale } = useI18n();
   const intlTag = intlLocaleForApp(locale);
 
-  const quotaLabel =
-    creditsRemaining != null && creditsAllowance != null
-      ? `${creditsRemaining} / ${creditsAllowance}`
-      : "—";
+  const quotaLabel = scanQuotaSummary?.trim() ? scanQuotaSummary : "—";
 
   const netFlow =
     flowSummary != null
@@ -110,12 +106,7 @@ export default function ERPDashboard({
 
         <div className="bg-white border border-slate-200 p-6 rounded-[2rem] shadow-sm shrink-0">
           <p className="text-xs text-slate-400 font-bold uppercase mb-1">{t("erpDash.quotaCaption")}</p>
-          <p className="text-3xl font-black text-slate-900">
-            {quotaLabel}{" "}
-            {creditsAllowance != null && (
-              <span className="text-sm text-slate-400 font-normal">{t("erpDash.pointsSuffix")}</span>
-            )}
-          </p>
+          <p className="text-xl font-black text-slate-900 leading-snug">{quotaLabel}</p>
         </div>
       </div>
 

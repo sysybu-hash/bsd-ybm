@@ -21,6 +21,8 @@ import { isRtlLocale } from "@/lib/i18n/config";
 import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
 import { DocStatus } from "@prisma/client";
 import type { Document } from "@prisma/client";
+import { tierAllowance } from "@/lib/subscription-tier-config";
+import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 
 type SearchParams = { q?: string };
 
@@ -139,9 +141,21 @@ export default async function ErpPage({
   const orgQuota = orgId
     ? await prisma.organization.findUnique({
         where: { id: orgId },
-        select: { creditsRemaining: true, monthlyAllowance: true },
+        select: {
+          cheapScansLeft: true,
+          premiumScansLeft: true,
+          subscriptionTier: true,
+        },
       })
     : null;
+
+  const scanQuotaSummary =
+    orgQuota != null
+      ? (() => {
+          const a = tierAllowance(orgQuota.subscriptionTier);
+          return `זולות ${formatCreditsForDisplay(orgQuota.cheapScansLeft)} / ${a.cheapScans} · פרימיום ${formatCreditsForDisplay(orgQuota.premiumScansLeft)} / ${a.premiumScans}`;
+        })()
+      : null;
 
   const priceComparison = orgId ? await getErpPriceComparisonForOrg(orgId) : null;
 
@@ -165,8 +179,7 @@ export default async function ErpPage({
       <ERPDashboard
         stats={stats}
         chartData={chartData}
-        creditsRemaining={orgQuota?.creditsRemaining ?? null}
-        creditsAllowance={orgQuota?.monthlyAllowance ?? null}
+        scanQuotaSummary={scanQuotaSummary}
         flowSummary={flowSummary}
         priceSpikes={priceSpikes}
       />

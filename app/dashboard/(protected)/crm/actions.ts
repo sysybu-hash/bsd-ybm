@@ -9,6 +9,10 @@ import {
   type ClientAiResult,
 } from "@/lib/crm-client-ai";
 import { resolveCrmGeminiModel } from "@/lib/crm-gemini-model";
+import {
+  defaultScanBalancesForTier,
+  parseSubscriptionTier,
+} from "@/lib/subscription-tier-config";
 
 export type { ClientAiTableRow, ClientAiResult } from "@/lib/crm-client-ai";
 
@@ -65,9 +69,9 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
       return { ok: false, error: "לא נמצא נתונים על הארגון." };
     }
 
-    const modelToUse = resolveCrmGeminiModel(org.plan, session.user.role);
+    const modelToUse = resolveCrmGeminiModel(org.subscriptionTier, session.user.role);
     console.log(
-      `[BSD-YBM AI] CRM analyze | Org: ${org.name} | Plan: ${org.plan} | Model: ${modelToUse} | Caller: ${session.user.role}`,
+      `[BSD-YBM AI] CRM analyze | Org: ${org.name} | Tier: ${org.subscriptionTier} | Model: ${modelToUse} | Caller: ${session.user.role}`,
     );
 
     const tableData = buildTableDataFromInvoices(org.invoices);
@@ -170,13 +174,24 @@ export async function deleteOrganization(id: string) {
   }
 }
 
-export async function updateOrgPlan(id: string, plan: string) {
+export async function updateOrgPlan(id: string, tierRaw: string) {
+  const tier = parseSubscriptionTier(tierRaw);
+  if (!tier) {
+    return { error: "רמת מנוי לא חוקית" };
+  }
+  const balances = defaultScanBalancesForTier(tier);
   try {
     await prisma.organization.update({
       where: { id },
-      data: { plan },
+      data: {
+        subscriptionTier: tier,
+        cheapScansLeft: balances.cheapScansLeft,
+        premiumScansLeft: balances.premiumScansLeft,
+        maxCompanies: balances.maxCompanies,
+      },
     });
     revalidatePath("/dashboard/crm");
+    revalidatePath("/dashboard/billing");
     return { success: true as const };
   } catch {
     return { error: "שגיאה בעדכון התוכנית" };

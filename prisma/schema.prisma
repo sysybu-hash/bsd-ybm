@@ -52,6 +52,15 @@ enum AccountStatus {
   SUSPENDED
 }
 
+/// רמות מנוי — מכסות סריקה (זולה = Gemini, פרימיום = OpenAI/Anthropic)
+enum SubscriptionTier {
+  FREE
+  HOUSEHOLD
+  DEALER
+  COMPANY
+  CORPORATE
+}
+
 /// ספקי ענן לגיבוי / סריקה אוטונומית (הרשאות OAuth יתווספו בהמשך)
 enum CloudProvider {
   GOOGLE_DRIVE
@@ -70,11 +79,14 @@ model Organization {
   /// ח.פ / ע.מ
   taxId                String?
   address              String?
-  plan                 String         @default("FREE")
+  subscriptionTier     SubscriptionTier @default(FREE)
   subscriptionStatus   String         @default("INACTIVE")
-  creditsRemaining     Int            @default(5)
-  monthlyAllowance     Int            @default(5)
-  isPayAsYouGo         Boolean        @default(false)
+  /// יתרת סריקות „זולות” (מנוע Gemini)
+  cheapScansLeft       Int            @default(0)
+  /// יתרת סריקות „פרימיום” (OpenAI / Anthropic)
+  premiumScansLeft     Int            @default(0)
+  /// מקסימום ישויות/חברות תחת המנוי (רלוונטי לרמת COMPANY ומעלה)
+  maxCompanies         Int            @default(1)
   stripeCustomerId     String?        @unique
   stripeSubscriptionId String?
   users                User[]
@@ -109,6 +121,33 @@ model Organization {
   liveDataTier          String                @default("basic")
   /// טיוטת הוצאות לביטוח, המלצות חברים, טקסט לשיחה לפני הרשמה — JSON (ממשק חיוב)
   billingWorkspaceJson  Json?
+}
+
+/// הגדרות גבייה גלובליות (מחירי מנוי / חבילות) — שורת singleton id=default
+model PlatformBillingConfig {
+  id                    String   @id @default("default")
+  /// מחירי מנוי חודשי בשקלים לפי מפתח רמה, למשל { "HOUSEHOLD": 59.9 }
+  tierMonthlyPricesJson Json?
+  /// מזהה לקוח PayPal ציבורי (עוקף NEXT_PUBLIC אם מוגדר)
+  paypalClientIdPublic  String?
+  updatedAt             DateTime @updatedAt
+}
+
+/// חבילת סריקות חד־פעמית לרכישה
+model ScanBundle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  priceIls    Float
+  cheapAdds   Int      @default(0)
+  premiumAdds Int      @default(0)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
 /// פרויקט / עסק תחת ארגון — לשיוך לקוחות ומעקב

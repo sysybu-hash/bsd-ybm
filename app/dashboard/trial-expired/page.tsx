@@ -23,7 +23,7 @@ export default async function TrialExpiredPage() {
 
   const org = await prisma.organization.findUnique({
     where: { id: orgId },
-    select: { plan: true, trialEndsAt: true, name: true },
+    select: { subscriptionTier: true, trialEndsAt: true, name: true },
   });
 
   if (!org || !isFreeTrialExpired(org)) {
@@ -56,7 +56,7 @@ export default async function TrialExpiredPage() {
             href="/dashboard/billing"
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform shadow-lg shadow-blue-200"
           >
-            <Rocket size={20} /> שדרגו עכשיו ל־PRO
+            <Rocket size={20} /> שדרגו מנוי או רכשו בנדל סריקות
           </Link>
 
           <Link

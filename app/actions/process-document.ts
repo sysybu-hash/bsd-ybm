@@ -18,7 +18,11 @@ import {
 } from "@/lib/i18n/ai-prompts";
 import { extractDocumentWithOpenAI } from "@/lib/ai-extract-openai";
 import { extractDocumentWithAnthropic } from "@/lib/ai-extract-anthropic";
-import { checkAndDeductCredit, resolveOrganizationForUser } from "@/lib/quota-check";
+import {
+  checkAndDeductScanCredit,
+  resolveOrganizationForUser,
+} from "@/lib/quota-check";
+import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
 import { sendDocNotification } from "./send-doc-notification";
@@ -125,10 +129,10 @@ export async function processDocumentAction(
       select: {
         email: true,
         role: true,
-        organization: { select: { plan: true } },
+        organization: { select: { subscriptionTier: true } },
       },
     });
-    const orgPlan = accessUser?.organization?.plan ?? "FREE";
+    const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
     const superAdmin = accessUser?.role === "SUPER_ADMIN";
     const devBypass =
       !!accessUser?.email && isPlatformDeveloperEmail(accessUser.email);
@@ -177,7 +181,8 @@ export async function processDocumentAction(
       aiData = cached.resultJson as Record<string, unknown>;
       fromCache = true;
     } else {
-      const quota = await checkAndDeductCredit(orgId, userId);
+      const creditKind = scanCreditKindForProvider(effectiveProvider);
+      const quota = await checkAndDeductScanCredit(orgId, userId, creditKind);
       if (!quota.allowed) {
         return {
           success: false,

@@ -212,11 +212,17 @@ export default function MultiEngineScanner({
           const res = await fetch("/api/ai", { method: "POST", body: formData });
           const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
           if (!res.ok) {
+            const baseErr =
+              typeof data.error === "string" ? data.error : "שגיאת שרת";
+            const extra =
+              data.code === "QUOTA_EXCEEDED" && typeof data.billingUrl === "string"
+                ? ` — לרכישת בנדל או שדרוג: ${data.billingUrl}`
+                : "";
             engines.push({
               providerId: pid,
               label: idToLabel.get(pid) ?? pid,
               ok: false,
-              error: typeof data.error === "string" ? data.error : "שגיאת שרת",
+              error: `${baseErr}${extra}`,
               score: 0,
             });
           } else {

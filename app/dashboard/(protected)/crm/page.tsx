@@ -55,7 +55,7 @@ export default async function CRMPage() {
         select: {
           id: true,
           name: true,
-          plan: true,
+          subscriptionTier: true,
           createdAt: true,
           users: {
             take: 1,

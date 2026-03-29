@@ -46,9 +46,9 @@ export async function ensurePlatformDeveloperAccount(
   if (user.role === "SUPER_ADMIN" && user.organizationId) {
     const orgQuick = await prisma.organization.findUnique({
       where: { id: user.organizationId },
-      select: { creditsRemaining: true },
+      select: { cheapScansLeft: true },
     });
-    if (orgQuick && orgQuick.creditsRemaining >= 1_000_000_000) {
+    if (orgQuick && orgQuick.cheapScansLeft >= 1_000_000_000) {
       return {
         id: user.id,
         role: user.role,
@@ -64,10 +64,11 @@ export async function ensurePlatformDeveloperAccount(
       data: {
         name: "BSD-YBM — מפתחי פלטפורמה",
         type: "ENTERPRISE",
-        plan: "ENTERPRISE",
+        subscriptionTier: "CORPORATE",
         subscriptionStatus: "ACTIVE",
-        creditsRemaining: PLATFORM_UNLIMITED_CREDITS,
-        monthlyAllowance: PLATFORM_UNLIMITED_CREDITS,
+        cheapScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        premiumScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        maxCompanies: 999,
       },
       select: { id: true },
     });
@@ -76,9 +77,10 @@ export async function ensurePlatformDeveloperAccount(
     await prisma.organization.update({
       where: { id: orgId },
       data: {
-        creditsRemaining: PLATFORM_UNLIMITED_CREDITS,
-        monthlyAllowance: PLATFORM_UNLIMITED_CREDITS,
-        plan: "ENTERPRISE",
+        cheapScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        premiumScansLeft: PLATFORM_UNLIMITED_CREDITS,
+        maxCompanies: 999,
+        subscriptionTier: "CORPORATE",
         subscriptionStatus: "ACTIVE",
       },
     });

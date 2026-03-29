@@ -32,10 +32,10 @@ export default async function DashboardLayout({
   if (orgId) {
     const org = await prisma.organization.findUnique({
       where: { id: orgId },
-      select: { plan: true, trialEndsAt: true },
+      select: { subscriptionTier: true, trialEndsAt: true },
     });
-    const plan = (org?.plan || "").toUpperCase();
-    if (plan === "FREE" && org?.trialEndsAt) {
+    const tier = org?.subscriptionTier ?? "FREE";
+    if (tier === "FREE" && org?.trialEndsAt) {
       const days = freeTrialDaysRemaining(org.trialEndsAt);
       if (days !== null && days > 0) {
         trialBannerDaysLeft = days;

@@ -5,13 +5,13 @@ import type { AiProviderId } from "@/lib/ai-providers";
 /** ספקים שתומכים בסריקת מסמך (לא כולל Groq) */
 const DOCUMENT_SCAN_PROVIDERS: AiProviderId[] = ["gemini", "openai", "anthropic"];
 
-/** מנועים מותרים לפי תוכנית — FREE רק Gemini; מנויים משלמים / מנהלים — כל ספקי הסריקה */
+/** מנועים מותרים לפי רמת מנוי — FREE רק Gemini; מנויים משלמים / מנהלים — כל ספקי הסריקה */
 export function getAllowedAiProvidersForPlan(
-  plan: string,
+  subscriptionTier: string,
   elevated: boolean,
 ): AiProviderId[] {
   if (elevated) return [...DOCUMENT_SCAN_PROVIDERS];
-  const normalized = (plan || "FREE").trim().toUpperCase();
+  const normalized = (subscriptionTier || "FREE").trim().toUpperCase();
   if (normalized === "FREE") return ["gemini"];
   return [...DOCUMENT_SCAN_PROVIDERS];
 }

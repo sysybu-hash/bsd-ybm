@@ -3,7 +3,7 @@ import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
 export type OrganizationRowFromDb = {
   id: string;
   name: string;
-  plan: string;
+  subscriptionTier: string;
   createdAt: Date;
   users: { email: string }[];
 };
@@ -53,7 +53,7 @@ export function dedupeOrganizationsForCrmDisplay(
     ({ row, invoiceTotal }) => ({
       id: row.id,
       name: row.name,
-      plan: row.plan,
+      plan: row.subscriptionTier,
       users: row.users,
       invoiceTotalAmount: invoiceTotal,
     }),

@@ -21,6 +21,7 @@ type ProcessDocumentResult = {
     aiData?: ScanResult;
   };
   error?: string;
+  code?: string;
 };
 
 const quickLinkClass =
@@ -54,6 +55,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [scanQuotaRedirect, setScanQuotaRedirect] = useState(false);
 
   const {
     monthTitle,
@@ -71,6 +73,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
     setIsUploading(true);
     setUploadError(null);
+    setScanQuotaRedirect(false);
 
     try {
       if (status !== "authenticated" || !session?.user?.id || !session?.user?.organizationId) {
@@ -89,6 +92,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
       if (!result.success) {
         setScanResult(null);
+        setScanQuotaRedirect(result.code === "QUOTA_EXCEEDED");
         setUploadError(result.error ?? "אירעה שגיאה בפענוח המסמך.");
         return;
       }
@@ -251,8 +255,16 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <FileText size={18} className="text-[var(--primary-color,#3b82f6)]" /> תוצאות פענוח מסמך
           </h4>
           {uploadError && (
-            <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
-              {uploadError}
+            <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 space-y-2">
+              <p>{uploadError}</p>
+              {scanQuotaRedirect ? (
+                <Link
+                  href="/dashboard/billing"
+                  className="inline-flex font-bold text-blue-700 underline underline-offset-2"
+                >
+                  מעבר לדף חיוב ורכישת בנדל
+                </Link>
+              ) : null}
             </div>
           )}
           {scanResult ? (

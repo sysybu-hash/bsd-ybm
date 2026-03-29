@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma, SubscriptionTier } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,11 +6,16 @@ import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
 import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
 import PayPalSubscriptionCheckoutLazy from "@/components/billing/PayPalSubscriptionCheckoutLazy";
+import PayPalBundleCheckoutLazy from "@/components/billing/PayPalBundleCheckoutLazy";
 import BillingOnboardingCallout from "@/components/billing/BillingOnboardingCallout";
 import BillingQuickPayments from "@/components/billing/BillingQuickPayments";
 import BillingWorkspaceEditor from "@/components/billing/BillingWorkspaceEditor";
+import SubscriptionPricingTable from "@/components/billing/SubscriptionPricingTable";
+import ScanUsageProgress from "@/components/billing/ScanUsageProgress";
 import { parseBillingWorkspace } from "@/lib/billing-workspace";
 import { ShieldCheck } from "lucide-react";
+import { tierAllowance, tierLabelHe, ADMIN_SUBSCRIPTION_TIER_OPTIONS } from "@/lib/subscription-tier-config";
+import { getEffectiveTierMonthlyPriceIls, getPayPalClientIdPublic } from "@/lib/billing-pricing";
 
 function formatInvoiceDate(d: Date) {
   return new Intl.DateTimeFormat("he-IL", {
@@ -29,11 +34,11 @@ function monthStart(d: Date) {
 
 const orgSelectBilling = {
   name: true,
-  plan: true,
+  subscriptionTier: true,
   subscriptionStatus: true,
-  creditsRemaining: true,
-  monthlyAllowance: true,
-  isPayAsYouGo: true,
+  cheapScansLeft: true,
+  premiumScansLeft: true,
+  maxCompanies: true,
   companyType: true,
   taxId: true,
   address: true,
@@ -58,11 +63,11 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
       where: { id: orgId },
       select: {
         name: true,
-        plan: true,
+        subscriptionTier: true,
         subscriptionStatus: true,
-        creditsRemaining: true,
-        monthlyAllowance: true,
-        isPayAsYouGo: true,
+        cheapScansLeft: true,
+        premiumScansLeft: true,
+        maxCompanies: true,
         companyType: true,
         taxId: true,
         address: true,
@@ -76,7 +81,7 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
       paypalMeSlug: null,
       liveDataTier: "basic",
       billingWorkspaceJson: null,
-    };
+    } as OrgBilling;
   }
 }
 
@@ -94,8 +99,16 @@ export default async function BillingPage() {
 
   const start = monthStart(new Date());
 
-  const [org, dbInvoices, issuedDocuments, issuedThisMonth, paidInvoicesMonth, crmContacts] =
-    await Promise.all([
+  const [
+    org,
+    dbInvoices,
+    issuedDocuments,
+    issuedThisMonth,
+    paidInvoicesMonth,
+    crmContacts,
+    scanBundles,
+    paypalClientId,
+  ] = await Promise.all([
     fetchOrgForBilling(orgId),
     prisma.invoice.findMany({
       where: { organizationId: orgId },
@@ -121,6 +134,12 @@ export default async function BillingPage() {
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
+    prisma.scanBundle.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, name: true, priceIls: true, cheapAdds: true, premiumAdds: true },
+    }),
+    getPayPalClientIdPublic(),
   ]);
 
   if (!org) {
@@ -132,6 +151,21 @@ export default async function BillingPage() {
   }
 
   const billingWorkspace = parseBillingWorkspace(org.billingWorkspaceJson);
+
+  const tierAllow = tierAllowance(org.subscriptionTier);
+  const tierPriceEntries = await Promise.all(
+    ADMIN_SUBSCRIPTION_TIER_OPTIONS.map(async (t) => {
+      const p = await getEffectiveTierMonthlyPriceIls(t as SubscriptionTier);
+      return [t, p] as const;
+    }),
+  );
+  const tierPricesForTable = Object.fromEntries(tierPriceEntries) as Record<
+    string,
+    number | null
+  >;
+  const tierPricesForPayPal = Object.fromEntries(
+    tierPriceEntries.filter(([, p]) => p != null) as [string, number][],
+  );
 
   const monthGross = issuedThisMonth.reduce((s, d) => s + d.total, 0);
   const monthVat = issuedThisMonth.reduce((s, d) => s + d.vat, 0);
@@ -174,21 +208,23 @@ export default async function BillingPage() {
             {org.name}
           </p>
           <p>
-            מנוי: <span className="font-medium text-slate-800">{org.plan}</span>
+            מנוי:{" "}
+            <span className="font-medium text-slate-800">
+              {tierLabelHe(org.subscriptionTier)} ({org.subscriptionTier})
+            </span>
             {" · "}
             סטטוס: <span className="font-medium text-slate-800">{org.subscriptionStatus}</span>
             {" · "}
             סיווג מס: <span className="font-medium text-slate-800">{org.companyType}</span>
+            {" · "}
+            חברות מקס׳: <span className="font-medium text-slate-800">{org.maxCompanies}</span>
           </p>
           <p className="mt-1">
-            סריקות שנותרו:{" "}
-            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.creditsRemaining)}</span>
+            סריקות זולות נותרו:{" "}
+            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.cheapScansLeft)}</span>
             {" · "}
-            מכסה חודשית:{" "}
-            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.monthlyAllowance)}</span>
-            {org.isPayAsYouGo ? (
-              <span className="text-emerald-600 mr-2 font-medium"> · Pay-as-you-go פעיל</span>
-            ) : null}
+            פרימיום נותרו:{" "}
+            <span className="font-medium text-slate-800">{formatCreditsForDisplay(org.premiumScansLeft)}</span>
           </p>
           <p className="mt-2 text-xs text-slate-500">
             רמת נתונים חיים:{" "}
@@ -209,17 +245,32 @@ export default async function BillingPage() {
         </div>
       </div>
 
+      <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
+        <SubscriptionPricingTable tierPricesIls={tierPricesForTable} />
+      </div>
+
+      <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
+        <ScanUsageProgress
+          cheapLeft={org.cheapScansLeft}
+          cheapIncluded={tierAllow.cheapScans}
+          premiumLeft={org.premiumScansLeft}
+          premiumIncluded={tierAllow.premiumScans}
+        />
+      </div>
+
       <div className="mx-auto mb-6 max-w-[1600px] space-y-6 px-4 sm:px-8">
         <BillingOnboardingCallout text={billingWorkspace.onboardingFreePitch} />
         <BillingQuickPayments presets={billingWorkspace.quickPaymentPresets} />
       </div>
 
-      <div className="mx-auto mb-8 max-w-[1600px] px-4 sm:px-8">
+      <div className="mx-auto mb-8 max-w-[1600px] px-4 sm:px-8 space-y-8">
         <PayPalSubscriptionCheckoutLazy
-          clientId={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? ""}
-          currentPlan={org.plan}
+          clientId={paypalClientId}
+          currentTier={org.subscriptionTier}
           subscriptionStatus={org.subscriptionStatus}
+          tierPricesIls={tierPricesForPayPal}
         />
+        <PayPalBundleCheckoutLazy clientId={paypalClientId} bundles={scanBundles} />
       </div>
 
       {org.paypalMeSlug || org.paypalMerchantEmail ? (

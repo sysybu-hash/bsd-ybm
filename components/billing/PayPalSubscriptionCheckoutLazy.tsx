@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { SubscriptionTierKey } from "@/lib/subscription-tier-config";
 
 const PayPalSubscriptionCheckout = dynamic(
   () => import("@/components/billing/PayPalSubscriptionCheckout"),
@@ -17,10 +18,13 @@ const PayPalSubscriptionCheckout = dynamic(
   },
 );
 
+type TierPriceMap = Partial<Record<SubscriptionTierKey, number>>;
+
 type Props = {
   clientId: string;
-  currentPlan: string;
+  currentTier: string;
   subscriptionStatus: string;
+  tierPricesIls?: TierPriceMap | null;
 };
 
 /** עטיפה: PayPal SDK רק בדפדפן — לא ב-SSR (מונע שגיאות שרת ב-Vercel) */

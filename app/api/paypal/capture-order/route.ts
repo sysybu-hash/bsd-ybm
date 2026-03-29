@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
-import { CompanyType, DocStatus, DocType } from "@prisma/client";
+import { CompanyType, DocStatus, DocType, type SubscriptionTier } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import { isPayPalServerConfigured, paypalCaptureOrder } from "@/lib/paypal-server";
 import { sendPayPalSubscriptionConfirmationEmail } from "@/lib/mail";
-import { planDefaultCredits, planLabelHe, planPriceIls } from "@/lib/subscription-plans";
+import { tierLabelHe, defaultScanBalancesForTier, parseSubscriptionTier } from "@/lib/subscription-tier-config";
+import { getEffectiveTierMonthlyPriceIls } from "@/lib/billing-pricing";
 
 function parseCapturePayload(data: Record<string, unknown>): {
   customId: string;
@@ -80,14 +81,11 @@ export async function POST(req: Request) {
 
   const parts = parsed.customId.split("|");
   const orgIdFromOrder = parts[0]?.trim();
-  const planFromOrder = parts[1]?.trim().toUpperCase();
-  if (!orgIdFromOrder || !planFromOrder || orgIdFromOrder !== orgIdSession) {
-    return NextResponse.json({ ok: false, error: "הזמנה לא תואמת לארגון" }, { status: 403 });
-  }
+  const kind = parts[1]?.trim().toUpperCase();
+  const payload = parts[2]?.trim();
 
-  const expected = planPriceIls(planFromOrder);
-  if (expected == null || Math.abs(parsed.paid - expected) > 0.02) {
-    return NextResponse.json({ ok: false, error: "סכום לא תואם לתוכנית" }, { status: 400 });
+  if (!orgIdFromOrder || !kind || !payload || orgIdFromOrder !== orgIdSession) {
+    return NextResponse.json({ ok: false, error: "הזמנה לא תואמת לארגון" }, { status: 403 });
   }
 
   const org = await prisma.organization.findUnique({
@@ -102,10 +100,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "ארגון לא נמצא" }, { status: 404 });
   }
 
-  const credits = planDefaultCredits(planFromOrder);
-  const planLabel = planLabelHe(planFromOrder);
   const paidTotal = parsed.paid;
-
   let amountNet = paidTotal;
   let vatAmt = 0;
   if (org.isReportable && org.companyType !== CompanyType.EXEMPT_DEALER) {
@@ -115,45 +110,114 @@ export async function POST(req: Request) {
 
   const docType = org.isReportable ? DocType.INVOICE_RECEIPT : DocType.RECEIPT;
 
+  let planLabel = "";
+  let descriptionLine = "";
+
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.organization.update({
-        where: { id: orgIdSession },
-        data: {
-          plan: planFromOrder,
-          subscriptionStatus: "ACTIVE",
-          creditsRemaining: credits,
-          monthlyAllowance: credits,
-        },
+    if (kind === "BUNDLE") {
+      const bundle = await prisma.scanBundle.findFirst({
+        where: { id: payload, isActive: true },
       });
+      if (!bundle) {
+        return NextResponse.json({ ok: false, error: "חבילה לא תואמת" }, { status: 400 });
+      }
+      if (Math.abs(paidTotal - bundle.priceIls) > 0.02) {
+        return NextResponse.json({ ok: false, error: "סכום לא תואם לחבילה" }, { status: 400 });
+      }
+      planLabel = bundle.name;
+      descriptionLine = `חבילת סריקות BSD-YBM — ${bundle.name} (PayPal)`;
 
-      const lastDoc = await tx.issuedDocument.findFirst({
-        where: { organizationId: orgIdSession, type: docType },
-        orderBy: { number: "desc" },
-        select: { number: true },
-      });
-      const nextNumber = (lastDoc?.number ?? 1000) + 1;
+      await prisma.$transaction(async (tx) => {
+        await tx.organization.update({
+          where: { id: orgIdSession },
+          data: {
+            cheapScansLeft: { increment: bundle.cheapAdds },
+            premiumScansLeft: { increment: bundle.premiumAdds },
+          },
+        });
 
-      await tx.issuedDocument.create({
-        data: {
-          organizationId: orgIdSession,
-          type: docType,
-          number: nextNumber,
-          clientName: org.name,
-          amount: amountNet,
-          vat: vatAmt,
-          total: paidTotal,
-          status: DocStatus.PAID,
-          items: [
-            {
-              desc: `מנוי BSD-YBM — ${planLabel} (תשלום PayPal)`,
-              qty: 1,
-              price: amountNet,
-            },
-          ],
-        },
+        const lastDoc = await tx.issuedDocument.findFirst({
+          where: { organizationId: orgIdSession, type: docType },
+          orderBy: { number: "desc" },
+          select: { number: true },
+        });
+        const nextNumber = (lastDoc?.number ?? 1000) + 1;
+
+        await tx.issuedDocument.create({
+          data: {
+            organizationId: orgIdSession,
+            type: docType,
+            number: nextNumber,
+            clientName: org.name,
+            amount: amountNet,
+            vat: vatAmt,
+            total: paidTotal,
+            status: DocStatus.PAID,
+            items: [
+              {
+                desc: descriptionLine,
+                qty: 1,
+                price: amountNet,
+              },
+            ],
+          },
+        });
       });
-    });
+    } else if (kind === "TIER") {
+      const tier = parseSubscriptionTier(payload) as SubscriptionTier | null;
+      if (!tier || tier === "FREE") {
+        return NextResponse.json({ ok: false, error: "רמת מנוי לא חוקית" }, { status: 400 });
+      }
+      const expected = await getEffectiveTierMonthlyPriceIls(tier);
+      if (expected == null || Math.abs(paidTotal - expected) > 0.02) {
+        return NextResponse.json({ ok: false, error: "סכום לא תואם לרמת המנוי" }, { status: 400 });
+      }
+      const balances = defaultScanBalancesForTier(tier);
+      planLabel = tierLabelHe(tier);
+      descriptionLine = `מנוי BSD-YBM — ${planLabel} (תשלום PayPal)`;
+
+      await prisma.$transaction(async (tx) => {
+        await tx.organization.update({
+          where: { id: orgIdSession },
+          data: {
+            subscriptionTier: tier,
+            subscriptionStatus: "ACTIVE",
+            cheapScansLeft: balances.cheapScansLeft,
+            premiumScansLeft: balances.premiumScansLeft,
+            maxCompanies: balances.maxCompanies,
+          },
+        });
+
+        const lastDoc = await tx.issuedDocument.findFirst({
+          where: { organizationId: orgIdSession, type: docType },
+          orderBy: { number: "desc" },
+          select: { number: true },
+        });
+        const nextNumber = (lastDoc?.number ?? 1000) + 1;
+
+        await tx.issuedDocument.create({
+          data: {
+            organizationId: orgIdSession,
+            type: docType,
+            number: nextNumber,
+            clientName: org.name,
+            amount: amountNet,
+            vat: vatAmt,
+            total: paidTotal,
+            status: DocStatus.PAID,
+            items: [
+              {
+                desc: descriptionLine,
+                qty: 1,
+                price: amountNet,
+              },
+            ],
+          },
+        });
+      });
+    } else {
+      return NextResponse.json({ ok: false, error: "סוג הזמנה לא מוכר" }, { status: 400 });
+    }
   } catch (e) {
     console.error("[capture-order] db", e);
     return NextResponse.json(
@@ -163,7 +227,7 @@ export async function POST(req: Request) {
   }
 
   void sendPayPalSubscriptionConfirmationEmail(userEmail, {
-    planLabel,
+    planLabel: planLabel || "רכישה",
     amountIls: paidTotal.toLocaleString("he-IL", { minimumFractionDigits: 2 }),
     orgName: org.name,
   });
@@ -174,6 +238,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     message:
-      "תודה! המנוי שלך הופעל. ברוך הבא לשדרה שמחברת בין כולם",
+      "תודה! הרכישה נרשמה. ברוך הבא לשדרה שמחברת בין כולם",
   });
 }

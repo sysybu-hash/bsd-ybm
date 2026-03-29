@@ -54,13 +54,22 @@ export default async function ExecutiveDashboardPage() {
           </h1>
           <p className="mt-2 text-slate-500 font-medium max-w-xl">{t("executive.subtitle")}</p>
         </div>
-        <Link
-          href="/dashboard/intelligence"
-          className="inline-flex items-center gap-2 self-start rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 transition-colors"
-        >
-          <ArrowRight size={18} />
-          {t("executive.linkIntelligence")}
-        </Link>
+        <div className="flex flex-wrap gap-3 self-start">
+          <Link
+            href="/dashboard/executive/subscriptions"
+            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-800 shadow-sm hover:border-emerald-300 transition-colors"
+          >
+            <ArrowRight size={18} />
+            ניהול מנויים וגבייה
+          </Link>
+          <Link
+            href="/dashboard/intelligence"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 transition-colors"
+          >
+            <ArrowRight size={18} />
+            {t("executive.linkIntelligence")}
+          </Link>
+        </div>
       </header>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">

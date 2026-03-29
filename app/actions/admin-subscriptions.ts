@@ -2,17 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
-import { AccountStatus, type UserRole } from "@prisma/client";
+import { AccountStatus, type SubscriptionTier, type UserRole } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, generateProvisionPassword } from "@/lib/password";
-import { planDefaultCredits, ADMIN_PLAN_OPTIONS } from "@/lib/subscription-plans";
 import { sendProvisionCredentialsEmail } from "@/app/actions/send-credentials-email";
 import {
   sendAccessApprovedAdminNotify,
   sendAccessApprovedEmail,
 } from "@/lib/mail";
 import { isPlatformDeveloperEmail } from "@/lib/platform-developers";
+import {
+  defaultScanBalancesForTier,
+  parseSubscriptionTier,
+} from "@/lib/subscription-tier-config";
 
 /** אישור מנויים / ניהול לקוחות — רק PLATFORM_DEVELOPER_EMAILS */
 async function requirePlatformOwner() {
@@ -26,6 +29,11 @@ async function requirePlatformOwner() {
   return session;
 }
 
+function assertValidTier(plan: string): SubscriptionTier | null {
+  const t = parseSubscriptionTier(plan);
+  return t;
+}
+
 export async function approveOrganizationAction(
   organizationId: string,
   plan: string,
@@ -35,20 +43,22 @@ export async function approveOrganizationAction(
     return { ok: false, error: "אין הרשאה" };
   }
 
-  if (!ADMIN_PLAN_OPTIONS.includes(plan as (typeof ADMIN_PLAN_OPTIONS)[number])) {
-    return { ok: false, error: "חבילה לא חוקית" };
+  const tier = assertValidTier(plan);
+  if (!tier) {
+    return { ok: false, error: "רמת מנוי לא חוקית" };
   }
 
-  const credits = planDefaultCredits(plan);
+  const balances = defaultScanBalancesForTier(tier);
   try {
     await prisma.$transaction([
       prisma.organization.update({
         where: { id: organizationId },
         data: {
           subscriptionStatus: "ACTIVE",
-          plan,
-          monthlyAllowance: credits,
-          creditsRemaining: credits,
+          subscriptionTier: tier,
+          cheapScansLeft: balances.cheapScansLeft,
+          premiumScansLeft: balances.premiumScansLeft,
+          maxCompanies: balances.maxCompanies,
         },
       }),
       prisma.user.updateMany({
@@ -60,6 +70,7 @@ export async function approveOrganizationAction(
       }),
     ]);
     revalidatePath("/dashboard/admin");
+    revalidatePath("/dashboard/billing");
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון נכשל" };
@@ -82,8 +93,9 @@ export async function approvePendingRegistrationAction(
   if (!session) return { ok: false, error: "אין הרשאה" };
   if (!userId) return { ok: false, error: "חסר מזהה משתמש" };
 
-  if (!ADMIN_PLAN_OPTIONS.includes(plan as (typeof ADMIN_PLAN_OPTIONS)[number])) {
-    return { ok: false, error: "חבילה לא חוקית" };
+  const tier = assertValidTier(plan);
+  if (!tier) {
+    return { ok: false, error: "רמת מנוי לא חוקית" };
   }
   if (!PROVISION_ROLES.includes(role as UserRole)) {
     return { ok: false, error: "תפקיד לא חוקי" };
@@ -101,16 +113,17 @@ export async function approvePendingRegistrationAction(
     return { ok: false, error: "לא ניתן לאשר משתמש מפתח פלטפורמה" };
   }
 
-  const credits = planDefaultCredits(plan);
+  const balances = defaultScanBalancesForTier(tier);
   try {
     await prisma.$transaction([
       prisma.organization.update({
         where: { id: user.organizationId },
         data: {
           subscriptionStatus: "ACTIVE",
-          plan,
-          monthlyAllowance: credits,
-          creditsRemaining: credits,
+          subscriptionTier: tier,
+          cheapScansLeft: balances.cheapScansLeft,
+          premiumScansLeft: balances.premiumScansLeft,
+          maxCompanies: balances.maxCompanies,
         },
       }),
       prisma.user.update({
@@ -119,6 +132,7 @@ export async function approvePendingRegistrationAction(
       }),
     ]);
     revalidatePath("/dashboard/admin");
+    revalidatePath("/dashboard/billing");
 
     void Promise.all([
       sendAccessApprovedEmail(user.email),

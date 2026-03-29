@@ -9,10 +9,9 @@ export const trialEndsAtFromNow = () => {
 
 /** בדיקה האם הניסיון פג (רק FREE עם תאריך מוגדר) */
 export const isFreeTrialExpired = (
-  org: Pick<Organization, "plan" | "trialEndsAt">,
+  org: Pick<Organization, "subscriptionTier" | "trialEndsAt">,
 ) => {
-  const plan = (org.plan || "").toUpperCase();
-  if (plan !== "FREE" || !org.trialEndsAt) return false;
+  if (org.subscriptionTier !== "FREE" || !org.trialEndsAt) return false;
   return new Date() > new Date(org.trialEndsAt);
 };
 
