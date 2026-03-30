@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Assistant, Heebo } from "next/font/google";
 import "./globals.css";
+import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -29,6 +30,11 @@ const assistant = Assistant({
 
 export const metadata: Metadata = buildRootMetadata();
 
+/** סשן משתמש — חייב להתעדכן בכל בקשה; אחרת RSC עלול להציג משתמש קודם ב-SessionProvider */
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -49,6 +55,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  noStore();
   const session = await getServerSession(authOptions);
   const jar = await cookies();
   const locale = normalizeLocale(jar.get(COOKIE_LOCALE)?.value);
@@ -64,7 +71,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${heebo.className} antialiased font-sans`}>
-        <SessionProvider session={session}>
+        <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
             <Themer />
             {children}

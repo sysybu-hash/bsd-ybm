@@ -1,10 +1,13 @@
 import { Suspense } from "react";
-import LoginClient from "./LoginClient";
+import { unstable_noStore as noStore } from "next/cache";
+import AuthEntryClient from "@/components/auth/AuthEntryClient";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "כניסה | BSD-YBM Intelligence",
-  description: "התחברות עם Google לפלטפורמת BSD-YBM",
+  description: "התחברות לפלטפורמת BSD-YBM",
 };
 
 function LoginFallback() {
@@ -16,9 +19,10 @@ function LoginFallback() {
 }
 
 export default function LoginPage() {
+  noStore();
   return (
     <Suspense fallback={<LoginFallback />}>
-      <LoginClient />
+      <AuthEntryClient />
     </Suspense>
   );
 }

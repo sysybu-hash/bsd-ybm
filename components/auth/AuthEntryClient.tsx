@@ -1,12 +1,13 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Brain, ArrowRight, Loader2, KeyRound } from "lucide-react";
-import { useState } from "react";
+import { Brain, ArrowRight, Loader2, KeyRound, LogOut, UserCircle } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import type { Session } from "next-auth";
+import { loginErrorMessages, loginReasonMessages } from "@/lib/auth/login-messages";
 
 function GoogleMark({ className }: { className?: string }) {
   return (
@@ -31,39 +32,68 @@ function GoogleMark({ className }: { className?: string }) {
   );
 }
 
-const errorMessages: Record<string, string> = {
-  Configuration: "בעיית הגדרת שרת (בדוק משתני סביבה ל-Google).",
-  AccessDenied: "הגישה נדחתה.",
-  Verification: "פג תוקף קישור האימות. נסה שוב.",
-  OAuthAccountNotLinked:
-    "האימייל כבר קיים במערכת — נסה שוב להתחבר עם Google (אמור להיקשר אוטומטית).",
-  CredentialsSignin: "התחברות נכשלה — בדקו אימייל וסיסמה.",
-  Default: "התחברות נכשלה. נסה שוב.",
-};
+function navigateHard(href: string) {
+  window.location.assign(href);
+}
 
-const reasonMessages: Record<string, string> = {
-  no_account: "אין חשבון פעיל עבור אימייל זה. נא להירשם או לפנות למנהל המערכת.",
-  pending: "החשבון ממתין לאישור מנוי על ידי מנהל המערכת.",
-  blocked: "התחברות חסומה עבור כתובת זו. פנו למנהל המערכת.",
-  allowlist: "כתובת זו אינה ברשימת ההתרה להתחברות. רק חשבונות מורשים יכולים להיכנס.",
-};
+/** רק נתיב יחסי פנימי — לא // או http (חיזוק מול open redirect) */
+function safeInternalPath(raw: string | null | undefined, fallback: string): string {
+  const s = (raw ?? "").trim();
+  if (!s.startsWith("/") || s.startsWith("//")) return fallback;
+  return s;
+}
 
-export default function LoginClient() {
+export default function AuthEntryClient() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const registered = searchParams.get("registered");
   const callbackUrl =
     registered === "1"
       ? "/dashboard?welcome=1"
-      : searchParams.get("callbackUrl") || "/dashboard";
+      : safeInternalPath(searchParams.get("callbackUrl"), "/dashboard");
   const errorCode = searchParams.get("error");
   const reason = searchParams.get("reason");
-  const oauthError = errorCode ? errorMessages[errorCode] ?? errorMessages.Default : null;
-  const reasonText = reason ? reasonMessages[reason] ?? null : null;
+  const oauthError = errorCode ? loginErrorMessages[errorCode] ?? loginErrorMessages.Default : null;
+  const reasonText = reason ? loginReasonMessages[reason] ?? null : null;
 
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingCreds, setLoadingCreds] = useState(false);
   const [credError, setCredError] = useState<string | null>(null);
+  const [sessionProbe, setSessionProbe] = useState<"idle" | "loading" | "done">("idle");
+  const [activeSession, setActiveSession] = useState<Session | null>(null);
+
+  const refreshLocalSession = useCallback(async () => {
+    setSessionProbe("loading");
+    const s = await getSession();
+    const id = s?.user?.id?.trim() ?? "";
+    if (id.length > 0) {
+      setActiveSession(s);
+    } else {
+      setActiveSession(null);
+    }
+    setSessionProbe("done");
+  }, []);
+
+  useEffect(() => {
+    void refreshLocalSession();
+  }, [refreshLocalSession]);
+
+  const handleGoogle = () => {
+    setLoadingGoogle(true);
+    /** redirect מלא ל-Google וחזרה — לא נשארים ב-SPA עם עוגיה ישנה */
+    void signIn("google", { callbackUrl, redirect: true });
+  };
+
+  const handleSwitchAccount = () => {
+    void signOut({
+      callbackUrl: "/login",
+      redirect: true,
+    });
+  };
+
+  const sessionEmail = (activeSession?.user?.email ?? "").trim();
+  const sessionName = (activeSession?.user?.name ?? "").trim();
+  const showActiveBanner =
+    sessionProbe === "done" && activeSession != null && sessionEmail.length > 0;
 
   return (
     <div
@@ -88,10 +118,7 @@ export default function LoginClient() {
             BSD-YBM<span className="text-slate-900">.</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link
-              href="/register"
-              className="text-sm font-bold text-blue-600 hover:text-blue-500"
-            >
+            <Link href="/register" className="text-sm font-bold text-blue-600 hover:text-blue-500">
               הרשמה
             </Link>
             <Link href="/" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
@@ -119,6 +146,44 @@ export default function LoginClient() {
             Google — או אימייל וסיסמה אם הופקו על ידי מנהל המערכת.
           </p>
 
+          {sessionProbe === "loading" && (
+            <div className="mt-6 flex justify-center">
+              <Loader2 className="h-6 w-6 animate-spin text-slate-400" aria-hidden />
+            </div>
+          )}
+
+          {showActiveBanner && (
+            <div className="mt-6 rounded-2xl border border-amber-200/90 bg-amber-50/90 px-4 py-4 text-sm text-amber-950 shadow-sm">
+              <div className="flex items-start gap-3">
+                <UserCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden />
+                <div className="min-w-0 flex-1 space-y-1 text-end">
+                  <p className="font-bold">כבר מחוברים</p>
+                  <p className="break-all text-xs text-amber-900/90">
+                    {sessionName ? `${sessionName} · ` : null}
+                    {sessionEmail}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row-reverse sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => navigateHard(callbackUrl)}
+                  className="rounded-xl bg-amber-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-amber-700"
+                >
+                  המשך לדשבורד
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void handleSwitchAccount()}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-amber-300/80 bg-white px-4 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100/50"
+                >
+                  <LogOut className="h-3.5 w-3.5" aria-hidden />
+                  התנתקות והתחברות אחרת
+                </button>
+              </div>
+            </div>
+          )}
+
           {(oauthError || reasonText) && (
             <p className="mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
               {reasonText ?? oauthError}
@@ -128,10 +193,7 @@ export default function LoginClient() {
           <button
             type="button"
             disabled={loadingGoogle}
-            onClick={() => {
-              setLoadingGoogle(true);
-              void signIn("google", { callbackUrl });
-            }}
+            onClick={handleGoogle}
             className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-4 text-sm font-bold text-slate-800 shadow-sm transition-all hover:bg-slate-50 hover:shadow-md disabled:opacity-60"
           >
             {loadingGoogle ? (
@@ -174,13 +236,21 @@ export default function LoginClient() {
                 setCredError("אימייל או סיסמה שגויים — או שאין סיסמה הופקה עדיין.");
                 return;
               }
-              if (res?.url) {
-                router.push(res.url);
-                router.refresh();
-              } else {
-                router.push(callbackUrl);
-                router.refresh();
+              const fromApi = res?.url?.trim() ?? "";
+              let dest = callbackUrl;
+              if (fromApi.length > 0) {
+                try {
+                  const nextHost =
+                    typeof window !== "undefined" ? window.location.host : "";
+                  const u = new URL(fromApi, window.location.origin);
+                  if (u.host === nextHost && u.pathname.startsWith("/") && !u.pathname.startsWith("//")) {
+                    dest = `${u.pathname}${u.search}${u.hash}`;
+                  }
+                } catch {
+                  dest = callbackUrl;
+                }
               }
+              navigateHard(dest);
             }}
           >
             <div className="flex items-center gap-2 text-slate-700 text-sm font-bold">
@@ -203,9 +273,7 @@ export default function LoginClient() {
               placeholder="סיסמה"
               className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
             />
-            {credError && (
-              <p className="text-sm text-red-600 text-center">{credError}</p>
-            )}
+            {credError && <p className="text-sm text-red-600 text-center">{credError}</p>}
             <button
               type="submit"
               disabled={loadingCreds}

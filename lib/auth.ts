@@ -31,6 +31,12 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
+      /** בחירת חשבון Google מפורשת — מפחית „נשארתי על המשתמש הקודם” */
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
     }),
     CredentialsProvider({
       id: "credentials",
@@ -104,21 +110,44 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ token, session }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.organizationId = token.organizationId as string | null;
+        session.user.id = (token.id as string) ?? "";
+        session.user.role = (token.role as string) ?? "";
+        session.user.organizationId = (token.organizationId as string | null) ?? null;
         if (typeof token.email === "string") {
           session.user.email = token.email;
+        }
+        if (typeof token.name === "string" && token.name.length > 0) {
+          session.user.name = token.name;
+        }
+        if (typeof token.picture === "string" && token.picture.length > 0) {
+          session.user.image = token.picture;
         }
       }
       return session;
     },
     async jwt({ token, user }) {
-      if (user?.email) {
-        token.email = user.email.trim().toLowerCase();
-      }
-      if (user && "id" in user && typeof (user as { id?: string }).id === "string") {
-        token.id = (user as { id: string }).id;
+      if (user) {
+        const u = user as {
+          id?: string;
+          email?: string | null;
+          name?: string | null;
+          image?: string | null;
+        };
+        if (u.email) {
+          token.email = u.email.trim().toLowerCase();
+        }
+        if (typeof u.id === "string" && u.id.length > 0) {
+          token.id = u.id;
+        }
+        if (u.name != null) {
+          token.name = u.name ?? undefined;
+        }
+        if (u.image != null) {
+          token.picture = u.image ?? undefined;
+        }
+        /** התחברות חדשה — לא לשמר תפקיד/ארגון מ-JWT קודם (מיזוג תוקע זהות) */
+        delete (token as { role?: string }).role;
+        delete (token as { organizationId?: string | null }).organizationId;
       }
       const email = typeof token.email === "string" ? token.email.trim().toLowerCase() : null;
       if (!email) {
@@ -148,6 +177,8 @@ export const authOptions: NextAuthOptions = {
             role: true,
             organizationId: true,
             accountStatus: true,
+            name: true,
+            image: true,
           },
         });
         if (!dbUser || dbUser.accountStatus !== AccountStatus.ACTIVE) {
@@ -160,6 +191,8 @@ export const authOptions: NextAuthOptions = {
         token.role = jwtRoleForSession(email, dbUser.role);
         const managed = meckanoManagedOrganizationId();
         token.organizationId = managed ?? dbUser.organizationId;
+        if (dbUser.name) token.name = dbUser.name;
+        if (dbUser.image) token.picture = dbUser.image;
         return token;
       }
 
@@ -178,6 +211,8 @@ export const authOptions: NextAuthOptions = {
           role: true,
           organizationId: true,
           accountStatus: true,
+          name: true,
+          image: true,
         },
       });
 
@@ -191,6 +226,8 @@ export const authOptions: NextAuthOptions = {
       token.id = dbUser.id;
       token.organizationId = dbUser.organizationId;
       token.role = jwtRoleForSession(email, dbUser.role);
+      if (dbUser.name) token.name = dbUser.name;
+      if (dbUser.image) token.picture = dbUser.image;
 
       return token;
     },
