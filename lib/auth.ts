@@ -133,12 +133,23 @@ export const authOptions: NextAuthOptions = {
           name?: string | null;
           image?: string | null;
         };
-        if (u.email) {
-          token.email = u.email.trim().toLowerCase();
+        /**
+         * התחברות חדשה: חובה לאפס אימייל מהטוקן הישן.
+         * אם `user.email` חסר לרגע, הקוד הישן השאיר את token.email של המשתמש הקודם —
+         * ואז נטען פרופיל/תפקיד של sysybu למרות התחברות כ-jbuildgca (באג ייצור).
+         */
+        const emailNorm = (u.email ?? "").trim().toLowerCase();
+        if (!emailNorm) {
+          token.email = "";
+          token.id = "";
+          token.name = undefined;
+          token.picture = undefined;
+          delete (token as { role?: string }).role;
+          delete (token as { organizationId?: string | null }).organizationId;
+          return token;
         }
-        if (typeof u.id === "string" && u.id.length > 0) {
-          token.id = u.id;
-        }
+        token.email = emailNorm;
+        token.id = typeof u.id === "string" && u.id.length > 0 ? u.id : "";
         if (u.name != null) {
           token.name = u.name ?? undefined;
         }

@@ -55,6 +55,8 @@ type Props = {
   userRole: string;
   /** מספר ימים שנותרו בניסיון FREE — null אם אין באנר */
   trialBannerDaysLeft: number | null;
+  /** סשן שאומת בשרת — מקור אמת לתצוגת פרופיל (מונע אי-התאמה מ-useSession בצד לקוח) */
+  serverUser: { email: string; name: string | null; image: string | null };
 };
 
 export default function DashboardLayoutClient({
@@ -62,15 +64,16 @@ export default function DashboardLayoutClient({
   orgId,
   userRole,
   trialBannerDaysLeft,
+  serverUser,
 }: Props) {
   const { t, dir } = useI18n();
   const pathname = usePathname() ?? "";
   const { data: sessionData, status: sessionStatus } = useSession();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  /** ניווט רגיש (אדמין / אקזקוטיב / מקנ״ו) — רק אחרי אימות סשן בצד הלקוח, לפי אימייל מה־session בלבד */
-  const navReady = sessionStatus === "authenticated";
-  const liveEmail = navReady ? (sessionData?.user?.email ?? "").trim() : "";
+  /** אימייל לתפריט: קודם מהשרת (מסונכרן עם JWT בפועל), אחר כך session בדפדפן */
+  const liveEmail = (serverUser.email || (sessionData?.user?.email ?? "")).trim();
+  const navReady = sessionStatus === "authenticated" || liveEmail.length > 0;
   const isSpecialClient = navReady && hasMeckanoAccess(liveEmail);
   const showMeckanoLink = isSpecialClient;
   const meckanoOperatorMinimalNav = isSpecialClient;
@@ -188,7 +191,7 @@ export default function DashboardLayoutClient({
         </div>
         <div className="space-y-3 border-t border-slate-100 pt-4">
           <LanguageSwitcher showLabel className="px-1" />
-          <DashboardSidebarUserCard />
+          <DashboardSidebarUserCard serverUser={serverUser} />
         </div>
       </aside>
 
@@ -234,7 +237,7 @@ export default function DashboardLayoutClient({
         </div>
         <div className="space-y-3">
           <LanguageSwitcher showLabel className="px-1" />
-          <DashboardSidebarUserCard />
+          <DashboardSidebarUserCard serverUser={serverUser} />
         </div>
       </aside>
 

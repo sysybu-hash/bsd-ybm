@@ -44,6 +44,11 @@ export default async function DashboardLayout({
       orgId={session?.user?.organizationId || ""}
       userRole={session.user.role}
       trialBannerDaysLeft={trialBannerDaysLeft}
+      serverUser={{
+        email: session.user.email ?? "",
+        name: session.user.name ?? null,
+        image: session.user.image ?? null,
+      }}
     >
       {children}
     </DashboardLayoutClient>

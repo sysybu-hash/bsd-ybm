@@ -4,20 +4,24 @@ import { signOut, useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 
+type ServerUser = { email: string; name: string | null; image: string | null };
+
 /** פרופיל משתמש בתחתית סרגל הצד — זכוכית, מסגרת זהב, נקודת סטטוס פעיל */
-export default function DashboardSidebarUserCard() {
+export default function DashboardSidebarUserCard({
+  serverUser,
+}: Readonly<{ serverUser: ServerUser }>) {
   const { data: session, status } = useSession({ required: true });
   const { t, dir } = useI18n();
 
-  const email = (session?.user?.email ?? "").trim();
-  const name = (session?.user?.name ?? "").trim();
-  const image = session?.user?.image ?? null;
-  const loading = status === "loading";
+  const email = (serverUser.email || (session?.user?.email ?? "")).trim();
+  const name = (serverUser.name || (session?.user?.name ?? "") || "").trim();
+  const image = serverUser.image ?? session?.user?.image ?? null;
+  const loading = status === "loading" && !serverUser.email;
   const displayName = loading ? "…" : name || email.split("@")[0] || "—";
 
   return (
     <div
-      key={session?.user?.email ?? ""}
+      key={email}
       dir={dir}
       className="w-full rounded-xl border border-slate-200/70 bg-white/75 px-3 py-3 shadow-md shadow-slate-200/40 backdrop-blur-md ring-1 ring-slate-100/90"
     >
