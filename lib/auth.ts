@@ -122,6 +122,11 @@ export const authOptions: NextAuthOptions = {
         if (typeof token.picture === "string" && token.picture.length > 0) {
           session.user.image = token.picture;
         }
+        /** הגנה כפולה: SUPER_ADMIN ב-UI/API רק ל־STEEL_ADMIN_EMAIL — לא דרך באג ב-JWT */
+        const em = typeof session.user.email === "string" ? session.user.email : "";
+        if (session.user.role === "SUPER_ADMIN" && !isAdmin(em)) {
+          session.user.role = "ORG_ADMIN";
+        }
       }
       return session;
     },

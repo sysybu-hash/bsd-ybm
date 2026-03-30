@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { unstable_noStore as noStore } from "next/cache";
-import AuthEntryClient from "@/components/auth/AuthEntryClient";
+import LoginPortal from "@/components/auth/LoginPortal";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -12,8 +12,11 @@ export const metadata: Metadata = {
 
 function LoginFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50" dir="rtl">
-      <div className="h-10 w-10 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+    <div className="min-h-app flex items-center justify-center bg-slate-50" dir="rtl">
+      <div
+        className="h-10 w-10 animate-spin rounded-full border-2 border-t-transparent"
+        style={{ borderColor: "var(--primary-color,#b8860b)", borderTopColor: "transparent" }}
+      />
     </div>
   );
 }
@@ -22,7 +25,7 @@ export default function LoginPage() {
   noStore();
   return (
     <Suspense fallback={<LoginFallback />}>
-      <AuthEntryClient />
+      <LoginPortal />
     </Suspense>
   );
 }

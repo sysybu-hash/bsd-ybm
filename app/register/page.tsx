@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import RegisterClient from "./RegisterClient";
+import { unstable_noStore as noStore } from "next/cache";
+import RegisterPortal from "@/components/auth/RegisterPortal";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "הרשמה | BSD-YBM Intelligence",
@@ -11,10 +14,9 @@ type Props = {
 };
 
 export default async function RegisterPage({ searchParams }: Props) {
+  noStore();
   const sp = await searchParams;
   const inviteToken = sp.invite?.trim() || undefined;
   const orgInviteToken = sp.orgInvite?.trim() || undefined;
-  return (
-    <RegisterClient inviteToken={inviteToken} orgInviteToken={orgInviteToken} />
-  );
+  return <RegisterPortal inviteToken={inviteToken} orgInviteToken={orgInviteToken} />;
 }

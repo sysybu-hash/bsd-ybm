@@ -19,16 +19,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const caller = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { organizationId: true, role: true },
-  });
-
   const isPlatformOwner = isAdmin(session.user.email);
-
-  if (!caller) {
-    return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 403 });
-  }
+  /** הרשאות לפי סשן (אחרי jwtRoleForSession) — לא לפי role גולמי ב-DB */
+  const sessionRole = String(session.user.role ?? "");
+  const sessionOrgId = session.user.organizationId ?? null;
+  const isOrgLead = isPlatformOwner || sessionRole === "ORG_ADMIN";
 
   const body = (await req.json()) as {
     email?: string;
@@ -42,14 +37,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "חסר אימייל או מזהה ארגון" }, { status: 400 });
   }
 
-  if (!isPlatformOwner && caller.role !== "ORG_ADMIN") {
+  if (!isOrgLead) {
     return NextResponse.json(
       { error: "רק מנהל ארגון רשאי לשייך משתמשים לצוות" },
       { status: 403 },
     );
   }
 
-  if (!isPlatformOwner && caller.organizationId !== organizationId) {
+  if (!isPlatformOwner && sessionOrgId !== organizationId) {
     return NextResponse.json({ error: "אסור לשייך מחוץ לארגון שלך" }, { status: 403 });
   }
 
@@ -62,11 +57,11 @@ export async function POST(req: Request) {
 
   let newRole: UserRole = "EMPLOYEE";
   const r = String(body.role ?? "").trim();
-  if (r === "ORG_ADMIN" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+  if (r === "ORG_ADMIN" && isOrgLead) {
     newRole = "ORG_ADMIN";
-  } else if (r === "PROJECT_MGR" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+  } else if (r === "PROJECT_MGR" && isOrgLead) {
     newRole = "PROJECT_MGR";
-  } else if (r === "CLIENT" && (caller.role === "ORG_ADMIN" || isPlatformOwner)) {
+  } else if (r === "CLIENT" && isOrgLead) {
     newRole = "CLIENT";
   } else if (r === "EMPLOYEE") {
     newRole = "EMPLOYEE";

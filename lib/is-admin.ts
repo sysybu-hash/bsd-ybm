@@ -5,6 +5,7 @@ import type { UserRole } from "@prisma/client";
  *
  * רק האימייל המפורט נחשב בעל פלטפורמה לצורכי UI ו־API (חדר מצב, לשוניות ניהול בבילינג, שידור וכו׳).
  * משתמשים עם SUPER_ADMIN ב־DB שאינם כתובת זו — מקבלים בטוקן ORG_ADMIN (לא SUPER_ADMIN) — ראו `jwtRoleForSession`.
+ * בנוסף, ב־`session` callback ב־auth: אם role הוא SUPER_ADMIN אבל האימייל אינו כאן — מנורמל ל־ORG_ADMIN.
  *
  * אין כאן מטמון — תמיד השוואת מחרוזת מנורמלת.
  */
