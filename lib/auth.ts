@@ -72,7 +72,7 @@ export const authOptions: NextAuthOptions = {
         }
         return {
           id: user.id,
-          email: user.email,
+          email: user.email.trim().toLowerCase(),
           name: user.name ?? undefined,
         };
       },

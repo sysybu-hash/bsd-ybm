@@ -43,6 +43,15 @@ function safeInternalPath(raw: string | null | undefined, fallback: string): str
   return s;
 }
 
+/** מוחק עוגיית JWT קיימת לפני כניסה חדשה — אחרת NextAuth לעיתים משאיר את המשתמש הקודם (sysybu) */
+async function clearClientSessionCookie(): Promise<void> {
+  try {
+    await signOut({ redirect: false });
+  } catch {
+    /* לא מחובר / רשת — ממשיכים */
+  }
+}
+
 export default function AuthEntryClient() {
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
@@ -77,10 +86,14 @@ export default function AuthEntryClient() {
     void refreshLocalSession();
   }, [refreshLocalSession]);
 
-  const handleGoogle = () => {
+  const handleGoogle = async () => {
     setLoadingGoogle(true);
-    /** redirect מלא ל-Google וחזרה — לא נשארים ב-SPA עם עוגיה ישנה */
-    void signIn("google", { callbackUrl, redirect: true });
+    try {
+      await clearClientSessionCookie();
+      await signIn("google", { callbackUrl, redirect: true });
+    } catch {
+      setLoadingGoogle(false);
+    }
   };
 
   const handleSwitchAccount = () => {
@@ -145,6 +158,9 @@ export default function AuthEntryClient() {
           <p className="mt-2 text-center text-sm text-slate-500 leading-relaxed">
             Google — או אימייל וסיסמה אם הופקו על ידי מנהל המערכת.
           </p>
+          <p className="mt-2 text-center text-xs text-slate-400 leading-relaxed">
+            לפני כל כניסה נמחקת אוטומטית עוגיית הסשן הקודמת — כדי שלא יישארו מחוברים בטעות כמשתמש אחר.
+          </p>
 
           {sessionProbe === "loading" && (
             <div className="mt-6 flex justify-center">
@@ -193,7 +209,7 @@ export default function AuthEntryClient() {
           <button
             type="button"
             disabled={loadingGoogle}
-            onClick={handleGoogle}
+            onClick={() => void handleGoogle()}
             className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-4 text-sm font-bold text-slate-800 shadow-sm transition-all hover:bg-slate-50 hover:shadow-md disabled:opacity-60"
           >
             {loadingGoogle ? (
@@ -225,6 +241,7 @@ export default function AuthEntryClient() {
                 return;
               }
               setLoadingCreds(true);
+              await clearClientSessionCookie();
               const res = await signIn("credentials", {
                 email,
                 password,
