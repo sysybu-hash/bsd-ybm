@@ -1,12 +1,12 @@
 /**
- * מנרמל רשומות User במסד: SUPER_ADMIN מותר רק ל־sysybu@gmail.com.
+ * מנרמל רשומות User במסד: SUPER_ADMIN מותר רק לבעל הפלטפורמה (STEEL_ADMIN_EMAIL או sysybu@gmail.com).
  * כל שאר SUPER_ADMIN ב־DB יורדים ל־ORG_ADMIN (שומר ניהול ארגון, בלי מפתח פלטפורמה).
  *
  * הרצה: node scripts/demote-non-steel-super-admins.mjs
  */
 import { PrismaClient } from "@prisma/client";
 
-const STEEL = "sysybu@gmail.com";
+const STEEL = (process.env.STEEL_ADMIN_EMAIL || "sysybu@gmail.com").trim().toLowerCase();
 const prisma = new PrismaClient();
 
 async function main() {

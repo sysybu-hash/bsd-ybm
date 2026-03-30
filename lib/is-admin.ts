@@ -1,26 +1,35 @@
 import type { UserRole } from "@prisma/client";
 
+/** ברירת מחדל בקוד — אם אין STEEL_ADMIN_EMAIL ב־.env */
+export const DEFAULT_STEEL_ADMIN_EMAIL = "sysybu@gmail.com";
+
 /**
- * נעילת זהות פלטפורמה (Steel Lock) — SuperAdmin יחיד.
+ * כתובת בעל הפלטפורמה (Steel Lock) — אימייל יחיד שמקבל SUPER_ADMIN אמיתי ו־Master Admin.
  *
- * רק האימייל המפורט נחשב בעל פלטפורמה לצורכי UI ו־API (חדר מצב, לשוניות ניהול בבילינג, שידור וכו׳).
- * משתמשים עם SUPER_ADMIN ב־DB שאינם כתובת זו — מקבלים בטוקן ORG_ADMIN (לא SUPER_ADMIN) — ראו `jwtRoleForSession`.
- * בנוסף, ב־`session` callback ב־auth: אם role הוא SUPER_ADMIN אבל האימייל אינו כאן — מנורמל ל־ORG_ADMIN.
- *
- * אין כאן מטמון — תמיד השוואת מחרוזת מנורמלת.
+ * אפשר לעקוף ב־`STEEL_ADMIN_EMAIL` (משתנה סביבה) אם חשבון Google/DB נרשם עם כתובת אחרת
+ * (למשל sysybug@gmail.com במקום sysybu) — בלי לשנות קוד.
  */
-export const STEEL_ADMIN_EMAIL = "sysybu@gmail.com";
-
-/** SuperAdmin הפלטפורמה (Yohanan / חשבון הבעלים) — לבדיקות מפורשות */
-export const PLATFORM_SUPER_ADMIN_EMAIL = STEEL_ADMIN_EMAIL;
-
-export function isAdmin(email: string | null | undefined): boolean {
-  return (email ?? "").trim().toLowerCase() === STEEL_ADMIN_EMAIL;
+export function steelPlatformOwnerEmail(): string {
+  const raw = process.env.STEEL_ADMIN_EMAIL?.trim().toLowerCase();
+  if (raw && raw.includes("@")) return raw;
+  return DEFAULT_STEEL_ADMIN_EMAIL;
 }
 
 /**
- * תפקיד ב-JWT/סשן: רק sysybu@gmail.com כ־SUPER_ADMIN.
- * SUPER_ADMIN שגוי ב־DB → מנורמל ל־ORG_ADMIN (יכולות מנהל ארגון בלי מפתח פלטפורמה).
+ * @deprecated השתמשו ב־`steelPlatformOwnerEmail()` — הקבוע משקף רק את ברירת המחדל, לא עקיפת env
+ */
+export const STEEL_ADMIN_EMAIL = DEFAULT_STEEL_ADMIN_EMAIL;
+
+/** @deprecated השתמשו ב־`steelPlatformOwnerEmail()` */
+export const PLATFORM_SUPER_ADMIN_EMAIL = DEFAULT_STEEL_ADMIN_EMAIL;
+
+export function isAdmin(email: string | null | undefined): boolean {
+  return (email ?? "").trim().toLowerCase() === steelPlatformOwnerEmail();
+}
+
+/**
+ * תפקיד ב-JWT/סשן: רק בעל הפלטפורמה (steelPlatformOwnerEmail) כ־SUPER_ADMIN.
+ * SUPER_ADMIN שגוי ב־DB → מנורמל ל־ORG_ADMIN.
  */
 export function jwtRoleForSession(
   email: string | null | undefined,

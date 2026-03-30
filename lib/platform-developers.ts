@@ -1,13 +1,13 @@
 import type { UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { isAdmin, STEEL_ADMIN_EMAIL } from "@/lib/is-admin";
+import { isAdmin, steelPlatformOwnerEmail } from "@/lib/is-admin";
 
 /** PostgreSQL INT — ערך גבוה ללא ניכוי מעשי */
 export const PLATFORM_UNLIMITED_CREDITS = 2_147_483_647;
 
 /** רשימת בעלי פלטפורמה — מסונכרן עם isAdmin (Steel Lock) */
 export function getPlatformDeveloperEmails(): string[] {
-  return [STEEL_ADMIN_EMAIL];
+  return [steelPlatformOwnerEmail()];
 }
 
 /** @deprecated השתמשו ב־isAdmin מ־lib/is-admin.ts */
