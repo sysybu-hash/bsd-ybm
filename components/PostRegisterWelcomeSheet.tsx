@@ -40,12 +40,12 @@ export default function PostRegisterWelcomeSheet() {
 
   return (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[250] flex items-center justify-center bg-slate-200/55 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"
     >
-      <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white p-8 shadow-2xl" dir="rtl">
+      <div className="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl shadow-slate-200/50" dir="rtl">
         <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-slate-900">
           ברוך הבא ל־BSD-YBM
         </h2>

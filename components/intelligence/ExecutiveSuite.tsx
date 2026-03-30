@@ -74,7 +74,7 @@ export default function ExecutiveSuite() {
               <p className="text-slate-500">נמצא ספק זול ב-12% מ-OfficeDepot.</p>
               <button
                 type="button"
-                className="w-full mt-2 py-2 bg-slate-900 text-white rounded-lg font-bold"
+                className="w-full mt-2 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700"
               >
                 צור הזמנה
               </button>
@@ -132,16 +132,16 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl">
-            <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-6">
+          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 text-slate-900 shadow-2xl shadow-slate-200/40">
+            <h4 className="text-xs font-black uppercase tracking-widest text-blue-700 mb-6">
               סטטוס בנקים מאוחד
             </h4>
             <div className="space-y-4">
-              <div className="flex justify-between border-b border-white/5 pb-2">
+              <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-xs">בנק הפועלים (842)</span>
                 <span className="text-xs font-bold">₪42,100</span>
               </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
+              <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-xs">כרטיס עסקי Platinum</span>
                 <span className="text-xs font-bold text-rose-400">-₪8,400</span>
               </div>

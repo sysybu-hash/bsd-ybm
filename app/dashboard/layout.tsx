@@ -1,30 +1,27 @@
 import type { ReactNode } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { freeTrialDaysRemaining } from "@/lib/trial";
 import DashboardLayoutClient from "@/components/DashboardLayoutClient";
-import { hasMeckanoAccess } from "@/lib/meckano-access";
-import { isAdmin } from "@/lib/is-admin";
 
-/** מניעת מטמון RSC/CDN לתפריט לפי משתמש */
+/** מניעת מטמון RSC/CDN — ללא גרסת „אדמין” שנשמרת למשתמש רגיל */
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  noStore();
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     redirect("/login");
   }
-
-  const email = session.user.email;
-  /** חדר מצב / מאסטר — רק Steel Admin (sysybu@gmail.com). לא מספיק SUPER_ADMIN ב-DB. */
-  const showAdminNav = Boolean(email) && !hasMeckanoAccess(email) && isAdmin(email);
 
   let trialBannerDaysLeft: number | null = null;
   const orgId = session.user.organizationId;
@@ -46,10 +43,7 @@ export default async function DashboardLayout({
     <DashboardLayoutClient
       orgId={session?.user?.organizationId || ""}
       userRole={session.user.role}
-      userEmail={session.user.email ?? null}
-      userImage={session.user.image ?? null}
       trialBannerDaysLeft={trialBannerDaysLeft}
-      showAdminNav={showAdminNav}
     >
       {children}
     </DashboardLayoutClient>

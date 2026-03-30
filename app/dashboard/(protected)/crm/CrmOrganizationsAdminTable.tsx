@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   Trash2,
@@ -13,6 +14,7 @@ import {
   Receipt,
   Percent,
   Zap,
+  CreditCard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -60,8 +62,10 @@ function payPlusTableTotals(rows: ClientAiTableRow[]) {
 
 export default function CrmOrganizationsAdminTable({
   organizations,
+  showUnifiedBillingLinks = false,
 }: {
   organizations: CrmAdminOrganizationRow[];
+  showUnifiedBillingLinks?: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -201,7 +205,16 @@ export default function CrmOrganizationsAdminTable({
                 </button>
               </td>
               <td className="px-8 py-6">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  {showUnifiedBillingLinks ? (
+                    <Link
+                      href={`/dashboard/billing?tab=control&orgId=${encodeURIComponent(org.id)}`}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200/90 bg-amber-50/90 px-3 py-1.5 text-sm font-bold text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
+                    >
+                      <CreditCard size={16} />
+                      מנוי
+                    </Link>
+                  ) : null}
                   <button
                     type="button"
                     title="עריכת שם ארגון"
@@ -232,7 +245,7 @@ export default function CrmOrganizationsAdminTable({
       </table>
 
       {aiModal ? (
-        <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[3px] z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-200/70 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
           <div
             className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-hidden shadow-[0_25px_80px_-12px_rgba(15,23,42,0.35)] border border-slate-200/80 relative flex flex-col"
             dir="rtl"
@@ -361,7 +374,7 @@ export default function CrmOrganizationsAdminTable({
                     <div className="rounded-xl border border-slate-200 bg-white overflow-hidden overflow-x-auto shadow-inner">
                       <table className="w-full text-sm text-right min-w-[560px]">
                         <thead>
-                          <tr className="bg-slate-900 text-white text-[11px] font-black uppercase tracking-wider">
+                          <tr className="bg-slate-200 text-slate-800 text-[11px] font-black uppercase tracking-wider">
                             <th className="px-4 py-3.5 font-semibold">תאריך</th>
                             <th className="px-4 py-3.5 font-semibold">תיאור</th>
                             <th className="px-4 py-3.5 font-semibold">ברוטו</th>
@@ -449,7 +462,7 @@ export default function CrmOrganizationsAdminTable({
               <button
                 type="button"
                 onClick={() => setAiModal(null)}
-                className="w-full bg-slate-900 text-white py-3.5 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-md"
+                className="w-full bg-blue-600 text-white py-3.5 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-md"
               >
                 סגור
               </button>

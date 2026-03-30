@@ -13,6 +13,7 @@ import {
   defaultScanBalancesForTier,
   parseSubscriptionTier,
 } from "@/lib/subscription-tier-config";
+import { isAdmin } from "@/lib/is-admin";
 
 export type { ClientAiTableRow, ClientAiResult } from "@/lib/crm-client-ai";
 
@@ -39,8 +40,8 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
     }
 
     const userOrgId = session.user.organizationId ?? null;
-    const isSuperAdmin = session.user.role === "SUPER_ADMIN";
-    if (userOrgId !== orgId && !isSuperAdmin) {
+    const platformOwner = isAdmin(session.user.email);
+    if (userOrgId !== orgId && !platformOwner) {
       return {
         ok: false,
         error: "אין לך הרשאה לנתח נתונים של ארגון זה.",
@@ -69,7 +70,11 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
       return { ok: false, error: "לא נמצא נתונים על הארגון." };
     }
 
-    const modelToUse = resolveCrmGeminiModel(org.subscriptionTier, session.user.role);
+    const modelToUse = resolveCrmGeminiModel(
+      org.subscriptionTier,
+      session.user.role,
+      platformOwner,
+    );
     console.log(
       `[BSD-YBM AI] CRM analyze | Org: ${org.name} | Tier: ${org.subscriptionTier} | Model: ${modelToUse} | Caller: ${session.user.role}`,
     );

@@ -134,13 +134,9 @@ export async function processDocumentAction(
       },
     });
     const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
-    const superAdmin = accessUser?.role === "SUPER_ADMIN";
-    const devBypass =
-      !!accessUser?.email && isAdmin(accessUser.email);
-    const allowedProviders = getAllowedAiProvidersForPlan(
-      orgPlan,
-      superAdmin || devBypass,
-    );
+    /** רק בעל הפלטפורמה (מייל) — לא SUPER_ADMIN שגוי ב־DB */
+    const platformAiBypass = !!accessUser?.email && isAdmin(accessUser.email);
+    const allowedProviders = getAllowedAiProvidersForPlan(orgPlan, platformAiBypass);
 
     let effectiveProvider = resolveScanProvider(requested, mimeType);
     if (!allowedProviders.includes(effectiveProvider)) {

@@ -121,7 +121,7 @@ export default function AiBubble() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-[4.75rem] end-0 w-[min(380px,calc(100vw-2rem))] h-[min(520px,calc(100dvh-8rem))] bg-slate-950/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden"
+            className="absolute bottom-[4.75rem] end-0 w-[min(380px,calc(100vw-2rem))] h-[min(520px,calc(100dvh-8rem))] bg-white/95 backdrop-blur-2xl border border-slate-200 rounded-[2.5rem] shadow-2xl shadow-slate-300/50 flex flex-col overflow-hidden"
             dir={dir}
           >
             <div
@@ -137,7 +137,7 @@ export default function AiBubble() {
               <ShieldCheck size={18} className="opacity-80 shrink-0" aria-hidden />
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-slate-50/80">
               {messages.map((m, i) => (
                 <div
                   key={`${i}-${m.content.slice(0, 12)}`}
@@ -146,8 +146,8 @@ export default function AiBubble() {
                   <div
                     className={`max-w-[85%] p-3.5 rounded-2xl text-sm font-medium leading-relaxed ${
                       m.role === "user"
-                        ? "bg-blue-600 text-white rounded-br-md"
-                        : "bg-white/10 text-slate-100 rounded-bl-md border border-white/10"
+                        ? "bg-blue-600 text-white rounded-br-md shadow-sm"
+                        : "bg-white text-slate-800 rounded-bl-md border border-slate-200 shadow-sm"
                     }`}
                   >
                     {m.content}
@@ -156,7 +156,7 @@ export default function AiBubble() {
               ))}
               {sending ? (
                 <div className="flex justify-end">
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-bold px-3 py-2">
+                  <div className="flex items-center gap-2 text-slate-500 text-xs font-bold px-3 py-2">
                     <Loader2 className="animate-spin" size={16} aria-hidden />
                     {t("aiBubble.writing")}
                   </div>
@@ -165,32 +165,32 @@ export default function AiBubble() {
             </div>
 
             {loggedIn ? (
-              <div className="px-4 pb-2 shrink-0">
+              <div className="px-4 pb-2 shrink-0 bg-white border-t border-slate-100">
                 <Link
                   href="/dashboard/ai"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center text-xs font-bold text-blue-300 hover:text-white transition-colors py-1"
+                  className="block text-center text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors py-1"
                 >
                   {t("aiBubble.centerLink")}
                 </Link>
               </div>
             ) : null}
 
-            <div className="p-3 flex gap-2 overflow-x-auto border-t border-white/10 shrink-0">
+            <div className="p-3 flex gap-2 overflow-x-auto border-t border-slate-200 shrink-0 bg-white">
               {quickActions.map((action, i) => (
                 <button
                   key={i}
                   type="button"
                   disabled={sending}
                   onClick={() => sendMessage(action.label)}
-                  className="whitespace-nowrap bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/80 text-xs px-3 py-2 rounded-full border border-white/10 flex items-center gap-2 transition-all shrink-0"
+                  className="whitespace-nowrap bg-slate-50 hover:bg-slate-100 disabled:opacity-50 text-slate-700 text-xs px-3 py-2 rounded-full border border-slate-200 flex items-center gap-2 transition-all shrink-0"
                 >
                   {action.icon} {action.label}
                 </button>
               ))}
             </div>
 
-            <div className="p-3 bg-white/5 border-t border-white/10 flex gap-2 shrink-0">
+            <div className="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0">
               <input
                 type="text"
                 value={input}
@@ -203,14 +203,14 @@ export default function AiBubble() {
                 }}
                 disabled={sending}
                 placeholder={t("aiBubble.placeholder")}
-                className="flex-1 bg-transparent text-white placeholder:text-white/35 outline-none text-sm px-2 disabled:opacity-60"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 outline-none text-sm px-3 py-2 disabled:opacity-60"
                 aria-label={t("aiBubble.ariaMessage")}
               />
               <button
                 type="button"
                 disabled={sending}
                 onClick={() => void sendMessage("")}
-                className="p-2.5 rounded-xl text-white shrink-0 disabled:opacity-50 transition-transform hover:scale-105"
+                className="p-2.5 rounded-xl text-white shrink-0 disabled:opacity-50 transition-transform hover:scale-105 shadow-md"
                 style={{ backgroundColor: primary }}
                 aria-label={t("aiBubble.ariaSend")}
               >
@@ -219,18 +219,18 @@ export default function AiBubble() {
             </div>
 
             {!loggedIn ? (
-              <div className="flex gap-2 px-3 pb-3 pt-0 shrink-0">
+              <div className="flex gap-2 px-3 pb-3 pt-0 shrink-0 bg-white">
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl bg-white/10 text-white hover:bg-white/15"
+                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100"
                 >
                   {t("nav.login")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl bg-white text-slate-900 hover:bg-white/90"
+                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
                 >
                   {t("aiBubble.trial30")}
                 </Link>

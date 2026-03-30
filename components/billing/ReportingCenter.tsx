@@ -44,25 +44,25 @@ export default function ReportingCenter() {
 
   return (
     <div className="space-y-3">
-      <div className="bg-slate-950 text-white p-8 rounded-[3rem] shadow-2xl border border-slate-800 flex flex-col md:flex-row items-center gap-6 group hover:border-blue-500/30 transition-all">
-        <div className="bg-blue-600/10 p-5 rounded-2xl text-blue-500 group-hover:scale-110 transition-transform shrink-0">
+      <div className="bg-white text-slate-900 p-8 rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-200 flex flex-col md:flex-row items-center gap-6 group hover:border-blue-200 transition-all">
+        <div className="bg-blue-50 p-5 rounded-2xl text-blue-600 border border-blue-100 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>
         <div className="flex-1 text-center md:text-right min-w-0">
           <h3 className="text-xl font-black italic tracking-tighter">מרכז דיווחים BSD-YBM</h3>
-          <p className="text-slate-400 text-sm font-bold mt-1">
+          <p className="text-slate-600 text-sm font-bold mt-1">
             ייצוא נתוני מס לרואה חשבון בפורמט CSV
           </p>
         </div>
-        <div className="flex gap-2 bg-slate-900 p-2 rounded-2xl border border-slate-800">
+        <div className="flex gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200">
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-transparent font-black text-blue-400 outline-none px-2 py-1 rounded-lg"
+            className="bg-white font-black text-blue-700 outline-none px-3 py-2 rounded-xl border border-slate-200"
             aria-label="חודש"
           >
             {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1} className="bg-slate-900">
+              <option key={i + 1} value={i + 1} className="bg-white text-slate-900">
                 {i + 1}
               </option>
             ))}
@@ -70,11 +70,11 @@ export default function ReportingCenter() {
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="bg-transparent font-black text-blue-400 outline-none px-2 py-1 rounded-lg"
+            className="bg-white font-black text-blue-700 outline-none px-3 py-2 rounded-xl border border-slate-200"
             aria-label="שנה"
           >
             {yearOptions.map((y) => (
-              <option key={y} value={y} className="bg-slate-900">
+              <option key={y} value={y} className="bg-white text-slate-900">
                 {y}
               </option>
             ))}

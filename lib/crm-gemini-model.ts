@@ -10,6 +10,7 @@ export const CRM_PREMIUM_MODEL_DEFAULT = "gemini-2.5-pro";
 export function resolveCrmGeminiModel(
   orgTier: string,
   callerRole: string | undefined,
+  callerIsPlatformOwner?: boolean,
 ): string {
   const flash =
     process.env.CRM_ANALYSIS_GEMINI_MODEL?.trim() || CRM_FLASH_MODEL_DEFAULT;
@@ -17,7 +18,8 @@ export function resolveCrmGeminiModel(
 
   const tier = parseSubscriptionTier(orgTier) ?? "FREE";
   const orgPremium = tier !== "FREE";
-  const platformAdmin = callerRole === "SUPER_ADMIN";
+  const platformAdmin =
+    callerIsPlatformOwner === true || callerRole === "SUPER_ADMIN";
 
   if (orgPremium || platformAdmin) {
     return pro;

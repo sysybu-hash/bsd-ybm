@@ -21,14 +21,14 @@ type Variant = "dark" | "light";
 
 export default function FinancialCharts({
   data,
-  variant = "dark",
+  variant: _variant = "light",
 }: {
   data: Array<{ aiData?: { docType?: string; total?: number } | null }>;
   variant?: Variant;
 }) {
+  void _variant;
   const { t, locale } = useI18n();
   const intlTag = intlLocaleForApp(locale);
-  const isLight = variant === "light";
 
   const categoryData = data.reduce<{ name: string; value: number }[]>((acc, doc) => {
     const category = doc.aiData?.docType || "אחר";
@@ -42,18 +42,19 @@ export default function FinancialCharts({
     return acc;
   }, []);
 
-  const cardClass = isLight
-    ? "bg-white p-6 rounded-3xl border border-slate-100 shadow-lg  shadow-slate-200/50"
-    : "bg-slate-900/50 p-6 rounded-3xl border border-white/5";
+  const cardClass =
+    "bg-white p-6 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50";
 
-  const titlePieClass = isLight ? "text-lg font-bold mb-4 text-slate-900" : "text-lg font-bold mb-4 text-blue-400";
-  const titleBarClass = isLight ? "text-lg font-bold mb-4 text-slate-900" : "text-lg font-bold mb-4 text-emerald-400";
+  const titlePieClass = "text-lg font-bold mb-4 text-slate-900";
+  const titleBarClass = "text-lg font-bold mb-4 text-slate-900";
 
-  const tooltipStyle = isLight
-    ? { backgroundColor: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px" }
-    : { backgroundColor: "#0f172a", border: "none", borderRadius: "8px" };
+  const tooltipStyle = {
+    backgroundColor: "#fff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+  };
 
-  const barFill = isLight ? "var(--primary-color, #3b82f6)" : "#3b82f6";
+  const barFill = "var(--primary-color, #3b82f6)";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
@@ -87,7 +88,7 @@ export default function FinancialCharts({
               <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickMargin={8} />
               <YAxis stroke="#64748b" fontSize={12} width={48} />
               <Tooltip
-                cursor={isLight ? { fill: "#f1f5f9" } : { fill: "#1e293b" }}
+                cursor={{ fill: "#f1f5f9" }}
                 contentStyle={tooltipStyle}
                 formatter={(value: number) => [
                   `₪${Number(value).toLocaleString(intlTag)}`,

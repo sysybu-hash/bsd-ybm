@@ -14,7 +14,7 @@ const HERO_TITLE_ART = "/landing-hero-title-art.png";
 
 /** ניגוד + רוויה + צללים מדורגים — חדות ויזואלית ותחושת תבליט מול רקע עיר */
 const HERO_IMG_FILTER =
-  "contrast(1.12) saturate(1.18) brightness(1.045) drop-shadow(0 2px 6px rgba(0,0,0,0.62)) drop-shadow(0 10px 28px rgba(0,0,0,0.45)) drop-shadow(0 20px 48px rgba(0,0,0,0.28)) drop-shadow(0 0 1.5px rgba(0,0,0,0.55))";
+  "contrast(1.06) saturate(1.1) brightness(1.02) drop-shadow(0 2px 4px rgba(15,23,42,0.12)) drop-shadow(0 8px 20px rgba(15,23,42,0.08)) drop-shadow(0 16px 36px rgba(15,23,42,0.06))";
 
 export default function LandingHeroMetallicTitle({ text }: Props) {
   return (

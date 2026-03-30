@@ -525,7 +525,7 @@ export default function SettingsPageClient({
                     <button
                       type="submit"
                       disabled={pendingPortal}
-                      className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-black disabled:opacity-50"
+                      className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
                     >
                       {pendingPortal ? "שומר…" : "שמור הגדרות פורטל"}
                     </button>

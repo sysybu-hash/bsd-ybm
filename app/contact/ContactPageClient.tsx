@@ -13,35 +13,35 @@ export default function ContactPageClient() {
 
   return (
     <MarketingPublicShell title={t("contactPage.title")}>
-      <p className="mb-8 text-lg text-slate-300/95">{t("contactPage.intro")}</p>
+      <p className="mb-8 text-lg text-slate-600 leading-relaxed">{t("contactPage.intro")}</p>
 
-      <ul className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 text-slate-200 backdrop-blur-sm">
+      <ul className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 text-slate-800 shadow-lg shadow-slate-200/40">
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-200/80">
+          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
             {t("contactPage.addressLabel")}
           </span>
-          <span className="mt-1 block text-base">
+          <span className="mt-1 block text-base font-medium text-slate-900">
             {t("marketingDrawer.contactAddress")}
           </span>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-200/80">
+          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
             {t("contactPage.phoneLabel")}
           </span>
           <a
             href="tel:+972525640021"
-            className="mt-1 block text-lg font-semibold text-white hover:text-amber-200"
+            className="mt-1 block text-lg font-semibold text-blue-700 hover:text-blue-900 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactPhone")}
           </a>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-200/80">
+          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
             {t("contactPage.emailLabel")}
           </span>
           <a
             href="mailto:sysybu@gmail.com"
-            className="mt-1 block text-lg font-semibold text-sky-300 hover:text-sky-200"
+            className="mt-1 block text-lg font-semibold text-blue-700 hover:text-blue-900 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactEmail")}
           </a>

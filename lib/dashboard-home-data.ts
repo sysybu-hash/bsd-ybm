@@ -44,6 +44,10 @@ export type OrgDashboardHomeData = {
   pipelineDealCount: number;
   recentContacts: RecentContactHomeRow[];
   monthlySeries: DashboardChartPoint[];
+  /** יתרות סריקה מהארגון */
+  cheapScansRemaining: number;
+  premiumScansRemaining: number;
+  subscriptionTier: string;
 };
 
 const EMPTY_HOME: OrgDashboardHomeData = {
@@ -55,6 +59,9 @@ const EMPTY_HOME: OrgDashboardHomeData = {
   pipelineDealCount: 0,
   recentContacts: [],
   monthlySeries: [],
+  cheapScansRemaining: 0,
+  premiumScansRemaining: 0,
+  subscriptionTier: "FREE",
 };
 
 function ymKey(d: Date) {
@@ -79,7 +86,7 @@ export async function getOrgDashboardHomeData(
   const prevEnd = endOfMonth(prevRef);
   const seriesStart = startOfMonth(addMonths(now, -5));
 
-  const [issuedCur, issuedPrev, pendingQuotes, recentContactsRaw, docsForSeries] = await Promise.all([
+  const [issuedCur, issuedPrev, pendingQuotes, recentContactsRaw, docsForSeries, orgRow] = await Promise.all([
     prisma.issuedDocument.aggregate({
       where: { organizationId, date: { gte: curStart, lte: curEnd } },
       _sum: { total: true },
@@ -101,6 +108,14 @@ export async function getOrgDashboardHomeData(
     prisma.issuedDocument.findMany({
       where: { organizationId, date: { gte: seriesStart, lte: curEnd } },
       select: { date: true, total: true },
+    }),
+    prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: {
+        cheapScansRemaining: true,
+        premiumScansRemaining: true,
+        subscriptionTier: true,
+      },
     }),
   ]);
 
@@ -154,5 +169,8 @@ export async function getOrgDashboardHomeData(
     pipelineDealCount,
     recentContacts,
     monthlySeries,
+    cheapScansRemaining: orgRow?.cheapScansRemaining ?? 0,
+    premiumScansRemaining: orgRow?.premiumScansRemaining ?? 0,
+    subscriptionTier: orgRow?.subscriptionTier ?? "FREE",
   };
 }

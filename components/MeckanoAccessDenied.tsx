@@ -17,7 +17,7 @@ export default function MeckanoAccessDenied() {
         </p>
         <Link
           href="/dashboard"
-          className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-slate-800 transition-colors"
+          className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
         >
           חזור לדשבורד הראשי
         </Link>

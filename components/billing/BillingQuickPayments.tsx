@@ -109,7 +109,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           type="button"
           disabled={pending}
           onClick={applyCustom}
-          className="rounded-xl bg-slate-900 text-white px-6 py-2.5 text-sm font-black hover:bg-slate-800 disabled:opacity-50 shrink-0"
+          className="rounded-xl bg-blue-600 text-white px-6 py-2.5 text-sm font-black hover:bg-blue-700 disabled:opacity-50 shrink-0"
         >
           צור בקשה
         </button>

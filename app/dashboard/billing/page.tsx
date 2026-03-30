@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
 import { Suspense } from "react";
-import type { Prisma, SubscriptionTier } from "@prisma/client";
+import type { Prisma, ScanBundle, SubscriptionTier } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isAdmin } from "@/lib/is-admin";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import GlobalBillingPageClient from "@/components/billing/GlobalBillingPageClient";
 import PayPalInvoicesSection from "@/components/billing/PayPalInvoicesSection";
@@ -21,9 +20,13 @@ import { parseBillingWorkspace } from "@/lib/billing-workspace";
 import { ShieldCheck } from "lucide-react";
 import { tierAllowance, tierLabelHe, ADMIN_SUBSCRIPTION_TIER_OPTIONS } from "@/lib/subscription-tier-config";
 import { getEffectiveTierMonthlyPriceIls, getPayPalClientIdPublic } from "@/lib/billing-pricing";
+import { isAdmin } from "@/lib/is-admin";
+import AdminSubscriptionControlCenter from "@/components/executive/AdminSubscriptionControlCenter";
 import { ensureDefaultScanBundles } from "@/lib/ensure-scan-bundles";
-import ExecutiveSubscriptionsPanel from "@/components/executive/ExecutiveSubscriptionsPanel";
-import ManageSubscriptionsPanel from "@/components/executive/ManageSubscriptionsPanel";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
   title: "מנויים ותשלומים | BSD-YBM Intelligence",
@@ -98,17 +101,15 @@ async function fetchOrgForBilling(orgId: string): Promise<OrgBilling | null> {
   }
 }
 
-type SearchParams = Promise<{ tab?: string }>;
+type SearchParams = Promise<{ tab?: string; orgId?: string }>;
 
 export default async function BillingPage({ searchParams }: { searchParams: SearchParams }) {
+  noStore();
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
   const sp = await searchParams;
-  const isSteelAdmin = isAdmin(session?.user?.email);
-  const tabRaw = sp.tab?.trim();
-  if (!isSteelAdmin && (tabRaw === "manage" || tabRaw === "advanced")) {
-    redirect("/dashboard/billing");
-  }
+  const focusOrgId = sp.orgId?.trim() || undefined;
+  const steelAdmin = isAdmin(session?.user?.email);
 
   if (!orgId) {
     return (
@@ -120,40 +121,6 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
 
   const start = monthStart(new Date());
 
-  const adminFetches = isSteelAdmin
-    ? (async () => {
-        await ensureDefaultScanBundles();
-        const [orgs, bundles, billingConfig] = await Promise.all([
-          prisma.organization.findMany({
-            orderBy: { createdAt: "desc" },
-            select: {
-              id: true,
-              name: true,
-              subscriptionTier: true,
-              subscriptionStatus: true,
-              cheapScansRemaining: true,
-              premiumScansRemaining: true,
-              maxCompanies: true,
-              trialEndsAt: true,
-              users: {
-                take: 1,
-                orderBy: { createdAt: "asc" },
-                select: { email: true },
-              },
-            },
-          }),
-          prisma.scanBundle.findMany({
-            where: { isActive: true },
-            orderBy: { sortOrder: "asc" },
-          }),
-          prisma.platformBillingConfig.findUnique({
-            where: { id: "default" },
-          }),
-        ]);
-        return { orgs, bundles, billingConfig };
-      })()
-    : Promise.resolve(null);
-
   const [
     org,
     dbInvoices,
@@ -163,7 +130,6 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
     crmContacts,
     scanBundles,
     paypalClientId,
-    adminPack,
   ] = await Promise.all([
     fetchOrgForBilling(orgId),
     prisma.invoice.findMany({
@@ -196,8 +162,78 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
       select: { id: true, name: true, priceIls: true, cheapAdds: true, premiumAdds: true },
     }),
     getPayPalClientIdPublic(),
-    adminFetches,
   ]);
+
+  let adminOrgs:
+    | Array<{
+        id: string;
+        name: string;
+        subscriptionTier: SubscriptionTier;
+        subscriptionStatus: string;
+        cheapScansRemaining: number;
+        premiumScansRemaining: number;
+        maxCompanies: number;
+        trialEndsAt: Date | null;
+        primaryEmail: string | null;
+        tenantPublicDomain: string | null;
+      }>
+    | null = null;
+  let adminBundles: ScanBundle[] | null = null;
+  let adminBillingConfig:
+    | {
+        paypalClientIdPublic: string | null;
+        tierMonthlyPricesJson: Prisma.JsonValue | null;
+      }
+    | null = null;
+
+  if (steelAdmin) {
+    await ensureDefaultScanBundles();
+    const [orgRows, bundlesRows, cfg] = await Promise.all([
+      prisma.organization.findMany({
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          subscriptionTier: true,
+          subscriptionStatus: true,
+          cheapScansRemaining: true,
+          premiumScansRemaining: true,
+          maxCompanies: true,
+          trialEndsAt: true,
+          tenantPublicDomain: true,
+          users: {
+            take: 1,
+            orderBy: { createdAt: "asc" },
+            select: { email: true },
+          },
+        },
+      }),
+      prisma.scanBundle.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" },
+      }),
+      prisma.platformBillingConfig.findUnique({ where: { id: "default" } }),
+    ]);
+    adminOrgs = orgRows.map((o) => ({
+      id: o.id,
+      name: o.name,
+      subscriptionTier: o.subscriptionTier,
+      subscriptionStatus: o.subscriptionStatus,
+      cheapScansRemaining: o.cheapScansRemaining,
+      premiumScansRemaining: o.premiumScansRemaining,
+      maxCompanies: o.maxCompanies,
+      trialEndsAt: o.trialEndsAt,
+      primaryEmail: o.users[0]?.email ?? null,
+      tenantPublicDomain: o.tenantPublicDomain ?? null,
+    }));
+    adminBundles = bundlesRows;
+    adminBillingConfig = cfg
+      ? {
+          paypalClientIdPublic: cfg.paypalClientIdPublic,
+          tierMonthlyPricesJson: cfg.tierMonthlyPricesJson,
+        }
+      : null;
+  }
 
   if (!org) {
     return (
@@ -256,55 +292,44 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
     items: d.items,
   }));
 
-  const initialOrgs =
-    adminPack?.orgs.map((o) => ({
-      id: o.id,
-      name: o.name,
-      subscriptionTier: o.subscriptionTier,
-      subscriptionStatus: o.subscriptionStatus,
-      cheapScansRemaining: o.cheapScansRemaining,
-      premiumScansRemaining: o.premiumScansRemaining,
-      maxCompanies: o.maxCompanies,
-      trialEndsAt: o.trialEndsAt,
-      primaryEmail: o.users[0]?.email ?? null,
-    })) ?? [];
-
-  const manageOrgs = initialOrgs;
-
   const overview = (
     <>
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
-        <div className="mb-8 rounded-[1.5rem] border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6 shadow-xl shadow-black/30 text-sm text-slate-300">
-          <p className="text-white font-bold mb-1 flex items-center gap-2">
-            <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
+      {/* שלב 1 — סיכום ארגון */}
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-8">
+        <p className="mb-2 text-xs font-black uppercase tracking-wider text-slate-500">
+          שלב 1 — סיכום ארגון
+        </p>
+        <div className="card-avenue crystal-border crystal-hover mb-8 rounded-[1.25rem] p-6 text-sm text-slate-700">
+          <p className="mb-1 flex items-center gap-2 font-bold text-slate-900">
+            <ShieldCheck size={18} className="shrink-0 text-emerald-600" />
             {org.name}
           </p>
           <p>
             מנוי:{" "}
-            <span className="font-medium text-white">
+            <span className="font-semibold text-slate-900">
               {tierLabelHe(org.subscriptionTier)} ({org.subscriptionTier})
             </span>
             {" · "}
-            סטטוס: <span className="font-medium text-white">{org.subscriptionStatus}</span>
+            סטטוס: <span className="font-semibold text-slate-900">{org.subscriptionStatus}</span>
             {" · "}
-            סיווג מס: <span className="font-medium text-white">{org.companyType}</span>
+            סיווג מס: <span className="font-semibold text-slate-900">{org.companyType}</span>
             {" · "}
-            חברות מקס׳: <span className="font-medium text-white">{org.maxCompanies}</span>
+            חברות מקס׳: <span className="font-semibold text-slate-900">{org.maxCompanies}</span>
           </p>
           <p className="mt-1">
             סריקות זולות נותרו:{" "}
-            <span className="font-medium text-sky-300">
+            <span className="font-semibold text-sky-700">
               {formatCreditsForDisplay(org.cheapScansRemaining)}
             </span>
             {" · "}
             פרימיום נותרו:{" "}
-            <span className="font-medium text-violet-300">
+            <span className="font-semibold text-violet-700">
               {formatCreditsForDisplay(org.premiumScansRemaining)}
             </span>
           </p>
           <p className="mt-2 text-xs text-slate-500">
             רמת נתונים חיים:{" "}
-            <span className="font-bold text-slate-300">
+            <span className="font-bold text-slate-800">
               {org.liveDataTier === "premium"
                 ? "פרימיום"
                 : org.liveDataTier === "standard"
@@ -312,30 +337,35 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
                   : "בסיסי"}
             </span>
             {" — "}
-            לוח מס, PayPal והזמנת צוות — ב־
-            <a href="/dashboard/settings?tab=account" className="font-bold text-sky-400 underline">
-              הגדרות › חשבון
-            </a>
-            {" "}ו־
-            <a href="/dashboard/settings?tab=billing" className="font-bold text-sky-400 underline">
-              מנויים
+            כל ערכי החשבון, המנויים והאינטגרציות במקום אחד:{" "}
+            <a href="/dashboard/settings" className="font-bold text-amber-800 underline decoration-amber-300/80 underline-offset-2 hover:text-amber-950">
+              הגדרות
             </a>
             .
           </p>
         </div>
       </div>
 
+      {/* שלב 2 — גרפי שימוש (מוקד ויזואלי) */}
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
-        <SubscriptionPricingTable tierPricesIls={tierPricesForTable} variant="glass" />
-      </div>
-
-      <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
+        <p className="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">
+          שלב 2 — שימוש במנוי (גרפים)
+        </p>
         <ScanUsageRadialCharts
           cheapLeft={org.cheapScansRemaining}
           cheapIncluded={tierAllow.cheapScans}
           premiumLeft={org.premiumScansRemaining}
           premiumIncluded={tierAllow.premiumScans}
+          variant="light"
         />
+      </div>
+
+      {/* שלב 3 — מחירון ופעולות תשלום */}
+      <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
+        <p className="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">
+          שלב 3 — מנויים, חבילות ותשלום
+        </p>
+        <SubscriptionPricingTable tierPricesIls={tierPricesForTable} />
       </div>
 
       <div className="mx-auto mb-6 max-w-[1600px] space-y-6 px-4 sm:px-8">
@@ -417,52 +447,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
     </>
   );
 
-  const managePanel =
-    isSteelAdmin && adminPack ? (
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-6">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 p-4 sm:p-6 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-1">
-            מנהל פלטפורמה
-          </p>
-          <p className="text-sm text-slate-600">
-            ניהול ארגונים, מחירי PayPal, חבילות סריקה והזמנות — רק לחשבון המורשה.
-          </p>
-        </div>
-        <ExecutiveSubscriptionsPanel
-          initialOrgs={initialOrgs}
-          bundles={adminPack.bundles}
-          billingConfig={
-            adminPack.billingConfig
-              ? {
-                  paypalClientIdPublic: adminPack.billingConfig.paypalClientIdPublic,
-                  tierMonthlyPricesJson: adminPack.billingConfig.tierMonthlyPricesJson,
-                }
-              : null
-          }
-        />
-      </div>
-    ) : null;
-
-  const advancedPanel =
-    isSteelAdmin && adminPack ? (
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 p-4 sm:p-6 shadow-sm mb-6">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">
-            הגדרות מתקדמות
-          </p>
-          <p className="text-sm text-slate-600">
-            יצירת משתמשים, הזמנות טוקן והתאמות יתרה — גישה מוגבלת.
-          </p>
-        </div>
-        <ManageSubscriptionsPanel initialOrgs={manageOrgs} />
-      </div>
-    ) : null;
-
   return (
     <Suspense
       fallback={
         <div
-          className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm font-medium"
+          className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-slate-50 text-slate-600 text-sm font-medium"
           dir="rtl"
         >
           טוען מנויים ותשלומים…
@@ -470,10 +459,18 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
       }
     >
       <BillingUnifiedTabsClient
-        isSteelAdmin={isSteelAdmin}
+        isSteelAdmin={steelAdmin}
         childrenOverview={overview}
-        childrenManage={managePanel}
-        childrenAdvanced={advancedPanel}
+        childrenControl={
+          steelAdmin && adminOrgs && adminBundles ? (
+            <AdminSubscriptionControlCenter
+              initialOrgs={adminOrgs}
+              bundles={adminBundles}
+              billingConfig={adminBillingConfig}
+              focusOrgId={focusOrgId}
+            />
+          ) : null
+        }
       />
     </Suspense>
   );

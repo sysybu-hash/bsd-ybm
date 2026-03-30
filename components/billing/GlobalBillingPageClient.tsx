@@ -507,23 +507,23 @@ export default function GlobalBillingPageClient({
 
       {printRow ? (
         <div
-          className="fixed inset-0 z-[200] overflow-y-auto bg-slate-900/70 print:static print:bg-white print:overflow-visible"
+          className="fixed inset-0 z-[200] overflow-y-auto bg-slate-200/60 print:static print:bg-white print:overflow-visible"
           role="dialog"
           aria-modal="true"
           aria-label="תצוגת הדפסה"
         >
-          <div className="sticky top-0 z-10 print:hidden flex flex-wrap justify-center gap-3 p-4 bg-slate-900/90 backdrop-blur-sm border-b border-slate-700/50">
+          <div className="sticky top-0 z-10 print:hidden flex flex-wrap justify-center gap-3 p-4 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-2xl bg-white px-6 py-3 font-black text-slate-900 shadow-lg hover:bg-slate-100"
+              className="rounded-2xl bg-blue-600 px-6 py-3 font-black text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
             >
               הדפס
             </button>
             <button
               type="button"
               onClick={() => setPrintRow(null)}
-              className="rounded-2xl border border-white/30 bg-transparent px-6 py-3 font-bold text-white hover:bg-white/10"
+              className="rounded-2xl border border-slate-200 bg-white px-6 py-3 font-bold text-slate-800 hover:bg-slate-50"
             >
               סגור
             </button>

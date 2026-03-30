@@ -34,6 +34,7 @@ export type ExecutiveOrgRow = {
   maxCompanies: number;
   trialEndsAt: Date | null;
   primaryEmail: string | null;
+  tenantPublicDomain: string | null;
 };
 
 export async function executiveListOrganizationsAction(): Promise<
@@ -53,6 +54,7 @@ export async function executiveListOrganizationsAction(): Promise<
       premiumScansRemaining: true,
       maxCompanies: true,
       trialEndsAt: true,
+      tenantPublicDomain: true,
       users: {
         take: 1,
         orderBy: { createdAt: "asc" },
@@ -71,6 +73,7 @@ export async function executiveListOrganizationsAction(): Promise<
     maxCompanies: o.maxCompanies,
     trialEndsAt: o.trialEndsAt,
     primaryEmail: o.users[0]?.email ?? null,
+    tenantPublicDomain: o.tenantPublicDomain ?? null,
   }));
 }
 

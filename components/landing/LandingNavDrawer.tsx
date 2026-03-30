@@ -44,9 +44,9 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base font-semibold text-white/95 transition hover:border-amber-400/35 hover:bg-white/10"
+      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-800 transition hover:border-amber-300 hover:bg-amber-50/80"
     >
-      <Icon className="h-5 w-5 shrink-0 text-amber-200/90" aria-hidden />
+      <Icon className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
       {label}
     </Link>
   );
@@ -63,7 +63,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
     <Dialog open={open} onClose={onClose} className="relative z-[200]">
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[201] bg-black/65 backdrop-blur-md transition duration-300 ease-out data-[closed]:opacity-0"
+        className="fixed inset-0 z-[201] bg-slate-300/55 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 z-[202] overflow-hidden" dir={dir}>
@@ -71,28 +71,31 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-amber-400/25 border-white/10 bg-slate-950/80 shadow-2xl shadow-black/50 backdrop-blur-2xl transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
+              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-slate-200 bg-white shadow-2xl shadow-slate-300/40 backdrop-blur-xl transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-amber-500/[0.06] via-transparent to-slate-900/40 pointer-events-none" aria-hidden />
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-b from-amber-50/40 via-white to-slate-50/90"
+                aria-hidden
+              />
 
-              <div className="relative flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
+              <div className="relative flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
                 <DialogTitle className="sr-only">
                   {t("marketingDrawer.navAria")}
                 </DialogTitle>
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-200/70">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-800/90">
                   BSD-YBM
                 </p>
                 <button
                   type="button"
                   onClick={close}
-                  className="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+                  className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                   aria-label={t("marketingDrawer.closeMenu")}
                 >
                   <X className="h-5 w-5" aria-hidden />
                 </button>
               </div>
 
-              <div className="relative border-b border-white/10 px-4 py-4">
+              <div className="relative border-b border-slate-100 px-4 py-4">
                 <div className="mx-auto max-h-24 w-full max-w-[16rem]">
                   <Image
                     src={HERO_LOGO}
@@ -128,23 +131,23 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   onNavigate={close}
                 />
 
-                <div className="mt-2 rounded-xl border border-white/10 bg-black/20 p-3 text-sm leading-relaxed text-slate-200/95">
-                  <p className="mb-2 font-bold text-amber-100/90">
+                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50/90 p-3 text-sm leading-relaxed text-slate-700">
+                  <p className="mb-2 font-bold text-amber-900">
                     {t("marketingDrawer.contact")}
                   </p>
-                  <p className="text-slate-300/95">
+                  <p className="text-slate-600">
                     {t("marketingDrawer.contactAddress")}
                   </p>
                   <a
                     href="tel:+972525640021"
-                    className="mt-2 block font-medium text-white hover:text-amber-200"
+                    className="mt-2 block font-medium text-slate-900 hover:text-amber-800"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactPhone")}
                   </a>
                   <a
                     href="mailto:sysybu@gmail.com"
-                    className="mt-1 block font-medium text-sky-300 hover:text-sky-200"
+                    className="mt-1 block font-medium text-blue-700 hover:text-blue-800"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactEmail")}
@@ -174,14 +177,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/dashboard/billing"
                   onClick={close}
-                  className="text-center text-xs font-semibold text-white/50 underline-offset-2 hover:text-amber-200/90 hover:underline"
+                  className="text-center text-xs font-semibold text-slate-500 underline-offset-2 hover:text-amber-800 hover:underline"
                 >
                   {t("marketingDrawer.billingLink")}
                 </Link>
               </nav>
 
-              <div className="relative border-t border-white/10 px-4 py-5">
-                <p className="text-center text-[0.95rem] font-medium italic leading-snug text-slate-300/90">
+              <div className="relative border-t border-slate-100 px-4 py-5">
+                <p className="text-center text-[0.95rem] font-medium italic leading-snug text-slate-600">
                   {t("marketingDrawer.brandQuote")}
                 </p>
               </div>

@@ -59,20 +59,13 @@ export default async function ExecutiveDashboardPage() {
         <div className="flex flex-wrap gap-3 self-start">
           {showSuperManage ? (
             <Link
-              href="/dashboard/billing?tab=advanced"
-              className="inline-flex items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-bold text-violet-900 shadow-sm hover:border-violet-300 transition-colors"
+              href="/dashboard/billing?tab=control"
+              className="inline-flex items-center gap-2 rounded-2xl border border-amber-300/80 bg-gradient-to-br from-amber-50 to-slate-50 px-5 py-3 text-sm font-bold text-amber-950 shadow-sm ring-1 ring-amber-200/60 transition-colors hover:border-amber-400"
             >
               <ArrowRight size={18} />
-              הגדרות מתקדמות (מנויים)
+              מרכז שליטה במנויים
             </Link>
           ) : null}
-          <Link
-            href="/dashboard/billing?tab=manage"
-            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-800 shadow-sm hover:border-emerald-300 transition-colors"
-          >
-            <ArrowRight size={18} />
-            ניהול ועריכת מנויים
-          </Link>
           <Link
             href="/dashboard/intelligence"
             className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 transition-colors"
@@ -116,25 +109,25 @@ export default async function ExecutiveDashboardPage() {
           <p className="mt-4 text-xs text-slate-400 leading-relaxed">{t("executive.expenseHint")}</p>
         </article>
 
-        <article className="rounded-[2rem] border border-slate-100 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-2xl shadow-slate-900/20">
+        <article className="rounded-[2rem] border border-slate-100 bg-gradient-to-br from-white via-emerald-50/35 to-white p-8 shadow-xl shadow-slate-200/40 ring-1 ring-slate-50">
           <div className="flex items-center justify-between gap-4 mb-6">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/25">
               <Building2 size={22} strokeWidth={2} />
             </span>
-            <span className="text-xs font-bold text-white/50 uppercase tracking-wider">
+            <span className="text-xs font-bold text-emerald-700/90 uppercase tracking-wider">
               {t("executive.netBadge")}
             </span>
           </div>
-          <p className="text-sm font-semibold text-white/60 mb-1">{t("executive.netLabel")}</p>
+          <p className="text-sm font-semibold text-slate-500 mb-1">{t("executive.netLabel")}</p>
           <p
             className={`text-2xl md:text-3xl font-black tabular-nums ${
-              net >= 0 ? "text-emerald-300" : "text-amber-300"
+              net >= 0 ? "text-emerald-700" : "text-amber-700"
             }`}
           >
             {fmt(net)}
           </p>
-          <p className="mt-4 flex items-center gap-2 text-sm text-white/55">
-            <Users size={16} className="opacity-70" />
+          <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+            <Users size={16} className="text-slate-400" />
             <span>
               {t("executive.orgsActive", {
                 count: totals.orgCount.toLocaleString(intlTag),

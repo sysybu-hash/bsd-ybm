@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Assistant, Heebo } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
@@ -13,10 +13,18 @@ import { getMessages } from "@/lib/i18n/load-messages";
 import { buildRootMetadata } from "@/lib/site-metadata";
 import GlobalFloatingChrome from "@/components/GlobalFloatingChrome";
 
-const inter = Inter({
+const heebo = Heebo({
+  subsets: ["hebrew", "latin"],
+  display: "swap",
+  adjustFontFallback: true,
+  variable: "--font-heebo",
+});
+
+const assistant = Assistant({
   subsets: ["latin", "latin-ext"],
   display: "swap",
   adjustFontFallback: true,
+  variable: "--font-assistant",
 });
 
 export const metadata: Metadata = buildRootMetadata();
@@ -29,10 +37,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   /** מקלדת צפה: התאמת גובה תוכן (Chrome/Android ועוד) */
   interactiveWidget: "resizes-content",
-  colorScheme: "light dark",
+  colorScheme: "light",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: "#f8fafc" },
   ],
 };
 
@@ -49,8 +57,13 @@ export default async function RootLayout({
   const htmlLang = locale;
 
   return (
-    <html lang={htmlLang} dir={dir} suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
+    <html
+      lang={htmlLang}
+      dir={dir}
+      className={`${heebo.variable} ${assistant.variable}`}
+      suppressHydrationWarning
+    >
+      <body className={`${heebo.className} antialiased font-sans`}>
         <SessionProvider session={session}>
           <I18nProvider locale={locale} messages={messages}>
             <Themer />

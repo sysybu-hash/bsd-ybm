@@ -125,6 +125,7 @@ export default async function CRMPage() {
 
         <CrmClient
           hasOrganization={hasOrganization}
+          showUnifiedBillingLinks={platformDev}
           contacts={contacts.map((c) => ({
             id: c.id,
             name: c.name,

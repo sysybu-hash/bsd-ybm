@@ -288,7 +288,7 @@ export default function MeckanoDashboard() {
               </div>
 
               {activeEmployees.length === 0 && !loading && !fetchError && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-800/85 backdrop-blur-md text-white px-6 py-3 rounded-2xl text-sm font-medium z-20 max-w-[90%] text-center">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md text-slate-800 border border-slate-200 shadow-lg px-6 py-3 rounded-2xl text-sm font-medium z-20 max-w-[90%] text-center">
                   {t("meckanoDash.noOneOnSite")}
                 </div>
               )}
@@ -307,7 +307,7 @@ export default function MeckanoDashboard() {
 
         <div className="flex flex-col md:flex-row gap-4">
           <select
-            className="flex-1 bg-white/10 border border-white/20 text-white rounded-2xl p-4 focus:outline-none [&>option]:text-slate-900"
+            className="flex-1 bg-white border border-blue-200/80 text-slate-900 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-white/50"
             value={reportProject}
             onChange={(e) => setReportProject(e.target.value)}
           >
@@ -318,7 +318,7 @@ export default function MeckanoDashboard() {
 
           <input
             type="month"
-            className="flex-1 bg-white/10 border border-white/20 text-white rounded-2xl p-4 focus:outline-none"
+            className="flex-1 bg-white border border-blue-200/80 text-slate-900 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-white/50 [color-scheme:light]"
             value={reportMonth}
             onChange={(e) => setReportMonth(e.target.value)}
           />

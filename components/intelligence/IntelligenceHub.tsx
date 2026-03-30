@@ -200,12 +200,12 @@ export default function IntelligenceHub() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 text-slate-900 shadow-2xl shadow-slate-200/40 relative overflow-hidden">
             <div className="relative z-10">
               <h3 className="text-xl font-black italic mb-6 flex items-center gap-2">
                 <Mic
                   size={20}
-                  className={isRecording ? "text-rose-500 animate-pulse" : "text-blue-400"}
+                  className={isRecording ? "text-rose-500 animate-pulse" : "text-blue-600"}
                 />{" "}
                 Voice Insights
               </h3>
@@ -299,7 +299,7 @@ export default function IntelligenceHub() {
 
       {vaultOpen ? (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-200/75 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="vault-title"
@@ -344,7 +344,7 @@ export default function IntelligenceHub() {
 
       {dailyOpen ? (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-slate-200/75 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="daily-title"
@@ -382,7 +382,7 @@ export default function IntelligenceHub() {
             <button
               type="button"
               onClick={() => setDailyOpen(false)}
-              className="mt-6 w-full py-3 rounded-2xl bg-slate-900 text-white font-bold"
+              className="mt-6 w-full py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700"
             >
               סגור
             </button>

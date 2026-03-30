@@ -26,11 +26,8 @@ export async function GET() {
   ]);
 
   const plan = orgPlan?.subscriptionTier ?? "FREE";
-  const superAdmin = session.user.role === "SUPER_ADMIN";
-  const dev = !!(
-    userEmailRow?.email && isAdmin(userEmailRow.email)
-  );
-  const allowedIds = getAllowedAiProvidersForPlan(plan, superAdmin || dev);
+  const platformAiBypass = !!(userEmailRow?.email && isAdmin(userEmailRow.email));
+  const allowedIds = getAllowedAiProvidersForPlan(plan, platformAiBypass);
 
   const providers = getAiProvidersPublic().map((p) => ({
     ...p,

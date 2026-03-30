@@ -40,40 +40,43 @@ export default function LandingPage() {
       className="relative min-h-screen font-[var(--font-heading)] overflow-x-hidden text-right"
       dir={dir}
     >
+      {/* גוון עדין תחת התמונה — לא לבן מלא שלא מכהה את הצילום */}
+      <div className="fixed inset-0 z-0 bg-slate-400/30" aria-hidden />
       <div
-        className="fixed inset-0 z-0 bg-slate-950 bg-cover bg-center bg-no-repeat"
+        className="pointer-events-none fixed inset-0 z-[1] bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url('/jerusalem-street.jpg')` }}
+        aria-hidden
       />
-      {/* ללא טשטוש — רק עמעום קל לקריאות טקסט על השמש/בהירות */}
+      {/* ללא מסכה לבנה — רק טשטוש קל מלמעלה/מלמטה לניגוד טקסט בלי להסתיר את העיר */}
       <div
-        className="pointer-events-none fixed inset-0 z-10 bg-gradient-to-b from-black/45 via-black/25 to-black/55"
+        className="pointer-events-none fixed inset-0 z-[2] bg-gradient-to-b from-slate-900/10 via-transparent to-slate-900/25"
         aria-hidden
       />
 
-      <header className="relative z-50 flex items-center justify-between gap-3 px-6 py-5 sm:px-8 bg-black/25 border-b border-white/10">
-        <h1 className="text-3xl font-black text-white italic tracking-tighter">
-          BSD-<span className="text-blue-400">YBM</span>
+      <header className="relative z-50 flex items-center justify-between gap-3 border-b border-slate-200/90 bg-white/95 px-6 py-5 shadow-sm shadow-slate-200/40 backdrop-blur-md sm:px-8">
+        <h1 className="text-3xl font-black italic tracking-tighter text-slate-900">
+          BSD-<span className="text-blue-600">YBM</span>
         </h1>
-        <div className="flex flex-wrap gap-2 sm:gap-4 items-center justify-end">
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
           <button
             type="button"
             onClick={() => setNavOpen(true)}
-            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 p-2.5 text-white transition hover:bg-white/15 md:p-2"
+            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2.5 text-slate-800 transition hover:border-slate-300 hover:bg-slate-50 md:p-2"
             aria-label={t("marketingDrawer.openMenu")}
             aria-expanded={navOpen}
           >
             <Menu className="h-6 w-6" aria-hidden />
           </button>
-          <LanguageSwitcher tone="dark" showLabel />
+          <LanguageSwitcher showLabel />
           <Link
             href="/login"
-            className="text-white/80 font-bold hover:text-white transition-colors text-sm"
+            className="text-sm font-bold text-slate-600 transition-colors hover:text-blue-700"
           >
             {t("nav.login")}
           </Link>
           <Link
             href="/register"
-            className="bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg shadow-blue-200/50 hover:scale-105 transition-all text-sm flex items-center gap-2"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02]"
           >
             {t("landing.registerQuick")} <Zap size={14} />
           </Link>
@@ -87,7 +90,9 @@ export default function LandingPage() {
         <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center px-1">
           <LandingHeroMetallicTitle text={t("landing.heroTitle")} />
 
-          <p className="mt-8 max-w-2xl text-xl font-medium leading-relaxed text-slate-200 md:text-2xl">
+          <p
+            className="mt-8 max-w-2xl text-xl font-medium leading-relaxed text-slate-800 md:text-2xl [text-shadow:0_1px_18px_rgba(255,255,255,0.75),0_0_1px_rgba(255,255,255,0.9)]"
+          >
             {t("landing.heroSubtitle")}
           </p>
         </div>
@@ -95,20 +100,20 @@ export default function LandingPage() {
         <div className="flex w-full shrink-0 flex-wrap justify-center gap-4 pt-6">
           <Link
             href="#features"
-            className="bg-white/10 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all text-lg"
+            className="rounded-2xl border border-slate-200 bg-white px-8 py-4 text-lg font-bold text-slate-800 shadow-sm transition-all hover:border-blue-200 hover:bg-slate-50"
           >
             {t("landing.ctaDiscover")}
           </Link>
           <Link
             href="#tutorial-videos"
-            className="inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/10 transition-all text-lg"
+            className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50/90 px-8 py-4 text-lg font-bold text-blue-900 transition-all hover:bg-blue-100"
           >
             <Play size={20} className="opacity-90" aria-hidden />
             {t("landing.tutorialCta")}
           </Link>
           <Link
             href="/register"
-            className="bg-white text-blue-700 font-black px-12 py-4 rounded-[2rem] text-lg shadow-2xl shadow-white/20 hover:scale-[1.03] transition-all flex items-center gap-2"
+            className="flex items-center gap-2 rounded-[2rem] bg-gradient-to-l from-blue-600 to-indigo-600 px-12 py-4 text-lg font-black text-white shadow-xl shadow-blue-500/30 transition-all hover:scale-[1.03]"
           >
             {t("landing.ctaStart")} <ChevronLeft size={20} />
           </Link>
@@ -119,7 +124,7 @@ export default function LandingPage() {
 
       <section
         id="features"
-        className="relative z-30 bg-white rounded-[4rem] p-16 md:p-24 mx-4 md:mx-10 mb-24 shadow-2xl shadow-black/20 text-right"
+        className="relative z-30 mx-4 mb-24 rounded-[4rem] border border-slate-100 bg-white p-16 text-right shadow-2xl shadow-slate-200/50 md:mx-10 md:p-24"
         dir={dir}
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -142,7 +147,7 @@ export default function LandingPage() {
         <PricingSection />
       </div>
 
-      <footer className="relative z-50 p-10 text-center text-slate-400 text-[10px] bg-black/60 border-t border-white/5">
+      <footer className="relative z-50 border-t border-slate-200 bg-slate-100/90 p-10 text-center text-[10px] text-slate-500">
         <p className="font-bold uppercase tracking-widest italic flex items-center justify-center gap-3 flex-wrap">
           <Palette size={12} /> {t("landing.footerTagline")} | {new Date().getFullYear()}
         </p>

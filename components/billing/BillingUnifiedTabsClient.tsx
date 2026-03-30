@@ -3,28 +3,30 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { BarChart3, Crown, Settings2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { BarChart3, Crown } from "lucide-react";
 
-type TabId = "overview" | "manage" | "advanced";
+type TabId = "overview" | "control";
 
 function parseTab(raw: string | null | undefined, isSteelAdmin: boolean): TabId {
   if (!isSteelAdmin) return "overview";
-  if (raw === "manage" || raw === "advanced" || raw === "overview") return raw;
+  const r = raw ?? "";
+  if (r === "manage" || r === "advanced" || r === "control") return "control";
+  if (r === "overview") return "overview";
   return "overview";
 }
 
 type Props = {
   isSteelAdmin: boolean;
   childrenOverview: ReactNode;
-  childrenManage: ReactNode | null;
-  childrenAdvanced: ReactNode | null;
+  /** מרכז ניהול מנויים — רק לאדמין פלטפורמה */
+  childrenControl: ReactNode | null;
 };
 
 export default function BillingUnifiedTabsClient({
   isSteelAdmin,
   childrenOverview,
-  childrenManage,
-  childrenAdvanced,
+  childrenControl,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -43,73 +45,109 @@ export default function BillingUnifiedTabsClient({
     (next: TabId) => {
       setTab(next);
       const p = new URLSearchParams(searchParams.toString());
-      if (next === "overview") p.delete("tab");
-      else p.set("tab", next);
+      if (next === "overview") {
+        p.delete("tab");
+        p.delete("orgId");
+      } else {
+        p.set("tab", "control");
+      }
       const q = p.toString();
       router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
     },
     [pathname, router, searchParams],
   );
 
-  const tabs: { id: TabId; label: string; icon: typeof BarChart3; adminOnly?: boolean }[] = [
-    { id: "overview", label: "דוחות וסקירה כללית", icon: BarChart3 },
-    { id: "manage", label: "ניהול ועריכת מנויים", icon: Crown, adminOnly: true },
-    { id: "advanced", label: "הגדרות מתקדמות", icon: Settings2, adminOnly: true },
+  const tabs: {
+    id: TabId;
+    label: string;
+    step: number;
+    hint: string;
+    icon: typeof BarChart3;
+    adminOnly?: boolean;
+  }[] = [
+    {
+      id: "overview",
+      step: 1,
+      label: "סקירה וגרפים",
+      hint: "מצב, מכסות ויזואליות",
+      icon: BarChart3,
+    },
+    {
+      id: "control",
+      step: 2,
+      label: "מרכז שליטה במנויים",
+      hint: "ניהול מלא — טבלה וכרטיס בודד",
+      icon: Crown,
+      adminOnly: true,
+    },
   ];
 
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-100" dir="rtl">
-      <div className="max-w-[1600px] mx-auto px-4 pt-6 sm:px-8">
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">
+    <div className="min-h-screen bg-transparent font-sans text-slate-900" dir="rtl">
+      <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
+        <h1 className="mb-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
           מנויים ותשלומים
         </h1>
-        <p className="text-sm text-slate-400 mb-6">
-          מרכז אחד לשימוש, שדרוג מנוי וניהול — לפי ההרשאות שלך.
+        <p className="mb-6 text-sm font-medium text-slate-600">
+          סקירה עם גרפים — או מרכז שליטה אחד לניהול כל המנויים (למפעילי פלטפורמה בלבד).
         </p>
 
         <div
-          className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-900/80 border border-amber-500/20 shadow-inner shadow-black/40 mb-8"
+          className="mb-8 rounded-2xl border border-slate-200/90 bg-white/95 p-2 shadow-md shadow-slate-200/50 backdrop-blur-md ring-1 ring-slate-100/90"
           role="tablist"
-          aria-label="מקטעי מנויים ותשלומים"
+          aria-label="מקטעי מנויים"
         >
-          {visibleTabs.map(({ id, label, icon: Icon }) => {
-            const active = tab === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setTabAndUrl(id)}
-                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
-                  active
-                    ? "bg-gradient-to-br from-amber-200/95 via-amber-100 to-slate-200 text-slate-900 shadow-md shadow-amber-900/30 ring-1 ring-amber-300/80"
-                    : "text-slate-300 hover:bg-slate-800/90 hover:text-white border border-transparent"
-                }`}
-              >
-                <Icon size={18} className={active ? "text-amber-900" : "text-slate-500"} />
-                {label}
-              </button>
-            );
-          })}
+          <div className="flex flex-wrap gap-2">
+            {visibleTabs.map(({ id, label, hint, step, icon: Icon }) => {
+              const active = tab === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setTabAndUrl(id)}
+                  className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
+                    active
+                      ? "bg-gradient-to-br from-amber-50 via-white to-slate-50 text-slate-900 shadow-md shadow-amber-200/40 ring-1 ring-amber-300/80"
+                      : "border border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 text-xs font-black text-amber-800/80">
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
+                        active ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-700"
+                      }`}
+                    >
+                      {step}
+                    </span>
+                    <Icon size={16} className={active ? "text-amber-700" : "text-slate-400"} strokeWidth={2} />
+                    <span className="font-black text-slate-900">{label}</span>
+                  </span>
+                  <span className="pe-8 text-[11px] font-medium text-slate-500">{hint}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="pb-16" role="tabpanel" hidden={tab !== "overview"}>
-        {tab === "overview" ? childrenOverview : null}
-      </div>
-      {isSteelAdmin ? (
-        <>
-          <div className="pb-16" role="tabpanel" hidden={tab !== "manage"}>
-            {tab === "manage" ? childrenManage : null}
-          </div>
-          <div className="pb-16" role="tabpanel" hidden={tab !== "advanced"}>
-            {tab === "advanced" ? childrenAdvanced : null}
-          </div>
-        </>
-      ) : null}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+          className="pb-16"
+          role="tabpanel"
+        >
+          {tab === "overview" ? childrenOverview : null}
+          {isSteelAdmin && tab === "control" ? childrenControl : null}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

@@ -55,9 +55,9 @@ export default function SimulationMode() {
             <input
               type="number"
               placeholder="סכום (₪)"
-              className="p-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder:text-blue-200"
+              className="p-3 rounded-xl bg-white/95 border border-white/50 text-slate-900 placeholder:text-slate-400 shadow-sm"
             />
-            <select className="p-3 rounded-xl bg-white/20 border border-white/30 text-white">
+            <select className="p-3 rounded-xl bg-white/95 border border-white/50 text-slate-900 shadow-sm">
               <option className="text-slate-900">הוצאה חד פעמית</option>
               <option className="text-slate-900">הוצאה חודשית קבועה</option>
               <option className="text-slate-900">הכנסה חזויה</option>
@@ -67,9 +67,9 @@ export default function SimulationMode() {
       </div>
 
       {isSimulating ? (
-        <div className="mt-8 p-4 bg-white/10 rounded-2xl flex items-start gap-3 border border-white/10">
-          <TrendingDown className="text-rose-300 flex-shrink-0" aria-hidden />
-          <p className="text-xs italic text-blue-50">
+        <div className="mt-8 p-4 bg-white/20 rounded-2xl flex items-start gap-3 border border-white/25">
+          <TrendingDown className="text-rose-200 flex-shrink-0" aria-hidden />
+          <p className="text-xs italic text-white/95">
             שים לב: הוספת הוצאה קבועה של ₪5,000 תוריד את יתרת המזומנים שלך מתחת
             ל&quot;קו האדום&quot; בחודש יולי. כדאי לשקול דחייה.
           </p>

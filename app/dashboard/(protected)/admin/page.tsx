@@ -4,11 +4,16 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 import { hasMeckanoAccess } from "@/lib/meckano-access";
+import Link from "next/link";
 import { Users, Building, CreditCard, ArrowUpRight, Clock, ShieldCheck } from "lucide-react";
 import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
 import PlatformPayPalOwnerCard from "@/components/admin/PlatformPayPalOwnerCard";
 
-export default async function AdminDashboard() {
+type AdminPageProps = {
+  searchParams?: Promise<{ section?: string }>;
+};
+
+export default async function AdminDashboard({ searchParams }: AdminPageProps) {
   const session = await getServerSession(authOptions);
 
   if (hasMeckanoAccess(session?.user?.email)) {
@@ -46,6 +51,9 @@ export default async function AdminDashboard() {
     include: { users: { take: 1, select: { email: true, role: true } } }
   });
 
+  const sp = (await searchParams) ?? {};
+  const activeSection = sp.section === "subscriptions" ? "subscriptions" : sp.section === "broadcast" ? "broadcast" : "overview";
+
   return (
     <div
       className="min-h-app bg-[#f8fafc] p-8 md:p-12 font-sans text-slate-900"
@@ -63,11 +71,44 @@ export default async function AdminDashboard() {
             מבט על: ניהול לקוחות, מנויים והכנסות (הרשאת בעלים)
           </p>
         </div>
+        <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white/90 p-1.5 shadow-sm">
+          <Link
+            href="/dashboard/admin"
+            className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+              activeSection === "overview"
+                ? "bg-blue-600 text-white"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            סקירה כללית
+          </Link>
+          <Link
+            href="/dashboard/admin?section=subscriptions"
+            className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+              activeSection === "subscriptions"
+                ? "bg-violet-700 text-white"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            MASTER ADMIN - מנויים
+          </Link>
+          <Link
+            href="/dashboard/admin?section=broadcast"
+            className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+              activeSection === "broadcast"
+                ? "bg-blue-700 text-white"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            שידור והתראות
+          </Link>
+        </div>
       </header>
 
-      <PlatformPayPalOwnerCard />
+      {activeSection === "overview" ? <PlatformPayPalOwnerCard /> : null}
 
       {/* שורת כרטיסיות נתונים (KPIs) */}
+      {activeSection === "overview" ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         
         {/* הכנסות */}
@@ -119,16 +160,21 @@ export default async function AdminDashboard() {
         </div>
 
       </div>
+      ) : null}
 
       {/* רשימת לקוחות אחרונים (Mini CRM) */}
+      {activeSection === "overview" ? (
       <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 p-8">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-2xl font-black flex items-center gap-3">
             <Building className="text-blue-500" /> לקוחות ומנויים אחרונים
           </h3>
-          <button className="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-xl hover:bg-blue-100 transition-colors">
+          <Link
+            href="/dashboard/billing?tab=control"
+            className="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-xl hover:bg-blue-100 transition-colors inline-block"
+          >
             הצג את כל הלקוחות
-          </button>
+          </Link>
         </div>
 
         <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
@@ -161,9 +207,12 @@ export default async function AdminDashboard() {
                       {client.createdAt.toLocaleDateString('he-IL')}
                     </td>
                     <td className="py-5">
-                      <button className="text-blue-600 hover:text-blue-800 font-bold text-sm flex items-center gap-1 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                      <Link
+                        href={`/dashboard/billing?tab=control&orgId=${encodeURIComponent(client.id)}`}
+                        className="text-blue-600 hover:text-blue-800 font-bold text-sm inline-flex items-center gap-1 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm"
+                      >
                         ניהול מנוי <ArrowUpRight size={14} />
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))
@@ -172,8 +221,37 @@ export default async function AdminDashboard() {
           </table>
         </div>
       </div>
+      ) : null}
 
-      <AdminBroadcastNotifications />
+      {activeSection === "subscriptions" ? (
+      <section id="subscriptions" className="mt-2 space-y-6">
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/30">
+          <p className="text-xs font-black uppercase tracking-wider text-violet-600 mb-1">MASTER ADMIN</p>
+          <h2 className="text-2xl font-black text-slate-900">ניהול מנויים מרוכז</h2>
+          <p className="text-sm text-slate-600 mt-1">
+            ניהול המנויים עבר למסך ייעודי מאוחד.
+          </p>
+          <p className="text-xs text-slate-500 mt-2">
+            כדי למנוע כפילויות וחלונות חופפים, כל פעולות עריכה/מחיקה זמינות ב־
+            <Link href="/dashboard/billing?tab=control" className="font-bold text-blue-600 underline ms-1">
+              /dashboard/billing
+            </Link>
+            .
+          </p>
+        </div>
+        <div className="rounded-[2rem] border border-violet-200 bg-violet-50/50 p-6">
+          <Link
+            href="/dashboard/billing?tab=control"
+            className="inline-flex items-center gap-2 rounded-xl bg-violet-700 px-5 py-3 text-sm font-bold text-white hover:bg-violet-600"
+          >
+            מעבר לניהול מנויים מאוחד
+            <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </section>
+      ) : null}
+
+      {activeSection === "broadcast" ? <AdminBroadcastNotifications /> : null}
 
     </div>
   );

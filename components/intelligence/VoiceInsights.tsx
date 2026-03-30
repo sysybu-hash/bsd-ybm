@@ -25,15 +25,15 @@ export default function VoiceInsights() {
 
   return (
     <div
-      className="bg-slate-950 text-white p-8 rounded-[3rem] border border-white/5 shadow-3xl shadow-slate-950/40 font-sans"
+      className="bg-white text-slate-900 p-8 rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/40 font-sans"
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
-        <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
-          <BrainCircuit className="text-blue-400" size={24} aria-hidden />
+        <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100">
+          <BrainCircuit className="text-blue-600" size={24} aria-hidden />
         </div>
         <div>
-          <h4 className="font-black text-xl italic text-white tracking-tighter">
+          <h4 className="font-black text-xl italic text-slate-900 tracking-tighter">
             Voice Insights Live
           </h4>
           <p className="text-slate-500 text-xs">
@@ -45,18 +45,18 @@ export default function VoiceInsights() {
       <div className="space-y-6">
         <div className="flex justify-center mb-8">
           {isProcessing ? (
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center animate-pulse">
-              <Loader2 className="animate-spin text-blue-500" size={32} />
+            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center animate-pulse border border-slate-200">
+              <Loader2 className="animate-spin text-blue-600" size={32} />
             </div>
           ) : (
             <button
               type="button"
               onMouseDown={startRecording}
               onMouseUp={stopRecording}
-              className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+              className={`w-20 h-20 rounded-full flex items-center justify-center transition-all text-white ${
                 isRecording
-                  ? "bg-rose-600 shadow-2xl shadow-rose-600/50 scale-110"
-                  : "bg-blue-600 hover:bg-blue-500"
+                  ? "bg-rose-600 shadow-2xl shadow-rose-600/40 scale-110"
+                  : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/25"
               }`}
               aria-label={isRecording ? "הפסק הקלטה" : "התחל הקלטה"}
             >
@@ -66,7 +66,7 @@ export default function VoiceInsights() {
         </div>
 
         {response ? (
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 text-sm text-slate-300 leading-relaxed animate-in fade-in">
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-sm text-slate-700 leading-relaxed animate-in fade-in">
             {response}
           </div>
         ) : null}

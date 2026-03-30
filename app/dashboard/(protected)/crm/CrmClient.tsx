@@ -60,11 +60,14 @@ export default function CrmClient({
   projects,
   hasOrganization,
   organizations = [],
+  showUnifiedBillingLinks = false,
 }: {
   contacts: ContactRow[];
   projects: ProjectRow[];
   hasOrganization: boolean;
   organizations?: CrmAdminOrganizationRow[];
+  /** Steel Admin — קישור לניהול מנוי בבילינג מאוחד */
+  showUnifiedBillingLinks?: boolean;
 }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -120,7 +123,10 @@ export default function CrmClient({
                 הרשאת בעלים
               </span>
             </div>
-            <CrmOrganizationsAdminTable organizations={organizations} />
+            <CrmOrganizationsAdminTable
+              organizations={organizations}
+              showUnifiedBillingLinks={showUnifiedBillingLinks}
+            />
           </section>
         ) : null}
       </div>
@@ -228,7 +234,7 @@ export default function CrmClient({
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-2xl bg-slate-900 text-white px-6 py-3 font-black hover:bg-slate-800 disabled:opacity-50 shadow-md transition-all"
+                className="rounded-2xl bg-blue-600 text-white px-6 py-3 font-black hover:bg-blue-700 disabled:opacity-50 shadow-md transition-all"
               >
                 {pending ? "..." : "הוסף פרויקט"}
               </button>
@@ -452,7 +458,10 @@ export default function CrmClient({
               הרשאת בעלים
             </span>
           </div>
-          <CrmOrganizationsAdminTable organizations={organizations} />
+          <CrmOrganizationsAdminTable
+            organizations={organizations}
+            showUnifiedBillingLinks={showUnifiedBillingLinks}
+          />
         </section>
       )}
     </>

@@ -186,22 +186,22 @@ ${formContext}
         initial={false}
         animate={{ width: railW }}
         transition={{ type: "spring", stiffness: 380, damping: 32 }}
-        className="shrink-0 border-b border-slate-200 lg:border-b-0 lg:border-l bg-slate-900 text-white flex flex-col"
+        className="shrink-0 border-b border-slate-200 lg:border-b-0 lg:border-l bg-slate-100 text-slate-800 flex flex-col"
         style={{ minHeight: "min(100%, 520px)" }}
       >
-        <div className="flex items-center justify-between gap-1 p-2 border-b border-white/10">
+        <div className="flex items-center justify-between gap-1 p-2 border-b border-slate-200/90">
           {railWide ? (
             <span className="text-xs font-black uppercase tracking-tight px-1 flex items-center gap-1 truncate">
-              <Sparkles size={14} className="text-amber-300 shrink-0" />
+              <Sparkles size={14} className="text-amber-600 shrink-0" />
               מרכז AI
             </span>
           ) : (
-            <Sparkles size={18} className="text-amber-300 mx-auto" />
+            <Sparkles size={18} className="text-amber-600 mx-auto" />
           )}
           <button
             type="button"
             onClick={() => setRailWide((v) => !v)}
-            className="p-2 rounded-xl hover:bg-white/10 text-slate-300"
+            className="p-2 rounded-xl hover:bg-white text-slate-600 border border-transparent hover:border-slate-200"
             aria-label={railWide ? "צמצם סרגל" : "הרחב סרגל"}
           >
             {railWide ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
@@ -216,7 +216,9 @@ ${formContext}
                 type="button"
                 onClick={() => setSection(id)}
                 className={`flex items-center gap-3 rounded-xl px-2 py-2.5 text-sm font-bold transition-colors whitespace-nowrap lg:w-full ${
-                  active ? "bg-white/15 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  active
+                    ? "bg-white text-slate-900 shadow-sm border border-slate-200"
+                    : "text-slate-600 hover:bg-white/80 hover:text-slate-900"
                 }`}
               >
                 <Icon size={20} className="shrink-0" aria-hidden />
@@ -278,43 +280,62 @@ ${formContext}
               exit={{ opacity: 0, y: -8 }}
               className="space-y-4"
             >
-              <div className="flex flex-col gap-2 sm:gap-3">
-                {orgPlan === "FREE" && (
-                  <p className="text-xs text-slate-600 bg-slate-100 border border-slate-200 rounded-xl px-3 py-2">
-                    <strong>מנוי FREE:</strong> סריקת מסמכים זמינה עם Gemini. Pro/Business פותחים ספקים
-                    נוספים לפי החבילה.
+              <div className="rounded-[2rem] border-2 border-amber-200/55 bg-gradient-to-b from-white via-amber-50/20 to-slate-50/40 p-4 shadow-2xl shadow-amber-200/25 ring-1 ring-slate-200/70 md:p-6">
+                <div className="mb-4 border-b border-slate-200/80 pb-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">השדרה · במה מרכזית</p>
+                  <h2 className="mt-1 flex items-center gap-2 text-xl font-black text-slate-900">
+                    <ScanLine className="text-amber-600" size={26} />
+                    סריקת מסמכים רב־מנועית
+                  </h2>
+                  <p className="mt-1 text-xs font-medium text-slate-600">
+                    העלאה, בחירת ספק ופענוח — כל הממשק במקום אחד.
                   </p>
-                )}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
-                  <label className="text-sm font-bold text-slate-800 shrink-0">ספק לסריקה:</label>
-                  <select
-                    value={providerScan}
-                    onChange={(e) => setProviderScan(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium max-w-md"
-                  >
-                    {scanProviderOptions.length === 0 ? (
-                      <option value="gemini">טוען ספקים…</option>
-                    ) : (
-                      scanProviderOptions.map((p) => {
-                        const usable = p.configured && p.allowedByPlan !== false;
-                        return (
-                          <option key={p.id} value={p.id} disabled={!usable}>
-                            {p.label} — {!p.configured ? "חסר מפתח בשרת" : p.allowedByPlan === false ? "דורש שדרוג מנוי" : p.description}
-                          </option>
-                        );
-                      })
-                    )}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => loadProviders()}
-                    className="text-xs font-bold text-blue-600 hover:underline"
-                  >
-                    רענון רשימה
-                  </button>
+                </div>
+                <div className="flex flex-col gap-2 sm:gap-3">
+                  {orgPlan === "FREE" && (
+                    <p className="rounded-xl border border-slate-200 bg-slate-100/90 px-3 py-2 text-xs text-slate-600">
+                      <strong>מנוי FREE:</strong> סריקת מסמכים זמינה עם Gemini. Pro/Business פותחים ספקים נוספים
+                      לפי החבילה.
+                    </p>
+                  )}
+                  <div className="flex flex-col flex-wrap gap-3 sm:flex-row sm:items-center">
+                    <label className="shrink-0 text-sm font-bold text-slate-800">ספק לסריקה:</label>
+                    <select
+                      value={providerScan}
+                      onChange={(e) => setProviderScan(e.target.value)}
+                      className="max-w-md rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium shadow-sm"
+                    >
+                      {scanProviderOptions.length === 0 ? (
+                        <option value="gemini">טוען ספקים…</option>
+                      ) : (
+                        scanProviderOptions.map((p) => {
+                          const usable = p.configured && p.allowedByPlan !== false;
+                          return (
+                            <option key={p.id} value={p.id} disabled={!usable}>
+                              {p.label} —{" "}
+                              {!p.configured
+                                ? "חסר מפתח בשרת"
+                                : p.allowedByPlan === false
+                                  ? "דורש שדרוג מנוי"
+                                  : p.description}
+                            </option>
+                          );
+                        })
+                      )}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => loadProviders()}
+                      className="text-xs font-bold text-blue-600 hover:underline"
+                    >
+                      רענון רשימה
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-5">
+                  <MultiEngineScanner variant="light" provider={providerScan} />
                 </div>
               </div>
-              <MultiEngineScanner variant="light" provider={providerScan} />
             </motion.div>
           )}
 

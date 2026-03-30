@@ -27,7 +27,7 @@ export default function SuccessPage() {
         <Sparkles className="absolute -top-2 -right-2 text-amber-500 animate-pulse" size={32} />
       </div>
 
-      <h1 className="text-4xl font-black mb-4 bg-gradient-to-r from-blue-600 to-slate-900 bg-clip-text text-transparent italic">
+      <h1 className="text-4xl font-black mb-4 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent italic">
         ברוך הבא למסלול PRO!
       </h1>
 

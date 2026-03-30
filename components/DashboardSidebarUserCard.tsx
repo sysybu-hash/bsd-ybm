@@ -1,0 +1,59 @@
+"use client";
+
+import { signOut, useSession } from "next-auth/react";
+import { LogOut } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
+
+/** פרופיל משתמש בתחתית סרגל הצד — זכוכית, מסגרת זהב, נקודת סטטוס פעיל */
+export default function DashboardSidebarUserCard() {
+  const { data: session, status } = useSession({ required: true });
+  const { t, dir } = useI18n();
+
+  const email = (session?.user?.email ?? "").trim();
+  const name = (session?.user?.name ?? "").trim();
+  const image = session?.user?.image ?? null;
+  const loading = status === "loading";
+  const displayName = loading ? "…" : name || email.split("@")[0] || "—";
+
+  return (
+    <div
+      key={session?.user?.email ?? ""}
+      dir={dir}
+      className="w-full rounded-xl border border-slate-200/70 bg-white/75 px-3 py-3 shadow-md shadow-slate-200/40 backdrop-blur-md ring-1 ring-slate-100/90"
+    >
+      <div className="flex items-center gap-3">
+        <div className="relative shrink-0">
+          <span
+            className="absolute -top-0.5 z-[1] h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.85)] ring-2 ring-white"
+            title="מחובר"
+            aria-hidden
+          />
+          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-amber-400/85 ring-offset-2 ring-offset-white">
+            {image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={image} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-100 to-slate-200 text-sm font-black text-slate-700">
+                {(loading ? "…" : email || "?").charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="min-w-0 flex-1 text-end">
+          <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
+          <p className="truncate text-[11px] font-medium text-slate-500" title={email || undefined}>
+            {loading ? "…" : email || "—"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void signOut({ callbackUrl: "/", redirect: true })}
+          className="shrink-0 rounded-xl border border-slate-200/80 bg-white/90 p-2.5 text-slate-500 transition hover:scale-105 hover:border-amber-300/60 hover:text-amber-900"
+          aria-label={t("dashboard.logout")}
+        >
+          <LogOut size={18} strokeWidth={2.25} />
+        </button>
+      </div>
+    </div>
+  );
+}

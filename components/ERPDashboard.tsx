@@ -159,18 +159,18 @@ export default function ERPDashboard({
         </div>
       ) : null}
 
-      <div className="bg-slate-950 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+      <div className="bg-white text-slate-900 p-10 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
           <div className="bg-blue-600 p-6 rounded-[2rem] shadow-xl shadow-blue-500/20 animate-pulse">
             <FileSearch size={40} />
           </div>
           <div className="flex-1">
             <h3 className="text-2xl font-black italic tracking-tighter">{t("erpDash.scannerTitle")}</h3>
-            <p className="text-slate-400 font-medium mt-1">{t("erpDash.scannerDesc")}</p>
+            <p className="text-slate-600 font-medium mt-1">{t("erpDash.scannerDesc")}</p>
           </div>
           <Link
             href="/dashboard/erp#erp-multi-scanner"
-            className="bg-white text-slate-950 px-10 py-4 rounded-2xl font-black hover:scale-105 transition-all flex items-center gap-2"
+            className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-2"
           >
             <Layers size={20} /> {t("erpDash.scannerCta")}
           </Link>
@@ -211,7 +211,7 @@ export default function ERPDashboard({
                   type="button"
                   disabled={isAiPending}
                   onClick={() => runAiForKey(s.normalizedKey)}
-                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2.5 font-bold hover:bg-slate-800 disabled:opacity-50"
+                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 text-white px-4 py-2.5 font-bold hover:bg-blue-700 disabled:opacity-50"
                 >
                   <Sparkles size={18} />
                   {t("erpDash.analyzeAi")}

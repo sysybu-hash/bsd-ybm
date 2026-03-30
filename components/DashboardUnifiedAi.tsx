@@ -139,7 +139,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                   <Sparkles size={16} className="shrink-0 opacity-90" aria-hidden />
                   <span className="truncate">{title}</span>
                 </div>
-                <div className="flex shrink-0 gap-1 rounded-xl bg-black/15 p-0.5">
+                <div className="flex shrink-0 gap-1 rounded-xl bg-white/20 p-0.5">
                   <button
                     type="button"
                     onClick={() => setTab("chat")}

@@ -13,14 +13,14 @@ type Variant = "dark" | "light";
  * dock: ללא מעטפת fixed — לשימוש ב־DashboardBottomDock
  */
 export default function ScannerBubble({
-  variant = "dark",
+  variant = "light",
   dock = false,
 }: {
   variant?: Variant;
   dock?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const isLight = variant === "light";
+  void variant;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -36,8 +36,8 @@ export default function ScannerBubble({
     };
   }, [isOpen]);
 
-  const overlayBg = isLight ? "bg-slate-100/95 backdrop-blur-md" : "bg-slate-950/95 backdrop-blur-md";
-  const headerBorder = isLight ? "border-slate-200 bg-white/90" : "border-white/10 bg-slate-900/80";
+  const overlayBg = "bg-slate-100/95 backdrop-blur-md";
+  const headerBorder = "border-slate-200 bg-white/90";
 
   const wrapClass = dock
     ? "relative z-[2] inline-block"
@@ -77,17 +77,13 @@ export default function ScannerBubble({
             <header
               className={`shrink-0 flex items-center justify-between gap-4 px-4 py-3 border-b ${headerBorder}`}
             >
-              <h2 className={`text-lg font-black ${isLight ? "text-slate-900" : "text-white"}`}>
+              <h2 className="text-lg font-black text-slate-900">
                 סריקה רב־מנועית — חלון קבוע
               </h2>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className={`p-3 rounded-2xl transition-colors ${
-                  isLight
-                    ? "bg-slate-100 text-slate-800 hover:bg-slate-200"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                }`}
+                className="p-3 rounded-2xl transition-colors bg-slate-100 text-slate-800 hover:bg-slate-200"
                 aria-label="סגור מסך סריקה"
               >
                 <X size={22} />
@@ -96,11 +92,7 @@ export default function ScannerBubble({
 
             <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
               <div className="max-w-5xl mx-auto w-full p-4 pb-16 md:p-6 md:pb-20">
-                <MultiEngineScanner
-                  variant={isLight ? "light" : "dark"}
-                  fillHeight
-                  compactHeader
-                />
+                <MultiEngineScanner variant="light" fillHeight compactHeader />
               </div>
             </div>
           </motion.div>

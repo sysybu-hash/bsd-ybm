@@ -209,7 +209,7 @@ export default function LoginClient() {
             <button
               type="submit"
               disabled={loadingCreds}
-              className="w-full rounded-2xl bg-slate-900 hover:bg-black text-white py-3.5 text-sm font-bold disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full rounded-2xl bg-blue-600 py-3.5 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loadingCreds ? <Loader2 className="animate-spin" size={18} /> : null}
               כניסה

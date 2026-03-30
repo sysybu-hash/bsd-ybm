@@ -201,20 +201,20 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
       </div>
 
       <div className="relative z-10 flex justify-end">
-        <div className="w-full md:w-80 space-y-3 bg-slate-950 p-8 rounded-[2.5rem] shadow-xl shadow-slate-900/10 text-slate-100">
-          <div className="flex justify-between text-slate-300 font-medium">
+        <div className="w-full md:w-80 space-y-3 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200 shadow-lg shadow-slate-200/40 text-slate-800">
+          <div className="flex justify-between text-slate-600 font-medium">
             <span>סה״כ לפני מע״מ:</span>
             <span>₪{money(doc.amount)}</span>
           </div>
           {!internalMemo && !isExempt ? (
-            <div className="flex justify-between text-slate-400 font-medium">
+            <div className="flex justify-between text-slate-500 font-medium">
               <span>מע״מ ({vatPercentLabel}):</span>
               <span>₪{money(doc.vat)}</span>
             </div>
           ) : null}
-          <div className="flex justify-between text-2xl font-black text-white pt-3 border-t border-slate-700 leading-none tracking-tight">
+          <div className="flex justify-between text-2xl font-black text-slate-900 pt-3 border-t border-slate-200 leading-none tracking-tight">
             <span>סה״כ לתשלום:</span>
-            <span className="italic">₪{money(doc.total)}</span>
+            <span className="italic text-blue-700">₪{money(doc.total)}</span>
           </div>
         </div>
       </div>

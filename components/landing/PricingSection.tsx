@@ -15,7 +15,7 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="relative z-30 bg-slate-50 rounded-[4rem] p-16 md:p-24 mx-4 md:mx-10 mb-24 shadow-2xl shadow-black/10 text-right border border-white"
+      className="relative z-30 mx-4 mb-24 rounded-[4rem] border border-slate-100 bg-slate-50 p-16 text-right shadow-2xl shadow-slate-200/40 md:mx-10 md:p-24"
     >
       <div className="text-center mb-16">
         <span className="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">

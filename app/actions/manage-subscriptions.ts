@@ -45,6 +45,7 @@ export async function manageSubsListOrganizationsAction(): Promise<
       premiumScansRemaining: true,
       maxCompanies: true,
       trialEndsAt: true,
+      tenantPublicDomain: true,
       users: {
         take: 1,
         orderBy: { createdAt: "asc" },
@@ -63,7 +64,59 @@ export async function manageSubsListOrganizationsAction(): Promise<
     maxCompanies: o.maxCompanies,
     trialEndsAt: o.trialEndsAt,
     primaryEmail: o.users[0]?.email ?? null,
+    tenantPublicDomain: o.tenantPublicDomain ?? null,
   }));
+}
+
+function normalizeTenantDomainInput(raw: string): string | null {
+  let d = raw.trim();
+  if (!d) return null;
+  d = d.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").trim().toLowerCase();
+  if (d.length > 253) return "";
+  return d || null;
+}
+
+/** עדכון דומיין ציבורי לארגון — רק סופר־אדמין מנויים */
+export async function manageSubsSaveTenantDomainAction(
+  formData: FormData,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const s = await requireSuperAdmin();
+  if (!s) return { ok: false, error: "אין הרשאה" };
+
+  const organizationId = String(formData.get("organizationId") ?? "").trim();
+  const domainOrNull = normalizeTenantDomainInput(
+    String(formData.get("tenantPublicDomain") ?? ""),
+  );
+
+  if (!organizationId) return { ok: false, error: "חסר ארגון" };
+  if (domainOrNull === "") return { ok: false, error: "דומיין חוקי בלבד (שם מארח קצר מדי או לא תקין)" };
+
+  try {
+    if (domainOrNull) {
+      const clash = await prisma.organization.findFirst({
+        where: {
+          tenantPublicDomain: domainOrNull,
+          NOT: { id: organizationId },
+        },
+        select: { id: true },
+      });
+      if (clash) {
+        return { ok: false, error: "דומיין זה כבר בשימוש בארגון אחר" };
+      }
+    }
+
+    await prisma.organization.update({
+      where: { id: organizationId },
+      data: { tenantPublicDomain: domainOrNull },
+    });
+
+    revalidatePath("/dashboard/billing");
+    revalidatePath("/dashboard/settings");
+    return { ok: true };
+  } catch (e) {
+    console.error("manageSubsSaveTenantDomainAction", e);
+    return { ok: false, error: "שמירת דומיין נכשלה" };
+  }
 }
 
 export async function manageSubsCreateManualUserAction(
@@ -242,5 +295,94 @@ export async function manageSubsSendTierInviteAction(
   } catch (e) {
     console.error("manageSubsSendTierInviteAction", e);
     return { ok: false, error: "שמירת הזמנה או שליחת מייל נכשלה" };
+  }
+}
+
+export async function manageSubsUpdateSubscriptionAction(
+  formData: FormData,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const s = await requireSuperAdmin();
+  if (!s) return { ok: false, error: "אין הרשאה" };
+
+  const organizationId = String(formData.get("organizationId") ?? "").trim();
+  const tierRaw = String(formData.get("tier") ?? "").trim();
+  const statusRaw = String(formData.get("subscriptionStatus") ?? "").trim().toUpperCase();
+
+  const tier = parseSubscriptionTier(tierRaw);
+  if (!organizationId) return { ok: false, error: "חסר ארגון" };
+  if (!tier) return { ok: false, error: "רמת מנוי לא חוקית" };
+  if (!statusRaw) return { ok: false, error: "סטטוס מנוי חסר" };
+
+  try {
+    await prisma.organization.update({
+      where: { id: organizationId },
+      data: {
+        subscriptionTier: tier,
+        subscriptionStatus: statusRaw,
+      },
+    });
+    revalidatePath("/dashboard/billing");
+    return { ok: true };
+  } catch (e) {
+    console.error("manageSubsUpdateSubscriptionAction", e);
+    return { ok: false, error: "עדכון מנוי נכשל" };
+  }
+}
+
+export async function manageSubsDeleteUserByEmailAction(
+  formData: FormData,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const s = await requireSuperAdmin();
+  if (!s) return { ok: false, error: "אין הרשאה" };
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const actor = s.user?.email?.trim().toLowerCase() ?? "";
+  if (!email.includes("@")) return { ok: false, error: "אימייל לא תקין" };
+  if (email === actor) return { ok: false, error: "לא ניתן למחוק את המשתמש המחובר" };
+  if (isExecutiveSubscriptionSuperAdmin(email)) {
+    return { ok: false, error: "לא ניתן למחוק את חשבון הסופר־אדמין" };
+  }
+
+  const target = await prisma.user.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+    select: { id: true },
+  });
+  if (!target) return { ok: false, error: "המשתמש לא נמצא" };
+
+  try {
+    await prisma.user.delete({ where: { id: target.id } });
+    revalidatePath("/dashboard/billing");
+    return { ok: true };
+  } catch (e) {
+    console.error("manageSubsDeleteUserByEmailAction", e);
+    return { ok: false, error: "מחיקת משתמש נכשלה" };
+  }
+}
+
+export async function manageSubsDeleteOrganizationAction(
+  formData: FormData,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const s = await requireSuperAdmin();
+  if (!s) return { ok: false, error: "אין הרשאה" };
+
+  const organizationId = String(formData.get("organizationId") ?? "").trim();
+  if (!organizationId) return { ok: false, error: "חסר ארגון" };
+
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { id: true, users: { select: { id: true }, take: 1 } },
+  });
+  if (!org) return { ok: false, error: "הארגון לא נמצא" };
+  if (org.users.length > 0) {
+    return { ok: false, error: "יש למחוק/להעביר משתמשים מהארגון לפני מחיקת הארגון" };
+  }
+
+  try {
+    await prisma.organization.delete({ where: { id: organizationId } });
+    revalidatePath("/dashboard/billing");
+    return { ok: true };
+  } catch (e) {
+    console.error("manageSubsDeleteOrganizationAction", e);
+    return { ok: false, error: "מחיקת ארגון נכשלה" };
   }
 }

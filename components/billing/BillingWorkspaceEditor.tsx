@@ -69,7 +69,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
       dir="rtl"
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className="rounded-xl bg-slate-900 p-2.5 text-white">
+        <div className="rounded-xl bg-blue-50 p-2.5 text-blue-700 border border-blue-100">
           <ClipboardList size={22} aria-hidden />
         </div>
         <div>
@@ -184,7 +184,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
           type="button"
           disabled={pending}
           onClick={save}
-          className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 text-white px-6 py-3 text-sm font-black hover:bg-slate-800 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 text-white px-6 py-3 text-sm font-black hover:bg-blue-700 disabled:opacity-50 shadow-md shadow-blue-600/15"
         >
           <Save size={18} aria-hidden />
           {pending ? "שומר…" : "שמור הכל"}

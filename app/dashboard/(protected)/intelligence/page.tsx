@@ -1,13 +1,11 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import {
   canAccessIntelligenceDashboard,
   intelligenceModulesForRole,
 } from "@/lib/intelligence-access";
 import IntelligenceRoleDashboard from "@/components/intelligence/IntelligenceRoleDashboard";
-import { ArrowRight } from "lucide-react";
 
 export default async function IntelligenceDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -33,13 +31,6 @@ export default async function IntelligenceDashboardPage() {
             </code>
           </p>
         </div>
-        <Link
-          href="/dashboard/executive"
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:underline"
-        >
-          דף Executive וגרפים
-          <ArrowRight size={18} className="rotate-180" />
-        </Link>
       </div>
 
       <IntelligenceRoleDashboard modules={modules} />

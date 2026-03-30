@@ -132,7 +132,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
 
       {previewDoc ? (
         <div
-          className="fixed inset-0 z-[220] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[220] bg-slate-200/55 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setPreviewDoc(null)}
         >
           <div
@@ -164,7 +164,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
 
       {editDoc ? (
         <div
-          className="fixed inset-0 z-[220] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[220] bg-slate-200/55 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setEditDoc(null)}
         >
           <div

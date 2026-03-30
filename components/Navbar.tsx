@@ -132,7 +132,7 @@ export default function Navbar() {
                   <Link
                     href="/register"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-black text-white p-3 rounded-xl text-sm font-bold transition-all"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 p-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500"
                   >
                     {t("nav.register")}
                   </Link>

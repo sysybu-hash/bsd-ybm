@@ -18,7 +18,7 @@ export default function LanguageSwitcher({ className, showLabel, tone = "default
 
   const isDark = tone === "dark";
   const selectClass = isDark
-    ? "rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-medium text-white min-w-[9rem] backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 [&>option]:bg-slate-900 [&>option]:text-white"
+    ? "rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-medium text-white min-w-[9rem] backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 [&>option]:bg-white [&>option]:text-slate-900"
     : "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 min-w-[9rem]";
 
   return (

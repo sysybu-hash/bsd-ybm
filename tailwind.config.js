@@ -8,6 +8,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "var(--font-heebo)",
+          "var(--font-assistant)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
       minHeight: {
         /** תאימות מובייל: dvh כשזמין, גיבוי ל-vh */
         screen: "100vh",

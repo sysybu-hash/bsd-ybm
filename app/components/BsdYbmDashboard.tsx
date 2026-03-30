@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Upload, FileText, Users, Search, Languages, ArrowLeft } from "lucide-react";
+import { Upload, FileText, Users, Search, Languages, ArrowLeft, Sparkles, ScanLine } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { processDocumentAction } from "@/app/actions/process-document";
 import DashboardRevenueChart from "@/components/dashboard/DashboardRevenueChart";
 import type { OrgDashboardHomeData } from "@/lib/dashboard-home-data";
+import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 
 type ScanResult = {
   vendor?: string;
@@ -67,6 +68,9 @@ export default function BsdYbmDashboard({ homeData }: Props) {
     pipelineDealCount,
     recentContacts,
     monthlySeries,
+    cheapScansRemaining,
+    premiumScansRemaining,
+    subscriptionTier,
   } = homeData;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,8 +145,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
   return (
     <div className="space-y-8" dir="rtl">
-      <div className="flex flex-wrap items-center gap-4 gap-y-2 text-sm border-b border-slate-200 pb-4">
-        <span className="text-slate-400 font-bold uppercase tracking-wide text-xs">קישורים מהירים</span>
+      <div className="flex flex-wrap items-center gap-4 gap-y-2 border-b border-slate-200/80 pb-4 text-sm">
+        <span className="text-xs font-bold uppercase tracking-wide text-slate-400">קישורים מהירים</span>
         <Link href="/dashboard/crm" className={quickLinkClass}>
           <Users size={16} /> CRM
           <ArrowLeft size={14} className="opacity-50" />
@@ -156,6 +160,53 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <ArrowLeft size={14} className="opacity-50" />
         </Link>
       </div>
+
+      <section className="card-avenue relative overflow-hidden p-6 md:p-8">
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-bl from-amber-100/40 via-transparent to-slate-200/30"
+          aria-hidden
+        />
+        <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-800">השדרה · סריקה חכמה</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
+              מרכז הסריקה הרב־מנועי
+            </h2>
+            <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-slate-600">
+              Gemini, OpenAI ו־Claude בממשק אחד — פענוח מסמכים ברמת פרימיום. מנוי נוכחי:{" "}
+              <span className="font-bold text-slate-900">{subscriptionTier}</span>
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Link
+                href="/dashboard/ai"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-amber-600 to-amber-800 px-6 py-3.5 text-sm font-black text-white shadow-xl shadow-amber-900/25 ring-1 ring-amber-500/40 transition hover:brightness-105"
+              >
+                <Sparkles size={18} className="opacity-90" />
+                פתיחת מרכז AI המלא
+              </Link>
+              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-slate-200/90 bg-white/90 px-5 py-3 text-sm font-bold text-slate-800 shadow-md transition hover:border-amber-200/80 hover:bg-white">
+                <input type="file" className="hidden" onChange={handleFileUpload} disabled={isUploading} />
+                <Upload size={18} className="text-amber-600" />
+                {isUploading ? "מעבד מסמך…" : "סריקה מהירה מהדף הראשי"}
+              </label>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-4 lg:flex-col lg:items-stretch xl:flex-row">
+            <div className="min-w-[9rem] rounded-2xl border border-amber-200/70 bg-white/90 px-5 py-4 shadow-md ring-1 ring-amber-100/80">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-800/90">Flash (זול)</p>
+              <p className="mt-1 text-2xl font-black tabular-nums text-amber-900">
+                {formatCreditsForDisplay(cheapScansRemaining)}
+              </p>
+            </div>
+            <div className="min-w-[9rem] rounded-2xl border border-slate-300/70 bg-gradient-to-br from-slate-50 to-white px-5 py-4 shadow-md ring-1 ring-slate-200/60">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pro (פרימיום)</p>
+              <p className="mt-1 text-2xl font-black tabular-nums text-slate-800">
+                {formatCreditsForDisplay(premiumScansRemaining)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <header className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
         <div className="relative w-full sm:max-w-md">
@@ -194,15 +245,23 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <h3 className="text-3xl font-bold text-slate-900 tabular-nums">{formatMoney(pipelineValue)}</h3>
           <span className="text-blue-600 text-xs font-medium">{pipelineSub}</span>
         </div>
-        <div className="bg-white border border-dashed border-blue-300 p-6 rounded-2xl shadow-sm bg-blue-50/40">
-          <p className="text-[var(--primary-color,#2563eb)] text-sm mb-1 font-bold italic">AI Scanner</p>
-          <label className="cursor-pointer">
-            <input type="file" className="hidden" onChange={handleFileUpload} disabled={isUploading} />
-            <div className="flex items-center gap-2 text-slate-700">
-              <Upload size={20} className="text-[var(--primary-color,#3b82f6)]" />
-              <span>{isUploading ? "מעבד מסמך..." : "בחר חשבונית לסריקה"}</span>
-            </div>
-          </label>
+        <div className="card-avenue flex flex-col justify-between p-6">
+          <div>
+            <p className="mb-1 flex items-center gap-2 text-sm font-black text-slate-800">
+              <ScanLine size={18} className="text-amber-600" />
+              סיכום מכסות
+            </p>
+            <p className="text-xs font-medium text-slate-500">
+              זול / פרימיום — לרכישת בנדלים ושדרוג בבילינג.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/billing"
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-800 transition hover:border-amber-200 hover:bg-amber-50/80"
+          >
+            מנויים ותשלומים
+            <ArrowLeft size={14} />
+          </Link>
         </div>
       </div>
 
@@ -317,8 +376,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               </p>
             </div>
           ) : (
-            <div className="h-40 flex items-center justify-center text-slate-400 italic border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-              טרם נסרק מסמך. העלה קובץ למעלה.
+            <div className="flex h-40 items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 text-slate-400 italic">
+              טרם נסרק מסמך. השתמשו בכרטיס „השדרה” למעלה להעלאה מהירה.
             </div>
           )}
         </div>

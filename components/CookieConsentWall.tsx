@@ -98,7 +98,7 @@ export default function CookieConsentWall() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[240] bg-slate-900/25 backdrop-blur-[2px]"
+        className="fixed inset-0 z-[240] bg-slate-200/55 backdrop-blur-[2px]"
         aria-hidden="true"
       />
       <div
@@ -197,7 +197,7 @@ export default function CookieConsentWall() {
               <button
                 type="button"
                 onClick={saveCustom}
-                className="inline-flex items-center justify-center rounded-2xl bg-slate-800 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-900"
+                className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
               >
                 {t("cookie.savePrefs")}
               </button>
