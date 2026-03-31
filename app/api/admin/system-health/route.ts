@@ -53,12 +53,6 @@ export async function GET() {
     ].join(" · "),
   });
 
-  statuses.push({
-    name: "Meckano",
-    ok: Boolean(process.env.MECKANO_API_KEY?.trim()),
-    detail: process.env.MECKANO_API_KEY?.trim() ? "מפתח מוגדר" : "חסר מפתח",
-  });
-
   return NextResponse.json({
     checkedAt: new Date().toISOString(),
     statuses,

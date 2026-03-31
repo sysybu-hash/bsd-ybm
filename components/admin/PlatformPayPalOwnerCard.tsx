@@ -13,7 +13,7 @@ export default function PlatformPayPalOwnerCard() {
       className={`mb-10 rounded-[2rem] border p-6 md:p-8 shadow-lg ${
         configured
           ? "border-[#0070ba]/40 bg-gradient-to-r from-[#0070ba]/8 to-sky-50/80"
-          : "border-amber-200 bg-amber-50/40"
+          : "border-blue-200 bg-blue-50/40"
       }`}
       dir="rtl"
       aria-labelledby="platform-paypal-title"
@@ -60,7 +60,7 @@ export default function PlatformPayPalOwnerCard() {
           ) : null}
         </div>
       ) : (
-        <p className="mt-4 text-sm text-amber-900 font-medium">
+        <p className="mt-4 text-sm text-blue-800 font-medium">
           לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-white px-1 rounded">.env.local</code>:{" "}
           <code className="text-xs">PLATFORM_PAYPAL_MERCHANT_EMAIL</code> ו/או{" "}
           <code className="text-xs">PLATFORM_PAYPAL_ME_SLUG</code>.

@@ -3,7 +3,6 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
-import { hasMeckanoAccess } from "@/lib/meckano-access";
 import Link from "next/link";
 import { Users, Building, CreditCard, ArrowUpRight, Clock, ShieldCheck } from "lucide-react";
 import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
@@ -15,10 +14,6 @@ type AdminPageProps = {
 
 export default async function AdminDashboard({ searchParams }: AdminPageProps) {
   const session = await getServerSession(authOptions);
-
-  if (hasMeckanoAccess(session?.user?.email)) {
-    redirect("/dashboard");
-  }
 
   // אבטחה: רק Steel Admin — לא מספיק SUPER_ADMIN ב-DB בלבד
   const allowed = isAdmin(session?.user?.email);
@@ -125,9 +120,9 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
 
         {/* צפי הכנסות (ממתין) */}
         <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
           <div className="flex justify-between items-start mb-4">
-            <div className="bg-amber-50 text-amber-600 p-3 rounded-2xl">
+            <div className="bg-blue-50 text-blue-500 p-3 rounded-2xl">
               <Clock size={24} />
             </div>
           </div>

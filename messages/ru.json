@@ -66,7 +66,6 @@
     "executive": "Executive / графики",
     "executiveSubscriptions": "Подписки и приглашения по почте",
     "executiveManageSubscriptions": "Расширенное управление подписками",
-    "meckano": "Meckano",
     "logout": "Выход",
     "smartArchiveHint": "Умный архив (OCR) — поиск по всем документам и сводкам"
   },
@@ -314,29 +313,10 @@
     "insightKicker": "Инсайт BSD-YBM",
     "insightBody": "Разница между двумя последними покупками: ₪{diff}. Сравните поставщиков или объедините заказы."
   },
-  "meckanoDash": {
-    "title": "Персонал и проекты",
-    "subtitle": "Живой список, карта — Meckano",
-    "poweredBy": "(Meckano)",
-    "liveRoster": "Список",
-    "gpsMap": "Карта",
-    "reportSection": "Отчёты ERP",
-    "atWork": "На работе",
-    "offWork": "Не на работе",
-    "mapHint": "Карта",
-    "filterActiveOnly": "Только активные",
-    "noEmployees": "Нет данных",
-    "radiusNote": "Радиус",
-    "iframeTitle": "Карта",
-    "refreshNow": "Обновить",
-    "refreshingData": "Обновление…",
-    "searchPlaceholder": "Поиск…",
-    "lastUpdateLabel": "Обновлено",
-    "liveConnected": "Синхронизация с Meckano",
-    "enforcementRadius": "Радиус 100 м",
-    "loadingFromMeckano": "Загрузка…",
-    "noOneOnSite": "Никого на объекте.",
-    "rosterTitle": "Список",
-    "atWorkCount": "На работе"
+  "intelligencePage": {
+    "title": "Intelligence",
+    "subtitle": "Модули по роли ({role}) — карта в lib/intelligence-access.ts",
+    "executiveBelow": "Ниже: глобальный отчёт Executive (владелец платформы).",
+    "dividerLabel": "Глобальный отчёт Executive"
   }
 }

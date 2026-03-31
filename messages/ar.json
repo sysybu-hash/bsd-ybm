@@ -66,7 +66,6 @@
     "executive": "Executive / الرسوم",
     "executiveSubscriptions": "الاشتراكات ودعوات البريد",
     "executiveManageSubscriptions": "إدارة اشتراكات متقدمة",
-    "meckano": "Meckano",
     "logout": "خروج",
     "smartArchiveHint": "أرشيف ذكي (OCR) — بحث في كل المستندات والملخصات"
   },
@@ -310,29 +309,10 @@
     "insightKicker": "رؤية BSD-YBM",
     "insightBody": "فرق الوحدة بين آخر عمليتي شراء: ₪{diff}. قارن موردين بديلين أو اجمع الطلبات."
   },
-  "meckanoDash": {
-    "title": "Workforce & projects",
-    "subtitle": "Live roster, presence map — Meckano",
-    "poweredBy": "(Meckano)",
-    "liveRoster": "Live roster",
-    "gpsMap": "Map",
-    "reportSection": "ERP reports",
-    "atWork": "At work",
-    "offWork": "Off",
-    "mapHint": "Map view",
-    "filterActiveOnly": "Active only",
-    "noEmployees": "No data",
-    "radiusNote": "Radius",
-    "iframeTitle": "Map",
-    "refreshNow": "Refresh",
-    "refreshingData": "Refreshing…",
-    "searchPlaceholder": "Search…",
-    "lastUpdateLabel": "Last update",
-    "liveConnected": "Live — Meckano",
-    "enforcementRadius": "100m radius",
-    "loadingFromMeckano": "Loading…",
-    "noOneOnSite": "No one on site.",
-    "rosterTitle": "Roster",
-    "atWorkCount": "At work"
+  "intelligencePage": {
+    "title": "Intelligence",
+    "subtitle": "وحدات حسب الدور ({role}) — عدّل الخريطة في lib/intelligence-access.ts",
+    "executiveBelow": "أدناه: تقرير Executive العالمي (مالك المنصة).",
+    "dividerLabel": "تقرير Executive العالمي"
   }
 }

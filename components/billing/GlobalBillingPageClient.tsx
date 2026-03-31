@@ -23,6 +23,7 @@ import ReportingCenter from "@/components/billing/ReportingCenter";
 import type { PayPalInvoiceRow } from "@/components/billing/PayPalInvoicesSection";
 import { exportAccountantMonthCsvAction } from "@/app/dashboard/billing/export-accountant-csv";
 import { paypalMeUrlWithAmount } from "@/lib/paypal-me-payment";
+import { useI18n } from "@/components/I18nProvider";
 
 export type IssuedDocRow = {
   id: string;
@@ -158,6 +159,7 @@ export default function GlobalBillingPageClient({
   stats,
   contacts,
 }: Props) {
+  const { dir } = useI18n();
   const [searchTerm, setSearchTerm] = useState("");
   const [tab, setTab] = useState<TabKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
@@ -211,13 +213,13 @@ export default function GlobalBillingPageClient({
       : `מבוסס על ${Math.round(VAT_RATE * 100)}% (מורשה / חברה)`;
 
   return (
-    <div className="min-h-0 max-w-[1600px] mx-auto p-4 sm:p-8 md:p-10 text-right space-y-10" dir="rtl">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-10">
+    <div className="mx-auto min-h-0 max-w-[1600px] space-y-10 p-4 text-start sm:p-8 md:p-10" dir={dir}>
+      <div className="flex flex-col gap-6 border-b border-slate-200/80 pb-10 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter">
-            מרכז פיננסי <span className="text-blue-600 italic">BSD-YBM</span>
+          <h1 className="text-2xl font-black italic tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+            מרכז פיננסי <span className="text-blue-600">BSD-YBM</span>
           </h1>
-          <p className="text-slate-500 font-medium text-base sm:text-lg mt-2">
+          <p className="mt-1 text-sm text-slate-500 sm:text-base">
             ניהול חשבוניות, הפקדות ודיווח מע״מ — {organizationName}
             {taxId ? (
               <span className="block text-sm text-slate-400 mt-1">ח.פ / ע.מ {taxId}</span>
@@ -225,24 +227,21 @@ export default function GlobalBillingPageClient({
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
           <Link
             href="/dashboard/settings?tab=billing"
-            className="flex-1 md:flex-none bg-slate-100 text-slate-600 px-8 py-4 rounded-[1.5rem] font-bold hover:bg-slate-200 transition-all text-center inline-flex items-center justify-center"
+            className="btn-secondary flex-1 justify-center py-3.5 sm:flex-none md:px-8"
           >
             הגדרות חשבונאיות
           </Link>
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="flex-1 md:flex-none bg-gradient-to-tr from-blue-700 to-indigo-600 text-white px-10 py-4 rounded-[1.5rem] font-black shadow-2xl shadow-blue-200 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
-          >
-            <FilePlus size={22} /> הפקת מסמך
+          <button type="button" onClick={() => setCreateOpen(true)} className="btn-primary flex-1 gap-2 py-3.5 sm:flex-none md:px-10">
+            <FilePlus size={22} aria-hidden />
+            הפקת מסמך
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
         {[
           {
             title: "הכנסות ברוטו (חודשי)",
@@ -282,18 +281,18 @@ export default function GlobalBillingPageClient({
         ].map((card, i) => (
           <div
             key={i}
-            className={`${card.bg} p-8 rounded-[3rem] border border-white shadow-xl shadow-slate-200/20 flex flex-col justify-between group hover:scale-[1.02] transition-all cursor-default`}
+            className={`card-avenue flex cursor-default flex-col justify-between p-6 transition-shadow hover:shadow-md ${card.bg}`}
           >
-            <div className="flex justify-between items-start mb-6">
-              <div className={`p-4 bg-white rounded-2xl shadow-sm ${card.color}`}>{card.icon}</div>
-              <span className="text-[10px] font-black text-slate-400 bg-white/50 px-3 py-1 rounded-full uppercase italic">
+            <div className="mb-4 flex items-start justify-between">
+              <div className={`rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-100 ${card.color}`}>{card.icon}</div>
+              <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-black uppercase italic text-slate-400 ring-1 ring-slate-100">
                 עדכני
               </span>
             </div>
             <div>
-              <p className="text-slate-500 font-bold text-sm">{card.title}</p>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1 break-words">{card.value}</h2>
-              <p className="text-xs text-slate-400 mt-2">{card.sub}</p>
+              <p className="text-sm font-bold text-slate-500">{card.title}</p>
+              <p className="mt-1 break-words text-2xl font-black text-slate-900 sm:text-3xl">{card.value}</p>
+              <p className="mt-2 text-xs text-slate-400">{card.sub}</p>
             </div>
           </div>
         ))}
@@ -306,27 +305,31 @@ export default function GlobalBillingPageClient({
           type="button"
           onClick={() => handleExportAccountantCsv()}
           disabled={exportPending}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-black text-slate-800 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+          className="btn-secondary text-sm disabled:opacity-50"
         >
           <Download size={18} aria-hidden />
           {exportPending ? "מייצא…" : "ייצוא לרואה חשבון (CSV)"}
         </button>
       </div>
 
-      <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/40 border border-slate-50 overflow-hidden">
-        <div className="p-8 border-b border-slate-50 flex flex-wrap justify-between items-center gap-4">
+      <div className="card-avenue overflow-hidden shadow-lg">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-6 md:p-8">
           <div className="relative w-full md:w-96">
-            <Search className="absolute right-4 top-3.5 text-slate-400 pointer-events-none" size={20} />
+            <Search
+              className="pointer-events-none absolute top-1/2 text-slate-400 -translate-y-1/2 end-3.5"
+              size={20}
+              aria-hidden
+            />
             <input
               type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="חיפוש לקוח או מספר מסמך..."
-              className="w-full pr-12 pl-4 py-3.5 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 ps-4 pe-11 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
-          <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 gap-1 flex-wrap">
+          <div className="flex flex-wrap gap-1 rounded-2xl border border-slate-100 bg-slate-50 p-1.5">
             {(
               [
                 ["all", "הכל"],
@@ -339,10 +342,10 @@ export default function GlobalBillingPageClient({
                 key={key}
                 type="button"
                 onClick={() => setTab(key)}
-                className={`px-4 sm:px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition-all sm:px-6 ${
                   tab === key
-                    ? "text-blue-600 bg-white shadow-sm"
-                    : "text-slate-500 hover:text-blue-600 hover:bg-white/80"
+                    ? "bg-white text-blue-700 shadow-sm ring-1 ring-blue-200/60"
+                    : "text-slate-500 hover:bg-white/80 hover:text-blue-700"
                 }`}
               >
                 {label}
@@ -352,23 +355,40 @@ export default function GlobalBillingPageClient({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-right min-w-[720px]">
-            <thead className="bg-slate-50/30 text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100">
+          <table className="w-full min-w-[720px] text-start">
+            <thead className="border-b border-slate-100 bg-blue-50/90 text-[11px] font-black uppercase tracking-widest text-blue-900">
               <tr>
                 <th className="p-6 sm:p-8">סוג / מקור #</th>
                 <th className="p-6 sm:p-8">לקוח / חברה</th>
                 <th className="p-6 sm:p-8 text-center">סטטוס</th>
-                <th className="p-6 sm:p-8 text-left">סכום</th>
+                <th className="p-6 text-end sm:p-8">סכום</th>
                 <th className="p-6 sm:p-8 w-24" />
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center text-slate-500 font-medium">
-                    {!hasAnyRows
-                      ? "אין עדיין מסמכים שהונפקו או בקשות תשלום PayPal — לחצו על ״הפקת מסמך״ או צרו חשבונית בדיקה בסעיף PayPal למטה."
-                      : "אין תוצאות לסינון הנוכחי."}
+                  <td colSpan={5} className="p-12">
+                    <div className="mx-auto flex max-w-lg flex-col items-center gap-4 text-center">
+                      <div className="rounded-2xl bg-blue-50 p-4 text-blue-600 ring-1 ring-blue-100">
+                        <FilePlus size={36} strokeWidth={1.25} aria-hidden />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800">
+                          {!hasAnyRows ? "אין עדיין מסמכים" : "אין תוצאות לסינון"}
+                        </p>
+                        <p className="mt-1 text-sm text-slate-500">
+                          {!hasAnyRows
+                            ? "הפיקו מסמך או צרו חשבונית PayPal — כפתור „הפקת מסמך” למעלה."
+                            : "נסו חיפוש אחר או בחרו טאב אחר."}
+                        </p>
+                      </div>
+                      {!hasAnyRows ? (
+                        <button type="button" onClick={() => setCreateOpen(true)} className="btn-primary text-sm">
+                          הפקת מסמך
+                        </button>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -401,7 +421,7 @@ export default function GlobalBillingPageClient({
                           {STATUS_LABEL[row.doc.status]}
                         </span>
                       </td>
-                      <td className="p-6 sm:p-8 text-left font-black text-slate-900 text-lg sm:text-xl tracking-tight italic">
+                      <td className="p-6 text-end font-black text-lg text-slate-900 italic tracking-tight sm:p-8 sm:text-xl">
                         {formatMoney(row.doc.total)}
                       </td>
                       <td className="p-6 sm:p-8">
@@ -455,7 +475,7 @@ export default function GlobalBillingPageClient({
                           {paypalStatusLabel(row.inv.status)}
                         </span>
                       </td>
-                      <td className="p-6 sm:p-8 text-left font-black text-slate-900 text-lg sm:text-xl tracking-tight italic">
+                      <td className="p-6 text-end font-black text-lg text-slate-900 italic tracking-tight sm:p-8 sm:text-xl">
                         {formatMoney(row.inv.amount)}
                       </td>
                       <td className="p-6 sm:p-8">
@@ -513,18 +533,10 @@ export default function GlobalBillingPageClient({
           aria-label="תצוגת הדפסה"
         >
           <div className="sticky top-0 z-10 print:hidden flex flex-wrap justify-center gap-3 p-4 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-black text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
-            >
+            <button type="button" onClick={() => window.print()} className="btn-primary px-6 py-3">
               הדפס
             </button>
-            <button
-              type="button"
-              onClick={() => setPrintRow(null)}
-              className="rounded-2xl border border-slate-200 bg-white px-6 py-3 font-bold text-slate-800 hover:bg-slate-50"
-            >
+            <button type="button" onClick={() => setPrintRow(null)} className="btn-secondary px-6 py-3">
               סגור
             </button>
           </div>

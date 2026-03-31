@@ -24,7 +24,7 @@ export default function SuccessPage() {
     >
       <div className="bg-blue-100 p-4 rounded-full mb-6 relative">
         <CheckCircle2 size={80} className="text-blue-600" />
-        <Sparkles className="absolute -top-2 -right-2 text-amber-500 animate-pulse" size={32} />
+        <Sparkles className="absolute -top-2 -right-2 text-blue-400 animate-pulse" size={32} />
       </div>
 
       <h1 className="text-4xl font-black mb-4 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent italic">

@@ -12,6 +12,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import type { ExecutiveOrgRow } from "@/app/actions/executive-subscriptions";
 import {
   executiveApplyManualSubscriptionAction,
@@ -63,7 +64,7 @@ type Props = {
 function statusBadgeClass(status: string): string {
   const u = status.toUpperCase();
   if (u === "ACTIVE" || u === "TRIAL") {
-    return "bg-gradient-to-r from-amber-100/90 via-yellow-50 to-slate-100 text-amber-950 ring-1 ring-amber-400/50 shadow-sm shadow-amber-200/40";
+    return "bg-gradient-to-r from-blue-100/90 via-blue-50 to-slate-100 text-blue-900 ring-1 ring-blue-400/50 shadow-sm shadow-blue-200/40";
   }
   if (u === "CANCELED" || u === "PAST_DUE") {
     return "bg-gradient-to-r from-rose-100 to-slate-100 text-rose-900 ring-1 ring-rose-300/40";
@@ -103,10 +104,10 @@ function UsageBar({
         <div
           className={`h-full rounded-full transition-all ${
             unlimited
-              ? "bg-gradient-to-l from-amber-400 via-yellow-300 to-slate-300"
+              ? "bg-gradient-to-l from-blue-400 via-blue-300 to-slate-300"
               : pct > 25
                 ? "bg-gradient-to-l from-emerald-500 to-teal-400"
-                : "bg-gradient-to-l from-amber-500 to-rose-400"
+                : "bg-gradient-to-l from-blue-500 to-rose-400"
           }`}
           style={{ width: `${unlimited ? 100 : pct}%` }}
         />
@@ -121,6 +122,7 @@ export default function AdminSubscriptionControlCenter({
   billingConfig,
   focusOrgId,
 }: Props) {
+  const { dir } = useI18n();
   const [orgs, setOrgs] = useState(initialOrgs);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<ExecutiveOrgRow | null>(null);
@@ -213,11 +215,11 @@ export default function AdminSubscriptionControlCenter({
     const t = window.setTimeout(() => {
       const el = document.getElementById(`admin-sub-row-${id}`);
       el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      el?.classList.add("ring-2", "ring-amber-400", "ring-offset-2", "bg-amber-50/80");
+      el?.classList.add("ring-2", "ring-blue-400", "ring-offset-2", "bg-blue-50/80");
       const o = orgs.find((x) => x.id === id);
       if (o) openRow(o);
       window.setTimeout(() => {
-        el?.classList.remove("ring-2", "ring-amber-400", "ring-offset-2", "bg-amber-50/80");
+        el?.classList.remove("ring-2", "ring-blue-400", "ring-offset-2", "bg-blue-50/80");
       }, 4000);
     }, 320);
     return () => window.clearTimeout(t);
@@ -359,8 +361,8 @@ export default function AdminSubscriptionControlCenter({
   const selectedAllow = selected ? tierAllowance(selected.subscriptionTier) : null;
 
   return (
-    <div className="relative min-h-screen pb-24" dir="rtl">
-      <div className="fixed left-4 top-4 z-[270] flex w-[min(26rem,92vw)] flex-col gap-2">
+    <div className="relative min-h-screen pb-24" dir={dir}>
+      <div className="fixed end-4 top-4 z-[270] flex w-[min(26rem,92vw)] flex-col gap-2">
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -406,7 +408,7 @@ export default function AdminSubscriptionControlCenter({
             className="flex w-full items-center justify-between gap-3 px-5 py-4 text-start"
           >
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-amber-800/70">
+              <p className="text-xs font-black uppercase tracking-wider text-blue-700/70">
                 Avenue — תצורת פלטפורמה
               </p>
               <p className="text-base font-black text-slate-900">גבייה, חבילות סריקה והזמנות הצטרפות</p>
@@ -441,14 +443,14 @@ export default function AdminSubscriptionControlCenter({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-xl bg-gradient-to-l from-slate-700 to-slate-900 px-5 py-2.5 text-sm font-bold text-amber-50 shadow-md shadow-slate-400/30 disabled:opacity-50"
+                    className="rounded-xl bg-gradient-to-l from-slate-700 to-slate-900 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-slate-400/30 disabled:opacity-50"
                   >
                     שמירת הגדרות גבייה
                   </button>
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-amber-200/60 bg-gradient-to-br from-amber-50/40 to-slate-50/50 p-6">
+              <section className="rounded-2xl border border-blue-200/60 bg-gradient-to-br from-blue-50/40 to-slate-50/50 p-6">
                 <h3 className="mb-3 text-lg font-black text-slate-900">הזמנת הצטרפות במייל</h3>
                 <form className="grid gap-3 md:grid-cols-2" onSubmit={onInviteSubmit}>
                   <input
@@ -477,7 +479,7 @@ export default function AdminSubscriptionControlCenter({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="md:col-span-2 rounded-xl bg-gradient-to-l from-amber-600 to-yellow-600 px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                    className="md:col-span-2 rounded-xl bg-gradient-to-l from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                   >
                     שליחת הזמנה
                   </button>
@@ -513,7 +515,7 @@ export default function AdminSubscriptionControlCenter({
                         <button
                           type="submit"
                           disabled={pending}
-                          className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-amber-50 disabled:opacity-50"
+                          className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white disabled:opacity-50"
                         >
                           עדכון
                         </button>
@@ -568,7 +570,7 @@ export default function AdminSubscriptionControlCenter({
                     <button
                       type="submit"
                       disabled={pending}
-                      className="rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-amber-50 disabled:opacity-50"
+                      className="rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                     >
                       צור משתמש וארגון
                     </button>
@@ -609,11 +611,11 @@ export default function AdminSubscriptionControlCenter({
           ) : null}
         </div>
 
-        <div className="rounded-[1.5rem] border border-amber-300/40 bg-gradient-to-br from-white via-slate-50/90 to-amber-50/20 p-1 shadow-xl shadow-amber-200/15 ring-1 ring-slate-200/60">
+        <div className="rounded-[1.5rem] border border-blue-300/40 bg-gradient-to-br from-white via-slate-50/90 to-blue-50/20 p-1 shadow-xl shadow-blue-200/15 ring-1 ring-slate-200/60">
           <div className="rounded-[1.35rem] bg-white/80 px-4 py-5 sm:px-6 sm:py-6">
             <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-transparent bg-clip-text bg-gradient-to-l from-slate-500 via-amber-700 to-slate-600">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-transparent bg-clip-text bg-gradient-to-l from-slate-500 via-blue-700 to-slate-600">
                   מרכז שליטה במנויים
                 </p>
                 <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
@@ -624,13 +626,13 @@ export default function AdminSubscriptionControlCenter({
                 </p>
               </div>
               <label className="relative w-full md:max-w-md">
-                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-amber-700/50" />
+                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-blue-600/50" />
                 <input
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="חיפוש לפי שם או אימייל…"
-                  className="w-full rounded-2xl border border-slate-200/90 bg-white py-3.5 pe-12 ps-4 text-sm font-medium shadow-inner shadow-slate-200/40 ring-1 ring-amber-200/30 placeholder:text-slate-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300/40"
+                  className="w-full rounded-2xl border border-slate-200/90 bg-white py-3.5 pe-12 ps-4 text-sm font-medium shadow-inner shadow-slate-200/40 ring-1 ring-blue-200/30 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300/40"
                 />
               </label>
             </div>
@@ -638,23 +640,23 @@ export default function AdminSubscriptionControlCenter({
             <div className="overflow-x-auto rounded-xl ring-1 ring-slate-200/80">
               <table className="w-full min-w-[920px] border-collapse text-right text-sm">
                 <thead>
-                  <tr className="bg-gradient-to-bl from-slate-200/95 via-white to-amber-100/50 text-slate-900 shadow-sm">
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                  <tr className="bg-gradient-to-bl from-slate-200/95 via-white to-blue-100/50 text-slate-900 shadow-sm">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       שם
                     </th>
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       אימייל
                     </th>
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       רמה
                     </th>
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       סריקות נוכחיות
                     </th>
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       דומיין
                     </th>
-                    <th className="border-b border-amber-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
                       סטטוס
                     </th>
                   </tr>
@@ -673,14 +675,14 @@ export default function AdminSubscriptionControlCenter({
                           openRow(o);
                         }
                       }}
-                      className="cursor-pointer border-b border-slate-100 transition-colors hover:bg-gradient-to-l hover:from-amber-50/50 hover:to-transparent focus:bg-amber-50/60 focus:outline-none"
+                      className="cursor-pointer border-b border-slate-100 transition-colors hover:bg-gradient-to-l hover:from-blue-50/50 hover:to-transparent focus:bg-blue-50/60 focus:outline-none"
                     >
                       <td className="px-4 py-3.5 font-bold text-slate-900">{o.name}</td>
                       <td className="px-4 py-3.5 font-mono text-xs text-slate-600" dir="ltr">
                         {o.primaryEmail ?? "—"}
                       </td>
                       <td className="px-4 py-3.5 font-semibold text-slate-800">
-                        <span className="rounded-lg bg-gradient-to-l from-slate-100 to-amber-50 px-2 py-1 text-xs font-black ring-1 ring-amber-200/50">
+                        <span className="rounded-lg bg-gradient-to-l from-slate-100 to-blue-50 px-2 py-1 text-xs font-black ring-1 ring-blue-200/50">
                           {tierLabelHe(o.subscriptionTier)}
                         </span>
                       </td>
@@ -726,12 +728,12 @@ export default function AdminSubscriptionControlCenter({
             onClick={closeSheet}
           />
           <aside
-            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-amber-400/40 bg-gradient-to-b from-white via-slate-50 to-amber-50/30 shadow-2xl shadow-slate-900/20"
-            dir="rtl"
+            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-blue-400/40 bg-gradient-to-b from-white via-slate-50 to-blue-50/30 shadow-2xl shadow-slate-900/20"
+            dir={dir}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-amber-200/50 bg-gradient-to-l from-slate-100/80 to-amber-50/40 px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-blue-200/50 bg-gradient-to-l from-slate-100/80 to-blue-50/40 px-5 py-4">
               <div>
-                <p className="text-xs font-black text-amber-800/80">מנוי נבחר</p>
+                <p className="text-xs font-black text-blue-700/80">מנוי נבחר</p>
                 <h3 className="text-lg font-black text-slate-900">{selected.name}</h3>
                 <p className="mt-0.5 font-mono text-[11px] text-slate-500" dir="ltr">
                   {selected.primaryEmail ?? "— אימייל"}
@@ -791,7 +793,7 @@ export default function AdminSubscriptionControlCenter({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="w-full rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-amber-50 disabled:opacity-50"
+                    className="w-full rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                   >
                     שמירת דומיין
                   </button>
@@ -862,7 +864,7 @@ export default function AdminSubscriptionControlCenter({
                           } else pushToast("err", r.error);
                         });
                       }}
-                      className="rounded-lg border border-amber-200/80 bg-amber-50/50 px-2.5 py-1 text-[11px] font-bold text-amber-950"
+                      className="rounded-lg border border-blue-200/80 bg-blue-50/50 px-2.5 py-1 text-[11px] font-bold text-blue-900"
                     >
                       זול {d > 0 ? `+${d}` : d}
                     </button>

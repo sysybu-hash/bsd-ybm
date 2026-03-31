@@ -23,6 +23,15 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  let serverEmail = (session.user.email ?? "").trim();
+  if (!serverEmail) {
+    const row = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { email: true },
+    });
+    serverEmail = row?.email?.trim() ?? "";
+  }
+
   let trialBannerDaysLeft: number | null = null;
   const orgId = session.user.organizationId;
   if (orgId) {
@@ -45,7 +54,7 @@ export default async function DashboardLayout({
       userRole={session.user.role}
       trialBannerDaysLeft={trialBannerDaysLeft}
       serverUser={{
-        email: session.user.email ?? "",
+        email: serverEmail,
         name: session.user.name ?? null,
         image: session.user.image ?? null,
       }}

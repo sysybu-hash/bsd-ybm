@@ -17,6 +17,7 @@ import {
   Bot,
 } from "lucide-react";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
+import { useI18n } from "@/components/I18nProvider";
 
 type HubSection = "scan" | "chat" | "forms" | "links";
 
@@ -45,6 +46,7 @@ const quickLinks = [
 ] as const;
 
 export default function DashboardAiHub({ orgId }: { orgId: string }) {
+  const { dir } = useI18n();
   const [railWide, setRailWide] = useState(false);
   const [section, setSection] = useState<HubSection>("scan");
   const [providers, setProviders] = useState<ProviderRow[]>([]);
@@ -178,25 +180,25 @@ ${formContext}
 
   return (
     <div
-      className="flex flex-col gap-4 lg:flex-row lg:items-stretch min-h-[calc(100dvh-6rem)] rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/40 overflow-hidden"
-      dir="rtl"
+      className="flex min-h-[calc(100dvh-6rem)] flex-col gap-4 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/40 lg:flex-row lg:items-stretch"
+      dir={dir}
     >
       {/* סרגל צד — קומפקטי / נפתח */}
       <motion.aside
         initial={false}
         animate={{ width: railW }}
         transition={{ type: "spring", stiffness: 380, damping: 32 }}
-        className="shrink-0 border-b border-slate-200 lg:border-b-0 lg:border-l bg-slate-100 text-slate-800 flex flex-col"
+        className="flex shrink-0 flex-col border-b border-slate-200 bg-slate-100 text-slate-800 lg:border-b-0 lg:border-e lg:border-slate-200"
         style={{ minHeight: "min(100%, 520px)" }}
       >
         <div className="flex items-center justify-between gap-1 p-2 border-b border-slate-200/90">
           {railWide ? (
             <span className="text-xs font-black uppercase tracking-tight px-1 flex items-center gap-1 truncate">
-              <Sparkles size={14} className="text-amber-600 shrink-0" />
+              <Sparkles size={14} className="text-blue-500 shrink-0" />
               מרכז AI
             </span>
           ) : (
-            <Sparkles size={18} className="text-amber-600 mx-auto" />
+            <Sparkles size={18} className="text-blue-500 mx-auto" />
           )}
           <button
             type="button"
@@ -215,9 +217,9 @@ ${formContext}
                 key={id}
                 type="button"
                 onClick={() => setSection(id)}
-                className={`flex items-center gap-3 rounded-xl px-2 py-2.5 text-sm font-bold transition-colors whitespace-nowrap lg:w-full ${
+                className={`flex items-center gap-3 whitespace-nowrap rounded-xl px-2 py-2.5 text-sm font-bold transition-colors lg:w-full ${
                   active
-                    ? "bg-white text-slate-900 shadow-sm border border-slate-200"
+                    ? "border border-blue-200/80 bg-white text-slate-900 shadow-sm ring-1 ring-blue-100/60"
                     : "text-slate-600 hover:bg-white/80 hover:text-slate-900"
                 }`}
               >
@@ -249,21 +251,29 @@ ${formContext}
       {/* תוכן ראשי */}
       <div className="flex-1 min-w-0 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
         <header className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-black italic text-slate-900 flex items-center gap-2">
-            <Sparkles className="text-[var(--primary-color,#3b82f6)]" size={28} />
+          <h1 className="flex items-center gap-2 text-2xl font-black italic text-slate-900 md:text-3xl">
+            <Sparkles className="text-blue-600" size={28} aria-hidden />
             מרכז AI — הכל במקום אחד
           </h1>
-          <p className="text-slate-600 text-sm max-w-3xl leading-relaxed">
+          <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
             סריקה עם כמה ספקים, שיחה על נתוני הארגון, טיוטות למילוי טפסים, וקישורים ל-ERP ול-CRM — בלי לחפש ברחבי המערכת.
           </p>
         </header>
 
         {providersLoading ? (
-          <div className="flex items-center gap-2 text-slate-500 text-sm">
-            <Loader2 className="animate-spin" size={18} /> טוען סטטוס ספקים…
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" aria-busy="true">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
+              <Loader2 className="animate-spin text-blue-600" size={18} aria-hidden />
+              טוען סטטוס ספקים…
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <div className="h-14 animate-pulse rounded-xl bg-blue-100/60" />
+              <div className="h-14 animate-pulse rounded-xl bg-slate-100" />
+              <div className="h-14 animate-pulse rounded-xl bg-slate-100" />
+            </div>
           </div>
         ) : configuredChatProviders.length === 0 ? (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900" role="status">
             <strong>אין ספק AI מוגדר.</strong> הגדרו לפחות אחד מ:{" "}
             <code className="text-xs">GOOGLE_GENERATIVE_AI_API_KEY</code>,{" "}
             <code className="text-xs">OPENAI_API_KEY</code>,{" "}
@@ -280,11 +290,11 @@ ${formContext}
               exit={{ opacity: 0, y: -8 }}
               className="space-y-4"
             >
-              <div className="rounded-[2rem] border-2 border-amber-200/55 bg-gradient-to-b from-white via-amber-50/20 to-slate-50/40 p-4 shadow-2xl shadow-amber-200/25 ring-1 ring-slate-200/70 md:p-6">
+              <div className="crystal-border crystal-hover rounded-[2rem] p-4 shadow-lg shadow-blue-200/20 ring-1 ring-slate-200/60 md:p-6">
                 <div className="mb-4 border-b border-slate-200/80 pb-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">השדרה · במה מרכזית</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">השדרה · במה מרכזית</p>
                   <h2 className="mt-1 flex items-center gap-2 text-xl font-black text-slate-900">
-                    <ScanLine className="text-amber-600" size={26} />
+                    <ScanLine className="text-blue-500" size={26} />
                     סריקת מסמכים רב־מנועית
                   </h2>
                   <p className="mt-1 text-xs font-medium text-slate-600">
@@ -323,11 +333,7 @@ ${formContext}
                         })
                       )}
                     </select>
-                    <button
-                      type="button"
-                      onClick={() => loadProviders()}
-                      className="text-xs font-bold text-blue-600 hover:underline"
-                    >
+                    <button type="button" onClick={() => loadProviders()} className="btn-ghost py-1.5 text-xs text-blue-700">
                       רענון רשימה
                     </button>
                   </div>
@@ -345,10 +351,10 @@ ${formContext}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl space-y-4"
+              className="card-avenue space-y-4 rounded-[2rem] p-6 shadow-lg"
             >
               <div className="flex flex-wrap items-center gap-3">
-                <Bot className="text-[var(--primary-color)]" size={22} />
+                <Bot className="text-blue-600" size={22} aria-hidden />
                 <h2 className="text-lg font-black text-slate-900">עוזר על נתוני הארגון</h2>
                 <select
                   value={providerChat}
@@ -385,9 +391,9 @@ ${formContext}
                   type="button"
                   onClick={runChat}
                   disabled={chatLoading || !chatQ.trim()}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary-color)] text-white font-bold px-6 py-3 disabled:opacity-40"
+                  className="btn-primary px-6 py-3 disabled:opacity-40"
                 >
-                  <Send size={18} />
+                  <Send size={18} aria-hidden />
                   שלח
                 </button>
               </div>
@@ -400,7 +406,7 @@ ${formContext}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl space-y-4"
+              className="card-avenue space-y-4 rounded-[2rem] p-6 shadow-lg"
             >
               <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
                 <FilePenLine className="text-emerald-600" size={22} />
@@ -471,11 +477,11 @@ ${formContext}
                 <Link
                   key={href}
                   href={href}
-                  className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+                  className="card-avenue group flex items-start gap-3 p-5 transition-all hover:border-blue-200 hover:shadow-md"
                 >
                   <ExternalLink
                     size={20}
-                    className="mt-0.5 shrink-0 text-[var(--primary-color)] opacity-70 group-hover:opacity-100"
+                    className="mt-0.5 shrink-0 text-blue-600 opacity-80 group-hover:opacity-100"
                     aria-hidden
                   />
                   <div>

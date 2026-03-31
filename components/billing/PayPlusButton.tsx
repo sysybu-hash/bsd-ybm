@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CreditCard, Loader2 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 
 type Props = {
   invoiceId: string;
@@ -22,6 +23,7 @@ export default function PayPlusButton({
   payplusConfigured = true,
   mockPaymentAllowed = false,
 }: Props) {
+  const { dir } = useI18n();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -72,10 +74,10 @@ export default function PayPlusButton({
 
   if (!payplusConfigured && mockPaymentAllowed) {
     return (
-      <div className="w-full space-y-3">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-start">
-          <p className="text-sm font-bold text-amber-950">מצב פיתוח — סימולציית תשלום</p>
-          <p className="text-[11px] leading-relaxed text-amber-900/90 mt-1">
+      <div className="w-full space-y-3" dir={dir}>
+        <div className="card-avenue border-blue-200 bg-blue-50/80 p-4 text-start">
+          <p className="text-sm font-bold text-blue-900">מצב פיתוח — סימולציית תשלום</p>
+          <p className="text-[11px] leading-relaxed text-blue-800/90 mt-1">
             PayPlus לא מוגדר. אפשר לסמן חשבונית כשולמה לבדיקת UI בלבד (ללא סליקה אמיתית).
           </p>
         </div>
@@ -83,7 +85,7 @@ export default function PayPlusButton({
           type="button"
           onClick={mockPay}
           disabled={loading || amount <= 0}
-          className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-violet-500/25 transition-all disabled:opacity-60 text-sm"
+          className="btn-primary w-full py-4 text-sm disabled:opacity-60"
         >
           {loading ? (
             <Loader2 className="animate-spin" size={20} />
@@ -95,7 +97,7 @@ export default function PayPlusButton({
             : `סימולציית תשלום · ₪${amount.toLocaleString("he-IL")}`}
         </button>
         {err ? (
-          <p className="text-center text-xs text-red-600 font-medium" role="alert">
+          <p className="text-center text-xs font-medium text-rose-700" role="alert">
             {err}
           </p>
         ) : null}
@@ -105,21 +107,21 @@ export default function PayPlusButton({
 
   if (!payplusConfigured) {
     return (
-      <div className="w-full space-y-3 rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-start">
-        <p className="text-sm font-bold text-amber-950">
+      <div className="card-avenue w-full space-y-3 border-blue-200 bg-blue-50/80 p-4 text-start" dir={dir}>
+        <p className="text-sm font-bold text-blue-900">
           PayPlus עדיין לא מחובר לשרת
         </p>
-        <p className="text-xs leading-relaxed text-amber-900/90">
+        <p className="text-xs leading-relaxed text-blue-800/90">
           הוסף ל־<code className="rounded bg-white/80 px-1">.env.local</code> את המשתנים הבאים
           (מלוח הבקרה של PayPlus → API / דפי תשלום), שמור את הקובץ והפעל מחדש את{" "}
           <code className="rounded bg-white/80 px-1">npm run dev</code>:
         </p>
-        <ul className="list-disc list-inside text-[11px] text-amber-900/85 font-mono space-y-0.5">
+        <ul className="list-disc list-inside text-[11px] text-blue-800/85 font-mono space-y-0.5">
           <li>PAYPLUS_API_KEY</li>
           <li>PAYPLUS_SECRET_KEY</li>
           <li>PAYPLUS_PAYMENT_PAGE_UID</li>
         </ul>
-        <p className="text-[11px] text-amber-800/80">
+        <p className="text-[11px] text-blue-700/80">
           לסביבת בדיקות אפשר להגדיר גם{" "}
           <code className="rounded bg-white/80 px-1">PAYPLUS_API_URL=https://restapidev.payplus.co.il/api/v1.0</code>
         </p>
@@ -136,12 +138,12 @@ export default function PayPlusButton({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full" dir={dir}>
       <button
         type="button"
         onClick={goPay}
         disabled={loading || amount <= 0}
-        className="w-full flex items-center justify-center gap-2 bg-gradient-to-l from-blue-600 to-blue-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-blue-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+        className="btn-primary w-full py-4 text-sm disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
           <Loader2 className="animate-spin" size={20} />
@@ -151,7 +153,7 @@ export default function PayPlusButton({
         {loading ? "פותח תשלום…" : `תשלום מאובטח · ₪${amount.toLocaleString("he-IL")}`}
       </button>
       {err ? (
-        <p className="text-center text-xs text-red-600 mt-2 font-medium" role="alert">
+        <p className="mt-2 text-center text-xs font-medium text-rose-700" role="alert">
           {err}
         </p>
       ) : null}

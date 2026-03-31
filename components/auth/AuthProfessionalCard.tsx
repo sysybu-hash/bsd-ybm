@@ -9,13 +9,15 @@ type Props = Readonly<{
   icon?: ReactNode;
 }>;
 
-/** „חלון” מרכזי — כרטיס עם פס מותג וצל עומק */
+/** כרטיס מרכזי — כחול-לבן מקצועי עם פס מותג */
 export default function AuthProfessionalCard({ children, title, subtitle, icon }: Props) {
   return (
     <div className="w-full max-w-[440px]">
-      <div className="crystal-border overflow-hidden rounded-[1.75rem] bg-white/95 shadow-[0_25px_60px_-12px_rgba(15,23,42,0.22)] backdrop-blur-xl">
+      <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_20px_50px_-12px_rgba(15,23,42,0.15),0_4px_16px_-4px_rgba(37,99,235,0.08)] backdrop-blur-xl">
+        {/* פס מותג כחול */}
         <div
-          className="h-1.5 w-full bg-gradient-to-l from-amber-600 via-orange-500 to-amber-500"
+          className="h-1.5 w-full"
+          style={{ background: "linear-gradient(90deg, var(--primary-color, #2563eb), #4f46e5)" }}
           aria-hidden
         />
         <div className="px-6 pb-8 pt-7 sm:px-9 sm:pb-10 sm:pt-8">
@@ -24,7 +26,7 @@ export default function AuthProfessionalCard({ children, title, subtitle, icon }
             {title}
           </h1>
           {subtitle ? (
-            <p className="mx-auto mt-2 max-w-sm text-center text-sm leading-relaxed text-slate-500">
+            <p className="mx-auto mt-2.5 max-w-sm text-center text-sm leading-relaxed text-slate-500">
               {subtitle}
             </p>
           ) : null}

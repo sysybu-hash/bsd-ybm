@@ -226,8 +226,6 @@ model User {
   createdAt      DateTime        @default(now())
   /// התחברות אחרונה (מעודכן ב־NextAuth signIn)
   lastLoginAt    DateTime?
-  /// נשלח מייל „ברוכים הבאים / גישה למקאנו” פעם אחת למפעילי מקאנו
-  meckanoAccessActivationEmailSentAt DateTime?
   inAppNotifications InAppNotification[]
 
   @@index([lastLoginAt])

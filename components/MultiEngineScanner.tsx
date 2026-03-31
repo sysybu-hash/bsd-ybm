@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { DROPZONE_ACCEPT, SCAN_ACCEPT_SUMMARY } from "@/lib/scan-mime";
 import { pickBestEngineIndex, scoreExtractedDocument } from "@/lib/score-scan-result";
+import { useI18n } from "@/components/I18nProvider";
 
 type ProviderRow = {
   id: string;
@@ -77,6 +78,7 @@ export default function MultiEngineScanner({
   fillHeight = false,
   compactHeader = false,
 }: ScannerProps) {
+  const { dir } = useI18n();
   const { status } = useSession();
   const router = useRouter();
   const [providers, setProviders] = useState<ProviderRow[]>([]);
@@ -282,7 +284,7 @@ export default function MultiEngineScanner({
     processing || files.length === 0 || status !== "authenticated" || selectedIds.length === 0;
 
   const crystalActionClass =
-    "border border-amber-300/50 bg-white/80 text-slate-900 shadow-lg shadow-amber-200/20 backdrop-blur-xl hover:border-amber-400 hover:bg-amber-50/90";
+    "border border-blue-300/50 bg-white/80 text-slate-900 shadow-lg shadow-blue-200/20 backdrop-blur-xl hover:border-blue-400 hover:bg-blue-50/90";
 
   const onSaveToDocumentInbox = async () => {
     const out = await executeMultiScan();
@@ -311,7 +313,7 @@ export default function MultiEngineScanner({
     clearFiles();
   };
 
-  const shellClass = `flex flex-col rounded-[2rem] scroll-mt-24 bg-white border border-slate-100 shadow-2xl shadow-slate-200/50 relative overflow-hidden ${
+  const shellClass = `card-avenue flex flex-col scroll-mt-24 bg-white shadow-2xl shadow-slate-200/50 relative overflow-hidden ${
     fillHeight ? "min-h-[min(92vh,860px)] flex-1 p-6 md:p-8" : "min-h-[320px] rounded-[3rem] p-10"
   }`;
 
@@ -328,7 +330,7 @@ export default function MultiEngineScanner({
   ];
 
   return (
-    <section id="erp-multi-scanner" className={shellClass} dir="rtl">
+    <section id="erp-multi-scanner" className={shellClass} dir={dir}>
       {!compactHeader ? (
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <div className="p-3 rounded-2xl bg-blue-50">
@@ -376,7 +378,7 @@ export default function MultiEngineScanner({
           <button
             type="button"
             onClick={selectAllEngines}
-            className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-700 text-white hover:bg-amber-800"
+            className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-700 text-white hover:bg-blue-800"
           >
             כל המנועים
           </button>
@@ -388,7 +390,7 @@ export default function MultiEngineScanner({
             נקה
           </button>
           {scanEngineRows.length === 0 && providers.length === 0 && (
-            <span className="text-xs text-amber-600">טוען רשימת מנועים…</span>
+            <span className="text-xs text-blue-500">טוען רשימת מנועים…</span>
           )}
         </div>
         <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 w-full">
@@ -491,7 +493,7 @@ export default function MultiEngineScanner({
       )}
 
       {status !== "authenticated" && (
-        <p className="text-sm mt-3 text-amber-700">
+        <p className="text-sm mt-3 text-blue-600">
           נדרשת התחברות כדי להריץ סריקה.
         </p>
       )}
@@ -552,7 +554,7 @@ export default function MultiEngineScanner({
                     </div>
                   ) : (
                     <div
-                      className="rounded-2xl px-3 py-2 text-xs font-bold flex items-center gap-2 bg-amber-50 text-amber-900"
+                      className="rounded-2xl px-3 py-2 text-xs font-bold flex items-center gap-2 bg-blue-50 text-blue-800"
                     >
                       <AlertCircle size={16} />
                       לא נמצאה תוצאה מוצלחת — בדוק מנוע או קובץ.
@@ -634,7 +636,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Archive className="size-5 shrink-0 text-amber-600" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Archive className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
           שמירה בתיבת המסמכים
         </motion.button>
         <motion.button
@@ -645,7 +647,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <FolderKanban className="size-5 shrink-0 text-amber-600" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <FolderKanban className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
           שיוך לפרויקט
         </motion.button>
         <motion.button
@@ -656,7 +658,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <StepForward className="size-5 shrink-0 text-amber-600" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <StepForward className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
           שמור והמשך למסמך הבא
         </motion.button>
         <motion.button

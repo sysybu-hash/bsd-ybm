@@ -28,7 +28,7 @@ export default function MarketingPublicShell({ children, title }: Props) {
           </Link>
           <Link
             href="/"
-            className="text-sm font-bold text-amber-800 hover:text-amber-700"
+            className="text-sm font-bold text-blue-600 hover:text-blue-800"
           >
             {t("auth.home")}
           </Link>

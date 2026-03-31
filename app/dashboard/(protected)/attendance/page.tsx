@@ -1,3 +1,5 @@
-import MeckanoPageShell from "../meckano/MeckanoPageShell";
+import { redirect } from "next/navigation";
 
-export default MeckanoPageShell;
+export default function AttendanceRedirectPage() {
+  redirect("/dashboard");
+}

@@ -24,6 +24,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import RechartsBounded from "@/components/RechartsBounded";
+import { useI18n } from "@/components/I18nProvider";
 
 const forecastData = [
   { day: "01/04", balance: 52000, type: "actual" as const },
@@ -35,6 +36,7 @@ const forecastData = [
 ];
 
 export default function IntelligenceHub() {
+  const { dir } = useI18n();
   const [isSimulating, setIsSimulating] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [vaultOpen, setVaultOpen] = useState(false);
@@ -62,10 +64,7 @@ export default function IntelligenceHub() {
   const primaryColor = "var(--primary-color, #3b82f6)";
 
   return (
-    <div
-      className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans text-slate-900"
-      dir="rtl"
-    >
+    <div className="min-h-screen bg-[#f8fafc] p-4 font-sans text-slate-900 md:p-8" dir={dir}>
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
           <h1
@@ -92,7 +91,7 @@ export default function IntelligenceHub() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40">
+          <div className="card-avenue bg-white p-8 shadow-2xl shadow-slate-200/40">
             <div className="flex justify-between items-center mb-8 flex-wrap gap-3">
               <h3 className="text-xl font-black italic flex items-center gap-2">
                 <BrainCircuit style={{ color: primaryColor }} /> חיזוי תזרים וסימולציה
@@ -184,7 +183,7 @@ export default function IntelligenceHub() {
 
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-lg">
               <h4 className="font-black italic mb-4 flex items-center gap-2">
-                <FileSearch className="text-amber-500" aria-hidden /> לוביסט AI — חיסכון
+                <FileSearch className="text-blue-500" aria-hidden /> לוביסט AI — חיסכון
               </h4>
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
                 נמצאו עמלות בנק חריגות (1.2%). ה-AI ניסח מכתב דרישה להפחתה ל-0.4%.
@@ -308,7 +307,7 @@ export default function IntelligenceHub() {
           <div
             className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl text-slate-900"
             onClick={(e) => e.stopPropagation()}
-            dir="rtl"
+            dir={dir}
           >
             <div className="flex justify-between items-start gap-2 mb-4">
               <h3 id="vault-title" className="text-lg font-black flex items-center gap-2">
@@ -334,7 +333,7 @@ export default function IntelligenceHub() {
             <button
               type="button"
               onClick={() => setVaultOpen(false)}
-              className="mt-6 w-full py-3 rounded-2xl bg-blue-600 text-white font-bold"
+              className="btn-primary mt-6 w-full py-3"
             >
               סגור
             </button>
@@ -353,7 +352,7 @@ export default function IntelligenceHub() {
           <div
             className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl text-slate-900 max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
-            dir="rtl"
+            dir={dir}
           >
             <div className="flex justify-between items-start gap-2 mb-4">
               <h3 id="daily-title" className="text-lg font-black text-blue-700">

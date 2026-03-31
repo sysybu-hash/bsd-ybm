@@ -22,7 +22,7 @@ export default function IntelligenceRoleDashboard({ modules }: Props) {
   const ordered = INTELLIGENCE_MODULE_ORDER.filter((id) => set.has(id));
 
   return (
-    <div className="space-y-8" dir="rtl">
+    <div className="space-y-8">
       {ordered.map((id) => {
         switch (id) {
           case "hub":

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { CompanyType, DocType, DocStatus } from "@prisma/client";
 import { Receipt, Building2, User2, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import { getDocumentHeader } from "@/lib/document-header";
 
@@ -60,12 +61,12 @@ function lineItemsFromJson(items: unknown): { desc: string; qty: number; price: 
 
 function statusBadge(status: DocStatus): { className: string; icon: typeof CheckCircle } {
   if (status === DocStatus.PAID) {
-    return { className: "bg-green-100 text-green-800", icon: CheckCircle };
+    return { className: "bg-emerald-100 text-emerald-800", icon: CheckCircle };
   }
   if (status === DocStatus.CANCELLED) {
     return { className: "bg-slate-200 text-slate-800", icon: XCircle };
   }
-  return { className: "bg-orange-100 text-orange-800", icon: AlertTriangle };
+  return { className: "bg-amber-100 text-amber-800", icon: AlertTriangle };
 }
 
 const money = (n: number) =>
@@ -77,6 +78,7 @@ type Props = {
 };
 
 export default function DocumentPrintTemplate({ doc, org }: Props) {
+  const { dir } = useI18n();
   const internalMemo = !org.isReportable;
   const headerMeta = useMemo(
     () =>
@@ -101,11 +103,11 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
 
   return (
     <div
-      className="bg-white p-12 max-w-[850px] mx-auto border shadow-xl shadow-slate-200/50 rounded-[3rem] print:shadow-none print:rounded-none print:border-none text-right font-sans relative overflow-hidden"
-      dir="rtl"
+      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-xl shadow-slate-200/50 print:border-none print:shadow-none print:rounded-none"
+      dir={dir}
       id={`print-doc-${doc.number}`}
     >
-      <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50/50 rounded-full -mr-32 -mt-32 z-0 pointer-events-none" />
+      <div className="pointer-events-none absolute end-0 top-0 z-0 h-64 w-64 -mt-32 -me-32 rounded-full bg-slate-50/50" />
 
       <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b-2 border-slate-900 pb-10 mb-10">
         <div className="flex items-center gap-4 min-w-0">
@@ -124,12 +126,12 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
             </p>
           </div>
         </div>
-        <div className="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 min-w-[12rem] shrink-0 w-full md:w-auto">
+        <div className="w-full min-w-[12rem] shrink-0 rounded-3xl border border-slate-100 bg-slate-50 p-6 text-start md:w-auto">
           <h2 className="text-3xl font-black text-blue-600 tracking-tight">
             {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
           </h2>
           {internalMemo ? (
-            <p className="text-sm font-bold text-amber-700 mt-2">{headerMeta.subTitle}</p>
+            <p className="text-sm font-bold text-blue-700 mt-2">{headerMeta.subTitle}</p>
           ) : null}
           <p className="text-xl font-bold text-slate-800 mt-1">מספר: {doc.number}</p>
           <p className="text-sm text-slate-500 italic mt-1 font-medium">תאריך: {dateLabel}</p>
@@ -163,10 +165,10 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
       </div>
 
       <div className="relative z-10 bg-slate-50/50 rounded-3xl p-6 border border-slate-100 mb-12 overflow-x-auto">
-        <table className="w-full min-w-[520px] text-right border-collapse">
+        <table className="w-full min-w-[520px] border-collapse text-start">
           <thead className="text-slate-500 text-[11px] font-black uppercase tracking-widest border-b-2 border-slate-200">
             <tr>
-              <th className="p-5 text-right align-middle">
+              <th className="p-5 text-start align-middle">
                 <span className="inline-flex items-center gap-2">
                   <Receipt size={14} className="shrink-0" />
                   תיאור השירות / מוצר
@@ -174,7 +176,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
               </th>
               <th className="p-5 text-center align-middle">כמות</th>
               <th className="p-5 text-center align-middle">מחיר יח׳</th>
-              <th className="p-5 text-left align-middle font-black">סה״כ (₪)</th>
+              <th className="p-5 text-end align-middle font-black">סה״כ (₪)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
@@ -190,7 +192,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
                   <td className="p-5 font-bold">{item.desc || "—"}</td>
                   <td className="p-5 text-center font-bold text-slate-600">{item.qty}</td>
                   <td className="p-5 text-center font-bold text-slate-600">₪{money(item.price)}</td>
-                  <td className="p-5 text-left font-black text-lg tracking-tight">
+                  <td className="p-5 text-end font-black text-lg tracking-tight">
                     ₪{money(item.qty * item.price)}
                   </td>
                 </tr>

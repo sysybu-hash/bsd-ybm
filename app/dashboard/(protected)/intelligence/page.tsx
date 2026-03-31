@@ -2,38 +2,64 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import {
+  canAccessExecutiveSuite,
   canAccessIntelligenceDashboard,
   intelligenceModulesForRole,
 } from "@/lib/intelligence-access";
 import IntelligenceRoleDashboard from "@/components/intelligence/IntelligenceRoleDashboard";
+import ExecutiveDashboardSection from "@/components/executive/ExecutiveDashboardSection";
+import { getServerTranslator } from "@/lib/i18n/server";
+import { isRtlLocale } from "@/lib/i18n/config";
 
 export default async function IntelligenceDashboardPage() {
   const session = await getServerSession(authOptions);
   const role = session?.user?.role;
+  const email = session?.user?.email;
 
   if (!canAccessIntelligenceDashboard(role)) {
     redirect("/dashboard");
   }
 
   const modules = intelligenceModulesForRole(role);
+  const showExecutive = canAccessExecutiveSuite(role, email);
+
+  const { t, locale } = await getServerTranslator();
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="space-y-10 pb-16" dir={dir}>
+      <header className="flex flex-col gap-3 border-b border-slate-200/80 pb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-[var(--primary-color,#3b82f6)]">
-            לוח Intelligence
+          <h1 className="text-2xl font-black text-[var(--primary-color,#3b82f6)] md:text-3xl">
+            {t("intelligencePage.title")}
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            רכיבים לפי תפקיד ({role}) — ניתן לערוך ב־
-            <code className="mx-1 text-xs bg-slate-100 px-1 rounded">
-              lib/intelligence-access.ts
-            </code>
+          <p className="mt-2 text-sm font-medium text-slate-600">
+            {t("intelligencePage.subtitle", { role: String(role ?? "—") })}
           </p>
+          {showExecutive ? (
+            <p className="mt-2 text-xs font-semibold text-blue-700/90">{t("intelligencePage.executiveBelow")}</p>
+          ) : null}
         </div>
-      </div>
+      </header>
 
       <IntelligenceRoleDashboard modules={modules} />
+
+      {showExecutive ? (
+        <section
+          id="executive-suite"
+          className="scroll-mt-24 space-y-6 border-t border-slate-200 pt-10"
+          aria-label={t("intelligencePage.dividerLabel")}
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-blue-200 to-blue-400/80" />
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
+              {t("intelligencePage.dividerLabel")}
+            </h2>
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-200 to-blue-400/80" />
+          </div>
+          <ExecutiveDashboardSection embedded userEmail={email} />
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -69,7 +69,6 @@
     "executive": "Executive / גרפים",
     "executiveSubscriptions": "מנויים והזמנות במייל",
     "executiveManageSubscriptions": "ניהול מנויים מתקדם",
-    "meckano": "מקאנו (עובדים)",
     "logout": "התנתק",
     "smartArchiveHint": "ארכיון חכם (OCR) – חיפוש בכל המסמכים והסיכומים"
   },
@@ -319,29 +318,10 @@
     "insightKicker": "תובנת BSD-YBM",
     "insightBody": "הפרש יחידה בין שתי הרכישות האחרונות: ₪{diff}. מומלץ להשוות מול ספקים חלופיים או לאחד הזמנות להנחת כמות."
   },
-  "meckanoDash": {
-    "title": "ניהול עובדים ופרויקטים",
-    "subtitle": "בקרה חיה, מפת נוכחות ודוחות — מסונכרן מול Meckano",
-    "poweredBy": "(מסונכרן עם Meckano)",
-    "liveRoster": "מצבת עובדים חיה",
-    "gpsMap": "מפת נוכחות ואזורי עבודה",
-    "reportSection": "מחולל דוחות ל־ERP",
-    "atWork": "בעבודה",
-    "offWork": "לא בעבודה",
-    "mapHint": "מפת OpenStreetMap (תצוגה). סמנים — לפי מיקום אחרון מה־API או הדגמה.",
-    "filterActiveOnly": "הצג רק פעילים כעת",
-    "noEmployees": "אין עובדים להצגה או שחסר חיבור למקאנו (MECKANO_API_KEY).",
-    "radiusNote": "אכיפת רדיוס — לפי מדיניות האתר במקאנו",
-    "iframeTitle": "מפת נוכחות",
-    "refreshNow": "רענן עכשיו",
-    "refreshingData": "מרענן נתונים…",
-    "searchPlaceholder": "חיפוש עובד…",
-    "lastUpdateLabel": "עדכון אחרון",
-    "liveConnected": "מחובר בזמן אמת למערכת Meckano",
-    "enforcementRadius": "אכיפת רדיוס 100 מטר פעילה",
-    "loadingFromMeckano": "טוען נתונים ממקאנו…",
-    "noOneOnSite": "אין עובדים מדווחים בפרויקט כרגע.",
-    "rosterTitle": "מצבת עובדים",
-    "atWorkCount": "בעבודה"
+  "intelligencePage": {
+    "title": "Intelligence",
+    "subtitle": "רכיבים לפי תפקיד ({role}) — ניתן לערוך ב־lib/intelligence-access.ts",
+    "executiveBelow": "במקטע הבא: דוח Executive גלובלי (מנהל פלטפורמה).",
+    "dividerLabel": "דוח Executive גלובלי"
   }
 }

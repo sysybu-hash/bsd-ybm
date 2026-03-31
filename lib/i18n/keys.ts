@@ -69,7 +69,6 @@ export type MessageTree = {
     executiveSubscriptions: string;
     /** SuperAdmin בלבד — הזמנות טוקן, יתרות סריקה */
     executiveManageSubscriptions: string;
-    meckano: string;
     logout: string;
     smartArchiveHint: string;
   };
@@ -319,30 +318,10 @@ export type MessageTree = {
     insightKicker: string;
     insightBody: string;
   };
-  /** טקסטים לדף מקאנו — מתורגמים אוטומטית לפי שפת ממשק */
-  meckanoDash: {
+  intelligencePage: {
     title: string;
     subtitle: string;
-    poweredBy: string;
-    liveRoster: string;
-    gpsMap: string;
-    reportSection: string;
-    atWork: string;
-    offWork: string;
-    mapHint: string;
-    filterActiveOnly: string;
-    noEmployees: string;
-    radiusNote: string;
-    iframeTitle: string;
-    refreshNow: string;
-    refreshingData: string;
-    searchPlaceholder: string;
-    lastUpdateLabel: string;
-    liveConnected: string;
-    enforcementRadius: string;
-    loadingFromMeckano: string;
-    noOneOnSite: string;
-    rosterTitle: string;
-    atWorkCount: string;
+    executiveBelow: string;
+    dividerLabel: string;
   };
 };

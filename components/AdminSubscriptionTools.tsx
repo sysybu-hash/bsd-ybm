@@ -161,12 +161,12 @@ export default function AdminSubscriptionTools({
         )}
       </section>
 
-      <section className="rounded-2xl border border-amber-200 bg-amber-50/50 p-6 md:p-8">
-        <h2 className="text-xl font-black italic text-amber-900 mb-2 flex items-center gap-2">
-          <CheckCircle2 className="text-amber-600" size={22} />
+      <section className="rounded-2xl border border-blue-200 bg-blue-50/50 p-6 md:p-8">
+        <h2 className="text-xl font-black italic text-blue-800 mb-2 flex items-center gap-2">
+          <CheckCircle2 className="text-blue-600" size={22} />
           בקשות הרשמה ממתינות לאישור
         </h2>
-        <p className="text-sm text-amber-900/80 mb-6">
+        <p className="text-sm text-blue-900/80 mb-6">
           לאחר אישור — המשתמש יוכל להתחבר עם Google (אם חשבון קיים) או עם סיסמה אם יצרת משתמש
           בפריסה יזומה.
         </p>
@@ -177,7 +177,7 @@ export default function AdminSubscriptionTools({
             {pendingOrgs.map((o) => (
               <li
                 key={o.id}
-                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-amber-100 p-4"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-blue-100 p-4"
               >
                 <div>
                   <p className="font-bold text-slate-900">{o.name}</p>

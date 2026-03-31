@@ -11,6 +11,7 @@ import {
   LogOut,
   UserCircle,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { Session } from "next-auth";
@@ -21,22 +22,10 @@ import AuthProfessionalCard from "@/components/auth/AuthProfessionalCard";
 function GoogleMark({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="#4285F4"
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-      />
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
     </svg>
   );
 }
@@ -109,8 +98,8 @@ export default function LoginPortal() {
   const showActiveBanner = sessionProbe === "done" && activeSession != null && sessionEmail.length > 0;
 
   const iconSlot = (
-    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-orange-50 ring-2 ring-amber-200/60 shadow-inner shadow-amber-900/5">
-      <ShieldCheck className="h-7 w-7 text-amber-700" aria-hidden />
+    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 ring-2 ring-blue-200/60 shadow-inner shadow-blue-900/5">
+      <ShieldCheck className="h-7 w-7 text-blue-600" aria-hidden />
     </div>
   );
 
@@ -122,34 +111,42 @@ export default function LoginPortal() {
         transition={{ duration: 0.35, ease: "easeOut" }}
         className="flex w-full max-w-6xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16"
       >
+        {/* פאנל שמאל — תיאור */}
         <section className="order-2 max-w-md text-center lg:order-1 lg:text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50/90 px-3 py-1 text-xs font-bold text-amber-950 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 text-amber-600" aria-hidden />
-            BSD-YBM Intelligence
+          <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800 shadow-sm">
+            <Sparkles className="h-3.5 w-3.5 text-blue-500" aria-hidden />
+            BSD-YBM Intelligence Platform
           </p>
           <h2 className="mt-4 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-3xl">
             כניסה מאובטחת
             <br />
-            <span className="bg-gradient-to-l from-amber-700 to-orange-600 bg-clip-text text-transparent">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "linear-gradient(90deg, var(--primary-color, #2563eb), #4f46e5)" }}
+            >
               לעסק שלכם
             </span>
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-            CRM, ERP, בינה מלאכותית וסריקה רב־מנועית — במקום אחד. התחברות עם Google או סיסמה שסופקה
-            על־ידי מנהל המערכת.
+            CRM, ERP, בינה מלאכותית וסריקה רב־מנועית — במקום אחד. התחברות עם Google או סיסמה שסופקה על־ידי מנהל המערכת.
           </p>
-          <ul className="mt-6 hidden space-y-2.5 text-start text-sm text-slate-500 sm:block">
-            <li className="flex items-start gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-              סשן נקי לפני כל כניסה — ללא „דליפה” בין משתמשים
+          <ul className="mt-6 hidden space-y-3 text-start text-sm text-slate-500 sm:block">
+            <li className="flex items-start gap-2.5">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+              סשן נקי לפני כל כניסה — ללא ״דליפה״ בין משתמשים
             </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
+            <li className="flex items-start gap-2.5">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
               הצפנת עוגיות, OAuth 2.0 עם Google
+            </li>
+            <li className="flex items-start gap-2.5">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+              GDPR-Ready · אחסון ישראל / EU
             </li>
           </ul>
         </section>
 
+        {/* פאנל ימין — טופס */}
         <div className="order-1 w-full lg:order-2 lg:flex lg:justify-end">
           <AuthProfessionalCard
             icon={iconSlot}
@@ -167,12 +164,12 @@ export default function LoginPortal() {
             ) : null}
 
             {showActiveBanner ? (
-              <div className="mt-6 rounded-2xl border border-amber-200/90 bg-gradient-to-l from-amber-50 to-orange-50/80 px-4 py-4 text-sm text-amber-950 shadow-sm">
+              <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50/80 px-4 py-4 text-sm text-blue-900 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <UserCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden />
+                  <UserCircle className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden />
                   <div className="min-w-0 flex-1 space-y-1 text-end">
                     <p className="font-bold">כבר מחוברים למערכת</p>
-                    <p className="break-all text-xs text-amber-900/85">
+                    <p className="break-all text-xs text-blue-800/85">
                       {sessionName ? `${sessionName} · ` : null}
                       {sessionEmail}
                     </p>
@@ -182,14 +179,15 @@ export default function LoginPortal() {
                   <button
                     type="button"
                     onClick={() => navigateHard(callbackUrl)}
-                    className="rounded-xl bg-gradient-to-l from-amber-600 to-orange-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-orange-500/25 hover:from-amber-500 hover:to-orange-500"
+                    className="rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+                    style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
                   >
                     המשך לדשבורד
                   </button>
                   <button
                     type="button"
                     onClick={() => void handleSwitchAccount()}
-                    className="flex items-center justify-center gap-2 rounded-xl border border-amber-300/80 bg-white/90 px-4 py-2.5 text-xs font-bold text-amber-900 hover:bg-white"
+                    className="flex items-center justify-center gap-2 rounded-xl border border-blue-300/80 bg-white/90 px-4 py-2.5 text-xs font-bold text-blue-800 hover:bg-white"
                   >
                     <LogOut className="h-3.5 w-3.5" aria-hidden />
                     התנתקות וחשבון אחר
@@ -204,6 +202,7 @@ export default function LoginPortal() {
               </p>
             )}
 
+            {/* כפתור Google */}
             <button
               type="button"
               disabled={loadingGoogle}
@@ -226,6 +225,7 @@ export default function LoginPortal() {
               <div className="h-px flex-1 bg-slate-200" />
             </div>
 
+            {/* טופס אימייל/סיסמה */}
             <form
               className="space-y-4"
               onSubmit={async (e) => {
@@ -257,11 +257,7 @@ export default function LoginPortal() {
                   try {
                     const nextHost = typeof window !== "undefined" ? window.location.host : "";
                     const u = new URL(fromApi, window.location.origin);
-                    if (
-                      u.host === nextHost &&
-                      u.pathname.startsWith("/") &&
-                      !u.pathname.startsWith("//")
-                    ) {
+                    if (u.host === nextHost && u.pathname.startsWith("/") && !u.pathname.startsWith("//")) {
                       dest = `${u.pathname}${u.search}${u.hash}`;
                     }
                   } catch {
@@ -272,7 +268,7 @@ export default function LoginPortal() {
               }}
             >
               <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                <KeyRound size={18} className="text-amber-600" aria-hidden />
+                <KeyRound size={18} className="text-blue-500" aria-hidden />
                 אימייל וסיסמה
               </div>
               <input
@@ -281,7 +277,7 @@ export default function LoginPortal() {
                 required
                 autoComplete="email"
                 placeholder="email@example.com"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
               />
               <input
                 name="password"
@@ -289,13 +285,14 @@ export default function LoginPortal() {
                 required
                 autoComplete="current-password"
                 placeholder="סיסמה"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
               />
               {credError ? <p className="text-center text-sm text-red-600">{credError}</p> : null}
               <button
                 type="submit"
                 disabled={loadingCreds}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-amber-600 to-orange-600 py-3.5 text-sm font-black text-white shadow-lg shadow-orange-500/25 transition hover:from-amber-500 hover:to-orange-500 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black text-white shadow-lg transition hover:opacity-90 disabled:opacity-60"
+                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
               >
                 {loadingCreds ? <Loader2 className="animate-spin" size={18} /> : null}
                 כניסה מאובטחת
@@ -304,15 +301,16 @@ export default function LoginPortal() {
 
             <p className="mt-6 text-center text-xs text-slate-400">
               אין לכם חשבון?{" "}
-              <Link href="/register" className="font-bold text-amber-700 underline-offset-2 hover:underline">
+              <Link href="/register" className="font-bold text-blue-600 underline-offset-2 hover:underline">
                 בקשת הרשמה
               </Link>
             </p>
 
             <Link
               href="/"
-              className="mt-6 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 transition hover:text-amber-800"
+              className="mt-5 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 transition hover:text-slate-800"
             >
+              <ArrowLeft size={15} aria-hidden />
               חזרה לעמוד הבית
             </Link>
           </AuthProfessionalCard>

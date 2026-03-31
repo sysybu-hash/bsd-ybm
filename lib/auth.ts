@@ -7,10 +7,9 @@ import { prisma } from "@/lib/prisma";
 import { ensurePlatformDeveloperAccount } from "@/lib/platform-developers";
 import { isAdmin, jwtRoleForSession } from "@/lib/is-admin";
 import { verifyPassword } from "@/lib/password";
-import { hasMeckanoAccess, meckanoManagedOrganizationId } from "@/lib/meckano-access";
 import { isLoginBlockedEmail } from "@/lib/login-blocklist";
 import { isLoginAllowedByAllowlist } from "@/lib/login-allowlist";
-import { sendMeckanoOperatorLoginWelcomeEmail, sendWelcomeEmail } from "@/lib/mail";
+import { sendWelcomeEmail } from "@/lib/mail";
 
 /** Vercel / Auth.js מגדירים לעיתים רק AUTH_URL — NextAuth v4 מצפה ל-NEXTAUTH_URL */
 if (!process.env.NEXTAUTH_URL && process.env.AUTH_URL) {
@@ -165,6 +164,22 @@ export const authOptions: NextAuthOptions = {
         delete (token as { role?: string }).role;
         delete (token as { organizationId?: string | null }).organizationId;
       }
+
+      /** ריענון JWT: יש `id` בלי `email` בטוקן — משחזרים מה-DB כדי שלא ייפול ה-UI ל-useSession ישן */
+      if (!user) {
+        const tid = typeof token.id === "string" && token.id.length > 0 ? token.id : null;
+        const tokenEmailRaw = typeof token.email === "string" ? token.email.trim() : "";
+        if (tid && !tokenEmailRaw) {
+          const row = await prisma.user.findUnique({
+            where: { id: tid },
+            select: { email: true, accountStatus: true },
+          });
+          if (row?.email && row.accountStatus === AccountStatus.ACTIVE) {
+            token.email = row.email.trim().toLowerCase();
+          }
+        }
+      }
+
       const email = typeof token.email === "string" ? token.email.trim().toLowerCase() : null;
       if (!email) {
         return token;
@@ -181,34 +196,6 @@ export const authOptions: NextAuthOptions = {
         token.id = "";
         token.role = "";
         token.organizationId = null;
-        return token;
-      }
-
-      // מקאנו לפני קידום מפתחי פלטפורמה — אם אותו מייל בטעות בשתי הרשימות, חוויית מנוי מקאנו קודמת
-      if (hasMeckanoAccess(email)) {
-        const dbUser = await prisma.user.findFirst({
-          where: { email: { equals: email, mode: "insensitive" } },
-          select: {
-            id: true,
-            role: true,
-            organizationId: true,
-            accountStatus: true,
-            name: true,
-            image: true,
-          },
-        });
-        if (!dbUser || dbUser.accountStatus !== AccountStatus.ACTIVE) {
-          token.id = "";
-          token.role = "";
-          token.organizationId = null;
-          return token;
-        }
-        token.id = dbUser.id;
-        token.role = jwtRoleForSession(email, dbUser.role);
-        const managed = meckanoManagedOrganizationId();
-        token.organizationId = managed ?? dbUser.organizationId;
-        if (dbUser.name) token.name = dbUser.name;
-        if (dbUser.image) token.picture = dbUser.image;
         return token;
       }
 
@@ -256,7 +243,7 @@ export const authOptions: NextAuthOptions = {
 
         const before = await prisma.user.findFirst({
           where: { email: { equals: emailRaw, mode: "insensitive" } },
-          select: { id: true, lastLoginAt: true, name: true, meckanoAccessActivationEmailSentAt: true },
+          select: { id: true, lastLoginAt: true, name: true },
         });
 
         const isFirstAppLogin = before != null && before.lastLoginAt == null;
@@ -266,38 +253,13 @@ export const authOptions: NextAuthOptions = {
           data: { lastLoginAt: new Date() },
         });
 
-        /** מייל „ברוכים הבאים ל־BSD-YBM” — פעם אחת, בהתחברות הראשונה לאפליקציה (לא למפעילי מקאנו) */
-        if (isFirstAppLogin && !hasMeckanoAccess(emailRaw)) {
+        if (isFirstAppLogin) {
           void sendWelcomeEmail(emailRaw, before.name ?? null).catch((err) =>
             console.error("sendWelcomeEmail (first login)", err),
           );
         }
-
-        if (!hasMeckanoAccess(emailRaw)) return;
-
-        const dbUser = await prisma.user.findFirst({
-          where: { email: { equals: emailRaw, mode: "insensitive" } },
-          select: { id: true, meckanoAccessActivationEmailSentAt: true },
-        });
-        if (!dbUser || dbUser.meckanoAccessActivationEmailSentAt) return;
-
-        await sendMeckanoOperatorLoginWelcomeEmail(emailRaw);
-
-        await prisma.$transaction([
-          prisma.user.update({
-            where: { id: dbUser.id },
-            data: { meckanoAccessActivationEmailSentAt: new Date() },
-          }),
-          prisma.inAppNotification.create({
-            data: {
-              userId: dbUser.id,
-              title: "מקאנו",
-              body: "הגישה למקאנו הופעלה עבורכם!",
-            },
-          }),
-        ]);
       } catch (e) {
-        console.error("signIn welcome / meckano / notification", e);
+        console.error("signIn welcome / notification", e);
       }
     },
   },

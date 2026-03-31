@@ -26,7 +26,7 @@ export default function AdminBroadcastNotifications() {
       }
       setMsg({
         type: "ok",
-        text: `נשלח ל־${data.count ?? 0} משתמשים — ההודעה תופיע בפעמון בדשבורד.`,
+        text: `נשלח ל־${data.count ?? 0} משתמשים פעילים — ההודעה תופיע בפעמון בדשבורד.`,
       });
       setTitle("");
       setBody("");
@@ -44,7 +44,7 @@ export default function AdminBroadcastNotifications() {
         שידור לכולם
       </h3>
       <p className="mb-6 text-sm font-medium text-slate-500">
-        יוצר התראה פנימית לכל משתמש רשום. ההודעה תופיע בפעמון בראש הדשבורד (לא מייל).
+        יוצר התראה פנימית לכל משתמש במצב <strong className="text-slate-700">ACTIVE</strong>. ההודעה תופיע בפעמון בראש הדשבורד (לא מייל).
       </p>
 
       <form onSubmit={onSubmit} className="max-w-2xl space-y-4">

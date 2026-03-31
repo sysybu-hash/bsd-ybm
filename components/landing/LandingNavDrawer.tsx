@@ -16,6 +16,8 @@ import {
   Sparkles,
   X,
   MessageCircle,
+  LogIn,
+  LayoutDashboard,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
@@ -44,9 +46,11 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-slate-800 transition hover:border-amber-300 hover:bg-amber-50/80"
+      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-200 hover:bg-blue-50/60"
     >
-      <Icon className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
+      <span className="rounded-lg bg-blue-50 p-1.5">
+        <Icon className="h-4 w-4 text-blue-600" aria-hidden />
+      </span>
       {label}
     </Link>
   );
@@ -63,7 +67,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
     <Dialog open={open} onClose={onClose} className="relative z-[200]">
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[201] bg-slate-300/55 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
+        className="fixed inset-0 z-[201] bg-slate-900/30 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 z-[202] overflow-hidden" dir={dir}>
@@ -71,18 +75,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-slate-200 bg-white shadow-2xl shadow-slate-300/40 backdrop-blur-xl transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
+              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-slate-200 bg-white shadow-2xl shadow-slate-300/30 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
             >
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-b from-amber-50/40 via-white to-slate-50/90"
-                aria-hidden
-              />
-
-              <div className="relative flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+              {/* Header */}
+              <div className="relative flex items-center justify-between gap-2 border-b border-slate-100 bg-white px-4 py-3.5">
                 <DialogTitle className="sr-only">
                   {t("marketingDrawer.navAria")}
                 </DialogTitle>
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-800/90">
+                <p className="text-sm font-black italic tracking-tight" style={{ color: "var(--primary-color, #2563eb)" }}>
                   BSD-YBM
                 </p>
                 <button
@@ -95,8 +95,9 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </button>
               </div>
 
-              <div className="relative border-b border-slate-100 px-4 py-4">
-                <div className="mx-auto max-h-24 w-full max-w-[16rem]">
+              {/* לוגו */}
+              <div className="border-b border-slate-100 px-4 py-4">
+                <div className="mx-auto max-h-20 w-full max-w-[14rem]">
                   <Image
                     src={HERO_LOGO}
                     alt={t("landing.heroTitle")}
@@ -108,46 +109,31 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </div>
               </div>
 
+              {/* ניווט */}
               <nav
-                className="relative flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4 text-start"
+                className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4 text-start"
                 aria-label={t("marketingDrawer.navAria")}
               >
-                <NavRow
-                  href="/"
-                  icon={Home}
-                  label={t("marketingDrawer.home")}
-                  onNavigate={close}
-                />
-                <NavRow
-                  href="/about"
-                  icon={Info}
-                  label={t("marketingDrawer.about")}
-                  onNavigate={close}
-                />
-                <NavRow
-                  href="/contact"
-                  icon={Mail}
-                  label={t("marketingDrawer.contact")}
-                  onNavigate={close}
-                />
+                <NavRow href="/" icon={Home} label={t("marketingDrawer.home")} onNavigate={close} />
+                <NavRow href="/about" icon={Info} label={t("marketingDrawer.about")} onNavigate={close} />
+                <NavRow href="/contact" icon={Mail} label={t("marketingDrawer.contact")} onNavigate={close} />
 
-                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50/90 p-3 text-sm leading-relaxed text-slate-700">
-                  <p className="mb-2 font-bold text-amber-900">
+                {/* כרטיס פרטי קשר */}
+                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700">
+                  <p className="mb-2 font-bold text-slate-900">
                     {t("marketingDrawer.contact")}
                   </p>
-                  <p className="text-slate-600">
-                    {t("marketingDrawer.contactAddress")}
-                  </p>
+                  <p className="text-slate-600 text-xs">{t("marketingDrawer.contactAddress")}</p>
                   <a
                     href="tel:+972525640021"
-                    className="mt-2 block font-medium text-slate-900 hover:text-amber-800"
+                    className="mt-2 block font-medium text-slate-800 hover:text-blue-700"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactPhone")}
                   </a>
                   <a
                     href="mailto:sysybu@gmail.com"
-                    className="mt-1 block font-medium text-blue-700 hover:text-blue-800"
+                    className="mt-1 block font-medium text-blue-600 hover:text-blue-800"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactEmail")}
@@ -157,34 +143,51 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={close}
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2.5 text-sm font-bold text-white shadow-lg shadow-green-900/30 transition hover:brightness-110"
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2.5 text-sm font-bold text-white shadow transition hover:brightness-110"
                   >
                     <MessageCircle className="h-4 w-4" aria-hidden />
                     {t("marketingDrawer.whatsappQuick")}
                   </a>
                 </div>
 
+                {/* כפתור מחירים */}
                 <Link
                   href={pricingHref}
                   scroll={pathname === "/"}
                   onClick={close}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-amber-200 via-yellow-100 to-slate-200 px-4 py-3.5 text-center text-base font-black text-slate-900 shadow-lg shadow-amber-900/25 ring-1 ring-amber-300/50 transition hover:brightness-105"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3.5 text-sm font-black text-blue-700 shadow-sm transition hover:bg-blue-100"
                 >
-                  <Sparkles className="h-5 w-5 text-amber-800" aria-hidden />
+                  <Sparkles className="h-4 w-4" aria-hidden />
                   {t("marketingDrawer.subscribe")}
                 </Link>
 
                 <Link
                   href="/dashboard/billing"
                   onClick={close}
-                  className="text-center text-xs font-semibold text-slate-500 underline-offset-2 hover:text-amber-800 hover:underline"
+                  className="text-center text-xs font-semibold text-slate-400 underline-offset-2 hover:text-blue-700 hover:underline"
                 >
                   {t("marketingDrawer.billingLink")}
                 </Link>
               </nav>
 
-              <div className="relative border-t border-slate-100 px-4 py-5">
-                <p className="text-center text-[0.95rem] font-medium italic leading-snug text-slate-600">
+              {/* Footer — כניסה/הרשמה */}
+              <div className="relative border-t border-slate-100 px-4 py-5 space-y-2">
+                <Link
+                  href="/login"
+                  onClick={close}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-black text-white transition hover:opacity-90"
+                  style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+                >
+                  <LogIn size={16} /> כניסה למערכת
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={close}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+                >
+                  <LayoutDashboard size={15} /> לדשבורד
+                </Link>
+                <p className="text-center text-[0.8rem] font-medium italic leading-snug text-slate-500 pt-1">
                   {t("marketingDrawer.brandQuote")}
                 </p>
               </div>

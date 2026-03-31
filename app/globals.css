@@ -12,31 +12,37 @@
 }
 
 :root {
-  /* ערכת „השדרה” — רקע לבן/אפור בהיר, נגיעות זהב */
+  /* ערכת עיצוב כחול-לבן מקצועי */
   --foreground-rgb: 15, 23, 42;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 248, 250, 252;
-  --primary-color: #b8860b;
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-muted: #bfdbfe;
   --heading-color: #1e293b;
-  --brand-gold: #d4af37;
-  --brand-gold-light: #f5d76e;
-  --brand-silver: #94a3b8;
-  --brand-silver-light: #e2e8f0;
-  --avenue-deep-slate: #334155;
+  --brand-blue: #2563eb;
+  --brand-blue-light: #eff6ff;
+  --brand-slate: #64748b;
+  --brand-slate-light: #f1f5f9;
+  --surface-white: #ffffff;
+  --surface-card: #f8fafc;
+  --border-color: #e2e8f0;
   color-scheme: light;
 }
 
 @layer components {
-  /** כרטיס זכוכית על רקע לבן */
+  /** כרטיס ראשי — גבול עדין, צל קל */
   .card-avenue {
-    @apply rounded-2xl border border-slate-200/90 bg-white/90 shadow-lg shadow-slate-200/50 backdrop-blur-md ring-1 ring-slate-100/90;
+    @apply rounded-2xl border border-slate-200/90 bg-white shadow-sm shadow-slate-200/60 ring-1 ring-slate-100/80;
   }
 
+  /** כרטיס עם גבול כחול מבריק */
   .crystal-border {
     border: 1px solid transparent;
     background:
-      linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)) padding-box,
-      linear-gradient(135deg, rgba(212, 175, 55, 0.55), rgba(192, 192, 192, 0.65)) border-box;
+      linear-gradient(rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)) padding-box,
+      linear-gradient(135deg, rgba(37, 99, 235, 0.35), rgba(148, 163, 184, 0.45)) border-box;
   }
 
   .crystal-hover {
@@ -45,7 +51,22 @@
 
   .crystal-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 18px 40px rgba(37, 99, 235, 0.08);
+  }
+
+  /** כפתור ראשי כחול */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95 disabled:opacity-60;
+  }
+
+  /** כפתור משני גבול כחול */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-bold text-blue-700 transition hover:bg-blue-100 active:scale-95 disabled:opacity-60;
+  }
+
+  /** כפתור טקסט */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 active:scale-95;
   }
 }
 
@@ -73,7 +94,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: rgba(184, 134, 11, 0.15);
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.12);
   }
 
   img,
@@ -114,7 +135,7 @@
   }
 
   ::selection {
-    background-color: rgba(212, 175, 55, 0.28);
+    background-color: rgba(37, 99, 235, 0.18);
     color: inherit;
   }
 }
@@ -153,11 +174,21 @@ h6 {
 
 @layer components {
   .glass-card {
-    @apply bg-white/95 backdrop-blur-xl border border-slate-200 shadow-2xl shadow-slate-200/35;
+    @apply bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-xl shadow-blue-900/5;
   }
 
   .glass-card-light {
-    @apply bg-white/95 backdrop-blur-xl border border-slate-200 shadow-2xl shadow-slate-200/40;
+    @apply bg-white/98 backdrop-blur-xl border border-slate-200/70 shadow-lg shadow-slate-200/50;
+  }
+
+  /** כרטיס דשבורד */
+  .dashboard-card {
+    @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm;
+  }
+
+  /** כרטיס פעיל / מוגבש */
+  .dashboard-card-active {
+    @apply rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-sm ring-1 ring-blue-100;
   }
 }
 

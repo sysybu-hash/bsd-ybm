@@ -13,10 +13,12 @@ export default function DashboardSidebarUserCard({
   const { data: session, status } = useSession({ required: true });
   const { t, dir } = useI18n();
 
-  const email = (serverUser.email || (session?.user?.email ?? "")).trim();
+  const serverMail = serverUser.email.trim();
+  /** כמו התפריט: לא מציגים מייל מ-session בדפדפן אם יש מייל שרת — מונע „לקוח עם מייל אדמין ישן” */
+  const email = (serverMail || (session?.user?.email ?? "")).trim();
   const name = (serverUser.name || (session?.user?.name ?? "") || "").trim();
   const image = serverUser.image ?? session?.user?.image ?? null;
-  const loading = status === "loading" && !serverUser.email;
+  const loading = status === "loading" && !serverMail;
   const displayName = loading ? "…" : name || email.split("@")[0] || "—";
 
   return (
@@ -32,12 +34,12 @@ export default function DashboardSidebarUserCard({
             title="מחובר"
             aria-hidden
           />
-          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-amber-400/85 ring-offset-2 ring-offset-white">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-blue-400/70 ring-offset-2 ring-offset-white">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={image} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-100 to-slate-200 text-sm font-black text-slate-700">
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-slate-100 text-sm font-black text-blue-700">
                 {(loading ? "…" : email || "?").charAt(0).toUpperCase()}
               </div>
             )}
@@ -52,7 +54,7 @@ export default function DashboardSidebarUserCard({
         <button
           type="button"
           onClick={() => void signOut({ callbackUrl: "/", redirect: true })}
-          className="shrink-0 rounded-xl border border-slate-200/80 bg-white/90 p-2.5 text-slate-500 transition hover:scale-105 hover:border-amber-300/60 hover:text-amber-900"
+          className="shrink-0 rounded-xl border border-slate-200/80 bg-white/90 p-2.5 text-slate-500 transition hover:scale-105 hover:border-blue-200 hover:text-blue-700"
           aria-label={t("dashboard.logout")}
         >
           <LogOut size={18} strokeWidth={2.25} />

@@ -17,6 +17,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/I18nProvider";
 import {
   analyzeClientAI,
   deleteOrganization,
@@ -67,6 +68,7 @@ export default function CrmOrganizationsAdminTable({
   organizations: CrmAdminOrganizationRow[];
   showUnifiedBillingLinks?: boolean;
 }) {
+  const { dir } = useI18n();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -135,25 +137,27 @@ export default function CrmOrganizationsAdminTable({
   };
 
   return (
-    <div className="relative overflow-hidden bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100">
-      <table className="w-full text-right">
-        <thead className="bg-slate-50/50 text-slate-400 text-xs font-bold">
+    <div className="card-avenue relative overflow-hidden" dir={dir}>
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[800px] text-start">
+        <thead className="bg-blue-50/90 text-xs font-bold text-blue-900">
           <tr>
-            <th className="px-8 py-5">שם הלקוח</th>
-            <th className="px-8 py-5">תוכנית</th>
-            <th className="px-8 py-5">סה&quot;כ חשבוניות</th>
-            <th className="px-8 py-5 text-center">Intelligence</th>
-            <th className="px-8 py-5">ניהול</th>
+            <th className="px-6 py-4 sm:px-8">שם הלקוח</th>
+            <th className="px-6 py-4 sm:px-8">תוכנית</th>
+            <th className="px-6 py-4 sm:px-8">סה״כ חשבוניות</th>
+            <th className="px-6 py-4 text-center sm:px-8">Intelligence</th>
+            <th className="px-6 py-4 sm:px-8">ניהול</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50">
+        <tbody className="divide-y divide-slate-100">
           {organizations.length === 0 && (
             <tr>
-              <td
-                colSpan={5}
-                className="px-8 py-14 text-center text-slate-400 font-medium"
-              >
-                אין לקוחות עדיין במערכת.
+              <td colSpan={5} className="px-8 py-16 text-center">
+                <div className="mx-auto flex max-w-sm flex-col items-center gap-3">
+                  <Sparkles className="text-slate-200" size={36} strokeWidth={1.25} aria-hidden />
+                  <p className="font-bold text-slate-600">אין ארגונים להצגה</p>
+                  <p className="text-sm text-slate-400">הטבלה תתמלא כשייווצרו לקוחות במערכת.</p>
+                </div>
               </td>
             </tr>
           )}
@@ -194,7 +198,7 @@ export default function CrmOrganizationsAdminTable({
                   type="button"
                   onClick={() => void handleAnalyze(org)}
                   disabled={loadingId === org.id}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-[11px] font-black hover:scale-105 transition-all shadow-md disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-[11px] font-black text-white shadow-md transition hover:bg-blue-700 disabled:opacity-50"
                 >
                   {loadingId === org.id ? (
                     <Loader2 className="animate-spin" size={14} />
@@ -209,7 +213,7 @@ export default function CrmOrganizationsAdminTable({
                   {showUnifiedBillingLinks ? (
                     <Link
                       href={`/dashboard/billing?tab=control&orgId=${encodeURIComponent(org.id)}`}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-amber-200/90 bg-amber-50/90 px-3 py-1.5 text-sm font-bold text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200/90 bg-blue-50/90 px-3 py-1.5 text-sm font-bold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
                     >
                       <CreditCard size={16} />
                       מנוי
@@ -243,21 +247,22 @@ export default function CrmOrganizationsAdminTable({
           ))}
         </tbody>
       </table>
+      </div>
 
       {aiModal ? (
         <div className="fixed inset-0 bg-slate-200/70 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
           <div
-            className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-hidden shadow-[0_25px_80px_-12px_rgba(15,23,42,0.35)] border border-slate-200/80 relative flex flex-col"
-            dir="rtl"
+            className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-2xl shadow-slate-900/15"
+            dir={dir}
             role="dialog"
             aria-modal="true"
             aria-labelledby="crm-ai-modal-title"
           >
-            <div className="h-1.5 w-full bg-gradient-to-l from-violet-500 via-indigo-500 to-blue-500 shrink-0" />
+            <div className="h-1 w-full shrink-0 bg-gradient-to-l from-blue-600 to-blue-500" />
             <button
               type="button"
               onClick={() => setAiModal(null)}
-              className="absolute left-4 top-5 z-10 text-slate-400 hover:text-slate-800 p-2.5 rounded-xl hover:bg-slate-100 transition-colors"
+              className="absolute end-4 top-5 z-10 rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-800"
               aria-label="סגור"
             >
               <X size={22} />
@@ -266,8 +271,8 @@ export default function CrmOrganizationsAdminTable({
             <div className="px-8 pt-8 pb-5 border-b border-slate-100 shrink-0 bg-gradient-to-b from-slate-50/80 to-white">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="bg-gradient-to-br from-violet-500 to-indigo-600 text-white p-3.5 rounded-2xl shadow-lg shadow-indigo-500/25">
-                    <Sparkles size={26} strokeWidth={2} />
+                  <div className="rounded-2xl bg-blue-600 p-3.5 text-white shadow-lg shadow-blue-600/25">
+                    <Sparkles size={26} strokeWidth={2} aria-hidden />
                   </div>
                   <div>
                     <h3
@@ -321,8 +326,8 @@ export default function CrmOrganizationsAdminTable({
                       </p>
                     </section>
 
-                    <section className="rounded-2xl border border-amber-200/80 bg-amber-50/40 p-5 shadow-sm">
-                      <div className="flex items-center gap-2 text-amber-900 font-black text-xs uppercase tracking-wide mb-3">
+                    <section className="rounded-2xl border border-blue-200/80 bg-blue-50/40 p-5 shadow-sm">
+                      <div className="flex items-center gap-2 text-blue-800 font-black text-xs uppercase tracking-wide mb-3">
                         <AlertTriangle size={18} strokeWidth={2.25} />
                         התראות
                       </div>
@@ -336,10 +341,10 @@ export default function CrmOrganizationsAdminTable({
                           {aiModal.data.alerts.map((a, i) => (
                             <li
                               key={i}
-                              className="flex items-start gap-2.5 text-sm text-amber-950 leading-snug"
+                              className="flex items-start gap-2.5 text-sm text-blue-900 leading-snug"
                             >
                               <AlertTriangle
-                                className="shrink-0 text-amber-600 mt-0.5"
+                                className="shrink-0 text-blue-600 mt-0.5"
                                 size={16}
                               />
                               {a}
@@ -367,14 +372,14 @@ export default function CrmOrganizationsAdminTable({
                         תשלומים ועמלות PayPlus
                       </h4>
                       <p className="text-xs text-slate-600 font-semibold bg-white px-3 py-2 rounded-xl border border-slate-200 inline-flex items-center gap-2">
-                        <Percent size={14} className="text-amber-600" />
+                        <Percent size={14} className="text-blue-600" />
                         לכל עסקה: ‎1.2% × ברוטו + ‎₪1.20 — הנטו מחושב בשרת
                       </p>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-white overflow-hidden overflow-x-auto shadow-inner">
                       <table className="w-full text-sm text-right min-w-[560px]">
                         <thead>
-                          <tr className="bg-slate-200 text-slate-800 text-[11px] font-black uppercase tracking-wider">
+                          <tr className="bg-blue-50 text-[11px] font-black uppercase tracking-wider text-blue-900">
                             <th className="px-4 py-3.5 font-semibold">תאריך</th>
                             <th className="px-4 py-3.5 font-semibold">תיאור</th>
                             <th className="px-4 py-3.5 font-semibold">ברוטו</th>
@@ -408,7 +413,7 @@ export default function CrmOrganizationsAdminTable({
                                 <td className="px-4 py-3 font-semibold tabular-nums text-slate-900">
                                   {formatMoney(row.amountGross)}
                                 </td>
-                                <td className="px-4 py-3 tabular-nums text-amber-700 font-semibold">
+                                <td className="px-4 py-3 tabular-nums text-blue-700 font-semibold">
                                   {formatMoney(row.feePayPlus)}
                                 </td>
                                 <td className="px-4 py-3 font-bold tabular-nums text-emerald-700">
@@ -437,7 +442,7 @@ export default function CrmOrganizationsAdminTable({
                                   payPlusTableTotals(aiModal.data.tableData).gross,
                                 )}
                               </td>
-                              <td className="px-4 py-3.5 text-sm font-black tabular-nums text-amber-800">
+                              <td className="px-4 py-3.5 text-sm font-black tabular-nums text-blue-700">
                                 {formatMoney(
                                   payPlusTableTotals(aiModal.data.tableData).fee,
                                 )}
@@ -459,11 +464,7 @@ export default function CrmOrganizationsAdminTable({
             </div>
 
             <div className="px-8 pb-8 pt-2 shrink-0 border-t border-slate-100 bg-slate-50/40">
-              <button
-                type="button"
-                onClick={() => setAiModal(null)}
-                className="w-full bg-blue-600 text-white py-3.5 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-md"
-              >
+              <button type="button" onClick={() => setAiModal(null)} className="btn-primary w-full py-3.5">
                 סגור
               </button>
             </div>

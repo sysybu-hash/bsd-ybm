@@ -12,16 +12,18 @@ import {
   ArrowUpRight,
   Globe2,
 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 
 export default function ExecutiveSuite() {
+  const { dir } = useI18n();
   const primaryColor = "var(--primary-color, #3b82f6)";
 
   return (
-    <div className="min-h-screen bg-white p-6 md:p-10 font-sans text-slate-900" dir="rtl">
+    <div className="min-h-screen bg-white p-6 font-sans text-slate-900 md:p-10" dir={dir}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12 p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm"
+        className="card-avenue mb-12 flex flex-col gap-4 bg-slate-50 p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-4">
           <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg">
@@ -44,7 +46,7 @@ export default function ExecutiveSuite() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="space-y-8">
-          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl relative overflow-hidden group">
+          <div className="card-avenue relative overflow-hidden bg-white p-8 shadow-xl group">
             <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50" />
             <div className="relative z-10">
               <div className="flex justify-between mb-6">
@@ -65,7 +67,7 @@ export default function ExecutiveSuite() {
             </div>
           </div>
 
-          <div className="bg-slate-50 p-8 rounded-[3rem] border border-slate-100">
+          <div className="card-avenue bg-slate-50 p-8">
             <h4 className="font-black italic mb-4 flex items-center gap-2 text-sm">
               <ShoppingCart size={18} aria-hidden /> עוזר רכש AI
             </h4>
@@ -74,7 +76,7 @@ export default function ExecutiveSuite() {
               <p className="text-slate-500">נמצא ספק זול ב-12% מ-OfficeDepot.</p>
               <button
                 type="button"
-                className="w-full mt-2 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700"
+                className="btn-primary mt-2 w-full rounded-lg py-2"
               >
                 צור הזמנה
               </button>
@@ -83,7 +85,7 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl min-h-[350px] relative">
+          <div className="card-avenue relative min-h-[350px] bg-white p-8 shadow-xl">
             <h4 className="font-black italic mb-6 flex items-center gap-2">
               <Map className="text-emerald-500" aria-hidden /> פריסת לקוחות גאוגרפית (Heatmap)
             </h4>
@@ -111,14 +113,14 @@ export default function ExecutiveSuite() {
               </button>
             </div>
 
-            <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-lg">
+            <div className="card-avenue bg-white p-8 shadow-lg">
               <h4 className="font-black italic mb-4 flex items-center gap-2">
                 <PenTool className="text-purple-500" aria-hidden /> חתימה דיגיטלית
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl gap-2">
                   <span className="text-[10px] font-bold">חוזה שירות — אקווה</span>
-                  <span className="text-[10px] text-amber-500 font-black italic shrink-0">ממתין</span>
+                  <span className="text-[10px] text-blue-500 font-black italic shrink-0">ממתין</span>
                 </div>
                 <button
                   type="button"
@@ -132,7 +134,7 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 text-slate-900 shadow-2xl shadow-slate-200/40">
+          <div className="card-avenue bg-white p-8 text-slate-900 shadow-2xl shadow-slate-200/40">
             <h4 className="text-xs font-black uppercase tracking-widest text-blue-700 mb-6">
               סטטוס בנקים מאוחד
             </h4>
@@ -148,7 +150,7 @@ export default function ExecutiveSuite() {
             </div>
           </div>
 
-          <div className="bg-emerald-50 p-8 rounded-[3rem] border border-emerald-100">
+          <div className="card-avenue border-emerald-100 bg-emerald-50 p-8">
             <h4 className="font-black italic text-emerald-900 mb-2 flex items-center gap-2">
               <ShieldCheck size={18} aria-hidden /> יועץ מס AI
             </h4>
@@ -157,7 +159,7 @@ export default function ExecutiveSuite() {
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-lg text-center">
+          <div className="card-avenue bg-white p-8 text-center shadow-lg">
             <GraduationCap className="mx-auto text-blue-500 mb-4" size={32} />
             <h4 className="text-sm font-black italic">איך קוראים דוח P&amp;L?</h4>
             <p className="text-[10px] text-slate-400 mb-4">מדריך קצר של 2 דקות מותאם לעסק שלך.</p>

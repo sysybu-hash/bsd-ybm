@@ -1,14 +1,23 @@
+import { TrendingUp } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getServerLocale } from "@/lib/i18n/server";
+import { isRtlLocale } from "@/lib/i18n/config";
 
 export default async function FinancialInsightsWidget({
   organizationId,
 }: {
   organizationId: string | null | undefined;
 }) {
+  const locale = await getServerLocale();
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
+
   if (!organizationId) {
     return (
-      <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-amber-900 text-sm">
-        <p className="font-bold text-amber-800 mb-2">תובנות BSD-YBM</p>
+      <div
+        className="card-avenue border-blue-200 bg-blue-50 p-6 text-sm text-blue-800"
+        dir={dir}
+      >
+        <p className="mb-2 font-bold text-blue-700">תובנות BSD-YBM</p>
         <p>שייך משתמש לארגון כדי לקבל תובנות AI.</p>
       </div>
     );
@@ -19,15 +28,18 @@ export default async function FinancialInsightsWidget({
   });
 
   return (
-    <div className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-6 text-slate-800 shadow-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-xl">💰</span>
+    <div
+      className="card-avenue border-emerald-200/90 bg-gradient-to-b from-emerald-50/80 to-white p-6 text-slate-800 shadow-sm"
+      dir={dir}
+    >
+      <div className="mb-3 flex items-center gap-2">
+        <TrendingUp className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
         <h2 className="text-lg font-bold text-emerald-800">תובנות BSD-YBM</h2>
       </div>
       {insight ? (
         <>
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{insight.content}</p>
-          <p className="text-xs text-slate-500 mt-4">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed">{insight.content}</p>
+          <p className="mt-4 text-xs text-slate-500">
             עודכן: {new Date(insight.updatedAt).toLocaleString("he-IL")}
           </p>
         </>

@@ -1,4 +1,4 @@
-import { canonicalizeEmailForMeckano } from "@/lib/meckano-access";
+import { canonicalizeLoginEmail } from "@/lib/email-canonicalize";
 
 let cache: { key: string; set: Set<string> } | null = null;
 
@@ -15,7 +15,7 @@ function allowlistSet(): Set<string> | null {
   if (cache?.key === raw) return cache.set;
   const s = new Set<string>();
   for (const part of raw.split(",")) {
-    const c = canonicalizeEmailForMeckano(part.trim());
+    const c = canonicalizeLoginEmail(part.trim());
     if (c) s.add(c);
   }
   cache = { key: raw, set: s };
@@ -35,6 +35,6 @@ export function isLoginAllowlistEnforced(): boolean {
 export function isLoginAllowedByAllowlist(email: string | null | undefined): boolean {
   const s = allowlistSet();
   if (!s || s.size === 0) return true;
-  const c = canonicalizeEmailForMeckano(email);
+  const c = canonicalizeLoginEmail(email);
   return c.length > 0 && s.has(c);
 }

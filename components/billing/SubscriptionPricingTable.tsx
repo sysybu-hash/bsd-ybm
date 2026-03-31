@@ -1,3 +1,6 @@
+"use client";
+
+import { useI18n } from "@/components/I18nProvider";
 import { tierAllowance, tierLabelHe, type SubscriptionTierKey } from "@/lib/subscription-tier-config";
 
 const ORDER: SubscriptionTierKey[] = [
@@ -15,40 +18,39 @@ type Props = {
 };
 
 export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
+  const { dir } = useI18n();
+
   return (
-    <section
-      className="rounded-[2rem] border border-slate-200/80 bg-gradient-to-b from-slate-50 to-white p-6 md:p-10 shadow-2xl shadow-slate-200/50"
-      dir="rtl"
-    >
-      <div className="text-center mb-10">
-        <p className="text-xs font-black uppercase tracking-[0.25em] mb-2 text-blue-600">מחירון</p>
-        <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">השוואת מנויים</h2>
-        <p className="mt-2 font-medium max-w-2xl mx-auto text-sm text-slate-500">
+    <section className="card-avenue bg-gradient-to-b from-slate-50/80 to-white p-6 shadow-lg md:p-10" dir={dir}>
+      <div className="mb-10 text-center">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-blue-600">מחירון</p>
+        <h2 className="text-2xl font-black italic tracking-tight text-slate-900 md:text-3xl">השוואת מנויים</h2>
+        <p className="mx-auto mt-2 max-w-2xl text-sm font-medium text-slate-500">
           חמש רמות — מנוע Gemini כסריקה „זולה”, OpenAI ו־Claude כפרימיום. התשלום ב־PayPal בשקלים.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-5">
         {ORDER.map((tier) => {
           const a = tierAllowance(tier);
           const price =
             tierPricesIls[tier] ?? a.monthlyPriceIls ?? (tier === "FREE" ? 0 : null);
           const highlight = a.recommended === true;
           const cardBase = highlight
-            ? "border-amber-300/90 bg-gradient-to-b from-amber-50/95 via-white to-slate-50/90 shadow-xl shadow-amber-200/50 ring-2 ring-amber-400/45 scale-[1.02] z-[1]"
-            : "border-slate-100 bg-white/90 shadow-lg shadow-slate-200/30 hover:shadow-xl hover:border-slate-200";
+            ? "border-blue-300 bg-gradient-to-b from-blue-50 to-white shadow-xl shadow-blue-200/40 ring-2 ring-blue-400/40 md:scale-[1.02]"
+            : "border-slate-200/90 bg-white shadow-md hover:border-blue-200/60 hover:shadow-lg";
           return (
             <article
               key={tier}
-              className={`relative flex flex-col rounded-[1.75rem] border p-5 md:p-6 transition-shadow ${cardBase}`}
+              className={`relative flex flex-col rounded-2xl border p-5 transition-shadow md:p-6 ${cardBase}`}
             >
               {highlight ? (
-                <span className="absolute -top-3 left-1/2 z-[2] -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-amber-700 px-3 py-0.5 text-[10px] font-black text-white shadow-lg shadow-amber-600/40">
+                <span className="absolute -top-3 left-1/2 z-[2] -translate-x-1/2 rounded-full bg-blue-600 px-3 py-0.5 text-[10px] font-black text-white shadow-md shadow-blue-600/30">
                   מומלץ
                 </span>
               ) : null}
-              <h3 className="text-lg font-black mb-1 text-slate-900">{tierLabelHe(tier)}</h3>
-              <p className="text-[10px] font-bold uppercase tracking-wider mb-4 text-slate-400">{tier}</p>
+              <h3 className="mb-1 text-lg font-black text-slate-900">{tierLabelHe(tier)}</h3>
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">{tier}</p>
               <div className="mb-4">
                 {price != null ? (
                   <p className="text-3xl font-black tabular-nums text-slate-900">
@@ -62,15 +64,15 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
               <table className="mb-4 w-full flex-1 border-collapse text-sm text-slate-600">
                 <tbody>
                   <tr className="border-b border-slate-200/80">
-                    <td className="py-2.5 ps-0 pe-2 font-semibold text-sky-600">זול (Flash)</td>
+                    <td className="py-2.5 pe-2 ps-0 font-semibold text-blue-600">זול (Flash)</td>
                     <td className="py-2.5 text-end font-black tabular-nums text-slate-900">{a.cheapScans}</td>
                   </tr>
                   <tr className="border-b border-slate-200/80">
-                    <td className="py-2.5 ps-0 pe-2 font-semibold text-violet-600">פרימיום (Pro)</td>
+                    <td className="py-2.5 pe-2 ps-0 font-semibold text-slate-700">פרימיום (Pro)</td>
                     <td className="py-2.5 text-end font-black tabular-nums text-slate-900">{a.premiumScans}</td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 ps-0 pe-2 font-semibold text-slate-500">חברות</td>
+                    <td className="py-2.5 pe-2 ps-0 font-semibold text-slate-500">חברות</td>
                     <td className="py-2.5 text-end font-bold text-slate-900">
                       {a.unlimitedCompanies ? (
                         <>ללא הגבלה (מעשית)</>

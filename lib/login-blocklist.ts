@@ -1,4 +1,4 @@
-import { canonicalizeEmailForMeckano } from "@/lib/meckano-access";
+import { canonicalizeLoginEmail } from "@/lib/email-canonicalize";
 
 let cache: Set<string> | null = null;
 
@@ -8,7 +8,7 @@ function blockedSet(): Set<string> {
   const raw = process.env.LOGIN_BLOCKED_EMAILS?.trim();
   if (raw) {
     for (const part of raw.split(",")) {
-      const c = canonicalizeEmailForMeckano(part.trim());
+      const c = canonicalizeLoginEmail(part.trim());
       if (c) s.add(c);
     }
   }
@@ -24,6 +24,6 @@ export function clearLoginBlockedEmailCache(): void {
 /** מיילים ב־LOGIN_BLOCKED_EMAILS (פסיקים) — לא יכולים להתחבר גם אם ACTIVE ב-DB */
 export function isLoginBlockedEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  const c = canonicalizeEmailForMeckano(email);
+  const c = canonicalizeLoginEmail(email);
   return c.length > 0 && blockedSet().has(c);
 }

@@ -13,7 +13,7 @@ type Props = {
 const sectionClass = "space-y-4 text-slate-700 leading-relaxed text-[15px]";
 const h2Class = "text-xl font-bold text-slate-900 mt-10 mb-3 scroll-mt-28";
 const noteClass =
-  "rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 not-italic";
+  "rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950 not-italic";
 
 export default function LegalLayout({ title, subtitle, children }: Props) {
   return (

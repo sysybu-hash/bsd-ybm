@@ -24,11 +24,12 @@ import {
   TrendingUp,
   AlertTriangle,
   Sparkles,
+  BarChart3,
 } from "lucide-react";
 import { compareSupplierPrices } from "@/app/actions/erp-compare";
 import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 
-const primary = "var(--primary-color, #3b82f6)";
+const primary = "var(--primary-color, #2563eb)";
 
 export type ErpStatCard = {
   label: string;
@@ -86,101 +87,97 @@ export default function ERPDashboard({
     <div className="space-y-12 text-right" dir={dir}>
       <div className="flex flex-col gap-6 lg:flex-row lg:justify-between lg:items-end">
         <div>
-          <h1
-            className="text-4xl font-black italic tracking-tighter"
-            style={{ color: primary }}
-          >
+          <h1 className="text-2xl font-black italic tracking-tight text-slate-900 md:text-3xl">
             {t("erpDash.pageTitle")}
           </h1>
-          <p className="text-slate-500 font-medium mt-1">{t("erpDash.pageSubtitle")}</p>
+          <p className="mt-1 text-sm text-slate-500">{t("erpDash.pageSubtitle")}</p>
           {netFlow != null && (
             <p className="text-sm font-bold text-slate-600 mt-2 flex items-center gap-2 flex-wrap">
               <TrendingUp size={16} className="text-emerald-600 shrink-0" />
               {t("erpDash.netFlowIntro")}{" "}
-              <span className={netFlow >= 0 ? "text-emerald-600" : "text-red-600"}>
+              <span className={netFlow >= 0 ? "text-emerald-600" : "text-rose-600"}>
                 ₪{netFlow.toLocaleString(intlTag)}
               </span>
             </p>
           )}
         </div>
 
-        <div className="bg-white border border-slate-200 p-6 rounded-[2rem] shadow-sm shrink-0">
-          <p className="text-xs text-slate-400 font-bold uppercase mb-1">{t("erpDash.quotaCaption")}</p>
-          <p className="text-xl font-black text-slate-900 leading-snug">{quotaLabel}</p>
+        <div className="card-avenue shrink-0 p-6">
+          <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">{t("erpDash.quotaCaption")}</p>
+          <p className="text-xl font-black leading-snug text-slate-900">{quotaLabel}</p>
         </div>
       </div>
 
       {flowSummary ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40">
-            <div className="flex justify-between items-center mb-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                <Box />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+          <div className="card-avenue p-6 md:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="rounded-2xl bg-blue-50 p-3 text-blue-600">
+                <Box aria-hidden />
               </div>
-              <span className="text-[10px] font-black bg-blue-100 text-blue-700 px-3 py-1 rounded-full uppercase">
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-black uppercase text-blue-700">
                 {t("erpDash.badgeInventory")}
               </span>
             </div>
-            <p className="text-slate-500 font-bold text-sm">{t("erpDash.flowItemsLabel")}</p>
-            <h2 className="text-3xl font-black text-slate-900 mt-1">
-              {flowSummary.totalItems}
-            </h2>
+            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowItemsLabel")}</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-900">{flowSummary.totalItems}</h2>
           </div>
 
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 border-r-4 border-r-green-500">
-            <div className="flex justify-between items-center mb-4">
-              <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
-                <ArrowUpRight />
+          <div className="card-avenue border-e-4 border-e-emerald-500 p-6 md:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
+                <ArrowUpRight aria-hidden />
               </div>
-              <span className="text-[10px] font-black bg-green-100 text-green-700 px-3 py-1 rounded-full uppercase">
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black uppercase text-emerald-800">
                 {t("erpDash.badgeIncome")}
               </span>
             </div>
-            <p className="text-slate-500 font-bold text-sm">{t("erpDash.flowIssuedLabel")}</p>
-            <h2 className="text-3xl font-black text-slate-900 mt-1">
+            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowIssuedLabel")}</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-900">
               ₪{flowSummary.totalIssued.toLocaleString(intlTag)}
             </h2>
           </div>
 
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 border-r-4 border-r-red-500">
-            <div className="flex justify-between items-center mb-4">
-              <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
-                <ArrowDownLeft />
+          <div className="card-avenue border-e-4 border-e-rose-500 p-6 md:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="rounded-2xl bg-rose-50 p-3 text-rose-600">
+                <ArrowDownLeft aria-hidden />
               </div>
-              <span className="text-[10px] font-black bg-red-100 text-red-700 px-3 py-1 rounded-full uppercase">
+              <span className="rounded-full bg-rose-100 px-3 py-1 text-[10px] font-black uppercase text-rose-800">
                 {t("erpDash.badgeExpense")}
               </span>
             </div>
-            <p className="text-slate-500 font-bold text-sm">{t("erpDash.flowExpenseLabel")}</p>
-            <h2 className="text-3xl font-black text-slate-900 mt-1">
+            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowExpenseLabel")}</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-900">
               ₪{flowSummary.totalExpenses.toLocaleString(intlTag)}
             </h2>
           </div>
         </div>
       ) : null}
 
-      <div className="bg-white text-slate-900 p-10 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-          <div className="bg-blue-600 p-6 rounded-[2rem] shadow-xl shadow-blue-500/20 animate-pulse">
-            <FileSearch size={40} />
+      <div className="card-avenue relative overflow-hidden p-8 md:p-10">
+        <div className="relative z-10 flex flex-col items-center gap-8 md:flex-row">
+          <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl shadow-blue-600/25 ring-1 ring-blue-500/30">
+            <FileSearch size={40} aria-hidden />
           </div>
-          <div className="flex-1">
-            <h3 className="text-2xl font-black italic tracking-tighter">{t("erpDash.scannerTitle")}</h3>
-            <p className="text-slate-600 font-medium mt-1">{t("erpDash.scannerDesc")}</p>
+          <div className="min-w-0 flex-1 text-center md:text-start">
+            <h2 className="text-xl font-black italic text-slate-900 md:text-2xl">{t("erpDash.scannerTitle")}</h2>
+            <p className="mt-1 text-sm font-medium text-slate-600">{t("erpDash.scannerDesc")}</p>
           </div>
-          <Link
-            href="/dashboard/erp#erp-multi-scanner"
-            className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-2"
-          >
-            <Layers size={20} /> {t("erpDash.scannerCta")}
+          <Link href="/dashboard/erp#erp-multi-scanner" className="btn-primary shrink-0 px-8 py-3.5 text-sm md:px-10 md:py-4">
+            <Layers size={20} aria-hidden />
+            {t("erpDash.scannerCta")}
           </Link>
         </div>
-        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full -ml-20 -mt-20 blur-3xl pointer-events-none" />
+        <div
+          className="pointer-events-none absolute -start-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-3xl"
+          aria-hidden
+        />
       </div>
 
       {priceSpikes.length > 0 ? (
-        <div className="rounded-[2rem] border border-amber-200 bg-amber-50/60 p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-amber-900 font-black">
+        <div className="rounded-[2rem] border border-blue-200 bg-blue-50/60 p-6 md:p-8 space-y-4">
+          <div className="flex items-center gap-2 text-blue-800 font-black">
             <AlertTriangle size={22} className="shrink-0" />
             {t("erpDash.spikesTitle")}
           </div>
@@ -188,12 +185,12 @@ export default function ERPDashboard({
             {priceSpikes.map((s) => (
               <li
                 key={s.normalizedKey}
-                className="flex flex-col gap-2 rounded-2xl bg-white/80 border border-amber-100 p-4 md:flex-row md:items-center md:justify-between"
+                className="flex flex-col gap-2 rounded-2xl bg-white/80 border border-blue-100 p-4 md:flex-row md:items-center md:justify-between"
               >
                 <div>
                   <p className="font-bold text-slate-900">{s.description || s.normalizedKey}</p>
                   <p className="text-slate-600 mt-1">
-                    <span className="font-black text-red-600">
+                    <span className="font-black text-rose-600">
                       {t("erpDash.spikeRise", { pct: s.changePercent.toFixed(1) })}
                     </span>{" "}
                     {t("erpDash.spikeRange", {
@@ -202,7 +199,7 @@ export default function ERPDashboard({
                     })}
                   </p>
                   {insightByKey[s.normalizedKey] ? (
-                    <p className="text-slate-700 mt-2 leading-relaxed border-t border-amber-100 pt-2">
+                    <p className="text-slate-700 mt-2 leading-relaxed border-t border-blue-100 pt-2">
                       {insightByKey[s.normalizedKey]}
                     </p>
                   ) : null}
@@ -211,7 +208,7 @@ export default function ERPDashboard({
                   type="button"
                   disabled={isAiPending}
                   onClick={() => runAiForKey(s.normalizedKey)}
-                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 text-white px-4 py-2.5 font-bold hover:bg-blue-700 disabled:opacity-50"
+                  className="btn-primary shrink-0 px-4 py-2.5 text-sm disabled:opacity-50"
                 >
                   <Sparkles size={18} />
                   {t("erpDash.analyzeAi")}
@@ -230,7 +227,7 @@ export default function ERPDashboard({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
             whileHover={{ y: -5 }}
-            className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40"
+            className="card-avenue p-6 md:p-8"
           >
             <p className="text-slate-500 text-sm mb-2 font-bold">{stat.label}</p>
             <p className={`text-3xl font-black ${stat.valueClass}`}>{stat.value}</p>
@@ -241,10 +238,24 @@ export default function ERPDashboard({
         ))}
       </div>
 
-      <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/30">
-        <h3 className="text-xl font-black mb-8 italic text-slate-900">{t("erpDash.chartTitle")}</h3>
+      <div className="card-avenue p-8 md:p-10">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="flex items-center gap-2 text-xl font-black italic text-slate-900">
+              <BarChart3 className="text-blue-600" size={22} aria-hidden />
+              {t("erpDash.chartTitle")}
+            </h2>
+            <p className="mt-0.5 text-sm text-slate-500">הוצאות לפי תקופה — נתוני ERP</p>
+          </div>
+        </div>
         {chartData.length === 0 ? (
-          <p className="text-slate-400 text-center py-20">{t("erpDash.chartEmpty")}</p>
+          <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+            <BarChart3 className="text-slate-200" size={48} strokeWidth={1} aria-hidden />
+            <p className="max-w-md text-sm font-medium text-slate-500">{t("erpDash.chartEmpty")}</p>
+            <Link href="/dashboard/erp#erp-multi-scanner" className="btn-secondary text-sm">
+              {t("erpDash.scannerCta")}
+            </Link>
+          </div>
         ) : (
           <RechartsBounded height={400}>
             <ResponsiveContainer width="100%" height="100%">

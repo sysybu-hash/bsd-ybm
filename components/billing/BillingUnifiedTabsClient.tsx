@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { BarChart3, Crown } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 
 type TabId = "overview" | "control";
 
@@ -28,6 +29,7 @@ export default function BillingUnifiedTabsClient({
   childrenOverview,
   childrenControl,
 }: Props) {
+  const { dir } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -85,9 +87,9 @@ export default function BillingUnifiedTabsClient({
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-transparent font-sans text-slate-900" dir="rtl">
+    <div className="min-h-screen bg-transparent font-sans text-slate-900" dir={dir}>
       <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
-        <h1 className="mb-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="mb-1 text-2xl font-black italic tracking-tight text-slate-900 sm:text-3xl">
           מנויים ותשלומים
         </h1>
         <p className="mb-6 text-sm font-medium text-slate-600">
@@ -111,19 +113,19 @@ export default function BillingUnifiedTabsClient({
                   onClick={() => setTabAndUrl(id)}
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
-                      ? "bg-gradient-to-br from-amber-50 via-white to-slate-50 text-slate-900 shadow-md shadow-amber-200/40 ring-1 ring-amber-300/80"
+                      ? "bg-gradient-to-br from-blue-50 via-white to-slate-50 text-slate-900 shadow-md shadow-blue-200/40 ring-1 ring-blue-300/80"
                       : "border border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-xs font-black text-amber-800/80">
+                  <span className="flex items-center gap-2 text-xs font-black text-blue-700/80">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-700"
+                        active ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-700"
                       }`}
                     >
                       {step}
                     </span>
-                    <Icon size={16} className={active ? "text-amber-700" : "text-slate-400"} strokeWidth={2} />
+                    <Icon size={16} className={active ? "text-blue-600" : "text-slate-400"} strokeWidth={2} />
                     <span className="font-black text-slate-900">{label}</span>
                   </span>
                   <span className="pe-8 text-[11px] font-medium text-slate-500">{hint}</span>

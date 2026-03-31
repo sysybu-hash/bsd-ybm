@@ -3,20 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
-import { hasMeckanoAccess } from "@/lib/meckano-access";
 import type { UserRole } from "@prisma/client";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "נדרשת התחברות" }, { status: 401 });
-  }
-
-  if (hasMeckanoAccess(session.user.email)) {
-    return NextResponse.json(
-      { error: "מפעילי מקאנו אינם רשאים לשייך משתמשים." },
-      { status: 403 },
-    );
   }
 
   const isPlatformOwner = isAdmin(session.user.email);

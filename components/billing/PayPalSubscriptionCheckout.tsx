@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import confetti from "canvas-confetti";
+import { useI18n } from "@/components/I18nProvider";
 import { purchasableTierKeysAbove, planLabelHe, planPriceIls } from "@/lib/subscription-plans";
 import type { SubscriptionTierKey } from "@/lib/subscription-tier-config";
 
@@ -30,6 +31,7 @@ export default function PayPalSubscriptionCheckout({
   subscriptionStatus,
   tierPricesIls,
 }: Props) {
+  const { dir } = useI18n();
   const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -106,8 +108,8 @@ export default function PayPalSubscriptionCheckout({
     return (
       <div id="paypal-subscription" className="scroll-mt-24">
         <div
-          className="rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-900"
-          dir="rtl"
+          className="card-avenue border-blue-200 bg-blue-50/80 px-4 py-3 text-sm text-blue-800"
+          dir={dir}
         >
           להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
           <code className="text-xs">.env</code> או הגדירו מזהה בלוח הבקרה לבעלי פלטפורמה.
@@ -120,8 +122,8 @@ export default function PayPalSubscriptionCheckout({
     return (
       <div id="paypal-subscription" className="scroll-mt-24">
         <div
-          className="rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900"
-          dir="rtl"
+          className="card-avenue border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900"
+          dir={dir}
         >
           המנוי הנוכחי ({planLabelHe(currentTier)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג נוסף פנו
           לתמיכה.
@@ -135,8 +137,8 @@ export default function PayPalSubscriptionCheckout({
   return (
     <section
       id="paypal-subscription"
-      className="scroll-mt-24 rounded-[2rem] border border-[#0070ba]/25 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/40"
-      dir="rtl"
+      className="card-avenue scroll-mt-24 border-[#0070ba]/25 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/40"
+      dir={dir}
     >
       <h2 className="text-xl font-black text-slate-900 mb-2">הפעלת מנוי — PayPal (Live)</h2>
       <p className="text-sm text-slate-600 mb-4">

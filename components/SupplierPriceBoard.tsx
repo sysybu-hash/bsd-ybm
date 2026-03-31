@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, TrendingDown, Package } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import type { PriceCompareRow } from "@/lib/price-compare-types";
 
 export default function SupplierPriceBoard() {
+  const { dir } = useI18n();
   const [rows, setRows] = useState<PriceCompareRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +36,8 @@ export default function SupplierPriceBoard() {
   return (
     <section
       id="supplier-price-board"
-      className="rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/50"
-      dir="rtl"
+      className="card-avenue bg-white p-6 shadow-xl shadow-slate-200/50 md:p-8"
+      dir={dir}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
@@ -67,15 +69,15 @@ export default function SupplierPriceBoard() {
       )}
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-2">{error}</p>
+        <p className="card-avenue border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-800">{error}</p>
       )}
 
       {!loading && !error && alerts.length > 0 && (
-        <div className="mb-6 space-y-2 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <p className="text-xs font-black text-amber-900 flex items-center gap-2">
+        <div className="card-avenue mb-6 space-y-2 border-blue-200 bg-blue-50 p-4">
+          <p className="text-xs font-black text-blue-800 flex items-center gap-2">
             <TrendingDown size={16} /> נמצאו מחירים גבוהים ביחס לרכישה הזולה הידועה
           </p>
-          <ul className="text-xs text-amber-950 space-y-1">
+          <ul className="text-xs text-blue-900 space-y-1">
             {alerts.slice(0, 5).map((r) => (
               <li key={r.normalizedKey}>
                 <strong>{r.description}</strong> — אצל {r.latestSupplier ?? "—"} נרשם ₪
@@ -89,7 +91,7 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && rows.length === 0 && (
-        <p className="text-sm text-slate-500 italic py-6 text-center">
+        <p className="card-avenue border-dashed border-slate-200 bg-slate-50/80 py-8 text-center text-sm italic text-slate-500">
           אין עדיין תצפיות מחיר — סרקו חשבונית או קבלה עם שורות מוצרים.
         </p>
       )}

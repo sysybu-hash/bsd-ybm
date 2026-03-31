@@ -69,7 +69,6 @@
     "executive": "Executive / charts",
     "executiveSubscriptions": "Subscriptions & email invites",
     "executiveManageSubscriptions": "Advanced subscription admin",
-    "meckano": "Meckano (workforce)",
     "logout": "Sign out",
     "smartArchiveHint": "Smart archive (OCR) — search across all documents and summaries"
   },
@@ -319,29 +318,10 @@
     "insightKicker": "BSD-YBM insight",
     "insightBody": "Unit gap between the last two purchases: ₪{diff}. Compare alternative suppliers or consolidate orders for volume discounts."
   },
-  "meckanoDash": {
-    "title": "Workforce & projects",
-    "subtitle": "Live roster, presence map and ERP reports — synced with Meckano",
-    "poweredBy": "(Powered by Meckano)",
-    "liveRoster": "Live employee roster",
-    "gpsMap": "Presence & work-area map",
-    "reportSection": "Report generator for ERP",
-    "atWork": "At work",
-    "offWork": "Off work",
-    "mapHint": "OpenStreetMap view. Markers from last API location or demo placement.",
-    "filterActiveOnly": "Show only currently active",
-    "noEmployees": "No employees or Meckano API is not configured (MECKANO_API_KEY).",
-    "radiusNote": "Radius enforcement per Meckano site policy",
-    "iframeTitle": "Presence map",
-    "refreshNow": "Refresh now",
-    "refreshingData": "Refreshing…",
-    "searchPlaceholder": "Search employee…",
-    "lastUpdateLabel": "Last updated",
-    "liveConnected": "Live sync with Meckano",
-    "enforcementRadius": "100m radius enforcement active",
-    "loadingFromMeckano": "Loading from Meckano…",
-    "noOneOnSite": "No employees reported on site right now.",
-    "rosterTitle": "Roster",
-    "atWorkCount": "At work"
+  "intelligencePage": {
+    "title": "Intelligence",
+    "subtitle": "Modules by role ({role}) — edit the map in lib/intelligence-access.ts",
+    "executiveBelow": "Below: global Executive report (platform owner).",
+    "dividerLabel": "Global Executive report"
   }
 }

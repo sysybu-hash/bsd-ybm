@@ -49,7 +49,7 @@ export default function PayPalInvoicesSection({
           השתמשו ב־״הפקת מסמך״ למעלה לחשבונית מס רשמית, או צרו חשבונית בדיקה לגבייה ב־PayPal.
         </p>
         {!hasPaypal ? (
-          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-4 py-2 max-w-md mx-auto mb-4">
+          <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2 max-w-md mx-auto mb-4">
             לא הוגדר PayPal לארגון — קישורי תשלום לא יופיעו עד שתשלימו את ההגדרות.
           </p>
         ) : null}

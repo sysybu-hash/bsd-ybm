@@ -4,35 +4,39 @@ import { useState, useEffect } from "react";
 import { Accessibility, Palette, Type, Contrast, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/** בועות צבע — 5 אפשרויות מוגדרות */
 const colors = [
-  { name: "כחול BSD", value: "#3b82f6" },
+  { name: "כחול BSD", value: "#2563eb" },
   { name: "ירוק אזמרגד", value: "#10b981" },
-  { name: "סגול מלכותי", value: "#8b5cf6" },
-  { name: "זהב עסקי", value: "#f59e0b" },
-  { name: "אדום עוצמה", value: "#ef4444" },
+  { name: "סגול מלכותי", value: "#7c3aed" },
+  { name: "ים תיכוני", value: "#0891b2" },
+  { name: "אדום עוצמה", value: "#dc2626" },
 ];
 
 const FONT_KEY = "bsd-font-large";
 const CONTRAST_KEY = "bsd-high-contrast";
+const DEFAULT_COLOR = "#2563eb";
 
-function normalizeHex(raw: string): string {
-  return /^#[0-9A-Fa-f]{6}$/.test(raw) ? raw : "#3b82f6";
+function normalizeHex(raw: string | null | undefined): string {
+  return /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string) : DEFAULT_COLOR;
 }
 
 type Props = {
-  /** בתוך שורת Dock בתחתית הדשבורד — בלי position:fixed על המסך כולו */
+  /** בתוך שורת Dock בתחתית הדשבורד */
   dock?: boolean;
 };
 
 export default function AccessibilityMenu({ dock = false }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeColor, setActiveColor] = useState("#3b82f6");
+  const [activeColor, setActiveColor] = useState(DEFAULT_COLOR);
   const [fontLarge, setFontLarge] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
 
   useEffect(() => {
     const saved =
-      localStorage.getItem("bsd-theme-color") || localStorage.getItem("user-theme-color") || "#3b82f6";
+      localStorage.getItem("bsd-theme-color") ||
+      localStorage.getItem("user-theme-color") ||
+      DEFAULT_COLOR;
     const color = normalizeHex(saved);
     setActiveColor(color);
     document.documentElement.style.setProperty("--primary-color", color);
@@ -61,8 +65,10 @@ export default function AccessibilityMenu({ dock = false }: Props) {
     window.dispatchEvent(new Event("bsd-theme-change"));
   };
 
-  const activeToggle = "bg-[var(--primary-color)]/15 text-slate-900 border border-[var(--primary-color)]/35";
-  const idleToggle = "bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-100";
+  const activeToggle =
+    "bg-slate-100 text-slate-900 border border-slate-200 ring-1 ring-[var(--primary-color,#2563eb)]/20";
+  const idleToggle =
+    "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200";
 
   const rootClass = dock
     ? "relative z-[2]"
@@ -77,30 +83,32 @@ export default function AccessibilityMenu({ dock = false }: Props) {
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
         aria-label={isOpen ? "סגור תפריט נגישות" : "פתח נגישות וצבעים"}
-        className="bg-white border border-slate-200 text-slate-700 p-4 rounded-full shadow-xl hover:bg-slate-50 transition-colors"
+        className="border border-slate-200 bg-white p-3.5 rounded-full shadow-lg hover:bg-slate-50 transition-colors text-slate-600"
       >
-        <Accessibility size={24} className="text-[var(--primary-color,#3b82f6)]" />
+        <Accessibility size={22} style={{ color: "var(--primary-color, #2563eb)" }} />
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.2 }}
-            className={`absolute w-64 bg-white border border-slate-100 rounded-[2rem] shadow-2xl p-6 text-slate-900 ${
+            initial={{ opacity: 0, x: -12, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -12, scale: 0.97 }}
+            transition={{ duration: 0.18 }}
+            className={`absolute w-60 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl shadow-slate-300/30 text-slate-900 ${
               dock
-                ? "bottom-[calc(100%+0.5rem)] start-1/2 -translate-x-1/2"
+                ? "bottom-[calc(100%+0.75rem)] start-1/2 -translate-x-1/2"
                 : "bottom-[4.5rem] start-0"
             }`}
           >
-            <h4 className="font-black italic mb-4 flex items-center gap-2 text-slate-900">
-              <Palette size={18} className="text-[var(--primary-color,#3b82f6)]" aria-hidden />
+            {/* כותרת */}
+            <h4 className="mb-4 flex items-center gap-2 text-sm font-black text-slate-800">
+              <Palette size={16} style={{ color: "var(--primary-color, #2563eb)" }} aria-hidden />
               נראות וצבעים
             </h4>
 
-            <div className="grid grid-cols-5 gap-2 mb-6">
+            {/* בועות צבע */}
+            <div className="mb-4 grid grid-cols-5 gap-2">
               {colors.map((c) => (
                 <button
                   key={c.value}
@@ -109,35 +117,44 @@ export default function AccessibilityMenu({ dock = false }: Props) {
                   aria-label={`צבע ${c.name}`}
                   aria-pressed={activeColor === c.value}
                   onClick={() => updateColor(c.value)}
-                  className="relative w-8 h-8 rounded-full border-2 border-slate-200 transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-slate-400"
-                  style={{ backgroundColor: c.value }}
+                  className="relative h-8 w-8 rounded-full border-2 border-white shadow-md transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                  style={{
+                    backgroundColor: c.value,
+                    boxShadow:
+                      activeColor === c.value
+                        ? `0 0 0 3px white, 0 0 0 5px ${c.value}`
+                        : undefined,
+                  }}
                 >
                   {activeColor === c.value ? (
-                    <Check size={12} className="absolute inset-0 m-auto text-white drop-shadow-md" />
+                    <Check size={11} className="absolute inset-0 m-auto text-white drop-shadow" />
                   ) : null}
                 </button>
               ))}
             </div>
 
-            <div className="space-y-3">
+            <div className="h-px bg-slate-100 mb-4" />
+
+            {/* מתגים */}
+            <div className="space-y-2">
               <button
                 type="button"
                 onClick={() => setHighContrast((v) => !v)}
-                className={`w-full flex justify-between items-center p-3 rounded-xl text-xs font-bold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors ${
                   highContrast ? activeToggle : idleToggle
                 }`}
               >
-                {highContrast ? "ניגודיות רגילה" : "ניגודיות גבוהה"}
+                <span>{highContrast ? "ניגודיות רגילה" : "ניגודיות גבוהה"}</span>
                 <Contrast size={14} aria-hidden />
               </button>
               <button
                 type="button"
                 onClick={() => setFontLarge((v) => !v)}
-                className={`w-full flex justify-between items-center p-3 rounded-xl text-xs font-bold transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors ${
                   fontLarge ? activeToggle : idleToggle
                 }`}
               >
-                {fontLarge ? "גודל טקסט רגיל" : "הגדלת טקסט"}
+                <span>{fontLarge ? "גודל טקסט רגיל" : "הגדלת טקסט"}</span>
                 <Type size={14} aria-hidden />
               </button>
             </div>

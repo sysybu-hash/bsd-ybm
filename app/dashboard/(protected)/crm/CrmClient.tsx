@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useMemo, useEffect } from "react";
 import {
   createContactAction,
   createProjectAction,
@@ -22,6 +22,7 @@ import {
 import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
 } from "./CrmOrganizationsAdminTable";
+import { useI18n } from "@/components/I18nProvider";
 
 type ContactRow = {
   id: string;
@@ -69,7 +70,9 @@ export default function CrmClient({
   /** Steel Admin — קישור לניהול מנוי בבילינג מאוחד */
   showUnifiedBillingLinks?: boolean;
 }) {
+  const { dir } = useI18n();
   const [msg, setMsg] = useState<string | null>(null);
+  const [msgDismissed, setMsgDismissed] = useState(false);
   const [pending, startTransition] = useTransition();
   const [contactMonthFilter, setContactMonthFilter] = useState("");
   const [hideInactiveProjects, setHideInactiveProjects] = useState(true);
@@ -90,17 +93,21 @@ export default function CrmClient({
     });
   }, [contacts, contactMonthFilter]);
 
+  useEffect(() => {
+    setMsgDismissed(false);
+  }, [msg]);
+
   if (!hasOrganization) {
     return (
-      <div className="space-y-8" dir="rtl">
-        <div className="rounded-[2.5rem] border border-amber-200/90 bg-gradient-to-br from-amber-50 to-orange-50/40 p-8 shadow-lg shadow-amber-900/5">
+      <div className="space-y-8" dir={dir}>
+        <div className="card-avenue border-blue-200/90 bg-gradient-to-br from-blue-50 to-blue-50/30 p-8 shadow-md">
           <div className="flex items-start gap-4">
-            <div className="rounded-2xl bg-amber-100 p-3 text-amber-900 shrink-0">
+            <div className="rounded-2xl bg-blue-100 p-3 text-blue-800 shrink-0">
               <Shield size={24} />
             </div>
             <div>
-              <p className="font-black text-lg text-amber-950 mb-2">אין ארגון משויך</p>
-              <p className="text-sm text-amber-950/80 leading-relaxed">
+              <p className="font-black text-lg text-blue-900 mb-2">אין ארגון משויך</p>
+              <p className="text-sm text-blue-900/80 leading-relaxed">
                 עבור ל<strong className="font-bold">הגדרות</strong>, שייך משתמש לארגון או התחבר מחדש. לאחר מכן תוכל להוסיף לקוחות
                 ופרויקטים.
               </p>
@@ -111,15 +118,15 @@ export default function CrmClient({
           <section className="space-y-4">
             <div className="flex flex-wrap items-end justify-between gap-4 px-1">
               <div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <LayoutGrid className="text-[var(--primary-color,#2563eb)]" size={22} />
+                <h2 className="flex items-center gap-2 text-xl font-black italic tracking-tight text-slate-900">
+                  <LayoutGrid className="text-blue-600" size={22} aria-hidden />
                   ארגונים במערכת (תצוגת בעלים)
                 </h2>
-                <p className="text-sm text-slate-500 font-medium mt-1">
+                <p className="mt-1 text-sm font-medium text-slate-500">
                   ניהול מנויים, סיכום AI וחשבוניות — ללא צורך בארגון אישי לצפייה בלבד בטבלה זו
                 </p>
               </div>
-              <span className="text-xs font-black bg-amber-100 text-amber-900 px-4 py-2 rounded-full border border-amber-200/80">
+              <span className="text-xs font-black bg-blue-100 text-blue-800 px-4 py-2 rounded-full border border-blue-200/80">
                 הרשאת בעלים
               </span>
             </div>
@@ -135,22 +142,22 @@ export default function CrmClient({
 
   return (
     <>
-      <div className="space-y-10 relative" dir="rtl">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 px-1">
+      <div className="relative space-y-10" dir={dir}>
+        <div className="flex flex-col gap-4 px-1 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <span className="inline-flex rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 text-white shadow-lg shadow-blue-500/25">
-                <LayoutGrid size={22} />
+            <h1 className="flex items-center gap-3 text-2xl font-black italic tracking-tight text-slate-900">
+              <span className="inline-flex rounded-2xl bg-blue-600 p-2.5 text-white shadow-lg shadow-blue-600/25">
+                <LayoutGrid size={22} aria-hidden />
               </span>
               מרכז לידים ולקוחות
-            </h2>
-            <p className="text-sm text-slate-500 font-medium mt-2 max-w-xl">
+            </h1>
+            <p className="mt-1 max-w-xl text-sm text-slate-500">
               פרויקטים, אנשי קשר והצעות מחיר — באותה שפה ויזואלית כמו שאר לוח הבקרה.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm">
-            <label className="flex items-center gap-2 font-bold text-slate-600 bg-white rounded-2xl border border-slate-200/90 px-4 py-2.5 shadow-sm">
-              <Filter size={16} className="text-slate-400" />
+            <label className="flex items-center gap-2 rounded-2xl border border-slate-200/90 bg-white px-4 py-2.5 font-bold text-slate-600 shadow-sm">
+              <Filter size={16} className="text-slate-400" aria-hidden />
               לקוחות לפי חודש
               <input
                 type="month"
@@ -160,35 +167,40 @@ export default function CrmClient({
               />
             </label>
             {contactMonthFilter ? (
-              <button
-                type="button"
-                onClick={() => setContactMonthFilter("")}
-                className="text-[var(--primary-color,#2563eb)] font-black hover:underline"
-              >
+              <button type="button" onClick={() => setContactMonthFilter("")} className="btn-ghost py-2 text-sm text-blue-700">
                 נקה מסנן
               </button>
             ) : null}
           </div>
         </div>
 
-        {msg && (
-          <p
-            className={`text-sm rounded-2xl px-5 py-3 font-medium ${
+        {msg && !msgDismissed ? (
+          <div
+            className={`flex flex-wrap items-start gap-3 rounded-2xl px-5 py-3 text-sm font-medium ${
               msg.startsWith("✓")
-                ? "bg-emerald-50 text-emerald-900 border border-emerald-200/90 shadow-sm"
-                : "bg-red-50 text-red-900 border border-red-200/90 shadow-sm"
+                ? "border border-emerald-200/90 bg-emerald-50 text-emerald-900 shadow-sm"
+                : "border border-rose-200/90 bg-rose-50 text-rose-900 shadow-sm"
             }`}
+            role="status"
           >
-            {msg}
-          </p>
-        )}
+            <p className="min-w-0 flex-1">{msg}</p>
+            <button
+              type="button"
+              onClick={() => setMsgDismissed(true)}
+              className="shrink-0 rounded-lg p-1 text-current opacity-70 hover:bg-black/5"
+              aria-label="סגור הודעה"
+            >
+              ×
+            </button>
+          </div>
+        ) : null}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <section className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/40">
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2 mb-5">
-              <FolderPlus className="text-[var(--primary-color,#2563eb)]" size={22} />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <section className="card-avenue p-6 md:p-8">
+            <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-900">
+              <FolderPlus className="text-blue-600" size={22} aria-hidden />
               פרויקט חדש
-            </h3>
+            </h2>
             <form
               action={(fd) => {
                 setMsg(null);
@@ -203,7 +215,7 @@ export default function CrmClient({
                 name="name"
                 required
                 placeholder="שם פרויקט / עסק"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-[var(--primary-color,#2563eb)] focus:ring-2 focus:ring-blue-100 outline-none transition-shadow"
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition-shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -231,12 +243,8 @@ export default function CrmClient({
                 <input type="checkbox" name="isActive" value="on" defaultChecked className="rounded border-slate-300" />
                 פרויקט פעיל (ארכיון אם לא מסומן)
               </label>
-              <button
-                type="submit"
-                disabled={pending}
-                className="rounded-2xl bg-blue-600 text-white px-6 py-3 font-black hover:bg-blue-700 disabled:opacity-50 shadow-md transition-all"
-              >
-                {pending ? "..." : "הוסף פרויקט"}
+              <button type="submit" disabled={pending} className="btn-primary disabled:opacity-50">
+                {pending ? "…" : "הוסף פרויקט"}
               </button>
             </form>
 
@@ -247,26 +255,23 @@ export default function CrmClient({
                   <li
                     key={p.id}
                     className={`flex flex-wrap justify-between gap-2 rounded-xl px-3 py-2 ${
-                      p.isActive ? "bg-slate-50 border border-slate-100" : "bg-amber-50/90 border border-amber-100 text-slate-700"
+                      p.isActive ? "bg-slate-50 border border-slate-100" : "bg-blue-50/90 border border-blue-100 text-slate-700"
                     }`}
                   >
                     <span className="font-bold">{p.name}</span>
                     <span className="text-slate-500">{formatRange(p.activeFrom, p.activeTo)}</span>
-                    {!p.isActive ? <span className="text-amber-900 font-black">ארכיון</span> : null}
+                    {!p.isActive ? <span className="text-blue-800 font-black">ארכיון</span> : null}
                   </li>
                 ))}
               </ul>
             </div>
           </section>
 
-          <section
-            id="crm-new-contact"
-            className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/40 scroll-mt-24"
-          >
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2 mb-5">
-              <UserPlus className="text-[var(--primary-color,#2563eb)]" size={22} />
+          <section id="crm-new-contact" className="card-avenue scroll-mt-24 p-6 md:p-8">
+            <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-900">
+              <UserPlus className="text-blue-600" size={22} aria-hidden />
               לקוח חדש
-            </h3>
+            </h2>
             <label className="flex items-center gap-2 text-xs font-bold text-slate-600 mb-4">
               <input
                 type="checkbox"
@@ -290,13 +295,13 @@ export default function CrmClient({
                 name="name"
                 required
                 placeholder="שם לקוח / חברה"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-[var(--primary-color,#2563eb)] focus:ring-2 focus:ring-blue-100 outline-none"
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
               <input
                 name="email"
                 type="email"
                 placeholder="אימייל (אופציונלי)"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-[var(--primary-color,#2563eb)] focus:ring-2 focus:ring-blue-100 outline-none"
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
               <div className="flex flex-col sm:flex-row gap-3">
                 <select
@@ -322,23 +327,22 @@ export default function CrmClient({
                   ))}
                 </select>
               </div>
-              <button
-                type="submit"
-                disabled={pending}
-                className="w-full sm:w-auto rounded-2xl bg-gradient-to-l from-blue-600 to-indigo-600 text-white px-8 py-3 font-black hover:opacity-95 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-              >
-                <Plus size={18} /> הוסף לקוח
+              <button type="submit" disabled={pending} className="btn-primary w-full justify-center sm:w-auto">
+                <Plus size={18} aria-hidden />
+                הוסף לקוח
               </button>
             </form>
           </section>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-200/40">
-          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-            <h3 className="text-sm font-black text-slate-500 uppercase tracking-wider">אנשי קשר</h3>
+        <div className="card-avenue overflow-hidden">
+          <div className="border-b border-slate-100 bg-blue-50/50 px-6 py-4">
+            <h2 className="text-sm font-black uppercase tracking-wider text-blue-900">אנשי קשר</h2>
+            <p className="mt-0.5 text-xs text-slate-500">הצעות מחיר, חתימה ועריכה מהירה</p>
           </div>
-          <table className="w-full text-right">
-            <thead className="bg-slate-50/80 text-slate-500 text-xs font-black uppercase tracking-wide">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-start">
+            <thead className="bg-slate-50 text-xs font-black uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="p-4 font-semibold">שם</th>
                 <th className="p-4 font-semibold">פרויקט + טווח</th>
@@ -408,9 +412,10 @@ export default function CrmClient({
                               setMsg(r.ok ? "✓ עודכן" : r.error || "שגיאה");
                             });
                           }}
-                          className="inline-flex items-center gap-1 text-blue-600 text-sm font-bold hover:underline"
+                          className="btn-ghost gap-1 py-1.5 text-xs text-blue-700"
                         >
-                          <Edit3 size={14} /> ערוך
+                          <Edit3 size={14} aria-hidden />
+                          ערוך
                         </button>
                         <button
                           type="button"
@@ -421,9 +426,10 @@ export default function CrmClient({
                               setMsg(r.ok ? "✓ נמחק" : r.error || "שגיאה");
                             });
                           }}
-                          className="inline-flex items-center gap-1 text-red-600 text-sm font-bold hover:underline"
+                          className="inline-flex items-center gap-1 rounded-xl py-1.5 ps-2 pe-2 text-xs font-bold text-rose-700 hover:bg-rose-50"
                         >
-                          <Trash2 size={14} /> מחק
+                          <Trash2 size={14} aria-hidden />
+                          מחק
                         </button>
                       </div>
                     </td>
@@ -432,29 +438,45 @@ export default function CrmClient({
               })}
             </tbody>
           </table>
-          {filteredContacts.length === 0 && (
-            <p className="p-12 text-center text-slate-500 font-medium">
-              {contactMonthFilter
-                ? "אין לקוחות בחודש שנבחר — נסו מסנן אחר."
-                : "אין לקוחות עדיין — השתמש בטופס \"לקוח חדש\" למעלה."}
-            </p>
-          )}
+          </div>
+          {filteredContacts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-4 px-6 py-14 text-center">
+              <UserPlus className="text-slate-200" size={40} strokeWidth={1.25} aria-hidden />
+              <div>
+                <p className="font-bold text-slate-700">
+                  {contactMonthFilter
+                    ? "אין לקוחות בחודש שנבחר"
+                    : "אין לקוחות עדיין"}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {contactMonthFilter
+                    ? "נסו מסנן אחר או נקו את המסנן."
+                    : "השתמשו בטופס „לקוח חדש” למעלה."}
+                </p>
+              </div>
+              {!contactMonthFilter ? (
+                <a href="#crm-new-contact" className="btn-primary text-sm">
+                  הוספת לקוח
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
 
       {organizations.length > 0 && (
-        <section className="mt-12 space-y-4" dir="rtl">
+        <section className="mt-12 space-y-4" dir={dir}>
           <div className="flex flex-wrap items-end justify-between gap-4 px-1">
             <div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <LayoutGrid className="text-[var(--primary-color,#2563eb)]" size={22} />
+              <h2 className="flex items-center gap-2 text-xl font-black italic tracking-tight text-slate-900">
+                <LayoutGrid className="text-blue-600" size={22} aria-hidden />
                 כל הארגונים במערכת
               </h2>
-              <p className="text-sm text-slate-500 font-medium mt-1">
+              <p className="mt-1 text-sm font-medium text-slate-500">
                 תוכנית, חשבוניות, סיכום AI (Gemini) וניהול ארגון — הרשאת בעלים
               </p>
             </div>
-            <span className="text-xs font-black bg-amber-100 text-amber-900 px-4 py-2 rounded-full border border-amber-200/80">
+            <span className="text-xs font-black bg-blue-100 text-blue-800 px-4 py-2 rounded-full border border-blue-200/80">
               הרשאת בעלים
             </span>
           </div>

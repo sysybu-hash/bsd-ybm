@@ -9,15 +9,18 @@ const WHATSAPP_HREF =
   "https://wa.me/972525640021?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A0%D7%99%20%D7%A4%D7%95%D7%A0%D7%94%20%D7%9E%D7%91%D7%A8%D7%A7%20%D7%99%D7%91%D7%9D";
 
 export default function ContactPageClient() {
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
 
   return (
     <MarketingPublicShell title={t("contactPage.title")}>
-      <p className="mb-8 text-lg text-slate-600 leading-relaxed">{t("contactPage.intro")}</p>
+      <p className="mb-8 text-lg leading-relaxed text-slate-600">{t("contactPage.intro")}</p>
 
-      <ul className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 text-slate-800 shadow-lg shadow-slate-200/40">
+      <ul
+        className="card-avenue space-y-5 bg-white p-6 text-slate-800 shadow-lg shadow-slate-200/40"
+        dir={dir}
+      >
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
             {t("contactPage.addressLabel")}
           </span>
           <span className="mt-1 block text-base font-medium text-slate-900">
@@ -25,7 +28,7 @@ export default function ContactPageClient() {
           </span>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
             {t("contactPage.phoneLabel")}
           </span>
           <a
@@ -36,7 +39,7 @@ export default function ContactPageClient() {
           </a>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-amber-800/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
             {t("contactPage.emailLabel")}
           </span>
           <a

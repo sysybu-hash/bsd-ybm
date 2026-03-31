@@ -118,7 +118,7 @@ export default function SignClient({
 
         {msg && (
           <p
-            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-emerald-700" : "text-amber-700"}`}
+            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-emerald-700" : "text-blue-700"}`}
           >
             {msg}
           </p>

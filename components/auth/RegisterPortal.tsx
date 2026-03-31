@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Building2, Loader2, UserPlus, Users, Sparkles, Mail } from "lucide-react";
+import { Building2, Loader2, UserPlus, Users, Sparkles, Mail, ArrowLeft } from "lucide-react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import AuthProfessionalCard from "@/components/auth/AuthProfessionalCard";
 
 const ORG_TYPES = [
   { value: "HOME", label: "משק בית" },
-  { value: "FREELANCER", label: "עצמאי" },
+  { value: "FREELANCER", label: "עצמאי / עוסק" },
   { value: "COMPANY", label: "חברה" },
-  { value: "ENTERPRISE", label: "ארגון" },
+  { value: "ENTERPRISE", label: "ארגון / תאגיד" },
 ];
 
 const ROLE_LABELS: Record<string, string> = {
@@ -77,14 +77,14 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
     <div
       className={`flex h-14 w-14 items-center justify-center rounded-2xl ring-2 shadow-inner ${
         isOrgTeam
-          ? "bg-gradient-to-br from-teal-100 to-emerald-50 ring-teal-200/70 shadow-teal-900/5"
-          : "bg-gradient-to-br from-amber-100 to-orange-50 ring-amber-200/60 shadow-amber-900/5"
+          ? "bg-teal-50 ring-teal-200/70 shadow-teal-900/5"
+          : "bg-blue-50 ring-blue-200/60 shadow-blue-900/5"
       }`}
     >
       {isOrgTeam ? (
-        <Users className="h-7 w-7 text-teal-700" aria-hidden />
+        <Users className="h-7 w-7 text-teal-600" aria-hidden />
       ) : (
-        <UserPlus className="h-7 w-7 text-amber-700" aria-hidden />
+        <UserPlus className="h-7 w-7 text-blue-600" aria-hidden />
       )}
     </div>
   );
@@ -97,8 +97,11 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
         ? `הוזמנתם ל־${preview.orgName} בתפקיד ${ROLE_LABELS[preview.role] ?? preview.role}. האימייל חייב להתאים להזמנה.`
         : previewErr || "לא ניתן לטעון את פרטי ההזמנה."
     : isNewOrgInvite
-      ? "הוזמנתם לרמת מנוי — ייווצר ארגון חדש ואתם תהיו מנהליו. האימייל חייב להתאים להזמנה."
+      ? "הוזמנתם לרמת מנוי — ייווצר ארגון חדש ואתם תהיו מנהליו."
       : "מלאו פרטים — מנהל המערכת יאשר את המנוי. לאחר האישור תתאפשר כניסה עם Google או סיסמה.";
+
+  const inputClass =
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition read-only:bg-slate-50 read-only:text-slate-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15";
 
   return (
     <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
@@ -108,34 +111,38 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
         transition={{ duration: 0.35, ease: "easeOut" }}
         className="flex w-full max-w-6xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16"
       >
+        {/* פאנל שמאל — תיאור */}
         <section className="order-2 max-w-md text-center lg:order-1 lg:text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-orange-50/90 px-3 py-1 text-xs font-bold text-orange-950 shadow-sm">
-            <Mail className="h-3.5 w-3.5 text-orange-600" aria-hidden />
+          <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800 shadow-sm">
+            <Mail className="h-3.5 w-3.5 text-blue-500" aria-hidden />
             הצטרפות לפלטפורמה
           </p>
           <h2 className="mt-4 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-3xl">
             הרשמה מבוקרת
             <br />
-            <span className="bg-gradient-to-l from-amber-700 to-orange-600 bg-clip-text text-transparent">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "linear-gradient(90deg, var(--primary-color, #2563eb), #4f46e5)" }}
+            >
               ואישור מנוי
             </span>
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-            כל בקשה נבדקת לפני הפעלה. קישורי הזמנה (ארגון או צוות) מזרזים את התהליך ומגדירים את התפקיד שלכם
-            מראש.
+            כל בקשה נבדקת לפני הפעלה. קישורי הזמנה (ארגון או צוות) מזרזים את התהליך ומגדירים את התפקיד שלכם מראש.
           </p>
-          <ul className="mt-6 hidden space-y-2.5 text-start text-sm text-slate-500 sm:block">
-            <li className="flex items-start gap-2">
-              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <ul className="mt-6 hidden space-y-3 text-start text-sm text-slate-500 sm:block">
+            <li className="flex items-start gap-2.5">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
               אינטגרציה עם Google לאחר אישור חשבון
             </li>
-            <li className="flex items-start gap-2">
-              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+            <li className="flex items-start gap-2.5">
+              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
               CRM · ERP · מרכז AI — לפי רמת המנוי
             </li>
           </ul>
         </section>
 
+        {/* פאנל ימין — טופס */}
         <div className="order-1 w-full lg:order-2 lg:flex lg:justify-end">
           <AuthProfessionalCard icon={iconSlot} title={title} subtitle={typeof subtitle === "string" ? subtitle : ""}>
             {!previewErr && (isOrgTeam ? preview && !previewLoading : true) ? (
@@ -164,9 +171,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                     if (!res.ok) {
                       setErr(typeof data.error === "string" ? data.error : "שגיאה");
                     } else {
-                      setMsg(
-                        typeof data.message === "string" ? data.message : "הבקשה נקלטה בהצלחה.",
-                      );
+                      setMsg(typeof data.message === "string" ? data.message : "הבקשה נקלטה בהצלחה.");
                       (e.target as HTMLFormElement).reset();
                     }
                   } catch {
@@ -184,36 +189,25 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                     required
                     readOnly={isOrgTeam && !!preview?.emailHint}
                     defaultValue={preview?.emailHint ?? ""}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition read-only:bg-slate-50 read-only:text-slate-700 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
+                    className={inputClass}
                   />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-bold text-slate-600">שם מלא</label>
-                  <input
-                    name="name"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-                  />
+                  <input name="name" className={inputClass} />
                 </div>
                 {showOrgFields ? (
                   <>
                     <div>
                       <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-slate-600">
-                        <Building2 size={14} className="text-amber-600" aria-hidden />
+                        <Building2 size={14} className="text-blue-500" aria-hidden />
                         שם ארגון / עסק
                       </label>
-                      <input
-                        name="organizationName"
-                        required
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-                      />
+                      <input name="organizationName" required className={inputClass} />
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-xs font-bold text-slate-600">סוג</label>
-                      <select
-                        name="orgType"
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20"
-                        defaultValue="COMPANY"
-                      >
+                      <label className="mb-1.5 block text-xs font-bold text-slate-600">סוג ישות</label>
+                      <select name="orgType" className={inputClass} defaultValue="COMPANY">
                         {ORG_TYPES.map((t) => (
                           <option key={t.value} value={t.value}>
                             {t.label}
@@ -226,11 +220,12 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                 <button
                   type="submit"
                   disabled={loading || (isOrgTeam && (!preview || !!previewErr))}
-                  className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black text-white shadow-lg transition disabled:opacity-60 ${
+                  className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black text-white shadow-lg transition hover:opacity-90 disabled:opacity-60 ${
                     isOrgTeam
-                      ? "bg-gradient-to-l from-teal-600 to-emerald-600 shadow-teal-500/20 hover:from-teal-500 hover:to-emerald-500"
-                      : "bg-gradient-to-l from-amber-600 to-orange-600 shadow-orange-500/25 hover:from-amber-500 hover:to-orange-500"
+                      ? "bg-gradient-to-l from-teal-600 to-emerald-500 shadow-teal-500/20"
+                      : ""
                   }`}
+                  style={!isOrgTeam ? { backgroundColor: "var(--primary-color, #2563eb)" } : {}}
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : null}
                   {isOrgTeam ? "השלמת הצטרפות לצוות" : isNewOrgInvite ? "השלמת הרשמה" : "שליחת בקשת הרשמה"}
@@ -243,6 +238,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                 {err}
               </p>
             ) : null}
+
             {msg ? (
               <div className="mt-6 space-y-3">
                 <p className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-center text-sm font-medium text-emerald-900">
@@ -250,7 +246,8 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                 </p>
                 <Link
                   href="/login?registered=1"
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-amber-600 to-orange-600 py-3.5 text-sm font-black text-white shadow-lg shadow-orange-500/25 hover:from-amber-500 hover:to-orange-500"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black text-white shadow-lg hover:opacity-90"
+                  style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
                 >
                   {isOrgTeam || isNewOrgInvite ? "מעבר לכניסה" : "המשך לכניסה (לאחר אישור)"}
                 </Link>
@@ -259,8 +256,9 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
 
             <Link
               href="/login"
-              className="mt-8 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 transition hover:text-amber-800"
+              className="mt-8 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 transition hover:text-slate-800"
             >
+              <ArrowLeft size={15} aria-hidden />
               כבר רשומים? כניסה למערכת
             </Link>
           </AuthProfessionalCard>

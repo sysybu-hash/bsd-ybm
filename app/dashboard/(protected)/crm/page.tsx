@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
 import { isAdmin } from "@/lib/is-admin";
-import { hasMeckanoAccess } from "@/lib/meckano-access";
 import CrmClient from "./CrmClient";
 import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
 import { dedupeOrganizationsForCrmDisplay } from "./dedupe-organizations";
@@ -32,9 +31,8 @@ export default async function CRMPage() {
   }
 
   const platformDev = isAdmin(email);
-  const meckanoOp = hasMeckanoAccess(session.user.email);
 
-  if (!platformDev && !meckanoOp) {
+  if (!platformDev) {
     redirect("/dashboard");
   }
 
@@ -44,61 +42,48 @@ export default async function CRMPage() {
   let contacts: Loaded["contacts"] = [];
   let projects: Loaded["projects"] = [];
 
-  if (platformDev) {
-    const userId = session.user.id;
-    const [dbUser, organizationsRaw] = await Promise.all([
-      prisma.user.findUnique({
-        where: { id: userId },
-        select: { organizationId: true },
-      }),
-      prisma.organization.findMany({
-        select: {
-          id: true,
-          name: true,
-          subscriptionTier: true,
-          createdAt: true,
-          users: {
-            take: 1,
-            orderBy: { createdAt: "asc" },
-            select: { email: true },
-          },
+  const userId = session.user.id;
+  const [dbUser, organizationsRaw] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { organizationId: true },
+    }),
+    prisma.organization.findMany({
+      select: {
+        id: true,
+        name: true,
+        subscriptionTier: true,
+        createdAt: true,
+        users: {
+          take: 1,
+          orderBy: { createdAt: "asc" },
+          select: { email: true },
         },
-        orderBy: { createdAt: "desc" },
-      }),
-    ]);
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
-    orgId = dbUser?.organizationId ?? null;
-    const orgIds = organizationsRaw.map((o) => o.id);
-    const invoiceSums =
-      orgIds.length > 0
-        ? await prisma.invoice.groupBy({
-            by: ["organizationId"],
-            where: { organizationId: { in: orgIds } },
-            _sum: { amount: true },
-          })
-        : [];
-    const totalByOrgId = new Map(
-      invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
-    );
+  orgId = dbUser?.organizationId ?? null;
+  const orgIds = organizationsRaw.map((o) => o.id);
+  const invoiceSums =
+    orgIds.length > 0
+      ? await prisma.invoice.groupBy({
+          by: ["organizationId"],
+          where: { organizationId: { in: orgIds } },
+          _sum: { amount: true },
+        })
+      : [];
+  const totalByOrgId = new Map(
+    invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
+  );
 
-    organizations = dedupeOrganizationsForCrmDisplay(
-      organizationsRaw,
-      totalByOrgId,
-    );
+  organizations = dedupeOrganizationsForCrmDisplay(organizationsRaw, totalByOrgId);
 
-    if (orgId) {
-      const loaded = await loadContactsProjects(orgId);
-      contacts = loaded.contacts;
-      projects = loaded.projects;
-    }
-  } else {
-    orgId = session.user.organizationId ?? null;
-    if (orgId) {
-      const loaded = await loadContactsProjects(orgId);
-      contacts = loaded.contacts;
-      projects = loaded.projects;
-    }
-    organizations = [];
+  if (orgId) {
+    const loaded = await loadContactsProjects(orgId);
+    contacts = loaded.contacts;
+    projects = loaded.projects;
   }
 
   const hasOrganization = Boolean(orgId);

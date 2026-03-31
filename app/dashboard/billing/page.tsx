@@ -338,7 +338,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
             </span>
             {" — "}
             כל ערכי החשבון, המנויים והאינטגרציות במקום אחד:{" "}
-            <a href="/dashboard/settings" className="font-bold text-amber-800 underline decoration-amber-300/80 underline-offset-2 hover:text-amber-950">
+            <a href="/dashboard/settings" className="font-bold text-blue-700 underline decoration-blue-300/80 underline-offset-2 hover:text-blue-900">
               הגדרות
             </a>
             .

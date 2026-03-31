@@ -11,7 +11,7 @@ const sectors = [
   { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-blue-50" },
   { title: "עוסק מורשה", desc: "הנהלת חשבונות חכמה, ניהול לקוחות (CRM) ודיווחים מהירים.", icon: Shield, color: "bg-emerald-50" },
   { title: "חברה", desc: "שליטה במלאי, ניהול צוותים, ERP תפעולי ודוחות רווח והפסד.", icon: Briefcase, color: "bg-purple-50" },
-  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-amber-50" },
+  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-blue-50" },
 ];
 
 const plans = [
@@ -155,7 +155,7 @@ export default function LandingMarketing() {
                 } relative`}
               >
                 {plan.level === "Premium" && (
-                  <div className="absolute top-6 start-6 text-yellow-500 p-2 bg-yellow-400/15 rounded-full animate-pulse">
+                  <div className="absolute top-6 start-6 text-blue-500 p-2 bg-blue-400/15 rounded-full animate-pulse">
                     <Star size={18} fill="currentColor" />
                   </div>
                 )}

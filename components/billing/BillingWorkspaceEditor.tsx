@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ClipboardList, Save, Plus, Trash2 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import { saveBillingWorkspaceAction } from "@/app/actions/billing-workspace";
 import type { BillingWorkspaceV1, InsuranceExpenseLine } from "@/lib/billing-workspace";
 import { sumInsuranceLines } from "@/lib/billing-workspace";
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export default function BillingWorkspaceEditor({ initial }: Props) {
+  const { dir } = useI18n();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [lines, setLines] = useState<InsuranceExpenseLine[]>(
@@ -64,10 +66,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
   };
 
   return (
-    <section
-      className="rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/30"
-      dir="rtl"
-    >
+    <section className="card-avenue bg-white p-6 shadow-xl shadow-slate-200/30 md:p-8" dir={dir}>
       <div className="flex items-center gap-3 mb-6">
         <div className="rounded-xl bg-blue-50 p-2.5 text-blue-700 border border-blue-100">
           <ClipboardList size={22} aria-hidden />
@@ -119,7 +118,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
                 <button
                   type="button"
                   onClick={() => removeLine(i)}
-                  className="p-2 rounded-xl text-red-600 hover:bg-red-50"
+                  className="rounded-xl p-2 text-rose-600 hover:bg-rose-50"
                   aria-label="מחק שורה"
                 >
                   <Trash2 size={18} />
@@ -184,13 +183,13 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
           type="button"
           disabled={pending}
           onClick={save}
-          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 text-white px-6 py-3 text-sm font-black hover:bg-blue-700 disabled:opacity-50 shadow-md shadow-blue-600/15"
+          className="btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm disabled:opacity-50"
         >
           <Save size={18} aria-hidden />
           {pending ? "שומר…" : "שמור הכל"}
         </button>
         {msg ? (
-          <span className={`text-sm font-bold ${msg.startsWith("✓") ? "text-emerald-700" : "text-red-600"}`}>
+          <span className={`text-sm font-bold ${msg.startsWith("✓") ? "text-emerald-700" : "text-rose-700"}`}>
             {msg}
           </span>
         ) : null}

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
-import { listMeckanoOperatorEmails } from "@/lib/meckano-access";
+import { steelPlatformOwnerEmail } from "@/lib/is-admin";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://bsd-ybm.co.il";
 const TAGLINE = "BSD-YBM - השדרה שמחברת בין כולם";
@@ -202,13 +202,12 @@ export async function sendAccessApprovedEmail(toEmail: string): Promise<void> {
   }
 }
 
-/** התראה למנהלי מקאנו (רשימת ההרשאה) — נושא לפי מפרט */
+/** התראה לבעל הפלטפורמה כשאושרה גישה למשתמש חדש */
 export async function sendAccessApprovedAdminNotify(
   approvedUserEmail: string,
   approvedUserName: string | null,
 ): Promise<void> {
-  const admins = listMeckanoOperatorEmails();
-  if (admins.length === 0) return;
+  const admins = [steelPlatformOwnerEmail()];
 
   const who = approvedUserName?.trim()
     ? `${approvedUserName.trim()} (${approvedUserEmail})`
@@ -233,7 +232,6 @@ export async function sendAccessApprovedAdminNotify(
   }
 }
 
-/** מייל הפעלה למפעילי מקאנו בכניסה ראשונה (נושא לפי מפרט מוצר) */
 /** אישור תשלום מנוי אחרי PayPal (מעוצב עם מיתוג BSD-YBM) */
 export async function sendPayPalSubscriptionConfirmationEmail(
   toEmail: string,
@@ -362,24 +360,3 @@ export async function sendSubscriptionTierInvitationEmail(
   return { ok: true };
 }
 
-export async function sendMeckanoOperatorLoginWelcomeEmail(toEmail: string): Promise<void> {
-  const inner = `
-    <h1 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#f8fafc;text-align:center;">ברוכים הבאים ל־BSD-YBM</h1>
-    <p style="margin:0;color:#e2e8f0;font-size:15px;text-align:center;line-height:1.7;">
-      שלום, הגישה שלך למערכת הניהול BSD-YBM הופעלה בהצלחה. כעת ניתן לגשת ל-ERP, ל-Billing ולניהול הארגוני בכתובת
-      <a href="https://bsd-ybm.co.il" style="color:#60a5fa;font-weight:700;">https://bsd-ybm.co.il</a>.
-    </p>
-    <p style="text-align:center;margin:28px 0 0;">
-      <a href="https://bsd-ybm.co.il/login" style="display:inline-block;background:#2563eb;color:#fff;font-weight:800;padding:14px 28px;border-radius:12px;text-decoration:none;">
-        כניסה למערכת
-      </a>
-    </p>`;
-  const r = await sendTransactionalEmail(
-    toEmail.trim().toLowerCase(),
-    "ברוכים הבאים ל-BSD-YBM: הגישה למערכת אושרה",
-    inner,
-  );
-  if (!r.ok) {
-    console.warn("sendMeckanoOperatorLoginWelcomeEmail:", r.error);
-  }
-}

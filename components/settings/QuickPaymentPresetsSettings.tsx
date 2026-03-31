@@ -60,7 +60,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
 
       <div className="space-y-3 mb-4">
         {presets.length === 0 ? (
-          <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+          <p className="text-sm text-blue-700 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
             אין כפתורים — בדף החיוב יוצגו רק &quot;מנוי חודשי&quot; ו&quot;סכום מותאם&quot;. לחצו &quot;שחזר ברירת מחדל&quot; או
             &quot;שורה נוספת&quot;.
           </p>
