@@ -3,14 +3,18 @@
 import { useEffect } from "react";
 
 const DEFAULT_COLOR = "#2563eb";
+const APPROVED_COLORS = new Set([
+  "#2563eb", "#10b981", "#7c3aed", "#0891b2", "#dc2626",
+]);
 
 /** מסנכרן --primary-color מ-localStorage (דפי נחיתה ללא תפריט נגישות) */
 export default function Themer() {
   useEffect(() => {
     const applyTheme = (raw: string | null | undefined) => {
-      const color = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string) : DEFAULT_COLOR;
+      const hex = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string).toLowerCase() : "";
+      const color = APPROVED_COLORS.has(hex) ? hex : DEFAULT_COLOR;
       document.documentElement.style.setProperty("--primary-color", color);
-      document.documentElement.style.setProperty("--heading-color", color);
+      // --heading-color stays dark slate always (#1e293b) — not affected by user color choice
     };
 
     const readAndApply = () => {

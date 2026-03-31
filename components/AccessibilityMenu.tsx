@@ -17,8 +17,12 @@ const FONT_KEY = "bsd-font-large";
 const CONTRAST_KEY = "bsd-high-contrast";
 const DEFAULT_COLOR = "#2563eb";
 
+// רק צבעים שקיימים בפלטה המאושרת
+const APPROVED_COLORS = new Set(colors.map((c) => c.value.toLowerCase()));
+
 function normalizeHex(raw: string | null | undefined): string {
-  return /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string) : DEFAULT_COLOR;
+  const hex = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string).toLowerCase() : "";
+  return APPROVED_COLORS.has(hex) ? hex : DEFAULT_COLOR;
 }
 
 type Props = {
@@ -40,7 +44,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
     const color = normalizeHex(saved);
     setActiveColor(color);
     document.documentElement.style.setProperty("--primary-color", color);
-    document.documentElement.style.setProperty("--heading-color", color);
+
 
     setFontLarge(localStorage.getItem(FONT_KEY) === "1");
     setHighContrast(localStorage.getItem(CONTRAST_KEY) === "1");
@@ -59,7 +63,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
   const updateColor = (color: string) => {
     setActiveColor(color);
     document.documentElement.style.setProperty("--primary-color", color);
-    document.documentElement.style.setProperty("--heading-color", color);
+
     localStorage.setItem("bsd-theme-color", color);
     localStorage.setItem("user-theme-color", color);
     window.dispatchEvent(new Event("bsd-theme-change"));

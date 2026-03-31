@@ -140,14 +140,14 @@
   }
 }
 
-/* צבע כותרות גלובלי — מתעדכן יחד עם בחירת צבע נושא */
+/* כותרות — צבע ברירת מחדל כהה. כיתות Tailwind text-* מחליפות זאת כרגיל */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  color: var(--heading-color, var(--primary-color, #3b82f6)) !important;
+  color: #1e293b;
 }
 
 /* RTL Support */
