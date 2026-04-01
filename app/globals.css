@@ -428,7 +428,7 @@ html.high-contrast { filter: contrast(1.15) saturate(1.1); }
    AUTH PAGE
 ───────────────────────────────────────── */
 .auth-input {
-  @apply w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-blue-400 focus:bg-white focus:ring-3 focus:ring-blue-100/70;
+  @apply w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100/70;
 }
 
 /* ─────────────────────────────────────────
