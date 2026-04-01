@@ -228,7 +228,21 @@ export const authOptions: NextAuthOptions = {
 
       token.id = dbUser.id;
       token.organizationId = dbUser.organizationId;
-      token.role = jwtRoleForSession(email, dbUser.role);
+
+      /**
+       * הגנה כפולה: אם משתמש שאינו Steel Admin קיבל SUPER_ADMIN ב-DB (באג עבר) —
+       * מתקנים את ה-DB מיד ומורידים ל-ORG_ADMIN כדי שכל שאילתת DB ישירה גם מוגנת.
+       */
+      if (String(dbUser.role) === "SUPER_ADMIN" && !isAdmin(email)) {
+        await prisma.user.update({
+          where: { id: dbUser.id },
+          data: { role: "ORG_ADMIN" },
+        });
+        token.role = "ORG_ADMIN";
+      } else {
+        token.role = jwtRoleForSession(email, dbUser.role);
+      }
+
       if (dbUser.name) token.name = dbUser.name;
       if (dbUser.image) token.picture = dbUser.image;
 
