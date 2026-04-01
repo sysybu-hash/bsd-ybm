@@ -213,29 +213,29 @@ export default function GlobalBillingPageClient({
       : `מבוסס על ${Math.round(VAT_RATE * 100)}% (מורשה / חברה)`;
 
   return (
-    <div className=”space-y-8 text-start” dir={dir}>
+    <div className="space-y-8 text-start" dir={dir}>
 
       {/* ── Page header ── */}
-      <div className=”flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between”>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className=”text-2xl font-black tracking-tight text-slate-900”>מרכז פיננסי</h1>
-          <p className=”mt-0.5 text-sm text-slate-500”>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900">מרכז פיננסי</h1>
+          <p className="mt-0.5 text-sm text-slate-500">
             {organizationName}
-            {taxId ? <span className=”ms-2 text-slate-400”>· ח.פ {taxId}</span> : null}
+            {taxId ? <span className="ms-2 text-slate-400">· ח.פ {taxId}</span> : null}
           </p>
         </div>
-        <div className=”flex flex-wrap gap-2”>
+        <div className="flex flex-wrap gap-2">
           <Link
-            href=”/dashboard/settings?tab=billing”
-            className=”inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50”
+            href="/dashboard/settings?tab=billing"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50"
           >
             הגדרות חשבונאיות
           </Link>
           <button
-            type=”button”
+            type="button"
             onClick={() => setCreateOpen(true)}
-            className=”inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90”
-            style={{ backgroundColor: “var(--primary-color, #2563eb)” }}
+            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+            style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
           >
             <FilePlus size={17} aria-hidden />
             הפקת מסמך
@@ -244,53 +244,53 @@ export default function GlobalBillingPageClient({
       </div>
 
       {/* ── KPI cards ── */}
-      <div className=”grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4”>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { title: “הכנסות ברוטו (חודשי)”, value: formatMoney(stats.monthGross), sub: “סה״כ מסמכים שהונפקו החודש”, color: “text-blue-600”, iconBg: “bg-blue-50”, icon: <TrendingUp size={20} /> },
-          { title: “מע״מ (מסמכים החודש)”, value: formatMoney(stats.monthVat), sub: vatHint, color: “text-violet-600”, iconBg: “bg-violet-50”, icon: <ShieldCheck size={20} /> },
-          { title: “תשלומים בהמתנה”, value: formatMoney(stats.pendingAmount), sub: stats.pendingInvoiceCount > 0 ? `${stats.pendingInvoiceCount} חשבוניות פתוחות` : “אין ממתינות”, color: “text-orange-600”, iconBg: “bg-orange-50”, icon: <History size={20} /> },
-          { title: “שולם החודש (גולמי)”, value: formatMoney(stats.paidMonthGross), sub: “לפני עמלות PayPal”, color: “text-emerald-600”, iconBg: “bg-emerald-50”, icon: <CheckCircle2 size={20} /> },
+          { title: "הכנסות ברוטו (חודשי)", value: formatMoney(stats.monthGross), sub: "סה״כ מסמכים שהונפקו החודש", color: "text-blue-600", iconBg: "bg-blue-50", icon: <TrendingUp size={20} /> },
+          { title: "מע״מ (מסמכים החודש)", value: formatMoney(stats.monthVat), sub: vatHint, color: "text-violet-600", iconBg: "bg-violet-50", icon: <ShieldCheck size={20} /> },
+          { title: "תשלומים בהמתנה", value: formatMoney(stats.pendingAmount), sub: stats.pendingInvoiceCount > 0 ? `${stats.pendingInvoiceCount} חשבוניות פתוחות` : "אין ממתינות", color: "text-orange-600", iconBg: "bg-orange-50", icon: <History size={20} /> },
+          { title: "שולם החודש (גולמי)", value: formatMoney(stats.paidMonthGross), sub: "לפני עמלות PayPal", color: "text-emerald-600", iconBg: "bg-emerald-50", icon: <CheckCircle2 size={20} /> },
         ].map((card, i) => (
-          <div key={i} className=”flex flex-col justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md”>
-            <div className=”mb-4 flex items-center gap-3”>
+          <div key={i} className="flex flex-col justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div className="mb-4 flex items-center gap-3">
               <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${card.iconBg} ${card.color}`}>
                 {card.icon}
               </div>
-              <p className=”text-xs font-bold text-slate-500”>{card.title}</p>
+              <p className="text-xs font-bold text-slate-500">{card.title}</p>
             </div>
-            <p className=”text-2xl font-black text-slate-900”>{card.value}</p>
-            <p className=”mt-1.5 text-xs text-slate-400”>{card.sub}</p>
+            <p className="text-2xl font-black text-slate-900">{card.value}</p>
+            <p className="mt-1.5 text-xs text-slate-400">{card.sub}</p>
           </div>
         ))}
       </div>
 
       <ReportingCenter />
 
-      <div className=”flex justify-end”>
-        <button type=”button” onClick={() => handleExportAccountantCsv()} disabled={exportPending} className=”inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 disabled:opacity-50”>
+      <div className="flex justify-end">
+        <button type="button" onClick={() => handleExportAccountantCsv()} disabled={exportPending} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 disabled:opacity-50">
           <Download size={16} aria-hidden />
-          {exportPending ? “מייצא…” : “ייצוא לרואה חשבון (CSV)”}
+          {exportPending ? "מייצא…" : "ייצוא לרואה חשבון (CSV)"}
         </button>
       </div>
 
       {/* ── Documents table ── */}
-      <div className=”overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm”>
+      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         {/* Table toolbar */}
-        <div className=”flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4”>
-          <div className=”relative”>
-            <Search className=”pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400” size={16} aria-hidden />
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+          <div className="relative">
+            <Search className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} aria-hidden />
             <input
-              type=”search”
+              type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder=”חיפוש לקוח או מסמך...”
-              className=”rounded-xl border border-slate-200 bg-slate-50 py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15”
+              placeholder="חיפוש לקוח או מסמך..."
+              className="rounded-xl border border-slate-200 bg-slate-50 py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
             />
           </div>
-          <div className=”flex gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1”>
-            {([[“all”, “הכל”], [“invoices”, “חשבוניות”], [“receipts”, “קבלות”], [“credits”, “זיכויים”]] as const).map(([key, label]) => (
-              <button key={key} type=”button” onClick={() => setTab(key)}
-                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? “bg-white text-blue-700 shadow-sm” : “text-slate-500 hover:text-slate-800”}`}>
+          <div className="flex gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1">
+            {([["all", "הכל"], ["invoices", "חשבוניות"], ["receipts", "קבלות"], ["credits", "זיכויים"]] as const).map(([key, label]) => (
+              <button key={key} type="button" onClick={() => setTab(key)}
+                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? "bg-white text-blue-700 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>
                 {label}
               </button>
             ))}
@@ -298,29 +298,29 @@ export default function GlobalBillingPageClient({
         </div>
 
         {/* Table */}
-        <div className=”overflow-x-auto”>
-          <table className=”w-full min-w-[680px] text-start”>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[680px] text-start">
             <thead>
-              <tr className=”border-b border-slate-100 bg-slate-50/80”>
-                <th className=”px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400”>סוג / מספר</th>
-                <th className=”px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400”>לקוח</th>
-                <th className=”px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400”>סטטוס</th>
-                <th className=”px-5 py-3 text-end text-[10px] font-bold uppercase tracking-wider text-slate-400”>סכום</th>
-                <th className=”w-20 px-5 py-3” />
+              <tr className="border-b border-slate-100 bg-slate-50/80">
+                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">סוג / מספר</th>
+                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">לקוח</th>
+                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400">סטטוס</th>
+                <th className="px-5 py-3 text-end text-[10px] font-bold uppercase tracking-wider text-slate-400">סכום</th>
+                <th className="w-20 px-5 py-3" />
               </tr>
             </thead>
-            <tbody className=”divide-y divide-slate-50”>
+            <tbody className="divide-y divide-slate-50">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className=”px-5 py-14”>
-                    <div className=”mx-auto flex max-w-sm flex-col items-center gap-3 text-center”>
-                      <div className=”flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600”>
+                  <td colSpan={5} className="px-5 py-14">
+                    <div className="mx-auto flex max-w-sm flex-col items-center gap-3 text-center">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                         <FilePlus size={28} strokeWidth={1.5} />
                       </div>
-                      <p className=”font-bold text-slate-700”>{!hasAnyRows ? “אין עדיין מסמכים” : “אין תוצאות לסינון”}</p>
-                      <p className=”text-sm text-slate-500”>{!hasAnyRows ? “הפיקו מסמך ראשון דרך הכפתור למעלה.” : “נסו חיפוש אחר.”}</p>
+                      <p className="font-bold text-slate-700">{!hasAnyRows ? "אין עדיין מסמכים" : "אין תוצאות לסינון"}</p>
+                      <p className="text-sm text-slate-500">{!hasAnyRows ? "הפיקו מסמך ראשון דרך הכפתור למעלה." : "נסו חיפוש אחר."}</p>
                       {!hasAnyRows ? (
-                        <button type=”button” onClick={() => setCreateOpen(true)} className=”mt-1 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90” style={{ backgroundColor: “var(--primary-color, #2563eb)” }}>
+                        <button type="button" onClick={() => setCreateOpen(true)} className="mt-1 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90" style={{ backgroundColor: "var(--primary-color, #2563eb)" }}>
                           <FilePlus size={15} /> הפקת מסמך
                         </button>
                       ) : null}
@@ -329,76 +329,76 @@ export default function GlobalBillingPageClient({
                 </tr>
               ) : (
                 filtered.map((row) =>
-                  row.kind === “issued” ? (
-                    <tr key={`i-${row.doc.id}`} className=”group transition-colors hover:bg-slate-50/60”>
-                      <td className=”px-5 py-3.5”>
-                        <div className=”flex items-center gap-3”>
-                          <div className=”flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-600”>
+                  row.kind === "issued" ? (
+                    <tr key={`i-${row.doc.id}`} className="group transition-colors hover:bg-slate-50/60">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-600">
                             #{row.doc.number}
                           </div>
                           <div>
-                            <p className=”text-sm font-bold text-slate-900”>{DOC_TYPE_LABEL[row.doc.docType]}</p>
-                            <p className=”text-[10px] font-bold uppercase tracking-wider text-slate-400”>{COMPANY_BADGE[companyType]}</p>
+                            <p className="text-sm font-bold text-slate-900">{DOC_TYPE_LABEL[row.doc.docType]}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{COMPANY_BADGE[companyType]}</p>
                           </div>
                         </div>
                       </td>
-                      <td className=”px-5 py-3.5”>
-                        <p className=”text-sm font-bold text-slate-700”>{row.doc.clientName}</p>
-                        <p className=”text-xs text-slate-400”>{row.doc.dateLabel}</p>
+                      <td className="px-5 py-3.5">
+                        <p className="text-sm font-bold text-slate-700">{row.doc.clientName}</p>
+                        <p className="text-xs text-slate-400">{row.doc.dateLabel}</p>
                       </td>
-                      <td className=”px-5 py-3.5 text-center”>
+                      <td className="px-5 py-3.5 text-center">
                         <span className={`inline-block rounded-lg border px-3 py-1 text-[10px] font-bold ${STATUS_STYLE[row.doc.status]} border-current/20`}>
                           {STATUS_LABEL[row.doc.status]}
                         </span>
                       </td>
-                      <td className=”px-5 py-3.5 text-end font-black text-slate-900”>{formatMoney(row.doc.total)}</td>
-                      <td className=”px-5 py-3.5”>
-                        <div className=”flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100”>
-                          <button type=”button” title=”הדפסה” onClick={() => setPrintRow(row.doc)} className=”rounded-lg border border-slate-100 bg-white p-2 text-slate-500 shadow-sm transition hover:border-blue-300 hover:text-blue-600”>
+                      <td className="px-5 py-3.5 text-end font-black text-slate-900">{formatMoney(row.doc.total)}</td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button type="button" title="הדפסה" onClick={() => setPrintRow(row.doc)} className="rounded-lg border border-slate-100 bg-white p-2 text-slate-500 shadow-sm transition hover:border-blue-300 hover:text-blue-600">
                             <Download size={15} />
                           </button>
-                          <button type=”button” title=”עוד” className=”rounded-lg border border-slate-100 bg-white p-2 text-slate-400 shadow-sm transition hover:bg-slate-100”>
+                          <button type="button" title="עוד" className="rounded-lg border border-slate-100 bg-white p-2 text-slate-400 shadow-sm transition hover:bg-slate-100">
                             <MoreVertical size={15} />
                           </button>
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    <tr key={`p-${row.inv.id}`} className=”group transition-colors hover:bg-slate-50/60”>
-                      <td className=”px-5 py-3.5”>
-                        <div className=”flex items-center gap-3”>
-                          <div className=”flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0070ba]/10 text-xs font-black text-[#0070ba]”>
+                    <tr key={`p-${row.inv.id}`} className="group transition-colors hover:bg-slate-50/60">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0070ba]/10 text-xs font-black text-[#0070ba]">
                             #{row.inv.number}
                           </div>
                           <div>
-                            <p className=”text-sm font-bold text-slate-900”>{row.inv.description}</p>
-                            <p className=”text-[10px] font-bold uppercase tracking-wider text-[#0070ba]”>PayPal</p>
+                            <p className="text-sm font-bold text-slate-900">{row.inv.description}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#0070ba]">PayPal</p>
                           </div>
                         </div>
                       </td>
-                      <td className=”px-5 py-3.5”>
-                        <p className=”text-sm font-bold text-slate-700”>{row.inv.customerName}</p>
-                        <p className=”text-xs text-slate-400”>{row.inv.date}</p>
-                        {row.inv.customerEmail ? <p className=”text-[11px] font-mono text-slate-400” dir=”ltr”>{row.inv.customerEmail}</p> : null}
+                      <td className="px-5 py-3.5">
+                        <p className="text-sm font-bold text-slate-700">{row.inv.customerName}</p>
+                        <p className="text-xs text-slate-400">{row.inv.date}</p>
+                        {row.inv.customerEmail ? <p className="text-[11px] font-mono text-slate-400" dir="ltr">{row.inv.customerEmail}</p> : null}
                       </td>
-                      <td className=”px-5 py-3.5 text-center”>
+                      <td className="px-5 py-3.5 text-center">
                         <span className={`inline-block rounded-lg px-3 py-1 text-[10px] font-bold ${paypalStatusClass(row.inv.status)}`}>
                           {paypalStatusLabel(row.inv.status)}
                         </span>
                       </td>
-                      <td className=”px-5 py-3.5 text-end font-black text-slate-900”>{formatMoney(row.inv.amount)}</td>
-                      <td className=”px-5 py-3.5”>
-                        <div className=”flex flex-col items-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100”>
-                          {row.inv.status !== “PAID” && paypalMeSlug?.trim() ? (
-                            <a href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)} target=”_blank” rel=”noopener noreferrer” className=”inline-flex items-center gap-1 rounded-lg bg-[#0070ba] px-2.5 py-1.5 text-xs font-bold text-white hover:bg-[#005ea6]”>
+                      <td className="px-5 py-3.5 text-end font-black text-slate-900">{formatMoney(row.inv.amount)}</td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col items-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                          {row.inv.status !== "PAID" && paypalMeSlug?.trim() ? (
+                            <a href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-[#0070ba] px-2.5 py-1.5 text-xs font-bold text-white hover:bg-[#005ea6]">
                               <ExternalLink size={12} /> תשלום
                             </a>
                           ) : null}
-                          {row.inv.status !== “PAID” && paypalMerchantEmail?.trim() && !paypalMeSlug?.trim() ? (
-                            <span className=”max-w-[140px] text-right text-[10px] text-slate-500” dir=”ltr”>{paypalMerchantEmail.trim()}</span>
+                          {row.inv.status !== "PAID" && paypalMerchantEmail?.trim() && !paypalMeSlug?.trim() ? (
+                            <span className="max-w-[140px] text-right text-[10px] text-slate-500" dir="ltr">{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
-                            <Link href=”/dashboard/settings?tab=billing” className=”text-[10px] font-bold text-[#0070ba] underline”>הגדרת PayPal</Link>
+                            <Link href="/dashboard/settings?tab=billing" className="text-[10px] font-bold text-[#0070ba] underline">הגדרת PayPal</Link>
                           ) : null}
                         </div>
                       </td>

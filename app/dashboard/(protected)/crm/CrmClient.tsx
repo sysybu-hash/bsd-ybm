@@ -521,7 +521,7 @@ export default function CrmClient({
               <p className="mt-1 text-sm text-slate-500">
                 {contactMonthFilter || searchQuery
                   ? "נסו מסנן אחר או נקו את החיפוש."
-                  : "השתמשו בטופס „לקוח חדש" למעלה."}
+                  : 'השתמשו בטופס "לקוח חדש" למעלה.'}
               </p>
             </div>
             {!contactMonthFilter && !searchQuery ? (
