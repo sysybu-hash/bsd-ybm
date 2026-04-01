@@ -3,57 +3,66 @@ import type { ReactNode } from "react";
 
 type Props = Readonly<{
   children: ReactNode;
-  /** קישור משני בכותרת (למשל הרשמה בדף כניסה) */
   secondaryNav: { href: string; label: string };
 }>;
 
-/** רקע ומסגרת עליונה — כחול-לבן מקצועי */
 export default function AuthPageShell({ children, secondaryNav }: Props) {
   return (
-    <div className="min-h-app relative flex flex-col overflow-x-hidden bg-white text-slate-900" dir="rtl">
-      {/* רקע — נקודות עדינות + גרדיאנט כחול */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
+    <div className="min-h-screen relative flex flex-col overflow-x-hidden bg-slate-950 text-slate-900" dir="rtl">
+
+      {/* Background mesh */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)",
+          }}
+        />
         <div
           className="absolute inset-0"
           style={{
             backgroundImage: `
-              radial-gradient(ellipse 80% 60% at 100% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
-              radial-gradient(ellipse 65% 50% at 0% 100%, rgba(99, 102, 241, 0.06), transparent 50%),
-              radial-gradient(ellipse 45% 35% at 50% 50%, rgba(148, 163, 184, 0.04), transparent 65%)
+              radial-gradient(ellipse 70% 50% at 20% 50%, rgba(37,99,235,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 60% at 80% 20%, rgba(99,102,241,0.12) 0%, transparent 55%)
             `,
           }}
         />
+        {/* Dot grid */}
         <div
-          className="absolute inset-0 opacity-[0.25]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.8' fill='%2394a3b8' fill-opacity='0.2'/%3E%3C/svg%3E")`,
-            backgroundSize: "24px 24px",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1.5' cy='1.5' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E")`,
+            backgroundSize: "30px 30px",
           }}
         />
       </div>
 
-      {/* Header */}
-      <header className="relative z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      {/* Navbar */}
+      <header className="relative z-20 border-b border-white/8">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
           <Link
             href="/"
-            className="group text-xl font-black italic tracking-tighter transition-opacity hover:opacity-85 sm:text-2xl"
-            style={{ color: "var(--primary-color, #2563eb)" }}
+            className="flex items-center gap-2 text-xl font-black italic tracking-tight"
           >
-            BSD-<span className="text-slate-900">YBM</span>
+            <span
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black shadow-lg"
+              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            >B</span>
+            <span style={{ color: "var(--primary-color, #2563eb)" }}>BSD-</span>
+            <span className="text-white">YBM</span>
           </Link>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href={secondaryNav.href}
-              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm transition hover:bg-blue-100 hover:text-blue-900 sm:px-4 sm:text-sm"
-            >
-              {secondaryNav.label}
-            </Link>
+          <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="hidden text-sm font-medium text-slate-500 transition hover:text-slate-900 sm:inline"
+              className="hidden text-sm font-medium text-slate-400 transition hover:text-white sm:inline"
             >
               לאתר
+            </Link>
+            <Link
+              href={secondaryNav.href}
+              className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white backdrop-blur-sm transition hover:bg-white/15"
+            >
+              {secondaryNav.label}
             </Link>
           </div>
         </div>
@@ -65,8 +74,8 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-100 bg-white/70 py-4 text-center text-[11px] text-slate-400 backdrop-blur-sm sm:text-xs">
-        © {new Date().getFullYear()} BSD-YBM · גישה מאובטחת (JWT + OAuth 2.0)
+      <footer className="relative z-10 border-t border-white/6 py-4 text-center text-[11px] text-slate-600">
+        © {new Date().getFullYear()} BSD-YBM · גישה מאובטחת · JWT + OAuth 2.0
       </footer>
     </div>
   );

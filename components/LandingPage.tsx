@@ -3,18 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
-  Zap,
-  Target,
-  BarChart3,
-  ChevronLeft,
-  Bot,
-  Play,
-  Menu,
-  ShieldCheck,
-  FileText,
-  Users,
-  BrainCircuit,
-  CheckCircle2,
+  Zap, Target, BarChart3, ChevronLeft, ChevronRight,
+  Bot, Play, Menu, ShieldCheck, FileText, Users,
+  BrainCircuit, CheckCircle2, ArrowRight, Star,
+  TrendingUp, Globe, Lock, Cpu, Sparkles,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -26,92 +18,110 @@ export default function LandingPage() {
   const { t, dir } = useI18n();
   const [navOpen, setNavOpen] = useState(false);
 
-  const featureCards = useMemo(
-    () => [
-      {
-        title: t("landing.featureCrmTitle"),
-        icon: <Bot size={22} className="text-blue-600" />,
-        desc: t("landing.featureCrmDesc"),
-        bg: "bg-blue-50",
-        border: "border-blue-100",
-        iconBg: "bg-blue-100",
-      },
-      {
-        title: t("landing.featureInvTitle"),
-        icon: <Target size={22} className="text-emerald-600" />,
-        desc: t("landing.featureInvDesc"),
-        bg: "bg-emerald-50/60",
-        border: "border-emerald-100",
-        iconBg: "bg-emerald-100",
-      },
-      {
-        title: t("landing.featureFlowTitle"),
-        icon: <BarChart3 size={22} className="text-indigo-600" />,
-        desc: t("landing.featureFlowDesc"),
-        bg: "bg-indigo-50/60",
-        border: "border-indigo-100",
-        iconBg: "bg-indigo-100",
-      },
-    ],
-    [t],
-  );
+  const featureCards = useMemo(() => [
+    {
+      title: t("landing.featureCrmTitle"),
+      icon: <Users size={22} />,
+      desc: t("landing.featureCrmDesc"),
+      color: "blue",
+      gradient: "from-blue-500 to-blue-600",
+      bg: "bg-blue-50",
+      iconColor: "text-blue-600",
+    },
+    {
+      title: t("landing.featureInvTitle"),
+      icon: <BarChart3 size={22} />,
+      desc: t("landing.featureInvDesc"),
+      color: "emerald",
+      gradient: "from-emerald-500 to-teal-600",
+      bg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+    },
+    {
+      title: t("landing.featureFlowTitle"),
+      icon: <BrainCircuit size={22} />,
+      desc: t("landing.featureFlowDesc"),
+      color: "violet",
+      gradient: "from-violet-500 to-indigo-600",
+      bg: "bg-violet-50",
+      iconColor: "text-violet-600",
+    },
+  ], [t]);
 
-  const trustItems = [
-    { icon: <ShieldCheck size={16} />, text: "אבטחת JWT + OAuth 2.0" },
-    { icon: <FileText size={16} />, text: "Gemini + OpenAI / Claude" },
-    { icon: <Users size={16} />, text: "Multi-Tenant מלא" },
-    { icon: <BrainCircuit size={16} />, text: "AI בזמן אמת" },
+  const stats = [
+    { value: "2,400+", label: "עסקים פעילים" },
+    { value: "98%", label: "שביעות רצון" },
+    { value: "3.2×", label: "גידול ממוצע" },
+    { value: "24/7", label: "AI זמין תמיד" },
   ];
 
+  const trustItems = [
+    { icon: <Lock size={14} />,       text: "JWT + OAuth 2.0" },
+    { icon: <Cpu size={14} />,        text: "Gemini + OpenAI + Claude" },
+    { icon: <Globe size={14} />,      text: "Multi-Tenant מלא" },
+    { icon: <Sparkles size={14} />,   text: "AI בזמן אמת" },
+  ];
+
+  const chevron = dir === "rtl"
+    ? <ChevronLeft size={16} />
+    : <ChevronRight size={16} />;
+
   return (
-    <div
-      className="relative min-h-screen overflow-x-hidden bg-white text-slate-900"
-      dir={dir}
-    >
-      {/* ═══════════════ NAVBAR ═══════════════ */}
+    <div className="relative min-h-screen overflow-x-hidden bg-white text-slate-900" dir={dir}>
+
+      {/* ══════════════════════════════════
+          NAVBAR
+      ══════════════════════════════════ */}
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-          {/* לוגו */}
-          <Link href="/" className="flex items-center gap-1 text-2xl font-black italic tracking-tighter">
-            <span style={{ color: "var(--primary-color, #2563eb)" }}>BSD-</span>
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 text-xl font-black italic tracking-tight">
+            <span
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black shadow"
+              style={{ backgroundColor: "var(--primary-color)" }}
+            >B</span>
+            <span style={{ color: "var(--primary-color)" }}>BSD-</span>
             <span className="text-slate-900">YBM</span>
           </Link>
 
-          {/* ניווט מרכזי — desktop */}
+          {/* Desktop nav */}
           <nav className="hidden items-center gap-6 md:flex">
-            <Link href="#features" className="text-sm font-medium text-slate-600 transition hover:text-blue-700">
-              {t("landing.featureCrmTitle")}
-            </Link>
-            <Link href="#tutorial-videos" className="text-sm font-medium text-slate-600 transition hover:text-blue-700">
-              הדגמות
-            </Link>
-            <Link href="#pricing" className="text-sm font-medium text-slate-600 transition hover:text-blue-700">
-              מחירים
-            </Link>
+            {["#features", "#tutorial-videos", "#pricing"].map((href, i) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600"
+              >
+                {["פתרונות", "הדגמות", "מחירים"][i]}
+              </Link>
+            ))}
           </nav>
 
-          {/* כפתורי פעולה */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {/* Mobile menu */}
             <button
               type="button"
               onClick={() => setNavOpen(true)}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 transition hover:bg-slate-50 md:hidden"
-              aria-label={t("marketingDrawer.openMenu")}
-              aria-expanded={navOpen}
+              className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2.5 text-slate-700 hover:bg-slate-50 transition-colors md:hidden"
+              aria-label="פתח תפריט"
             >
-              <Menu className="h-5 w-5" aria-hidden />
+              <Menu className="h-5 w-5" />
             </button>
+
             <LanguageSwitcher />
+
             <Link
               href="/login"
-              className="hidden text-sm font-bold text-slate-600 transition hover:text-blue-700 sm:inline"
+              className="hidden text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600 sm:inline px-2 py-1.5"
             >
               {t("nav.login")}
             </Link>
+
             <Link
               href="/register"
-              className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-black text-white shadow-sm transition hover:opacity-90"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
+              style={{ backgroundColor: "var(--primary-color)" }}
             >
               {t("landing.registerQuick")} <Zap size={13} />
             </Link>
@@ -121,102 +131,124 @@ export default function LandingPage() {
 
       <LandingNavDrawer open={navOpen} onClose={setNavOpen} />
 
-      {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative overflow-hidden bg-white">
-        {/* גרדיאנט רקע */}
+      {/* ══════════════════════════════════
+          HERO — Dark gradient
+      ══════════════════════════════════ */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1e40af 100%)",
+        }}
+      >
+        {/* Mesh overlay */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `
-              radial-gradient(ellipse 80% 60% at 60% -10%, rgba(37,99,235,0.07) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 50% at 0% 80%, rgba(99,102,241,0.05) 0%, transparent 55%)
+              radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,.4) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(99,102,241,.2) 0%, transparent 50%)
             `,
           }}
           aria-hidden
         />
-        {/* נקודות דקורטיביות */}
+
+        {/* Dot grid */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='22' height='22' viewBox='0 0 22 22' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.8' fill='%2394a3b8'/%3E%3C/svg%3E")`,
-            backgroundSize: "22px 22px",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff'/%3E%3C/svg%3E")`,
+            backgroundSize: "24px 24px",
           }}
           aria-hidden
         />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-40">
-          {/* Badge */}
-          <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-xs font-bold text-blue-700 shadow-sm">
-            <CheckCircle2 size={13} />
-            פלטפורמת ניהול עסקי — Made in Israel
-          </p>
+        <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-44">
 
-          {/* Hero title */}
-          <h1 className="mx-auto max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-7xl">
+          {/* Badge */}
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-blue-200 backdrop-blur-sm">
+            <CheckCircle2 size={13} className="text-blue-300" />
+            פלטפורמת ניהול עסקי מבוססת AI — Made in Israel
+          </div>
+
+          {/* H1 */}
+          <h1 className="mx-auto max-w-4xl text-4xl font-black leading-[1.12] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {t("landing.heroTitle")}
           </h1>
 
           {/* Subtitle */}
-          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-slate-600 sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-blue-100/80 sm:text-xl">
             {t("landing.heroSubtitle")}
           </p>
 
           {/* CTA buttons */}
-          <div className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-base font-black text-white shadow-lg shadow-blue-600/25 transition hover:opacity-90 hover:scale-[1.02]"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-black text-white shadow-xl shadow-blue-900/40 transition-all hover:bg-blue-500 hover:scale-[1.02]"
             >
-              {t("landing.ctaStart")} <ChevronLeft size={18} />
+              {t("landing.ctaStart")} {chevron}
             </Link>
             <Link
               href="#tutorial-videos"
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-8 py-4 text-base font-bold text-slate-800 shadow-sm transition hover:border-blue-200 hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15"
             >
-              <Play size={18} className="text-blue-500" aria-hidden />
+              <Play size={16} className="text-blue-300" />
               {t("landing.tutorialCta")}
-            </Link>
-            <Link
-              href="#features"
-              className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-8 py-4 text-base font-bold text-blue-700 transition hover:bg-blue-100"
-            >
-              {t("landing.ctaDiscover")}
             </Link>
           </div>
 
           {/* Trust strip */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+              <span key={i} className="flex items-center gap-2 text-xs font-semibold text-blue-200/80">
                 <span className="text-blue-400">{item.icon}</span>
                 {item.text}
               </span>
             ))}
           </div>
+
+          {/* Stats bar */}
+          <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-2xl mx-auto">
+            {stats.map((s) => (
+              <div
+                key={s.value}
+                className="rounded-2xl border border-white/10 bg-white/6 p-4 backdrop-blur-sm"
+              >
+                <p className="text-2xl font-black text-white">{s.value}</p>
+                <p className="mt-1 text-xs font-semibold text-blue-200/70">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Bottom fade */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
+          style={{ background: "linear-gradient(to bottom, transparent, #f8fafc)" }}
+          aria-hidden
+        />
       </section>
 
-      {/* ═══════════════ VIDEO TUTORIALS ═══════════════ */}
-      <LandingTutorialSection />
+      {/* ══════════════════════════════════
+          TUTORIAL VIDEOS
+      ══════════════════════════════════ */}
+      <div className="bg-slate-50">
+        <LandingTutorialSection />
+      </div>
 
-      {/* ═══════════════ FEATURES ═══════════════ */}
-      <section
-        id="features"
-        className="bg-slate-50/80 py-20 sm:py-28"
-        dir={dir}
-      >
+      {/* ══════════════════════════════════
+          FEATURES
+      ══════════════════════════════════ */}
+      <section id="features" className="bg-white py-20 sm:py-28" dir={dir}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          {/* כותרת section */}
+
           <div className="mb-14 text-center">
-            <span className="inline-block rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-700">
-              יכולות ליבה
-            </span>
+            <span className="section-badge">יכולות ליבה</span>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
               כל מה שהעסק שלכם צריך
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-slate-500 sm:text-base">
-              מערכת All-in-One המשלבת AI, ניהול לקוחות ותפעול — בממשק אחד
+            <p className="mx-auto mt-4 max-w-xl text-base text-slate-500">
+              מערכת All-in-One המשלבת AI, ניהול לקוחות ותפעול — בממשק אחד חכם
             </p>
           </div>
 
@@ -224,49 +256,82 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <div
                 key={feat.title}
-                className={`rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${feat.bg} ${feat.border}`}
+                className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-slate-200"
               >
-                <div className={`mb-5 inline-flex rounded-2xl p-3 ${feat.iconBg}`}>
-                  {feat.icon}
+                {/* Top gradient bar */}
+                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${feat.gradient} rounded-t-3xl opacity-80`} aria-hidden />
+
+                <div className={`mb-5 inline-flex rounded-2xl p-3.5 ${feat.bg}`}>
+                  <span className={feat.iconColor}>{feat.icon}</span>
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{feat.title}</p>
+
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{feat.title}</p>
                 <h3 className="mt-2 text-xl font-black leading-snug text-slate-900">{feat.desc}</h3>
+
+                <div className={`mt-6 inline-flex items-center gap-1 text-xs font-bold ${feat.iconColor} opacity-0 transition-opacity group-hover:opacity-100`}>
+                  גלה עוד {chevron}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* CTA תחתית */}
           <div className="mt-12 text-center">
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-black text-white shadow-md transition hover:opacity-90"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              className="btn-primary text-base px-8 py-3.5"
             >
-              {t("landing.ctaStart")} <ChevronLeft size={16} />
+              {t("landing.ctaStart")} {chevron}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ PRICING ═══════════════ */}
-      <div dir={dir}>
+      {/* ══════════════════════════════════
+          WHY US — Social proof strip
+      ══════════════════════════════════ */}
+      <section className="bg-slate-900 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {[1,2,3,4,5].map(i => <Star key={i} size={18} className="fill-amber-400 text-amber-400" />)}
+          </div>
+          <p className="text-2xl font-black text-white sm:text-3xl max-w-2xl mx-auto">
+            &ldquo;BSD-YBM שינתה את הדרך שאנחנו מנהלים את העסק — חסכנו 12 שעות בשבוע&rdquo;
+          </p>
+          <p className="mt-4 text-sm font-semibold text-slate-400">יעקב לוי, מנכ&quot;ל פיינטק IL</p>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════
+          PRICING
+      ══════════════════════════════════ */}
+      <div dir={dir} className="bg-slate-50">
         <PricingSection />
       </div>
 
-      {/* ═══════════════ FOOTER ═══════════════ */}
+      {/* ══════════════════════════════════
+          FOOTER
+      ══════════════════════════════════ */}
       <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <Link href="/" className="text-xl font-black italic tracking-tighter" style={{ color: "var(--primary-color, #2563eb)" }}>
-              BSD-<span className="text-slate-900">YBM</span>
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+            <Link href="/" className="flex items-center gap-1.5 text-xl font-black italic tracking-tight">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black" style={{ backgroundColor: "var(--primary-color)" }}>B</span>
+              <span style={{ color: "var(--primary-color)" }}>BSD-</span>
+              <span className="text-slate-900">YBM</span>
             </Link>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-500">
-              <Link href="/about" className="hover:text-slate-800">אודות</Link>
-              <Link href="/contact" className="hover:text-slate-800">צור קשר</Link>
-              <Link href="/legal" className="hover:text-slate-800">משפטי</Link>
-              <Link href="/privacy" className="hover:text-slate-800">פרטיות</Link>
-              <Link href="/terms" className="hover:text-slate-800">תנאים</Link>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-500">
+              {[
+                ["/about",   "אודות"],
+                ["/contact", "צור קשר"],
+                ["/legal",   "משפטי"],
+                ["/privacy", "פרטיות"],
+                ["/terms",   "תנאים"],
+              ].map(([href, label]) => (
+                <Link key={href} href={href} className="hover:text-slate-800 transition-colors">{label}</Link>
+              ))}
             </div>
+
             <p className="text-[11px] text-slate-400">
               © {new Date().getFullYear()} BSD-YBM · {t("landing.footerTagline")}
             </p>

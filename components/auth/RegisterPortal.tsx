@@ -113,31 +113,31 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
       >
         {/* פאנל שמאל — תיאור */}
         <section className="order-2 max-w-md text-center lg:order-1 lg:text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800 shadow-sm">
-            <Mail className="h-3.5 w-3.5 text-blue-500" aria-hidden />
+          <p className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300">
+            <Mail className="h-3.5 w-3.5 text-blue-400" aria-hidden />
             הצטרפות לפלטפורמה
           </p>
-          <h2 className="mt-4 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-3xl">
+          <h2 className="mt-5 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl">
             הרשמה מבוקרת
             <br />
             <span
               className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(90deg, var(--primary-color, #2563eb), #4f46e5)" }}
+              style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #818cf8)" }}
             >
               ואישור מנוי
             </span>
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
             כל בקשה נבדקת לפני הפעלה. קישורי הזמנה (ארגון או צוות) מזרזים את התהליך ומגדירים את התפקיד שלכם מראש.
           </p>
-          <ul className="mt-6 hidden space-y-3 text-start text-sm text-slate-500 sm:block">
-            <li className="flex items-start gap-2.5">
-              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-              אינטגרציה עם Google לאחר אישור חשבון
+          <ul className="mt-8 hidden space-y-4 text-start text-sm sm:block">
+            <li className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
+              <span className="text-slate-300">אינטגרציה עם Google לאחר אישור חשבון</span>
             </li>
-            <li className="flex items-start gap-2.5">
-              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
-              CRM · ERP · מרכז AI — לפי רמת המנוי
+            <li className="flex items-start gap-3">
+              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" />
+              <span className="text-slate-300">CRM · ERP · מרכז AI — לפי רמת המנוי</span>
             </li>
           </ul>
         </section>

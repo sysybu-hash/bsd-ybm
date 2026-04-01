@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* גובה מלא חוצה-דפדפנים (Safari iOS, Chrome, Edge) */
+/* ─────────────────────────────────────────
+   גובה מלא חוצה-דפדפנים
+───────────────────────────────────────── */
 @layer utilities {
   .min-h-app {
     min-height: 100vh;
@@ -11,116 +13,237 @@
   }
 }
 
+/* ─────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────── */
 :root {
-  /* ערכת עיצוב כחול-לבן מקצועי */
   --foreground-rgb: 15, 23, 42;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 248, 250, 252;
+
+  /* Brand */
   --primary-color: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
   --primary-muted: #bfdbfe;
-  --heading-color: #1e293b;
-  --brand-blue: #2563eb;
-  --brand-blue-light: #eff6ff;
-  --brand-slate: #64748b;
-  --brand-slate-light: #f1f5f9;
+  --primary-rgb: 37, 99, 235;
+
+  /* Surface */
   --surface-white: #ffffff;
   --surface-card: #f8fafc;
+  --surface-subtle: #f1f5f9;
+
+  /* Text */
+  --heading-color: #0f172a;
+  --body-color: #334155;
+  --muted-color: #64748b;
+
+  /* Border */
   --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Sidebar (dark) */
+  --sidebar-bg: #0f172a;
+  --sidebar-border: #1e293b;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-active: #f1f5f9;
+  --sidebar-active-bg: rgba(37, 99, 235, 0.15);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+
+  /* Shadow tokens */
+  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.07), 0 1px 2px -1px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 12px -2px rgba(0,0,0,.08), 0 2px 6px -2px rgba(0,0,0,.05);
+  --shadow-lg: 0 10px 30px -6px rgba(0,0,0,.10), 0 4px 10px -4px rgba(0,0,0,.06);
+  --shadow-xl: 0 20px 50px -10px rgba(0,0,0,.12), 0 8px 20px -8px rgba(0,0,0,.07);
+
   color-scheme: light;
 }
 
+/* ─────────────────────────────────────────
+   COMPONENT CLASSES
+───────────────────────────────────────── */
 @layer components {
-  /** כרטיס ראשי — גבול עדין, צל קל */
+
+  /* ── Cards ── */
   .card-avenue {
-    @apply rounded-2xl border border-slate-200/90 bg-white shadow-sm shadow-slate-200/60 ring-1 ring-slate-100/80;
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100/60;
   }
 
-  /** כרטיס עם גבול כחול מבריק */
+  .card-glass {
+    @apply rounded-2xl border border-white/60 bg-white/90 shadow-lg backdrop-blur-xl;
+  }
+
+  .card-elevated {
+    @apply rounded-2xl border border-slate-100 bg-white shadow-md;
+    box-shadow: var(--shadow-md);
+  }
+
   .crystal-border {
     border: 1px solid transparent;
     background:
-      linear-gradient(rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)) padding-box,
-      linear-gradient(135deg, rgba(37, 99, 235, 0.35), rgba(148, 163, 184, 0.45)) border-box;
+      linear-gradient(rgba(255,255,255,0.98), rgba(255,255,255,0.98)) padding-box,
+      linear-gradient(135deg, rgba(37,99,235,.35), rgba(148,163,184,.45)) border-box;
   }
 
   .crystal-hover {
     @apply transition-all duration-300;
   }
-
   .crystal-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 18px 40px rgba(37,99,235,.08);
   }
 
-  /** כפתור ראשי כחול */
+  /* ── Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95 disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--primary-color);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), .3);
   }
 
-  /** כפתור משני גבול כחול */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-bold text-blue-700 transition hover:bg-blue-100 active:scale-95 disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-bold text-blue-700 transition-all duration-200 hover:bg-blue-100 active:scale-95 disabled:opacity-50;
   }
 
-  /** כפתור טקסט */
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition-all duration-200 hover:bg-slate-100 hover:text-slate-900 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 active:scale-95;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition-all duration-200 hover:bg-rose-700 active:scale-95 disabled:opacity-50;
+  }
+
+  /* ── Dashboard Cards ── */
+  .dashboard-card {
+    @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md;
+  }
+
+  .dashboard-card-active {
+    @apply rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-sm ring-1 ring-blue-100;
+  }
+
+  .stat-card {
+    @apply rounded-2xl border border-slate-100 bg-white p-5 shadow-sm;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ── Glass ── */
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-xl;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .glass-card-light {
+    @apply bg-white/98 backdrop-blur-xl border border-slate-200/70 shadow-lg;
+  }
+
+  /* ── Form inputs ── */
+  .input-field {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all duration-200 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-500;
+  }
+
+  .input-label {
+    @apply mb-1.5 block text-sm font-semibold text-slate-700;
+  }
+
+  /* ── Section containers ── */
+  .section-padded {
+    @apply mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24;
+  }
+
+  .section-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-blue-700;
+  }
+
+  /* ── Sidebar nav item ── */
+  .sidebar-nav-item {
+    @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-150;
+    color: var(--sidebar-text);
+  }
+  .sidebar-nav-item:hover {
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-active);
+  }
+  .sidebar-nav-item.active {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-text-active);
+  }
+
+  /* ── Badges ── */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .badge-blue   { @apply badge bg-blue-100 text-blue-800; }
+  .badge-green  { @apply badge bg-emerald-100 text-emerald-800; }
+  .badge-red    { @apply badge bg-rose-100 text-rose-800; }
+  .badge-orange { @apply badge bg-orange-100 text-orange-800; }
+  .badge-gray   { @apply badge bg-slate-100 text-slate-700; }
+
+  /* ── Table ── */
+  .data-table {
+    @apply w-full text-sm;
+  }
+  .data-table th {
+    @apply px-4 py-3 text-start text-xs font-bold uppercase tracking-wide text-slate-500 border-b border-slate-100;
+  }
+  .data-table td {
+    @apply px-4 py-3 text-slate-700 border-b border-slate-50;
+  }
+  .data-table tr:hover td {
+    @apply bg-slate-50/60;
   }
 }
 
-/* ---- תאימות דפדפנים (Chrome, Firefox, Safari, Edge, מובייל) ---- */
+/* ─────────────────────────────────────────
+   BASE STYLES
+───────────────────────────────────────── */
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* מניעת גלילה אופקית “שבורה” מרכיבים רחבים */
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
     color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-        to bottom,
-        rgb(var(--background-start-rgb)),
-        rgb(var(--background-end-rgb))
-      )
-      rgb(var(--background-start-rgb));
-    /* vh → iOS (fill-available) → dvh במודרני */
+    background-color: #f8fafc;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     min-height: 100dvh;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.12);
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
   }
 
-  img,
-  video,
-  canvas,
-  svg:not([width]):not([height]) {
+  img, video, canvas {
     max-width: 100%;
     height: auto;
   }
 
-  input,
-  textarea,
-  select,
-  button {
+  input, textarea, select, button {
     min-width: 0;
     font: inherit;
   }
 
-  fieldset {
-    min-width: 0;
+  fieldset { min-width: 0; }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-color);
+    line-height: 1.2;
+  }
+
+  ::selection {
+    background-color: rgba(37, 99, 235, 0.15);
+    color: inherit;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -129,243 +252,186 @@
   }
 
   @media (prefers-contrast: more) {
-    :root {
-      --foreground-rgb: 0, 0, 0;
-    }
-  }
-
-  ::selection {
-    background-color: rgba(37, 99, 235, 0.18);
-    color: inherit;
+    :root { --foreground-rgb: 0, 0, 0; }
   }
 }
 
-/* כותרות — צבע ברירת מחדל כהה. כיתות Tailwind text-* מחליפות זאת כרגיל */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #1e293b;
-}
+/* ─────────────────────────────────────────
+   ACCESSIBILITY
+───────────────────────────────────────── */
+html.font-large  { font-size: 110%; }
+html.high-contrast { filter: contrast(1.15) saturate(1.1); }
 
-/* RTL Support */
-[dir="rtl"] {
-  text-align: right;
-}
+/* ─────────────────────────────────────────
+   RTL
+───────────────────────────────────────── */
+[dir="rtl"] { text-align: right; }
+.flex-row-reverse-rtl { flex-direction: row-reverse; }
 
-/* Custom Animations */
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-
-  .text-glow {
-    text-shadow: 0 0 20px var(--primary-color);
-  }
-
-  .bg-glow {
-    background: radial-gradient(circle at center, var(--primary-color) 0%, transparent 70%);
-    filter: blur(100px);
-    opacity: 0.15;
-  }
-}
-
-@layer components {
-  .glass-card {
-    @apply bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-xl shadow-blue-900/5;
-  }
-
-  .glass-card-light {
-    @apply bg-white/98 backdrop-blur-xl border border-slate-200/70 shadow-lg shadow-slate-200/50;
-  }
-
-  /** כרטיס דשבורד */
-  .dashboard-card {
-    @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm;
-  }
-
-  /** כרטיס פעיל / מוגבש */
-  .dashboard-card-active {
-    @apply rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-sm ring-1 ring-blue-100;
-  }
-}
-
-html.font-large {
-  font-size: 110%;
-}
-
-html.high-contrast {
-  filter: contrast(1.15) saturate(1.1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Recharts — מניעת רוחב/גוביין חריגים ב-RTL ובתוך flex (ResponsiveContainer) */
-.recharts-bounded .recharts-responsive-container,
-.recharts-responsive-container {
-  max-width: 100% !important;
-}
-
-.recharts-bounded .recharts-wrapper {
-  max-width: 100% !important;
-}
-
-/* Tailwind Overrides for RTL spacing */
-.flex-row-reverse-rtl {
-  flex-direction: row-reverse;
-}
-
-/* הסתרת פס גלילה — כרום/ספארי/אדג׳ + פיירפוקס */
+/* ─────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────── */
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-/* דף הבית — הדרכות (לולאה ~10 שניות; גיבוי כשאין MP4 ב־/public/tutorials/) */
-@keyframes bsd-tut-crm-pulse {
-  0%,
-  6% {
-    opacity: 0.45;
-    box-shadow: 0 0 0 0 transparent;
-    transform: scale(1);
-  }
-  10%,
-  30% {
-    opacity: 1;
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.55);
-    transform: scale(1.02);
-  }
-  34%,
-  100% {
-    opacity: 0.45;
-    box-shadow: 0 0 0 0 transparent;
-    transform: scale(1);
-  }
+/* Thin scrollbar for sidebar */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.12) transparent;
+}
+.thin-scrollbar::-webkit-scrollbar { width: 4px; }
+.thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.12);
+  border-radius: 4px;
 }
 
-.bsd-tut-crm-row:nth-child(2) {
-  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
-}
-.bsd-tut-crm-row:nth-child(3) {
-  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
-  animation-delay: 3.15s;
-}
-.bsd-tut-crm-row:nth-child(4) {
-  animation: bsd-tut-crm-pulse 10s ease-in-out infinite;
-  animation-delay: 6.3s;
-}
-
-@keyframes bsd-tut-erp-h {
-  0%,
-  10% {
-    height: 22%;
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
   }
-  25%,
-  40% {
-    height: 88%;
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
   }
-  55%,
-  70% {
-    height: 48%;
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
   }
-  85%,
-  100% {
-    height: 72%;
+  .text-glow {
+    text-shadow: 0 0 24px rgba(var(--primary-rgb), 0.4);
   }
-}
-
-.bsd-tut-erp-bar {
-  min-height: 12%;
-  height: 22%;
-  align-self: flex-end;
-  animation: bsd-tut-erp-h 10s ease-in-out infinite;
-}
-
-.bsd-tut-erp-bar:nth-child(1) {
-  animation-delay: 0s;
-}
-.bsd-tut-erp-bar:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.bsd-tut-erp-bar:nth-child(3) {
-  animation-delay: 0.4s;
-}
-.bsd-tut-erp-bar:nth-child(4) {
-  animation-delay: 0.55s;
-}
-
-@keyframes bsd-tut-scan-move {
-  0% {
-    top: 8%;
-    opacity: 0.5;
-  }
-  50% {
-    top: 82%;
-    opacity: 1;
-  }
-  100% {
-    top: 8%;
-    opacity: 0.5;
-  }
-}
-
-.bsd-tut-scan-line {
-  animation: bsd-tut-scan-move 10s ease-in-out infinite;
-}
-
-@keyframes bsd-tut-scan-file {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.75;
-  }
-  20%,
-  35% {
-    transform: scale(1.06);
-    opacity: 1;
-  }
-}
-
-.bsd-tut-scan-file {
-  animation: bsd-tut-scan-file 10s ease-in-out infinite;
-}
-
-@keyframes bsd-tut-scan-prog {
-  0% {
-    width: 0%;
+  .bg-glow {
+    background: radial-gradient(circle at center, rgba(var(--primary-rgb), .15) 0%, transparent 70%);
+    filter: blur(80px);
     opacity: 0.6;
   }
-  40% {
-    width: 72%;
-    opacity: 1;
-  }
-  70% {
-    width: 100%;
-    opacity: 1;
-  }
-  100% {
-    width: 0%;
-    opacity: 0.5;
-  }
 }
 
-.bsd-tut-scan-progress {
-  animation: bsd-tut-scan-prog 10s ease-in-out infinite;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), .4); }
+  70%  { box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
+}
+
+/* ─────────────────────────────────────────
+   RECHARTS FIX
+───────────────────────────────────────── */
+.recharts-bounded .recharts-responsive-container,
+.recharts-responsive-container {
+  max-width: 100% !important;
+}
+.recharts-bounded .recharts-wrapper {
+  max-width: 100% !important;
+}
+
+/* ─────────────────────────────────────────
+   TUTORIAL ANIMATIONS (Landing)
+───────────────────────────────────────── */
+@keyframes bsd-tut-crm-pulse {
+  0%, 6%   { opacity: .45; box-shadow: none; transform: scale(1); }
+  10%, 30% { opacity: 1;   box-shadow: 0 0 0 2px rgba(96,165,250,.55); transform: scale(1.02); }
+  34%, 100%{ opacity: .45; box-shadow: none; transform: scale(1); }
+}
+.bsd-tut-crm-row:nth-child(2) { animation: bsd-tut-crm-pulse 10s ease-in-out infinite; }
+.bsd-tut-crm-row:nth-child(3) { animation: bsd-tut-crm-pulse 10s ease-in-out infinite; animation-delay: 3.15s; }
+.bsd-tut-crm-row:nth-child(4) { animation: bsd-tut-crm-pulse 10s ease-in-out infinite; animation-delay: 6.3s; }
+
+@keyframes bsd-tut-erp-h {
+  0%,10%   { height: 22%; }
+  25%,40%  { height: 88%; }
+  55%,70%  { height: 48%; }
+  85%,100% { height: 72%; }
+}
+.bsd-tut-erp-bar { min-height: 12%; height: 22%; align-self: flex-end; animation: bsd-tut-erp-h 10s ease-in-out infinite; }
+.bsd-tut-erp-bar:nth-child(1) { animation-delay: 0s; }
+.bsd-tut-erp-bar:nth-child(2) { animation-delay: .2s; }
+.bsd-tut-erp-bar:nth-child(3) { animation-delay: .4s; }
+.bsd-tut-erp-bar:nth-child(4) { animation-delay: .55s; }
+
+@keyframes bsd-tut-scan-move {
+  0%   { top: 8%;  opacity: .5; }
+  50%  { top: 82%; opacity: 1; }
+  100% { top: 8%;  opacity: .5; }
+}
+.bsd-tut-scan-line { animation: bsd-tut-scan-move 10s ease-in-out infinite; }
+
+@keyframes bsd-tut-scan-file {
+  0%,100% { transform: scale(1);    opacity: .75; }
+  20%,35% { transform: scale(1.06); opacity: 1;   }
+}
+.bsd-tut-scan-file { animation: bsd-tut-scan-file 10s ease-in-out infinite; }
+
+@keyframes bsd-tut-scan-prog {
+  0%   { width: 0%;   opacity: .6; }
+  40%  { width: 72%;  opacity: 1;  }
+  70%  { width: 100%; opacity: 1;  }
+  100% { width: 0%;   opacity: .5; }
+}
+.bsd-tut-scan-progress { animation: bsd-tut-scan-prog 10s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────
+   LANDING PAGE — HERO GRADIENT
+───────────────────────────────────────── */
+.hero-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 100%);
+}
+
+.hero-mesh {
+  background-image:
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(37,99,235,.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 80%,  rgba(99,102,241,.15) 0%, transparent 50%);
+}
+
+/* Floating card for hero mockup */
+.hero-card {
+  @apply rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm;
+}
+
+/* ─────────────────────────────────────────
+   DASHBOARD SIDEBAR GRADIENT LINE
+───────────────────────────────────────── */
+.sidebar-active-indicator {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--primary-color);
+}
+
+/* ─────────────────────────────────────────
+   AUTH PAGE
+───────────────────────────────────────── */
+.auth-input {
+  @apply w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-blue-400 focus:bg-white focus:ring-3 focus:ring-blue-100/70;
+}
+
+/* ─────────────────────────────────────────
+   PAGE TRANSITION
+───────────────────────────────────────── */
+.page-enter { animation: fadeIn .3s ease-out forwards; }

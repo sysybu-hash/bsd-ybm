@@ -213,179 +213,115 @@ export default function GlobalBillingPageClient({
       : `מבוסס על ${Math.round(VAT_RATE * 100)}% (מורשה / חברה)`;
 
   return (
-    <div className="mx-auto min-h-0 max-w-[1600px] space-y-10 p-4 text-start sm:p-8 md:p-10" dir={dir}>
-      <div className="flex flex-col gap-6 border-b border-slate-200/80 pb-10 md:flex-row md:items-center md:justify-between">
+    <div className=”space-y-8 text-start” dir={dir}>
+
+      {/* ── Page header ── */}
+      <div className=”flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between”>
         <div>
-          <h1 className="text-2xl font-black italic tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-            מרכז פיננסי <span className="text-blue-600">BSD-YBM</span>
-          </h1>
-          <p className="mt-1 text-sm text-slate-500 sm:text-base">
-            ניהול חשבוניות, הפקדות ודיווח מע״מ — {organizationName}
-            {taxId ? (
-              <span className="block text-sm text-slate-400 mt-1">ח.פ / ע.מ {taxId}</span>
-            ) : null}
+          <h1 className=”text-2xl font-black tracking-tight text-slate-900”>מרכז פיננסי</h1>
+          <p className=”mt-0.5 text-sm text-slate-500”>
+            {organizationName}
+            {taxId ? <span className=”ms-2 text-slate-400”>· ח.פ {taxId}</span> : null}
           </p>
         </div>
-
-        <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+        <div className=”flex flex-wrap gap-2”>
           <Link
-            href="/dashboard/settings?tab=billing"
-            className="btn-secondary flex-1 justify-center py-3.5 sm:flex-none md:px-8"
+            href=”/dashboard/settings?tab=billing”
+            className=”inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50”
           >
             הגדרות חשבונאיות
           </Link>
-          <button type="button" onClick={() => setCreateOpen(true)} className="btn-primary flex-1 gap-2 py-3.5 sm:flex-none md:px-10">
-            <FilePlus size={22} aria-hidden />
+          <button
+            type=”button”
+            onClick={() => setCreateOpen(true)}
+            className=”inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90”
+            style={{ backgroundColor: “var(--primary-color, #2563eb)” }}
+          >
+            <FilePlus size={17} aria-hidden />
             הפקת מסמך
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
+      {/* ── KPI cards ── */}
+      <div className=”grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4”>
         {[
-          {
-            title: "הכנסות ברוטו (חודשי)",
-            value: formatMoney(stats.monthGross),
-            sub: "סה״כ מסמכים שהונפקו החודש",
-            color: "text-blue-600",
-            bg: "bg-blue-50/50",
-            icon: <TrendingUp className="w-6 h-6" />,
-          },
-          {
-            title: "מע״מ (מסמכים החודש)",
-            value: formatMoney(stats.monthVat),
-            sub: vatHint,
-            color: "text-purple-600",
-            bg: "bg-purple-50/50",
-            icon: <ShieldCheck className="w-6 h-6" />,
-          },
-          {
-            title: "תשלומים בהמתנה (PayPal)",
-            value: formatMoney(stats.pendingAmount),
-            sub:
-              stats.pendingInvoiceCount > 0
-                ? `${stats.pendingInvoiceCount} חשבוניות פתוחות`
-                : "אין חשבוניות ממתינות",
-            color: "text-orange-600",
-            bg: "bg-orange-50/50",
-            icon: <History className="w-6 h-6" />,
-          },
-          {
-            title: "שולם החודש (גולמי)",
-            value: formatMoney(stats.paidMonthGross),
-            sub: "סכום חשבוניות שסומנו כשולמו — לפני עמלות PayPal",
-            color: "text-emerald-600",
-            bg: "bg-emerald-50/50",
-            icon: <CheckCircle2 className="w-6 h-6" />,
-          },
+          { title: “הכנסות ברוטו (חודשי)”, value: formatMoney(stats.monthGross), sub: “סה״כ מסמכים שהונפקו החודש”, color: “text-blue-600”, iconBg: “bg-blue-50”, icon: <TrendingUp size={20} /> },
+          { title: “מע״מ (מסמכים החודש)”, value: formatMoney(stats.monthVat), sub: vatHint, color: “text-violet-600”, iconBg: “bg-violet-50”, icon: <ShieldCheck size={20} /> },
+          { title: “תשלומים בהמתנה”, value: formatMoney(stats.pendingAmount), sub: stats.pendingInvoiceCount > 0 ? `${stats.pendingInvoiceCount} חשבוניות פתוחות` : “אין ממתינות”, color: “text-orange-600”, iconBg: “bg-orange-50”, icon: <History size={20} /> },
+          { title: “שולם החודש (גולמי)”, value: formatMoney(stats.paidMonthGross), sub: “לפני עמלות PayPal”, color: “text-emerald-600”, iconBg: “bg-emerald-50”, icon: <CheckCircle2 size={20} /> },
         ].map((card, i) => (
-          <div
-            key={i}
-            className={`card-avenue flex cursor-default flex-col justify-between p-6 transition-shadow hover:shadow-md ${card.bg}`}
-          >
-            <div className="mb-4 flex items-start justify-between">
-              <div className={`rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-100 ${card.color}`}>{card.icon}</div>
-              <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-black uppercase italic text-slate-400 ring-1 ring-slate-100">
-                עדכני
-              </span>
+          <div key={i} className=”flex flex-col justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md”>
+            <div className=”mb-4 flex items-center gap-3”>
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${card.iconBg} ${card.color}`}>
+                {card.icon}
+              </div>
+              <p className=”text-xs font-bold text-slate-500”>{card.title}</p>
             </div>
-            <div>
-              <p className="text-sm font-bold text-slate-500">{card.title}</p>
-              <p className="mt-1 break-words text-2xl font-black text-slate-900 sm:text-3xl">{card.value}</p>
-              <p className="mt-2 text-xs text-slate-400">{card.sub}</p>
-            </div>
+            <p className=”text-2xl font-black text-slate-900”>{card.value}</p>
+            <p className=”mt-1.5 text-xs text-slate-400”>{card.sub}</p>
           </div>
         ))}
       </div>
 
       <ReportingCenter />
 
-      <div className="flex flex-wrap justify-end gap-3">
-        <button
-          type="button"
-          onClick={() => handleExportAccountantCsv()}
-          disabled={exportPending}
-          className="btn-secondary text-sm disabled:opacity-50"
-        >
-          <Download size={18} aria-hidden />
-          {exportPending ? "מייצא…" : "ייצוא לרואה חשבון (CSV)"}
+      <div className=”flex justify-end”>
+        <button type=”button” onClick={() => handleExportAccountantCsv()} disabled={exportPending} className=”inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 disabled:opacity-50”>
+          <Download size={16} aria-hidden />
+          {exportPending ? “מייצא…” : “ייצוא לרואה חשבון (CSV)”}
         </button>
       </div>
 
-      <div className="card-avenue overflow-hidden shadow-lg">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-6 md:p-8">
-          <div className="relative w-full md:w-96">
-            <Search
-              className="pointer-events-none absolute top-1/2 text-slate-400 -translate-y-1/2 end-3.5"
-              size={20}
-              aria-hidden
-            />
+      {/* ── Documents table ── */}
+      <div className=”overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm”>
+        {/* Table toolbar */}
+        <div className=”flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4”>
+          <div className=”relative”>
+            <Search className=”pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400” size={16} aria-hidden />
             <input
-              type="search"
+              type=”search”
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="חיפוש לקוח או מספר מסמך..."
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 ps-4 pe-11 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              placeholder=”חיפוש לקוח או מסמך...”
+              className=”rounded-xl border border-slate-200 bg-slate-50 py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15”
             />
           </div>
-
-          <div className="flex flex-wrap gap-1 rounded-2xl border border-slate-100 bg-slate-50 p-1.5">
-            {(
-              [
-                ["all", "הכל"],
-                ["invoices", "חשבוניות"],
-                ["receipts", "קבלות"],
-                ["credits", "זיכויים"],
-              ] as const
-            ).map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setTab(key)}
-                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition-all sm:px-6 ${
-                  tab === key
-                    ? "bg-white text-blue-700 shadow-sm ring-1 ring-blue-200/60"
-                    : "text-slate-500 hover:bg-white/80 hover:text-blue-700"
-                }`}
-              >
+          <div className=”flex gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1”>
+            {([[“all”, “הכל”], [“invoices”, “חשבוניות”], [“receipts”, “קבלות”], [“credits”, “זיכויים”]] as const).map(([key, label]) => (
+              <button key={key} type=”button” onClick={() => setTab(key)}
+                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? “bg-white text-blue-700 shadow-sm” : “text-slate-500 hover:text-slate-800”}`}>
                 {label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-start">
-            <thead className="border-b border-slate-100 bg-blue-50/90 text-[11px] font-black uppercase tracking-widest text-blue-900">
-              <tr>
-                <th className="p-6 sm:p-8">סוג / מקור #</th>
-                <th className="p-6 sm:p-8">לקוח / חברה</th>
-                <th className="p-6 sm:p-8 text-center">סטטוס</th>
-                <th className="p-6 text-end sm:p-8">סכום</th>
-                <th className="p-6 sm:p-8 w-24" />
+        {/* Table */}
+        <div className=”overflow-x-auto”>
+          <table className=”w-full min-w-[680px] text-start”>
+            <thead>
+              <tr className=”border-b border-slate-100 bg-slate-50/80”>
+                <th className=”px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400”>סוג / מספר</th>
+                <th className=”px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400”>לקוח</th>
+                <th className=”px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400”>סטטוס</th>
+                <th className=”px-5 py-3 text-end text-[10px] font-bold uppercase tracking-wider text-slate-400”>סכום</th>
+                <th className=”w-20 px-5 py-3” />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className=”divide-y divide-slate-50”>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-12">
-                    <div className="mx-auto flex max-w-lg flex-col items-center gap-4 text-center">
-                      <div className="rounded-2xl bg-blue-50 p-4 text-blue-600 ring-1 ring-blue-100">
-                        <FilePlus size={36} strokeWidth={1.25} aria-hidden />
+                  <td colSpan={5} className=”px-5 py-14”>
+                    <div className=”mx-auto flex max-w-sm flex-col items-center gap-3 text-center”>
+                      <div className=”flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600”>
+                        <FilePlus size={28} strokeWidth={1.5} />
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-800">
-                          {!hasAnyRows ? "אין עדיין מסמכים" : "אין תוצאות לסינון"}
-                        </p>
-                        <p className="mt-1 text-sm text-slate-500">
-                          {!hasAnyRows
-                            ? "הפיקו מסמך או צרו חשבונית PayPal — כפתור „הפקת מסמך” למעלה."
-                            : "נסו חיפוש אחר או בחרו טאב אחר."}
-                        </p>
-                      </div>
+                      <p className=”font-bold text-slate-700”>{!hasAnyRows ? “אין עדיין מסמכים” : “אין תוצאות לסינון”}</p>
+                      <p className=”text-sm text-slate-500”>{!hasAnyRows ? “הפיקו מסמך ראשון דרך הכפתור למעלה.” : “נסו חיפוש אחר.”}</p>
                       {!hasAnyRows ? (
-                        <button type="button" onClick={() => setCreateOpen(true)} className="btn-primary text-sm">
-                          הפקת מסמך
+                        <button type=”button” onClick={() => setCreateOpen(true)} className=”mt-1 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90” style={{ backgroundColor: “var(--primary-color, #2563eb)” }}>
+                          <FilePlus size={15} /> הפקת מסמך
                         </button>
                       ) : null}
                     </div>
@@ -393,118 +329,76 @@ export default function GlobalBillingPageClient({
                 </tr>
               ) : (
                 filtered.map((row) =>
-                  row.kind === "issued" ? (
-                    <tr key={`i-${row.doc.id}`} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="p-6 sm:p-8">
-                        <div className="flex items-center gap-4 sm:gap-5">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-50 rounded-[1.25rem] flex items-center justify-center text-blue-600 font-black shadow-sm italic shrink-0 text-sm sm:text-base">
+                  row.kind === “issued” ? (
+                    <tr key={`i-${row.doc.id}`} className=”group transition-colors hover:bg-slate-50/60”>
+                      <td className=”px-5 py-3.5”>
+                        <div className=”flex items-center gap-3”>
+                          <div className=”flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-600”>
                             #{row.doc.number}
                           </div>
                           <div>
-                            <p className="font-black text-slate-900 text-base sm:text-lg">
-                              {DOC_TYPE_LABEL[row.doc.docType]}
-                            </p>
-                            <p className="text-[10px] text-blue-400 font-black uppercase tracking-wider leading-none mt-1">
-                              {COMPANY_BADGE[companyType]}
-                            </p>
+                            <p className=”text-sm font-bold text-slate-900”>{DOC_TYPE_LABEL[row.doc.docType]}</p>
+                            <p className=”text-[10px] font-bold uppercase tracking-wider text-slate-400”>{COMPANY_BADGE[companyType]}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="p-6 sm:p-8">
-                        <p className="font-bold text-slate-700">{row.doc.clientName}</p>
-                        <p className="text-xs text-slate-400">{row.doc.dateLabel}</p>
+                      <td className=”px-5 py-3.5”>
+                        <p className=”text-sm font-bold text-slate-700”>{row.doc.clientName}</p>
+                        <p className=”text-xs text-slate-400”>{row.doc.dateLabel}</p>
                       </td>
-                      <td className="p-6 sm:p-8 text-center">
-                        <span
-                          className={`${STATUS_STYLE[row.doc.status]} px-4 sm:px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-sm tracking-tighter inline-block`}
-                        >
+                      <td className=”px-5 py-3.5 text-center”>
+                        <span className={`inline-block rounded-lg border px-3 py-1 text-[10px] font-bold ${STATUS_STYLE[row.doc.status]} border-current/20`}>
                           {STATUS_LABEL[row.doc.status]}
                         </span>
                       </td>
-                      <td className="p-6 text-end font-black text-lg text-slate-900 italic tracking-tight sm:p-8 sm:text-xl">
-                        {formatMoney(row.doc.total)}
-                      </td>
-                      <td className="p-6 sm:p-8">
-                        <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                          <button
-                            type="button"
-                            title="הדפסה / תצוגה להדפסה"
-                            onClick={() => setPrintRow(row.doc)}
-                            className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm text-slate-600"
-                          >
-                            <Download size={18} />
+                      <td className=”px-5 py-3.5 text-end font-black text-slate-900”>{formatMoney(row.doc.total)}</td>
+                      <td className=”px-5 py-3.5”>
+                        <div className=”flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100”>
+                          <button type=”button” title=”הדפסה” onClick={() => setPrintRow(row.doc)} className=”rounded-lg border border-slate-100 bg-white p-2 text-slate-500 shadow-sm transition hover:border-blue-300 hover:text-blue-600”>
+                            <Download size={15} />
                           </button>
-                          <button
-                            type="button"
-                            title="עוד"
-                            className="p-3 bg-white border border-slate-100 rounded-xl hover:bg-slate-100 transition-all shadow-sm text-slate-400"
-                          >
-                            <MoreVertical size={18} />
+                          <button type=”button” title=”עוד” className=”rounded-lg border border-slate-100 bg-white p-2 text-slate-400 shadow-sm transition hover:bg-slate-100”>
+                            <MoreVertical size={15} />
                           </button>
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    <tr key={`p-${row.inv.id}`} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="p-6 sm:p-8">
-                        <div className="flex items-center gap-4 sm:gap-5">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#0070ba]/10 rounded-[1.25rem] flex items-center justify-center text-[#0070ba] font-black shadow-sm italic shrink-0 text-xs sm:text-sm">
+                    <tr key={`p-${row.inv.id}`} className=”group transition-colors hover:bg-slate-50/60”>
+                      <td className=”px-5 py-3.5”>
+                        <div className=”flex items-center gap-3”>
+                          <div className=”flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0070ba]/10 text-xs font-black text-[#0070ba]”>
                             #{row.inv.number}
                           </div>
                           <div>
-                            <p className="font-black text-slate-900 text-base sm:text-lg">{row.inv.description}</p>
-                            <p className="text-[10px] text-[#0070ba] font-black uppercase tracking-wider leading-none mt-1">
-                              PayPal · בקשת תשלום
-                            </p>
+                            <p className=”text-sm font-bold text-slate-900”>{row.inv.description}</p>
+                            <p className=”text-[10px] font-bold uppercase tracking-wider text-[#0070ba]”>PayPal</p>
                           </div>
                         </div>
                       </td>
-                      <td className="p-6 sm:p-8">
-                        <p className="font-bold text-slate-700">{row.inv.customerName}</p>
-                        <p className="text-xs text-slate-400">{row.inv.date}</p>
-                        {row.inv.customerEmail ? (
-                          <p className="text-[11px] text-slate-400 font-mono mt-0.5" dir="ltr">
-                            {row.inv.customerEmail}
-                          </p>
-                        ) : null}
+                      <td className=”px-5 py-3.5”>
+                        <p className=”text-sm font-bold text-slate-700”>{row.inv.customerName}</p>
+                        <p className=”text-xs text-slate-400”>{row.inv.date}</p>
+                        {row.inv.customerEmail ? <p className=”text-[11px] font-mono text-slate-400” dir=”ltr”>{row.inv.customerEmail}</p> : null}
                       </td>
-                      <td className="p-6 sm:p-8 text-center">
-                        <span
-                          className={`${paypalStatusClass(row.inv.status)} px-4 sm:px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-sm tracking-tighter inline-block`}
-                        >
+                      <td className=”px-5 py-3.5 text-center”>
+                        <span className={`inline-block rounded-lg px-3 py-1 text-[10px] font-bold ${paypalStatusClass(row.inv.status)}`}>
                           {paypalStatusLabel(row.inv.status)}
                         </span>
                       </td>
-                      <td className="p-6 text-end font-black text-lg text-slate-900 italic tracking-tight sm:p-8 sm:text-xl">
-                        {formatMoney(row.inv.amount)}
-                      </td>
-                      <td className="p-6 sm:p-8">
-                        <div className="flex flex-col items-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                          {row.inv.status !== "PAID" && paypalMeSlug?.trim() ? (
-                            <a
-                              href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 rounded-xl bg-[#0070ba] px-3 py-2 text-xs font-black text-white shadow-sm hover:bg-[#005ea6]"
-                            >
-                              <ExternalLink size={14} aria-hidden />
-                              תשלום
+                      <td className=”px-5 py-3.5 text-end font-black text-slate-900”>{formatMoney(row.inv.amount)}</td>
+                      <td className=”px-5 py-3.5”>
+                        <div className=”flex flex-col items-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100”>
+                          {row.inv.status !== “PAID” && paypalMeSlug?.trim() ? (
+                            <a href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)} target=”_blank” rel=”noopener noreferrer” className=”inline-flex items-center gap-1 rounded-lg bg-[#0070ba] px-2.5 py-1.5 text-xs font-bold text-white hover:bg-[#005ea6]”>
+                              <ExternalLink size={12} /> תשלום
                             </a>
                           ) : null}
-                          {row.inv.status !== "PAID" &&
-                          paypalMerchantEmail?.trim() &&
-                          !paypalMeSlug?.trim() ? (
-                            <span className="text-[10px] text-slate-500 max-w-[140px] text-right" dir="ltr">
-                              {paypalMerchantEmail.trim()}
-                            </span>
+                          {row.inv.status !== “PAID” && paypalMerchantEmail?.trim() && !paypalMeSlug?.trim() ? (
+                            <span className=”max-w-[140px] text-right text-[10px] text-slate-500” dir=”ltr”>{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
-                            <Link
-                              href="/dashboard/settings?tab=billing"
-                              className="text-[10px] font-bold text-[#0070ba] underline"
-                            >
-                              הגדרת PayPal
-                            </Link>
+                            <Link href=”/dashboard/settings?tab=billing” className=”text-[10px] font-bold text-[#0070ba] underline”>הגדרת PayPal</Link>
                           ) : null}
                         </div>
                       </td>

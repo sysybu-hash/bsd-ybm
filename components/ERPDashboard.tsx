@@ -22,9 +22,11 @@ import {
   FileSearch,
   Layers,
   TrendingUp,
+  TrendingDown,
   AlertTriangle,
   Sparkles,
   BarChart3,
+  ScanLine,
 } from "lucide-react";
 import { compareSupplierPrices } from "@/app/actions/erp-compare";
 import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
@@ -47,7 +49,6 @@ export type ErpFlowSummary = {
 type Props = {
   stats: ErpStatCard[];
   chartData: { name: string; value: number }[];
-  /** תיאור מכסות סריקה (זולות / פרימיום) */
   scanQuotaSummary: string | null;
   flowSummary: ErpFlowSummary | null;
   priceSpikes: PriceSpikeAlert[];
@@ -84,112 +85,135 @@ export default function ERPDashboard({
   };
 
   return (
-    <div className="space-y-12 text-right" dir={dir}>
-      <div className="flex flex-col gap-6 lg:flex-row lg:justify-between lg:items-end">
+    <div className="space-y-8 text-right" dir={dir}>
+
+      {/* ── Page header ── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-black italic tracking-tight text-slate-900 md:text-3xl">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900">
             {t("erpDash.pageTitle")}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">{t("erpDash.pageSubtitle")}</p>
+          <p className="mt-0.5 text-sm text-slate-500">{t("erpDash.pageSubtitle")}</p>
           {netFlow != null && (
-            <p className="text-sm font-bold text-slate-600 mt-2 flex items-center gap-2 flex-wrap">
-              <TrendingUp size={16} className="text-emerald-600 shrink-0" />
+            <p className="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
+              {netFlow >= 0 ? (
+                <TrendingUp size={15} className="text-emerald-600 shrink-0" />
+              ) : (
+                <TrendingDown size={15} className="text-rose-600 shrink-0" />
+              )}
               {t("erpDash.netFlowIntro")}{" "}
-              <span className={netFlow >= 0 ? "text-emerald-600" : "text-rose-600"}>
+              <span className={`font-black ${netFlow >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                 ₪{netFlow.toLocaleString(intlTag)}
               </span>
             </p>
           )}
         </div>
 
-        <div className="card-avenue shrink-0 p-6">
-          <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">{t("erpDash.quotaCaption")}</p>
-          <p className="text-xl font-black leading-snug text-slate-900">{quotaLabel}</p>
+        {/* Quota pill */}
+        <div className="flex shrink-0 items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3 self-start">
+          <ScanLine size={16} className="text-blue-600" aria-hidden />
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500">{t("erpDash.quotaCaption")}</p>
+            <p className="text-sm font-black text-slate-900">{quotaLabel}</p>
+          </div>
         </div>
       </div>
 
+      {/* ── Flow summary cards ── */}
       {flowSummary ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
-          <div className="card-avenue p-6 md:p-8">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="rounded-2xl bg-blue-50 p-3 text-blue-600">
-                <Box aria-hidden />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Box size={18} aria-hidden />
               </div>
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-black uppercase text-blue-700">
+              <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold text-blue-700">
                 {t("erpDash.badgeInventory")}
               </span>
             </div>
-            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowItemsLabel")}</p>
-            <h2 className="mt-1 text-3xl font-black text-slate-900">{flowSummary.totalItems}</h2>
+            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowItemsLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-slate-900">{flowSummary.totalItems}</p>
           </div>
 
-          <div className="card-avenue border-e-4 border-e-emerald-500 p-6 md:p-8">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
-                <ArrowUpRight aria-hidden />
+          <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <ArrowUpRight size={18} aria-hidden />
               </div>
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black uppercase text-emerald-800">
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
                 {t("erpDash.badgeIncome")}
               </span>
             </div>
-            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowIssuedLabel")}</p>
-            <h2 className="mt-1 text-3xl font-black text-slate-900">
+            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowIssuedLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-slate-900">
               ₪{flowSummary.totalIssued.toLocaleString(intlTag)}
-            </h2>
+            </p>
           </div>
 
-          <div className="card-avenue border-e-4 border-e-rose-500 p-6 md:p-8">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="rounded-2xl bg-rose-50 p-3 text-rose-600">
-                <ArrowDownLeft aria-hidden />
+          <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                <ArrowDownLeft size={18} aria-hidden />
               </div>
-              <span className="rounded-full bg-rose-100 px-3 py-1 text-[10px] font-black uppercase text-rose-800">
+              <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700">
                 {t("erpDash.badgeExpense")}
               </span>
             </div>
-            <p className="text-sm font-bold text-slate-500">{t("erpDash.flowExpenseLabel")}</p>
-            <h2 className="mt-1 text-3xl font-black text-slate-900">
+            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowExpenseLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-slate-900">
               ₪{flowSummary.totalExpenses.toLocaleString(intlTag)}
-            </h2>
+            </p>
           </div>
         </div>
       ) : null}
 
-      <div className="card-avenue relative overflow-hidden p-8 md:p-10">
-        <div className="relative z-10 flex flex-col items-center gap-8 md:flex-row">
-          <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl shadow-blue-600/25 ring-1 ring-blue-500/30">
-            <FileSearch size={40} aria-hidden />
+      {/* ── Scanner CTA ── */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 60% 80% at 100% 50%, rgba(37,99,235,0.05) 0%, transparent 65%)" }}
+          aria-hidden
+        />
+        <div className="relative flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg"
+              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            >
+              <FileSearch size={26} aria-hidden />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-slate-900">{t("erpDash.scannerTitle")}</h2>
+              <p className="mt-0.5 text-sm text-slate-500">{t("erpDash.scannerDesc")}</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1 text-center md:text-start">
-            <h2 className="text-xl font-black italic text-slate-900 md:text-2xl">{t("erpDash.scannerTitle")}</h2>
-            <p className="mt-1 text-sm font-medium text-slate-600">{t("erpDash.scannerDesc")}</p>
-          </div>
-          <Link href="/dashboard/erp#erp-multi-scanner" className="btn-primary shrink-0 px-8 py-3.5 text-sm md:px-10 md:py-4">
-            <Layers size={20} aria-hidden />
+          <Link
+            href="/dashboard/erp#erp-multi-scanner"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+            style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+          >
+            <Layers size={17} />
             {t("erpDash.scannerCta")}
           </Link>
         </div>
-        <div
-          className="pointer-events-none absolute -start-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-3xl"
-          aria-hidden
-        />
       </div>
 
+      {/* ── Price spike alerts ── */}
       {priceSpikes.length > 0 ? (
-        <div className="rounded-[2rem] border border-blue-200 bg-blue-50/60 p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-blue-800 font-black">
-            <AlertTriangle size={22} className="shrink-0" />
-            {t("erpDash.spikesTitle")}
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+          <div className="mb-4 flex items-center gap-2 text-amber-800">
+            <AlertTriangle size={18} className="shrink-0" />
+            <span className="font-bold">{t("erpDash.spikesTitle")}</span>
           </div>
-          <ul className="space-y-3 text-sm">
+          <ul className="space-y-3">
             {priceSpikes.map((s) => (
               <li
                 key={s.normalizedKey}
-                className="flex flex-col gap-2 rounded-2xl bg-white/80 border border-blue-100 p-4 md:flex-row md:items-center md:justify-between"
+                className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-white p-4 md:flex-row md:items-center md:justify-between"
               >
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="font-bold text-slate-900">{s.description || s.normalizedKey}</p>
-                  <p className="text-slate-600 mt-1">
+                  <p className="mt-1 text-sm text-slate-600">
                     <span className="font-black text-rose-600">
                       {t("erpDash.spikeRise", { pct: s.changePercent.toFixed(1) })}
                     </span>{" "}
@@ -199,7 +223,7 @@ export default function ERPDashboard({
                     })}
                   </p>
                   {insightByKey[s.normalizedKey] ? (
-                    <p className="text-slate-700 mt-2 leading-relaxed border-t border-blue-100 pt-2">
+                    <p className="mt-2 border-t border-amber-100 pt-2 text-sm leading-relaxed text-slate-700">
                       {insightByKey[s.normalizedKey]}
                     </p>
                   ) : null}
@@ -208,9 +232,10 @@ export default function ERPDashboard({
                   type="button"
                   disabled={isAiPending}
                   onClick={() => runAiForKey(s.normalizedKey)}
-                  className="btn-primary shrink-0 px-4 py-2.5 text-sm disabled:opacity-50"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                  style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
                 >
-                  <Sparkles size={18} />
+                  <Sparkles size={15} />
                   {t("erpDash.analyzeAi")}
                 </button>
               </li>
@@ -219,45 +244,53 @@ export default function ERPDashboard({
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* ── Stat cards ── */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            whileHover={{ y: -5 }}
-            className="card-avenue p-6 md:p-8"
+            className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-slate-500 text-sm mb-2 font-bold">{stat.label}</p>
-            <p className={`text-3xl font-black ${stat.valueClass}`}>{stat.value}</p>
-            <div className="mt-4 text-xs font-bold bg-slate-50 inline-block px-3 py-1 rounded-full text-slate-500">
+            <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+            <p className={`mt-2 text-3xl font-black ${stat.valueClass}`}>{stat.value}</p>
+            <div className="mt-3 inline-block rounded-lg bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
               {stat.trend}
             </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="card-avenue p-8 md:p-10">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      {/* ── Chart ── */}
+      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-black italic text-slate-900">
-              <BarChart3 className="text-blue-600" size={22} aria-hidden />
+            <h2 className="flex items-center gap-2 text-base font-black text-slate-900">
+              <BarChart3 className="text-blue-600" size={20} aria-hidden />
               {t("erpDash.chartTitle")}
             </h2>
-            <p className="mt-0.5 text-sm text-slate-500">הוצאות לפי תקופה — נתוני ERP</p>
+            <p className="mt-0.5 text-xs text-slate-500">הוצאות לפי תקופה — נתוני ERP</p>
           </div>
         </div>
         {chartData.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-            <BarChart3 className="text-slate-200" size={48} strokeWidth={1} aria-hidden />
-            <p className="max-w-md text-sm font-medium text-slate-500">{t("erpDash.chartEmpty")}</p>
-            <Link href="/dashboard/erp#erp-multi-scanner" className="btn-secondary text-sm">
+            <BarChart3 className="text-slate-200" size={44} strokeWidth={1} aria-hidden />
+            <div>
+              <p className="font-bold text-slate-700">אין עדיין נתוני תרשים</p>
+              <p className="mt-1 text-sm text-slate-500">{t("erpDash.chartEmpty")}</p>
+            </div>
+            <Link
+              href="/dashboard/erp#erp-multi-scanner"
+              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90"
+              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            >
               {t("erpDash.scannerCta")}
             </Link>
           </div>
         ) : (
-          <RechartsBounded height={400}>
+          <RechartsBounded height={380}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -276,16 +309,17 @@ export default function ERPDashboard({
                 />
                 <Tooltip
                   contentStyle={{
-                    borderRadius: "20px",
-                    border: "none",
-                    boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
+                    borderRadius: "12px",
+                    border: "1px solid #e2e8f0",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+                    fontSize: "13px",
                   }}
                   formatter={(value: number) => [
                     `₪${value.toLocaleString(intlTag)}`,
                     t("erpDash.chartTooltipExpenses"),
                   ]}
                 />
-                <Bar dataKey="value" fill={primary} radius={[10, 10, 0, 0]} maxBarSize={72} />
+                <Bar dataKey="value" fill={primary} radius={[8, 8, 0, 0]} maxBarSize={64} />
               </BarChart>
             </ResponsiveContainer>
           </RechartsBounded>

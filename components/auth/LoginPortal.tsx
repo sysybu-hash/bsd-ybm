@@ -113,35 +113,35 @@ export default function LoginPortal() {
       >
         {/* פאנל שמאל — תיאור */}
         <section className="order-2 max-w-md text-center lg:order-1 lg:text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 text-blue-500" aria-hidden />
+          <p className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300">
+            <Sparkles className="h-3.5 w-3.5 text-blue-400" aria-hidden />
             BSD-YBM Intelligence Platform
           </p>
-          <h2 className="mt-4 text-2xl font-black leading-tight tracking-tight text-slate-900 sm:text-3xl">
+          <h2 className="mt-5 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl">
             כניסה מאובטחת
             <br />
             <span
               className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(90deg, var(--primary-color, #2563eb), #4f46e5)" }}
+              style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #818cf8)" }}
             >
               לעסק שלכם
             </span>
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
             CRM, ERP, בינה מלאכותית וסריקה רב־מנועית — במקום אחד. התחברות עם Google או סיסמה שסופקה על־ידי מנהל המערכת.
           </p>
-          <ul className="mt-6 hidden space-y-3 text-start text-sm text-slate-500 sm:block">
-            <li className="flex items-start gap-2.5">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-              סשן נקי לפני כל כניסה — ללא ״דליפה״ בין משתמשים
+          <ul className="mt-8 hidden space-y-4 text-start text-sm sm:block">
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+              <span className="text-slate-300">סשן נקי לפני כל כניסה — ללא ״דליפה״ בין משתמשים</span>
             </li>
-            <li className="flex items-start gap-2.5">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
-              הצפנת עוגיות, OAuth 2.0 עם Google
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400" />
+              <span className="text-slate-300">הצפנת עוגיות, OAuth 2.0 עם Google</span>
             </li>
-            <li className="flex items-start gap-2.5">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-              GDPR-Ready · אחסון ישראל / EU
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-500" />
+              <span className="text-slate-400">GDPR-Ready · אחסון ישראל / EU</span>
             </li>
           </ul>
         </section>

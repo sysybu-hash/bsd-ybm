@@ -218,14 +218,18 @@ export default function SettingsPageClient({
   const currentTitle = t(`settings.${activeTab}`);
 
   return (
-    <div className="min-h-full bg-[#f8fafc] py-6 md:py-10 px-4 md:px-8 text-slate-900" dir={dir}>
-      <div className="max-w-6xl mx-auto bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden flex flex-col md:flex-row border border-slate-100">
-        <aside className="w-full md:w-72 bg-slate-50 p-6 md:p-10 border-b md:border-b-0 md:border-l border-slate-100 shrink-0">
-          <h2 className="text-2xl font-black italic mb-8 text-blue-600 flex items-center gap-2">
-            <Settings size={28} className="shrink-0" />
-            {t("settings.title")}
-          </h2>
-          <nav className="space-y-2 md:space-y-4">
+    <div className="text-slate-900" dir={dir}>
+      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col md:flex-row">
+
+        {/* ── Sidebar ── */}
+        <aside className="w-full shrink-0 bg-slate-900 md:w-60">
+          <div className="border-b border-white/8 px-5 py-5">
+            <h2 className="flex items-center gap-2 text-base font-black text-white">
+              <Settings size={18} className="shrink-0 text-blue-400" />
+              {t("settings.title")}
+            </h2>
+          </div>
+          <nav className="flex flex-row gap-1 overflow-x-auto p-3 md:flex-col md:overflow-visible">
             {TAB_ORDER.map((tabId) => {
               const Icon = TAB_ICONS[tabId];
               return (
@@ -233,13 +237,13 @@ export default function SettingsPageClient({
                   key={tabId}
                   type="button"
                   onClick={() => setActiveTab(tabId)}
-                  className={`w-full text-start p-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 ${
+                  className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-bold transition-all md:w-full ${
                     activeTab === tabId
-                      ? "bg-white shadow-md text-blue-600"
-                      : "text-slate-400 hover:text-slate-600"
+                      ? "bg-white/15 text-white"
+                      : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
                   }`}
                 >
-                  <Icon size={18} className="shrink-0 opacity-80" />
+                  <Icon size={16} className="shrink-0" />
                   {t(`settings.${tabId}`)}
                 </button>
               );
@@ -247,13 +251,14 @@ export default function SettingsPageClient({
           </nav>
         </aside>
 
-        <main className="flex-1 p-6 md:p-12 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 md:mb-10">
+        {/* ── Content ── */}
+        <main className="min-w-0 flex-1 p-6 md:p-8">
+          <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <motion.h3
               key={currentTitle}
               initial={{ opacity: 0, x: 8 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-2xl md:text-3xl font-black italic"
+              className="text-xl font-black tracking-tight text-slate-900"
             >
               {currentTitle}
             </motion.h3>
@@ -261,9 +266,10 @@ export default function SettingsPageClient({
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-200 hover:scale-[1.02] transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
             >
-              <Save size={18} />
+              <Save size={16} />
               {activeTab === "account"
                 ? pendingOrg
                   ? t("common.loading")
@@ -275,16 +281,16 @@ export default function SettingsPageClient({
           </div>
 
           {prefsMsg && (
-            <p className="mb-4 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-2">
+            <p className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700">
               {prefsMsg}
             </p>
           )}
 
           {activeTab === "account" && (
-            <div className="grid grid-cols-1 gap-8">
-              <div className="p-6 md:p-8 bg-slate-50 rounded-2xl border border-slate-100">
-                <h4 className="text-lg font-bold mb-4 flex items-center gap-2 text-emerald-700">
-                  <Shield size={22} /> פרופיל אישי
+            <div className="grid grid-cols-1 gap-6">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                <h4 className="mb-4 flex items-center gap-2 text-base font-bold text-slate-800">
+                  <Shield size={18} className="text-emerald-600" /> פרופיל אישי
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
                   <div className="bg-white p-4 rounded-2xl border border-slate-100">
@@ -881,10 +887,6 @@ export default function SettingsPageClient({
           )}
         </main>
       </div>
-
-      <footer className="text-center text-slate-500 text-xs italic mt-10 max-w-6xl mx-auto">
-        BSD-YBM Intelligence Platform — הגדרות
-      </footer>
     </div>
   );
 }

@@ -178,38 +178,40 @@ ${formContext}
 
   const railW = railWide ? 196 : 58;
 
+  const inputCls = "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15";
+
   return (
     <div
-      className="flex min-h-[calc(100dvh-6rem)] flex-col gap-4 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/40 lg:flex-row lg:items-stretch"
+      className="flex min-h-[calc(100dvh-6rem)] flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm lg:flex-row lg:items-stretch"
       dir={dir}
     >
-      {/* סרגל צד — קומפקטי / נפתח */}
+      {/* ── Sidebar rail ── */}
       <motion.aside
         initial={false}
         animate={{ width: railW }}
         transition={{ type: "spring", stiffness: 380, damping: 32 }}
-        className="flex shrink-0 flex-col border-b border-slate-200 bg-slate-100 text-slate-800 lg:border-b-0 lg:border-e lg:border-slate-200"
+        className="flex shrink-0 flex-col border-b border-slate-100 bg-slate-900 lg:border-b-0 lg:border-e lg:border-slate-100"
         style={{ minHeight: "min(100%, 520px)" }}
       >
-        <div className="flex items-center justify-between gap-1 p-2 border-b border-slate-200/90">
+        <div className="flex items-center justify-between gap-1 border-b border-white/8 p-3">
           {railWide ? (
-            <span className="text-xs font-black uppercase tracking-tight px-1 flex items-center gap-1 truncate">
-              <Sparkles size={14} className="text-blue-500 shrink-0" />
+            <span className="flex items-center gap-1.5 truncate px-1 text-xs font-black uppercase tracking-tight text-white">
+              <Sparkles size={13} className="shrink-0 text-blue-400" />
               מרכז AI
             </span>
           ) : (
-            <Sparkles size={18} className="text-blue-500 mx-auto" />
+            <Sparkles size={17} className="mx-auto text-blue-400" />
           )}
           <button
             type="button"
             onClick={() => setRailWide((v) => !v)}
-            className="p-2 rounded-xl hover:bg-white text-slate-600 border border-transparent hover:border-slate-200"
+            className="rounded-lg p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
             aria-label={railWide ? "צמצם סרגל" : "הרחב סרגל"}
           >
-            {railWide ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
+            {railWide ? <PanelRightClose size={16} /> : <PanelRightOpen size={16} />}
           </button>
         </div>
-        <nav className="flex-1 flex flex-row lg:flex-col gap-1 p-2 overflow-x-auto lg:overflow-visible">
+        <nav className="flex flex-1 flex-row gap-1 overflow-x-auto p-2 lg:flex-col lg:overflow-visible">
           {railItems.map(({ id, label, short, Icon }) => {
             const active = section === id;
             return (
@@ -217,13 +219,13 @@ ${formContext}
                 key={id}
                 type="button"
                 onClick={() => setSection(id)}
-                className={`flex items-center gap-3 whitespace-nowrap rounded-xl px-2 py-2.5 text-sm font-bold transition-colors lg:w-full ${
+                className={`flex items-center gap-3 whitespace-nowrap rounded-xl px-2.5 py-2.5 text-sm font-bold transition-all lg:w-full ${
                   active
-                    ? "border border-blue-200/80 bg-white text-slate-900 shadow-sm ring-1 ring-blue-100/60"
-                    : "text-slate-600 hover:bg-white/80 hover:text-slate-900"
+                    ? "bg-white/15 text-white shadow-sm"
+                    : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
                 }`}
               >
-                <Icon size={20} className="shrink-0" aria-hidden />
+                <Icon size={18} className="shrink-0" aria-hidden />
                 <AnimatePresence initial={false}>
                   {railWide && (
                     <motion.span
@@ -242,158 +244,126 @@ ${formContext}
           })}
         </nav>
         {!railWide && (
-          <p className="hidden lg:block text-[9px] text-slate-500 text-center px-1 pb-2 leading-tight">
+          <p className="hidden pb-3 text-center text-[9px] leading-tight text-slate-500 lg:block">
             {railItems.find((i) => i.id === section)?.short}
           </p>
         )}
       </motion.aside>
 
-      {/* תוכן ראשי */}
-      <div className="flex-1 min-w-0 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
-        <header className="space-y-1">
-          <h1 className="flex items-center gap-2 text-2xl font-black italic text-slate-900 md:text-3xl">
-            <Sparkles className="text-blue-600" size={28} aria-hidden />
-            מרכז AI — הכל במקום אחד
+      {/* ── Main content ── */}
+      <div className="min-w-0 flex-1 space-y-6 overflow-y-auto bg-slate-50/40 p-5 md:p-7">
+        <div>
+          <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-900">
+            <Sparkles className="text-blue-600" size={24} aria-hidden />
+            מרכז AI
           </h1>
-          <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
-            סריקה עם כמה ספקים, שיחה על נתוני הארגון, טיוטות למילוי טפסים, וקישורים ל-ERP ול-CRM — בלי לחפש ברחבי המערכת.
+          <p className="mt-0.5 text-sm text-slate-500">
+            סריקה, שיחה, טיוטות וקישורים — הכל במקום אחד
           </p>
-        </header>
+        </div>
 
         {providersLoading ? (
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" aria-busy="true">
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
-              <Loader2 className="animate-spin text-blue-600" size={18} aria-hidden />
+          <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm" aria-busy="true">
+            <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-500">
+              <Loader2 className="animate-spin text-blue-600" size={17} aria-hidden />
               טוען סטטוס ספקים…
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
-              <div className="h-14 animate-pulse rounded-xl bg-blue-100/60" />
-              <div className="h-14 animate-pulse rounded-xl bg-slate-100" />
-              <div className="h-14 animate-pulse rounded-xl bg-slate-100" />
+              {[0,1,2].map(i => <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />)}
             </div>
           </div>
         ) : configuredChatProviders.length === 0 ? (
-          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900" role="status">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
             <strong>אין ספק AI מוגדר.</strong> הגדרו לפחות אחד מ:{" "}
             <code className="text-xs">GOOGLE_GENERATIVE_AI_API_KEY</code>,{" "}
             <code className="text-xs">OPENAI_API_KEY</code>,{" "}
-            <code className="text-xs">ANTHROPIC_API_KEY</code>, <code className="text-xs">GROQ_API_KEY</code> ב-Vercel או ב־.env
+            <code className="text-xs">ANTHROPIC_API_KEY</code>,{" "}
+            <code className="text-xs">GROQ_API_KEY</code>
           </div>
         ) : null}
 
         <AnimatePresence mode="wait">
           {section === "scan" && (
-            <motion.div
-              key="scan"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="space-y-4"
-            >
-              <div className="crystal-border crystal-hover rounded-[2rem] p-4 shadow-lg shadow-blue-200/20 ring-1 ring-slate-200/60 md:p-6">
-                <div className="mb-4 border-b border-slate-200/80 pb-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-700">השדרה · במה מרכזית</p>
-                  <h2 className="mt-1 flex items-center gap-2 text-xl font-black text-slate-900">
-                    <ScanLine className="text-blue-500" size={26} />
-                    סריקת מסמכים רב־מנועית
-                  </h2>
-                  <p className="mt-1 text-xs font-medium text-slate-600">
-                    העלאה, בחירת ספק ופענוח — כל הממשק במקום אחד.
-                  </p>
+            <motion.div key="scan" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
+              <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
+                <div className="mb-5 border-b border-slate-100 pb-4">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-blue-700">
+                    <ScanLine size={10} /> סריקה רב-מנועית
+                  </span>
+                  <h2 className="mt-2 text-base font-black text-slate-900">סריקת מסמכים</h2>
+                  <p className="mt-0.5 text-xs text-slate-500">העלאה, בחירת ספק ופענוח — כל הממשק במקום אחד.</p>
                 </div>
-                <div className="flex flex-col gap-2 sm:gap-3">
-                  {orgPlan === "FREE" && (
-                    <p className="rounded-xl border border-slate-200 bg-slate-100/90 px-3 py-2 text-xs text-slate-600">
-                      <strong>מנוי FREE:</strong> סריקת מסמכים זמינה עם Gemini. Pro/Business פותחים ספקים נוספים
-                      לפי החבילה.
-                    </p>
-                  )}
-                  <div className="flex flex-col flex-wrap gap-3 sm:flex-row sm:items-center">
-                    <label className="shrink-0 text-sm font-bold text-slate-800">ספק לסריקה:</label>
-                    <select
-                      value={providerScan}
-                      onChange={(e) => setProviderScan(e.target.value)}
-                      className="max-w-md rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium shadow-sm"
-                    >
-                      {scanProviderOptions.length === 0 ? (
-                        <option value="gemini">טוען ספקים…</option>
-                      ) : (
-                        scanProviderOptions.map((p) => {
-                          const usable = p.configured && p.allowedByPlan !== false;
-                          return (
-                            <option key={p.id} value={p.id} disabled={!usable}>
-                              {p.label} —{" "}
-                              {!p.configured
-                                ? "חסר מפתח בשרת"
-                                : p.allowedByPlan === false
-                                  ? "דורש שדרוג מנוי"
-                                  : p.description}
-                            </option>
-                          );
-                        })
-                      )}
-                    </select>
-                    <button type="button" onClick={() => loadProviders()} className="btn-ghost py-1.5 text-xs text-blue-700">
-                      רענון רשימה
-                    </button>
+
+                {orgPlan === "FREE" && (
+                  <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                    <strong>מנוי FREE:</strong> סריקה זמינה עם Gemini. Pro/Business פותחים ספקים נוספים.
                   </div>
+                )}
+
+                <div className="mb-5 flex flex-wrap items-center gap-3">
+                  <label className="shrink-0 text-sm font-bold text-slate-700">ספק:</label>
+                  <select
+                    value={providerScan}
+                    onChange={(e) => setProviderScan(e.target.value)}
+                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium shadow-sm outline-none focus:border-blue-400"
+                  >
+                    {scanProviderOptions.length === 0 ? (
+                      <option value="gemini">טוען…</option>
+                    ) : (
+                      scanProviderOptions.map((p) => (
+                        <option key={p.id} value={p.id} disabled={!(p.configured && p.allowedByPlan !== false)}>
+                          {p.label} — {!p.configured ? "חסר מפתח" : p.allowedByPlan === false ? "נדרש שדרוג" : p.description}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  <button type="button" onClick={() => loadProviders()} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50">
+                    רענן
+                  </button>
                 </div>
-                <div className="mt-5">
-                  <MultiEngineScanner variant="light" provider={providerScan} />
-                </div>
+                <MultiEngineScanner variant="light" provider={providerScan} />
               </div>
             </motion.div>
           )}
 
           {section === "chat" && (
-            <motion.div
-              key="chat"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="card-avenue space-y-4 rounded-[2rem] p-6 shadow-lg"
-            >
+            <motion.div key="chat" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <Bot className="text-blue-600" size={22} aria-hidden />
-                <h2 className="text-lg font-black text-slate-900">עוזר על נתוני הארגון</h2>
+                <Bot className="text-blue-600" size={20} aria-hidden />
+                <h2 className="text-base font-black text-slate-900">עוזר על נתוני הארגון</h2>
                 <select
                   value={providerChat}
                   onChange={(e) => setProviderChat(e.target.value)}
-                  className="ms-auto rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                  className="ms-auto rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400"
                 >
-                  {providers.map((p) => {
-                    const usable = p.configured && p.allowedByPlan !== false;
-                    return (
-                      <option key={p.id} value={p.id} disabled={!usable}>
-                        {p.label}
-                        {!p.configured ? " — חסר מפתח" : p.allowedByPlan === false ? " — שדרוג מנוי" : ""}
-                      </option>
-                    );
-                  })}
+                  {providers.map((p) => (
+                    <option key={p.id} value={p.id} disabled={!(p.configured && p.allowedByPlan !== false)}>
+                      {p.label}{!p.configured ? " — חסר מפתח" : p.allowedByPlan === false ? " — שדרג מנוי" : ""}
+                    </option>
+                  ))}
                 </select>
               </div>
-              <p className="text-xs text-slate-500">
-                נשלח לספק עד ~50 מסמכים אחרונים כהקשר (כמו עוזר הגלובוס בתחתית המסך, כאן במסך מלא).
-              </p>
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 min-h-[160px] p-4 text-sm text-slate-800 whitespace-pre-wrap">
-                {chatA || <span className="text-slate-400 italic">התשובה תופיע כאן</span>}
-                {chatLoading && <Loader2 className="animate-spin mt-2 text-blue-600" size={20} />}
+              <p className="text-xs text-slate-400">נשלח לספק עד ~50 מסמכים אחרונים כהקשר.</p>
+              <div className="min-h-[160px] rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm whitespace-pre-wrap text-slate-800">
+                {chatA || <span className="italic text-slate-400">התשובה תופיע כאן</span>}
+                {chatLoading && <Loader2 className="mt-2 animate-spin text-blue-600" size={18} />}
               </div>
-              <div className="flex gap-2 flex-col sm:flex-row">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <input
                   value={chatQ}
                   onChange={(e) => setChatQ(e.target.value)}
-                  placeholder="שאלה — למשל: סכם את סוגי ההוצאות מהחודש..."
-                  className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="שאלה — למשל: סכם את ההוצאות מהחודש..."
+                  className={inputCls}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), runChat())}
                 />
                 <button
                   type="button"
                   onClick={runChat}
                   disabled={chatLoading || !chatQ.trim()}
-                  className="btn-primary px-6 py-3 disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40"
+                  style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
                 >
-                  <Send size={18} aria-hidden />
+                  <Send size={16} aria-hidden />
                   שלח
                 </button>
               </div>
@@ -401,92 +371,50 @@ ${formContext}
           )}
 
           {section === "forms" && (
-            <motion.div
-              key="forms"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="card-avenue space-y-4 rounded-[2rem] p-6 shadow-lg"
-            >
-              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                <FilePenLine className="text-emerald-600" size={22} />
+            <motion.div key="forms" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6 space-y-4">
+              <h2 className="flex items-center gap-2 text-base font-black text-slate-900">
+                <FilePenLine className="text-emerald-600" size={20} />
                 מילוי טפסים וטיוטות
               </h2>
-              <p className="text-sm text-slate-600">
-                הדבקו טקסט טופס / שדות / דוגמה. הנחיות — מה למלא בשביל מי. התשובה מיועדת להעתקה ידנית למערכות חיצוניות (לא חתימה משפטית).
-              </p>
+              <p className="text-sm text-slate-500">הדבקו טקסט טופס/שדות. התשובה מיועדת להעתקה — לא חתימה משפטית.</p>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">הנחיות מילוי</label>
-                  <textarea
-                    value={formGoal}
-                    onChange={(e) => setFormGoal(e.target.value)}
-                    placeholder="למשל: מלא פרטי עוסק וסכום ביטול"
-                    className="w-full h-28 rounded-xl border border-slate-200 p-3 text-sm"
-                  />
+                  <label className="mb-1.5 block text-xs font-bold text-slate-500">הנחיות מילוי</label>
+                  <textarea value={formGoal} onChange={(e) => setFormGoal(e.target.value)} placeholder="למשל: מלא פרטי עוסק וסכום ביטול" className="h-28 w-full rounded-xl border border-slate-200 p-3 text-sm outline-none focus:border-blue-400" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">תוכן / טופס</label>
-                  <textarea
-                    value={formContext}
-                    onChange={(e) => setFormContext(e.target.value)}
-                    placeholder="הדבק כאן טקסט השדות או הטיוטה"
-                    className="w-full h-28 rounded-xl border border-slate-200 p-3 text-sm"
-                  />
+                  <label className="mb-1.5 block text-xs font-bold text-slate-500">תוכן / טופס</label>
+                  <textarea value={formContext} onChange={(e) => setFormContext(e.target.value)} placeholder="הדבק כאן טקסט השדות או הטיוטה" className="h-28 w-full rounded-xl border border-slate-200 p-3 text-sm outline-none focus:border-blue-400" />
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <span className="text-xs font-bold text-slate-600">ספק:</span>
-                <select
-                  value={providerChat}
-                  onChange={(e) => setProviderChat(e.target.value)}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                >
+                <select value={providerChat} onChange={(e) => setProviderChat(e.target.value)} className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none">
                   {configuredChatProviders.map((p) => (
                     <option key={p.id} value={p.id} disabled={p.allowedByPlan === false}>
-                      {p.label}
-                      {p.allowedByPlan === false ? ` — ${planBlockLabel}` : ""}
+                      {p.label}{p.allowedByPlan === false ? ` — ${planBlockLabel}` : ""}
                     </option>
                   ))}
                 </select>
-                <button
-                  type="button"
-                  onClick={runFormAssist}
-                  disabled={formLoading || !formContext.trim()}
-                  className="ms-auto inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-bold px-5 py-2.5 disabled:opacity-40"
-                >
-                  {formLoading ? <Loader2 className="animate-spin" size={18} /> : null}
-                  ייצר טיוטת מילוי
+                <button type="button" onClick={runFormAssist} disabled={formLoading || !formContext.trim()} className="ms-auto inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40">
+                  {formLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+                  ייצר טיוטה
                 </button>
               </div>
-              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 min-h-[120px] p-4 text-sm whitespace-pre-wrap text-slate-800">
-                {formOut || <span className="text-slate-400 italic">הטיוטה תופיע כאן</span>}
+              <div className="min-h-[120px] rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 text-sm whitespace-pre-wrap text-slate-800">
+                {formOut || <span className="italic text-slate-400">הטיוטה תופיע כאן</span>}
               </div>
             </motion.div>
           )}
 
           {section === "links" && (
-            <motion.div
-              key="links"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="grid gap-3 sm:grid-cols-2"
-            >
+            <motion.div key="links" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="grid gap-3 sm:grid-cols-2">
               {quickLinks.map(({ href, title, desc }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="card-avenue group flex items-start gap-3 p-5 transition-all hover:border-blue-200 hover:shadow-md"
-                >
-                  <ExternalLink
-                    size={20}
-                    className="mt-0.5 shrink-0 text-blue-600 opacity-80 group-hover:opacity-100"
-                    aria-hidden
-                  />
+                <Link key={href} href={href} className="group flex items-start gap-3 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md">
+                  <ExternalLink size={18} className="mt-0.5 shrink-0 text-blue-500 transition group-hover:text-blue-600" aria-hidden />
                   <div>
-                    <div className="font-black text-slate-900">{title}</div>
-                    <div className="text-sm text-slate-500 mt-1">{desc}</div>
+                    <p className="font-bold text-slate-900 group-hover:text-blue-700">{title}</p>
+                    <p className="mt-0.5 text-sm text-slate-500">{desc}</p>
                   </div>
                 </Link>
               ))}
