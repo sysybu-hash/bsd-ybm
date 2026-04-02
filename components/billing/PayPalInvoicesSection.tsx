@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FileText } from "lucide-react";
-import SeedTestInvoiceButton from "@/components/billing/SeedTestInvoiceButton";
 
 export type PayPalInvoiceRow = {
   id: string;
@@ -53,7 +52,6 @@ export default function PayPalInvoicesSection({
             לא הוגדר PayPal לארגון — קישורי תשלום לא יופיעו עד שתשלימו את ההגדרות.
           </p>
         ) : null}
-        <SeedTestInvoiceButton />
       </div>
     </section>
   );

@@ -31,24 +31,30 @@ export default async function CRMPage() {
   }
 
   const platformDev = isAdmin(email);
+  const userId = session.user.id;
 
-  if (!platformDev) {
-    redirect("/dashboard");
-  }
+  // כל משתמש מחובר יכול להשתמש ב-CRM של הארגון שלו
+  const dbUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { organizationId: true },
+  });
 
-  let orgId: string | null = null;
-  let organizations: CrmAdminOrganizationRow[] = [];
+  const orgId = dbUser?.organizationId ?? session.user.organizationId ?? null;
+
   type Loaded = Awaited<ReturnType<typeof loadContactsProjects>>;
   let contacts: Loaded["contacts"] = [];
   let projects: Loaded["projects"] = [];
+  let organizations: CrmAdminOrganizationRow[] = [];
 
-  const userId = session.user.id;
-  const [dbUser, organizationsRaw] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { organizationId: true },
-    }),
-    prisma.organization.findMany({
+  if (orgId) {
+    const loaded = await loadContactsProjects(orgId);
+    contacts = loaded.contacts;
+    projects = loaded.projects;
+  }
+
+  // טבלת כל הארגונים — רק לאדמין הפלטפורמה
+  if (platformDev) {
+    const organizationsRaw = await prisma.organization.findMany({
       select: {
         id: true,
         name: true,
@@ -61,29 +67,22 @@ export default async function CRMPage() {
         },
       },
       orderBy: { createdAt: "desc" },
-    }),
-  ]);
+    });
 
-  orgId = dbUser?.organizationId ?? null;
-  const orgIds = organizationsRaw.map((o) => o.id);
-  const invoiceSums =
-    orgIds.length > 0
-      ? await prisma.invoice.groupBy({
-          by: ["organizationId"],
-          where: { organizationId: { in: orgIds } },
-          _sum: { amount: true },
-        })
-      : [];
-  const totalByOrgId = new Map(
-    invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
-  );
+    const orgIds = organizationsRaw.map((o) => o.id);
+    const invoiceSums =
+      orgIds.length > 0
+        ? await prisma.invoice.groupBy({
+            by: ["organizationId"],
+            where: { organizationId: { in: orgIds } },
+            _sum: { amount: true },
+          })
+        : [];
+    const totalByOrgId = new Map(
+      invoiceSums.map((s) => [s.organizationId, s._sum.amount ?? 0]),
+    );
 
-  organizations = dedupeOrganizationsForCrmDisplay(organizationsRaw, totalByOrgId);
-
-  if (orgId) {
-    const loaded = await loadContactsProjects(orgId);
-    contacts = loaded.contacts;
-    projects = loaded.projects;
+    organizations = dedupeOrganizationsForCrmDisplay(organizationsRaw, totalByOrgId);
   }
 
   const hasOrganization = Boolean(orgId);
@@ -94,10 +93,10 @@ export default async function CRMPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <div>
             <h1 className="text-3xl font-black text-[var(--heading-color,#2563eb)] italic tracking-tighter mb-2">
-              מערכת ניהול לקוחות (CRM)
+              ניהול לקוחות (CRM)
             </h1>
             <p className="text-slate-500 text-sm font-semibold">
-              לידים, פרויקטים, ארגונים וסיכומי Intelligence מבוססי AI
+              לקוחות, לידים, פרויקטים והצעות מחיר — הכל במקום אחד
             </p>
           </div>
           <a
