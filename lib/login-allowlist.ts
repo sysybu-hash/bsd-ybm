@@ -32,7 +32,19 @@ export function isLoginAllowlistEnforced(): boolean {
   return s !== null && s.size > 0;
 }
 
-export function isLoginAllowedByAllowlist(email: string | null | undefined): boolean {
+/**
+ * Allowlist gates **registration** only.
+ * Any user already in the DB with ACTIVE status may log in
+ * regardless of the allowlist — otherwise subscribers can never sign in.
+ *
+ * When called with `existsInDb = true` (i.e. the caller already verified
+ * the user has an active DB record), the check is skipped.
+ */
+export function isLoginAllowedByAllowlist(
+  email: string | null | undefined,
+  existsInDb = false,
+): boolean {
+  if (existsInDb) return true;
   const s = allowlistSet();
   if (!s || s.size === 0) return true;
   const c = canonicalizeLoginEmail(email);

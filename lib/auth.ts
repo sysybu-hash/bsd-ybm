@@ -53,13 +53,14 @@ export const authOptions: NextAuthOptions = {
         if (isLoginBlockedEmail(email)) {
           return null;
         }
-        if (!isLoginAllowedByAllowlist(email)) {
-          return null;
-        }
         const user = await prisma.user.findFirst({
           where: { email: { equals: email, mode: "insensitive" } },
         });
         if (!user?.passwordHash) {
+          return null;
+        }
+        /* Allowlist gates registration, not login for existing active users */
+        if (!isLoginAllowedByAllowlist(email, user.accountStatus === AccountStatus.ACTIVE)) {
           return null;
         }
         const ok = await verifyPassword(password, user.passwordHash);
@@ -100,7 +101,8 @@ export const authOptions: NextAuthOptions = {
         if (isLoginBlockedEmail(email)) {
           return "/login?error=CredentialsSignin&reason=blocked";
         }
-        if (!isLoginAllowedByAllowlist(email)) {
+        /* Allowlist gates registration, not login for existing active users */
+        if (!isLoginAllowedByAllowlist(email, dbUser.accountStatus === AccountStatus.ACTIVE)) {
           return "/login?error=CredentialsSignin&reason=allowlist";
         }
         return true;
@@ -192,7 +194,9 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      if (!isLoginAllowedByAllowlist(email)) {
+      /* Allowlist is checked with existsInDb=true during JWT refresh
+         because the user already passed the signIn gate. */
+      if (!isLoginAllowedByAllowlist(email, true)) {
         token.id = "";
         token.role = "";
         token.organizationId = null;

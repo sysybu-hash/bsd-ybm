@@ -21,12 +21,12 @@
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 248, 250, 252;
 
-  /* Brand */
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff;
-  --primary-muted: #bfdbfe;
-  --primary-rgb: 37, 99, 235;
+  /* Brand — Indigo 600 */
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --primary-muted: #c7d2fe;
+  --primary-rgb: 79, 70, 229;
 
   /* Surface */
   --surface-white: #ffffff;
