@@ -160,13 +160,13 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           HERO — Greeting + Subscription
       ═══════════════════════════════════════════ */}
       <div
-        className="relative overflow-hidden rounded-[2rem] p-8 md:p-10"
+        className="relative overflow-hidden rounded-2xl p-8 md:p-10"
         style={{
           background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
         }}
       >
         {/* Decorative orbs */}
-        <div className="pointer-events-none absolute -top-20 -end-20 h-60 w-60 rounded-full bg-blue-500/20 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute -top-20 -end-20 h-60 w-60 rounded-full bg-indigo-500/20 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-16 -start-16 h-48 w-48 rounded-full bg-violet-500/15 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute top-1/2 start-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-400/10 blur-2xl" aria-hidden />
 
@@ -187,9 +187,9 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           {/* Mini stats in hero */}
           <div className="flex gap-3">
             <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 backdrop-blur-sm min-w-[130px]">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-300">הכנסות</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-300">הכנסות</p>
               <p className="mt-1 text-2xl font-black tabular-nums text-white">
-                <span className="text-lg text-blue-300">&#8362;</span>{fmt(animatedRevenue)}
+                <span className="text-lg text-indigo-300">&#8362;</span>{fmt(animatedRevenue)}
               </p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 backdrop-blur-sm min-w-[130px]">
@@ -228,15 +228,15 @@ export default function BsdYbmDashboard({ homeData }: Props) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
         {/* Revenue card — 5 cols */}
-        <div className="lg:col-span-5 rounded-[1.5rem] bg-white p-6 shadow-sm ring-1 ring-slate-100">
+        <div className="lg:col-span-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-                <BarChart3 size={15} className="text-blue-600" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                <BarChart3 size={15} className="text-indigo-600" />
               </div>
               <p className="text-sm font-black text-slate-900">הכנסות</p>
             </div>
-            <Link href="/dashboard/erp" className="text-[11px] font-bold text-blue-600 hover:underline">
+            <Link href="/dashboard/erp" className="text-[11px] font-bold text-indigo-600 hover:underline">
               ERP
             </Link>
           </div>
@@ -273,7 +273,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
           {/* AI Scan — compact */}
           <div
-            className="relative overflow-hidden rounded-[1.5rem] p-6"
+            className="relative overflow-hidden rounded-2xl p-6"
             style={{
               background: "linear-gradient(135deg, #312e81 0%, #4338ca 50%, #3730a3 100%)",
             }}
@@ -282,8 +282,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles size={16} className="text-blue-300" />
-                  <span className="text-xs font-black text-blue-200 uppercase tracking-widest">AI Scanner</span>
+                  <Sparkles size={16} className="text-indigo-300" />
+                  <span className="text-xs font-black text-indigo-200 uppercase tracking-widest">AI Scanner</span>
                 </div>
                 <h3 className="text-lg font-black text-white leading-tight">סריקה חכמה</h3>
                 <p className="text-xs text-indigo-200/70 mt-1 max-w-xs">
@@ -305,7 +305,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               {/* Scan credits mini */}
               <div className="flex gap-2 sm:flex-col">
                 <div className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-sm text-center min-w-[90px]">
-                  <p className="text-[9px] font-black uppercase tracking-wider text-blue-200">Flash</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-indigo-200">Flash</p>
                   <p className="text-xl font-black text-white">{formatCreditsForDisplay(cheapScansRemaining)}</p>
                 </div>
                 <div className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-sm text-center min-w-[90px]">
@@ -318,7 +318,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             {/* Scan result */}
             {scanResult && (
               <div className="mt-4 rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-2">תוצאת פענוח</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-indigo-200 mb-2">תוצאת פענוח</p>
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { label: "ספק", value: scanResult.vendor ?? "—" },
@@ -339,7 +339,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           </div>
 
           {/* Recent contacts */}
-          <div className="rounded-[1.5rem] bg-white p-6 shadow-sm ring-1 ring-slate-100 flex-1">
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100 flex-1">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
@@ -380,7 +380,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     <span className={`shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-bold ${
                       c.status === "CLOSED_WON" ? "bg-emerald-50 text-emerald-700" :
                       c.status === "CLOSED_LOST" ? "bg-slate-100 text-slate-500" :
-                      c.status === "PROPOSAL" ? "bg-blue-50 text-blue-700" :
+                      c.status === "PROPOSAL" ? "bg-indigo-50 text-indigo-700" :
                       "bg-violet-50 text-violet-700"
                     }`}>{c.statusLabel}</span>
                   </Link>
@@ -406,7 +406,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-rose-800">{uploadError}</p>
             {scanQuotaRedirect && (
-              <Link href="/dashboard/billing" className="mt-1 inline-block text-xs font-bold text-blue-700 hover:underline">שדרוג מנוי</Link>
+              <Link href="/dashboard/billing" className="mt-1 inline-block text-xs font-bold text-indigo-700 hover:underline">שדרוג מנוי</Link>
             )}
           </div>
           <button type="button" onClick={() => setUploadErrorDismissed(true)} className="shrink-0 rounded-lg p-1.5 text-rose-400 hover:bg-rose-100 transition-colors" aria-label="סגור">

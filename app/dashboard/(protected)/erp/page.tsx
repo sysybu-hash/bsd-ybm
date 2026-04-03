@@ -84,7 +84,7 @@ export default async function ErpPage({
       label: t("erpPage.statMonthExpenses"),
       value: `₪${expenseThisMonth.toLocaleString(intlTag)}`,
       trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t),
-      valueClass: "text-blue-600",
+      valueClass: "text-indigo-600",
     },
     {
       label: t("erpPage.statDocsInView"),
@@ -161,10 +161,22 @@ export default async function ErpPage({
 
   return (
     <div
-      className="animate-in fade-in duration-500 rounded-[2rem] bg-[#f8fafc] text-slate-900 border border-slate-200/90 shadow-inner p-6 md:p-8 space-y-10"
+      className="animate-in fade-in duration-500 rounded-2xl bg-slate-50/60 text-slate-900 p-6 md:p-8 space-y-8"
       dir={pageDir}
     >
       <ErpScrollToHash />
+
+      {/* Quick action: Invoice issuance */}
+      <div className="flex flex-wrap items-center gap-3">
+        <a
+          href="/dashboard/erp/invoice"
+          className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-indigo-600/20 transition-colors hover:bg-indigo-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+          {t("erpPage.issueInvoice") ?? "הנפקת חשבונית"}
+        </a>
+      </div>
+
       {!geminiConfigured && (
         <div
           className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"

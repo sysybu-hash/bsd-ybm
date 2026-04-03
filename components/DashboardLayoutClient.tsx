@@ -48,7 +48,7 @@ type NavLinkProps = {
 
 function SidebarLink({ href, icon, label, onClick, isActive, color }: NavLinkProps) {
   const colorMap: Record<string, { active: string; icon: string; dot: string }> = {
-    blue:    { active: "bg-blue-500/12 text-blue-400",    icon: "text-blue-400",    dot: "bg-blue-400" },
+    blue:    { active: "bg-blue-500/12 text-indigo-400",    icon: "text-indigo-400",    dot: "bg-blue-400" },
     violet:  { active: "bg-violet-500/12 text-violet-400",  icon: "text-violet-400",  dot: "bg-violet-400" },
     emerald: { active: "bg-emerald-500/12 text-emerald-400", icon: "text-emerald-400", dot: "bg-emerald-400" },
     indigo:  { active: "bg-indigo-500/12 text-indigo-400",  icon: "text-indigo-400",  dot: "bg-indigo-400" },
@@ -223,7 +223,7 @@ export default function DashboardLayoutClient({
           </div>
           <div>
             <p className="text-sm font-black text-white leading-none tracking-tight">
-              BSD<span className="text-blue-400">-YBM</span>
+              BSD<span className="text-indigo-400">-YBM</span>
             </p>
             <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600 mt-0.5">Platform</p>
           </div>
@@ -262,7 +262,7 @@ export default function DashboardLayoutClient({
       >
         <div className="flex items-center justify-between px-4 py-4 border-b border-white/6">
           <Link href="/" className="text-sm font-black text-white" onClick={() => setMobileOpen(false)}>
-            BSD<span className="text-blue-400">-YBM</span>
+            BSD<span className="text-indigo-400">-YBM</span>
           </Link>
           <button type="button" className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>
             <X size={16} />
@@ -284,9 +284,9 @@ export default function DashboardLayoutClient({
             className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm"
             onClick={() => setMobileOpen(true)}
           >
-            <Menu size={16} className="text-blue-600" />
+            <Menu size={16} className="text-indigo-600" />
           </button>
-          <p className="text-sm font-black text-slate-900">BSD<span className="text-blue-600">-YBM</span></p>
+          <p className="text-sm font-black text-slate-900">BSD<span className="text-indigo-600">-YBM</span></p>
           <div className="flex items-center gap-1">
             <DashboardNotificationBell />
             <LanguageSwitcher />
@@ -308,14 +308,14 @@ export default function DashboardLayoutClient({
         <div className="flex flex-1 flex-col gap-5 p-4 pb-[max(7rem,env(safe-area-inset-bottom,0px))] sm:p-5 md:p-6 md:pb-14">
 
           {trialBannerDaysLeft !== null && (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
               <div className="flex items-center gap-2">
-                <Zap size={14} className="text-blue-600 shrink-0" />
-                <p className="text-sm font-bold text-blue-900">
+                <Zap size={14} className="text-indigo-600 shrink-0" />
+                <p className="text-sm font-bold text-indigo-900">
                   {trialBannerDaysLeft === 1 ? t("layout.trialBannerOne") : t("layout.trialBannerMany", { days: String(trialBannerDaysLeft) })}
                 </p>
               </div>
-              <Link href="/dashboard/billing" className="shrink-0 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-700 transition-colors">
+              <Link href="/dashboard/billing" className="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 transition-colors">
                 {t("layout.trialUpgrade")}
               </Link>
             </div>

@@ -55,7 +55,7 @@ export type FileCompareResult = {
 
 type Variant = "dark" | "light";
 
-const primary = "var(--primary-color, #3b82f6)";
+void 0; // primary color is now indigo-600 via Tailwind classes
 
 type ScannerProps = {
   variant?: Variant;
@@ -284,7 +284,7 @@ export default function MultiEngineScanner({
     processing || files.length === 0 || status !== "authenticated" || selectedIds.length === 0;
 
   const crystalActionClass =
-    "border border-blue-300/50 bg-white/80 text-slate-900 shadow-lg shadow-blue-200/20 backdrop-blur-xl hover:border-blue-400 hover:bg-blue-50/90";
+    "border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/60 transition-colors";
 
   const onSaveToDocumentInbox = async () => {
     const out = await executeMultiScan();
@@ -313,13 +313,16 @@ export default function MultiEngineScanner({
     clearFiles();
   };
 
-  const shellClass = `card-avenue flex flex-col scroll-mt-24 bg-white shadow-2xl shadow-slate-200/50 relative overflow-hidden ${
-    fillHeight ? "min-h-[min(92vh,860px)] flex-1 p-6 md:p-8" : "min-h-[320px] rounded-[3rem] p-10"
+  const shellClass = `flex flex-col scroll-mt-24 bg-white relative overflow-hidden ${
+    fillHeight
+      ? "min-h-[min(92vh,860px)] flex-1 rounded-2xl border border-slate-200/80 p-6 shadow-sm md:p-8"
+      : "min-h-[320px] rounded-2xl border border-slate-200/80 p-8 shadow-sm lg:p-10"
   }`;
 
-  const dropIdle = "border-slate-100 bg-slate-50/30 hover:bg-white hover:border-slate-200";
+  const dropIdle =
+    "border-slate-200 bg-slate-50/50 hover:bg-indigo-50/30 hover:border-indigo-300 transition-colors";
 
-  const dropActive = "border-blue-500 bg-blue-50/50 scale-[0.99]";
+  const dropActive = "border-indigo-500 bg-indigo-50/40 scale-[0.995]";
 
   const steps = [
     { n: 1, t: "מנועים" },
@@ -332,68 +335,72 @@ export default function MultiEngineScanner({
   return (
     <section id="erp-multi-scanner" className={shellClass} dir={dir}>
       {!compactHeader ? (
-        <div className="flex items-center gap-3 mb-6 flex-wrap">
-          <div className="p-3 rounded-2xl bg-blue-50">
-            <Brain style={{ color: primary }} size={28} />
+        <div className="mb-8 flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50">
+            <Brain className="text-indigo-600" size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-black italic tracking-tighter" style={{ color: primary }}>
+            <h2 className="text-xl font-extrabold text-slate-800">
               סורק ה-AI הרב-מנועי
             </h2>
-            <p className="text-slate-400 text-sm font-medium">
-              {SCAN_ACCEPT_SUMMARY}. ניתן להעלות <strong>מספר קבצים יחד</strong> (ארכיון מהמחשב).
-              בחר מנוע אחד, כמה מנועים, או כולם — לאחר מכן תוצג השוואה בעברית והמלצה.
+            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+              {SCAN_ACCEPT_SUMMARY}. ניתן להעלות מספר קבצים יחד.
+              בחר מנוע אחד או כולם — לאחר הפענוח תוצג השוואה והמלצה.
             </p>
           </div>
         </div>
       ) : null}
 
       {/* שלבים — שורה אחת */}
-      <div className="flex flex-nowrap items-center gap-2 mb-6 overflow-x-auto pb-1 w-full">
-        {steps.map((s) => {
+      <div className="mb-6 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+        {steps.map((s, i) => {
           const done = s.n < activeStep;
           const current = s.n === activeStep;
           return (
-            <div
-              key={s.n}
-              className={`flex items-center gap-2 shrink-0 rounded-full px-3 py-1.5 text-xs font-black border ${
-                current
-                  ? "bg-blue-600 text-white border-blue-500 ring-2 ring-blue-300/50"
-                  : done
-                    ? "bg-emerald-100 text-emerald-900 border-emerald-200"
-                    : "bg-slate-100 text-slate-500 border-slate-200"
-              }`}
-            >
-              <span className="opacity-80">{done ? "✓" : s.n}</span>
-              <span>{s.t}</span>
+            <div key={s.n} className="flex shrink-0 items-center">
+              <div
+                className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                  current
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
+                    : done
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                <span>{done ? <CheckCircle2 size={13} /> : s.n}</span>
+                <span>{s.t}</span>
+              </div>
+              {i < steps.length - 1 && (
+                <div className={`mx-1 h-px w-4 ${done ? "bg-emerald-300" : "bg-slate-200"}`} />
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* בחירת מנועים — שורה אחת עם גלילה */}
-      <div className="mb-4 space-y-2">
+      {/* בחירת מנועים */}
+      <div className="mb-6 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-black text-slate-500 shrink-0">מנועי פענוח:</span>
+          <span className="shrink-0 text-xs font-bold text-slate-500">מנועי פענוח:</span>
           <button
             type="button"
             onClick={selectAllEngines}
-            className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-700 text-white hover:bg-blue-800"
+            className="rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm shadow-indigo-600/20 transition-colors hover:bg-indigo-700"
           >
             כל המנועים
           </button>
           <button
             type="button"
             onClick={clearEngines}
-            className="text-xs font-bold px-3 py-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50"
+            className="rounded-xl border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-50"
           >
             נקה
           </button>
           {scanEngineRows.length === 0 && providers.length === 0 && (
-            <span className="text-xs text-blue-500">טוען רשימת מנועים…</span>
+            <span className="text-xs text-indigo-500">טוען רשימת מנועים…</span>
           )}
         </div>
-        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 w-full">
+        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
           {scanEngineRows.map((p) => {
             const on = selectedIds.includes(p.id);
             const ok = canRunEngine(p);
@@ -409,29 +416,29 @@ export default function MultiEngineScanner({
                 title={ok ? p.description : reason}
                 disabled={!ok && !on}
                 onClick={() => toggleProvider(p.id)}
-                className={`shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold border transition-all ${
+                className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all ${
                   !ok
-                    ? "opacity-55 cursor-not-allowed border-dashed border-slate-300 text-slate-500 bg-slate-100"
+                    ? "cursor-not-allowed border-dashed border-slate-200 bg-slate-50 text-slate-400 opacity-60"
                     : on
-                      ? "bg-blue-600 text-white border-blue-500 shadow-md"
-                      : "bg-white text-slate-600 border-slate-200"
+                      ? "border-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50"
                 }`}
               >
-                <Sparkles size={14} className={on && ok ? "opacity-100" : "opacity-50"} />
+                <Sparkles size={14} className={on && ok ? "opacity-100" : "opacity-40"} />
                 {p.label}
                 {!ok ? <span className="text-[9px] font-medium opacity-80">({!p.configured ? "לא מוגדר" : "מנוי"})</span> : null}
               </button>
             );
           })}
         </div>
-        {selectedIds.length === 0 ? (
-          <p className="text-xs text-rose-600 font-bold">נדרש לבחור לפחות מנוע אחד לפני סריקה.</p>
-        ) : null}
+        {selectedIds.length === 0 && (
+          <p className="text-xs font-semibold text-red-500">נדרש לבחור לפחות מנוע אחד לפני סריקה.</p>
+        )}
       </div>
 
       <div
         {...getRootProps()}
-        className={`relative border-2 border-dashed rounded-[2rem] p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer md:p-12 min-h-[200px] ${
+        className={`relative flex min-h-[180px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-all duration-300 md:p-10 ${
           isDragActive ? dropActive : dropIdle
         }`}
       >
@@ -446,18 +453,17 @@ export default function MultiEngineScanner({
               exit={{ opacity: 0 }}
               className="text-center"
             >
-              <>
-                <div className="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-50">
-                  <UploadCloud size={28} className="text-slate-300" />
-                </div>
-                <p className="text-slate-600 font-medium">גרור קבצים או לחץ לבחירה</p>
-              </>
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white shadow-sm">
+                <UploadCloud size={24} className="text-indigo-400" />
+              </div>
+              <p className="font-semibold text-slate-600">גרור קבצים או לחץ לבחירה</p>
+              <p className="mt-1 text-xs text-slate-400">{SCAN_ACCEPT_SUMMARY}</p>
               {files.length > 0 && (
-                <div className="mt-3 flex flex-wrap justify-center gap-2">
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
                   {files.map((f, i) => (
                     <span
                       key={`${f.name}-${i}`}
-                      className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-200/80 text-slate-700"
+                      className="rounded-lg bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700"
                     >
                       {f.name}
                     </span>
@@ -473,8 +479,8 @@ export default function MultiEngineScanner({
               exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-3"
             >
-              <Loader2 className="animate-spin text-blue-500" size={40} />
-              <p className="text-slate-600 text-sm">
+              <Loader2 className="animate-spin text-indigo-500" size={36} />
+              <p className="text-sm text-slate-500">
                 מריץ פענוח מול {eligibleSelectedCount} מנועים לכל קובץ…
               </p>
             </motion.div>
@@ -482,18 +488,38 @@ export default function MultiEngineScanner({
         </AnimatePresence>
       </div>
 
-      {files.length > 0 && !processing && (
-        <button
-          type="button"
-          onClick={clearFiles}
-          className="mt-2 text-xs font-bold underline text-slate-500"
-        >
-          נקה רשימת קבצים
-        </button>
+      {/* ══ PRIMARY SCAN BUTTON ══ */}
+      {files.length > 0 && !processing && compareResults.length === 0 && (
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <motion.button
+            type="button"
+            disabled={scanActionsDisabled}
+            onClick={() => void executeMultiScan()}
+            whileHover={scanActionsDisabled ? undefined : { scale: 1.03 }}
+            whileTap={scanActionsDisabled ? undefined : { scale: 0.97 }}
+            className="w-full max-w-md rounded-2xl bg-indigo-600 px-8 py-4 text-base font-black text-white shadow-lg shadow-indigo-600/25 transition-colors hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            <Sparkles size={20} />
+            התחל סריקה ({files.length} {files.length === 1 ? "קובץ" : "קבצים"} × {eligibleSelectedCount} מנועים)
+          </motion.button>
+          <button
+            type="button"
+            onClick={clearFiles}
+            className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            נקה רשימת קבצים
+          </button>
+        </div>
+      )}
+
+      {files.length > 0 && !processing && compareResults.length === 0 && (
+        <p className="mt-2 text-center text-xs text-slate-400">
+          או בחרו פעולה ספציפית למטה (שמירה בתיבת מסמכים, שיוך לפרויקט...)
+        </p>
       )}
 
       {status !== "authenticated" && (
-        <p className="text-sm mt-3 text-blue-600">
+        <p className="text-sm mt-3 text-indigo-600 font-semibold">
           נדרשת התחברות כדי להריץ סריקה.
         </p>
       )}
@@ -505,7 +531,7 @@ export default function MultiEngineScanner({
             <span className="text-slate-700">{progress}%</span>
           </div>
           <div className="w-full rounded-full h-2 overflow-hidden bg-slate-100">
-            <div className="h-full transition-all duration-300 bg-blue-600"
+            <div className="h-full transition-all duration-300 bg-indigo-600"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -514,16 +540,16 @@ export default function MultiEngineScanner({
 
       {/* השוואה ותצוגה מקדימה */}
       {compareResults.length > 0 && (
-        <div className="mt-8 space-y-8 text-slate-800">
+        <div className="mt-8 space-y-6 text-slate-800">
           {compareResults.map((row, idx) => (
             <div
               key={`${row.fileName}-${idx}`}
-              className="rounded-3xl border overflow-hidden border-slate-200 bg-slate-50/50"
+              className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                <div className="p-4 border-b lg:border-b-0 lg:border-l border-slate-200 bg-white">
-                  <p className="text-xs font-black text-slate-500 mb-2">תצוגה מקדימה</p>
-                  <p className="text-sm font-bold mb-2 truncate" title={row.fileName}>
+              <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
+                <div className="border-b border-slate-100 bg-slate-50/40 p-5 lg:border-b-0 lg:border-l">
+                  <p className="mb-2 text-xs font-bold text-slate-400">תצוגה מקדימה</p>
+                  <p className="mb-3 truncate text-sm font-bold text-slate-700" title={row.fileName}>
                     {row.fileName}
                   </p>
                   {row.previewUrl && row.isImage ? (
@@ -627,7 +653,7 @@ export default function MultiEngineScanner({
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <motion.button
           type="button"
           disabled={scanActionsDisabled}
@@ -636,7 +662,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Archive className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Archive className="size-5 shrink-0 text-indigo-500" strokeWidth={1.75} />}
           שמירה בתיבת המסמכים
         </motion.button>
         <motion.button
@@ -647,7 +673,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <FolderKanban className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <FolderKanban className="size-5 shrink-0 text-indigo-500" strokeWidth={1.75} />}
           שיוך לפרויקט
         </motion.button>
         <motion.button
@@ -658,7 +684,7 @@ export default function MultiEngineScanner({
           whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
           className={`rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${crystalActionClass}`}
         >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <StepForward className="size-5 shrink-0 text-blue-500" strokeWidth={1.75} />}
+          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <StepForward className="size-5 shrink-0 text-indigo-500" strokeWidth={1.75} />}
           שמור והמשך למסמך הבא
         </motion.button>
         <motion.button
@@ -667,7 +693,7 @@ export default function MultiEngineScanner({
           onClick={onCancelScanFlow}
           whileHover={processing ? undefined : { scale: 1.02 }}
           whileTap={processing ? undefined : { scale: 0.98 }}
-          className="rounded-2xl px-4 py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-rose-200 bg-rose-50 text-rose-900 hover:border-rose-300 hover:bg-rose-100"
+          className="flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm font-bold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <XCircle className="size-5 shrink-0 text-rose-600" strokeWidth={1.75} />
           ביטול
