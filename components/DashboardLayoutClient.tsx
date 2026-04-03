@@ -295,7 +295,11 @@ export default function DashboardLayoutClient({
 
         {/* Desktop header */}
         <header className="sticky top-0 z-[110] hidden items-center justify-between gap-4 border-b border-slate-200/60 bg-white/97 px-6 py-2.5 backdrop-blur-md md:flex">
-          <p className="text-sm font-bold text-slate-800">{pageTitle}</p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm font-bold text-slate-800">{pageTitle}</p>
+            <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500" dir="ltr">{serverEmail}</span>
+            {showAdmin && <span className="rounded-lg bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Admin</span>}
+          </div>
           <div className="flex items-center gap-2">
             <DashboardNotificationBell />
             <Link href="/" className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-50 transition-colors">

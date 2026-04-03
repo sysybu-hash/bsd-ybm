@@ -131,7 +131,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         const u = user as {
           id?: string;
@@ -140,31 +140,52 @@ export const authOptions: NextAuthOptions = {
           image?: string | null;
         };
         /**
-         * התחברות חדשה: חובה לאפס אימייל מהטוקן הישן.
-         * אם `user.email` חסר לרגע, הקוד הישן השאיר את token.email של המשתמש הקודם —
-         * ואז נטען פרופיל/תפקיד של sysybu למרות התחברות כ-jbuildgca (באג ייצור).
+         * התחברות חדשה (signIn / signUp):
+         * חובה לאפס את **כל** שדות הטוקן הישן כדי למנוע דליפת זהות.
+         * באג ייצור: sysybu התחבר, jbuildgca נכנס — הטוקן נשמר עם email/id/role של sysybu
+         * כי delete רגיל לא תמיד מנקה את כל ה-JWT claims.
+         *
+         * הפתרון: אנחנו בונים טוקן חדש לגמרי ומעתיקים רק את שדות ה-JWT הסטנדרטיים.
          */
         const emailNorm = (u.email ?? "").trim().toLowerCase();
         if (!emailNorm) {
+          /* אם אין אימייל — מנקים הכל ויוצאים */
           token.email = "";
           token.id = "";
           token.name = undefined;
           token.picture = undefined;
-          delete (token as { role?: string }).role;
-          delete (token as { organizationId?: string | null }).organizationId;
+          token.role = "";
+          token.organizationId = null;
+          token.sub = "";
           return token;
         }
+
+        /* ────────────────────────────────────────────
+         * ניקוי מוחלט: מאפסים את כל שדות הטוקן הקיימים
+         * ומגדירים רק את מה שהמשתמש החדש מביא.
+         * זה מונע כל אפשרות של דליפת שדות מ-JWT ישן.
+         * ──────────────────────────────────────────── */
+        const freshId = typeof u.id === "string" && u.id.length > 0 ? u.id : "";
+
+        /* מחק שדות ישנים — כולל שדות non-standard שייתכן והצטברו */
+        for (const key of Object.keys(token)) {
+          if (key === "iat" || key === "exp" || key === "jti") continue; /* JWT metadata */
+          delete (token as Record<string, unknown>)[key];
+        }
+
+        /* הגדר שדות חדשים */
+        token.sub = freshId;
         token.email = emailNorm;
-        token.id = typeof u.id === "string" && u.id.length > 0 ? u.id : "";
-        if (u.name != null) {
-          token.name = u.name ?? undefined;
-        }
-        if (u.image != null) {
-          token.picture = u.image ?? undefined;
-        }
-        /** התחברות חדשה — לא לשמר תפקיד/ארגון מ-JWT קודם (מיזוג תוקע זהות) */
-        delete (token as { role?: string }).role;
-        delete (token as { organizationId?: string | null }).organizationId;
+        token.id = freshId;
+        token.name = u.name ?? undefined;
+        token.picture = u.image ?? undefined;
+        /* role ו-organizationId ייטענו מה-DB בהמשך הפונקציה */
+      }
+
+      /* ─── signIn event (trigger) ─── */
+      if (trigger === "signIn" && !user) {
+        /* Edge case: signIn trigger without user — shouldn't happen, but guard */
+        return token;
       }
 
       /** ריענון JWT: יש `id` בלי `email` בטוקן — משחזרים מה-DB כדי שלא ייפול ה-UI ל-useSession ישן */
