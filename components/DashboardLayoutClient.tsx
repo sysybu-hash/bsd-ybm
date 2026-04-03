@@ -2,13 +2,19 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  BookOpen,
+  BriefcaseBusiness,
+  Cable,
+  Compass,
   LayoutDashboard,
   Users,
   FileText,
+  ReceiptText,
   Settings,
   Shield,
   CreditCard,
@@ -26,6 +32,8 @@ import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { canAccessIntelligenceDashboard } from "@/lib/intelligence-access";
 import { isAdmin } from "@/lib/is-admin";
+
+const DASHBOARD_SIMPLE_MODE_KEY = "bsd-dashboard:simple-mode";
 
 /* ─── helpers ─── */
 function routeActive(pathname: string, href: string): boolean {
@@ -101,6 +109,7 @@ export default function DashboardLayoutClient({
   const pathname = usePathname() ?? "";
   const { data: sessionData, status: sessionStatus } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [simpleMode, setSimpleMode] = useState(true);
 
   const serverEmail = serverUser.email.trim();
   const navReady = sessionStatus === "authenticated" || serverEmail.length > 0;
@@ -122,32 +131,56 @@ export default function DashboardLayoutClient({
     return () => window.removeEventListener("resize", fn);
   }, []);
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(DASHBOARD_SIMPLE_MODE_KEY);
+      if (raw === "0") setSimpleMode(false);
+      if (raw === "1") setSimpleMode(true);
+    } catch {
+      setSimpleMode(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(DASHBOARD_SIMPLE_MODE_KEY, simpleMode ? "1" : "0");
+  }, [simpleMode]);
+
   /* Nav items */
   const navItems = [
+    { href: "/dashboard/control-center", icon: <Compass size={17} />, label: "מרכז תפעול", color: "emerald" },
+    { href: "/dashboard/operations", icon: <BriefcaseBusiness size={17} />, label: "מרכז צמיחה", color: "sky" },
+    { href: "/dashboard/operator", icon: <Cable size={17} />, label: "עוזר תפעולי", color: "indigo" },
     { href: "/dashboard",       icon: <LayoutDashboard size={17} />, label: t("dashboard.main"),         color: "blue" },
     { href: "/dashboard/crm",   icon: <Users size={17} />,           label: t("dashboard.crm"),          color: "violet" },
     { href: "/dashboard/erp",   icon: <FileText size={17} />,        label: t("dashboard.erp"),          color: "emerald" },
-    { href: "/dashboard/ai",    icon: <Sparkles size={17} />,        label: t("dashboard.aiHub"),        color: "indigo" },
+    { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: "חשבוניות", color: "rose" },
+    ...(!simpleMode ? [{ href: "/dashboard/ai", icon: <Sparkles size={17} />, label: t("dashboard.aiHub"), color: "indigo" }] : []),
   ];
 
   const navItemsBottom = [
-    ...(canAccessIntelligenceDashboard(userRole) ? [
+    ...(!simpleMode && canAccessIntelligenceDashboard(userRole) ? [
       { href: "/dashboard/intelligence", icon: <TrendingUp size={17} />, label: t("dashboard.intelligence"), color: "sky" },
     ] : []),
     { href: "/dashboard/billing",  icon: <CreditCard size={17} />, label: t("dashboard.billing"),  color: "rose" },
     { href: "/dashboard/settings", icon: <Settings size={17} />,   label: t("dashboard.settings"), color: "blue" },
+    { href: "/dashboard/help", icon: <BookOpen size={17} />, label: "מדריך תפעול", color: "amber" },
   ];
 
   const drawerHidden = dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";
 
   const titleMap: Record<string, string> = {
+    "/dashboard/control-center": "מרכז תפעול",
+    "/dashboard/operations": "מרכז צמיחה",
+    "/dashboard/operator": "עוזר תפעולי",
     "/dashboard": t("dashboard.main"),
     "/dashboard/crm": t("dashboard.crm"),
     "/dashboard/erp": t("dashboard.erp"),
+    "/dashboard/erp/invoice": "מערכת חשבוניות",
     "/dashboard/ai": t("dashboard.aiHub"),
     "/dashboard/intelligence": t("dashboard.intelligence"),
     "/dashboard/billing": t("dashboard.billing"),
     "/dashboard/settings": t("dashboard.settings"),
+    "/dashboard/help": "מדריך תפעול",
     "/dashboard/admin": "Admin",
   };
   const pageTitle = titleMap[pathname] ?? "BSD-YBM";
@@ -165,7 +198,7 @@ export default function DashboardLayoutClient({
           <SidebarLink key={item.href} {...item} onClick={onNav} isActive={routeActive(pathname, item.href)} />
         ))}
       </div>
-      {showAdmin && (
+      {showAdmin && !simpleMode && (
         <>
           <div className="my-3 border-t border-white/6" />
           <SidebarLink
@@ -186,7 +219,7 @@ export default function DashboardLayoutClient({
       <div className="flex items-center gap-3 rounded-xl px-2 py-2">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-black text-white shadow">
           {serverUser.image ? (
-            <img src={serverUser.image} alt="" className="h-9 w-9 rounded-lg object-cover" />
+            <Image src={serverUser.image} alt="" width={36} height={36} className="h-9 w-9 rounded-lg object-cover" />
           ) : userInitials}
         </div>
         <div className="min-w-0 flex-1">
@@ -301,6 +334,13 @@ export default function DashboardLayoutClient({
             {showAdmin && <span className="rounded-lg bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Admin</span>}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSimpleMode((v) => !v)}
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
+            >
+              {simpleMode ? "מצב פשוט" : "מצב מתקדם"}
+            </button>
             <DashboardNotificationBell />
             <Link href="/" className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-50 transition-colors">
               לאתר

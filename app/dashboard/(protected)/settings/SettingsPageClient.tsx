@@ -219,6 +219,42 @@ export default function SettingsPageClient({
 
   return (
     <div className="text-slate-900" dir={dir}>
+      <section className="mb-5 rounded-2xl border border-teal-200 bg-teal-50 p-4">
+        <p className="text-xs font-black uppercase tracking-wider text-teal-700">Simple Mode</p>
+        <h3 className="mt-1 text-lg font-black text-teal-900">הגדרות בניהול קל</h3>
+        <p className="mt-1 text-sm text-teal-800">
+          לא חייבים לעבור בין כל הטאבים. בחר את המשימה שלך ותגיע ישר למסך הנכון.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab("account")}
+            className="rounded-xl bg-teal-700 px-3 py-2 text-sm font-bold text-white hover:bg-teal-800"
+          >
+            פרטי ארגון
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("billing")}
+            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
+          >
+            חיבורי תשלום
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("cloud")}
+            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
+          >
+            גיבוי ענן
+          </button>
+          <Link
+            href="/dashboard/control-center"
+            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
+          >
+            מרכז תפעול
+          </Link>
+        </div>
+      </section>
       <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col md:flex-row">
 
         {/* ── Sidebar ── */}

@@ -97,6 +97,12 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           >
             שידור והתראות
           </Link>
+          <Link
+            href="/dashboard/control-center"
+            className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100"
+          >
+            מרכז תפעול פשוט
+          </Link>
         </div>
       </header>
 

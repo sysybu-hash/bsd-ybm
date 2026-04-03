@@ -13,6 +13,7 @@ import { COOKIE_LOCALE, normalizeLocale, isRtlLocale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/load-messages";
 import { buildRootMetadata } from "@/lib/site-metadata";
 import GlobalFloatingChrome from "@/components/GlobalFloatingChrome";
+import SiteWizardChrome from "@/components/wizard/SiteWizardChrome";
 
 const heebo = Heebo({
   subsets: ["hebrew", "latin"],
@@ -74,7 +75,7 @@ export default async function RootLayout({
         <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
             <Themer />
-            {children}
+            <SiteWizardChrome>{children}</SiteWizardChrome>
             <GlobalFloatingChrome />
             <CookieConsentWall />
           </I18nProvider>

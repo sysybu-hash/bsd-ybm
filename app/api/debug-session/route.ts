@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getToken } from "next-auth/jwt";
-import { headers, cookies } from "next/headers";
+import { isAdmin } from "@/lib/is-admin";
 
 /**
  * GET /api/auth/debug-session
@@ -11,6 +11,14 @@ import { headers, cookies } from "next/headers";
  */
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
+  if (!isAdmin(session?.user?.email)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // In production, debug endpoint is disabled unless explicitly enabled.
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEBUG_SESSION !== "true") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
   /* Read JWT directly for comparison */
   let jwtEmail: string | null = null;

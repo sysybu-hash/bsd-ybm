@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import FinancialCharts from "@/components/FinancialCharts";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
 import SupplierPriceBoard from "@/components/SupplierPriceBoard";
+import Link from "next/link";
 import ErpScrollToHash from "@/components/ErpScrollToHash";
 import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout";
 import ERPDashboard, { type ErpStatCard } from "@/components/ERPDashboard";
@@ -166,6 +167,20 @@ export default async function ErpPage({
     >
       <ErpScrollToHash />
 
+      <section id="erp-wizard" className="scroll-mt-24 rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
+        <p className="mb-1 inline-flex rounded-full border border-cyan-300 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-700">
+          ERP Wizard
+        </p>
+        <h1 className="text-lg font-black text-slate-900">ניהול ERP לפי זרימה ברורה</h1>
+        <p className="mt-1 text-sm text-slate-600">בצע לפי הסדר: סריקה, תמחור, דוחות, ארכיון מסמכים.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a href="#erp-multi-scanner" className="rounded-xl bg-cyan-700 px-3 py-2 text-xs font-bold text-white hover:bg-cyan-800">1. סריקת מסמכים</a>
+          <a href="#erp-price-insights" className="rounded-xl border border-cyan-300 bg-white px-3 py-2 text-xs font-bold text-cyan-900 hover:bg-cyan-100">2. תמחור ותובנות</a>
+          <a href="#erp-financial-charts" className="rounded-xl border border-cyan-300 bg-white px-3 py-2 text-xs font-bold text-cyan-900 hover:bg-cyan-100">3. דוחות כספיים</a>
+          <a href="#erp-documents" className="rounded-xl border border-cyan-300 bg-white px-3 py-2 text-xs font-bold text-cyan-900 hover:bg-cyan-100">4. ניהול מסמכים</a>
+        </div>
+      </section>
+
       {/* Quick action: Invoice issuance */}
       <div className="flex flex-wrap items-center gap-3">
         <a
@@ -175,6 +190,18 @@ export default async function ErpPage({
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
           {t("erpPage.issueInvoice") ?? "הנפקת חשבונית"}
         </a>
+        <a
+          href="#erp-multi-scanner"
+          className="inline-flex items-center gap-2 rounded-2xl border border-cyan-300 bg-white px-5 py-2.5 text-sm font-bold text-cyan-900 transition-colors hover:bg-cyan-50"
+        >
+          מעבר לסריקה
+        </a>
+        <Link
+          href="/dashboard/control-center"
+          className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+        >
+          חזרה למרכז תפעול
+        </Link>
       </div>
 
       {!geminiConfigured && (
@@ -208,28 +235,36 @@ export default async function ErpPage({
 
       {orgId ? <ErpHistoricalImportCallout /> : null}
 
-      <MultiEngineScanner variant="light" />
+      <section id="erp-multi-scanner" className="scroll-mt-24">
+        <MultiEngineScanner variant="light" />
+      </section>
 
-      {orgId ? <SupplierPriceBoard /> : null}
+      <section id="erp-price-insights" className="scroll-mt-24 space-y-6">
+        {orgId ? <SupplierPriceBoard /> : null}
 
-      {priceComparison ? (
-        <PriceComparisonChart data={priceComparison.data} productName={priceComparison.productName} />
-      ) : null}
+        {priceComparison ? (
+          <PriceComparisonChart data={priceComparison.data} productName={priceComparison.productName} />
+        ) : null}
+      </section>
 
-      <FinancialCharts data={docs as unknown as any[]} variant="light" />
+      <section id="erp-financial-charts" className="scroll-mt-24">
+        <FinancialCharts data={docs as unknown as any[]} variant="light" />
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <ErpDocumentsManager
-          initialDocs={(q ? docs : docs).map((d) => ({
-            id: d.id,
-            fileName: d.fileName,
-            type: d.type,
-            status: d.status,
-            createdAt: d.createdAt.toISOString(),
-            aiData: d.aiData,
-          }))}
-        />
-      </div>
+      <section id="erp-documents" className="scroll-mt-24">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <ErpDocumentsManager
+            initialDocs={(q ? docs : docs).map((d) => ({
+              id: d.id,
+              fileName: d.fileName,
+              type: d.type,
+              status: d.status,
+              createdAt: d.createdAt.toISOString(),
+              aiData: d.aiData,
+            }))}
+          />
+        </div>
+      </section>
 
     </div>
   );

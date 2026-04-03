@@ -1,5 +1,5 @@
-import LandingPage from "@/components/LandingPage";
+import WizardHome from "@/components/landing/WizardHome";
 
 export default function HomePage() {
-  return <LandingPage />;
+  return <WizardHome />;
 }

@@ -14,6 +14,7 @@ import {
   Trash2,
   FolderPlus,
   UserPlus,
+  ListChecks,
   Filter,
   Edit3,
   LayoutGrid,
@@ -26,6 +27,7 @@ import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
 } from "./CrmOrganizationsAdminTable";
 import { useI18n } from "@/components/I18nProvider";
+import { trackWizardEvent } from "@/lib/client-telemetry";
 
 type ContactRow = {
   id: string;
@@ -78,6 +80,20 @@ function formatRange(from: string | null, to: string | null): string {
 const inputCls =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 placeholder:text-slate-400";
 
+const CRM_WIZARD_STORAGE_KEY = "bsd-crm:wizard-step";
+const CRM_DRAFT_STORAGE_KEY = "bsd-crm:wizard-draft";
+
+type CrmDraft = {
+  projectName: string;
+  projectFrom: string;
+  projectTo: string;
+  projectActive: boolean;
+  contactName: string;
+  contactEmail: string;
+  contactStatus: string;
+  contactProjectId: string;
+};
+
 export default function CrmClient({
   contacts,
   projects,
@@ -98,6 +114,17 @@ export default function CrmClient({
   const [contactMonthFilter, setContactMonthFilter] = useState("");
   const [hideInactiveProjects, setHideInactiveProjects] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1);
+  const [draft, setDraft] = useState<CrmDraft>({
+    projectName: "",
+    projectFrom: "",
+    projectTo: "",
+    projectActive: true,
+    contactName: "",
+    contactEmail: "",
+    contactStatus: "LEAD",
+    contactProjectId: "",
+  });
 
   const projectsForSelect = useMemo(() => {
     let list = projects;
@@ -131,6 +158,44 @@ export default function CrmClient({
   useEffect(() => {
     setMsgDismissed(false);
   }, [msg]);
+
+  useEffect(() => {
+    try {
+      const rawStep = window.localStorage.getItem(CRM_WIZARD_STORAGE_KEY);
+      if (rawStep === "1" || rawStep === "2" || rawStep === "3") {
+        setWizardStep(Number(rawStep) as 1 | 2 | 3);
+      }
+      const rawDraft = window.localStorage.getItem(CRM_DRAFT_STORAGE_KEY);
+      if (!rawDraft) return;
+      const parsed = JSON.parse(rawDraft) as Partial<CrmDraft>;
+      setDraft((prev) => ({
+        ...prev,
+        projectName: typeof parsed.projectName === "string" ? parsed.projectName : prev.projectName,
+        projectFrom: typeof parsed.projectFrom === "string" ? parsed.projectFrom : prev.projectFrom,
+        projectTo: typeof parsed.projectTo === "string" ? parsed.projectTo : prev.projectTo,
+        projectActive: typeof parsed.projectActive === "boolean" ? parsed.projectActive : prev.projectActive,
+        contactName: typeof parsed.contactName === "string" ? parsed.contactName : prev.contactName,
+        contactEmail: typeof parsed.contactEmail === "string" ? parsed.contactEmail : prev.contactEmail,
+        contactStatus: typeof parsed.contactStatus === "string" ? parsed.contactStatus : prev.contactStatus,
+        contactProjectId:
+          typeof parsed.contactProjectId === "string" ? parsed.contactProjectId : prev.contactProjectId,
+      }));
+    } catch {
+      // Ignore malformed local draft.
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(CRM_WIZARD_STORAGE_KEY, String(wizardStep));
+  }, [wizardStep]);
+
+  useEffect(() => {
+    void trackWizardEvent("crm_step_view", `step=${wizardStep}`);
+  }, [wizardStep]);
+
+  useEffect(() => {
+    window.localStorage.setItem(CRM_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+  }, [draft]);
 
   /* ── No org state ── */
   if (!hasOrganization) {
@@ -192,6 +257,51 @@ export default function CrmClient({
         </a>
       </div>
 
+      {/* ── CRM Wizard strip ── */}
+      <section id="crm-wizard" className="scroll-mt-24 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+        <p className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-indigo-300 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
+          <ListChecks size={12} />
+          CRM Wizard
+        </p>
+        <h2 className="text-base font-black text-slate-900">תפעול CRM ב-3 צעדים פשוטים</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setWizardStep(1)}
+            className={`rounded-xl px-3 py-2 text-xs font-bold ${
+              wizardStep === 1 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
+            }`}
+          >
+            1. צור פרויקט
+          </button>
+          <button
+            type="button"
+            onClick={() => setWizardStep(2)}
+            className={`rounded-xl px-3 py-2 text-xs font-bold ${
+              wizardStep === 2 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
+            }`}
+          >
+            2. הוסף לקוח
+          </button>
+          <button
+            type="button"
+            onClick={() => setWizardStep(3)}
+            className={`rounded-xl px-3 py-2 text-xs font-bold ${
+              wizardStep === 3 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
+            }`}
+          >
+            3. נהל סטטוס והצעות
+          </button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <a href="#crm-new-project" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 1</a>
+          <span className="text-indigo-300">|</span>
+          <a href="#crm-new-contact" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 2</a>
+          <span className="text-indigo-300">|</span>
+          <a href="#crm-contacts-table" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 3</a>
+        </div>
+      </section>
+
       {/* ── Toast ── */}
       {msg && !msgDismissed ? (
         <div
@@ -218,7 +328,12 @@ export default function CrmClient({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
         {/* New project */}
-        <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <section
+          id="crm-new-project"
+          className={`scroll-mt-24 rounded-2xl border bg-white p-6 shadow-sm ${
+            wizardStep === 1 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+          }`}
+        >
           <h2 className="mb-5 flex items-center gap-2 text-base font-black text-slate-900">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <FolderPlus size={17} aria-hidden />
@@ -226,43 +341,94 @@ export default function CrmClient({
             פרויקט חדש
           </h2>
           <form
-            action={(fd) => {
+            onSubmit={(e) => {
+              e.preventDefault();
               setMsg(null);
+              const fd = new FormData();
+              fd.set("name", draft.projectName);
+              if (draft.projectFrom) fd.set("activeFrom", draft.projectFrom);
+              if (draft.projectTo) fd.set("activeTo", draft.projectTo);
+              if (draft.projectActive) fd.set("isActive", "on");
               startTransition(async () => {
                 const r = await createProjectAction(fd);
                 setMsg(r.ok ? "✓ הפרויקט נשמר" : r.error || "שגיאה");
+                if (r.ok) {
+                  setDraft((prev) => ({
+                    ...prev,
+                    projectName: "",
+                    projectFrom: "",
+                    projectTo: "",
+                    projectActive: true,
+                  }));
+                  setWizardStep(2);
+                }
               });
             }}
             className="space-y-3"
           >
-            <input name="name" required placeholder="שם פרויקט / עסק" className={inputCls} />
+            <input
+              name="name"
+              required
+              placeholder="שם פרויקט / עסק"
+              className={inputCls}
+              value={draft.projectName}
+              onChange={(e) => setDraft((prev) => ({ ...prev, projectName: e.target.value }))}
+            />
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   תחילת תקופה
                 </label>
-                <input type="date" name="activeFrom" className={inputCls} />
+                <input
+                  type="date"
+                  name="activeFrom"
+                  className={inputCls}
+                  value={draft.projectFrom}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, projectFrom: e.target.value }))}
+                />
               </div>
               <div>
                 <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   סיום מתוכנן
                 </label>
-                <input type="date" name="activeTo" className={inputCls} />
+                <input
+                  type="date"
+                  name="activeTo"
+                  className={inputCls}
+                  value={draft.projectTo}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, projectTo: e.target.value }))}
+                />
               </div>
             </div>
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600">
-              <input type="checkbox" name="isActive" value="on" defaultChecked className="rounded border-slate-300 accent-blue-600" />
+              <input
+                type="checkbox"
+                name="isActive"
+                value="on"
+                checked={draft.projectActive}
+                onChange={(e) => setDraft((prev) => ({ ...prev, projectActive: e.target.checked }))}
+                className="rounded border-slate-300 accent-blue-600"
+              />
               פרויקט פעיל
             </label>
-            <button
-              type="submit"
-              disabled={pending}
-              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-            >
-              <Plus size={15} />
-              הוסף פרויקט
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="submit"
+                disabled={pending}
+                className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              >
+                <Plus size={15} />
+                הוסף פרויקט
+              </button>
+              <button
+                type="button"
+                onClick={() => setWizardStep(2)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                המשך לשלב הבא
+              </button>
+            </div>
           </form>
 
           {/* Existing projects mini-list */}
@@ -290,7 +456,12 @@ export default function CrmClient({
         </section>
 
         {/* New contact */}
-        <section id="crm-new-contact" className="scroll-mt-24 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <section
+          id="crm-new-contact"
+          className={`scroll-mt-24 rounded-2xl border bg-white p-6 shadow-sm ${
+            wizardStep === 2 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+          }`}
+        >
           <h2 className="mb-5 flex items-center gap-2 text-base font-black text-slate-900">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <UserPlus size={17} aria-hidden />
@@ -307,22 +478,53 @@ export default function CrmClient({
             הצג רק פרויקטים פעילים
           </label>
           <form
-            action={(fd) => {
+            onSubmit={(e) => {
+              e.preventDefault();
               setMsg(null);
+              const fd = new FormData();
+              fd.set("name", draft.contactName);
+              if (draft.contactEmail) fd.set("email", draft.contactEmail);
+              fd.set("status", draft.contactStatus || "LEAD");
+              if (draft.contactProjectId) fd.set("projectId", draft.contactProjectId);
               startTransition(async () => {
                 const r = await createContactAction(fd);
                 setMsg(r.ok ? "✓ הלקוח נוסף" : r.error || "שגיאה");
+                if (r.ok) {
+                  setDraft((prev) => ({
+                    ...prev,
+                    contactName: "",
+                    contactEmail: "",
+                    contactStatus: "LEAD",
+                    contactProjectId: "",
+                  }));
+                  setWizardStep(3);
+                }
               });
             }}
             className="space-y-3"
           >
-            <input name="name" required placeholder="שם לקוח / חברה" className={inputCls} />
-            <input name="email" type="email" placeholder="אימייל (אופציונלי)" className={inputCls} />
+            <input
+              name="name"
+              required
+              placeholder="שם לקוח / חברה"
+              className={inputCls}
+              value={draft.contactName}
+              onChange={(e) => setDraft((prev) => ({ ...prev, contactName: e.target.value }))}
+            />
+            <input
+              name="email"
+              type="email"
+              placeholder="אימייל (אופציונלי)"
+              className={inputCls}
+              value={draft.contactEmail}
+              onChange={(e) => setDraft((prev) => ({ ...prev, contactEmail: e.target.value }))}
+            />
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <select
                   name="status"
-                  defaultValue="LEAD"
+                  value={draft.contactStatus}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, contactStatus: e.target.value }))}
                   className={`${inputCls} appearance-none`}
                 >
                   {STATUS_OPTIONS.map((o) => (
@@ -332,7 +534,12 @@ export default function CrmClient({
                 <ChevronDown size={14} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
               </div>
               <div className="relative">
-                <select name="projectId" className={`${inputCls} appearance-none`}>
+                <select
+                  name="projectId"
+                  className={`${inputCls} appearance-none`}
+                  value={draft.contactProjectId}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, contactProjectId: e.target.value }))}
+                >
                   <option value="">— ללא פרויקט —</option>
                   {projectsForSelect.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -343,21 +550,35 @@ export default function CrmClient({
                 <ChevronDown size={14} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
               </div>
             </div>
-            <button
-              type="submit"
-              disabled={pending}
-              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-            >
-              <Plus size={15} />
-              הוסף לקוח
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="submit"
+                disabled={pending}
+                className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              >
+                <Plus size={15} />
+                הוסף לקוח
+              </button>
+              <button
+                type="button"
+                onClick={() => setWizardStep(3)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                המשך לטבלת ניהול
+              </button>
+            </div>
           </form>
         </section>
       </div>
 
       {/* ── Contacts table ── */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+      <div
+        id="crm-contacts-table"
+        className={`scroll-mt-24 overflow-hidden rounded-2xl border bg-white shadow-sm ${
+          wizardStep === 3 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+        }`}
+      >
         {/* Table header */}
         <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

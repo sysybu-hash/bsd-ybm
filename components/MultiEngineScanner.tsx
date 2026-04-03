@@ -67,6 +67,8 @@ type ScannerProps = {
   compactHeader?: boolean;
 };
 
+const SCANNER_PREFS_KEY = "bsd-erp:scanner:selected-engines";
+
 function extractAiPayload(data: Record<string, unknown>): Record<string, unknown> {
   const raw = data?.aiData ?? data;
   return typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
@@ -128,14 +130,45 @@ export default function MultiEngineScanner({
   useEffect(() => {
     if (!scanEngineRows.length) return;
     const eligible = scanEngineRows.filter(canRunEngine);
+
+    let stored: string[] = [];
+    try {
+      const raw = window.localStorage.getItem(SCANNER_PREFS_KEY);
+      const parsed = raw ? (JSON.parse(raw) as unknown) : null;
+      if (Array.isArray(parsed)) {
+        stored = parsed.filter((x): x is string => typeof x === "string");
+      }
+    } catch {
+      stored = [];
+    }
+
     if (provider) {
       const hit = scanEngineRows.find((p) => p.id === provider);
       if (hit && canRunEngine(hit)) setSelectedIds([hit.id]);
       else setSelectedIds(eligible.map((p) => p.id));
+    } else if (stored.length > 0) {
+      const restored = stored.filter((id) => {
+        const row = scanEngineRows.find((p) => p.id === id);
+        return row != null && canRunEngine(row);
+      });
+      if (restored.length > 0) {
+        setSelectedIds(restored);
+      } else {
+        setSelectedIds(eligible.map((p) => p.id));
+      }
     } else {
       setSelectedIds(eligible.map((p) => p.id));
     }
   }, [scanEngineRows, provider]);
+
+  useEffect(() => {
+    if (!selectedIds.length) return;
+    try {
+      window.localStorage.setItem(SCANNER_PREFS_KEY, JSON.stringify(selectedIds));
+    } catch {
+      // Ignore storage write issues.
+    }
+  }, [selectedIds]);
 
   useEffect(() => {
     const urls = files.map((f) => {
@@ -398,6 +431,9 @@ export default function MultiEngineScanner({
           </button>
           {scanEngineRows.length === 0 && providers.length === 0 && (
             <span className="text-xs text-indigo-500">טוען רשימת מנועים…</span>
+          )}
+          {scanEngineRows.length > 0 && (
+            <span className="text-[11px] font-semibold text-slate-400">בחירת המנועים נשמרת אוטומטית להמשך</span>
           )}
         </div>
         <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">

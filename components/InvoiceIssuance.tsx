@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Loader2,
 } from "lucide-react";
+import { trackWizardEvent } from "@/lib/client-telemetry";
 
 /* ───── סוגי מסמכים ───── */
 const DOC_TYPES = [
@@ -32,6 +33,9 @@ interface LineItem {
 }
 
 const emptyItem = (): LineItem => ({ desc: "", qty: 1, price: 0 });
+
+const INVOICE_DRAFT_KEY = "bsd-erp:invoice-draft";
+const INVOICE_STEP_KEY = "bsd-erp:invoice-step";
 
 /* ───── IssuedDoc — מה שחוזר מהשרת ───── */
 interface IssuedDoc {
@@ -57,6 +61,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
   const [clientName, setClientName] = useState("");
   const [items, setItems] = useState<LineItem[]>([emptyItem()]);
   const [dueDate, setDueDate] = useState("");
+  const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 4>(1);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState<IssuedDoc | null>(null);
   const [error, setError] = useState("");
@@ -74,6 +79,50 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
   const updateItem = (idx: number, field: keyof LineItem, val: string | number) => {
     setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, [field]: val } : it)));
   };
+
+  useEffect(() => {
+    try {
+      const rawStep = window.localStorage.getItem(INVOICE_STEP_KEY);
+      if (rawStep === "1" || rawStep === "2" || rawStep === "3" || rawStep === "4") {
+        setWizardStep(Number(rawStep) as 1 | 2 | 3 | 4);
+      }
+      const rawDraft = window.localStorage.getItem(INVOICE_DRAFT_KEY);
+      if (!rawDraft) return;
+      const parsed = JSON.parse(rawDraft) as {
+        docType?: DocType;
+        clientName?: string;
+        dueDate?: string;
+        items?: LineItem[];
+      };
+      if (parsed.docType) setDocType(parsed.docType);
+      if (typeof parsed.clientName === "string") setClientName(parsed.clientName);
+      if (typeof parsed.dueDate === "string") setDueDate(parsed.dueDate);
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+        setItems(
+          parsed.items.map((it) => ({
+            desc: String(it.desc ?? ""),
+            qty: Math.max(1, Number(it.qty ?? 1)),
+            price: Math.max(0, Number(it.price ?? 0)),
+          })),
+        );
+      }
+    } catch {
+      // Ignore malformed local storage payload.
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(INVOICE_STEP_KEY, String(wizardStep));
+  }, [wizardStep]);
+
+  useEffect(() => {
+    void trackWizardEvent("invoice_step_view", `step=${wizardStep}`);
+  }, [wizardStep]);
+
+  useEffect(() => {
+    const payload = { docType, clientName, dueDate, items };
+    window.localStorage.setItem(INVOICE_DRAFT_KEY, JSON.stringify(payload));
+  }, [docType, clientName, dueDate, items]);
 
   const removeItem = (idx: number) => {
     setItems((prev) => (prev.length === 1 ? [emptyItem()] : prev.filter((_, i) => i !== idx)));
@@ -130,6 +179,8 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
       setClientName("");
       setItems([emptyItem()]);
       setDueDate("");
+      setWizardStep(4);
+      window.localStorage.removeItem(INVOICE_DRAFT_KEY);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "שגיאה בהנפקה");
     } finally {
@@ -161,6 +212,27 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
             className={`transition-transform ${showHistory ? "rotate-180" : ""}`}
           />
         </button>
+      </div>
+
+      <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+        <p className="mb-2 text-xs font-black uppercase tracking-wider text-indigo-700">Invoice Wizard</p>
+        <div className="flex flex-wrap gap-2">
+          {[1, 2, 3, 4].map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setWizardStep(s as 1 | 2 | 3 | 4)}
+              className={`rounded-xl px-3 py-2 text-xs font-bold ${
+                wizardStep === s
+                  ? "bg-indigo-700 text-white"
+                  : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
+              }`}
+            >
+              {s === 1 ? "1. פרטי מסמך" : s === 2 ? "2. פריטים" : s === 3 ? "3. בדיקה והנפקה" : "4. סיום"}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-indigo-700">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
       </div>
 
       {/* ---- Success toast ---- */}
@@ -205,145 +277,212 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
         layout
         className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8"
       >
-        {/* Doc type pills */}
-        <label className="mb-2 block text-sm font-bold text-slate-600">סוג מסמך</label>
-        <div className="mb-6 flex flex-wrap gap-2">
-          {DOC_TYPES.map(({ value, label, icon: Icon }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setDocType(value)}
-              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
-                docType === value
-                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
-                  : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
-              }`}
-            >
-              <Icon size={16} />
-              {label}
-            </button>
-          ))}
-        </div>
+        {wizardStep === 1 && (
+          <>
+            <label className="mb-2 block text-sm font-bold text-slate-600">סוג מסמך</label>
+            <div className="mb-6 flex flex-wrap gap-2">
+              {DOC_TYPES.map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setDocType(value)}
+                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+                    docType === value
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
+                      : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  <Icon size={16} />
+                  {label}
+                </button>
+              ))}
+            </div>
 
-        {/* Client + Due date */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-sm font-bold text-slate-600">שם לקוח</label>
-            <input
-              type="text"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              placeholder="לדוגמה: חברת אלפא בע״מ"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-bold text-slate-600">תאריך יעד לתשלום</label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
-            />
-          </div>
-        </div>
-
-        {/* Line items */}
-        <label className="mb-2 block text-sm font-bold text-slate-600">פריטים</label>
-        <div className="space-y-3">
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="flex flex-wrap items-end gap-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3 sm:flex-nowrap"
-            >
-              <div className="min-w-0 flex-1">
-                <label className="mb-1 block text-xs font-semibold text-slate-500">תיאור</label>
+            <div className="mb-6 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-sm font-bold text-slate-600">שם לקוח</label>
                 <input
                   type="text"
-                  value={item.desc}
-                  onChange={(e) => updateItem(idx, "desc", e.target.value)}
-                  placeholder="תיאור הפריט"
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="לדוגמה: חברת אלפא בע״מ"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
               </div>
-              <div className="w-20">
-                <label className="mb-1 block text-xs font-semibold text-slate-500">כמות</label>
+              <div>
+                <label className="mb-1.5 block text-sm font-bold text-slate-600">תאריך יעד לתשלום</label>
                 <input
-                  type="number"
-                  min={1}
-                  value={item.qty}
-                  onChange={(e) => updateItem(idx, "qty", Math.max(1, +e.target.value))}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
               </div>
-              <div className="w-28">
-                <label className="mb-1 block text-xs font-semibold text-slate-500">מחיר ליח׳ ₪</label>
-                <input
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={item.price || ""}
-                  onChange={(e) => updateItem(idx, "price", Math.max(0, +e.target.value))}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
-                />
-              </div>
-              <div className="w-24 text-left">
-                <label className="mb-1 block text-xs font-semibold text-slate-500">סה״כ</label>
-                <span className="block py-2 text-sm font-bold text-slate-700">
-                  ₪{(item.qty * item.price).toLocaleString()}
-                </span>
-              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setWizardStep(2)}
+              className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700"
+            >
+              המשך לפריטים
+            </button>
+          </>
+        )}
+
+        {wizardStep === 2 && (
+          <>
+            <label className="mb-2 block text-sm font-bold text-slate-600">פריטים</label>
+            <div className="space-y-3">
+              {items.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-wrap items-end gap-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3 sm:flex-nowrap"
+                >
+                  <div className="min-w-0 flex-1">
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">תיאור</label>
+                    <input
+                      type="text"
+                      value={item.desc}
+                      onChange={(e) => updateItem(idx, "desc", e.target.value)}
+                      placeholder="תיאור הפריט"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                    />
+                  </div>
+                  <div className="w-20">
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">כמות</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={item.qty}
+                      onChange={(e) => updateItem(idx, "qty", Math.max(1, +e.target.value))}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                    />
+                  </div>
+                  <div className="w-28">
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">מחיר ליח׳ ₪</label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={item.price || ""}
+                      onChange={(e) => updateItem(idx, "price", Math.max(0, +e.target.value))}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                    />
+                  </div>
+                  <div className="w-24 text-left">
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">סה״כ</label>
+                    <span className="block py-2 text-sm font-bold text-slate-700">
+                      ₪{(item.qty * item.price).toLocaleString()}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(idx)}
+                    className="mb-0.5 rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                    aria-label="הסר פריט"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => removeItem(idx)}
-                className="mb-0.5 rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
-                aria-label="הסר פריט"
+                onClick={() => setItems((prev) => [...prev, emptyItem()])}
+                className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
               >
-                <Trash2 size={16} />
+                <Plus size={16} /> הוסף פריט
+              </button>
+              <button
+                type="button"
+                onClick={() => setWizardStep(1)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                חזרה לפרטי מסמך
+              </button>
+              <button
+                type="button"
+                onClick={() => setWizardStep(3)}
+                className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+              >
+                המשך לבדיקה
               </button>
             </div>
-          ))}
-        </div>
+          </>
+        )}
 
-        <button
-          type="button"
-          onClick={() => setItems((prev) => [...prev, emptyItem()])}
-          className="mt-3 flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
-        >
-          <Plus size={16} /> הוסף פריט
-        </button>
+        {wizardStep === 3 && (
+          <>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+              <p className="font-bold text-slate-800">סיכום לפני הנפקה</p>
+              <p className="mt-1 text-slate-600">{typeLabel} עבור {clientName || "לקוח ללא שם"}</p>
+              <p className="text-slate-600">פריטים: {items.length}</p>
+            </div>
 
-        {/* Totals */}
-        <div className="mt-6 space-y-1 border-t border-slate-100 pt-4 text-left">
-          <div className="flex justify-between text-sm text-slate-500">
-            <span>סכום לפני מע״מ</span>
-            <span className="font-semibold text-slate-700">₪{subtotal.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between text-sm text-slate-500">
-            <span>מע״מ (17%)</span>
-            <span className="font-semibold text-slate-700">₪{vat.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between text-base font-extrabold text-slate-800">
-            <span>סה״כ לתשלום</span>
-            <span className="text-indigo-600">₪{total.toLocaleString()}</span>
-          </div>
-        </div>
+            <div className="mt-6 space-y-1 border-t border-slate-100 pt-4 text-left">
+              <div className="flex justify-between text-sm text-slate-500">
+                <span>סכום לפני מע״מ</span>
+                <span className="font-semibold text-slate-700">₪{subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm text-slate-500">
+                <span>מע״מ (17%)</span>
+                <span className="font-semibold text-slate-700">₪{vat.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-base font-extrabold text-slate-800">
+                <span>סה״כ לתשלום</span>
+                <span className="text-indigo-600">₪{total.toLocaleString()}</span>
+              </div>
+            </div>
 
-        {/* Submit */}
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-          disabled={saving}
-          onClick={submit}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 py-3.5 text-base font-extrabold text-white shadow-lg shadow-indigo-600/25 transition-colors hover:bg-indigo-700 disabled:opacity-60"
-        >
-          {saving ? (
-            <Loader2 size={20} className="animate-spin" />
-          ) : (
-            <Send size={18} />
-          )}
-          {saving ? "מנפיק..." : `הנפק ${typeLabel}`}
-        </motion.button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setWizardStep(2)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                חזרה לעריכת פריטים
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={saving}
+                onClick={submit}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-indigo-600/25 transition-colors hover:bg-indigo-700 disabled:opacity-60"
+              >
+                {saving ? <Loader2 size={20} className="animate-spin" /> : <Send size={18} />}
+                {saving ? "מנפיק..." : `הנפק ${typeLabel}`}
+              </motion.button>
+            </div>
+          </>
+        )}
+
+        {wizardStep === 4 && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
+            <p className="font-black">המסמך הונפק בהצלחה.</p>
+            <p className="mt-1">אפשר לעבור להיסטוריה או להתחיל מסמך חדש.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setWizardStep(1);
+                  setSuccess(null);
+                }}
+                className="rounded-xl bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800"
+              >
+                מסמך חדש
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowHistory(true)}
+                className="rounded-xl border border-emerald-300 bg-white px-4 py-2 text-xs font-bold text-emerald-900 hover:bg-emerald-100"
+              >
+                צפייה בהיסטוריה
+              </button>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       {/* ════════ History ════════ */}
