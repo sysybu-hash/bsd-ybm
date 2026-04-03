@@ -32,7 +32,7 @@ export const SITE_WIZARD_STEPS: WizardStep[] = [
     id: "operate",
     title: "Operate",
     description: "Run daily workflows with CRM, ERP, and AI.",
-    primaryRoute: "/dashboard/control-center",
+    primaryRoute: "/dashboard",
     routes: [
       "/dashboard",
       "/dashboard/control-center",

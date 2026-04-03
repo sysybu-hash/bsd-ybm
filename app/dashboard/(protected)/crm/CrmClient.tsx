@@ -239,73 +239,81 @@ export default function CrmClient({
   }
 
   return (
-    <div className="space-y-8" dir={dir}>
+    <div className="space-y-6" dir={dir}>
 
       {/* ── Page header ── */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900">מרכז לידים ולקוחות</h1>
-          <p className="mt-0.5 text-sm text-slate-500">פרויקטים, אנשי קשר והצעות מחיר</p>
-        </div>
-        <a
-          href="#crm-new-contact"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
-          style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-        >
-          <UserPlus size={16} aria-hidden />
-          לקוח חדש
-        </a>
-      </div>
+      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
+        <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">
+                <ListChecks size={12} />
+                CRM workspace
+              </p>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">מרכז לידים ולקוחות</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">ניהול פרויקטים, לקוחות והצעות במסך שקט יותר, עם פוקוס ברור על השלב הבא.</p>
+            </div>
+            <a
+              href="#crm-new-contact"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            >
+              <UserPlus size={16} aria-hidden />
+              לקוח חדש
+            </a>
+          </div>
 
-      {/* ── CRM Wizard strip ── */}
-      <section id="crm-wizard" className="scroll-mt-24 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
-        <p className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-indigo-300 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
-          <ListChecks size={12} />
-          CRM Wizard
-        </p>
-        <h2 className="text-base font-black text-slate-900">תפעול CRM ב-3 צעדים פשוטים</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setWizardStep(1)}
-            className={`rounded-xl px-3 py-2 text-xs font-bold ${
-              wizardStep === 1 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
-            }`}
-          >
-            1. צור פרויקט
-          </button>
-          <button
-            type="button"
-            onClick={() => setWizardStep(2)}
-            className={`rounded-xl px-3 py-2 text-xs font-bold ${
-              wizardStep === 2 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
-            }`}
-          >
-            2. הוסף לקוח
-          </button>
-          <button
-            type="button"
-            onClick={() => setWizardStep(3)}
-            className={`rounded-xl px-3 py-2 text-xs font-bold ${
-              wizardStep === 3 ? "bg-indigo-700 text-white" : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
-            }`}
-          >
-            3. נהל סטטוס והצעות
-          </button>
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            <div className="rounded-3xl border border-blue-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">פרויקטים</p>
+              <p className="mt-1 text-2xl font-black text-slate-900">{projects.length}</p>
+            </div>
+            <div className="rounded-3xl border border-emerald-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">לקוחות</p>
+              <p className="mt-1 text-2xl font-black text-slate-900">{contacts.length}</p>
+            </div>
+            <div className="rounded-3xl border border-violet-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">שלב פעיל</p>
+              <p className="mt-1 text-lg font-black text-slate-900">{wizardStep === 1 ? "יצירת פרויקט" : wizardStep === 2 ? "הוספת לקוח" : "ניהול ומעקב"}</p>
+            </div>
+          </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <a href="#crm-new-project" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 1</a>
-          <span className="text-indigo-300">|</span>
-          <a href="#crm-new-contact" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 2</a>
-          <span className="text-indigo-300">|</span>
-          <a href="#crm-contacts-table" className="font-semibold text-indigo-700 underline-offset-2 hover:underline">קפיצה לשלב 3</a>
+
+        <div id="crm-wizard" className="scroll-mt-24 border-t border-slate-100 px-6 py-5 md:px-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-base font-black text-slate-900">תהליך עבודה ב-3 צעדים</h2>
+              <p className="mt-1 text-sm text-slate-500">במקום להעמיס הכול בבת אחת, מתקדמים שלב אחד ברור בכל פעם.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3].map((step) => (
+                <button
+                  key={step}
+                  type="button"
+                  onClick={() => setWizardStep(step as 1 | 2 | 3)}
+                  className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
+                    wizardStep === step
+                      ? "bg-slate-900 text-white"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {step === 1 ? "1. פרויקט" : step === 2 ? "2. לקוח" : "3. ניהול"}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold text-slate-500">
+            <a href="#crm-new-project" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 1</a>
+            <a href="#crm-new-contact" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 2</a>
+            <a href="#crm-contacts-table" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 3</a>
+          </div>
         </div>
       </section>
 
       {/* ── Toast ── */}
       {msg && !msgDismissed ? (
         <div
-          className={`flex items-start gap-3 rounded-xl px-4 py-3 text-sm ${
+          className={`flex items-start gap-3 rounded-[24px] px-4 py-4 text-sm shadow-sm ${
             msg.startsWith("✓")
               ? "border border-emerald-200 bg-emerald-50 text-emerald-900"
               : "border border-rose-200 bg-rose-50 text-rose-900"
@@ -325,21 +333,22 @@ export default function CrmClient({
       ) : null}
 
       {/* ── Forms row ── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[0.95fr_1.05fr]">
 
         {/* New project */}
         <section
           id="crm-new-project"
-          className={`scroll-mt-24 rounded-2xl border bg-white p-6 shadow-sm ${
-            wizardStep === 1 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+          className={`scroll-mt-24 rounded-[28px] border bg-white p-6 shadow-sm ${
+            wizardStep === 1 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
           }`}
         >
-          <h2 className="mb-5 flex items-center gap-2 text-base font-black text-slate-900">
+          <h2 className="mb-2 flex items-center gap-2 text-base font-black text-slate-900">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <FolderPlus size={17} aria-hidden />
             </span>
             פרויקט חדש
           </h2>
+          <p className="mb-5 text-sm leading-6 text-slate-500">יוצרים קודם מעטפת עבודה מסודרת, ואז מתקדמים ללקוח עצמו.</p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -435,13 +444,13 @@ export default function CrmClient({
           {projects.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-5">
               <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">פרויקטים קיימים</p>
-              <ul className="max-h-44 space-y-1.5 overflow-y-auto pr-1">
+              <ul className="max-h-44 space-y-2 overflow-y-auto rounded-2xl bg-slate-50 p-2 pr-2">
                 {projects.map((p) => (
                   <li
                     key={p.id}
-                    className={`flex flex-wrap justify-between gap-2 rounded-lg px-3 py-2 text-xs ${
+                    className={`flex flex-wrap justify-between gap-2 rounded-2xl px-3 py-3 text-xs ${
                       p.isActive
-                        ? "border border-slate-100 bg-slate-50"
+                        ? "border border-slate-200 bg-white"
                         : "border border-blue-100 bg-blue-50/60 text-slate-600"
                     }`}
                   >
@@ -458,8 +467,8 @@ export default function CrmClient({
         {/* New contact */}
         <section
           id="crm-new-contact"
-          className={`scroll-mt-24 rounded-2xl border bg-white p-6 shadow-sm ${
-            wizardStep === 2 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+          className={`scroll-mt-24 rounded-[28px] border bg-white p-6 shadow-sm ${
+            wizardStep === 2 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
           }`}
         >
           <h2 className="mb-5 flex items-center gap-2 text-base font-black text-slate-900">
@@ -468,6 +477,7 @@ export default function CrmClient({
             </span>
             לקוח חדש
           </h2>
+          <p className="mb-5 text-sm leading-6 text-slate-500">מוסיפים לקוח חדש רק עם השדות החשובים, בלי עומס שדות מיותר.</p>
           <label className="mb-4 flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-500">
             <input
               type="checkbox"
@@ -575,12 +585,12 @@ export default function CrmClient({
       {/* ── Contacts table ── */}
       <div
         id="crm-contacts-table"
-        className={`scroll-mt-24 overflow-hidden rounded-2xl border bg-white shadow-sm ${
-          wizardStep === 3 ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-100"
+        className={`scroll-mt-24 overflow-hidden rounded-[28px] border bg-white shadow-sm ${
+          wizardStep === 3 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
         }`}
       >
         {/* Table header */}
-        <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-base font-black text-slate-900">אנשי קשר</h2>
             <p className="mt-0.5 text-xs text-slate-500">

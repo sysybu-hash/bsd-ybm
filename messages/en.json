@@ -323,5 +323,39 @@
     "subtitle": "Modules by role ({role}) — edit the map in lib/intelligence-access.ts",
     "executiveBelow": "Below: global Executive report (platform owner).",
     "dividerLabel": "Global Executive report"
+  },
+  "home": {
+    "badge": "Order & Clarity",
+    "title": "A workspace that's a bit smarter",
+    "description": "BSD-YBM brings order to your documents and data. Simple interface, helpful AI, that's it — everything you need.",
+    "signup": "Create Account",
+    "login": "Sign In",
+    "crm": {
+      "title": "CRM & Clients",
+      "desc": "Manage clients, quotes, and contracts in one clear page."
+    },
+    "invoice": {
+      "title": "Invoices & ERP",
+      "desc": "Generate documents and cash flow reports with order and clarity."
+    },
+    "help": {
+      "title": "Help & Documentation",
+      "desc": "Quick answers to questions and real-world working examples."
+    },
+    "whatChanged": {
+      "title": "What Changed",
+      "pt1": {
+        "title": "Clean, bright interface",
+        "desc": "Simple design that doesn't distract — only what you need, when you need it."
+      },
+      "pt2": {
+        "title": "Smart AI that helps",
+        "desc": "Automatic data extraction from images and text with no surprises."
+      },
+      "pt3": {
+        "title": "Languages & auto-detect",
+        "desc": "The system detects your language when you sign in and switches everything for you."
+      }
+    }
   }
 }

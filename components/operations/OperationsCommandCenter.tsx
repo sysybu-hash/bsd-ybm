@@ -4,16 +4,11 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Bell,
-  BookOpen,
   Bot,
   CheckCircle2,
-  CreditCard,
   Gauge,
-  KeyRound,
   Link2,
-  Rocket,
-  Shield,
-  Users,
+  ListChecks,
   Workflow,
 } from "lucide-react";
 
@@ -54,7 +49,6 @@ export default function OperationsCommandCenter({
   data: Data;
   ownerMode: boolean;
 }) {
-  const [simple, setSimple] = useState(true);
   const [automation, setAutomation] = useState({
     invoiceReminders: true,
     dropoutFollowup: true,
@@ -66,10 +60,8 @@ export default function OperationsCommandCenter({
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as {
-        simple?: boolean;
         automation?: typeof automation;
       };
-      if (typeof parsed.simple === "boolean") setSimple(parsed.simple);
       if (parsed.automation) {
         setAutomation((prev) => ({ ...prev, ...parsed.automation }));
       }
@@ -78,27 +70,21 @@ export default function OperationsCommandCenter({
     }
   }, []);
 
-  const persist = (nextSimple: boolean, nextAutomation: typeof automation) => {
+  const persist = (nextAutomation: typeof automation) => {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ simple: nextSimple, automation: nextAutomation }),
+        JSON.stringify({ automation: nextAutomation }),
       );
     } catch {
       // ignore
     }
   };
 
-  const toggleSimple = () => {
-    const next = !simple;
-    setSimple(next);
-    persist(next, automation);
-  };
-
   const toggleAutomation = (key: keyof typeof automation) => {
     const next = { ...automation, [key]: !automation[key] };
     setAutomation(next);
-    persist(simple, next);
+    persist(next);
   };
 
   const mrrLike = useMemo(
@@ -108,146 +94,196 @@ export default function OperationsCommandCenter({
 
   return (
     <div className="space-y-6" dir="rtl">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-              <Rocket size={13} />
-              Growth OS
-            </p>
-            <h1 className="mt-2 text-3xl font-black text-slate-900">מרכז צמיחה ותפעול</h1>
-            <p className="mt-1 text-sm text-slate-600">כל 10 השדרוגים במקום אחד, עם מצב פשוט להפעלה יומיומית.</p>
+      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">
+                <ListChecks size={13} />
+                מרכז תפעול
+              </p>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">תמונה תפעולית אחת, בלי עומס מיותר</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                המסך הזה מרכז רק את מה שצריך לבדוק עכשיו: בריאות עסקית, אוטומציות, אינטגרציות ופעילות אחרונה.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/dashboard" className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">
+                חזרה למסך הבית
+              </Link>
+              <Link href="/dashboard/operator" className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800">
+                פתח עוזר תפעולי
+              </Link>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={toggleSimple}
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-          >
-            {simple ? "מצב פשוט פעיל" : "מצב מתקדם פעיל"}
-          </button>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-4">
+            <Metric title="הכנסות 30 יום" value={`₪${mrrLike.toLocaleString()}`} tone="blue" />
+            <Metric title="משתמשים פעילים" value={`${data.usersActive}/${data.usersTotal}`} tone="emerald" />
+            <Metric title="בריאות הכנסות" value={`${data.revenueHealth}%`} tone="amber" />
+            <Metric title="פעולות Wizard" value={`${data.wizardEvents30d}`} tone="violet" />
+          </div>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric title="MRR (30d)" value={`₪${mrrLike.toLocaleString()}`} />
-          <Metric title="משתמשים פעילים" value={`${data.usersActive}/${data.usersTotal}`} />
-          <Metric title="בריאות הכנסות" value={`${data.revenueHealth}%`} />
-          <Metric title="Wizard Events" value={`${data.wizardEvents30d}`} />
+        <div className="grid gap-5 px-6 py-6 md:px-8 xl:grid-cols-[1.15fr_0.85fr]">
+          <section className="space-y-5">
+            <Panel
+              title="מצב עסק ומערכת"
+              description="מבט קצר על בסיס הלקוחות, ההכנסות והמנוי."
+              icon={<Gauge size={17} className="text-blue-600" />}
+            >
+              <div className="grid gap-3 sm:grid-cols-2">
+                <MiniStat label="ארגון" value={`${data.organizationName} · ${data.organizationType}`} />
+                <MiniStat label="מנוי" value={`${data.subscriptionTier} · ${data.subscriptionStatus}`} />
+                <MiniStat label="לקוחות ופרויקטים" value={`${data.contactsCount} לקוחות · ${data.projectsCount} פרויקטים`} />
+                <MiniStat label="הכנסות ממתינות" value={`₪${data.revenuePending30d.toLocaleString()}`} />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <QuickLink href="/dashboard/control-center" label="מרכז עבודה" tone="primary" />
+                <QuickLink href="/dashboard/billing" label="מנוי ותשלום" />
+              </div>
+            </Panel>
+
+            <Panel
+              title="אוטומציות"
+              description="שלוש פעולות קבועות, עם מצב ברור וללא רעש."
+              icon={<Workflow size={17} className="text-violet-600" />}
+            >
+              <div className="space-y-3">
+                <ToggleCard label="תזכורות חשבוניות אוטומטיות" hint="מעקב גבייה שקט" on={automation.invoiceReminders} onToggle={() => toggleAutomation("invoiceReminders")} />
+                <ToggleCard label="מעקב אחרי נטישת Wizard" hint="החזרת משתמשים שנעצרו" on={automation.dropoutFollowup} onToggle={() => toggleAutomation("dropoutFollowup")} />
+                <ToggleCard label="התראה על שימוש נמוך" hint="זיהוי ירידה במעורבות" on={automation.lowUsageNudge} onToggle={() => toggleAutomation("lowUsageNudge")} />
+              </div>
+            </Panel>
+          </section>
+
+          <section className="space-y-5">
+            <Panel
+              title="בריאות סביבת העבודה"
+              description="חיבורים, AI והרשאות במסך אחד קצר."
+              icon={<Link2 size={17} className="text-cyan-600" />}
+            >
+              <div className="space-y-2.5">
+                <Health label="Google Calendar" ok={data.integrations.calendar} />
+                <Health label="PayPal" ok={data.integrations.paypal} />
+                <Health label="AI Engines" ok={data.integrations.ai} />
+                <Health label="Live data tier" ok={data.integrations.liveDataTier !== "FREE"} okLabel={data.integrations.liveDataTier} missingLabel="FREE" />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <QuickLink href="/dashboard/settings" label="הגדרות" />
+                <QuickLink href="/dashboard/settings?tab=account" label="משתמשים" />
+                {ownerMode ? <QuickLink href="/dashboard/admin" label="Admin" tone="warning" /> : null}
+              </div>
+            </Panel>
+
+            <Panel
+              title="פעילות אחרונה"
+              description="מה באמת קרה השבוע, בלי רשימה כבדה."
+              icon={<Bell size={17} className="text-indigo-600" />}
+            >
+              <div className="space-y-2">
+                {data.recentActivity.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                    אין פעילות אחרונה.
+                  </div>
+                ) : (
+                  data.recentActivity.map((activity, index) => (
+                    <div key={`${activity.action}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">{activity.action}</p>
+                          {activity.details ? <p className="mt-1 text-xs text-slate-500">{activity.details}</p> : null}
+                        </div>
+                        <p className="shrink-0 text-[11px] font-semibold text-slate-400">
+                          {new Date(activity.createdAtIso).toLocaleString("he-IL")}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Panel>
+          </section>
         </div>
-      </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <Card title="1. דוחות מנהלים בזמן אמת" icon={<Gauge size={17} className="text-blue-600" />}>
-          <p>מנוי: {data.subscriptionTier} · סטטוס: {data.subscriptionStatus}</p>
-          <p>לקוחות: {data.contactsCount} · פרויקטים: {data.projectsCount}</p>
-          <Link href="/dashboard/control-center" className="mt-3 inline-flex rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700">פתח דוחות משפך</Link>
-        </Card>
-
-        <Card title="2. אוטומציות חכמות" icon={<Workflow size={17} className="text-violet-600" />}>
-          <Toggle label="תזכורות חשבוניות אוטומטיות" on={automation.invoiceReminders} onToggle={() => toggleAutomation("invoiceReminders")} />
-          <Toggle label="Follow-up למי שנתקע ב-Wizard" on={automation.dropoutFollowup} onToggle={() => toggleAutomation("dropoutFollowup")} />
-          {!simple ? <Toggle label="קמפיין שימוש נמוך" on={automation.lowUsageNudge} onToggle={() => toggleAutomation("lowUsageNudge")} /> : null}
-          <Link href="/dashboard/operator" className="mt-2 inline-flex rounded-xl bg-violet-700 px-3 py-2 text-xs font-bold text-white hover:bg-violet-800">פתח עוזר תפעולי</Link>
-        </Card>
-
-        <Card title="3. הרשאות (RBAC)" icon={<KeyRound size={17} className="text-amber-600" />}>
-          <p>ניהול תפקידים והרשאות דרך מסך חשבון/אדמין.</p>
-          <div className="mt-3 flex gap-2">
-            <Link href="/dashboard/settings?tab=account" className="rounded-xl bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-amber-700">ניהול הרשאות</Link>
-            {ownerMode ? <Link href="/dashboard/admin" className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">Admin</Link> : null}
+        <div className="border-t border-slate-100 px-6 py-5 md:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[28px] bg-slate-50 px-5 py-4">
+            <div>
+              <p className="text-sm font-black text-slate-900">קיצורי דרך שעדיין שייכים למסך הזה</p>
+              <p className="mt-1 text-xs text-slate-500">פחות קיצורים, רק מה שמקדם פעולה אמיתית.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <QuickLink href="/dashboard/help" label="מדריך" />
+              <QuickLink href="/dashboard/control-center" label="משפך Wizard" />
+              <QuickLink href="/dashboard/erp/invoice" label="חשבוניות" />
+              <QuickLink href="/dashboard/crm" label="CRM" />
+              {ownerMode ? <QuickLink href="/api/admin/system-health" label="בדיקת מערכת" tone="primary" /> : null}
+            </div>
           </div>
-        </Card>
-
-        <Card title="4. מרכז אינטגרציות" icon={<Link2 size={17} className="text-cyan-600" />}>
-          <Health label="Google Calendar" ok={data.integrations.calendar} />
-          <Health label="PayPal" ok={data.integrations.paypal} />
-          <Health label="AI Engines" ok={data.integrations.ai} />
-          <p className="mt-2 text-xs text-slate-500">Live Data Tier: {data.integrations.liveDataTier}</p>
-        </Card>
-
-        <Card title="5. Billing חכם" icon={<CreditCard size={17} className="text-rose-600" />}>
-          <p>שולם 30d: ₪{data.revenuePaid30d.toLocaleString()}</p>
-          <p>ממתין 30d: ₪{data.revenuePending30d.toLocaleString()}</p>
-          <Link href="/dashboard/billing" className="mt-3 inline-flex rounded-xl bg-rose-600 px-3 py-2 text-xs font-bold text-white hover:bg-rose-700">ניהול תשלומים</Link>
-        </Card>
-
-        <Card title="6. התראות In-App" icon={<Bell size={17} className="text-indigo-600" />}>
-          <div className="max-h-28 space-y-1 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs">
-            {data.recentActivity.length === 0 ? (
-              <p className="text-slate-500">אין פעילות אחרונה.</p>
-            ) : (
-              data.recentActivity.map((a, i) => (
-                <p key={`${a.action}-${i}`} className="truncate text-slate-700">{a.action}</p>
-              ))
-            )}
-          </div>
-        </Card>
-
-        <Card title="7. Help Center" icon={<BookOpen size={17} className="text-emerald-600" />}>
-          <p>מדריך תפעול מקוצר + ניווט למסכים המומלצים.</p>
-          <Link href="/dashboard/help" className="mt-3 inline-flex rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">פתח מדריך</Link>
-        </Card>
-
-        <Card title="8. Onboarding דינמי" icon={<Rocket size={17} className="text-blue-600" />}>
-          <p>ארגון: {data.organizationName}</p>
-          <p>סוג: {data.organizationType}</p>
-          <Link href="/dashboard/control-center" className="mt-3 inline-flex rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">צ&apos;קליסט אונבורדינג</Link>
-        </Card>
-
-        <Card title="9. Customer Health" icon={<Users size={17} className="text-violet-600" />}>
-          <p className="text-sm">ציון בריאות לקוחות: <span className="font-black text-slate-900">{data.customerHealth}/100</span></p>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
-            <div className="h-full rounded-full bg-violet-600" style={{ width: `${data.customerHealth}%` }} />
-          </div>
-        </Card>
-
-        <Card title="10. אבטחה וציות" icon={<Shield size={17} className="text-emerald-600" />}>
-          <Health label="Debug Route מוגן" ok={true} />
-          <Health label="Telemetry עם Consent" ok={true} />
-          <Health label="Owner-Only Admin" ok={ownerMode} />
-          {ownerMode ? (
-            <a href="/api/admin/system-health" className="mt-3 inline-flex rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">בדיקת אבטחה</a>
-          ) : null}
-        </Card>
+        </div>
       </section>
     </div>
   );
 }
 
-function Metric({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-bold text-slate-500">{title}</p>
-      <p className="mt-1 text-xl font-black text-slate-900">{value}</p>
-    </div>
-  );
-}
-
-function Card({
+function Panel({
   title,
+  description,
   icon,
   children,
 }: {
   title: string;
+  description: string;
   icon: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
-        {icon}
-        {title}
-      </h2>
-      <div className="space-y-2 text-sm text-slate-700">{children}</div>
+    <article className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50">{icon}</div>
+        <div>
+          <h2 className="text-base font-black text-slate-900">{title}</h2>
+          <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
+        </div>
+      </div>
+      <div className="mt-5">{children}</div>
     </article>
   );
 }
 
-function Toggle({
+function Metric({ title, value, tone = "blue" }: { title: string; value: string; tone?: "blue" | "emerald" | "amber" | "violet" }) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-700 border-blue-100",
+    emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    amber: "bg-amber-50 text-amber-700 border-amber-100",
+    violet: "bg-violet-50 text-violet-700 border-violet-100",
+  };
+
+  return (
+    <div className={`rounded-3xl border px-4 py-4 ${tones[tone]}`}>
+      <p className="text-xs font-bold opacity-80">{title}</p>
+      <p className="mt-1 text-2xl font-black text-slate-900">{value}</p>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+      <p className="text-xs font-bold text-slate-500">{label}</p>
+      <p className="mt-1.5 text-sm font-bold leading-6 text-slate-900">{value}</p>
+    </div>
+  );
+}
+
+function ToggleCard({
   label,
+  hint,
   on,
   onToggle,
 }: {
   label: string;
+  hint: string;
   on: boolean;
   onToggle: () => void;
 }) {
@@ -255,23 +291,50 @@ function Toggle({
     <button
       type="button"
       onClick={onToggle}
-      className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs hover:bg-slate-100"
+      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right hover:bg-slate-100"
     >
-      <span>{label}</span>
-      <span className={`rounded-full px-2 py-0.5 font-bold ${on ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
-        {on ? "ON" : "OFF"}
+      <div>
+        <p className="text-sm font-bold text-slate-900">{label}</p>
+        <p className="mt-1 text-xs text-slate-500">{hint}</p>
+      </div>
+      <span className={`rounded-full px-3 py-1 text-xs font-black ${on ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+        {on ? "פעיל" : "כבוי"}
       </span>
     </button>
   );
 }
 
-function Health({ label, ok }: { label: string; ok: boolean }) {
+function QuickLink({ href, label, tone = "default" }: { href: string; label: string; tone?: "default" | "primary" | "warning" }) {
+  const styles = {
+    default: "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+    primary: "bg-slate-900 text-white hover:bg-slate-800",
+    warning: "bg-amber-500 text-white hover:bg-amber-600",
+  };
+
   return (
-    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-      <span>{label}</span>
-      <span className={`inline-flex items-center gap-1 font-bold ${ok ? "text-emerald-700" : "text-amber-700"}`}>
-        {ok ? <CheckCircle2 size={13} /> : <Bot size={13} />}
-        {ok ? "פעיל" : "דורש השלמה"}
+    <Link href={href} className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${styles[tone]}`}>
+      {label}
+    </Link>
+  );
+}
+
+function Health({
+  label,
+  ok,
+  okLabel = "פעיל",
+  missingLabel = "דורש השלמה",
+}: {
+  label: string;
+  ok: boolean;
+  okLabel?: string;
+  missingLabel?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+      <span className="font-semibold text-slate-700">{label}</span>
+      <span className={`inline-flex items-center gap-1.5 font-bold ${ok ? "text-emerald-700" : "text-amber-700"}`}>
+        {ok ? <CheckCircle2 size={14} /> : <Bot size={14} />}
+        {ok ? okLabel : missingLabel}
       </span>
     </div>
   );

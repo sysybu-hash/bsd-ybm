@@ -40,3 +40,6 @@ tsconfig.tsbuildinfo
 
 # נכסי Gemini בשורש — העתק לפריסה ב־public/landing-hero-title-art.png
 /Gemini_Generated_Image_*.png
+
+.vercel
+.env*.local

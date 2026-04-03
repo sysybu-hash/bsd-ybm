@@ -193,47 +193,69 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
 
   /* ═══════════════════════════════════════════════════════════ */
   return (
-    <div className="mx-auto max-w-3xl space-y-6" dir="rtl">
+    <div className="mx-auto max-w-5xl space-y-6" dir="rtl">
       {/* ---- Header ---- */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-800">הנפקת מסמכים</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            הנפקת חשבוניות מס, קבלות, חשבוניות מס/קבלה והודעות זיכוי
-          </p>
-        </div>
-        <button
-          onClick={loadHistory}
-          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
-        >
-          היסטוריה
-          <ChevronDown
-            size={16}
-            className={`transition-transform ${showHistory ? "rotate-180" : ""}`}
-          />
-        </button>
-      </div>
-
-      <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
-        <p className="mb-2 text-xs font-black uppercase tracking-wider text-indigo-700">Invoice Wizard</p>
-        <div className="flex flex-wrap gap-2">
-          {[1, 2, 3, 4].map((s) => (
+      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
+        <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">Invoice workspace</p>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">הנפקת מסמכים</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">חשבוניות, קבלות וזיכויים במסך פשוט יותר: פרטים, פריטים, בדיקה, סיום.</p>
+            </div>
             <button
-              key={s}
-              type="button"
-              onClick={() => setWizardStep(s as 1 | 2 | 3 | 4)}
-              className={`rounded-xl px-3 py-2 text-xs font-bold ${
-                wizardStep === s
-                  ? "bg-indigo-700 text-white"
-                  : "border border-indigo-300 bg-white text-indigo-900 hover:bg-indigo-100"
-              }`}
+              onClick={loadHistory}
+              className="flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
             >
-              {s === 1 ? "1. פרטי מסמך" : s === 2 ? "2. פריטים" : s === 3 ? "3. בדיקה והנפקה" : "4. סיום"}
+              היסטוריה
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${showHistory ? "rotate-180" : ""}`}
+              />
             </button>
-          ))}
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            <div className="rounded-3xl border border-blue-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">סוג מסמך</p>
+              <p className="mt-1 text-lg font-black text-slate-900">{typeLabel}</p>
+            </div>
+            <div className="rounded-3xl border border-emerald-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">פריטים</p>
+              <p className="mt-1 text-2xl font-black text-slate-900">{items.length}</p>
+            </div>
+            <div className="rounded-3xl border border-violet-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-slate-500">סה&quot;כ נוכחי</p>
+              <p className="mt-1 text-2xl font-black text-slate-900">₪{total.toLocaleString()}</p>
+            </div>
+          </div>
         </div>
-        <p className="mt-2 text-xs text-indigo-700">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
-      </div>
+
+        <div className="border-t border-slate-100 px-6 py-5 md:px-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-base font-black text-slate-900">התקדמות מונחית</h2>
+              <p className="mt-1 text-sm text-slate-500">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3, 4].map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setWizardStep(s as 1 | 2 | 3 | 4)}
+                  className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
+                    wizardStep === s
+                      ? "bg-slate-900 text-white"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {s === 1 ? "1. פרטים" : s === 2 ? "2. פריטים" : s === 3 ? "3. בדיקה" : "4. סיום"}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ---- Success toast ---- */}
       <AnimatePresence>
@@ -242,7 +264,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-800 shadow-sm"
+            className="flex items-center gap-3 rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-800 shadow-sm"
           >
             <CheckCircle2 size={22} className="shrink-0" />
             <span className="text-sm font-semibold">
@@ -265,7 +287,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700"
+            className="rounded-[24px] border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 shadow-sm"
           >
             {error}
           </motion.div>
@@ -275,11 +297,12 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
       {/* ════════ Form Card ════════ */}
       <motion.div
         layout
-        className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8"
+        className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
       >
         {wizardStep === 1 && (
           <>
             <label className="mb-2 block text-sm font-bold text-slate-600">סוג מסמך</label>
+            <p className="mb-5 text-sm leading-6 text-slate-500">בוחרים קודם את סוג המסמך ואת פרטי הלקוח, ורק אחר כך ממשיכים לפריטים.</p>
             <div className="mb-6 flex flex-wrap gap-2">
               {DOC_TYPES.map(({ value, label, icon: Icon }) => (
                 <button
@@ -332,6 +355,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
         {wizardStep === 2 && (
           <>
             <label className="mb-2 block text-sm font-bold text-slate-600">פריטים</label>
+            <p className="mb-5 text-sm leading-6 text-slate-500">כל שורה נשארת פשוטה: תיאור, כמות, מחיר וסכום שורה.</p>
             <div className="space-y-3">
               {items.map((item, idx) => (
                 <div
@@ -415,7 +439,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
 
         {wizardStep === 3 && (
           <>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+            <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-sm">
               <p className="font-bold text-slate-800">סיכום לפני הנפקה</p>
               <p className="mt-1 text-slate-600">{typeLabel} עבור {clientName || "לקוח ללא שם"}</p>
               <p className="text-slate-600">פריטים: {items.length}</p>
@@ -459,7 +483,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
         )}
 
         {wizardStep === 4 && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
+          <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900 shadow-sm">
             <p className="font-black">המסמך הונפק בהצלחה.</p>
             <p className="mt-1">אפשר לעבור להיסטוריה או להתחיל מסמך חדש.</p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -492,7 +516,7 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+            className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
           >
             <div className="border-b border-slate-100 px-6 py-4">
               <h2 className="text-lg font-extrabold text-slate-800">מסמכים שהונפקו</h2>

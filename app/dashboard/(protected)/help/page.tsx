@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { BookOpenCheck, CreditCard, Settings, Shield, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -17,55 +18,87 @@ export default function DashboardHelpPage() {
         </p>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <CreditCard size={18} className="text-rose-600" />
-            שלב 1: מנויים ותשלומים
-          </h2>
-          <p className="text-sm text-slate-600">בדוק שהמנוי פעיל ושיש נתיב תשלום תקין.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/dashboard/billing" className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white hover:bg-rose-700">פתיחת מסך מנויים</Link>
-            <Link href="/dashboard/billing?tab=control" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">בקרת מנויים</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Settings size={18} className="text-blue-600" />
-            שלב 2: הגדרות ארגון
-          </h2>
-          <p className="text-sm text-slate-600">עדכן שם עסק, מס, כתובת, וחיבורי שירותים חיצוניים.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/dashboard/settings" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">הגדרות ראשיות</Link>
-            <Link href="/dashboard/settings?tab=billing" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">חיבורי תשלום</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Users size={18} className="text-violet-600" />
-            שלב 3: משתמשים ותפקידים
-          </h2>
-          <p className="text-sm text-slate-600">הזמן עובדים, הקצה תפקידים, ואשר משתמשים ממתינים.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/dashboard/settings?tab=account" className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700">ניהול משתמשים</Link>
-            <Link href="/dashboard/admin?section=subscriptions" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">אישורי הרשמה</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Shield size={18} className="text-emerald-600" />
-            שלב 4: בקרה שוטפת
-          </h2>
-          <p className="text-sm text-slate-600">בקר מצב מערכת ודוחות, ואז עבור לתפעול CRM/ERP שוטף.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/dashboard/control-center" className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700">מרכז תפעול</Link>
-            <Link href="/dashboard" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">דשבורד ראשי</Link>
-          </div>
-        </article>
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+        <div className="space-y-4">
+          <HelpStep
+            icon={<CreditCard size={18} className="text-rose-600" />}
+            step="1"
+            title="בדיקת מנוי ותשלום"
+            description="לפני כל דבר אחר, ודא שיש חבילה פעילה ונתיב תשלום תקין."
+            primaryHref="/dashboard/billing"
+            primaryLabel="פתח מנוי"
+            secondaryHref="/dashboard/billing?tab=control"
+            secondaryLabel="בקרת מנויים"
+          />
+          <HelpStep
+            icon={<Settings size={18} className="text-blue-600" />}
+            step="2"
+            title="השלמת הגדרות העסק"
+            description="עדכן פרטי עסק, מס, כתובת ואינטגרציות בסיסיות."
+            primaryHref="/dashboard/settings"
+            primaryLabel="פתח הגדרות"
+            secondaryHref="/dashboard/settings?tab=billing"
+            secondaryLabel="חיבורי תשלום"
+          />
+          <HelpStep
+            icon={<Users size={18} className="text-violet-600" />}
+            step="3"
+            title="ניהול צוות והרשאות"
+            description="הזמן משתמשים, אשר בקשות והקצה תפקידים."
+            primaryHref="/dashboard/settings?tab=account"
+            primaryLabel="פתח משתמשים"
+            secondaryHref="/dashboard/admin?section=subscriptions"
+            secondaryLabel="אישורים"
+          />
+          <HelpStep
+            icon={<Shield size={18} className="text-emerald-600" />}
+            step="4"
+            title="מעבר לעבודה שוטפת"
+            description="אחרי שהבסיס מוכן, חזור למסך הבית או פתח את מרכז העבודה לפי הצורך."
+            primaryHref="/dashboard"
+            primaryLabel="חזרה לבית"
+            secondaryHref="/dashboard/control-center"
+            secondaryLabel="מרכז עבודה"
+          />
+        </div>
       </section>
     </div>
+  );
+}
+
+function HelpStep({
+  icon,
+  step,
+  title,
+  description,
+  primaryHref,
+  primaryLabel,
+  secondaryHref,
+  secondaryLabel,
+}: {
+  icon: ReactNode;
+  step: string;
+  title: string;
+  description: string;
+  primaryHref: string;
+  primaryLabel: string;
+  secondaryHref: string;
+  secondaryLabel: string;
+}) {
+  return (
+    <article className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-start gap-3">
+        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white bg-white shadow-sm">{icon}</div>
+        <div>
+          <p className="text-xs font-bold text-slate-500">שלב {step}</p>
+          <h2 className="mt-1 text-lg font-black text-slate-900">{title}</h2>
+          <p className="mt-1 text-sm text-slate-600">{description}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Link href={primaryHref} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800">{primaryLabel}</Link>
+        <Link href={secondaryHref} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">{secondaryLabel}</Link>
+      </div>
+    </article>
   );
 }

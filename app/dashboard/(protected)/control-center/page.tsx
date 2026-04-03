@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
-import { CircleCheckBig, CreditCard, Settings, Shield, Users } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowLeftRight, CircleCheckBig, CreditCard, Shield, Users } from "lucide-react";
 import OperatorOnboardingPanel from "@/components/control-center/OperatorOnboardingPanel";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +44,58 @@ function fmtDate(d: Date | null): string {
     month: "2-digit",
     year: "numeric",
   }).format(d);
+}
+
+function nextBestAction(funnel: FunnelMetric[]): { title: string; description: string; href: string; cta: string } {
+  const sorted = [...funnel].sort((a, b) => {
+    const aRate = a.views > 0 ? a.completion / a.views : 0;
+    const bRate = b.views > 0 ? b.completion / b.views : 0;
+    return aRate - bRate;
+  });
+
+  const weakest = sorted[0];
+  if (!weakest || weakest.views === 0) {
+    return {
+      title: "השלם קודם את הבסיס",
+      description: "עדיין אין מספיק נתוני שימוש, אז עדיף להתחיל מהגדרות העסק, מנוי ומשתמשים.",
+      href: "/dashboard/settings",
+      cta: "פתח הגדרות",
+    };
+  }
+
+  if (weakest.route === "CRM Wizard") {
+    return {
+      title: "חזק את מסלול ה-CRM",
+      description: "השלמת ה-CRM נמוכה יחסית. עדיף להכווין משתמשים ישירות למסך הלקוחות והפרויקטים.",
+      href: "/dashboard/crm#crm-wizard",
+      cta: "פתח CRM",
+    };
+  }
+
+  if (weakest.route === "Invoice Wizard") {
+    return {
+      title: "פשט את מסלול החשבוניות",
+      description: "מסלול החשבוניות הוא כרגע נקודת החיכוך העיקרית. עדיף להתחיל ישר ממסך ההנפקה.",
+      href: "/dashboard/erp/invoice",
+      cta: "פתח חשבוניות",
+    };
+  }
+
+  if (weakest.route === "Onboarding Checklist") {
+    return {
+      title: "סגור את האונבורדינג",
+      description: "לפני כלים מתקדמים, כדאי להשלים את רשימת ההפעלה לצוות.",
+      href: "/dashboard/control-center",
+      cta: "פתח צ'קליסט",
+    };
+  }
+
+  return {
+    title: "החזר את הפוקוס למסך הבית",
+    description: "מסלול הכניסה הציבורי עדיין חלש. עדיף להוביל משתמשים להרשמה או התחברות קצרה וישירה.",
+    href: "/dashboard",
+    cta: "חזרה לבית",
+  };
 }
 
 export default async function ControlCenterPage() {
@@ -125,6 +178,7 @@ export default async function ControlCenterPage() {
   }
 
   const latestWizardEventAt = wizardEvents[0]?.createdAt ?? null;
+  const recommendedAction = nextBestAction(funnel);
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -159,117 +213,79 @@ export default async function ControlCenterPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="lg:col-span-2">
           <OperatorOnboardingPanel />
         </div>
 
-        <article className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-1 text-lg font-black text-slate-900">דוח משפך Wizard (30 ימים אחרונים)</h2>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-2 text-lg font-black text-slate-900">מה לעשות עכשיו</h2>
+          <p className="text-sm text-slate-600">המסך הזה נותן המלצה אחת ברורה לפי הנתונים, במקום להעמיס עשרות החלטות.</p>
+          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-sm font-black text-emerald-950">{recommendedAction.title}</p>
+            <p className="mt-2 text-sm leading-6 text-emerald-900">{recommendedAction.description}</p>
+            <Link href={recommendedAction.href} className="mt-4 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800">{recommendedAction.cta}</Link>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <QuickPanel
+              icon={<CreditCard size={16} className="text-rose-600" />}
+              title="מנוי ותשלום"
+              description="בדיקה מהירה של חבילה ותשלום לפני כל פעולה אחרת."
+              href="/dashboard/billing"
+              cta="פתח מנוי"
+            />
+            <QuickPanel
+              icon={<Users size={16} className="text-violet-600" />}
+              title="צוות והרשאות"
+              description="אישור משתמשים והקצאת תפקידים בלי לחפש בין מסכים."
+              href="/dashboard/settings?tab=account"
+              cta="פתח משתמשים"
+            />
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
+            <ArrowLeftRight size={18} className="text-blue-600" />
+            דוח שימוש מקוצר
+          </h2>
           <p className="mb-4 text-sm text-slate-600">
-            צפיות שלב - מעבר קדימה - השלמה, לפי מסלול. 
+            צפיות, התקדמות והשלמה לכל מסלול.
             {latestWizardEventAt
               ? ` עדכון אחרון: ${new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short" }).format(latestWizardEventAt)}`
               : " אין עדיין אירועי Wizard."}
           </p>
-
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="space-y-3">
             {funnel.map((row) => (
-              <div key={row.route} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-black text-slate-900">{row.route}</p>
-                <div className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="rounded-lg bg-white p-2">
-                    <p className="text-slate-500">Views</p>
-                    <p className="text-base font-black text-slate-900">{row.views}</p>
-                  </div>
-                  <div className="rounded-lg bg-white p-2">
-                    <p className="text-slate-500">Next</p>
-                    <p className="text-base font-black text-blue-700">{row.next}</p>
-                  </div>
-                  <div className="rounded-lg bg-white p-2">
-                    <p className="text-slate-500">Completion</p>
-                    <p className="text-base font-black text-emerald-700">{row.completion}</p>
-                  </div>
+              <div key={row.route} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-black text-slate-900">{row.route}</p>
+                  <p className="text-xs font-bold text-slate-500">{pct(row.completion, row.views)} השלמה</p>
                 </div>
-                <div className="mt-3 space-y-1 text-xs text-slate-600">
-                  <p>Next Rate: <span className="font-bold text-slate-800">{pct(row.next, row.views)}</span></p>
-                  <p>Completion Rate: <span className="font-bold text-slate-800">{pct(row.completion, row.views)}</span></p>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div className="h-full bg-blue-500" style={{ width: pct(row.next, row.views) }} />
-                </div>
-                <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div className="h-full bg-emerald-500" style={{ width: pct(row.completion, row.views) }} />
+                <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                  <MetricChip label="צפיות" value={String(row.views)} />
+                  <MetricChip label="התקדמות" value={String(row.next)} tone="blue" />
+                  <MetricChip label="השלמות" value={String(row.completion)} tone="green" />
                 </div>
               </div>
             ))}
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-slate-900">
-            <CreditCard size={18} className="text-rose-600" />
-            מנויים ותשלומים
-          </h2>
-          <p className="mb-4 text-sm text-slate-600">ניהול חבילה, חשבוניות ופעולות גבייה מהירות.</p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/dashboard/billing" className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white hover:bg-rose-700">מרכז מנויים</Link>
-            <Link href="/dashboard/billing?tab=control" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">ניהול מתקדם</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Settings size={18} className="text-blue-600" />
-            הגדרות מערכת
-          </h2>
-          <p className="mb-4 text-sm text-slate-600">הגדרות עסק, פרטי מס, אינטגרציות, ופורטל לקוח.</p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/dashboard/settings" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">הגדרות בסיס</Link>
-            <Link href="/dashboard/settings?tab=billing" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">חיבורי תשלום</Link>
-            <Link href="/dashboard/settings?tab=cloud" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">גיבוי ענן</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Users size={18} className="text-violet-600" />
-            משתמשים והרשאות
-          </h2>
-          <p className="mb-4 text-sm text-slate-600">הזמנת עובדים, שינוי תפקידים, ואישור משתמשים חדשים.</p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/dashboard/settings?tab=account" className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700">ניהול צוות</Link>
-            <Link href="/dashboard/admin?section=subscriptions" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">אישורי הרשמה</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-slate-900">
-            <CircleCheckBig size={18} className="text-indigo-600" />
-            Wizard פנימי למסכים
-          </h2>
-          <p className="mb-4 text-sm text-slate-600">כניסה מהירה לתפעול שלבים בתוך CRM ו-ERP.</p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/dashboard/crm#crm-wizard" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700">CRM Wizard</Link>
-            <Link href="/dashboard/erp#erp-wizard" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">ERP Wizard</Link>
-            <Link href="/dashboard/operations" className="rounded-xl border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-bold text-indigo-800 hover:bg-indigo-100">כל 10 השדרוגים</Link>
-          </div>
-        </article>
-
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-slate-900">
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
             <Shield size={18} className="text-emerald-600" />
-            בריאות מערכת
+            קיצורי דרך חשובים
           </h2>
-          <p className="mb-4 text-sm text-slate-600">בדיקת סטטוס שירותים ותצוגת בעלים למערכת.</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-4 grid gap-3 md:grid-cols-4">
+            <QuickLink href="/dashboard/settings" title="הגדרות עסק" subtitle="שם עסק, מס ואינטגרציות" />
+            <QuickLink href="/dashboard/crm" title="CRM" subtitle="לקוחות ופרויקטים" />
+            <QuickLink href="/dashboard/erp/invoice" title="חשבוניות" subtitle="הפקה ותשלומים" />
             {ownerMode ? (
-              <>
-                <Link href="/dashboard/admin" className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700">חדר מצב בעלים</Link>
-                <a href="/api/admin/system-health" className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">בדיקת API</a>
-              </>
+              <QuickLink href="/dashboard/admin" title="חדר מצב" subtitle="זמין לבעלים בלבד" />
             ) : (
-              <span className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800">גישה מורחבת זמינה לבעל המערכת בלבד</span>
+              <QuickLink href="/dashboard/help" title="מדריך" subtitle="רצף הפעלה מקוצר" />
             )}
           </div>
         </article>
@@ -286,5 +302,59 @@ export default async function ControlCenterPage() {
         <p className="mt-2 text-xs text-amber-800">תאריך ניסיון חינם: {fmtDate(org?.trialEndsAt ?? null)}</p>
       </section>
     </div>
+  );
+}
+
+function QuickPanel({
+  icon,
+  title,
+  description,
+  href,
+  cta,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <p className="inline-flex items-center gap-2 text-sm font-black text-slate-900">{icon}{title}</p>
+      <p className="mt-2 text-sm text-slate-600">{description}</p>
+      <Link href={href} className="mt-3 inline-flex rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">{cta}</Link>
+    </div>
+  );
+}
+
+function MetricChip({
+  label,
+  value,
+  tone = "slate",
+}: {
+  label: string;
+  value: string;
+  tone?: "slate" | "blue" | "green";
+}) {
+  const toneClass = tone === "blue"
+    ? "text-blue-700"
+    : tone === "green"
+      ? "text-emerald-700"
+      : "text-slate-900";
+
+  return (
+    <div className="rounded-xl bg-white p-2">
+      <p className="text-slate-500">{label}</p>
+      <p className={`text-base font-black ${toneClass}`}>{value}</p>
+    </div>
+  );
+}
+
+function QuickLink({ href, title, subtitle }: { href: string; title: string; subtitle: string }) {
+  return (
+    <Link href={href} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white">
+      <p className="text-sm font-black text-slate-900">{title}</p>
+      <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
+    </Link>
   );
 }

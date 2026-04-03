@@ -324,4 +324,20 @@ export type MessageTree = {
     executiveBelow: string;
     dividerLabel: string;
   };
+  home: {
+    badge: string;
+    title: string;
+    description: string;
+    signup: string;
+    login: string;
+    crm: { title: string; desc: string };
+    invoice: { title: string; desc: string };
+    help: { title: string; desc: string };
+    whatChanged: {
+      title: string;
+      pt1: { title: string; desc: string };
+      pt2: { title: string; desc: string };
+      pt3: { title: string; desc: string };
+    };
+  };
 };
