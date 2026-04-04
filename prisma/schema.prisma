@@ -125,6 +125,8 @@ model Organization {
   billingWorkspaceJson  Json?
   /// הזמנות להצטרפות לארגון קיים (תפקיד נבחר — לא ארגון חדש)
   organizationInvites OrganizationInvite[]
+  /// API key לאינטגרציית מקאנו (שעון נוכחות / HR) — מוצפן בשרת בלבד
+  meckanoApiKey        String?
 }
 
 /// הזמנה להצטרף לארגון קיים — אחרי הרשמה המשתמש מקבל את התפקיד שנבחר (ברירת מחדל: עובד)

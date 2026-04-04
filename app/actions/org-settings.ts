@@ -156,3 +156,27 @@ export async function updateBillingConnectionsAction(formData: FormData) {
   revalidatePath("/dashboard/billing");
   return { ok: true as const };
 }
+
+/** מקאנו — שמירת API key לארגון */
+export async function updateMeckanoApiKeyAction(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false as const, error: "נדרשת התחברות" };
+  }
+  const orgId = session.user.organizationId ?? null;
+  const role = String(session.user.role ?? "");
+  if (!orgId) {
+    return { ok: false as const, error: "אין ארגון משויך" };
+  }
+  if (role !== UserRole.ORG_ADMIN && role !== UserRole.SUPER_ADMIN) {
+    return { ok: false as const, error: "רק מנהל ארגון רשאי להגדיר אינטגרציות" };
+  }
+  const key = String(formData.get("meckanoApiKey") ?? "").trim();
+  await prisma.organization.update({
+    where: { id: orgId },
+    data: { meckanoApiKey: key.length > 0 ? key : null },
+  });
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/meckano");
+  return { ok: true as const };
+}

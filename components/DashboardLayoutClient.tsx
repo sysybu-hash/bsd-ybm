@@ -21,6 +21,7 @@ import {
   Users,
   X,
   Zap,
+  Clock,
 } from "lucide-react";
 import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
@@ -129,6 +130,7 @@ export default function DashboardLayoutClient({
     { href: "/dashboard/crm", icon: <Users size={17} />, label: t("dashboard.crm"), color: "violet" },
     { href: "/dashboard/erp", icon: <FileText size={17} />, label: t("dashboard.erp"), color: "emerald" },
     { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: t("dashboard.invoices"), color: "rose" },
+    { href: "/dashboard/meckano", icon: <Clock size={17} />, label: t("dashboard.meckano"), color: "blue" },
     { href: "/dashboard/billing", icon: <CreditCard size={17} />, label: t("dashboard.billing"), color: "rose" },
     { href: "/dashboard/settings", icon: <Settings size={17} />, label: t("dashboard.settings"), color: "blue" },
   ];
@@ -150,6 +152,7 @@ export default function DashboardLayoutClient({
     if (routeActive(pathname, "/dashboard/erp")) return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/billing")) return t("dashboard.billing");
     if (routeActive(pathname, "/dashboard/settings")) return t("dashboard.settings");
+    if (routeActive(pathname, "/dashboard/meckano")) return t("dashboard.meckano");
     if (routeActive(pathname, "/dashboard/help")) return t("nav.tutorial");
     if (routeActive(pathname, "/dashboard/admin")) return "Admin";
     return t("dashboard.main");
