@@ -4,7 +4,6 @@ import React, { useState, useTransition, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   Settings,
   UserPlus,
@@ -24,7 +23,6 @@ import {
   CalendarDays,
   Globe,
   Wallet,
-  type LucideIcon,
 } from "lucide-react";
 import {
   updateOrganizationAction,
@@ -56,15 +54,6 @@ const PREFS_STORAGE_KEY = "bsd-settings-prefs";
 type TabId = "account" | "erp" | "crm" | "ai" | "billing" | "cloud";
 
 const TAB_ORDER: TabId[] = ["account", "erp", "crm", "ai", "billing", "cloud"];
-
-const TAB_ICONS: Record<TabId, LucideIcon> = {
-  account: User,
-  erp: Database,
-  crm: Users,
-  ai: Cpu,
-  billing: CreditCard,
-  cloud: Cloud,
-};
 
 type PlaceholderTabId = Exclude<TabId, "account" | "cloud">;
 
@@ -219,85 +208,32 @@ export default function SettingsPageClient({
 
   return (
     <div className="text-slate-900" dir={dir}>
-      <section className="mb-5 rounded-2xl border border-teal-200 bg-teal-50 p-4">
-        <p className="text-xs font-black uppercase tracking-wider text-teal-700">Simple Mode</p>
-        <h3 className="mt-1 text-lg font-black text-teal-900">הגדרות בניהול קל</h3>
-        <p className="mt-1 text-sm text-teal-800">
-          לא חייבים לעבור בין כל הטאבים. בחר את המשימה שלך ותגיע ישר למסך הנכון.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("account")}
-            className="rounded-xl bg-teal-700 px-3 py-2 text-sm font-bold text-white hover:bg-teal-800"
-          >
-            פרטי ארגון
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("billing")}
-            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
-          >
-            חיבורי תשלום
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("cloud")}
-            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
-          >
-            גיבוי ענן
-          </button>
-          <Link
-            href="/dashboard/control-center"
-            className="rounded-xl border border-teal-300 bg-white px-3 py-2 text-sm font-bold text-teal-900 hover:bg-teal-100"
-          >
-            מרכז תפעול
-          </Link>
-        </div>
-      </section>
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col md:flex-row">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        {/* ── Sidebar ── */}
-        <aside className="w-full shrink-0 bg-slate-900 md:w-60">
-          <div className="border-b border-white/8 px-5 py-5">
-            <h2 className="flex items-center gap-2 text-base font-black text-white">
-              <Settings size={18} className="shrink-0 text-blue-400" />
-              {t("settings.title")}
-            </h2>
-          </div>
-          <nav className="flex flex-row gap-1 overflow-x-auto p-3 md:flex-col md:overflow-visible">
-            {TAB_ORDER.map((tabId) => {
-              const Icon = TAB_ICONS[tabId];
-              return (
-                <button
-                  key={tabId}
-                  type="button"
-                  onClick={() => setActiveTab(tabId)}
-                  className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-bold transition-all md:w-full ${
-                    activeTab === tabId
-                      ? "bg-white/15 text-white"
-                      : "text-slate-400 hover:bg-white/8 hover:text-slate-200"
-                  }`}
-                >
-                  <Icon size={16} className="shrink-0" />
-                  {t(`settings.${tabId}`)}
-                </button>
-              );
-            })}
-          </nav>
-        </aside>
+        {/* ── Tab bar ── */}
+        <nav className="flex flex-row overflow-x-auto border-b border-slate-200 px-4 gap-0">
+          {TAB_ORDER.map((tabId) => (
+            <button
+              key={tabId}
+              type="button"
+              onClick={() => setActiveTab(tabId)}
+              className={`flex items-center gap-2 whitespace-nowrap px-4 py-4 text-sm font-bold border-b-2 transition-colors ${
+                activeTab === tabId
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              {t(`settings.${tabId}`)}
+            </button>
+          ))}
+        </nav>
 
         {/* ── Content ── */}
         <main className="min-w-0 flex-1 p-6 md:p-8">
           <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <motion.h3
-              key={currentTitle}
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-xl font-black tracking-tight text-slate-900"
-            >
+            <h3 className="text-xl font-black tracking-tight text-slate-900">
               {currentTitle}
-            </motion.h3>
+            </h3>
             <button
               type="button"
               onClick={handleHeaderSave}

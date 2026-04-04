@@ -127,7 +127,7 @@ export default function DashboardLayoutClient({
     { href: "/dashboard", icon: <LayoutDashboard size={17} />, label: t("dashboard.main"), color: "blue" },
     { href: "/dashboard/crm", icon: <Users size={17} />, label: t("dashboard.crm"), color: "violet" },
     { href: "/dashboard/erp", icon: <FileText size={17} />, label: t("dashboard.erp"), color: "emerald" },
-    { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: t("dashboard.erp"), color: "rose" },
+    { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: t("dashboard.invoices"), color: "rose" },
     { href: "/dashboard/billing", icon: <CreditCard size={17} />, label: t("dashboard.billing"), color: "rose" },
     { href: "/dashboard/settings", icon: <Settings size={17} />, label: t("dashboard.settings"), color: "blue" },
   ];
@@ -135,7 +135,7 @@ export default function DashboardLayoutClient({
   const supportItems = [
     { href: "/dashboard/control-center", icon: <Compass size={17} />, label: t("dashboard.mission"), color: "emerald" },
     { href: "/dashboard/operator", icon: <Cable size={17} />, label: t("dashboard.executive"), color: "indigo" },
-    { href: "/dashboard/help", icon: <BookOpen size={17} />, label: t("dashboard.settings"), color: "amber" },
+    { href: "/dashboard/help", icon: <BookOpen size={17} />, label: t("nav.tutorial"), color: "amber" },
   ];
 
   const drawerHidden = dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";

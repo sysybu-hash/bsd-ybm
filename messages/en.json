@@ -60,6 +60,7 @@
     "main": "Main dashboard",
     "crm": "CRM",
     "erp": "ERP & finance",
+    "invoices": "Invoices",
     "aiHub": "AI hub",
     "billing": "Billing",
     "settings": "Settings",
