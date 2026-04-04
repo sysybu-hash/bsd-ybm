@@ -124,48 +124,44 @@ export default function DashboardLayoutClient({
   }, []);
 
   const navItems = [
-    { href: "/dashboard", icon: <LayoutDashboard size={17} />, label: "בית", color: "blue" },
+    { href: "/dashboard", icon: <LayoutDashboard size={17} />, label: t("dashboard.main"), color: "blue" },
     { href: "/dashboard/crm", icon: <Users size={17} />, label: t("dashboard.crm"), color: "violet" },
     { href: "/dashboard/erp", icon: <FileText size={17} />, label: t("dashboard.erp"), color: "emerald" },
-    { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: "חשבוניות", color: "rose" },
+    { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: t("dashboard.erp"), color: "rose" },
     { href: "/dashboard/billing", icon: <CreditCard size={17} />, label: t("dashboard.billing"), color: "rose" },
     { href: "/dashboard/settings", icon: <Settings size={17} />, label: t("dashboard.settings"), color: "blue" },
   ];
 
   const supportItems = [
-    { href: "/dashboard/control-center", icon: <Compass size={17} />, label: "מרכז עבודה", color: "emerald" },
-    { href: "/dashboard/operator", icon: <Cable size={17} />, label: "עוזר תפעולי", color: "indigo" },
-    { href: "/dashboard/help", icon: <BookOpen size={17} />, label: "מדריך", color: "amber" },
+    { href: "/dashboard/control-center", icon: <Compass size={17} />, label: t("dashboard.mission"), color: "emerald" },
+    { href: "/dashboard/operator", icon: <Cable size={17} />, label: t("dashboard.executive"), color: "indigo" },
+    { href: "/dashboard/help", icon: <BookOpen size={17} />, label: t("dashboard.settings"), color: "amber" },
   ];
 
   const drawerHidden = dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none";
 
   const pageTitle = (() => {
-    if (routeActive(pathname, "/dashboard/control-center")) return "מרכז עבודה";
-    if (routeActive(pathname, "/dashboard/operator")) return "עוזר תפעולי";
-    if (routeActive(pathname, "/dashboard/operations")) return "כלים מתקדמים";
+    if (routeActive(pathname, "/dashboard/control-center")) return t("dashboard.mission");
+    if (routeActive(pathname, "/dashboard/operator")) return t("dashboard.executive");
+    if (routeActive(pathname, "/dashboard/operations")) return t("dashboard.intelligence");
     if (routeActive(pathname, "/dashboard/crm")) return t("dashboard.crm");
-    if (routeActive(pathname, "/dashboard/erp/invoice")) return "חשבוניות";
+    if (routeActive(pathname, "/dashboard/erp/invoice")) return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/erp")) return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/billing")) return t("dashboard.billing");
     if (routeActive(pathname, "/dashboard/settings")) return t("dashboard.settings");
-    if (routeActive(pathname, "/dashboard/help")) return "מדריך";
+    if (routeActive(pathname, "/dashboard/help")) return t("nav.tutorial");
     if (routeActive(pathname, "/dashboard/admin")) return "Admin";
-    return "בית";
+    return t("dashboard.main");
   })();
-
-  const onAdvancedRoute = routeActive(pathname, "/dashboard/control-center") || routeActive(pathname, "/dashboard/operator") || routeActive(pathname, "/dashboard/operations");
 
   const NavContent = ({ onNav }: { onNav?: () => void }) => (
     <>
-      <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-600">יומיומי</p>
       <div className="space-y-0.5">
         {navItems.map((item) => (
           <SidebarLink key={item.href} {...item} onClick={onNav} isActive={routeActive(pathname, item.href)} />
         ))}
       </div>
-      <div className="my-4 border-t border-white/6" />
-      <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-600">סיוע</p>
+      <div className="my-3 border-t border-slate-100" />
       <div className="space-y-0.5">
         {supportItems.map((item) => (
           <SidebarLink key={item.href} {...item} onClick={onNav} isActive={routeActive(pathname, item.href)} />
@@ -218,30 +214,21 @@ export default function DashboardLayoutClient({
   );
 
   return (
-    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-[radial-gradient(circle_at_top_right,_rgba(14,165,233,0.10),_transparent_30%),linear-gradient(180deg,_#f8fbff_0%,_#f2f6fb_100%)]" dir={dir}>
+    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-slate-50" dir={dir}>
 
       {/* ═══ SIDEBAR — Desktop ═══ */}
       <aside
-        className="hidden w-72 shrink-0 flex-col border-e border-slate-200 bg-white/88 backdrop-blur-xl md:fixed md:inset-y-0 md:start-0 md:flex"
+        className="hidden w-64 shrink-0 flex-col border-e border-slate-200 bg-white md:fixed md:inset-y-0 md:start-0 md:flex"
       >
-        <Link href="/" className="flex items-center gap-3 px-6 py-6 transition-opacity hover:opacity-80">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-sm font-black text-white shadow-sm">
+        <Link href="/" className="flex items-center gap-3 px-5 py-5 transition-opacity hover:opacity-80">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-sm font-black text-white">
             B
           </div>
           <div>
-            <p className="text-sm font-black leading-none tracking-tight text-slate-900">
-              BSD<span className="text-blue-600">-YBM</span>
-            </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Internal workspace</p>
+            <p className="text-sm font-black leading-none text-slate-900">BSD<span className="text-slate-400">-YBM</span></p>
+            <p className="mt-0.5 text-[10px] text-slate-400">Workspace</p>
           </div>
         </Link>
-
-        <div className="px-4 pb-2">
-          <div className="rounded-[28px] border border-slate-200 bg-slate-50 px-4 py-4">
-            <p className="text-xs font-bold text-slate-500">סביבת עבודה רגועה יותר</p>
-            <p className="mt-1 text-sm leading-6 text-slate-700">הניווט נשאר מלא, אבל המסכים מוצגים בפחות רעש ועם פוקוס ברור על פעולה אחת בכל פעם.</p>
-          </div>
-        </div>
 
         <nav className="flex-1 overflow-y-auto px-4 py-3">
           <NavContent />
@@ -287,7 +274,7 @@ export default function DashboardLayoutClient({
       </aside>
 
       {/* ═══ MAIN AREA ═══ */}
-      <main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden md:ms-72" style={{ WebkitOverflowScrolling: "touch" }}>
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden md:ms-64" style={{ WebkitOverflowScrolling: "touch" }}>
 
         {/* Mobile header */}
         <div className="sticky top-0 z-[120] flex items-center justify-between gap-3 border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md md:hidden">
@@ -306,28 +293,13 @@ export default function DashboardLayoutClient({
         </div>
 
         {/* Desktop header */}
-        <header className="sticky top-0 z-[110] hidden border-b border-slate-200/60 bg-white/88 px-8 py-5 backdrop-blur-xl md:block">
+        <header className="sticky top-0 z-[110] hidden border-b border-slate-200 bg-white px-8 py-4 md:block">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-slate-400">
-                <span>Workspace</span>
-                {onAdvancedRoute ? <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">מיקוד תפעולי</span> : null}
-              </div>
-              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900">{pageTitle}</h1>
-              <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
-                <span className="rounded-full bg-slate-100 px-3 py-1" dir="ltr">{serverEmail}</span>
-                <span className="rounded-full bg-slate-100 px-3 py-1">{userRole.replaceAll("_", " ")}</span>
-                {showAdmin ? <span className="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Admin</span> : null}
-              </div>
-            </div>
+            <h1 className="text-xl font-black text-slate-900">{pageTitle}</h1>
             <div className="flex items-center gap-2">
-              <Link href="/dashboard" className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50">
-                חזרה לבית
-              </Link>
+              {showAdmin ? <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">Admin</span> : null}
               <DashboardNotificationBell />
-              <Link href="/" className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50">
-                לאתר
-              </Link>
+              <LanguageSwitcher />
             </div>
           </div>
         </header>
