@@ -3,15 +3,13 @@
 import { getSession, signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ShieldCheck,
   Loader2,
   KeyRound,
   LogOut,
   UserCircle,
-  Sparkles,
-  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { Session } from "next-auth";
@@ -97,225 +95,175 @@ export default function LoginPortal() {
   const sessionName = (activeSession?.user?.name ?? "").trim();
   const showActiveBanner = sessionProbe === "done" && activeSession != null && sessionEmail.length > 0;
 
-  const iconSlot = (
-    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 ring-2 ring-blue-200/60 shadow-inner shadow-blue-900/5">
-      <ShieldCheck className="h-7 w-7 text-blue-600" aria-hidden />
-    </div>
-  );
-
   return (
     <AuthPageShell secondaryNav={{ href: "/register", label: "הרשמה" }}>
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        className="flex w-full max-w-6xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16"
+      <AuthProfessionalCard
+        icon={
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50">
+            <ShieldCheck className="h-6 w-6 text-blue-600" aria-hidden />
+          </div>
+        }
+        title="כניסה למערכת"
+        subtitle="בחרו Google או הזינו אימייל וסיסמה"
       >
-        {/* פאנל שמאל — תיאור */}
-        <section className="order-2 max-w-md text-center lg:order-1 lg:text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-300">
-            <Sparkles className="h-3.5 w-3.5 text-blue-400" aria-hidden />
-            BSD-YBM Intelligence Platform
-          </p>
-          <h2 className="mt-5 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl">
-            כניסה מאובטחת
-            <br />
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #818cf8)" }}
-            >
-              לעסק שלכם
-            </span>
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
-            CRM, ERP, בינה מלאכותית וסריקה רב־מנועית — במקום אחד. התחברות עם Google או סיסמה שסופקה על־ידי מנהל המערכת.
-          </p>
-          <ul className="mt-8 hidden space-y-4 text-start text-sm sm:block">
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
-              <span className="text-slate-300">סשן נקי לפני כל כניסה — ללא ״דליפה״ בין משתמשים</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400" />
-              <span className="text-slate-300">הצפנת עוגיות, OAuth 2.0 עם Google</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-500" />
-              <span className="text-slate-400">GDPR-Ready · אחסון ישראל / EU</span>
-            </li>
-          </ul>
-        </section>
+        {/* Session probe */}
+        {sessionProbe === "loading" && (
+          <div className="mt-4 flex justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-slate-400" aria-hidden />
+          </div>
+        )}
 
-        {/* פאנל ימין — טופס */}
-        <div className="order-1 w-full lg:order-2 lg:flex lg:justify-end">
-          <AuthProfessionalCard
-            icon={iconSlot}
-            title="כניסה למערכת"
-            subtitle="בחרו Google או הזינו אימייל וסיסמה בהתאם להנחיות מנהל המערכת."
-          >
-            <p className="mt-3 text-center text-[11px] leading-relaxed text-slate-400 sm:text-xs">
-              לפני כל כניסה נמחקת עוגיית הסשן הקודמת — כדי שלא יישאר חשבון אחר פעיל בטעות.
-            </p>
-
-            {sessionProbe === "loading" ? (
-              <div className="mt-6 flex justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-slate-400" aria-hidden />
+        {/* Already connected banner */}
+        {showActiveBanner ? (
+          <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <UserCircle className="h-5 w-5 shrink-0 text-blue-600" aria-hidden />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-slate-800">מחוברים כ־{sessionName || sessionEmail}</p>
+                {sessionName ? <p className="text-xs text-slate-500 break-all">{sessionEmail}</p> : null}
               </div>
-            ) : null}
-
-            {showActiveBanner ? (
-              <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50/80 px-4 py-4 text-sm text-blue-900 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <UserCircle className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden />
-                  <div className="min-w-0 flex-1 space-y-1 text-end">
-                    <p className="font-bold">כבר מחוברים למערכת</p>
-                    <p className="break-all text-xs text-blue-800/85">
-                      {sessionName ? `${sessionName} · ` : null}
-                      {sessionEmail}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row-reverse sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => navigateHard(callbackUrl)}
-                    className="rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:opacity-90"
-                    style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-                  >
-                    המשך לדשבורד
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void handleSwitchAccount()}
-                    className="flex items-center justify-center gap-2 rounded-xl border border-blue-300/80 bg-white/90 px-4 py-2.5 text-xs font-bold text-blue-800 hover:bg-white"
-                  >
-                    <LogOut className="h-3.5 w-3.5" aria-hidden />
-                    התנתקות וחשבון אחר
-                  </button>
-                </div>
-              </div>
-            ) : null}
-
-            {(oauthError || reasonText) && (
-              <p className="mt-6 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
-                {reasonText ?? oauthError}
-              </p>
-            )}
-
-            {/* כפתור Google */}
-            <button
-              type="button"
-              disabled={loadingGoogle}
-              onClick={() => void handleGoogle()}
-              className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-slate-200 bg-white py-4 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60"
-            >
-              {loadingGoogle ? (
-                <Loader2 className="h-5 w-5 animate-spin text-slate-500" />
-              ) : (
-                <>
-                  <GoogleMark className="h-5 w-5 shrink-0" />
-                  המשך עם Google
-                </>
-              )}
-            </button>
-
-            <div className="my-7 flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">או</span>
-              <div className="h-px flex-1 bg-slate-200" />
             </div>
-
-            {/* טופס אימייל/סיסמה */}
-            <form
-              className="space-y-4"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setCredError(null);
-                const fd = new FormData(e.currentTarget);
-                const email = String(fd.get("email") ?? "").trim();
-                const password = String(fd.get("password") ?? "");
-                if (!email || !password) {
-                  setCredError("מלאו אימייל וסיסמה");
-                  return;
-                }
-                setLoadingCreds(true);
-                await clearClientSessionCookie();
-                const res = await signIn("credentials", {
-                  email,
-                  password,
-                  redirect: false,
-                  callbackUrl,
-                });
-                setLoadingCreds(false);
-                if (res?.error) {
-                  setCredError("אימייל או סיסמה שגויים — או שאין סיסמה הופקה עדיין.");
-                  return;
-                }
-                const fromApi = res?.url?.trim() ?? "";
-                let dest = callbackUrl;
-                if (fromApi.length > 0) {
-                  try {
-                    const nextHost = typeof window !== "undefined" ? window.location.host : "";
-                    const u = new URL(fromApi, window.location.origin);
-                    if (u.host === nextHost && u.pathname.startsWith("/") && !u.pathname.startsWith("//")) {
-                      dest = `${u.pathname}${u.search}${u.hash}`;
-                    }
-                  } catch {
-                    dest = callbackUrl;
-                  }
-                }
-                navigateHard(dest);
-              }}
-            >
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                <KeyRound size={18} className="text-blue-500" aria-hidden />
-                אימייל וסיסמה
-              </div>
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="email@example.com"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
-              />
-              <input
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                placeholder="סיסמה"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
-              />
-              {credError ? <p className="text-center text-sm text-red-600">{credError}</p> : null}
+            <div className="mt-3 flex gap-2">
               <button
-                type="submit"
-                disabled={loadingCreds}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black text-white shadow-lg transition hover:opacity-90 disabled:opacity-60"
-                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+                type="button"
+                onClick={() => navigateHard(callbackUrl)}
+                className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700 transition"
               >
-                {loadingCreds ? <Loader2 className="animate-spin" size={18} /> : null}
-                כניסה מאובטחת
+                המשך לדשבורד
               </button>
-            </form>
+              <button
+                type="button"
+                onClick={() => void handleSwitchAccount()}
+                className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                <LogOut className="h-3.5 w-3.5" aria-hidden />
+                החלף חשבון
+              </button>
+            </div>
+          </div>
+        ) : null}
 
-            <p className="mt-6 text-center text-xs text-slate-400">
-              אין לכם חשבון?{" "}
-              <Link href="/register" className="font-bold text-blue-600 underline-offset-2 hover:underline">
-                בקשת הרשמה
-              </Link>
-            </p>
+        {/* Error messages */}
+        {(oauthError || reasonText) && (
+          <p className="mt-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+            {reasonText ?? oauthError}
+          </p>
+        )}
 
-            <Link
-              href="/"
-              className="mt-5 flex items-center justify-center gap-2 text-sm font-bold text-slate-500 transition hover:text-slate-800"
-            >
-              <ArrowLeft size={15} aria-hidden />
-              חזרה לעמוד הבית
-            </Link>
-          </AuthProfessionalCard>
+        {/* Google button */}
+        <button
+          type="button"
+          disabled={loadingGoogle}
+          onClick={() => void handleGoogle()}
+          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-bold text-slate-800 hover:bg-slate-50 transition disabled:opacity-60"
+        >
+          {loadingGoogle ? (
+            <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+          ) : (
+            <>
+              <GoogleMark className="h-5 w-5 shrink-0" />
+              המשך עם Google
+            </>
+          )}
+        </button>
+
+        {/* Divider */}
+        <div className="my-5 flex items-center gap-3">
+          <div className="h-px flex-1 bg-slate-200" />
+          <span className="text-xs font-medium text-slate-400">או</span>
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
-      </motion.div>
+
+        {/* Credentials form */}
+        <form
+          className="space-y-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setCredError(null);
+            const fd = new FormData(e.currentTarget);
+            const email = String(fd.get("email") ?? "").trim();
+            const password = String(fd.get("password") ?? "");
+            if (!email || !password) {
+              setCredError("מלאו אימייל וסיסמה");
+              return;
+            }
+            setLoadingCreds(true);
+            await clearClientSessionCookie();
+            const res = await signIn("credentials", {
+              email,
+              password,
+              redirect: false,
+              callbackUrl,
+            });
+            setLoadingCreds(false);
+            if (res?.error) {
+              setCredError("אימייל או סיסמה שגויים — או שאין סיסמה עדיין.");
+              return;
+            }
+            const fromApi = res?.url?.trim() ?? "";
+            let dest = callbackUrl;
+            if (fromApi.length > 0) {
+              try {
+                const nextHost = typeof window !== "undefined" ? window.location.host : "";
+                const u = new URL(fromApi, window.location.origin);
+                if (u.host === nextHost && u.pathname.startsWith("/") && !u.pathname.startsWith("//")) {
+                  dest = `${u.pathname}${u.search}${u.hash}`;
+                }
+              } catch {
+                dest = callbackUrl;
+              }
+            }
+            navigateHard(dest);
+          }}
+        >
+          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-slate-500">
+            <KeyRound size={14} className="text-blue-500" aria-hidden />
+            אימייל וסיסמה (מנהל מערכת)
+          </div>
+          <input
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="email@example.com"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
+          />
+          <input
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder="סיסמה"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
+          />
+          {credError ? <p className="text-center text-sm text-red-600">{credError}</p> : null}
+          <button
+            type="submit"
+            disabled={loadingCreds}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-60"
+          >
+            {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
+            כניסה
+          </button>
+        </form>
+
+        {/* Footer links */}
+        <div className="mt-5 flex flex-col items-center gap-3">
+          <p className="text-xs text-slate-500">
+            אין לכם חשבון?{" "}
+            <Link href="/register" className="font-bold text-blue-600 hover:underline">
+              הרשמה
+            </Link>
+          </p>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-700 transition"
+          >
+            <ArrowRight size={13} aria-hidden />
+            חזרה לאתר
+          </Link>
+        </div>
+      </AuthProfessionalCard>
     </AuthPageShell>
   );
 }
