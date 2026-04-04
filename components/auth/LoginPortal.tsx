@@ -1,6 +1,6 @@
 "use client";
 
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -56,14 +56,6 @@ export default function LoginPortal() {
   const [sessionProbe, setSessionProbe] = useState<"idle" | "loading" | "done">("idle");
   const [activeSession, setActiveSession] = useState<Session | null>(null);
 
-  // Auto-trigger Google sign-in after full server-side signout redirect
-  const autoGoogle = searchParams.get("_g");
-  useEffect(() => {
-    if (autoGoogle === "1") {
-      void signIn("google", { callbackUrl, redirect: true });
-    }
-  }, [autoGoogle, callbackUrl]);
-
   const refreshLocalSession = useCallback(async () => {
     setSessionProbe("loading");
     const s = await getSession();
@@ -78,19 +70,28 @@ export default function LoginPortal() {
   }, [refreshLocalSession]);
 
   /**
-   * הכפתור שולח לנתיב ה-signout של NextAuth שמנקה את ה-httpOnly JWT cookie בשרת.
-   * לאחר הניקוי, מגיעים ל-/login?_g=1 שמפעיל אוטומטית את OAuth של Google.
-   * כך מובטח שאין עוגיית session ישנה שנשמרת.
+   * signOut({ redirect: false }) שולח POST ל-/api/auth/signout עם CSRF token —
+   * זה מה שמנקה את ה-httpOnly JWT cookie בשרת.
+   * גישה ישנה (GET ל-/api/auth/signout) הציגה דף HTML ולא ניקתה כלום.
    */
-  const handleGoogle = () => {
+  const handleGoogle = useCallback(async () => {
     setLoadingGoogle(true);
-    const returnTo = encodeURIComponent(`/login?_g=1&callbackUrl=${encodeURIComponent(callbackUrl)}`);
-    window.location.href = `/api/auth/signout?callbackUrl=${returnTo}`;
-  };
+    try {
+      await signOut({ redirect: false });
+    } catch {
+      /* no active session — continue anyway */
+    }
+    void signIn("google", { callbackUrl, redirect: true });
+  }, [callbackUrl]);
 
-  const handleSwitchAccount = () => {
-    window.location.href = `/api/auth/signout?callbackUrl=${encodeURIComponent("/login")}`;
-  };
+  const handleSwitchAccount = useCallback(async () => {
+    try {
+      await signOut({ redirect: false });
+    } catch {
+      /* ignore */
+    }
+    window.location.href = "/login";
+  }, []);
 
   const sessionEmail = (activeSession?.user?.email ?? "").trim();
   const sessionName = (activeSession?.user?.name ?? "").trim();
