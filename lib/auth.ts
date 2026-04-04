@@ -29,7 +29,12 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      /** הוסר allowDangerousEmailAccountLinking — מונע קישור חשבונות שונים לאותו משתמש */
+      /**
+       * נדרש: משתמשים נוצרים ידנית / דרך הזמנה ללא Account record.
+       * בלי הפלאג הזה NextAuth יזרוק OAuthAccountNotLinked.
+       * הנתונים הפגומים שגרמו לבאג תוקנו ישירות ב-DB.
+       */
+      allowDangerousEmailAccountLinking: true,
       authorization: {
         params: {
           prompt: "select_account",
