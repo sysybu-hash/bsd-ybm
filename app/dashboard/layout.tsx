@@ -3,6 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isAdmin } from "@/lib/is-admin";
 import { prisma } from "@/lib/prisma";
 import { freeTrialDaysRemaining } from "@/lib/trial";
 import DashboardLayoutClient from "@/components/DashboardLayoutClient";
@@ -52,6 +53,7 @@ export default async function DashboardLayout({
     <DashboardLayoutClient
       orgId={session?.user?.organizationId || ""}
       userRole={session.user.role}
+      isAdminUser={isAdmin(serverEmail)}
       trialBannerDaysLeft={trialBannerDaysLeft}
       serverUser={{
         email: serverEmail,

@@ -59,27 +59,169 @@ type PlaceholderTabId = Exclude<TabId, "account" | "cloud">;
 
 const PLACEHOLDER_FIELDS: Record<
   PlaceholderTabId,
-  { key: string; label: string }[]
+  { key: string; label: string; hint?: string; options: { value: string; label: string }[] }[]
 > = {
   erp: [
-    { key: "defaultCurrency", label: "מטבע ברירת מחדל" },
-    { key: "fiscalYearEnd", label: "תאריך סגירת שנה" },
-    { key: "bankSync", label: "סנכרון בנקים אוטומטי" },
+    {
+      key: "defaultCurrency",
+      label: "מטבע ברירת מחדל",
+      hint: "יופיע בחשבוניות ובדוחות",
+      options: [
+        { value: "ILS", label: "₪ שקל חדש (ILS)" },
+        { value: "USD", label: "$ דולר אמריקאי (USD)" },
+        { value: "EUR", label: "€ יורו (EUR)" },
+        { value: "GBP", label: "£ פאונד בריטי (GBP)" },
+      ],
+    },
+    {
+      key: "fiscalYearEnd",
+      label: "סגירת שנת כספים",
+      hint: "התאריך שבו מסתיימת שנת הכספים",
+      options: [
+        { value: "12-31", label: "31 בדצמבר (רגיל)" },
+        { value: "03-31", label: "31 במרץ" },
+        { value: "06-30", label: "30 ביוני" },
+        { value: "09-30", label: "30 בספטמבר" },
+      ],
+    },
+    {
+      key: "vatRate",
+      label: "שיעור מע\"מ",
+      hint: "לחישוב חשבוניות מס",
+      options: [
+        { value: "18", label: "18% (ישראל — עדכני 2025)" },
+        { value: "17", label: "17% (ישראל — עד 2024)" },
+        { value: "0", label: "0% (עסק פטור / יצוא)" },
+      ],
+    },
+    {
+      key: "bankSync",
+      label: "סנכרון בנקים",
+      hint: "ייבוא תנועות בנקאיות אוטומטי",
+      options: [
+        { value: "manual", label: "ידני — ייבוא CSV/Excel" },
+        { value: "auto", label: "אוטומטי (בפיתוח)" },
+        { value: "none", label: "לא בשימוש" },
+      ],
+    },
   ],
   crm: [
-    { key: "leadStatus", label: "סטטוס ליד חדש" },
-    { key: "quoteTemplate", label: "תבנית הצעת מחיר" },
-    { key: "whatsapp", label: "אינטגרציה לווטסאפ" },
+    {
+      key: "leadStatus",
+      label: "סטטוס ברירת מחדל לליד חדש",
+      hint: "הסטטוס שמוקצה אוטומטית בפנייה נכנסת",
+      options: [
+        { value: "new", label: "פנייה ראשונה" },
+        { value: "active", label: "פעיל" },
+        { value: "hot", label: "חם" },
+        { value: "cold", label: "קר" },
+      ],
+    },
+    {
+      key: "quoteExpiry",
+      label: "תוקף הצעת מחיר",
+      hint: "כמה ימים ההצעה בתוקף לאחר הפקה",
+      options: [
+        { value: "7", label: "7 ימים" },
+        { value: "14", label: "14 ימים" },
+        { value: "30", label: "30 ימים" },
+        { value: "0", label: "ללא הגבלה" },
+      ],
+    },
+    {
+      key: "whatsapp",
+      label: "אינטגרציה WhatsApp",
+      hint: "שליחת עדכונים ולידים דרך WhatsApp Business API",
+      options: [
+        { value: "none", label: "לא מחובר" },
+        { value: "beta", label: "מחובר (בטא)" },
+        { value: "disabled", label: "לא רלוונטי לארגון" },
+      ],
+    },
+    {
+      key: "followUpDays",
+      label: "תזכורת מעקב אוטומטי",
+      hint: "כמה ימים אחרי יצירת ליד לשלוח תזכורת",
+      options: [
+        { value: "1", label: "יום אחד" },
+        { value: "3", label: "3 ימים" },
+        { value: "7", label: "שבוע" },
+        { value: "0", label: "ללא תזכורת" },
+      ],
+    },
   ],
   ai: [
-    { key: "ocr", label: "רמת פיענוח OCR" },
-    { key: "docLang", label: "שפת זיהוי מסמכים" },
-    { key: "engine", label: "מנוע AI נבחר" },
+    {
+      key: "engine",
+      label: "מנוע AI ראשי",
+      hint: "המנוע שישמש לסריקה, חילוץ נתונים וצ׳אט",
+      options: [
+        { value: "auto", label: "אוטומטי (מומלץ)" },
+        { value: "gemini", label: "Google Gemini" },
+        { value: "openai", label: "OpenAI GPT" },
+        { value: "claude", label: "Anthropic Claude" },
+      ],
+    },
+    {
+      key: "docLang",
+      label: "שפת זיהוי מסמכים",
+      hint: "שפת ברירת מחדל לחילוץ טקסט ממסמכים",
+      options: [
+        { value: "auto", label: "אוטומטי (זיהוי שפה)" },
+        { value: "he", label: "עברית" },
+        { value: "en", label: "אנגלית" },
+        { value: "ar", label: "ערבית" },
+      ],
+    },
+    {
+      key: "ocr",
+      label: "רמת פיענוח OCR",
+      hint: "איזון בין מהירות לדיוק בחילוץ טקסט",
+      options: [
+        { value: "standard", label: "סטנדרטי — מהיר ומדויק" },
+        { value: "high", label: "גבוה — מדויק יותר, איטי יותר" },
+        { value: "fast", label: "מהיר — פחות מדויק" },
+      ],
+    },
+    {
+      key: "autoSummarize",
+      label: "סיכום מסמך אוטומטי",
+      hint: "יצירת סיכום AI אחרי כל העלאה",
+      options: [
+        { value: "on", label: "מופעל" },
+        { value: "off", label: "כבוי" },
+        { value: "ask", label: "שאל בכל פעם" },
+      ],
+    },
   ],
   billing: [
-    { key: "paymentMethod", label: "שיטת תשלום" },
-    { key: "invoices", label: "הורדת חשבוניות" },
-    { key: "planUpgrade", label: "שדרוג חבילה" },
+    {
+      key: "billingCycle",
+      label: "מחזור חיוב מועדף",
+      hint: "תדירות חיוב המנוי",
+      options: [
+        { value: "monthly", label: "חודשי" },
+        { value: "yearly", label: "שנתי (חיסכון 20%)" },
+      ],
+    },
+    {
+      key: "invoiceFormat",
+      label: "פורמט חשבוניות להורדה",
+      options: [
+        { value: "pdf", label: "PDF" },
+        { value: "html", label: "HTML" },
+        { value: "both", label: "PDF + HTML" },
+      ],
+    },
+    {
+      key: "autoRenew",
+      label: "חידוש מנוי אוטומטי",
+      hint: "חידוש אוטומטי לפני תום התקופה",
+      options: [
+        { value: "on", label: "מופעל" },
+        { value: "off", label: "כבוי — חידוש ידני" },
+      ],
+    },
   ],
 };
 
@@ -838,22 +980,27 @@ export default function SettingsPageClient({
               {PLACEHOLDER_FIELDS[activeTab as PlaceholderTabId].map((field) => (
                 <div
                   key={field.key}
-                  className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                  className="p-5 bg-slate-50 rounded-2xl border border-slate-100"
                 >
-                  <span className="font-bold text-slate-700">{field.label}</span>
-                  <input
-                    type="text"
-                    value={getPref(activeTab as PlaceholderTabId, field.key)}
+                  <label className="block font-bold text-slate-800 mb-1">{field.label}</label>
+                  {field.hint && (
+                    <p className="text-xs text-slate-500 mb-3">{field.hint}</p>
+                  )}
+                  <select
+                    value={getPref(activeTab as PlaceholderTabId, field.key) || field.options[0].value}
                     onChange={(e) =>
                       setPref(activeTab as PlaceholderTabId, field.key, e.target.value)
                     }
-                    placeholder="הגדר ערך…"
-                    className="bg-white border border-slate-200 p-2 rounded-lg text-sm w-full sm:w-64 text-left"
-                  />
+                    className="w-full sm:w-72 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium"
+                  >
+                    {field.options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
                 </div>
               ))}
               <p className="text-xs text-slate-500 italic">
-                שדות אלו נשמרים מקומית בדפדפן; חיבור לשרת יגיע בעדכון עתידי.
+                הגדרות אלו נשמרות מקומית בדפדפן; חיבור לשרת יגיע בעדכון עתידי.
               </p>
             </div>
           )}

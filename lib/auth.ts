@@ -29,11 +29,11 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
-      /** בחירת חשבון Google מפורשת — מפחית „נשארתי על המשתמש הקודם” */
+      /** הוסר allowDangerousEmailAccountLinking — מונע קישור חשבונות שונים לאותו משתמש */
       authorization: {
         params: {
           prompt: "select_account",
+          access_type: "online",
         },
       },
     }),

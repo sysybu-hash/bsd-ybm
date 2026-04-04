@@ -1,6 +1,6 @@
 "use client";
 
-import { getSession, signIn, signOut } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -38,14 +38,6 @@ function safeInternalPath(raw: string | null | undefined, fallback: string): str
   return s;
 }
 
-async function clearClientSessionCookie(): Promise<void> {
-  try {
-    await signOut({ redirect: false });
-  } catch {
-    /* noop */
-  }
-}
-
 export default function LoginPortal() {
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
@@ -64,6 +56,14 @@ export default function LoginPortal() {
   const [sessionProbe, setSessionProbe] = useState<"idle" | "loading" | "done">("idle");
   const [activeSession, setActiveSession] = useState<Session | null>(null);
 
+  // Auto-trigger Google sign-in after full server-side signout redirect
+  const autoGoogle = searchParams.get("_g");
+  useEffect(() => {
+    if (autoGoogle === "1") {
+      void signIn("google", { callbackUrl, redirect: true });
+    }
+  }, [autoGoogle, callbackUrl]);
+
   const refreshLocalSession = useCallback(async () => {
     setSessionProbe("loading");
     const s = await getSession();
@@ -77,18 +77,19 @@ export default function LoginPortal() {
     void refreshLocalSession();
   }, [refreshLocalSession]);
 
-  const handleGoogle = async () => {
+  /**
+   * הכפתור שולח לנתיב ה-signout של NextAuth שמנקה את ה-httpOnly JWT cookie בשרת.
+   * לאחר הניקוי, מגיעים ל-/login?_g=1 שמפעיל אוטומטית את OAuth של Google.
+   * כך מובטח שאין עוגיית session ישנה שנשמרת.
+   */
+  const handleGoogle = () => {
     setLoadingGoogle(true);
-    try {
-      await clearClientSessionCookie();
-      await signIn("google", { callbackUrl, redirect: true });
-    } catch {
-      setLoadingGoogle(false);
-    }
+    const returnTo = encodeURIComponent(`/login?_g=1&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+    window.location.href = `/api/auth/signout?callbackUrl=${returnTo}`;
   };
 
   const handleSwitchAccount = () => {
-    void signOut({ callbackUrl: "/login", redirect: true });
+    window.location.href = `/api/auth/signout?callbackUrl=${encodeURIComponent("/login")}`;
   };
 
   const sessionEmail = (activeSession?.user?.email ?? "").trim();
@@ -133,7 +134,7 @@ export default function LoginPortal() {
               </button>
               <button
                 type="button"
-                onClick={() => void handleSwitchAccount()}
+                onClick={() => handleSwitchAccount()}
                 className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden />
@@ -154,7 +155,7 @@ export default function LoginPortal() {
         <button
           type="button"
           disabled={loadingGoogle}
-          onClick={() => void handleGoogle()}
+          onClick={handleGoogle}
           className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-bold text-slate-800 hover:bg-slate-50 transition disabled:opacity-60"
         >
           {loadingGoogle ? (
@@ -188,7 +189,6 @@ export default function LoginPortal() {
               return;
             }
             setLoadingCreds(true);
-            await clearClientSessionCookie();
             const res = await signIn("credentials", {
               email,
               password,

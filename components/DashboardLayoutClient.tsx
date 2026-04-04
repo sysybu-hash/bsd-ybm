@@ -27,7 +27,6 @@ import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
 import DashboardNotificationBell from "@/components/DashboardNotificationBell";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { isAdmin } from "@/lib/is-admin";
 
 /* ─── helpers ─── */
 function routeActive(pathname: string, href: string): boolean {
@@ -88,6 +87,7 @@ type Props = {
   children: ReactNode;
   orgId: string;
   userRole: string;
+  isAdminUser: boolean;
   trialBannerDaysLeft: number | null;
   serverUser: { email: string; name: string | null; image: string | null };
 };
@@ -96,6 +96,7 @@ export default function DashboardLayoutClient({
   children,
   orgId,
   userRole,
+  isAdminUser,
   trialBannerDaysLeft,
   serverUser,
 }: Props) {
@@ -104,7 +105,7 @@ export default function DashboardLayoutClient({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const serverEmail = serverUser.email.trim();
-  const showAdmin = isAdmin(serverEmail);
+  const showAdmin = isAdminUser;
 
   const userName = serverUser.name ?? serverEmail.split("@")[0] ?? "User";
   const userInitials = userName.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase();
