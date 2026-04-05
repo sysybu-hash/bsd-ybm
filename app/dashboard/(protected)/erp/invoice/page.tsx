@@ -5,13 +5,23 @@ import InvoiceIssuance from "@/components/InvoiceIssuance";
 
 export const metadata = { title: "הנפקת חשבוניות — BSD-YBM" };
 
-export default async function InvoicePage() {
+export default async function InvoicePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ client?: string }>;
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId) redirect("/login");
 
+  const sp = await searchParams;
+  const prefillClient = sp.client ? decodeURIComponent(sp.client) : undefined;
+
   return (
     <section className="min-h-screen bg-slate-50/60 px-4 py-8 sm:px-6 lg:px-8">
-      <InvoiceIssuance orgId={session.user.organizationId} />
+      <InvoiceIssuance
+        orgId={session.user.organizationId}
+        prefillClientName={prefillClient}
+      />
     </section>
   );
 }

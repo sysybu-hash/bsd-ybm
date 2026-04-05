@@ -9,6 +9,7 @@ import {
   updateContactStatusAction,
   deleteProjectAction,
 } from "@/app/actions/crm";
+import Link from "next/link";
 import {
   Plus,
   Trash2,
@@ -33,6 +34,7 @@ import {
   BarChart2,
   List,
   Loader2,
+  ReceiptText,
 } from "lucide-react";
 import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
@@ -248,11 +250,19 @@ function ContactModal({
         </div>
 
         <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 bg-slate-50">
-          <div>
+          <div className="flex items-center gap-2">
             {isEdit && (
               <button type="button" onClick={deleteContact} disabled={pending} className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition disabled:opacity-50">
                 <Trash2 size={13} /> מחק
               </button>
+            )}
+            {isEdit && c?.status === "CLOSED_WON" && (
+              <Link
+                href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                className="flex items-center gap-1.5 rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-100 transition"
+              >
+                <ReceiptText size={13} /> הנפק חשבונית
+              </Link>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -338,6 +348,16 @@ function ContactCard({
       )}
 
       <p className="mt-2.5 text-[10px] text-slate-300">{fmtDate(contact.createdAt)}</p>
+
+      {contact.status === "CLOSED_WON" && (
+        <Link
+          href={`/dashboard/erp/invoice?client=${encodeURIComponent(contact.name)}`}
+          onClick={(e) => e.stopPropagation()}
+          className="mt-2 flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition"
+        >
+          <ReceiptText size={10} /> הנפק חשבונית
+        </Link>
+      )}
 
       {menuOpen && (
         <div
@@ -702,13 +722,23 @@ export default function CrmClient({
                           <td className="px-4 py-3 text-xs font-bold text-emerald-600">{c.value != null ? fmtMoney(c.value) : "—"}</td>
                           <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(c.createdAt)}</td>
                           <td className="px-4 py-3">
-                            <button
-                              type="button"
-                              onClick={() => setModal({ mode: "edit", contact: c })}
-                              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 transition"
-                            >
-                              <Edit3 size={12} /> ערוך
-                            </button>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => setModal({ mode: "edit", contact: c })}
+                                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 transition"
+                              >
+                                <Edit3 size={12} /> ערוך
+                              </button>
+                              {c.status === "CLOSED_WON" && (
+                                <Link
+                                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                                  className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-100 transition"
+                                >
+                                  <ReceiptText size={12} /> חשבונית
+                                </Link>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );

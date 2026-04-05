@@ -13,6 +13,7 @@ import {
   CreditCard,
   FileText,
   LayoutDashboard,
+  Layers,
   LogOut,
   Menu,
   ReceiptText,
@@ -127,8 +128,7 @@ export default function DashboardLayoutClient({
 
   const navItems = [
     { href: "/dashboard", icon: <LayoutDashboard size={17} />, label: t("dashboard.main"), color: "blue" },
-    { href: "/dashboard/crm", icon: <Users size={17} />, label: t("dashboard.crm"), color: "violet" },
-    { href: "/dashboard/erp", icon: <FileText size={17} />, label: t("dashboard.erp"), color: "emerald" },
+    { href: "/dashboard/business", icon: <Layers size={17} />, label: "מרכז עסקי", color: "emerald" },
     { href: "/dashboard/erp/invoice", icon: <ReceiptText size={17} />, label: t("dashboard.invoices"), color: "rose" },
     { href: "/dashboard/meckano", icon: <Clock size={17} />, label: t("dashboard.meckano"), color: "blue" },
     { href: "/dashboard/billing", icon: <CreditCard size={17} />, label: t("dashboard.billing"), color: "rose" },
@@ -147,6 +147,7 @@ export default function DashboardLayoutClient({
     if (routeActive(pathname, "/dashboard/control-center")) return t("dashboard.mission");
     if (routeActive(pathname, "/dashboard/operator")) return t("dashboard.executive");
     if (routeActive(pathname, "/dashboard/operations")) return t("dashboard.intelligence");
+    if (routeActive(pathname, "/dashboard/business")) return "מרכז עסקי";
     if (routeActive(pathname, "/dashboard/crm")) return t("dashboard.crm");
     if (routeActive(pathname, "/dashboard/erp/invoice")) return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/erp")) return t("dashboard.erp");

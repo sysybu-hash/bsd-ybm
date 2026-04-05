@@ -53,7 +53,7 @@ interface IssuedDoc {
 }
 
 /* ═══════════════════════════════════════════════════════════ */
-export default function InvoiceIssuance({ orgId }: { orgId: string }) {
+export default function InvoiceIssuance({ orgId, prefillClientName }: { orgId: string; prefillClientName?: string }) {
   void orgId; // used implicitly via session on the server
 
   /* ---------- state ---------- */
@@ -110,6 +110,14 @@ export default function InvoiceIssuance({ orgId }: { orgId: string }) {
       // Ignore malformed local storage payload.
     }
   }, []);
+
+  // Pre-fill client name from URL (e.g. coming from CRM CLOSED_WON contact)
+  useEffect(() => {
+    if (prefillClientName) {
+      setClientName(prefillClientName);
+      setWizardStep(1);
+    }
+  }, [prefillClientName]);
 
   useEffect(() => {
     window.localStorage.setItem(INVOICE_STEP_KEY, String(wizardStep));
