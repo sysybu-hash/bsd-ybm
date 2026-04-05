@@ -10,5 +10,9 @@ export default async function DashboardAiPage() {
     redirect("/login");
   }
 
-  return <DashboardAiHub orgId={orgId} />;
+  return (
+    <div className="mx-auto w-full max-w-[1500px]">
+      <DashboardAiHub orgId={orgId} />
+    </div>
+  );
 }

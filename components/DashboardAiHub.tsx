@@ -50,7 +50,7 @@ const TABS: { id: HubTab; label: string; short: string; Icon: typeof ScanLine }[
 const DOC_TYPES = [
   { id: "invoice",  label: "חשבונית",       Icon: Receipt,        color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
   { id: "receipt",  label: "קבלה",          Icon: FileText,       color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  { id: "contract", label: "חוזה",          Icon: FileSignature,  color: "text-violet-600 bg-violet-50 border-violet-200" },
+  { id: "contract", label: "חוזה",          Icon: FileSignature,  color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
   { id: "id",       label: "תעודת זהות",    Icon: IdCard,         color: "text-amber-600 bg-amber-50 border-amber-200" },
   { id: "medical",  label: "מסמך רפואי",    Icon: Stethoscope,    color: "text-rose-600 bg-rose-50 border-rose-200" },
   { id: "custom",   label: "מותאם אישית",   Icon: Wrench,         color: "text-gray-600 bg-gray-50 border-gray-200" },
@@ -58,7 +58,7 @@ const DOC_TYPES = [
 
 const QUICK_LINKS = [
   { href: "/dashboard/erp",          title: "ERP — תפעול",       desc: "מסמכים, לוחות ודוחות",   icon: <BarChart3 size={18} />,      color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
-  { href: "/dashboard/business",     title: "CRM — לקוחות",      desc: "אנשי קשר ופרויקטים",      icon: <Users size={18} />,          color: "bg-violet-50 text-violet-600 border-violet-200" },
+  { href: "/dashboard/business",     title: "CRM — לקוחות",      desc: "אנשי קשר ופרויקטים",      icon: <Users size={18} />,          color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
   { href: "/dashboard",              title: "דשבורד ראשי",        desc: "סיכום ותובנות",            icon: <Sparkles size={18} />,       color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   { href: "/dashboard/billing",      title: "מנוי ותשלומים",      desc: "חבילות ומכסות סריקה",      icon: <CreditCard size={18} />,     color: "bg-rose-50 text-rose-600 border-rose-200" },
   { href: "/dashboard/settings",     title: "הגדרות",             desc: "ארגון, API ומשתמשים",      icon: <Settings size={18} />,       color: "bg-gray-50 text-gray-600 border-gray-200" },
@@ -118,6 +118,11 @@ export default function DashboardAiHub({ orgId }: { orgId: string }) {
     [providers],
   );
 
+  const configuredScanProviders = useMemo(
+    () => providers.filter((p) => p.configured && p.supportsDocumentScan && p.allowedByPlan !== false),
+    [providers],
+  );
+
   const activeDocType = DOC_TYPES.find((d) => d.id === docType) ?? DOC_TYPES[0];
   const planLabel = orgPlan ? orgPlan.replace(/_/g, " ") : "—";
   const scansLeft = cheapScans !== null ? cheapScans : "—";
@@ -174,59 +179,60 @@ ${formContext}
     <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" dir={dir}>
 
       {/* ══ HEADER ══ */}
-      <div className="bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-400 shadow-lg shadow-indigo-500/30">
-              <Bot size={22} className="text-indigo-950" />
+      <div className="relative border-b border-gray-200 bg-gray-50/80 px-6 py-6">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
+        <div className="relative flex flex-col gap-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 shadow-sm">
+                <Bot size={22} className="text-indigo-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black tracking-tight text-gray-900">מרכז AI וסריקה</h1>
+                <p className="mt-1 text-sm text-gray-500">סריקת מסמכים, עבודה מול הנתונים ועזרה חכמה לטפסים במקום אחד.</p>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {orgPlan ? (
+                    <span className="flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+                      <Zap size={10} className="text-indigo-500" />
+                      {planLabel}
+                    </span>
+                  ) : null}
+                  <span className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-bold text-gray-600">
+                    <Sparkles size={10} className="text-indigo-500" />
+                    {configuredChatProviders.length} מנועי AI פעילים
+                  </span>
+                  <span className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-bold text-gray-600">
+                    <ScanLine size={10} className="text-indigo-500" />
+                    {configuredScanProviders.length} מנועי סריקה · {scansLeft} סריקות
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-white">מרכז AI וסריקה</h1>
-              <p className="text-[11px] text-indigo-300/60">סורק מסמכים · צ׳אט עם הנתונים · עוזר טפסים</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href="/dashboard/billing" className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
+                מנוי וסריקות
+              </Link>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 mt-0.5">
-            {orgPlan && (
-              <span className="flex items-center gap-1 rounded-full bg-indigo-400/20 border border-indigo-400/20 px-3 py-1 text-[11px] font-bold text-indigo-200">
-                <Zap size={10} className="text-indigo-300" />
-                {planLabel}
-              </span>
-            )}
-            <span className="flex items-center gap-1 rounded-full bg-white/8 border border-white/10 px-3 py-1 text-[11px] font-bold text-white/70">
-              <ScanLine size={10} />
-              {scansLeft} סריקות
-            </span>
-            <Link href="/dashboard/billing" className="flex items-center gap-1 rounded-full bg-indigo-400 px-3 py-1 text-[11px] font-bold text-indigo-950 hover:bg-indigo-300 transition-colors">
-              שדרג
-            </Link>
-          </div>
-        </div>
 
-        {/* Tab nav */}
-        <div className="mt-5 flex gap-1 border-b border-indigo-800/40 pb-0">
-          {TABS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setTab(id)}
-              className={`relative flex items-center gap-1.5 rounded-t-xl px-4 py-2.5 text-[12px] font-bold transition-all ${
-                tab === id
-                  ? "bg-white/10 text-white"
-                  : "text-indigo-300/55 hover:text-indigo-200 hover:bg-white/5"
-              }`}
-            >
-              <Icon size={13} />
-              <span className="hidden sm:inline">{label}</span>
-              <span className="sm:hidden">{label.slice(0,5)}</span>
-              {tab === id && (
-                <motion.span
-                  layoutId="ai-hub-tab-indicator"
-                  className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-indigo-400"
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                />
-              )}
-            </button>
-          ))}
+          <div className="flex flex-wrap gap-2 rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm">
+            {TABS.map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setTab(id)}
+                className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[12px] font-bold transition-colors ${
+                  tab === id
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <Icon size={13} />
+                <span className="hidden sm:inline">{label}</span>
+                <span className="sm:hidden">{label.slice(0, 5)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

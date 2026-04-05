@@ -50,13 +50,13 @@ type NavLinkProps = {
 };
 
 const ACCENT: Record<string, { bg: string; text: string; border: string; dot: string; iconActive: string }> = {
-  indigo:  { bg: "bg-indigo-500/20",  text: "text-indigo-200",  border: "border-r-indigo-400",  dot: "bg-indigo-400",  iconActive: "bg-indigo-400/30 text-indigo-200" },
-  violet:  { bg: "bg-violet-500/20",  text: "text-violet-200",  border: "border-r-violet-400",  dot: "bg-violet-400",  iconActive: "bg-violet-400/30 text-violet-200" },
-  emerald: { bg: "bg-emerald-500/20", text: "text-emerald-200", border: "border-r-emerald-400", dot: "bg-emerald-400", iconActive: "bg-emerald-400/30 text-emerald-200" },
-  sky:     { bg: "bg-sky-500/20",     text: "text-sky-200",     border: "border-r-sky-400",     dot: "bg-sky-400",     iconActive: "bg-sky-400/30 text-sky-200" },
-  rose:    { bg: "bg-rose-500/20",    text: "text-rose-200",    border: "border-r-rose-400",    dot: "bg-rose-400",    iconActive: "bg-rose-400/30 text-rose-200" },
-  amber:   { bg: "bg-amber-400/20",   text: "text-amber-200",   border: "border-r-amber-400",   dot: "bg-amber-400",   iconActive: "bg-amber-400/30 text-amber-200" },
-  blue:    { bg: "bg-indigo-500/20",    text: "text-indigo-200",    border: "border-r-blue-400",    dot: "bg-indigo-400",    iconActive: "bg-indigo-400/30 text-indigo-200" },
+  indigo:  { bg: "bg-indigo-50",  text: "text-indigo-700",  border: "border-r-indigo-500",  dot: "bg-indigo-500",  iconActive: "bg-indigo-100 text-indigo-700" },
+  violet:  { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-r-violet-500",  dot: "bg-violet-500",  iconActive: "bg-violet-100 text-violet-700" },
+  emerald: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-r-emerald-500", dot: "bg-emerald-500", iconActive: "bg-emerald-100 text-emerald-700" },
+  sky:     { bg: "bg-sky-50",     text: "text-sky-700",     border: "border-r-sky-500",     dot: "bg-sky-500",     iconActive: "bg-sky-100 text-sky-700" },
+  rose:    { bg: "bg-rose-50",    text: "text-rose-700",    border: "border-r-rose-500",    dot: "bg-rose-500",    iconActive: "bg-rose-100 text-rose-700" },
+  amber:   { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-r-amber-500",   dot: "bg-amber-500",   iconActive: "bg-amber-100 text-amber-700" },
+  blue:    { bg: "bg-indigo-50",  text: "text-indigo-700",  border: "border-r-indigo-500",  dot: "bg-indigo-500",  iconActive: "bg-indigo-100 text-indigo-700" },
 };
 
 function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: NavLinkProps) {
@@ -67,19 +67,19 @@ function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: Na
       onClick={onClick}
       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-150 ${
         isActive
-          ? `${a.bg} ${a.text} border-r-2 ${a.border}`
-          : "text-indigo-300/60 hover:bg-white/5 hover:text-indigo-100"
+          ? `${a.bg} ${a.text} border-r-2 ${a.border} shadow-sm`
+          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
       }`}
     >
       {/* Icon */}
       <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[14px] transition-all ${
-        isActive ? a.iconActive : "text-indigo-400/50 group-hover:text-indigo-200"
+        isActive ? a.iconActive : "text-gray-400 group-hover:text-indigo-600"
       }`}>
         {icon}
       </span>
       <span className="flex-1 truncate leading-none">{label}</span>
       {badge && (
-        <span className="rounded-full bg-indigo-400/20 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
+        <span className="rounded-full border border-indigo-100 bg-white px-2 py-0.5 text-[10px] font-bold text-indigo-700">
           {badge}
         </span>
       )}
@@ -135,6 +135,7 @@ export default function DashboardLayoutClient({
 
   const navItems = [
     { href: "/dashboard",              icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     accent: "indigo" },
+    { href: "/dashboard/ai",           icon: <Zap size={15} />,             label: "AI וסריקה",             accent: "indigo" },
     { href: "/dashboard/business",     icon: <Layers size={15} />,          label: "מרכז עסקי",             accent: "emerald" },
     { href: "/dashboard/erp/invoice",  icon: <ReceiptText size={15} />,     label: t("dashboard.invoices"), accent: "rose" },
     { href: "/dashboard/meckano",      icon: <Clock size={15} />,           label: t("dashboard.meckano"),  accent: "sky" },
@@ -151,6 +152,7 @@ export default function DashboardLayoutClient({
   const pageTitle = (() => {
     if (routeActive(pathname, "/dashboard/control-center")) return t("dashboard.mission");
     if (routeActive(pathname, "/dashboard/operator"))       return t("dashboard.executive");
+    if (routeActive(pathname, "/dashboard/ai"))             return "AI וסריקה";
     if (routeActive(pathname, "/dashboard/business"))       return "מרכז עסקי";
     if (routeActive(pathname, "/dashboard/crm"))            return t("dashboard.crm");
     if (routeActive(pathname, "/dashboard/erp/invoice"))    return t("dashboard.erp");
@@ -164,7 +166,7 @@ export default function DashboardLayoutClient({
   })();
 
   const SectionLabel = ({ label }: { label: string }) => (
-    <p className="mb-1.5 mt-5 px-3 text-[10px] font-black uppercase tracking-[0.12em] text-indigo-400/40 first:mt-2">
+    <p className="mb-1.5 mt-5 px-3 text-[10px] font-black uppercase tracking-[0.12em] text-gray-400 first:mt-2">
       {label}
     </p>
   );
@@ -197,29 +199,29 @@ export default function DashboardLayoutClient({
   );
 
   const UserCard = () => (
-    <div className="border-t border-indigo-800/60 p-3">
-      <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-400 text-xs font-black text-indigo-950 shadow-md">
+    <div className="border-t border-gray-200 p-3">
+      <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2.5 shadow-sm">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-xs font-black text-white shadow-sm">
           {serverUser.image ? (
             <Image src={serverUser.image} alt="" width={32} height={32} className="h-8 w-8 rounded-lg object-cover" />
           ) : userInitials}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[12px] font-bold text-indigo-100 leading-tight">{userName}</p>
-          <p className="truncate text-[10px] text-indigo-400/60 leading-tight">{serverEmail}</p>
+          <p className="truncate text-[12px] font-bold leading-tight text-gray-900">{userName}</p>
+          <p className="truncate text-[10px] leading-tight text-gray-500">{serverEmail}</p>
         </div>
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="shrink-0 rounded-lg p-1.5 text-indigo-400/50 transition-colors hover:bg-white/8 hover:text-rose-400"
+          className="shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white hover:text-rose-500"
           title="התנתקות"
         >
           <LogOut size={13} />
         </button>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5 px-1">
-        <span className="rounded-full bg-indigo-400/15 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300/70">{userRole.replaceAll("_", " ")}</span>
-        <span className="rounded-full bg-indigo-400/15 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300/70" dir="ltr">ORG {orgId.slice(-6).toUpperCase()}</span>
+        <span className="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700">{userRole.replaceAll("_", " ")}</span>
+        <span className="rounded-full border border-gray-200 bg-white px-2.5 py-0.5 text-[10px] font-bold text-gray-600" dir="ltr">ORG {orgId.slice(-6).toUpperCase()}</span>
       </div>
     </div>
   );
@@ -227,13 +229,13 @@ export default function DashboardLayoutClient({
   const SidebarShell = ({ onNav }: { onNav?: () => void }) => (
     <>
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-3 px-5 py-5 hover:opacity-85 transition-opacity" onClick={onNav}>
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-400 text-xs font-black text-indigo-950 shadow-lg shadow-indigo-600/30">
+      <Link href="/" className="flex items-center gap-3 px-5 py-5 transition-opacity hover:opacity-90" onClick={onNav}>
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-sm">
           B
         </div>
         <div>
-          <p className="text-[14px] font-black leading-tight text-indigo-100 tracking-wide">BSD-YBM</p>
-          <p className="text-[10px] text-indigo-400/50 leading-none mt-0.5">Platform</p>
+          <p className="text-[14px] font-black leading-tight tracking-wide text-gray-900">BSD-YBM</p>
+          <p className="mt-0.5 text-[10px] leading-none text-gray-500">Platform</p>
         </div>
       </Link>
 
@@ -246,7 +248,7 @@ export default function DashboardLayoutClient({
       <div className="px-3 pb-2">
         <LanguageSwitcher
           showLabel
-          className="flex w-full items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-[12px] font-semibold text-indigo-300/70 transition-colors hover:bg-white/8 hover:text-indigo-100"
+          className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-[12px] font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
         />
       </div>
 
@@ -258,7 +260,7 @@ export default function DashboardLayoutClient({
     <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-gray-50" dir={dir}>
 
       {/* ══ SIDEBAR — Desktop ══ */}
-      <aside className="hidden w-64 shrink-0 flex-col bg-indigo-950 md:fixed md:inset-y-0 md:start-0 md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col bg-white shadow-sm md:fixed md:inset-y-0 md:start-0 md:flex">
         <SidebarShell />
       </aside>
 
@@ -266,7 +268,7 @@ export default function DashboardLayoutClient({
       {mobileOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[180] bg-indigo-950/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-[180] bg-gray-900/30 backdrop-blur-sm md:hidden"
           onClick={() => setMobileOpen(false)}
           aria-label="Close"
         />
@@ -274,16 +276,16 @@ export default function DashboardLayoutClient({
 
       {/* ══ MOBILE DRAWER ══ */}
       <aside
-        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col bg-indigo-950 shadow-xl shadow-indigo-950/30 transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col bg-white shadow-xl shadow-gray-900/12 transition-transform duration-300 ease-out md:hidden ${
           mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none")
         }`}
         aria-hidden={!mobileOpen}
       >
         <div className="flex items-center justify-between px-4 py-4">
-          <span className="text-sm font-black text-indigo-100">BSD-YBM</span>
+          <span className="text-sm font-black text-gray-900">BSD-YBM</span>
           <button
             type="button"
-            className="rounded-xl p-2 text-indigo-300/60 transition-colors hover:bg-white/8 hover:text-white"
+            className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
             onClick={() => setMobileOpen(false)}
           >
             <X size={16} />
@@ -293,7 +295,7 @@ export default function DashboardLayoutClient({
           <NavContent onNav={() => setMobileOpen(false)} />
         </nav>
         <div className="px-3 pb-2">
-          <LanguageSwitcher showLabel className="flex w-full items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-[12px] font-semibold text-indigo-300/70" />
+          <LanguageSwitcher showLabel className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-[12px] font-semibold text-gray-600 shadow-sm" />
         </div>
         <UserCard />
       </aside>
