@@ -33,6 +33,7 @@ import {
   UserX,
   FileText,
   Info,
+  Trash2,
 } from "lucide-react";
 import { updateMeckanoApiKeyAction } from "@/app/actions/org-settings";
 
@@ -116,6 +117,12 @@ type MeckanoZone = {
   radius: number;
   isActive: boolean;
   syncedToCrm: boolean;
+  managerName?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  budgetHours?: number | null;
+  projectNotes?: string | null;
+  assignedEmployeeIds?: number[];
 };
 
 type ApiResult<T> = { status: boolean; data?: T; error?: string };
@@ -254,6 +261,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   const [showAddZone, setShowAddZone] = useState(false);
   const [newZone, setNewZone] = useState({ name: "", address: "", description: "", radius: "150" });
   const [addingZone, setAddingZone] = useState(false);
+  const [expandedZoneId, setExpandedZoneId] = useState<string | null>(null);
+  const [editZone, setEditZone] = useState<Record<string, Partial<MeckanoZone> & { assignedEmployeeIds: number[] }>>({});
+  const [savingZoneId, setSavingZoneId] = useState<string | null>(null);
 
   // ── Reports ──
   const [reportType, setReportType] = useState<ReportType>("attendance");
@@ -384,6 +394,56 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, connected]);
 
+  const saveZoneDetails = async (id: string) => {
+    const edits = editZone[id];
+    if (!edits) return;
+    setSavingZoneId(id);
+    try {
+      const res = await fetch(`/api/meckano/zones/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(edits),
+      });
+      const data = await res.json() as { status: boolean; data?: MeckanoZone };
+      if (data.status && data.data) {
+        setZones(z => z.map(x => x.id === id ? { ...x, ...data.data } : x));
+        setExpandedZoneId(null);
+      }
+    } finally { setSavingZoneId(null); }
+  };
+
+  const initEditZone = (zone: MeckanoZone) => {
+    setEditZone(prev => ({
+      ...prev,
+      [zone.id]: {
+        name: zone.name,
+        address: zone.address,
+        description: zone.description ?? "",
+        radius: zone.radius,
+        managerName: zone.managerName ?? "",
+        startDate: zone.startDate ? zone.startDate.slice(0, 10) : "",
+        endDate: zone.endDate ? zone.endDate.slice(0, 10) : "",
+        budgetHours: zone.budgetHours ?? undefined,
+        projectNotes: zone.projectNotes ?? "",
+        assignedEmployeeIds: zone.assignedEmployeeIds ?? [],
+      },
+    }));
+    setExpandedZoneId(zone.id);
+  };
+
+  const toggleEmployeeInZone = (zoneId: string, empId: number) => {
+    setEditZone(prev => {
+      const cur = prev[zoneId]?.assignedEmployeeIds ?? [];
+      return {
+        ...prev,
+        [zoneId]: {
+          ...prev[zoneId],
+          assignedEmployeeIds: cur.includes(empId) ? cur.filter(x => x !== empId) : [...cur, empId],
+        },
+      };
+    });
+  };
+
   // ── Sync employees to CRM ──
   const syncToCrm = async () => {
     if (!employees.length) return;
@@ -413,6 +473,12 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
       filterEmpIds.add(parseInt(reportEmployeeId));
     } else if (reportDeptId) {
       employees.filter(e => e.activeState === 1 && String(e.departmentId) === reportDeptId).forEach(e => filterEmpIds.add(e.id));
+    } else if (reportZoneId) {
+      // Use employees assigned to the selected project/zone
+      const selectedZone = zones.find(z => z.id === reportZoneId);
+      if (selectedZone?.assignedEmployeeIds?.length) {
+        selectedZone.assignedEmployeeIds.forEach(id => filterEmpIds.add(id));
+      }
     }
     if (reportType === "attendance" || reportType === "summary") {
       const r = await meckanoFetch<MeckanoAttendance[]>("time-entry", { from: String(from), to: String(to) });
@@ -432,7 +498,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     setReportLoading(false);
     setReportGenerated(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reportType, reportFrom, reportTo, reportEmployeeId, reportDeptId, employees]);
+  }, [reportType, reportFrom, reportTo, reportEmployeeId, reportDeptId, reportZoneId, employees, zones]);
 
   const exportCsv = () => {
     const zoneName = reportZoneId ? (zones.find(z => z.id === reportZoneId)?.name ?? "") : "";
@@ -824,9 +890,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4" dir="rtl">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-black text-slate-900 text-base">אזורי דיווח מורשים</h3>
+                  <h3 className="font-black text-slate-900 text-base">פרויקטים ואזורי דיווח</h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    אתרי עבודה לחתימת נוכחות — ניתן לסנכרן לCRM ול-ERP
+                    הגדר פרטי פרויקט, שייך עובדים, וסנכרן ל-CRM ו-ERP
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -835,10 +901,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </button>
                   <button onClick={syncZonesToCrm} disabled={zoneSyncPending || zones.length === 0} className="flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700 transition disabled:opacity-50">
                     {zoneSyncPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                    סנכרן אתרים ל-CRM ופרויקטים
+                    סנכרן ל-CRM ופרויקטים
                   </button>
                   <button onClick={() => setShowAddZone(v => !v)} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition">
-                    <Hash size={14} /> הוסף אזור
+                    <Hash size={14} /> הוסף פרויקט
                   </button>
                 </div>
               </div>
@@ -852,10 +918,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {/* Add Zone Form */}
               {showAddZone && (
                 <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 space-y-3">
-                  <h4 className="font-black text-blue-900 text-sm">הוספת אזור דיווח חדש</h4>
+                  <h4 className="font-black text-blue-900 text-sm">הוספת פרויקט / אזור דיווח</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">שם האתר *</label>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">שם הפרויקט *</label>
                       <input value={newZone.name} onChange={e => setNewZone(z => ({ ...z, name: e.target.value }))} placeholder='שנלר, תנובה, ממילא...' className={inputCls + " w-full"} />
                     </div>
                     <div>
@@ -863,7 +929,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       <input value={newZone.address} onChange={e => setNewZone(z => ({ ...z, address: e.target.value }))} placeholder="שנלר, ירושלים" className={inputCls + " w-full"} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">תיאור (אופציונלי)</label>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">תיאור</label>
                       <input value={newZone.description} onChange={e => setNewZone(z => ({ ...z, description: e.target.value }))} placeholder="תיאור קצר" className={inputCls + " w-full"} />
                     </div>
                     <div>
@@ -883,45 +949,235 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {/* Info banner */}
               <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800 flex items-start gap-2">
                 <Info size={13} className="mt-0.5 shrink-0" />
-                <span>API מקאנו אינו חושף אזורי דיווח — הנתונים נשמרים מקומית ומוצגים על המפה החיה. ניתן לייצא ל-CRM ול-ERP.</span>
+                <span>לחץ על פרויקט להגדרת פרטים: מנהל, תאריכים, תקציב שעות ושיוך עובדים. הדוח לפי פרויקט מחשב שעות לפי העובדים המשויכים.</span>
               </div>
 
               {zonesLoading ? <LoadingSpinner /> : zonesError ? (
                 <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{zonesError}</div>
               ) : zones.length === 0 ? (
-                <EmptyState message="אין אזורי דיווח — הוסף את אתרי העבודה שלך" />
+                <EmptyState message="אין פרויקטים — הוסף את אתרי העבודה שלך" />
               ) : (
-                <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 overflow-hidden">
-                  {zones.map(zone => (
-                    <div key={zone.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
-                        <Globe size={18} className="text-blue-600" />
+                <div className="rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+                  {zones.map(zone => {
+                    const isExpanded = expandedZoneId === zone.id;
+                    const edit = editZone[zone.id];
+                    const assignedCount = zone.assignedEmployeeIds?.length ?? 0;
+                    return (
+                      <div key={zone.id}>
+                        {/* Header row */}
+                        <button
+                          type="button"
+                          onClick={() => isExpanded ? setExpandedZoneId(null) : initEditZone(zone)}
+                          className="w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition text-right"
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                            <Globe size={18} className="text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-black text-slate-900 text-sm">{zone.name}</p>
+                              {zone.syncedToCrm && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-xs font-bold">
+                                  <CheckCircle2 size={10} /> CRM
+                                </span>
+                              )}
+                              {assignedCount > 0 && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-bold">
+                                  <Users size={10} /> {assignedCount} עובדים
+                                </span>
+                              )}
+                              {zone.managerName && (
+                                <span className="text-xs text-slate-500">{zone.managerName}</span>
+                              )}
+                              {!zone.isActive && <span className="rounded-full bg-slate-100 text-slate-500 px-2 py-0.5 text-xs font-bold">לא פעיל</span>}
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5">{zone.address}</p>
+                            {(zone.startDate || zone.endDate) && (
+                              <p className="text-xs text-slate-400">
+                                {zone.startDate ? new Date(zone.startDate).toLocaleDateString("he-IL") : ""}
+                                {zone.endDate ? ` ← ${new Date(zone.endDate).toLocaleDateString("he-IL")}` : ""}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            {zone.budgetHours && (
+                              <div className="text-right">
+                                <p className="text-sm font-black text-indigo-600">{zone.budgetHours}ש׳</p>
+                                <p className="text-xs text-slate-400">תקציב</p>
+                              </div>
+                            )}
+                            <div className="text-right">
+                              <p className="text-sm font-bold text-slate-700">{zone.radius}מ׳</p>
+                              <p className="text-xs text-slate-400">רדיוס</p>
+                            </div>
+                            {isExpanded ? <ChevronUp size={15} className="text-slate-400" /> : <ChevronDown size={15} className="text-slate-400" />}
+                          </div>
+                        </button>
+
+                        {/* Expanded: project detail form */}
+                        {isExpanded && edit && (
+                          <div className="bg-slate-50 border-t border-slate-100 p-5 space-y-5">
+                            <h4 className="font-black text-slate-900 text-sm flex items-center gap-2">
+                              <Briefcase size={14} className="text-blue-600" /> פרטי פרויקט: {zone.name}
+                            </h4>
+
+                            {/* Basic fields */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">שם הפרויקט *</label>
+                                <input
+                                  value={edit.name ?? ""}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], name: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">כתובת</label>
+                                <input
+                                  value={edit.address ?? ""}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], address: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">מנהל פרויקט</label>
+                                <input
+                                  value={edit.managerName ?? ""}
+                                  placeholder="שם המנהל"
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], managerName: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">רדיוס (מטרים)</label>
+                                <input
+                                  type="number"
+                                  value={edit.radius ?? 150}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], radius: parseInt(e.target.value) || 150 } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">תאריך התחלה</label>
+                                <input
+                                  type="date"
+                                  value={typeof edit.startDate === "string" ? edit.startDate.slice(0, 10) : ""}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], startDate: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">תאריך סיום מתוכנן</label>
+                                <input
+                                  type="date"
+                                  value={typeof edit.endDate === "string" ? edit.endDate.slice(0, 10) : ""}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], endDate: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">תקציב שעות</label>
+                                <input
+                                  type="number"
+                                  value={edit.budgetHours ?? ""}
+                                  placeholder="0"
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], budgetHours: parseFloat(e.target.value) || undefined } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">תיאור</label>
+                                <input
+                                  value={edit.description ?? ""}
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], description: e.target.value } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Notes */}
+                            <div>
+                              <label className="block text-xs font-bold text-slate-600 mb-1">הערות פרויקט</label>
+                              <textarea
+                                rows={3}
+                                value={edit.projectNotes ?? ""}
+                                onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], projectNotes: e.target.value } }))}
+                                className={inputCls + " w-full resize-none"}
+                                placeholder="הערות חופשיות..."
+                              />
+                            </div>
+
+                            {/* Employee assignment */}
+                            <div>
+                              <label className="block text-xs font-bold text-slate-600 mb-2">שיוך עובדים לפרויקט</label>
+                              {activeEmployees.length === 0 ? (
+                                <p className="text-xs text-slate-400">טוען עובדים...</p>
+                              ) : (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-3">
+                                  {activeEmployees.map(emp => {
+                                    const empName = [emp.firstName, emp.lastName].filter(Boolean).join(" ") || emp.workerTag || `#${emp.id}`;
+                                    const isAssigned = (edit.assignedEmployeeIds ?? []).includes(emp.id);
+                                    return (
+                                      <button
+                                        key={emp.id}
+                                        type="button"
+                                        onClick={() => toggleEmployeeInZone(zone.id, emp.id)}
+                                        className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                                          isAssigned
+                                            ? "border-blue-400 bg-blue-50 text-blue-700"
+                                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                        }`}
+                                      >
+                                        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                                          isAssigned ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-500"
+                                        }`}>{empName.charAt(0)}</span>
+                                        <span className="truncate">{empName}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                              <p className="text-xs text-slate-400 mt-1">{(edit.assignedEmployeeIds ?? []).length} עובדים משויכים</p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-2 flex-wrap">
+                              <button
+                                onClick={() => saveZoneDetails(zone.id)} disabled={savingZoneId === zone.id}
+                                className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50"
+                              >
+                                {savingZoneId === zone.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />} שמור פרטים
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const z = zones.find(x => x.id === zone.id);
+                                  if (!z) return;
+                                  setReportZoneId(zone.id);
+                                  if (z.startDate) setReportFrom(z.startDate.slice(0, 10));
+                                  if (z.endDate) setReportTo(z.endDate.slice(0, 10));
+                                  setReportType("summary");
+                                  setReportGenerated(false);
+                                  setActiveTab("reports");
+                                }}
+                                className="flex items-center gap-2 rounded-xl border border-indigo-300 bg-indigo-50 px-5 py-2.5 text-sm font-bold text-indigo-700 hover:bg-indigo-100 transition"
+                              >
+                                <BarChart2 size={14} /> הפק דוח לפרויקט
+                              </button>
+                              <button
+                                onClick={() => { if (confirm("למחוק?")) deleteZone(zone.id); }}
+                                className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition"
+                              >
+                                <Trash2 size={14} /> מחק
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-black text-slate-900 text-sm">{zone.name}</p>
-                          {zone.syncedToCrm && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-xs font-bold">
-                              <CheckCircle2 size={10} /> CRM
-                            </span>
-                          )}
-                          {!zone.isActive && <span className="rounded-full bg-slate-100 text-slate-500 px-2 py-0.5 text-xs font-bold">לא פעיל</span>}
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">{zone.address}</p>
-                        {zone.description && <p className="text-xs text-slate-400">{zone.description}</p>}
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-slate-700">{zone.radius}מ׳</p>
-                        <p className="text-xs text-slate-400">רדיוס</p>
-                      </div>
-                      <button onClick={() => deleteZone(zone.id)} className="ml-2 rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition">
-                        <ArrowRight size={13} className="rotate-180" />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
-              <p className="text-xs text-slate-400 text-left">{zones.filter(z => z.isActive).length} אזורים פעילים</p>
+              <p className="text-xs text-slate-400 text-left">{zones.filter(z => z.isActive).length} פרויקטים פעילים</p>
             </div>
           )}
 
@@ -1170,7 +1426,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <label className="block text-xs font-bold text-slate-600 mb-1">אזור / פרויקט</label>
                     <select value={reportZoneId} onChange={e => setReportZoneId(e.target.value)} className={inputCls + " w-full"}>
                       <option value="">כל האזורים</option>
-                      {zones.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
+                      {zones.map(z => (
+                        <option key={z.id} value={z.id}>
+                          {z.name}{z.assignedEmployeeIds?.length ? ` (${z.assignedEmployeeIds.length} עובדים)` : ""}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -1200,13 +1460,42 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               )}
 
               {/* Zone context */}
-              {reportGenerated && reportZoneId && (
-                <div className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 text-sm text-blue-700">
-                  <Globe size={14} />
-                  <span className="font-bold">אזור: {zones.find(z => z.id === reportZoneId)?.name}</span>
-                  <span className="text-blue-500">— {zones.find(z => z.id === reportZoneId)?.address}</span>
-                </div>
-              )}
+              {reportZoneId && (() => {
+                const selectedZone = zones.find(z => z.id === reportZoneId);
+                if (!selectedZone) return null;
+                const assignedEmps = activeEmployees.filter(e => selectedZone.assignedEmployeeIds?.includes(e.id));
+                return (
+                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Globe size={14} className="text-blue-600 shrink-0" />
+                      <span className="font-black text-blue-900 text-sm">{selectedZone.name}</span>
+                      {selectedZone.syncedToCrm && <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-bold">CRM</span>}
+                    </div>
+                    <p className="text-xs text-blue-600">{selectedZone.address}</p>
+                    {selectedZone.managerName && <p className="text-xs text-blue-700"><strong>מנהל:</strong> {selectedZone.managerName}</p>}
+                    {(selectedZone.startDate || selectedZone.endDate) && (
+                      <p className="text-xs text-blue-700">
+                        {selectedZone.startDate ? new Date(selectedZone.startDate).toLocaleDateString("he-IL") : ""}
+                        {selectedZone.endDate ? ` ← ${new Date(selectedZone.endDate).toLocaleDateString("he-IL")}` : ""}
+                      </p>
+                    )}
+                    {assignedEmps.length > 0 ? (
+                      <div>
+                        <p className="text-xs font-bold text-blue-800 mb-1">עובדים משויכים ({assignedEmps.length}):</p>
+                        <div className="flex flex-wrap gap-1">
+                          {assignedEmps.map(e => (
+                            <span key={e.id} className="text-xs bg-white border border-blue-200 px-2 py-0.5 rounded-full text-blue-700">
+                              {[e.firstName, e.lastName].filter(Boolean).join(" ") || e.workerTag || `#${e.id}`}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-amber-700">לא שויכו עובדים לפרויקט זה — הדוח יציג את כל העובדים. שייך עובדים בלשונית &quot;פרויקטים&quot;.</p>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Results */}
               {reportLoading ? (

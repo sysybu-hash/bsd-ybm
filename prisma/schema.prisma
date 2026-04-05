@@ -143,6 +143,14 @@ model MeckanoZone {
   radius         Int          @default(150) // רדיוס דיווח במטרים
   isActive       Boolean      @default(true)
   syncedToCrm    Boolean      @default(false)
+  // ─── פרטי פרויקט ───
+  managerName    String?      // שם מנהל הפרויקט
+  startDate      DateTime?    // תחילת הפרויקט
+  endDate        DateTime?    // סיום מתוכנן
+  budgetHours    Float?       // תקציב שעות
+  projectNotes   String?      @db.Text  // הערות פרויקט
+  /// מזהי עובדים ממקאנו המשויכים לפרויקט (int[])
+  assignedEmployeeIds Int[]   @default([])
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

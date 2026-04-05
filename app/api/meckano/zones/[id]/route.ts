@@ -13,7 +13,13 @@ export async function PUT(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const body = await req.json() as { name?: string; address?: string; description?: string; lat?: number; lng?: number; radius?: number; isActive?: boolean };
+  const body = await req.json() as {
+    name?: string; address?: string; description?: string;
+    lat?: number; lng?: number; radius?: number; isActive?: boolean;
+    managerName?: string; startDate?: string | null; endDate?: string | null;
+    budgetHours?: number | null; projectNotes?: string | null;
+    assignedEmployeeIds?: number[];
+  };
 
   const existing = await prisma.meckanoZone.findUnique({ where: { id } });
   if (!existing || existing.organizationId !== session.user.organizationId)
@@ -29,6 +35,12 @@ export async function PUT(
       lng: body.lng !== undefined ? body.lng : existing.lng,
       radius: body.radius ?? existing.radius,
       isActive: body.isActive !== undefined ? body.isActive : existing.isActive,
+      managerName: body.managerName !== undefined ? body.managerName : existing.managerName,
+      startDate: body.startDate !== undefined ? (body.startDate ? new Date(body.startDate) : null) : existing.startDate,
+      endDate: body.endDate !== undefined ? (body.endDate ? new Date(body.endDate) : null) : existing.endDate,
+      budgetHours: body.budgetHours !== undefined ? body.budgetHours : existing.budgetHours,
+      projectNotes: body.projectNotes !== undefined ? body.projectNotes : existing.projectNotes,
+      assignedEmployeeIds: body.assignedEmployeeIds !== undefined ? body.assignedEmployeeIds : existing.assignedEmployeeIds,
     },
   });
   return NextResponse.json({ status: true, data: zone });
