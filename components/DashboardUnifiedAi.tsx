@@ -36,7 +36,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
   const { data: session, status } = useSession();
   const loggedIn = status === "authenticated" && Boolean(session?.user);
 
-  const primary = "var(--primary-color, #2563eb)";
+  const primary = "var(--primary-color, #4f46e5)";
 
   useEffect(() => {
     setMessages([{ role: "ai", content: t("aiBubble.initialGreeting") }]);
@@ -129,22 +129,19 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 tab === "chat" ? "" : ""
               }`}
             >
-              <div
-                className="flex items-center justify-between gap-2 px-3 py-2 text-white"
-                style={{
-                  background: `linear-gradient(90deg, ${primary}, #4f46e5)`,
-                }}
-              >
-                <div className="flex min-w-0 items-center gap-2 text-xs font-black">
-                  <Sparkles size={16} className="shrink-0 opacity-90" aria-hidden />
+              <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
+                <div className="flex min-w-0 items-center gap-2 text-xs font-black text-gray-900">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                    <Sparkles size={14} className="shrink-0" aria-hidden />
+                  </div>
                   <span className="truncate">{title}</span>
                 </div>
-                <div className="flex shrink-0 gap-1 rounded-xl bg-white/20 p-0.5">
+                <div className="flex shrink-0 gap-1 rounded-xl border border-gray-200 bg-white p-0.5 shadow-sm">
                   <button
                     type="button"
                     onClick={() => setTab("chat")}
                     className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "chat" ? "bg-white text-gray-900" : "text-white/80 hover:bg-white/10"
+                      tab === "chat" ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-50"
                     }`}
                   >
                     צ׳אט
@@ -153,7 +150,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                     type="button"
                     onClick={() => setTab("finance")}
                     className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "finance" ? "bg-white text-gray-900" : "text-white/80 hover:bg-white/10"
+                      tab === "finance" ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-50"
                     }`}
                   >
                     כספים
@@ -228,7 +225,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 </>
               ) : (
                 <div className="bg-white">
-                  <div className="flex items-center gap-2 border-b border-gray-100 bg-indigo-50/50 px-3 py-2 text-xs font-bold text-indigo-900">
+                  <div className="flex items-center gap-2 border-b border-gray-100 bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-900">
                     <Bot size={14} aria-hidden />
                     שאלות על הוצאות, הכנסות ומסמכים
                   </div>

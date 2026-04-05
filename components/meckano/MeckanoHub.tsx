@@ -1034,7 +1034,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="text-sm font-black text-gray-900">{zone.name}</p>
                               {zone.syncedToCrm && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-xs font-bold">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 text-indigo-700 px-2 py-0.5 text-xs font-bold">
                                   <CheckCircle2 size={10} /> CRM
                                 </span>
                               )}

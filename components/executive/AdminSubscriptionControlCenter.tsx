@@ -591,7 +591,7 @@ export default function AdminSubscriptionControlCenter({
                     <button
                       type="submit"
                       disabled={pending}
-                      className="rounded-xl bg-gradient-to-l from-violet-700 to-indigo-800 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                      className="rounded-xl bg-indigo-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                       צור הזמנה ושלח מייל
                     </button>
@@ -724,7 +724,7 @@ export default function AdminSubscriptionControlCenter({
           <button
             type="button"
             aria-label="סגור"
-            className="fixed inset-0 z-[300] bg-gray-950/40 backdrop-blur-[2px] transition-opacity"
+            className="fixed inset-0 z-[300] bg-gray-900/35 transition-opacity"
             onClick={closeSheet}
           />
           <aside
@@ -889,7 +889,7 @@ export default function AdminSubscriptionControlCenter({
                           } else pushToast("err", r.error);
                         });
                       }}
-                      className="rounded-lg border border-violet-200 bg-violet-50/50 px-2.5 py-1 text-[11px] font-bold text-violet-950"
+                      className="rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-900"
                     >
                       פרימיום {d > 0 ? `+${d}` : d}
                     </button>

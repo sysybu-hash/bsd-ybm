@@ -96,7 +96,7 @@ const STATUS_LABEL: Record<string, string> = {
   CLOSED_LOST: "נסגר ✗",
 };
 const STATUS_BADGE: Record<string, string> = {
-  LEAD: "bg-violet-100 text-violet-700",
+  LEAD: "bg-indigo-100 text-indigo-700",
   ACTIVE: "bg-sky-100 text-sky-700",
   PROPOSAL: "bg-indigo-100 text-indigo-700",
   CLOSED_WON: "bg-emerald-100 text-emerald-700",
@@ -195,13 +195,13 @@ function HubContent(props: Props) {
             </p>
             <p className={`text-[10px] mt-0.5 ${profit >= 0 ? "text-indigo-500" : "text-orange-500"}`}>הכנסות פחות הוצאות</p>
           </div>
-          <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
             <div className="flex items-center gap-1.5 mb-2">
-              <Layers size={13} className="text-violet-500" />
-              <p className="text-xs font-bold text-violet-600">פייפליין CRM</p>
+              <Layers size={13} className="text-indigo-500" />
+              <p className="text-xs font-bold text-indigo-600">פייפליין CRM</p>
             </div>
-            <p className="text-xl font-black text-violet-700">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
-            <p className="text-[10px] text-violet-500 mt-0.5">
+            <p className="text-xl font-black text-indigo-700">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
+            <p className="text-[10px] text-indigo-500 mt-0.5">
               {contacts.filter((c) => !["CLOSED_WON", "CLOSED_LOST"].includes(c.status)).length} עסקאות פתוחות
             </p>
           </div>

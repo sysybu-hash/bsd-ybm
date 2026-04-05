@@ -247,7 +247,7 @@ export default function GlobalBillingPageClient({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { title: "הכנסות ברוטו (חודשי)", value: formatMoney(stats.monthGross), sub: "סה״כ מסמכים שהונפקו החודש", color: "text-indigo-600", iconBg: "bg-indigo-50", icon: <TrendingUp size={20} /> },
-          { title: "מע״מ (מסמכים החודש)", value: formatMoney(stats.monthVat), sub: vatHint, color: "text-violet-600", iconBg: "bg-violet-50", icon: <ShieldCheck size={20} /> },
+          { title: "מע״מ (מסמכים החודש)", value: formatMoney(stats.monthVat), sub: vatHint, color: "text-indigo-600", iconBg: "bg-indigo-50", icon: <ShieldCheck size={20} /> },
           { title: "תשלומים בהמתנה", value: formatMoney(stats.pendingAmount), sub: stats.pendingInvoiceCount > 0 ? `${stats.pendingInvoiceCount} חשבוניות פתוחות` : "אין ממתינות", color: "text-orange-600", iconBg: "bg-orange-50", icon: <History size={20} /> },
           { title: "שולם החודש (גולמי)", value: formatMoney(stats.paidMonthGross), sub: "לפני עמלות PayPal", color: "text-emerald-600", iconBg: "bg-emerald-50", icon: <CheckCircle2 size={20} /> },
         ].map((card, i) => (

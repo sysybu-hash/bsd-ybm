@@ -40,7 +40,7 @@ export default function AdminBroadcastNotifications() {
   return (
     <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
       <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-gray-900">
-        <Megaphone className="text-violet-500" size={28} aria-hidden />
+        <Megaphone className="text-indigo-500" size={28} aria-hidden />
         שידור לכולם
       </h3>
       <p className="mb-6 text-sm font-medium text-gray-500">

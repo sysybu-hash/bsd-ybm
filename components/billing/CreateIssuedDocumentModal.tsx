@@ -95,23 +95,24 @@ export default function CreateIssuedDocumentModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-200/55 backdrop-blur-md p-4 overflow-y-auto"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-gray-900/35 p-4"
       dir="rtl"
       role="dialog"
       aria-modal="true"
       aria-labelledby="issued-doc-modal-title"
     >
       <div className="my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-200/60">
-        <div className="bg-gradient-to-r from-indigo-700 to-indigo-600 p-8 text-white flex justify-between items-center gap-4">
+        <div className="relative flex items-center justify-between gap-4 border-b border-gray-200 bg-gray-50 p-8">
+          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
           <div className="flex items-center gap-4 min-w-0">
-            <div className="bg-white/20 p-3 rounded-2xl shrink-0">
+            <div className="shrink-0 rounded-2xl bg-indigo-100 p-3 text-indigo-600 shadow-sm">
               <FileText />
             </div>
             <div className="min-w-0">
-              <h2 id="issued-doc-modal-title" className="text-2xl font-black italic tracking-tighter">
+              <h2 id="issued-doc-modal-title" className="text-2xl font-black italic tracking-tighter text-gray-900">
                 הפקת מסמך חדש
               </h2>
-              <p className="text-indigo-100 text-xs font-bold uppercase tracking-widest mt-1">
+              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-indigo-600">
                 {!isReportable
                   ? "מזכר פנימי — ללא דיווח מס"
                   : companyType === CompanyType.EXEMPT_DEALER
@@ -123,7 +124,7 @@ export default function CreateIssuedDocumentModal({
           <button
             type="button"
             onClick={onClose}
-            className="hover:rotate-90 transition-transform bg-white/10 p-2 rounded-full shrink-0"
+            className="shrink-0 rounded-full border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
             aria-label="סגור"
           >
             <X size={22} />
@@ -255,7 +256,7 @@ export default function CreateIssuedDocumentModal({
           </div>
         </div>
 
-        <div className="p-8 bg-gray-50/50 flex flex-wrap justify-end gap-4 border-t border-gray-100">
+        <div className="flex flex-wrap justify-end gap-4 border-t border-gray-200 bg-white p-8">
           <button
             type="button"
             onClick={onClose}
@@ -267,7 +268,7 @@ export default function CreateIssuedDocumentModal({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={loading}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-700 to-indigo-600 px-12 py-4 font-black text-white shadow-sm transition-transform hover:scale-[1.02] disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-12 py-4 font-black text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
           >
             {loading ? (
               "מפיק מסמך..."

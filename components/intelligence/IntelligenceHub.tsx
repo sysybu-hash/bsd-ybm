@@ -257,27 +257,27 @@ export default function IntelligenceHub() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
-            <h4 className="font-black italic mb-6 flex items-center gap-2">
-              <Zap className="text-yellow-300" aria-hidden /> Business Pulse
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-8 text-gray-900 shadow-sm">
+            <h4 className="mb-6 flex items-center gap-2 font-black italic text-indigo-900">
+              <Zap className="text-indigo-500" aria-hidden /> Business Pulse
             </h4>
             <div className="space-y-6">
               <div>
-                <div className="flex justify-between text-[10px] font-bold mb-2 uppercase opacity-80">
+                <div className="mb-2 flex justify-between text-[10px] font-bold uppercase text-gray-600">
                   יעד הכנסות חודשי: ₪100K
                 </div>
-                <div className="h-2 w-full bg-white/20 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div className="h-2 w-full overflow-hidden rounded-full border border-indigo-100 bg-white p-0.5">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: "72%" }}
-                    className="h-full bg-white rounded-full shadow-[0_0_10px_white]"
+                    className="h-full rounded-full bg-indigo-600"
                   />
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setVaultOpen(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 py-3 text-xs font-black transition-colors hover:bg-white/20"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-white py-3 text-xs font-black text-indigo-700 shadow-sm transition-colors hover:bg-indigo-50"
               >
                 <Lock size={14} /> כספת רואה חשבון: 14 מסמכים מוכנים
               </button>
@@ -287,7 +287,7 @@ export default function IntelligenceHub() {
                   setDailyOpen(true);
                   void loadDaily();
                 }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-xs font-black text-indigo-800 shadow-sm transition-colors hover:bg-indigo-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-xs font-black text-white shadow-sm transition-colors hover:bg-indigo-700"
               >
                 תובנה פיננסית יומית (מילת היום)
               </button>
@@ -298,7 +298,7 @@ export default function IntelligenceHub() {
 
       {vaultOpen ? (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="vault-title"
@@ -343,7 +343,7 @@ export default function IntelligenceHub() {
 
       {dailyOpen ? (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[300] flex items-center justify-center bg-gray-900/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="daily-title"

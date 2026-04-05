@@ -28,8 +28,8 @@ const FEATURES = [
   },
   {
     icon: ScanLine,
-    gradient: "from-violet-500 to-purple-600",
-    bg: "bg-violet-50 border-violet-100",
+    gradient: "from-indigo-500 to-sky-500",
+    bg: "bg-indigo-50 border-indigo-100",
     title: "סריקת מסמכים AI",
     desc: "העלה כל חשבונית, קבלה או הצעת מחיר — בינה מלאכותית מפענחת ומארגנת הנתונים אוטומטית.",
   },
@@ -75,23 +75,23 @@ export default function WizardHome() {
     <div className="min-h-screen bg-white" dir="rtl">
 
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950 shadow-sm shadow-black/20">
+      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white font-black text-sm shadow-lg shadow-indigo-600/30">
               B
             </div>
-            <span className="font-black text-white text-lg tracking-tight">
-              BSD<span className="text-indigo-400">-YBM</span>
+            <span className="font-black text-gray-900 text-lg tracking-tight">
+              BSD<span className="text-indigo-600">-YBM</span>
             </span>
           </div>
           <div className="hidden md:flex items-center gap-1">
-            <a href="#features" className="px-3 py-1.5 text-sm font-semibold text-gray-400 hover:text-white transition rounded-lg hover:bg-white/5">תכונות</a>
-            <a href="#tutorial-videos" className="px-3 py-1.5 text-sm font-semibold text-gray-400 hover:text-white transition rounded-lg hover:bg-white/5">הדגמה</a>
-            <a href="#pricing" className="px-3 py-1.5 text-sm font-semibold text-gray-400 hover:text-white transition rounded-lg hover:bg-white/5">מחירים</a>
+            <a href="#features" className="px-3 py-1.5 text-sm font-semibold text-gray-600 hover:text-indigo-600 transition rounded-lg hover:bg-gray-50">תכונות</a>
+            <a href="#tutorial-videos" className="px-3 py-1.5 text-sm font-semibold text-gray-600 hover:text-indigo-600 transition rounded-lg hover:bg-gray-50">הדגמה</a>
+            <a href="#pricing" className="px-3 py-1.5 text-sm font-semibold text-gray-600 hover:text-indigo-600 transition rounded-lg hover:bg-gray-50">מחירים</a>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-bold text-gray-300 hover:text-white transition rounded-xl hover:bg-white/10">
+            <Link href="/login" className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-bold text-gray-600 hover:text-indigo-600 transition rounded-xl hover:bg-gray-50">
               התחבר
             </Link>
             <Link href="/register" className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-500 transition shadow-sm shadow-indigo-600/30">
@@ -102,26 +102,26 @@ export default function WizardHome() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gray-950 pb-20 pt-16">
+      <section className="relative overflow-hidden bg-gradient-to-b from-white via-indigo-50/70 to-white pb-20 pt-16">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-40 right-1/3 h-[600px] w-[600px] rounded-full bg-indigo-600/10 blur-[120px]" />
-          <div className="absolute -top-20 left-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/10 blur-[100px]" />
+          <div className="absolute -top-40 right-1/3 h-[600px] w-[600px] rounded-full bg-indigo-500/10 blur-[120px]" />
+          <div className="absolute -top-20 left-1/4 h-[400px] w-[400px] rounded-full bg-sky-400/10 blur-[100px]" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-600/10 px-4 py-1.5 text-xs font-bold text-indigo-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-1.5 text-xs font-bold text-indigo-700 shadow-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
               מערכת ERP + CRM ישראלית — עם AI
             </span>
           </div>
-          <h1 className="text-center text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="text-center text-4xl font-black leading-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
             ניהול עסקי חכם
             <br />
-            <span className="bg-gradient-to-l from-indigo-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-l from-indigo-600 via-indigo-500 to-sky-500 bg-clip-text text-transparent">
               ERP ו-CRM בחלון אחד
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-gray-400 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-gray-600 sm:text-lg">
             סרוק מסמכים עם AI, נהל לקוחות ועסקאות, הנפק חשבוניות — הכל מסונכרן.
             <br className="hidden sm:block" />
             מנוי מ-₪99 לחודש. ניסיון חינם ל-30 יום.
@@ -130,22 +130,22 @@ export default function WizardHome() {
             <Link href="/register" className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-7 py-3.5 text-base font-black text-white shadow-xl shadow-indigo-600/30 hover:bg-indigo-500 transition">
               התחל ניסיון חינם <ArrowLeft size={16} />
             </Link>
-            <a href="#tutorial-videos" className="inline-flex items-center gap-2 rounded-2xl border border-gray-700 bg-gray-800/60 px-7 py-3.5 text-base font-bold text-gray-300 hover:bg-gray-800 transition">
+            <a href="#tutorial-videos" className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-7 py-3.5 text-base font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition">
               ▶ צפה בהדגמה
             </a>
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
             <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500" /> ללא כרטיס אשראי</span>
-            <span className="text-gray-700">·</span>
+            <span className="text-gray-300">·</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500" /> ביטול בכל עת</span>
-            <span className="text-gray-700">·</span>
+            <span className="text-gray-300">·</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500" /> GDPR-compliant</span>
           </div>
           <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
             {STATS.map(({ value, label, icon: Icon }) => (
-              <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900/60 p-4 text-center">
+              <div key={label} className="rounded-2xl border border-gray-200 bg-white p-4 text-center shadow-sm">
                 <Icon size={16} className="mx-auto mb-2 text-indigo-400" />
-                <p className="text-xl font-black text-white">{value}</p>
+                <p className="text-xl font-black text-gray-900">{value}</p>
                 <p className="mt-0.5 text-[11px] font-medium text-gray-500">{label}</p>
               </div>
             ))}
@@ -154,7 +154,7 @@ export default function WizardHome() {
       </section>
 
       {/* HERO BOTTOM FADE */}
-      <div style={{ background: "linear-gradient(to bottom, #020617 0%, #ffffff 100%)", height: "3rem" }} />
+      <div style={{ background: "linear-gradient(to bottom, #eef2ff 0%, #ffffff 100%)", height: "3rem" }} />
 
       {/* FEATURES */}
       <section id="features" className="bg-white py-20">
@@ -184,20 +184,20 @@ export default function WizardHome() {
       <LandingTutorialSection />
 
       {/* HOW IT WORKS */}
-      <section className="bg-gray-950 py-20">
+      <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          <h2 className="text-3xl font-black text-white sm:text-4xl">מתחילים תוך דקות — לא שבועות</h2>
-          <p className="mx-auto mt-4 max-w-xl text-gray-400">שלושה שלבים פשוטים להתחלת עבודה</p>
+          <h2 className="text-3xl font-black text-gray-900 sm:text-4xl">מתחילים תוך דקות — לא שבועות</h2>
+          <p className="mx-auto mt-4 max-w-xl text-gray-500">שלושה שלבים פשוטים להתחלת עבודה</p>
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
               { n: "01", title: "הרשמה חינם", desc: "צור חשבון תוך 30 שניות. לא צריך כרטיס אשראי." },
               { n: "02", title: "חבר את העסק", desc: "הזן פרטי חברה, הוסף לקוחות ראשונים, סרוק מסמך ראשון." },
               { n: "03", title: "עבוד בחכמה", desc: "ה-AI לומד את העסק שלך ומייצר תובנות ואוטומציות." },
             ].map(({ n, title, desc }) => (
-              <div key={n} className="rounded-2xl border border-gray-800 bg-gray-900/60 p-7">
-                <span className="text-4xl font-black text-indigo-500/40">{n}</span>
-                <h3 className="mt-3 text-lg font-black text-white">{title}</h3>
-                <p className="mt-2 text-sm text-gray-400 leading-relaxed">{desc}</p>
+              <div key={n} className="rounded-2xl border border-gray-200 bg-white p-7 shadow-sm">
+                <span className="text-4xl font-black text-indigo-300">{n}</span>
+                <h3 className="mt-3 text-lg font-black text-gray-900">{title}</h3>
+                <p className="mt-2 text-sm text-gray-600 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -213,42 +213,42 @@ export default function WizardHome() {
       <PricingSection />
 
       {/* FOOTER */}
-      <footer className="bg-gray-950 border-t border-gray-800">
+      <footer className="bg-white border-t border-gray-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
           <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white font-black text-sm">B</div>
-                <span className="font-black text-white">BSD-YBM</span>
+                <span className="font-black text-gray-900">BSD-YBM</span>
               </div>
               <p className="text-sm text-gray-500 leading-relaxed">מערכת ERP + CRM ישראלית לניהול עסקי חכם עם בינה מלאכותית.</p>
             </div>
             <div>
-              <h4 className="mb-3 text-sm font-black text-white">מוצר</h4>
+              <h4 className="mb-3 text-sm font-black text-gray-900">מוצר</h4>
               <ul className="space-y-2 text-sm text-gray-500">
-                <li><a href="#features" className="hover:text-white transition">תכונות</a></li>
-                <li><a href="#pricing" className="hover:text-white transition">מחירים</a></li>
-                <li><a href="#tutorial-videos" className="hover:text-white transition">הדגמה</a></li>
+                <li><a href="#features" className="hover:text-indigo-600 transition">תכונות</a></li>
+                <li><a href="#pricing" className="hover:text-indigo-600 transition">מחירים</a></li>
+                <li><a href="#tutorial-videos" className="hover:text-indigo-600 transition">הדגמה</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="mb-3 text-sm font-black text-white">כניסה</h4>
+              <h4 className="mb-3 text-sm font-black text-gray-900">כניסה</h4>
               <ul className="space-y-2 text-sm text-gray-500">
-                <li><Link href="/register" className="hover:text-white transition">הרשמה</Link></li>
-                <li><Link href="/login" className="hover:text-white transition">התחברות</Link></li>
+                <li><Link href="/register" className="hover:text-indigo-600 transition">הרשמה</Link></li>
+                <li><Link href="/login" className="hover:text-indigo-600 transition">התחברות</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="mb-3 text-sm font-black text-white">משפטי</h4>
+              <h4 className="mb-3 text-sm font-black text-gray-900">משפטי</h4>
               <ul className="space-y-2 text-sm text-gray-500">
-                <li><Link href="/privacy" className="hover:text-white transition">פרטיות</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition">תנאי שימוש</Link></li>
+                <li><Link href="/privacy" className="hover:text-indigo-600 transition">פרטיות</Link></li>
+                <li><Link href="/terms" className="hover:text-indigo-600 transition">תנאי שימוש</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 border-t border-gray-800 pt-6 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs text-gray-600">© 2026 BSD-YBM Platform. כל הזכויות שמורות.</p>
-            <div className="flex items-center gap-3 text-xs text-gray-600">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-6">
+            <p className="text-xs text-gray-500">© 2026 BSD-YBM Platform. כל הזכויות שמורות.</p>
+            <div className="flex items-center gap-3 text-xs text-gray-500">
               <Globe size={12} />
               <span>עברית · English · Русский</span>
             </div>

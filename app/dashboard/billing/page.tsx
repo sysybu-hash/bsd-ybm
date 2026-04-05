@@ -323,7 +323,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
             </span>
             {" · "}
             פרימיום נותרו:{" "}
-            <span className="font-semibold text-violet-700">
+              <span className="font-semibold text-indigo-700">
               {formatCreditsForDisplay(org.premiumScansRemaining)}
             </span>
           </p>

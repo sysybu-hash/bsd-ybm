@@ -76,19 +76,19 @@ export default function PricingSection() {
                 {/* Features */}
                 <ul className={`mt-6 flex-1 space-y-3 text-sm ${popular ? "text-indigo-50" : "text-gray-600"}`}>
                   <li className="flex items-start gap-2.5">
-                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-200" : "text-indigo-500"}`} />
+                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-indigo-500"}`} />
                     <span>
                       <strong className={popular ? "text-white" : "text-gray-800"}>{a.cheapScans}</strong> סריקות Gemini
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <Zap size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-200" : "text-indigo-500"}`} />
+                    <Zap size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-indigo-500"}`} />
                     <span>
                       <strong className={popular ? "text-white" : "text-gray-800"}>{a.premiumScans}</strong> סריקות פרימיום
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-200" : "text-gray-400"}`} />
+                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-gray-400"}`} />
                     <span>
                       {a.unlimitedCompanies ? (
                         "חברות ללא הגבלה"

@@ -40,7 +40,7 @@ export default function PostRegisterWelcomeSheet() {
 
   return (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-gray-900/30 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[250] flex items-center justify-center bg-gray-900/40 p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"

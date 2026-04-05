@@ -104,7 +104,7 @@ type View = "pipeline" | "list" | "projects";
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 const STATUS_COLUMNS = [
-  { key: "LEAD",        label: "ליד",     bg: "bg-violet-50",  border: "border-violet-200", badge: "bg-violet-100 text-violet-700", dot: "bg-violet-400" },
+  { key: "LEAD",        label: "ליד",     bg: "bg-indigo-50",  border: "border-indigo-200", badge: "bg-indigo-100 text-indigo-700", dot: "bg-indigo-400" },
   { key: "ACTIVE",      label: "פעיל",    bg: "bg-sky-50",     border: "border-sky-200",    badge: "bg-sky-100 text-sky-700",       dot: "bg-sky-400"    },
   { key: "PROPOSAL",    label: "הצעה",    bg: "bg-indigo-50",    border: "border-indigo-200",   badge: "bg-indigo-100 text-indigo-700",     dot: "bg-indigo-500"   },
   { key: "CLOSED_WON",  label: "נסגר ✓",  bg: "bg-emerald-50", border: "border-emerald-200",badge: "bg-emerald-100 text-emerald-700",dot: "bg-emerald-500"},
@@ -243,7 +243,7 @@ function ContactModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" dir="rtl">
-      <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-gray-900/55" onClick={onClose} />
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/60">
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
           <div className="flex items-center gap-3">
@@ -773,13 +773,13 @@ export default function CrmClient({
               <p className="text-2xl font-black text-emerald-700">{wonCount}</p>
               <p className="text-[10px] text-emerald-500 mt-0.5">{wonTotal > 0 ? fmtMoney(wonTotal) : "—"}</p>
             </div>
-            <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
+            <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
               <div className="flex items-center gap-2 mb-1">
-                <BarChart2 size={14} className="text-violet-500" />
-                <p className="text-xs text-violet-600 font-bold">אחוז הצלחה</p>
+                <BarChart2 size={14} className="text-indigo-500" />
+                <p className="text-xs text-indigo-600 font-bold">אחוז הצלחה</p>
               </div>
-              <p className="text-2xl font-black text-violet-700">{winRate != null ? `${winRate}%` : "—"}</p>
-              <p className="text-[10px] text-violet-400 mt-0.5">{closedAll} עסקאות סגורות</p>
+              <p className="text-2xl font-black text-indigo-700">{winRate != null ? `${winRate}%` : "—"}</p>
+              <p className="text-[10px] text-indigo-400 mt-0.5">{closedAll} עסקאות סגורות</p>
             </div>
           </div>
 

@@ -46,12 +46,11 @@ type NavLinkProps = {
   badge?: string;
   onClick?: () => void;
   isActive: boolean;
-  accent: string; // tailwind color name e.g. "violet"
+  accent: string; // tailwind color name e.g. "indigo"
 };
 
 const ACCENT: Record<string, { bg: string; text: string; border: string; dot: string; iconActive: string }> = {
   indigo:  { bg: "bg-indigo-50",  text: "text-indigo-700",  border: "border-r-indigo-500",  dot: "bg-indigo-500",  iconActive: "bg-indigo-100 text-indigo-700" },
-  violet:  { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-r-violet-500",  dot: "bg-violet-500",  iconActive: "bg-violet-100 text-violet-700" },
   emerald: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-r-emerald-500", dot: "bg-emerald-500", iconActive: "bg-emerald-100 text-emerald-700" },
   sky:     { bg: "bg-sky-50",     text: "text-sky-700",     border: "border-r-sky-500",     dot: "bg-sky-500",     iconActive: "bg-sky-100 text-sky-700" },
   rose:    { bg: "bg-rose-50",    text: "text-rose-700",    border: "border-r-rose-500",    dot: "bg-rose-500",    iconActive: "bg-rose-100 text-rose-700" },
@@ -139,7 +138,7 @@ export default function DashboardLayoutClient({
     { href: "/dashboard/business",     icon: <Layers size={15} />,          label: "מרכז עסקי",             accent: "emerald" },
     { href: "/dashboard/erp/invoice",  icon: <ReceiptText size={15} />,     label: t("dashboard.invoices"), accent: "rose" },
     { href: "/dashboard/meckano",      icon: <Clock size={15} />,           label: t("dashboard.meckano"),  accent: "sky" },
-    { href: "/dashboard/billing",      icon: <CreditCard size={15} />,      label: t("dashboard.billing"),  accent: "violet" },
+    { href: "/dashboard/billing",      icon: <CreditCard size={15} />,      label: t("dashboard.billing"),  accent: "indigo" },
     { href: "/dashboard/settings",     icon: <Settings size={15} />,        label: t("dashboard.settings"), accent: "blue" },
   ];
 
@@ -268,7 +267,7 @@ export default function DashboardLayoutClient({
       {mobileOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[180] bg-gray-900/30 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-[180] bg-gray-900/35 md:hidden"
           onClick={() => setMobileOpen(false)}
           aria-label="Close"
         />

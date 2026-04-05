@@ -41,10 +41,10 @@ export default function LandingPage() {
       title: t("landing.featureFlowTitle"),
       icon: <BrainCircuit size={22} />,
       desc: t("landing.featureFlowDesc"),
-      color: "violet",
-      gradient: "from-violet-500 to-indigo-600",
-      bg: "bg-violet-50",
-      iconColor: "text-violet-600",
+      color: "indigo",
+      gradient: "from-indigo-500 to-sky-500",
+      bg: "bg-indigo-50",
+      iconColor: "text-indigo-600",
     },
   ], [t]);
 
@@ -135,9 +135,9 @@ export default function LandingPage() {
           HERO — Dark gradient
       ══════════════════════════════════ */}
       <section
-        className="relative overflow-hidden"
+        className="relative overflow-hidden border-b border-gray-200/80"
         style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1e40af 100%)",
+          background: "linear-gradient(180deg, #ffffff 0%, #eef2ff 55%, #f8fafc 100%)",
         }}
       >
         {/* Mesh overlay */}
@@ -145,8 +145,8 @@ export default function LandingPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `
-              radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,.4) 0%, transparent 60%),
-              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(99,102,241,.2) 0%, transparent 50%)
+              radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,.16) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(59,130,246,.1) 0%, transparent 50%)
             `,
           }}
           aria-hidden
@@ -154,7 +154,7 @@ export default function LandingPage() {
 
         {/* Dot grid */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          className="pointer-events-none absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff'/%3E%3C/svg%3E")`,
             backgroundSize: "24px 24px",
@@ -165,18 +165,18 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-44">
 
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-indigo-200">
-            <CheckCircle2 size={13} className="text-indigo-300" />
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/90 px-4 py-2 text-xs font-bold text-indigo-700 shadow-sm">
+            <CheckCircle2 size={13} className="text-indigo-600" />
             פלטפורמת ניהול עסקי מבוססת AI — Made in Israel
           </div>
 
           {/* H1 */}
-          <h1 className="mx-auto max-w-4xl text-4xl font-black leading-[1.12] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="mx-auto max-w-4xl text-4xl font-black leading-[1.12] tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
             {t("landing.heroTitle")}
           </h1>
 
           {/* Subtitle */}
-          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-indigo-100/80 sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-gray-600 sm:text-xl">
             {t("landing.heroSubtitle")}
           </p>
 
@@ -190,9 +190,9 @@ export default function LandingPage() {
             </Link>
             <Link
               href="#tutorial-videos"
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white transition-all hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-8 py-4 text-base font-bold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
             >
-              <Play size={16} className="text-indigo-300" />
+              <Play size={16} className="text-indigo-600" />
               {t("landing.tutorialCta")}
             </Link>
           </div>
@@ -200,8 +200,8 @@ export default function LandingPage() {
           {/* Trust strip */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2 text-xs font-semibold text-indigo-200/80">
-                <span className="text-indigo-400">{item.icon}</span>
+              <span key={i} className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+                <span className="text-indigo-600">{item.icon}</span>
                 {item.text}
               </span>
             ))}
@@ -212,10 +212,10 @@ export default function LandingPage() {
             {stats.map((s) => (
               <div
                 key={s.value}
-                className="rounded-2xl border border-white/10 bg-white/6 p-4"
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
-                <p className="text-2xl font-black text-white">{s.value}</p>
-                <p className="mt-1 text-xs font-semibold text-indigo-200/70">{s.label}</p>
+                <p className="text-2xl font-black text-gray-900">{s.value}</p>
+                <p className="mt-1 text-xs font-semibold text-gray-500">{s.label}</p>
               </div>
             ))}
           </div>
@@ -224,7 +224,7 @@ export default function LandingPage() {
         {/* Bottom fade */}
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
-          style={{ background: "linear-gradient(to bottom, transparent, #f8fafc)" }}
+          style={{ background: "linear-gradient(to bottom, transparent, #ffffff)" }}
           aria-hidden
         />
       </section>

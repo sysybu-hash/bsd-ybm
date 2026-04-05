@@ -78,7 +78,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
               href="/dashboard/admin?section=subscriptions"
               className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                 activeSection === "subscriptions"
-                  ? "bg-violet-600 text-white shadow-sm"
+                  ? "bg-indigo-600 text-white shadow-sm"
                   : "text-gray-600 hover:bg-white"
               }`}
             >
@@ -207,14 +207,14 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
 
       {activeSection === "subscriptions" ? (
       <section id="subscriptions" className="space-y-4">
-        <div className="rounded-2xl border border-violet-100 bg-violet-50/50 p-6">
-          <p className="text-xs font-black uppercase tracking-wider text-violet-600 mb-1">MASTER ADMIN</p>
+        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
+          <p className="text-xs font-black uppercase tracking-wider text-indigo-600 mb-1">MASTER ADMIN</p>
           <h2 className="text-xl font-black text-gray-900">ניהול מנויים מרוכז</h2>
           <p className="text-sm text-gray-500 mt-1">כל פעולות עריכה/מחיקה זמינות במסך הבילינג המאוחד.</p>
         </div>
         <Link
           href="/dashboard/billing?tab=control"
-          className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white hover:bg-violet-700 transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition-colors"
         >
           מעבר לניהול מנויים מאוחד <ArrowUpRight size={15} />
         </Link>

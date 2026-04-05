@@ -121,7 +121,7 @@ export default function OperationsCommandCenter({
             <Metric title="הכנסות 30 יום" value={`₪${mrrLike.toLocaleString()}`} tone="blue" />
             <Metric title="משתמשים פעילים" value={`${data.usersActive}/${data.usersTotal}`} tone="emerald" />
             <Metric title="בריאות הכנסות" value={`${data.revenueHealth}%`} tone="amber" />
-            <Metric title="פעולות Wizard" value={`${data.wizardEvents30d}`} tone="violet" />
+            <Metric title="פעולות Wizard" value={`${data.wizardEvents30d}`} tone="blue" />
           </div>
         </div>
 
@@ -147,7 +147,7 @@ export default function OperationsCommandCenter({
             <Panel
               title="אוטומציות"
               description="שלוש פעולות קבועות, עם מצב ברור וללא רעש."
-              icon={<Workflow size={17} className="text-violet-600" />}
+              icon={<Workflow size={17} className="text-indigo-600" />}
             >
               <div className="space-y-3">
                 <ToggleCard label="תזכורות חשבוניות אוטומטיות" hint="מעקב גבייה שקט" on={automation.invoiceReminders} onToggle={() => toggleAutomation("invoiceReminders")} />
@@ -251,12 +251,11 @@ function Panel({
   );
 }
 
-function Metric({ title, value, tone = "blue" }: { title: string; value: string; tone?: "blue" | "emerald" | "amber" | "violet" }) {
+function Metric({ title, value, tone = "blue" }: { title: string; value: string; tone?: "blue" | "emerald" | "amber" }) {
   const tones = {
     blue: "border-indigo-200 bg-indigo-50 text-indigo-700",
     emerald: "border-emerald-200 bg-emerald-50 text-emerald-700",
     amber: "border-amber-200 bg-amber-50 text-amber-700",
-    violet: "border-violet-200 bg-violet-50 text-violet-700",
   };
   return (
     <div className={`rounded-2xl border px-4 py-3.5 ${tones[tone]}`}>

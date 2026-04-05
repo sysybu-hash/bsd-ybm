@@ -149,7 +149,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
   const quickCards = [
     { href: "/dashboard/crm", icon: <Users size={20} />, label: "לקוחות", desc: "ניהול CRM", iconBg: "bg-indigo-50", iconText: "text-indigo-600" },
     { href: "/dashboard/erp", icon: <FileText size={20} />, label: "מסמכים", desc: "חשבוניות והצעות", iconBg: "bg-emerald-50", iconText: "text-emerald-600" },
-    { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", iconBg: "bg-violet-50", iconText: "text-violet-600" },
+    { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", iconBg: "bg-indigo-50", iconText: "text-indigo-600" },
     { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", iconBg: "bg-gray-100", iconText: "text-gray-700" },
   ];
 
@@ -294,7 +294,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                   <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(cheapScansRemaining)}</p>
                 </div>
                 <div className="min-w-[90px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
-                  <p className="text-[9px] font-black uppercase tracking-wider text-violet-600">Pro</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-indigo-600">Pro</p>
                   <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(premiumScansRemaining)}</p>
                 </div>
               </div>

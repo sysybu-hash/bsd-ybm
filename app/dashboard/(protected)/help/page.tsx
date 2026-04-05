@@ -42,7 +42,7 @@ export default function DashboardHelpPage() {
             secondaryLabel="חיבורי תשלום"
           />
           <HelpStep
-            icon={<Users size={18} className="text-violet-600" />}
+            icon={<Users size={18} className="text-indigo-600" />}
             step="3"
             title="ניהול צוות והרשאות"
             description="הזמן משתמשים, אשר בקשות והקצה תפקידים."
@@ -86,24 +86,21 @@ function HelpStep({
   secondaryHref: string;
   secondaryLabel: string;
 }) {
-  const STEP_COLORS = ["indigo", "blue", "violet", "emerald"];
+  const STEP_COLORS = ["indigo", "blue", "indigo", "emerald"];
   const color = STEP_COLORS[(Number(step) - 1) % STEP_COLORS.length];
   const bg: Record<string, string> = {
     indigo: "border-indigo-100 bg-indigo-50/50",
     blue: "border-indigo-100 bg-indigo-50/50",
-    violet: "border-violet-100 bg-violet-50/50",
     emerald: "border-emerald-100 bg-emerald-50/50",
   };
   const numBg: Record<string, string> = {
     indigo: "bg-indigo-600 text-white",
     blue: "bg-indigo-600 text-white",
-    violet: "bg-violet-600 text-white",
     emerald: "bg-emerald-600 text-white",
   };
   const btnPrimary: Record<string, string> = {
     indigo: "bg-indigo-600 hover:bg-indigo-700",
     blue: "bg-indigo-600 hover:bg-indigo-700",
-    violet: "bg-violet-600 hover:bg-violet-700",
     emerald: "bg-emerald-600 hover:bg-emerald-700",
   };
   return (

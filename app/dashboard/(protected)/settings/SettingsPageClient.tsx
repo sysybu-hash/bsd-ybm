@@ -70,7 +70,7 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
 const TAB_COLORS: Record<TabId, string> = {
   account: "text-indigo-600 border-indigo-600",
   erp:     "text-indigo-600 border-indigo-600",
-  crm:     "text-violet-600 border-violet-600",
+  crm:     "text-indigo-600 border-indigo-600",
   ai:      "text-emerald-600 border-emerald-600",
   billing: "text-rose-600 border-rose-600",
   cloud:   "text-sky-600 border-sky-600",
@@ -374,25 +374,23 @@ export default function SettingsPageClient({
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
 
         {/* ── Page hero ── */}
-        <div className="relative overflow-hidden border-b border-indigo-900/20 bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-5">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-8 end-20 h-32 w-32 rounded-full bg-indigo-400/10 blur-[50px]" />
-          </div>
+        <div className="relative overflow-hidden border-b border-gray-200 bg-gray-50 px-6 py-5">
+          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
           <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-400/20 text-indigo-200 ring-1 ring-indigo-400/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 shadow-sm">
                 <Settings size={18} />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">{currentTitle}</h3>
-                <p className="text-[11px] text-indigo-300/70">הגדרות המערכת והארגון</p>
+                <h3 className="text-lg font-black text-gray-900">{currentTitle}</h3>
+                <p className="text-[11px] text-gray-500">הגדרות המערכת והארגון</p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-indigo-900/40 transition hover:bg-indigo-400 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50"
             >
               <Save size={15} />
               {activeTab === "account"
@@ -729,7 +727,7 @@ export default function SettingsPageClient({
 
               <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-6">
                 <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-4">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><UserPlus size={14} /></span> ניהול צוות
+                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><UserPlus size={14} /></span> ניהול צוות
                 </h4>
                 <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                   <strong className="text-gray-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
@@ -792,7 +790,7 @@ export default function SettingsPageClient({
                   )}
                 </div>
 
-                <details className="mb-4 text-sm text-gray-600 bg-white/80 rounded-2xl border border-gray-100 px-4 py-3">
+                <details className="mb-4 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-600">
                   <summary className="cursor-pointer font-bold text-gray-800">
                     מה ההבדל בין תפקידים?
                   </summary>
@@ -819,7 +817,7 @@ export default function SettingsPageClient({
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="אימייל (Google)"
-                      className="flex-1 min-w-[200px] bg-white border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary-color,#3b82f6)] outline-none"
+                      className="flex-1 min-w-[200px] rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder:text-gray-400"
                       required
                     />
                     <select
@@ -835,7 +833,7 @@ export default function SettingsPageClient({
                     </select>
                     <button
                       type="submit"
-                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-600/20"
+                      className="rounded-2xl bg-indigo-600 px-8 py-3 font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
                     >
                       שייך לארגון
                     </button>
@@ -996,10 +994,10 @@ export default function SettingsPageClient({
                 </div>
               )}
               {activeTab === "crm" && (
-                <div className="flex items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50/50 p-4 text-sm text-gray-700">
-                  <Users size={16} className="text-violet-600 shrink-0" />
+                <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 text-sm text-gray-700">
+                  <Users size={16} className="text-indigo-600 shrink-0" />
                   <span>לקוחות ולידים —{" "}
-                  <Link href="/dashboard/crm" className="font-bold text-violet-700 underline">פתיחת CRM</Link>.</span>
+                  <Link href="/dashboard/crm" className="font-bold text-indigo-700 underline">פתיחת CRM</Link>.</span>
                 </div>
               )}
 

@@ -276,13 +276,13 @@ function AnimScanner({ step }: { step: number }) {
       {step === 0 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">העלאת מסמך</p>
-          <div className="rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50/50 p-5 text-center mb-3">
-            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100">
+          <div className="rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-5 text-center mb-3">
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
               <span className="text-2xl">📄</span>
             </div>
             <p className="text-[12px] font-black text-gray-700">גרור קובץ לכאן</p>
             <p className="text-[10px] text-gray-400 mt-1">PDF, JPG, PNG · עד 20MB</p>
-            <div className="mt-3 rounded-xl bg-violet-600 py-1.5 text-[11px] font-black text-white">
+            <div className="mt-3 rounded-xl bg-indigo-600 py-1.5 text-[11px] font-black text-white">
               בחר קובץ
             </div>
           </div>
@@ -299,7 +299,7 @@ function AnimScanner({ step }: { step: number }) {
       {/* Step 1: Scanning progress */}
       {step === 1 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-violet-600 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-3">
             סורק מסמך... 🔍
           </p>
           <div className="relative mb-3 overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-4">
@@ -310,11 +310,11 @@ function AnimScanner({ step }: { step: number }) {
               ))}
             </div>
             {/* Scan line animation */}
-            <div className="absolute inset-x-0 h-0.5 bg-gradient-to-l from-transparent via-violet-500 to-transparent opacity-90" style={{ animation: 'bsd-tut-scan-line 2s ease-in-out infinite', position: 'absolute' }} />
+            <div className="absolute inset-x-0 h-0.5 bg-gradient-to-l from-transparent via-indigo-500 to-transparent opacity-90" style={{ animation: 'bsd-tut-scan-line 2s ease-in-out infinite', position: 'absolute' }} />
           </div>
           <div className="space-y-1.5">
             {[
-              { label: "OCR טקסט", pct: 72, color: "bg-violet-500" },
+              { label: "OCR טקסט", pct: 72, color: "bg-indigo-500" },
               { label: "זיהוי שדות", pct: 45, color: "bg-indigo-500" },
               { label: "AI מיפוי", pct: 18, color: "bg-indigo-500" },
             ].map(({ label, pct, color }) => (
@@ -334,7 +334,7 @@ function AnimScanner({ step }: { step: number }) {
       {/* Step 2: AI extraction */}
       {step === 2 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-violet-600 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-3">
             AI מחלץ נתונים... 🤖
           </p>
           <div className="space-y-2">
@@ -453,7 +453,7 @@ export default function LandingTutorialSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6" dir="rtl">
         {/* Section header */}
         <div className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-violet-700">
+          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-indigo-700">
             ▶ הדגמות חיות
           </span>
           <h2 className="mt-4 text-3xl font-black text-gray-900 sm:text-4xl">
@@ -519,7 +519,7 @@ export default function LandingTutorialSection() {
 
           {/* Video 3 */}
           <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
-            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-violet-700 to-purple-700">
+            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-indigo-700 to-indigo-600">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔍</span>
                 <div>

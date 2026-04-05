@@ -107,7 +107,7 @@
 
   /* Dark hero card */
   .card-dark {
-    @apply rounded-2xl bg-gray-950 text-white overflow-hidden;
+    @apply overflow-hidden rounded-2xl bg-gray-900 text-white;
   }
 
   /* ── Buttons ── */
@@ -193,7 +193,6 @@
   .badge-orange  { @apply badge bg-orange-100 text-orange-800; }
   .badge-gray    { @apply badge bg-gray-100 text-gray-700; }
   .badge-indigo  { @apply badge bg-indigo-100 text-indigo-800; }
-  .badge-violet  { @apply badge bg-violet-100 text-violet-800; }
 
   /* ── Table ── */
   .data-table {

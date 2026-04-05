@@ -31,7 +31,7 @@ export default async function DashboardHomePage() {
   const stats = [
     {
       icon: Users,      label: "לקוחות CRM",   value: "—",  href: "/dashboard/business",
-      chipBg: "bg-violet-100", chipText: "text-violet-700", iconBg: "bg-violet-600",
+      chipBg: "bg-indigo-100", chipText: "text-indigo-700", iconBg: "bg-indigo-600",
     },
     {
       icon: ReceiptText, label: "חשבוניות ERP", value: "—",  href: "/dashboard/erp/invoice",
@@ -74,9 +74,9 @@ export default async function DashboardHomePage() {
       title: "מרכז עבודה",
       description: "ניהול כל המשימות, הלידים ותהליכי העבודה שלך.",
       badge: "מיקוד",
-      iconBg: "bg-violet-600",
-      badgeBg: "bg-violet-100 text-violet-700",
-      hoverBorder: "hover:border-violet-300",
+      iconBg: "bg-indigo-600",
+      badgeBg: "bg-indigo-100 text-indigo-700",
+      hoverBorder: "hover:border-indigo-300",
     },
     {
       href: "/dashboard/settings",

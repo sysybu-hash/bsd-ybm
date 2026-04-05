@@ -67,7 +67,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
     <Dialog open={open} onClose={onClose} className="relative z-[200]">
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[201] bg-gray-900/30 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
+        className="fixed inset-0 z-[201] bg-gray-900/35 transition duration-300 ease-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 z-[202] overflow-hidden" dir={dir}>

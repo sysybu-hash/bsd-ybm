@@ -59,7 +59,7 @@ export default function ScanUsageProgress({
           </div>
           <div className="h-3 rounded-full bg-gray-100 overflow-hidden ring-1 ring-gray-200/80">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-600 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-500 transition-all duration-500"
               style={{ width: `${premBar}%` }}
             />
           </div>

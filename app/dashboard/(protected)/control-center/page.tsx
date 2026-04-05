@@ -202,9 +202,9 @@ export default async function ControlCenterPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 opacity-70">ארגון</p>
             <p className="mt-1.5 text-lg font-black text-indigo-700">{org?.name ?? "לא נמצא"}</p>
           </div>
-          <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-violet-500 opacity-70">מנוי</p>
-            <p className="mt-1.5 text-lg font-black text-violet-700">{org?.subscriptionTier ?? "-"}</p>
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 opacity-70">מנוי</p>
+            <p className="mt-1.5 text-lg font-black text-indigo-700">{org?.subscriptionTier ?? "-"}</p>
           </div>
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 opacity-70">משתמשים פעילים</p>
@@ -251,12 +251,12 @@ export default async function ControlCenterPage() {
               accent="rose"
             />
             <QuickPanel
-              icon={<Users size={15} className="text-violet-600" />}
+              icon={<Users size={15} className="text-indigo-600" />}
               title="צוות והרשאות"
               description="אישור משתמשים וניהול תפקידים."
               href="/dashboard/settings?tab=account"
               cta="פתח"
-              accent="violet"
+              accent="indigo"
             />
           </div>
         </article>
@@ -305,7 +305,7 @@ export default async function ControlCenterPage() {
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
             <QuickLink href="/dashboard/settings" title="הגדרות עסק" subtitle="שם עסק, מס ואינטגרציות" color="indigo" />
-            <QuickLink href="/dashboard/crm" title="CRM" subtitle="לקוחות ופרויקטים" color="violet" />
+            <QuickLink href="/dashboard/crm" title="CRM" subtitle="לקוחות ופרויקטים" color="indigo" />
             <QuickLink href="/dashboard/erp/invoice" title="חשבוניות" subtitle="הפקה ותשלומים" color="blue" />
             {ownerMode ? (
               <QuickLink href="/dashboard/admin" title="חדר מצב" subtitle="זמין לבעלים בלבד" color="amber" />
@@ -345,9 +345,9 @@ function QuickPanel({
   description: string;
   href: string;
   cta: string;
-  accent?: "rose" | "violet" | "slate";
+  accent?: "rose" | "indigo" | "slate";
 }) {
-  const borderClass = accent === "rose" ? "border-rose-100 bg-rose-50/50" : accent === "violet" ? "border-violet-100 bg-violet-50/50" : "border-gray-100 bg-gray-50";
+  const borderClass = accent === "rose" ? "border-rose-100 bg-rose-50/50" : accent === "indigo" ? "border-indigo-100 bg-indigo-50/50" : "border-gray-100 bg-gray-50";
   return (
     <div className={`rounded-xl border p-3 ${borderClass}`}>
       <p className="inline-flex items-center gap-2 text-sm font-black text-gray-900">{icon}{title}</p>
@@ -377,7 +377,6 @@ function MetricChip({
 
 const QUICK_LINK_COLORS: Record<string, string> = {
   indigo: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
-  violet: "border-violet-100 hover:border-violet-300 hover:bg-violet-50/40",
   blue: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
   amber: "border-amber-100 hover:border-amber-300 hover:bg-amber-50/40",
   emerald: "border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/40",
