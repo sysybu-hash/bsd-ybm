@@ -46,7 +46,7 @@ type ContactRow = {
   project: { id: string; name: string } | null;
   createdAt: string;
   issuedDocuments?: InvoiceRow[];
-  erp?: ErpSummary;
+  erp: ErpSummary;
 };
 
 type ProjectRow = {
@@ -157,9 +157,14 @@ function HubContent(props: Props) {
 
   const wonContacts = contacts.filter((c) => c.status === "CLOSED_WON" && !(c.erp?.invoiceCount));
 
+  const recentIssuedDocs = contacts
+    .flatMap((c) => c.issuedDocuments ?? [])
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 6);
+
   /* ── Tab definitions ── */
   const TABS: { key: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
-    { key: "overview", icon: <LayoutDashboard size={15} />, label: "סקירה" },
+    { key: "overview", icon: <LayoutDashboard size={15} />, label: "מבט מאוחד" },
     { key: "erp", icon: <FileText size={15} />, label: "מסמכים & ERP", badge: docs.length },
     { key: "crm", icon: <Users size={15} />, label: "לקוחות & CRM", badge: contacts.length },
   ];
@@ -210,11 +215,36 @@ function HubContent(props: Props) {
       {/* ══════════ OVERVIEW TAB ══════════ */}
       {tab === "overview" && (
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-6 space-y-6">
-          <div>
-            <h1 className="text-2xl font-black text-slate-900">מרכז עסקי</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
-              תמונת מצב מאוחדת — ERP ו-CRM בחלון אחד
-            </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-black text-slate-900">מרכז עסקי</h1>
+              <p className="text-sm text-slate-500 mt-0.5 flex items-center gap-1.5">
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                CRM ו-ERP מסונכרנים — מבט מאוחד בזמן אמת
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/dashboard/erp/invoice"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm"
+              >
+                <ReceiptText size={14} /> הנפק חשבונית
+              </Link>
+              <button
+                type="button"
+                onClick={() => setTab("erp")}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-300 bg-cyan-50 px-4 py-2 text-sm font-bold text-cyan-800 hover:bg-cyan-100 transition"
+              >
+                <ScanLine size={14} /> סרוק מסמך
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("crm")}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-bold text-violet-800 hover:bg-violet-100 transition"
+              >
+                <Plus size={14} /> לקוח חדש
+              </button>
+            </div>
           </div>
 
           {/* KPI Grid */}
@@ -303,30 +333,6 @@ function HubContent(props: Props) {
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/dashboard/erp/invoice"
-              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm"
-            >
-              <ReceiptText size={15} /> הנפק חשבונית
-            </Link>
-            <button
-              type="button"
-              onClick={() => setTab("erp")}
-              className="inline-flex items-center gap-2 rounded-2xl border border-cyan-300 bg-cyan-50 px-4 py-2.5 text-sm font-bold text-cyan-800 hover:bg-cyan-100 transition"
-            >
-              <ScanLine size={15} /> סרוק מסמך
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("crm")}
-              className="inline-flex items-center gap-2 rounded-2xl border border-violet-300 bg-violet-50 px-4 py-2.5 text-sm font-bold text-violet-800 hover:bg-violet-100 transition"
-            >
-              <Plus size={15} /> לקוח חדש
-            </button>
-          </div>
-
           {/* Sync Alert: won deals without invoice */}
           {wonContacts.length > 0 && (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 flex items-center gap-4">
@@ -345,7 +351,7 @@ function HubContent(props: Props) {
                 {wonContacts.slice(0, 3).map((c) => (
                   <Link
                     key={c.id}
-                    href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                    href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                     className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition whitespace-nowrap"
                   >
                     <ReceiptText size={11} /> {c.name}
@@ -364,121 +370,271 @@ function HubContent(props: Props) {
             </div>
           )}
 
-          {/* Recent Activity grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Recent Documents */}
-            <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-                <h2 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                  <FileText size={14} className="text-indigo-500" />
-                  מסמכים אחרונים
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setTab("erp")}
-                  className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
-                >
-                  הכל <ArrowUpRight size={11} />
-                </button>
-              </div>
-              <div className="divide-y divide-slate-50">
-                {recentDocs.length === 0 ? (
-                  <p className="px-5 py-8 text-center text-sm text-slate-400">
-                    אין מסמכים עדיין
-                  </p>
-                ) : (
-                  recentDocs.map((d) => (
-                    <div key={d.id} className="flex items-center justify-between px-5 py-3">
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 truncate max-w-[180px]">
-                          {d.fileName}
-                        </p>
-                        <p className="text-[10px] text-slate-400">
-                          {d.type} · {fmtDate(d.createdAt)}
-                        </p>
-                      </div>
-                      <span
-                        className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${
-                          d.status === "DONE"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-slate-100 text-slate-500"
-                        }`}
-                      >
-                        {d.status}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+          {/* ── Synergy main grid: CRM × ERP ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-            {/* Recent Contacts */}
-            <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+            {/* LEFT 2/3: unified CRM × ERP contacts table */}
+            <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100" style={{background: 'linear-gradient(to right, #f5f3ff80, #eef2ff80)'}}>
                 <h2 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                  <Users size={14} className="text-violet-500" />
-                  לקוחות אחרונים
+                  <Users size={13} className="text-violet-500" />
+                  <span className="text-violet-700">CRM</span>
+                  <span className="text-slate-300 font-normal text-base">×</span>
+                  <FileText size={13} className="text-indigo-500" />
+                  <span className="text-indigo-700">ERP</span>
+                  <span className="text-[11px] text-slate-400 font-normal hidden sm:inline">— מצב חיוב לפי לקוח</span>
                 </h2>
                 <button
                   type="button"
                   onClick={() => setTab("crm")}
                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                 >
-                  הכל <ArrowUpRight size={11} />
+                  ניהול מלא <ArrowUpRight size={11} />
                 </button>
               </div>
-              <div className="divide-y divide-slate-50">
-                {recentContacts.length === 0 ? (
-                  <p className="px-5 py-8 text-center text-sm text-slate-400">
-                    אין לקוחות עדיין
-                  </p>
-                ) : (
-                  recentContacts.map((c) => (
-                    <div key={c.id} className="flex items-center justify-between px-5 py-3">
-                      <div>
-                        <p className="text-sm font-bold text-slate-900">{c.name}</p>
-                        <p className="text-[10px] text-slate-400">
-                          {c.project?.name ?? "ללא פרויקט"} · {fmtDate(c.createdAt)}
-                        </p>
-                        {/* ERP sync data */}
-                        {(c.erp?.invoiceCount ?? 0) > 0 && (
-                          <p className="text-[10px] font-black text-indigo-600 mt-0.5">
-                            {c.erp!.invoiceCount} חשבוניות ·{" "}
-                            {c.erp!.totalPending > 0 ? (
-                              <span className="text-amber-600">פתוח: {fmtMoney(c.erp!.totalPending)}</span>
-                            ) : (
-                              <span className="text-emerald-600">שולם הכל ✓</span>
+              {contacts.length === 0 ? (
+                <div className="px-5 py-14 text-center">
+                  <Users size={32} className="mx-auto text-slate-200 mb-3" />
+                  <p className="text-sm text-slate-400">אין לקוחות עדיין</p>
+                  <button
+                    type="button"
+                    onClick={() => setTab("crm")}
+                    className="mt-3 text-xs font-bold text-blue-600 hover:underline"
+                  >
+                    + הוסף לקוח ראשון
+                  </button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-100 bg-slate-50/70 text-right">
+                        <th className="px-4 py-2.5 text-[11px] font-black text-slate-500">לקוח</th>
+                        <th className="px-4 py-2.5 text-[11px] font-black text-slate-500">סטטוס CRM</th>
+                        <th className="px-4 py-2.5 text-[11px] font-black text-slate-500 hidden md:table-cell">שווי עסקה</th>
+                        <th className="px-4 py-2.5 text-[11px] font-black text-indigo-600">ERP — חויב</th>
+                        <th className="px-4 py-2.5 text-[11px] font-black text-amber-600">פתוח לתשלום</th>
+                        <th className="px-3 py-2.5"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {contacts.slice(0, 12).map((c) => (
+                        <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="px-4 py-2.5">
+                            <p className="font-bold text-slate-900 leading-tight">{c.name}</p>
+                            {c.project && (
+                              <p className="text-[10px] text-slate-400">{c.project.name}</p>
                             )}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {c.value != null && (
-                          <span className="text-xs font-black text-emerald-600">
-                            {fmtMoney(c.value)}
-                          </span>
-                        )}
-                        <span
-                          className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${
-                            STATUS_BADGE[c.status] ?? "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {STATUS_LABEL[c.status] ?? c.status}
-                        </span>
-                        {c.status === "CLOSED_WON" && (
-                          <Link
-                            href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
-                            className="rounded-lg bg-indigo-600 px-2 py-1 text-[10px] font-black text-white hover:bg-indigo-700 transition whitespace-nowrap"
-                            title="הנפק חשבונית"
-                          >
-                            <ReceiptText size={10} />
-                          </Link>
-                        )}
-                      </div>
+                          </td>
+                          <td className="px-4 py-2.5">
+                            <span
+                              className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${
+                                STATUS_BADGE[c.status] ?? "bg-slate-100 text-slate-500"
+                              }`}
+                            >
+                              {STATUS_LABEL[c.status] ?? c.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2.5 hidden md:table-cell">
+                            {c.value != null ? (
+                              <span className="text-sm font-black text-emerald-600">
+                                {fmtMoney(c.value)}
+                              </span>
+                            ) : (
+                              <span className="text-slate-300">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5">
+                            {c.erp.invoiceCount > 0 ? (
+                              <div>
+                                <p className="text-sm font-black text-indigo-700">
+                                  {fmtMoney(c.erp.totalBilled)}
+                                </p>
+                                <p className="text-[10px] text-slate-400">
+                                  {c.erp.invoiceCount} חשבוניות
+                                </p>
+                              </div>
+                            ) : (
+                              <span className="text-[11px] text-slate-300">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5">
+                            {c.erp.invoiceCount > 0 ? (
+                              c.erp.totalPending > 0 ? (
+                                <span className="text-sm font-black text-amber-600">
+                                  {fmtMoney(c.erp.totalPending)}
+                                </span>
+                              ) : (
+                                <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-0.5">
+                                  <CheckCircle2 size={10} /> שולם
+                                </span>
+                              )
+                            ) : (
+                              <span className="text-slate-300">—</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            {c.status === "CLOSED_WON" && c.erp.invoiceCount === 0 && (
+                              <Link
+                                href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
+                                className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-2.5 py-1.5 text-[10px] font-black text-white hover:bg-emerald-700 transition whitespace-nowrap shadow-sm"
+                                title="הנפק חשבונית"
+                              >
+                                <ReceiptText size={10} /> הנפק
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {contacts.length > 12 && (
+                    <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 text-right">
+                      <button
+                        type="button"
+                        onClick={() => setTab("crm")}
+                        className="text-xs font-bold text-blue-600 hover:underline"
+                      >
+                        + עוד {contacts.length - 12} לקוחות...
+                      </button>
                     </div>
-                  ))
-                )}
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT 1/3: ERP financial snapshot */}
+            <div className="space-y-4">
+              {/* Financial summary */}
+              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                <div
+                  className="px-5 py-3.5 border-b border-slate-100"
+                  style={{background: 'linear-gradient(to right, #eef2ff80, #eff6ff80)'}}
+                >
+                  <h2 className="font-black text-slate-900 text-sm flex items-center gap-2">
+                    <TrendingUp size={13} className="text-indigo-500" />
+                    תמונה פיננסית
+                  </h2>
+                </div>
+                <div className="p-4 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">הכנסות (ERP)</span>
+                    <span className="text-sm font-black text-emerald-600">
+                      {income > 0 ? fmtMoney(income) : "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">הוצאות (ERP)</span>
+                    <span className="text-sm font-black text-rose-600">
+                      {expenses > 0 ? fmtMoney(expenses) : "—"}
+                    </span>
+                  </div>
+                  <div className="h-px bg-slate-100" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700">רווח גולמי</span>
+                    <span
+                      className={`text-sm font-black ${
+                        profit >= 0 ? "text-blue-700" : "text-orange-700"
+                      }`}
+                    >
+                      {income > 0 || expenses > 0 ? fmtMoney(profit) : "—"}
+                    </span>
+                  </div>
+                  <div className="h-px bg-slate-100" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">פייפליין CRM</span>
+                    <span className="text-sm font-black text-violet-600">
+                      {pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}
+                    </span>
+                  </div>
+                  {winRate != null && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-500">אחוז הצלחה</span>
+                      <span className="text-sm font-black text-sky-600">{winRate}%</span>
+                    </div>
+                  )}
+                </div>
+                <div className="px-4 pb-4">
+                  <button
+                    type="button"
+                    onClick={() => setTab("erp")}
+                    className="w-full rounded-xl border border-indigo-200 bg-indigo-50 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition flex items-center justify-center gap-1.5"
+                  >
+                    <FileText size={12} /> פתח ERP מלא
+                  </button>
+                </div>
               </div>
+
+              {/* Recent issued invoices */}
+              {recentIssuedDocs.length > 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                    <h2 className="font-black text-slate-900 text-sm flex items-center gap-2">
+                      <ReceiptText size={13} className="text-indigo-500" />
+                      חשבוניות אחרונות
+                    </h2>
+                    <Link
+                      href="/dashboard/erp/invoice"
+                      className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+                    >
+                      הנפק <ArrowUpRight size={11} />
+                    </Link>
+                  </div>
+                  <div className="divide-y divide-slate-50">
+                    {recentIssuedDocs.map((d) => (
+                      <div key={d.id} className="px-5 py-2.5 flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-slate-800 truncate max-w-[130px]">
+                            {d.clientName}
+                          </p>
+                          <p className="text-[10px] text-slate-400">{fmtDate(d.createdAt)}</p>
+                        </div>
+                        <div className="text-left">
+                          <p className="text-xs font-black text-indigo-700">{fmtMoney(d.total)}</p>
+                          <span
+                            className={`text-[10px] font-bold ${
+                              d.status === "PAID" ? "text-emerald-600" : "text-amber-600"
+                            }`}
+                          >
+                            {d.status === "PAID" ? "שולם ✓" : "ממתין"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-6 text-center">
+                  <ReceiptText size={24} className="mx-auto text-slate-200 mb-2" />
+                  <p className="text-xs text-slate-400">אין חשבוניות עדיין</p>
+                  <Link
+                    href="/dashboard/erp/invoice"
+                    className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline"
+                  >
+                    <ReceiptText size={11} /> הנפק ראשונה
+                  </Link>
+                </div>
+              )}
+
+              {/* Scanned expense docs summary */}
+              {docs.length > 0 && (
+                <div
+                  className="rounded-2xl border border-slate-200 bg-white p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition"
+                  onClick={() => setTab("erp")}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && setTab("erp")}
+                >
+                  <div className="flex items-center gap-2">
+                    <ScanLine size={14} className="text-cyan-500" />
+                    <div>
+                      <p className="text-xs font-black text-slate-700">{docs.length} מסמכים סרוקים</p>
+                      <p className="text-[10px] text-slate-400">הוצאות ERP</p>
+                    </div>
+                  </div>
+                  <ArrowUpRight size={14} className="text-slate-400" />
+                </div>
+              )}
             </div>
           </div>
         </div>
