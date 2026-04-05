@@ -199,7 +199,7 @@ const TABS = [
   { id: "settings", label: "הגדרות", Icon: Settings },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
-type ReportType = "attendance" | "task-entries" | "summary" | "project-cost";
+type ReportType = "attendance" | "task-entries" | "summary" | "project-cost" | "locations";
 
 export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }) {
   const [activeTab, setActiveTab] = useState<TabId>("employees");
@@ -280,6 +280,8 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   const [reportLoading, setReportLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [reportGenerated, setReportGenerated] = useState(false);
+  const [reportLocationsMode, setReportLocationsMode] = useState<"daily" | "monthly">("daily");
+  const [reportDate, setReportDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
 
   // ── Load helpers ──
   const loadEmployees = useCallback(async () => {
@@ -468,8 +470,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
   const generateReport = useCallback(async () => {
     setReportLoading(true); setReportError(null); setReportGenerated(false);
-    const from = Math.floor(new Date(reportFrom).getTime() / 1000);
-    const to = Math.floor(new Date(reportTo + "T23:59:59").getTime() / 1000);
+    // For locations daily mode, use reportDate as both from and to
+    const effectiveFrom = (reportType === "locations" && reportLocationsMode === "daily") ? reportDate : reportFrom;
+    const effectiveTo   = (reportType === "locations" && reportLocationsMode === "daily") ? reportDate : reportTo;
+    const from = Math.floor(new Date(effectiveFrom).getTime() / 1000);
+    const to = Math.floor(new Date(effectiveTo + "T23:59:59").getTime() / 1000);
     const filterEmpIds = new Set<number>();
     if (reportEmployeeId) {
       filterEmpIds.add(parseInt(reportEmployeeId));
@@ -482,7 +487,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
         selectedZone.assignedEmployeeIds.forEach(id => filterEmpIds.add(id));
       }
     }
-    if (reportType === "attendance" || reportType === "summary" || reportType === "project-cost") {
+    if (reportType === "attendance" || reportType === "summary" || reportType === "project-cost" || reportType === "locations") {
       const r = await meckanoFetch<MeckanoAttendance[]>("time-entry", { from: String(from), to: String(to) });
       if (r.status && r.data) {
         let data = r.data;
@@ -500,11 +505,13 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     setReportLoading(false);
     setReportGenerated(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reportType, reportFrom, reportTo, reportEmployeeId, reportDeptId, reportZoneId, employees, zones]);
+  }, [reportType, reportLocationsMode, reportDate, reportFrom, reportTo, reportEmployeeId, reportDeptId, reportZoneId, employees, zones]);
 
   const exportCsv = () => {
     const zoneName = reportZoneId ? (zones.find(z => z.id === reportZoneId)?.name ?? "") : "";
-    const header = `# דוח מקאנו · ${reportType === "attendance" ? "נוכחות" : reportType === "task-entries" ? "משימות" : reportType === "project-cost" ? "עלויות פרויקט" : "סיכום שעות"} · ${reportFrom} – ${reportTo}${zoneName ? ` · אזור: ${zoneName}` : ""}\n`;
+    const periodLabel = (reportType === "locations" && reportLocationsMode === "daily") ? reportDate : `${reportFrom} – ${reportTo}`;
+    const typeLabel = reportType === "attendance" ? "נוכחות" : reportType === "task-entries" ? "משימות" : reportType === "project-cost" ? "עלויות פרויקט" : reportType === "locations" ? `דוח מיקומים (${reportLocationsMode === "daily" ? "יומי" : "חודשי"})` : "סיכום שעות";
+    const header = `# דוח מקאנו · ${typeLabel} · ${periodLabel}${zoneName ? ` · אזור: ${zoneName}` : ""}\n`;
     let body = "";
     if (reportType === "attendance") {
       body = "עובד,מס׳,תאריך,שעה,כניסה/יציאה\n";
@@ -542,6 +549,37 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
         const hrs = minutes / 60;
         body += `"${sorted[0].userName ?? sorted[0].userId}","${sorted[0].workerTag ?? ""}","${days}","${hrs.toFixed(1)}","${rate.toFixed(2)}","${(hrs * rate).toFixed(2)}"\n`;
       });
+    } else if (reportType === "locations") {
+      // Build empId→zone map
+      const empZoneMap: Record<number, string> = {};
+      zones.forEach(z => { (z.assignedEmployeeIds ?? []).forEach(eid => { if (!empZoneMap[eid]) empZoneMap[eid] = z.name; }); });
+      body = "אזור/פרויקט,עובד,מס׳,תאריך,כניסה,יציאה,שעות\n";
+      // Group by zone→employee→date
+      const byZone: Record<string, Record<number, MeckanoAttendance[]>> = {};
+      reportAttendance.forEach(row => {
+        const zn = empZoneMap[row.userId] ?? "ללא אזור";
+        if (!byZone[zn]) byZone[zn] = {};
+        if (!byZone[zn][row.userId]) byZone[zn][row.userId] = [];
+        byZone[zn][row.userId].push(row);
+      });
+      Object.entries(byZone).forEach(([zn, empMap]) => {
+        Object.values(empMap).forEach(rows => {
+          const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+          const byDay: Record<string, MeckanoAttendance[]> = {};
+          sorted.forEach(r => { const d = r.dateStr ?? tsToDate(r.ts); if (!byDay[d]) byDay[d] = []; byDay[d].push(r); });
+          Object.entries(byDay).forEach(([d, dayRows]) => {
+            const ins = dayRows.filter(r => !r.isOut); const outs = dayRows.filter(r => r.isOut);
+            const inTime = ins[0] ? (ins[0].timeStr ?? tsToTime(ins[0].ts)) : "";
+            const outTime = outs[outs.length - 1] ? (outs[outs.length - 1].timeStr ?? tsToTime(outs[outs.length - 1].ts)) : "";
+            let mins = 0; let pendingIn: number | null = null;
+            dayRows.sort((a, b) => a.ts - b.ts).forEach(r => {
+              if (!r.isOut && pendingIn === null) pendingIn = r.ts;
+              else if (r.isOut && pendingIn !== null) { mins += Math.round((r.ts - pendingIn) / 60); pendingIn = null; }
+            });
+            body += `"${zn}","${sorted[0].userName ?? sorted[0].userId}","${sorted[0].workerTag ?? ""}","${d}","${inTime}","${outTime}","${(mins / 60).toFixed(2)}"\n`;
+          });
+        });
+      });
     } else {
       body = "עובד,משימה,תאריך,משך (דק׳),הערה\n";
       reportTaskEntries.forEach(row => {
@@ -551,7 +589,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     const blob = new Blob(["\uFEFF" + header + body], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `meckano-${reportType}-${reportFrom}-${reportTo}.csv`; a.click();
+    a.href = url; a.download = `meckano-${reportType}-${periodLabel.replace(" – ", "-")}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -1391,6 +1429,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       { id: "summary" as ReportType, label: "סיכום שעות", desc: "שעות מחושבות לפי עובד" },
                       { id: "task-entries" as ReportType, label: "דיווח משימות", desc: "דיווח שעות לפי משימה" },
                       { id: "project-cost" as ReportType, label: "עלויות פרויקט", desc: "שעות × תעריף לפי עובד" },
+                      { id: "locations" as ReportType, label: "דוח מיקומים", desc: "נוכחות מקובצת לפי אזור" },
                     ]).map(({ id, label, desc }) => (
                       <button
                         key={id}
@@ -1407,7 +1446,40 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </div>
                 </div>
 
+                {/* Daily/Monthly toggle for locations report */}
+                {reportType === "locations" && (
+                  <div>
+                    <p className="text-xs font-black text-slate-600 mb-2">תצוגה</p>
+                    <div className="inline-flex rounded-xl border border-slate-200 bg-white overflow-hidden">
+                      {(["daily", "monthly"] as const).map(mode => (
+                        <button
+                          key={mode}
+                          type="button"
+                          onClick={() => { setReportLocationsMode(mode); setReportGenerated(false); }}
+                          className={`px-5 py-2 text-xs font-black transition ${
+                            reportLocationsMode === mode ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          {mode === "daily" ? "יומי" : "חודשי"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Date range */}
+                {reportType === "locations" && reportLocationsMode === "daily" ? (
+                  <div className="flex flex-wrap items-end gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">תאריך</label>
+                      <input type="date" value={reportDate} onChange={e => setReportDate(e.target.value)} className={inputCls} />
+                    </div>
+                    <div className="flex flex-wrap gap-2 items-end pb-0.5">
+                      <button type="button" onClick={() => { const d = new Date(); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition">היום</button>
+                      <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition">אתמול</button>
+                    </div>
+                  </div>
+                ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1">מתאריך</label>
@@ -1432,6 +1504,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     ))}
                   </div>
                 </div>
+                )}
 
                 {/* Filters */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1702,6 +1775,160 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : reportGenerated && reportType === "locations" && reportAttendance.length === 0 ? (
+                <EmptyState message="אין נתוני נוכחות בטווח שנבחר" />
+              ) : reportGenerated && reportType === "locations" && reportAttendance.length > 0 ? (
+                (() => {
+                  // Build empId→zone map (first matching zone per employee)
+                  const empZoneMap: Record<number, { id: string; name: string; managerName?: string | null }> = {};
+                  zones.forEach(z => { (z.assignedEmployeeIds ?? []).forEach(eid => { if (!empZoneMap[eid]) empZoneMap[eid] = { id: z.id, name: z.name, managerName: z.managerName }; }); });
+
+                  // Group by zone → employee → date → rows
+                  type DayEntry = { date: string; inTime: string; outTime: string; hours: number; raw: MeckanoAttendance[] };
+                  type EmpSection = { userId: number; name: string; tag: string; days: DayEntry[]; totalHours: number };
+                  type ZoneSection = { zoneId: string; zoneName: string; managerName?: string | null; employees: EmpSection[]; totalHours: number };
+
+                  const zoneMap: Record<string, { emps: Record<number, MeckanoAttendance[]>; zoneId: string; zoneName: string; managerName?: string | null }> = {};
+                  reportAttendance.forEach(row => {
+                    const zInfo = empZoneMap[row.userId] ?? { id: "none", name: "ללא אזור" };
+                    if (!zoneMap[zInfo.id]) zoneMap[zInfo.id] = { zoneId: zInfo.id, zoneName: zInfo.name, managerName: zInfo.managerName, emps: {} };
+                    if (!zoneMap[zInfo.id].emps[row.userId]) zoneMap[zInfo.id].emps[row.userId] = [];
+                    zoneMap[zInfo.id].emps[row.userId].push(row);
+                  });
+
+                  const zoneSections: ZoneSection[] = Object.values(zoneMap).map(zs => {
+                    const employees: EmpSection[] = Object.entries(zs.emps).map(([, rows]) => {
+                      const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+                      const name = sorted[0].userName ?? `#${sorted[0].userId}`;
+                      const tag = sorted[0].workerTag ?? "";
+                      const byDay: Record<string, MeckanoAttendance[]> = {};
+                      sorted.forEach(r => { const d = r.dateStr ?? tsToDate(r.ts); if (!byDay[d]) byDay[d] = []; byDay[d].push(r); });
+                      const days: DayEntry[] = Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b)).map(([date, dayRows]) => {
+                        const ins = dayRows.filter(r => !r.isOut); const outs = dayRows.filter(r => r.isOut);
+                        const inTime = ins[0] ? (ins[0].timeStr ?? tsToTime(ins[0].ts)) : "—";
+                        const outTime = outs[outs.length - 1] ? (outs[outs.length - 1].timeStr ?? tsToTime(outs[outs.length - 1].ts)) : "—";
+                        let mins = 0; let pendingIn: number | null = null;
+                        [...dayRows].sort((a, b) => a.ts - b.ts).forEach(r => {
+                          if (!r.isOut && pendingIn === null) pendingIn = r.ts;
+                          else if (r.isOut && pendingIn !== null) { mins += Math.round((r.ts - pendingIn) / 60); pendingIn = null; }
+                        });
+                        return { date, inTime, outTime, hours: mins / 60, raw: dayRows };
+                      });
+                      const totalHours = days.reduce((s, d) => s + d.hours, 0);
+                      return { userId: sorted[0].userId, name, tag, days, totalHours };
+                    }).sort((a, b) => a.name.localeCompare(b.name, "he"));
+                    const totalHours = employees.reduce((s, e) => s + e.totalHours, 0);
+                    return { zoneId: zs.zoneId, zoneName: zs.zoneName, managerName: zs.managerName, employees, totalHours };
+                  }).sort((a, b) => a.zoneName.localeCompare(b.zoneName, "he"));
+
+                  const grandTotal = zoneSections.reduce((s, z) => s + z.totalHours, 0);
+                  const periodLabel = reportLocationsMode === "daily" ? reportDate : `${reportFrom} – ${reportTo}`;
+
+                  return (
+                    <div className="space-y-4">
+                      {/* Header bar */}
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <p className="text-sm text-slate-500">
+                          {reportLocationsMode === "daily" ? `דוח יומי · ${new Date(reportDate).toLocaleDateString("he-IL", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}` : `דוח חודשי · ${periodLabel}`}
+                          {" · "}{zoneSections.length} אזורים · {zoneSections.reduce((s, z) => s + z.employees.length, 0)} עובדים
+                        </p>
+                        <div className="flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2">
+                          <span className="text-xs text-blue-600 font-bold">סה״כ שעות:</span>
+                          <span className="text-lg font-black text-blue-700">{grandTotal.toFixed(1)}</span>
+                        </div>
+                      </div>
+
+                      {/* Zone sections */}
+                      {zoneSections.map(zs => (
+                        <div key={zs.zoneId} className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                          {/* Zone header */}
+                          <div className="flex items-center justify-between gap-3 bg-slate-800 px-5 py-3">
+                            <div className="flex items-center gap-2">
+                              <Globe size={14} className="text-slate-300 shrink-0" />
+                              <span className="font-black text-white text-sm">{zs.zoneName}</span>
+                              {zs.managerName && <span className="text-xs text-slate-400">· מנהל: {zs.managerName}</span>}
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-slate-300">
+                              <span>{zs.employees.length} עובדים</span>
+                              <span className="font-black text-white">{zs.totalHours.toFixed(1)} ש׳</span>
+                            </div>
+                          </div>
+
+                          {/* Employees */}
+                          {zs.employees.map((emp, ei) => (
+                            <div key={emp.userId} className={ei > 0 ? "border-t border-slate-100" : ""}>
+                              {/* Employee sub-header */}
+                              <div className="flex items-center gap-3 bg-slate-50 px-5 py-2 border-b border-slate-100">
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-black">
+                                  {(emp.name[0] ?? "?").toUpperCase()}
+                                </div>
+                                <span className="font-bold text-slate-900 text-sm">{emp.name}</span>
+                                {emp.tag && <span className="text-xs text-slate-400 font-mono">{emp.tag}</span>}
+                                <span className="mr-auto text-xs text-slate-500">{emp.days.length} ימים · <strong className="text-blue-600">{emp.totalHours.toFixed(1)} ש׳</strong></span>
+                              </div>
+
+                              {/* Day rows */}
+                              <table className="w-full text-sm">
+                                <thead className="bg-white border-b border-slate-50">
+                                  <tr>
+                                    {(reportLocationsMode === "monthly" ? ["תאריך", "שעת כניסה", "שעת יציאה", "שעות"] : ["שעת כניסה", "שעת יציאה", "שעות"]).map(h => (
+                                      <th key={h} className="px-5 py-2 text-right text-xs font-bold text-slate-400">{h}</th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                  {emp.days.map(day => (
+                                    <tr key={day.date} className="hover:bg-blue-50/30 transition">
+                                      {reportLocationsMode === "monthly" && (
+                                        <td className="px-5 py-2.5 text-slate-600 text-xs font-mono">{day.date}</td>
+                                      )}
+                                      <td className="px-5 py-2.5">
+                                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                          {day.inTime}
+                                        </span>
+                                      </td>
+                                      <td className="px-5 py-2.5">
+                                        {day.outTime !== "—" ? (
+                                          <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-orange-500 shrink-0" />
+                                            {day.outTime}
+                                          </span>
+                                        ) : <span className="text-xs text-slate-400">—</span>}
+                                      </td>
+                                      <td className="px-5 py-2.5 font-black text-blue-600 text-sm">
+                                        {day.hours > 0 ? day.hours.toFixed(2) : <span className="text-slate-400 font-normal text-xs">—</span>}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                  {/* Employee total row (monthly only) */}
+                                  {reportLocationsMode === "monthly" && emp.days.length > 1 && (
+                                    <tr className="bg-slate-50">
+                                      <td className="px-5 py-2 text-xs font-black text-slate-600" colSpan={3}>סה״כ עובד</td>
+                                      <td className="px-5 py-2 font-black text-blue-700">{emp.totalHours.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          ))}
+
+                          {/* Zone total footer */}
+                          <div className="flex items-center justify-between px-5 py-2.5 bg-slate-100 border-t border-slate-200">
+                            <span className="text-xs font-black text-slate-600">סה״כ אזור</span>
+                            <span className="font-black text-blue-700">{zs.totalHours.toFixed(2)} שעות</span>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Grand total */}
+                      <div className="rounded-2xl border border-blue-300 bg-blue-600 px-6 py-4 flex items-center justify-between">
+                        <span className="font-black text-white">סה״כ כללי — כל האזורים</span>
+                        <span className="text-2xl font-black text-white">{grandTotal.toFixed(2)} שעות</span>
                       </div>
                     </div>
                   );
