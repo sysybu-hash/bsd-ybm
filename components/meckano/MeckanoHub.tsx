@@ -187,9 +187,11 @@ const TABS = [
   { id: "live-map", label: "מפה חיה", Icon: Activity },
   { id: "tasks", label: "משימות", Icon: CheckSquare },
   { id: "task-entries", label: "דיווח משימות", Icon: BarChart2 },
+  { id: "reports", label: "דוחות", Icon: FileText },
   { id: "settings", label: "הגדרות", Icon: Settings },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
+type ReportType = "attendance" | "task-entries" | "summary";
 
 export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }) {
   const [activeTab, setActiveTab] = useState<TabId>("employees");
@@ -252,6 +254,21 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   const [showAddZone, setShowAddZone] = useState(false);
   const [newZone, setNewZone] = useState({ name: "", address: "", description: "", radius: "150" });
   const [addingZone, setAddingZone] = useState(false);
+
+  // ── Reports ──
+  const [reportType, setReportType] = useState<ReportType>("attendance");
+  const [reportFrom, setReportFrom] = useState<string>(() => {
+    const d = new Date(); d.setDate(d.getDate() - 30); return d.toISOString().slice(0, 10);
+  });
+  const [reportTo, setReportTo] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [reportEmployeeId, setReportEmployeeId] = useState<string>("");
+  const [reportDeptId, setReportDeptId] = useState<string>("");
+  const [reportZoneId, setReportZoneId] = useState<string>("");
+  const [reportAttendance, setReportAttendance] = useState<MeckanoAttendance[]>([]);
+  const [reportTaskEntries, setReportTaskEntries] = useState<MeckanoTaskEntry[]>([]);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [reportGenerated, setReportGenerated] = useState(false);
 
   // ── Load helpers ──
   const loadEmployees = useCallback(async () => {
@@ -345,19 +362,21 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     setZoneSyncPending(false);
   };
 
+  // Auto-load on mount: employees, departments and zones needed everywhere
+  useEffect(() => {
+    if (!connected) return;
+    if (employees.length === 0) loadEmployees();
+    if (departments.length === 0) loadDepartments();
+    if (zones.length === 0) loadZones();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connected]);
+
   // Auto-load on tab switch
   useEffect(() => {
     if (!connected) return;
-    if (activeTab === "employees" && employees.length === 0) loadEmployees();
-    if (activeTab === "departments" && departments.length === 0) loadDepartments();
     if (activeTab === "attendance") loadAttendance();
     if (activeTab === "tasks" && tasks.length === 0) loadTasks();
     if (activeTab === "task-entries") loadTaskEntries();
-    if (activeTab === "locations" && zones.length === 0) loadZones();
-    if (activeTab === "live-map") {
-      if (employees.length === 0) loadEmployees();
-      if (zones.length === 0) loadZones();
-    }
     if (activeTab === "settings" && employees.length === 0) {
       setOverviewLoading(true);
       loadEmployees().finally(() => setOverviewLoading(false));
@@ -383,6 +402,72 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     } finally {
       setSyncPending(false);
     }
+  };
+
+  const generateReport = useCallback(async () => {
+    setReportLoading(true); setReportError(null); setReportGenerated(false);
+    const from = Math.floor(new Date(reportFrom).getTime() / 1000);
+    const to = Math.floor(new Date(reportTo + "T23:59:59").getTime() / 1000);
+    const filterEmpIds = new Set<number>();
+    if (reportEmployeeId) {
+      filterEmpIds.add(parseInt(reportEmployeeId));
+    } else if (reportDeptId) {
+      employees.filter(e => e.activeState === 1 && String(e.departmentId) === reportDeptId).forEach(e => filterEmpIds.add(e.id));
+    }
+    if (reportType === "attendance" || reportType === "summary") {
+      const r = await meckanoFetch<MeckanoAttendance[]>("time-entry", { from: String(from), to: String(to) });
+      if (r.status && r.data) {
+        let data = r.data;
+        if (filterEmpIds.size > 0) data = data.filter(row => filterEmpIds.has(row.userId));
+        setReportAttendance(data);
+      } else { setReportError(r.error ?? "שגיאה בטעינת נתונים"); }
+    } else {
+      const r = await meckanoFetch<MeckanoTaskEntry[]>("task-entry", { from: String(from), to: String(to) });
+      if (r.status && r.data) {
+        let data = r.data;
+        if (filterEmpIds.size > 0) data = data.filter(row => filterEmpIds.has(row.userId));
+        setReportTaskEntries(data);
+      } else { setReportError(r.error ?? "שגיאה בטעינת נתונים"); }
+    }
+    setReportLoading(false);
+    setReportGenerated(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reportType, reportFrom, reportTo, reportEmployeeId, reportDeptId, employees]);
+
+  const exportCsv = () => {
+    const zoneName = reportZoneId ? (zones.find(z => z.id === reportZoneId)?.name ?? "") : "";
+    const header = `# דוח מקאנו · ${reportType === "attendance" ? "נוכחות" : reportType === "task-entries" ? "משימות" : "סיכום שעות"} · ${reportFrom} – ${reportTo}${zoneName ? ` · אזור: ${zoneName}` : ""}\n`;
+    let body = "";
+    if (reportType === "attendance") {
+      body = "עובד,מס׳,תאריך,שעה,כניסה/יציאה\n";
+      reportAttendance.forEach(row => {
+        body += `"${row.userName ?? row.userId}","${row.workerTag ?? ""}","${row.dateStr ?? tsToDate(row.ts)}","${row.timeStr ?? tsToTime(row.ts)}","${row.isOut ? "יציאה" : "כניסה"}"\n`;
+      });
+    } else if (reportType === "summary") {
+      body = "עובד,מס׳,ימי עבודה,שעות,רשומות\n";
+      const byUser: Record<number, MeckanoAttendance[]> = {};
+      reportAttendance.forEach(row => { if (!byUser[row.userId]) byUser[row.userId] = []; byUser[row.userId].push(row); });
+      Object.values(byUser).forEach(rows => {
+        const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+        const days = new Set(sorted.map(r => r.dateStr ?? tsToDate(r.ts))).size;
+        let minutes = 0; let pendingIn: number | null = null;
+        sorted.forEach(row => {
+          if (!row.isOut && pendingIn === null) pendingIn = row.ts;
+          else if (row.isOut && pendingIn !== null) { minutes += Math.round((row.ts - pendingIn) / 60); pendingIn = null; }
+        });
+        body += `"${sorted[0].userName ?? sorted[0].userId}","${sorted[0].workerTag ?? ""}","${days}","${(minutes / 60).toFixed(1)}","${sorted.length}"\n`;
+      });
+    } else {
+      body = "עובד,משימה,תאריך,משך (דק׳),הערה\n";
+      reportTaskEntries.forEach(row => {
+        body += `"${row.userName ?? row.userId}","${row.taskName ?? row.taskId}","${row.dateStr ?? tsToDate(row.ts)}","${row.duration ?? ""}","${row.note ?? ""}"\n`;
+      });
+    }
+    const blob = new Blob(["\uFEFF" + header + body], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `meckano-${reportType}-${reportFrom}-${reportTo}.csv`; a.click();
+    URL.revokeObjectURL(url);
   };
 
   const inputCls = "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 transition";
@@ -998,6 +1083,229 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 </div>
               )}
               <p className="text-xs text-slate-400 text-left">{taskEntries.length} רשומות</p>
+            </div>
+          )}
+
+          {/* ── REPORTS ── */}
+          {activeTab === "reports" && (
+            <div className="space-y-5" dir="rtl">
+              <div>
+                <h3 className="text-base font-black text-slate-900">מחולל דוחות</h3>
+                <p className="text-xs text-slate-500 mt-0.5">הפק דוחות נוכחות, שעות ומשימות לפי עובד, מחלקה ואתר</p>
+              </div>
+
+              {/* Filter card */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 space-y-5">
+                {/* Report type selection */}
+                <div>
+                  <p className="text-xs font-black text-slate-600 mb-2">סוג דוח</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {([
+                      { id: "attendance" as ReportType, label: "נוכחות", desc: "כניסות ויציאות לפי יום" },
+                      { id: "summary" as ReportType, label: "סיכום שעות", desc: "שעות מחושבות לפי עובד" },
+                      { id: "task-entries" as ReportType, label: "דיווח משימות", desc: "דיווח שעות לפי משימה" },
+                    ]).map(({ id, label, desc }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => { setReportType(id); setReportGenerated(false); }}
+                        className={`flex flex-col items-start gap-0.5 rounded-xl border px-4 py-3 text-right transition ${
+                          reportType === id ? "border-blue-400 bg-blue-50" : "border-slate-200 bg-white hover:bg-slate-50"
+                        }`}
+                      >
+                        <span className={`text-sm font-black ${reportType === id ? "text-blue-700" : "text-slate-900"}`}>{label}</span>
+                        <span className={`text-xs ${reportType === id ? "text-blue-500" : "text-slate-400"}`}>{desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Date range */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">מתאריך</label>
+                    <input type="date" value={reportFrom} onChange={e => setReportFrom(e.target.value)} className={inputCls + " w-full"} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">עד תאריך</label>
+                    <input type="date" value={reportTo} onChange={e => setReportTo(e.target.value)} className={inputCls + " w-full"} />
+                  </div>
+                  <div className="sm:col-span-2 flex flex-wrap gap-2 items-end pb-0.5">
+                    {([{ label: "שבוע", days: 7 }, { label: "חודש", days: 30 }, { label: "רבעון", days: 90 }]).map(({ label, days }) => (
+                      <button
+                        key={days} type="button"
+                        onClick={() => {
+                          const to = new Date(); const from = new Date();
+                          from.setDate(from.getDate() - days);
+                          setReportTo(to.toISOString().slice(0, 10));
+                          setReportFrom(from.toISOString().slice(0, 10));
+                        }}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition"
+                      >{label}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">עובד</label>
+                    <select value={reportEmployeeId} onChange={e => setReportEmployeeId(e.target.value)} className={inputCls + " w-full"}>
+                      <option value="">כל העובדים הפעילים ({activeEmployees.length})</option>
+                      {activeEmployees.map(e => (
+                        <option key={e.id} value={String(e.id)}>
+                          {[e.firstName, e.lastName].filter(Boolean).join(" ") || e.workerTag || `#${e.id}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">מחלקה</label>
+                    <select value={reportDeptId} onChange={e => setReportDeptId(e.target.value)} className={inputCls + " w-full"}>
+                      <option value="">כל המחלקות</option>
+                      {departments.map(d => <option key={d.id} value={String(d.id)}>{d.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1">אזור / פרויקט</label>
+                    <select value={reportZoneId} onChange={e => setReportZoneId(e.target.value)} className={inputCls + " w-full"}>
+                      <option value="">כל האזורים</option>
+                      {zones.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    type="button" onClick={generateReport} disabled={reportLoading}
+                    className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50"
+                  >
+                    {reportLoading ? <Loader2 size={14} className="animate-spin" /> : <BarChart2 size={14} />}
+                    הפק דוח
+                  </button>
+                  {reportGenerated && (reportAttendance.length > 0 || reportTaskEntries.length > 0) && (
+                    <button
+                      type="button" onClick={exportCsv}
+                      className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-100 transition"
+                    >
+                      <Download size={14} /> ייצוא CSV
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {reportError && (
+                <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{reportError}</div>
+              )}
+
+              {/* Zone context */}
+              {reportGenerated && reportZoneId && (
+                <div className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 text-sm text-blue-700">
+                  <Globe size={14} />
+                  <span className="font-bold">אזור: {zones.find(z => z.id === reportZoneId)?.name}</span>
+                  <span className="text-blue-500">— {zones.find(z => z.id === reportZoneId)?.address}</span>
+                </div>
+              )}
+
+              {/* Results */}
+              {reportLoading ? (
+                <LoadingSpinner />
+              ) : reportGenerated && reportType === "attendance" && reportAttendance.length === 0 ? (
+                <EmptyState message="אין נתוני נוכחות בטווח שנבחר" />
+              ) : reportGenerated && reportType === "task-entries" && reportTaskEntries.length === 0 ? (
+                <EmptyState message="אין דיווחי משימות בטווח שנבחר" />
+              ) : reportGenerated && reportType === "summary" && reportAttendance.length === 0 ? (
+                <EmptyState message="אין נתוני נוכחות לסיכום" />
+              ) : reportGenerated && reportType === "attendance" && reportAttendance.length > 0 ? (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-500">{reportAttendance.length} רשומות נוכחות</p>
+                  <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50 border-b border-slate-100">
+                        <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-slate-500">{h}</th>)}</tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {reportAttendance.map(row => (
+                          <tr key={row.id} className="hover:bg-slate-50 transition">
+                            <td className="px-4 py-3 font-medium text-slate-900">{row.userName ?? `#${row.userId}`}</td>
+                            <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.workerTag ?? "—"}</td>
+                            <td className="px-4 py-3 text-slate-600">{row.dateStr ?? tsToDate(row.ts)}</td>
+                            <td className="px-4 py-3 text-slate-600" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
+                            <td className="px-4 py-3">
+                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${
+                                row.isOut ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"
+                              }`}>{row.isOut ? "יציאה" : "כניסה"}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : reportGenerated && reportType === "task-entries" && reportTaskEntries.length > 0 ? (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-500">{reportTaskEntries.length} רשומות</p>
+                  <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50 border-b border-slate-100">
+                        <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-slate-500">{h}</th>)}</tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {reportTaskEntries.map(entry => (
+                          <tr key={entry.id} className="hover:bg-slate-50 transition">
+                            <td className="px-4 py-3 font-medium text-slate-900">{entry.userName ?? `#${entry.userId}`}</td>
+                            <td className="px-4 py-3 text-slate-700">{entry.taskName ?? `#${entry.taskId}`}</td>
+                            <td className="px-4 py-3 text-slate-600">{entry.dateStr ?? tsToDate(entry.ts)}</td>
+                            <td className="px-4 py-3 text-slate-600 font-mono">{entry.duration ?? "—"}</td>
+                            <td className="px-4 py-3 text-slate-500 max-w-[180px] truncate">{entry.note ?? "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : reportGenerated && reportType === "summary" && reportAttendance.length > 0 ? (
+                (() => {
+                  const byUser: Record<number, MeckanoAttendance[]> = {};
+                  reportAttendance.forEach(row => { if (!byUser[row.userId]) byUser[row.userId] = []; byUser[row.userId].push(row); });
+                  const summaryRows = Object.values(byUser).map(rows => {
+                    const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+                    const name = sorted[0].userName ?? `#${sorted[0].userId}`;
+                    const tag = sorted[0].workerTag ?? "";
+                    const days = new Set(sorted.map(r => r.dateStr ?? tsToDate(r.ts))).size;
+                    let minutes = 0; let pendingIn: number | null = null;
+                    sorted.forEach(row => {
+                      if (!row.isOut && pendingIn === null) pendingIn = row.ts;
+                      else if (row.isOut && pendingIn !== null) { minutes += Math.round((row.ts - pendingIn) / 60); pendingIn = null; }
+                    });
+                    return { userId: sorted[0].userId, name, tag, days, hours: (minutes / 60).toFixed(1), entries: sorted.length };
+                  }).sort((a, b) => parseFloat(b.hours) - parseFloat(a.hours));
+                  return (
+                    <div className="space-y-2">
+                      <p className="text-xs text-slate-500">סיכום {summaryRows.length} עובדים · {reportFrom} עד {reportTo}</p>
+                      <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table className="w-full text-sm">
+                          <thead className="bg-slate-50 border-b border-slate-100">
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-slate-500">{h}</th>)}</tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {summaryRows.map(row => (
+                              <tr key={row.userId} className="hover:bg-slate-50 transition">
+                                <td className="px-4 py-3 font-bold text-slate-900">{row.name}</td>
+                                <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.tag}</td>
+                                <td className="px-4 py-3 text-slate-700">{row.days}</td>
+                                <td className="px-4 py-3 font-black text-blue-600 text-lg">{row.hours}</td>
+                                <td className="px-4 py-3 text-slate-500">{row.entries}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : null}
             </div>
           )}
 
