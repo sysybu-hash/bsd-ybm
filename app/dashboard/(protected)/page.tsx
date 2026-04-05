@@ -9,11 +9,13 @@ import {
   ReceiptText,
   Settings,
   Users,
+  Clock,
+  TrendingUp,
+  FileStack,
   ArrowLeft,
   Zap,
-  TrendingUp,
-  Clock,
-  FileStack,
+  BarChart3,
+  Compass,
 } from "lucide-react";
 
 export default async function DashboardHomePage() {
@@ -21,124 +23,158 @@ export default async function DashboardHomePage() {
   const userName = session?.user?.name?.split(" ")[0]?.trim() || "הצוות";
   const hour = new Date().getHours();
   const greeting =
-    hour < 5 ? "לילה טוב" :
+    hour < 5  ? "לילה טוב"  :
     hour < 12 ? "בוקר טוב" :
-    hour < 17 ? "שלום" :
-    hour < 21 ? "ערב טוב" : "לילה טוב";
+    hour < 17 ? "צהריים טובים" :
+    hour < 21 ? "ערב טוב"  : "לילה טוב";
 
   const stats = [
-    { icon: Users,       label: "לקוחות CRM",   value: "—",  trend: "פתח CRM",    href: "/dashboard/business",    color: "from-violet-500 to-purple-600", glow: "shadow-violet-500/20" },
-    { icon: ReceiptText, label: "חשבוניות ERP",  value: "—",  trend: "פתח ERP",    href: "/dashboard/erp/invoice", color: "from-blue-500 to-indigo-600",   glow: "shadow-blue-500/20" },
-    { icon: FileStack,   label: "מסמכים סרוקים",value: "—",  trend: "פתח סורק",   href: "/dashboard/business",    color: "from-emerald-500 to-teal-600",  glow: "shadow-emerald-500/20" },
-    { icon: TrendingUp,  label: "הכנסות החודש", value: "₪—", trend: "ניתוח מלא",  href: "/dashboard/erp/invoice", color: "from-amber-400 to-orange-500",  glow: "shadow-amber-400/20" },
+    {
+      icon: Users,      label: "לקוחות CRM",   value: "—",  href: "/dashboard/business",
+      chipBg: "bg-violet-100", chipText: "text-violet-700", iconBg: "bg-violet-600",
+    },
+    {
+      icon: ReceiptText, label: "חשבוניות ERP", value: "—",  href: "/dashboard/erp/invoice",
+      chipBg: "bg-blue-100",   chipText: "text-blue-700",   iconBg: "bg-blue-600",
+    },
+    {
+      icon: FileStack,   label: "מסמכים",       value: "—",  href: "/dashboard/business",
+      chipBg: "bg-emerald-100",chipText: "text-emerald-700",iconBg: "bg-emerald-600",
+    },
+    {
+      icon: TrendingUp,  label: "הכנסות",       value: "₪—", href: "/dashboard/erp/invoice",
+      chipBg: "bg-amber-100",  chipText: "text-amber-700",  iconBg: "bg-amber-500",
+    },
   ];
 
   const quickActions = [
     {
       href: "/dashboard/business",
-      icon: <Layers size={22} />,
+      icon: <Layers size={20} />,
       title: "מרכז עסקי",
       description: "ERP ו-CRM בחלון אחד — לקוחות, עסקאות וחשבוניות.",
-      grad: "from-emerald-500 to-teal-600",
-      glow: "shadow-emerald-500/25",
       badge: "ERP + CRM",
+      iconBg: "bg-emerald-600",
+      badgeBg: "bg-emerald-100 text-emerald-700",
+      hoverBorder: "hover:border-emerald-300",
     },
     {
       href: "/dashboard/erp/invoice",
-      icon: <ReceiptText size={22} />,
+      icon: <ReceiptText size={20} />,
       title: "הנפק חשבונית",
       description: "יצירה מהירה של חשבונית מס, קבלה או הצעת מחיר.",
-      grad: "from-blue-500 to-indigo-600",
-      glow: "shadow-blue-500/25",
       badge: "ERP",
+      iconBg: "bg-indigo-600",
+      badgeBg: "bg-indigo-100 text-indigo-700",
+      hoverBorder: "hover:border-indigo-300",
+    },
+    {
+      href: "/dashboard/control-center",
+      icon: <Compass size={20} />,
+      title: "מרכז עבודה",
+      description: "ניהול כל המשימות, הלידים ותהליכי העבודה שלך.",
+      badge: "מיקוד",
+      iconBg: "bg-violet-600",
+      badgeBg: "bg-violet-100 text-violet-700",
+      hoverBorder: "hover:border-violet-300",
     },
     {
       href: "/dashboard/settings",
-      icon: <Settings size={22} />,
+      icon: <Settings size={20} />,
       title: "הגדרות",
       description: "פרטי עסק, חיבורי תשלום, גיבויים ומשתמשים.",
-      grad: "from-slate-600 to-slate-700",
-      glow: "shadow-slate-500/25",
       badge: "הגדרות",
+      iconBg: "bg-slate-600",
+      badgeBg: "bg-slate-100 text-slate-600",
+      hoverBorder: "hover:border-slate-300",
     },
   ];
 
-  const utilityLinks = [
-    { href: "/dashboard/control-center", icon: <LayoutDashboard size={15} />, label: "מרכז עבודה",      color: "text-emerald-600" },
-    { href: "/dashboard/operator",       icon: <Bot size={15} />,             label: "עוזר AI תפעולי", color: "text-indigo-600" },
-    { href: "/dashboard/billing",        icon: <CreditCard size={15} />,      label: "מנוי ותשלום",    color: "text-rose-600" },
-    { href: "/dashboard/meckano",        icon: <Clock size={15} />,           label: "נוכחות",          color: "text-sky-600" },
+  const shortcuts = [
+    { href: "/dashboard/operator",  icon: <Bot size={14} />,          label: "עוזר AI",         color: "text-indigo-600 bg-indigo-50" },
+    { href: "/dashboard/billing",   icon: <CreditCard size={14} />,   label: "מנוי ותשלום",     color: "text-rose-600 bg-rose-50" },
+    { href: "/dashboard/meckano",   icon: <Clock size={14} />,        label: "נוכחות",           color: "text-sky-600 bg-sky-50" },
+    { href: "/dashboard/business",  icon: <BarChart3 size={14} />,    label: "דוחות",            color: "text-amber-600 bg-amber-50" },
   ];
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-7" dir="rtl">
 
-      {/* ══ HERO STRIP ══ */}
-      <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-7 md:px-8 md:py-9">
-        {/* Background glows */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-20 right-10 h-64 w-64 rounded-full bg-blue-600/15 blur-[80px]" />
-          <div className="absolute bottom-0 left-20 h-40 w-40 rounded-full bg-violet-600/10 blur-[60px]" />
-        </div>
-        <div className="relative">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-600/10 px-3 py-1 text-[11px] font-bold text-blue-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
-            BSD-YBM Platform
-          </span>
-          <h1 className="mt-3 text-2xl font-black text-white md:text-3xl">
-            {greeting}, {userName} 👋
-          </h1>
-          <p className="mt-2 max-w-lg text-sm text-slate-400 leading-relaxed">
-            הכל מחובר ומסונכרן — ERP, CRM, סריקות ובינה מלאכותית. בחר פעולה להתחיל.
-          </p>
+      {/* ══ WELCOME BANNER ══ */}
+      <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8 md:py-8">
+        {/* Decorative bar */}
+        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-3xl bg-gradient-to-b from-indigo-500 to-violet-600" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-bold text-indigo-700">
+              <Zap size={10} className="text-indigo-600" />
+              BSD-YBM Platform
+            </span>
+            <h1 className="mt-3 text-2xl font-black text-gray-900 tracking-tight md:text-3xl">
+              {greeting}, {userName} 👋
+            </h1>
+            <p className="mt-2 max-w-lg text-sm text-gray-500 leading-relaxed">
+              הכל מחובר ומסונכרן — ERP, CRM, סריקות ובינה מלאכותית.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/business"
+            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-indigo-600/25 transition-all hover:bg-indigo-700 hover:-translate-y-0.5"
+          >
+            פתח מרכז עסקי
+            <ArrowLeft size={14} />
+          </Link>
         </div>
       </section>
 
       {/* ══ STATS ROW ══ */}
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map(({ icon: Icon, label, value, trend, href, color, glow }) => (
-          <Link
-            key={label}
-            href={href}
-            className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-white shadow-md ${glow}`}>
-              <Icon size={17} />
-            </div>
-            <div>
-              <p className="text-xl font-black text-slate-900">{value}</p>
-              <p className="text-[11px] font-medium text-slate-500">{label}</p>
-            </div>
-            <p className="mt-auto flex items-center gap-1 text-[11px] font-bold text-blue-600 group-hover:gap-2 transition-all">
-              {trend} <ArrowLeft size={10} />
-            </p>
-          </Link>
-        ))}
+      <section>
+        <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-gray-400">סיכום</h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {stats.map(({ icon: Icon, label, value, href, chipBg, chipText, iconBg }) => (
+            <Link
+              key={label}
+              href={href}
+              className="group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
+            >
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
+                <Icon size={17} />
+              </div>
+              <div>
+                <p className="text-2xl font-black text-gray-900">{value}</p>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-400">{label}</p>
+              </div>
+              <span className={`w-fit rounded-full px-2.5 py-0.5 text-[10px] font-bold ${chipBg} ${chipText}`}>
+                פתח →
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
 
       {/* ══ QUICK ACTIONS ══ */}
       <section>
-        <h2 className="mb-3 text-sm font-black uppercase tracking-widest text-slate-400">פעולות ראשיות</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {quickActions.map(({ href, icon, title, description, grad, glow, badge }) => (
+        <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-gray-400">פעולות ראשיות</h2>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {quickActions.map(({ href, icon, title, description, badge, iconBg, badgeBg, hoverBorder }) => (
             <Link
               key={href}
               href={href}
-              className="group relative flex flex-col gap-4 overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className={`group flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${hoverBorder}`}
             >
-              {/* Gradient icon */}
-              <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${grad} text-white shadow-lg ${glow}`}>
-                {icon}
+              <div className="flex items-start justify-between gap-2">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
+                  {icon}
+                </div>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${badgeBg}`}>
+                  {badge}
+                </span>
               </div>
-              {/* Badge */}
-              <span className="absolute end-4 top-4 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-500">
-                {badge}
-              </span>
               <div>
-                <h3 className="text-base font-black text-slate-900">{title}</h3>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">{description}</p>
+                <h3 className="text-[14px] font-black text-gray-900">{title}</h3>
+                <p className="mt-1 text-[12px] leading-relaxed text-gray-500">{description}</p>
               </div>
-              <span className="flex items-center gap-1 text-[12px] font-bold text-blue-600 opacity-0 transition-all group-hover:opacity-100">
+              <span className="mt-auto flex items-center gap-1 text-[12px] font-bold text-indigo-600 opacity-0 transition-all group-hover:opacity-100">
                 פתח <ArrowLeft size={11} />
               </span>
             </Link>
@@ -146,19 +182,20 @@ export default async function DashboardHomePage() {
         </div>
       </section>
 
-      {/* ══ UTILITY LINKS ══ */}
+      {/* ══ SHORTCUT CHIPS ══ */}
       <section>
-        <h2 className="mb-3 text-sm font-black uppercase tracking-widest text-slate-400">פעולות נוספות</h2>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {utilityLinks.map(({ href, icon, label, color }) => (
+        <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-gray-400">קיצורי דרך</h2>
+        <div className="flex flex-wrap gap-2">
+          {shortcuts.map(({ href, icon, label, color }) => (
             <Link
               key={href}
               href={href}
-              className="group flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
+              className={`flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-2 text-[13px] font-bold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${color.split(" ")[0]}`}
             >
-              <span className={color}>{icon}</span>
-              <span className="truncate">{label}</span>
-              <ArrowLeft size={11} className="ms-auto opacity-0 text-slate-400 group-hover:opacity-100 transition-opacity" />
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full ${color.split(" ")[1]}`}>
+                {icon}
+              </span>
+              {label}
             </Link>
           ))}
         </div>

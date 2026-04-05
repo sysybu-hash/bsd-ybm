@@ -1,0 +1,322 @@
+﻿const NAV = ["בית", "מרכז עסקי", "חשבוניות", "לקוחות", "AI", "הגדרות"];
+const STATS = ["לקוחות", "חשבוניות", "מסמכים", "הכנסות"];
+const ACTIONS = ["הנפק חשבונית", "מרכז עסקי", "הגדרות"];
+
+export default function DesignPreviewPage() {
+  return (
+    <div className="min-h-screen bg-[#080810] p-8 font-sans" dir="rtl">
+      <div className="text-center mb-14">
+        <div className="inline-block bg-white/5 border border-white/10 text-white/50 text-xs px-4 py-1.5 rounded-full mb-4 tracking-widest uppercase">
+          עיצוב — בחר אחד
+        </div>
+        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">
+          איזה עיצוב אתה רוצה?
+        </h1>
+        <p className="text-white/35 text-lg">6 סגנונות שונים — אמור לי A עד F ואני אבנה הכל מחדש</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 max-w-7xl mx-auto">
+
+        {/* A - AURORA DARK */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-purple-500/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+            A — Aurora Dark
+          </div>
+          <div className="flex h-[400px]">
+            <div className="w-[155px] bg-[#0d0d1a] border-l border-white/5 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-center gap-2 mb-7 px-1 relative">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-xs font-black shadow-lg shadow-purple-500/40">B</div>
+                <span className="text-xs font-black text-white tracking-wider">BSD-YBM</span>
+              </div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2.5 px-2 py-1.5 rounded-xl text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-200 border border-purple-500/20" : "text-white/30 hover:text-white/60"
+                }`}>
+                  <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${i === 0 ? "bg-purple-400" : "bg-white/10"}`} />
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 bg-[#10101f] p-4 overflow-hidden relative">
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="text-[10px] text-white/25 mb-1">בוקר טוב ✦</div>
+              <h2 className="text-sm font-black text-white mb-4">לוח הבקרה</h2>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {[{l:"לקוחות",c:"from-purple-500/15 to-indigo-500/15 border-purple-500/20"},{l:"חשבוניות",c:"from-blue-500/15 to-cyan-500/15 border-blue-500/20"},{l:"מסמכים",c:"from-emerald-500/15 to-teal-500/15 border-emerald-500/20"},{l:"הכנסות",c:"from-amber-500/15 to-orange-500/15 border-amber-500/20"}].map((s) => (
+                  <div key={s.l} className={`bg-gradient-to-br ${s.c} border rounded-2xl p-2.5`}>
+                    <div className="text-[9px] text-white/40 mb-1">{s.l}</div>
+                    <div className="text-sm font-black text-white/80">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white/3 border border-white/8 rounded-2xl p-3">
+                {ACTIONS.map((a) => (
+                  <div key={a} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                    <span className="text-[10px] text-white/50">{a}</span>
+                    <span className="text-purple-400/50 text-[10px]">←</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-[#0d0d1a] border-t border-white/5 px-4 py-2.5 text-center text-[10px] text-white/20">
+            Deep Navy · Aurora Glow · Gradient Accents
+          </div>
+        </div>
+
+        {/* B - NEON GLASS */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-cyan-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+            B — Neon Glass
+          </div>
+          <div className="flex h-[400px] bg-[#050d1a]">
+            <div className="w-[155px] bg-black/40 border-l border-cyan-500/10 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
+              <div className="absolute top-10 right-5 w-16 h-16 bg-cyan-400/20 rounded-full blur-xl" />
+              <div className="flex items-center gap-2 mb-7 px-1 relative">
+                <div className="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-xs font-black">B</div>
+                <span className="text-xs font-black text-cyan-100">BSD-YBM</span>
+              </div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2.5 px-2 py-1.5 rounded-xl text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-cyan-400/10 text-cyan-300 border border-cyan-400/20" : "text-white/25 hover:text-cyan-200/60"
+                }`}>
+                  <div className={`w-4 h-4 rounded-lg shrink-0 flex items-center justify-center text-[8px] ${i === 0 ? "bg-cyan-400/20 text-cyan-300" : "bg-white/5 text-white/15"}`}>◆</div>
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 p-4 overflow-hidden relative">
+              <div className="absolute top-10 left-10 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl" />
+              <div className="text-[10px] text-cyan-400/40 mb-1 font-mono">/ dashboard</div>
+              <h2 className="text-sm font-black text-white mb-4">לוח הבקרה</h2>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {STATS.map((s) => (
+                  <div key={s} className="bg-white/3 border border-white/8 rounded-2xl p-2.5">
+                    <div className="text-[9px] text-white/30 font-mono mb-1">{s}</div>
+                    <div className="text-sm font-black text-white/70">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-black/30 border border-white/6 rounded-2xl p-3">
+                {ACTIONS.map((a) => (
+                  <div key={a} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                    <span className="text-[10px] text-white/40 font-mono">{a}</span>
+                    <span className="text-cyan-400/40 text-[10px]">‹</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-black/60 border-t border-cyan-500/10 px-4 py-2.5 text-center text-[10px] text-cyan-400/30 font-mono tracking-widest">
+            GLASSMORPHISM · NEON CYAN · DARK
+          </div>
+        </div>
+
+        {/* C - CLEAN MINIMAL */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-slate-400/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl bg-white">
+          <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+            C — מינימלי לבן (Notion / Linear)
+          </div>
+          <div className="flex h-[400px]">
+            <div className="w-[155px] bg-white border-l border-gray-100 flex flex-col py-5 px-3 shrink-0">
+              <div className="flex items-center gap-2 mb-7 px-1">
+                <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white text-xs font-black">B</div>
+                <span className="text-xs font-black text-slate-900">BSD-YBM</span>
+              </div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2 px-2 py-2 rounded-lg text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-slate-100 text-slate-900" : "text-gray-400 hover:bg-gray-50"
+                }`}>
+                  <div className={`w-1 h-3.5 rounded-full shrink-0 ${i === 0 ? "bg-slate-900" : "bg-transparent"}`} />
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 bg-[#fafafa] p-5 overflow-hidden">
+              <p className="text-[10px] text-gray-300 mb-1">אפריל 2026</p>
+              <h2 className="text-base font-black text-gray-900 mb-5 tracking-tight">לוח הבקרה</h2>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {STATS.map((s) => (
+                  <div key={s} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
+                    <div className="text-[9px] text-gray-400 mb-1 uppercase tracking-wider">{s}</div>
+                    <div className="text-base font-black text-gray-800">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                <div className="px-3 py-2 border-b border-gray-50">
+                  <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">פעולות</span>
+                </div>
+                {ACTIONS.map((a) => (
+                  <div key={a} className="flex items-center justify-between px-3 py-2.5 border-b border-gray-50 last:border-0">
+                    <span className="text-[11px] font-medium text-gray-700">{a}</span>
+                    <span className="text-gray-200 text-xs">→</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 border-t border-gray-100 px-4 py-2.5 text-center text-[10px] text-gray-300">
+            White · Clean · No gradients · Notion-style
+          </div>
+        </div>
+
+        {/* D - OBSIDIAN PRO */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-white/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+          <div className="bg-white text-black text-center py-2.5 text-sm font-bold tracking-wide">
+            D — Obsidian Pro (Vercel / Raycast)
+          </div>
+          <div className="flex h-[400px]">
+            <div className="w-[155px] bg-black border-l border-white/6 flex flex-col py-5 px-3 shrink-0">
+              <div className="flex items-center gap-2 mb-7 px-1">
+                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-black text-xs font-black">B</div>
+                <span className="text-xs font-black text-white">BSD-YBM</span>
+              </div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2.5 px-2 py-2 rounded-lg text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-white text-black" : "text-white/30 hover:bg-white/6"
+                }`}>
+                  {item}
+                </div>
+              ))}
+              <div className="mt-auto pt-3 border-t border-white/8">
+                <div className="text-[9px] text-white/20 px-2">ישראל כ. — Pro</div>
+              </div>
+            </div>
+            <div className="flex-1 bg-[#0a0a0a] p-4 overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-black text-white">לוח הבקרה</h2>
+                <div className="bg-white text-black text-[9px] font-bold px-2 py-0.5 rounded-full">Pro</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {STATS.map((s) => (
+                  <div key={s} className="bg-white/4 rounded-xl p-2.5 border border-white/6">
+                    <div className="text-[9px] text-white/30 uppercase tracking-wider mb-1">{s}</div>
+                    <div className="text-sm font-black text-white">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white/3 rounded-xl border border-white/6">
+                {ACTIONS.map((a) => (
+                  <div key={a} className="flex items-center justify-between px-3 py-2.5 border-b border-white/5 last:border-0">
+                    <span className="text-[11px] font-medium text-white/50">{a}</span>
+                    <span className="text-white/15 text-xs">←</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-black border-t border-white/6 px-4 py-2.5 text-center text-[10px] text-white/15 tracking-widest uppercase">
+            Pure Black · High Contrast · Bold Type
+          </div>
+        </div>
+
+        {/* E - INDIGO SAAS */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-indigo-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+            E — Indigo SaaS (Stripe / Linear)
+          </div>
+          <div className="flex h-[400px]">
+            <div className="w-[155px] bg-indigo-950 flex flex-col py-5 px-3 shrink-0">
+              <div className="flex items-center gap-2 mb-7 px-1">
+                <div className="w-8 h-8 rounded-xl bg-indigo-400 flex items-center justify-center text-white text-xs font-black shadow-lg shadow-indigo-500/40">B</div>
+                <span className="text-xs font-black text-indigo-100">BSD-YBM</span>
+              </div>
+              <div className="text-[9px] text-indigo-400/40 uppercase tracking-widest px-2 mb-2 font-semibold">ניווט</div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-indigo-500/25 text-indigo-200 border-r-2 border-indigo-400" : "text-indigo-300/40 hover:bg-indigo-500/10"
+                }`}>
+                  <div className={`w-4 h-4 rounded-md shrink-0 ${i === 0 ? "bg-indigo-400/30" : "bg-indigo-500/15"}`} />
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 bg-white p-4 overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-[10px] text-gray-400 mb-0.5">בוקר טוב, ישראל</div>
+                  <h2 className="text-sm font-black text-gray-900">לוח הבקרה</h2>
+                </div>
+                <div className="bg-indigo-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Pro ✦</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {[{l:"לקוחות",bg:"bg-violet-50 border-violet-100 text-violet-700"},{l:"חשבוניות",bg:"bg-blue-50 border-blue-100 text-blue-700"},{l:"מסמכים",bg:"bg-emerald-50 border-emerald-100 text-emerald-700"},{l:"הכנסות",bg:"bg-amber-50 border-amber-100 text-amber-700"}].map((s) => (
+                  <div key={s.l} className={`${s.bg} border rounded-xl p-2.5`}>
+                    <div className="text-[9px] font-semibold mb-1 opacity-70 uppercase tracking-wider">{s.l}</div>
+                    <div className="text-sm font-black">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-gray-50 rounded-xl border border-gray-100">
+                {ACTIONS.map((a, i) => (
+                  <div key={a} className="flex items-center justify-between px-3 py-2 border-b border-gray-100 last:border-0">
+                    <span className={`text-[11px] font-semibold ${["text-indigo-600","text-violet-600","text-gray-600"][i]}`}>{a}</span>
+                    <span className="text-gray-200">←</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-indigo-950 border-t border-indigo-800/50 px-4 py-2.5 text-center text-[10px] text-indigo-400/30">
+            Indigo Dark Sidebar · White Content · Colorful Stats
+          </div>
+        </div>
+
+        {/* F - SUNSET BOLD */}
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-orange-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+          <div className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+            F — Sunset Bold (עז ועתידני)
+          </div>
+          <div className="flex h-[400px]">
+            <div className="w-[155px] bg-[#120a0e] flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/15 rounded-full blur-2xl" />
+              <div className="flex items-center gap-2 mb-7 px-1 relative">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black shadow-lg shadow-rose-500/40">B</div>
+                <span className="text-xs font-black text-white">BSD-YBM</span>
+              </div>
+              {NAV.map((item, i) => (
+                <div key={item} className={`flex items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] mb-0.5 font-medium ${
+                  i === 0 ? "bg-gradient-to-r from-orange-500/20 to-rose-500/20 text-orange-200 border border-orange-400/20" : "text-white/25 hover:text-white/60"
+                }`}>
+                  <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${i === 0 ? "bg-orange-400" : "bg-white/10"}`} />
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 bg-[#0e0810] p-4 overflow-hidden relative">
+              <div className="absolute bottom-5 right-5 w-32 h-32 bg-rose-500/8 rounded-full blur-3xl" />
+              <div className="text-[10px] text-white/25 mb-1">ברוך הבא ✦</div>
+              <h2 className="text-sm font-black text-white mb-4" style={{background:"linear-gradient(to left, #fb923c, #f43f5e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent"}}>לוח הבקרה</h2>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {[{l:"לקוחות",c:"border-orange-500/20 bg-orange-500/8"},{l:"חשבוניות",c:"border-rose-500/20 bg-rose-500/8"},{l:"מסמכים",c:"border-pink-500/20 bg-pink-500/8"},{l:"הכנסות",c:"border-amber-500/20 bg-amber-500/8"}].map((s) => (
+                  <div key={s.l} className={`border ${s.c} rounded-2xl p-2.5`}>
+                    <div className="text-[9px] text-white/30 mb-1">{s.l}</div>
+                    <div className="text-sm font-black text-white/70">—</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white/3 border border-white/6 rounded-2xl p-3">
+                {ACTIONS.map((a) => (
+                  <div key={a} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                    <span className="text-[10px] text-white/40">{a}</span>
+                    <span className="text-rose-400/40 text-[10px]">←</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-[#120a0e] border-t border-white/5 px-4 py-2.5 text-center text-[10px] text-rose-400/25">
+            Sunset Gradient · Dark Bold · Futuristic
+          </div>
+        </div>
+
+      </div>
+
+      <div className="mt-14 text-center">
+        <p className="text-white/25 text-base">אמור לי <span className="text-white/60 font-bold">A, B, C, D, E</span> או <span className="text-white/60 font-bold">F</span> — ואני אבנה את כל האתר מחדש</p>
+      </div>
+    </div>
+  );
+}
