@@ -370,29 +370,29 @@ export default function SettingsPageClient({
   const currentTitle = t(`settings.${activeTab}`);
 
   return (
-    <div className="text-slate-900" dir={dir}>
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md">
+    <div className="text-gray-900" dir={dir}>
+      <div className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm">
 
         {/* ── Page hero ── */}
-        <div className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-l from-slate-900 to-slate-800 px-6 py-5">
+        <div className="relative overflow-hidden border-b border-indigo-900/20 bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-5">
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-8 end-20 h-32 w-32 rounded-full bg-indigo-500/10 blur-[50px]" />
+            <div className="absolute -top-8 end-20 h-32 w-32 rounded-full bg-indigo-400/10 blur-[50px]" />
           </div>
           <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-md shadow-indigo-500/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-400/20 text-indigo-200 ring-1 ring-indigo-400/30">
                 <Settings size={18} />
               </div>
               <div>
                 <h3 className="text-lg font-black text-white">{currentTitle}</h3>
-                <p className="text-[11px] text-slate-400">הגדרות המערכת והארגון</p>
+                <p className="text-[11px] text-indigo-300/70">הגדרות המערכת והארגון</p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-500 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-indigo-900/40 transition hover:bg-indigo-400 disabled:opacity-50"
             >
               <Save size={15} />
               {activeTab === "account"
@@ -407,7 +407,7 @@ export default function SettingsPageClient({
         </div>
 
         {/* ── Tab bar ── */}
-        <nav className="flex flex-row overflow-x-auto border-b border-slate-200 bg-slate-50/50 px-3 gap-0">
+        <nav className="flex flex-row overflow-x-auto border-b border-gray-100 bg-gray-50/60 px-3 gap-0">
           {TAB_ORDER.map((tabId) => (
             <button
               key={tabId}
@@ -416,10 +416,10 @@ export default function SettingsPageClient({
               className={`flex items-center gap-2 whitespace-nowrap px-4 py-3.5 text-[12px] font-bold border-b-2 transition-all ${
                 activeTab === tabId
                   ? `border-b-2 bg-white ${TAB_COLORS[tabId]}`
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200"
               }`}
             >
-              <span className={activeTab === tabId ? "" : "text-slate-400"}>{TAB_ICONS[tabId]}</span>
+              <span className={activeTab === tabId ? "" : "text-gray-400"}>{TAB_ICONS[tabId]}</span>
               {t(`settings.${tabId}`)}
             </button>
           ))}

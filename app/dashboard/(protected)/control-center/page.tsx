@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 import type { ReactNode } from "react";
-import { ArrowLeftRight, CircleCheckBig, CreditCard, Shield, Users } from "lucide-react";
+import { ArrowLeftRight, CircleCheckBig, CreditCard, Shield, Users, Zap, TrendingUp, BarChart3, CheckCircle2, ArrowLeft } from "lucide-react";
 import OperatorOnboardingPanel from "@/components/control-center/OperatorOnboardingPanel";
 
 export const dynamic = "force-dynamic";
@@ -182,88 +182,112 @@ export default async function ControlCenterPage() {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-700">
-          <CircleCheckBig size={14} />
-          מצב תפעול פשוט
-        </p>
-        <h1 className="text-3xl font-black tracking-tight text-slate-900">מרכז שליטה ותפעול</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
-          זה המסך שממנו מנהלים את האתר בפועל. כל הפעולות החשובות מרוכזות כאן כדי שלא תצטרך לחפש בין עמודים.
-        </p>
 
+      {/* HEADER */}
+      <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-3xl bg-gradient-to-b from-indigo-500 to-violet-600" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-3 py-1 text-[11px] font-bold text-teal-700">
+              <CircleCheckBig size={11} /> מצב תפעול פשוט
+            </span>
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">מרכז שליטה ותפעול</h1>
+            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-500">
+              כל הפעולות החשובות מרוכזות כאן. ניהול מנוי, צוות, ניתוח שימוש והמלצות.
+            </p>
+          </div>
+        </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-bold text-slate-500">ארגון</p>
-            <p className="mt-1 text-base font-black text-slate-900">{org?.name ?? "לא נמצא"}</p>
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 opacity-70">ארגון</p>
+            <p className="mt-1.5 text-lg font-black text-indigo-700">{org?.name ?? "לא נמצא"}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-bold text-slate-500">מנוי</p>
-            <p className="mt-1 text-base font-black text-slate-900">{org?.subscriptionTier ?? "-"}</p>
-            <p className="text-xs text-slate-600">{org?.subscriptionStatus ?? ""}</p>
+          <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-violet-500 opacity-70">מנוי</p>
+            <p className="mt-1.5 text-lg font-black text-violet-700">{org?.subscriptionTier ?? "-"}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-bold text-slate-500">משתמשים פעילים</p>
-            <p className="mt-1 text-base font-black text-slate-900">{activeUsers}</p>
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 opacity-70">משתמשים פעילים</p>
+            <p className="mt-1.5 text-lg font-black text-emerald-700">{activeUsers}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-bold text-slate-500">ממתינים לאישור</p>
-            <p className="mt-1 text-base font-black text-slate-900">{pendingUsers}</p>
+          <div className={`rounded-2xl border p-4 ${pendingUsers > 0 ? "border-amber-200 bg-amber-50" : "border-gray-100 bg-gray-50"}`}>
+            <p className={`text-[10px] font-bold uppercase tracking-widest opacity-70 ${pendingUsers > 0 ? "text-amber-600" : "text-gray-400"}`}>ממתינים לאישור</p>
+            <p className={`mt-1.5 text-lg font-black ${pendingUsers > 0 ? "text-amber-700" : "text-gray-500"}`}>{pendingUsers}</p>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+      {/* MAIN GRID */}
+      <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+
         <div className="lg:col-span-2">
           <OperatorOnboardingPanel />
         </div>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 text-lg font-black text-slate-900">מה לעשות עכשיו</h2>
-          <p className="text-sm text-slate-600">המסך הזה נותן המלצה אחת ברורה לפי הנתונים, במקום להעמיס עשרות החלטות.</p>
-          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-sm font-black text-emerald-950">{recommendedAction.title}</p>
-            <p className="mt-2 text-sm leading-6 text-emerald-900">{recommendedAction.description}</p>
-            <Link href={recommendedAction.href} className="mt-4 inline-flex rounded-xl bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800">{recommendedAction.cta}</Link>
+        {/* Next best action */}
+        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
+            <Zap size={16} className="text-indigo-600" />
+            מה לעשות עכשיו
+          </h2>
+          <p className="mb-4 text-xs text-gray-400">המלצה אחת ברורה לפי הנתונים הנוכחיים</p>
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+            <p className="text-sm font-black text-indigo-900">{recommendedAction.title}</p>
+            <p className="mt-2 text-sm leading-6 text-indigo-800/80">{recommendedAction.description}</p>
+            <Link
+              href={recommendedAction.href}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-600/25 hover:bg-indigo-700 transition-colors"
+            >
+              {recommendedAction.cta} <ArrowLeft size={13} />
+            </Link>
           </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <QuickPanel
-              icon={<CreditCard size={16} className="text-rose-600" />}
+              icon={<CreditCard size={15} className="text-rose-600" />}
               title="מנוי ותשלום"
-              description="בדיקה מהירה של חבילה ותשלום לפני כל פעולה אחרת."
+              description="בדיקת חבילה ומסלול תשלום."
               href="/dashboard/billing"
-              cta="פתח מנוי"
+              cta="פתח"
+              accent="rose"
             />
             <QuickPanel
-              icon={<Users size={16} className="text-violet-600" />}
+              icon={<Users size={15} className="text-violet-600" />}
               title="צוות והרשאות"
-              description="אישור משתמשים והקצאת תפקידים בלי לחפש בין מסכים."
+              description="אישור משתמשים וניהול תפקידים."
               href="/dashboard/settings?tab=account"
-              cta="פתח משתמשים"
+              cta="פתח"
+              accent="violet"
             />
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <ArrowLeftRight size={18} className="text-blue-600" />
-            דוח שימוש מקוצר
+        {/* Funnel metrics */}
+        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
+            <BarChart3 size={16} className="text-blue-600" />
+            דוח שימוש — מסלולים
           </h2>
-          <p className="mb-4 text-sm text-slate-600">
-            צפיות, התקדמות והשלמה לכל מסלול.
+          <p className="mb-4 text-xs text-gray-400">
             {latestWizardEventAt
-              ? ` עדכון אחרון: ${new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short" }).format(latestWizardEventAt)}`
-              : " אין עדיין אירועי Wizard."}
+              ? `עדכון: ${new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short" }).format(latestWizardEventAt)}`
+              : "אין עדיין נתוני Wizard."}
           </p>
           <div className="space-y-3">
             {funnel.map((row) => (
-              <div key={row.route} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-black text-slate-900">{row.route}</p>
-                  <p className="text-xs font-bold text-slate-500">{pct(row.completion, row.views)} השלמה</p>
+              <div key={row.route} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <p className="text-[13px] font-bold text-gray-800">{row.route}</p>
+                  <span className="rounded-full bg-white border border-gray-200 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+                    {pct(row.completion, row.views)} השלמה
+                  </span>
                 </div>
-                <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-indigo-500 transition-all"
+                    style={{ width: row.views > 0 ? `${Math.round((row.completion / row.views) * 100)}%` : "0%" }}
+                  />
+                </div>
+                <div className="mt-2 grid grid-cols-3 gap-1 text-center text-[10px]">
                   <MetricChip label="צפיות" value={String(row.views)} />
                   <MetricChip label="התקדמות" value={String(row.next)} tone="blue" />
                   <MetricChip label="השלמות" value={String(row.completion)} tone="green" />
@@ -273,33 +297,36 @@ export default async function ControlCenterPage() {
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-slate-900">
-            <Shield size={18} className="text-emerald-600" />
+        {/* Quick shortcuts */}
+        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm lg:col-span-2">
+          <h2 className="mb-4 flex items-center gap-2 text-base font-black text-gray-900">
+            <Shield size={16} className="text-emerald-600" />
             קיצורי דרך חשובים
           </h2>
-          <div className="mt-4 grid gap-3 md:grid-cols-4">
-            <QuickLink href="/dashboard/settings" title="הגדרות עסק" subtitle="שם עסק, מס ואינטגרציות" />
-            <QuickLink href="/dashboard/crm" title="CRM" subtitle="לקוחות ופרויקטים" />
-            <QuickLink href="/dashboard/erp/invoice" title="חשבוניות" subtitle="הפקה ותשלומים" />
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+            <QuickLink href="/dashboard/settings" title="הגדרות עסק" subtitle="שם עסק, מס ואינטגרציות" color="indigo" />
+            <QuickLink href="/dashboard/crm" title="CRM" subtitle="לקוחות ופרויקטים" color="violet" />
+            <QuickLink href="/dashboard/erp/invoice" title="חשבוניות" subtitle="הפקה ותשלומים" color="blue" />
             {ownerMode ? (
-              <QuickLink href="/dashboard/admin" title="חדר מצב" subtitle="זמין לבעלים בלבד" />
+              <QuickLink href="/dashboard/admin" title="חדר מצב" subtitle="זמין לבעלים בלבד" color="amber" />
             ) : (
-              <QuickLink href="/dashboard/help" title="מדריך" subtitle="רצף הפעלה מקוצר" />
+              <QuickLink href="/dashboard/help" title="מדריך" subtitle="רצף הפעלה מקוצר" color="emerald" />
             )}
           </div>
         </article>
-      </section>
 
-      <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
-        <p className="font-bold">רצף עבודה מומלץ:</p>
-        <ol className="mt-2 list-decimal space-y-1 pe-5">
+      </div>
+
+      {/* WORKFLOW TIP */}
+      <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <p className="text-sm font-black text-amber-900">רצף עבודה מומלץ:</p>
+        <ol className="mt-2 list-decimal space-y-1 pe-5 text-sm text-amber-800">
           <li>בדוק מנוי פעיל ומסלול תשלום.</li>
           <li>הגדר פרטי ארגון ותשלום במסך ההגדרות.</li>
           <li>הזמן משתמשים לצוות והקצה תפקידים.</li>
           <li>עבור למסכי CRM/ERP להפעלה שוטפת.</li>
         </ol>
-        <p className="mt-2 text-xs text-amber-800">תאריך ניסיון חינם: {fmtDate(org?.trialEndsAt ?? null)}</p>
+        <p className="mt-2 text-xs text-amber-700">תאריך ניסיון חינם: {fmtDate(org?.trialEndsAt ?? null)}</p>
       </section>
     </div>
   );
@@ -311,18 +338,21 @@ function QuickPanel({
   description,
   href,
   cta,
+  accent = "slate",
 }: {
   icon: ReactNode;
   title: string;
   description: string;
   href: string;
   cta: string;
+  accent?: "rose" | "violet" | "slate";
 }) {
+  const borderClass = accent === "rose" ? "border-rose-100 bg-rose-50/50" : accent === "violet" ? "border-violet-100 bg-violet-50/50" : "border-gray-100 bg-gray-50";
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="inline-flex items-center gap-2 text-sm font-black text-slate-900">{icon}{title}</p>
-      <p className="mt-2 text-sm text-slate-600">{description}</p>
-      <Link href={href} className="mt-3 inline-flex rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">{cta}</Link>
+    <div className={`rounded-xl border p-3 ${borderClass}`}>
+      <p className="inline-flex items-center gap-2 text-sm font-black text-gray-900">{icon}{title}</p>
+      <p className="mt-1 text-xs text-gray-500">{description}</p>
+      <Link href={href} className="mt-2 inline-flex rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">{cta}</Link>
     </div>
   );
 }
@@ -336,25 +366,29 @@ function MetricChip({
   value: string;
   tone?: "slate" | "blue" | "green";
 }) {
-  const toneClass = tone === "blue"
-    ? "text-blue-700"
-    : tone === "green"
-      ? "text-emerald-700"
-      : "text-slate-900";
-
+  const toneClass = tone === "blue" ? "text-blue-700" : tone === "green" ? "text-emerald-700" : "text-gray-800";
   return (
-    <div className="rounded-xl bg-white p-2">
-      <p className="text-slate-500">{label}</p>
-      <p className={`text-base font-black ${toneClass}`}>{value}</p>
+    <div className="rounded-lg bg-white border border-gray-100 p-1.5">
+      <p className="text-[9px] text-gray-400">{label}</p>
+      <p className={`text-sm font-black ${toneClass}`}>{value}</p>
     </div>
   );
 }
 
-function QuickLink({ href, title, subtitle }: { href: string; title: string; subtitle: string }) {
+const QUICK_LINK_COLORS: Record<string, string> = {
+  indigo: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
+  violet: "border-violet-100 hover:border-violet-300 hover:bg-violet-50/40",
+  blue: "border-blue-100 hover:border-blue-300 hover:bg-blue-50/40",
+  amber: "border-amber-100 hover:border-amber-300 hover:bg-amber-50/40",
+  emerald: "border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/40",
+  slate: "border-gray-100 hover:border-gray-300 hover:bg-gray-50",
+};
+
+function QuickLink({ href, title, subtitle, color = "slate" }: { href: string; title: string; subtitle: string; color?: string }) {
   return (
-    <Link href={href} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white">
-      <p className="text-sm font-black text-slate-900">{title}</p>
-      <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
+    <Link href={href} className={`rounded-2xl border bg-white p-4 transition-all ${QUICK_LINK_COLORS[color] ?? QUICK_LINK_COLORS.slate}`}>
+      <p className="text-sm font-black text-gray-900">{title}</p>
+      <p className="mt-1 text-xs text-gray-500">{subtitle}</p>
     </Link>
   );
 }

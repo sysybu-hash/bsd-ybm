@@ -8,25 +8,24 @@ type Props = Readonly<{
 
 export default function AuthPageShell({ children, secondaryNav }: Props) {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900" dir="rtl">
+    <div className="min-h-screen flex flex-col bg-[#f5f5ff] text-slate-900" dir="rtl">
       {/* Navbar */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-indigo-950 border-b border-indigo-800/40">
         <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 text-lg font-black tracking-tight">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white text-xs font-black">B</span>
-            <span className="text-blue-600">BSD-</span>
-            <span className="text-slate-900">YBM</span>
+          <Link href="/" className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-400 text-indigo-950 text-xs font-black shadow-md">B</span>
+            <span className="text-sm font-black text-indigo-100 tracking-wide">BSD-YBM</span>
           </Link>
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="hidden text-sm font-medium text-slate-500 hover:text-slate-900 transition sm:inline"
+              className="hidden text-xs font-medium text-indigo-300/60 hover:text-indigo-100 transition sm:inline"
             >
               לאתר
             </Link>
             <Link
               href={secondaryNav.href}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+              className="rounded-xl border border-indigo-400/30 bg-indigo-400/15 px-4 py-2 text-xs font-bold text-indigo-200 hover:bg-indigo-400/25 transition"
             >
               {secondaryNav.label}
             </Link>
@@ -40,8 +39,8 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        © {new Date().getFullYear()} BSD-YBM
+      <footer className="border-t border-indigo-100 py-4 text-center text-xs text-indigo-400/50">
+        © {new Date().getFullYear()} BSD-YBM Platform
       </footer>
     </div>
   );
