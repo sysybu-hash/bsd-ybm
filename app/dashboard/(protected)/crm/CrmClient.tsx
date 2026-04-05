@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useMemo, useEffect, useCallback } from "react";
 import {
   createContactAction,
   createProjectAction,
@@ -10,7 +10,6 @@ import {
   deleteProjectAction,
 } from "@/app/actions/crm";
 import Link from "next/link";
-import { useCallback } from "react";
 import {
   Plus,
   Trash2,
@@ -182,19 +181,19 @@ function ContactModal({
   const [invoices, setInvoices] = useState<InvoiceRow[]>(c?.issuedDocuments ?? []);
   const [erpMsg, setErpMsg] = useState<string | null>(null);
 
-  /* טען ERP live בפתיחת עריכה */
+  /* טען ERP live בפתיחת עריכה — משתמש ב-endpoint ייעודי לפי ID */
   const loadErpInvoices = useCallback(async () => {
     if (!c?.id) return;
     setErpLoading(true);
     try {
-      const res = await fetch(`/api/crm/contacts?q=${encodeURIComponent(c.name)}`);
+      const res = await fetch(`/api/crm/contacts/${c.id}`);
+      if (!res.ok) throw new Error();
       const data = await res.json();
-      const found = data.contacts?.find((x: { id: string; issuedDocuments?: InvoiceRow[] }) => x.id === c.id);
-      if (found?.issuedDocuments) setInvoices(found.issuedDocuments);
+      if (data.contact?.issuedDocuments) setInvoices(data.contact.issuedDocuments);
     } catch { /* silent */ } finally { setErpLoading(false); }
-  }, [c]);
+  }, [c?.id]);
 
-  useState(() => { loadErpInvoices(); });
+  useEffect(() => { loadErpInvoices(); }, [loadErpInvoices]);
 
   const markInvoice = async (invId: string, status: string) => {
     setErpMsg(null);
@@ -573,6 +572,16 @@ export default function CrmClient({
   const [msg, setMsg] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
+  /* ── Refresh contacts from server after any mutation ── */
+  const refreshContacts = useCallback(async () => {
+    try {
+      const res = await fetch("/api/crm/contacts");
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.contacts) setContacts(data.contacts);
+    } catch { /* silent */ }
+  }, []);
+
   // List view filters
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -616,12 +625,19 @@ export default function CrmClient({
     return list;
   }, [contacts, filterStatus, filterProject, search]);
 
-  /* ── Status change (optimistic) ── */
+  /* ── Status change (optimistic + refresh on success) ── */
   const handleStatusChange = (id: string, status: StatusKey) => {
     setContacts(prev => prev.map(c => c.id === id ? { ...c, status } : c));
     startTransition(async () => {
       const r = await updateContactStatusAction(id, status);
-      if (!r.ok) setMsg(r.error ?? "שגיאה");
+      if (!r.ok) {
+        setMsg(r.error ?? "שגיאה");
+        // revert optimistic update
+        setContacts(prev => prev.map(c => c.id === id ? { ...c, status: c.status } : c));
+      } else {
+        // refresh to pick up auto-created invoice on CLOSED_WON
+        refreshContacts();
+      }
     });
   };
 
@@ -894,7 +910,7 @@ export default function CrmClient({
                               </button>
                               {c.status === "CLOSED_WON" && (
                                 <Link
-                                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                                   className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-100 transition"
                                 >
                                   <ReceiptText size={12} /> חשבונית
@@ -1055,7 +1071,7 @@ export default function CrmClient({
           state={modal}
           projects={projects}
           onClose={() => setModal(null)}
-          onSaved={(m) => setMsg(m)}
+          onSaved={(m) => { setMsg(m); refreshContacts(); }}
         />
       )}
     </div>

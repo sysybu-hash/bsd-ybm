@@ -56,6 +56,7 @@ export async function createContactAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }
 
@@ -83,6 +84,7 @@ export async function createProjectAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }
 
@@ -100,6 +102,7 @@ export async function deleteContactAction(contactId: string) {
   await prisma.quote.deleteMany({ where: { contactId } });
   await prisma.contact.delete({ where: { id: contactId } });
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }
 
@@ -151,6 +154,7 @@ export async function updateContactAction(input: {
   });
 
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }
 
@@ -168,7 +172,7 @@ export async function updateContactStatusAction(contactId: string, status: strin
   /* ── סנכרון ERP: כשעסקה נסגרת בהצלחה — צור חשבונית ממתינה אוטומטית ── */
   if (status === "CLOSED_WON") {
     const existingInvoice = await prisma.issuedDocument.findFirst({
-      where: { contactId, organizationId: ctx.orgId },
+      where: { contactId, organizationId: ctx.orgId, type: "INVOICE" },
       select: { id: true },
     });
     if (!existingInvoice) {
@@ -216,5 +220,6 @@ export async function deleteProjectAction(projectId: string) {
   await prisma.contact.updateMany({ where: { projectId, organizationId: ctx.orgId }, data: { projectId: null } });
   await prisma.project.delete({ where: { id: projectId } });
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }

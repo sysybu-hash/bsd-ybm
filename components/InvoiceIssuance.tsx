@@ -96,7 +96,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
     setCrmSuggestions([]);
     setShowSuggestions(false);
     if (c.value && c.value > 0 && items.length === 1 && !items[0].desc && items[0].price === 0) {
-      setItems([{ desc: "שירותיים / מוצרים", qty: 1, price: c.value }]);
+      setItems([{ desc: "שירותים / מוצרים", qty: 1, price: c.value }]);
     }
   };
 

@@ -155,7 +155,7 @@ function HubContent(props: Props) {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 6);
 
-  const wonContacts = contacts.filter((c) => c.status === "CLOSED_WON");
+  const wonContacts = contacts.filter((c) => c.status === "CLOSED_WON" && !(c.erp?.invoiceCount));
 
   /* ── Tab definitions ── */
   const TABS: { key: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
@@ -575,7 +575,7 @@ function HubContent(props: Props) {
           </section>
 
           <section>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="w-full">
               <ErpDocumentsManager initialDocs={docs} />
             </div>
           </section>
