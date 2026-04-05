@@ -43,13 +43,13 @@
   --border-color: #e2e8f0;
   --border-strong: #cbd5e1;
 
-  /* Sidebar — dark slate-950 */
-  --sidebar-bg: #020617;
-  --sidebar-border: #0f172a;
-  --sidebar-text: #94a3b8;
-  --sidebar-text-active: #f1f5f9;
-  --sidebar-active-bg: rgba(37, 99, 235, 0.18);
-  --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+  /* Sidebar — clean white */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #f1f5f9;
+  --sidebar-text: #64748b;
+  --sidebar-text-active: #1e293b;
+  --sidebar-active-bg: #eff6ff;
+  --sidebar-hover-bg: #f8fafc;
 
   /* Elevation shadows */
   --shadow-xs: 0 1px 2px 0 rgba(0,0,0,.04);
@@ -297,12 +297,12 @@ html.high-contrast { filter: contrast(1.15) saturate(1.1); }
 /* Thin scrollbar for sidebar */
 .thin-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,.12) transparent;
+  scrollbar-color: #e2e8f0 transparent;
 }
 .thin-scrollbar::-webkit-scrollbar { width: 4px; }
 .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,.12);
+  background: #e2e8f0;
   border-radius: 4px;
 }
 
