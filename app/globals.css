@@ -351,6 +351,18 @@ html.high-contrast { filter: contrast(1.15) saturate(1.1); }
 /* ─────────────────────────────────────────
    TUTORIAL ANIMATIONS (Landing)
 ───────────────────────────────────────── */
+
+@keyframes bsd-fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bsd-tut-scan-line {
+  0%   { top: 8%;  opacity: .5; }
+  50%  { top: 82%; opacity: 1; }
+  100% { top: 8%;  opacity: .5; }
+}
+
 @keyframes bsd-tut-crm-pulse {
   0%, 6%   { opacity: .45; box-shadow: none; transform: scale(1); }
   10%, 30% { opacity: 1;   box-shadow: 0 0 0 2px rgba(96,165,250,.55); transform: scale(1.02); }
