@@ -23,6 +23,9 @@ import {
   CalendarDays,
   Globe,
   Wallet,
+  BarChart3,
+  Bot,
+  Receipt,
 } from "lucide-react";
 import {
   updateOrganizationAction,
@@ -54,6 +57,24 @@ const PREFS_STORAGE_KEY = "bsd-settings-prefs";
 type TabId = "account" | "erp" | "crm" | "ai" | "billing" | "cloud";
 
 const TAB_ORDER: TabId[] = ["account", "erp", "crm", "ai", "billing", "cloud"];
+
+const TAB_ICONS: Record<TabId, React.ReactNode> = {
+  account: <Building2 size={14} />,
+  erp:     <Receipt size={14} />,
+  crm:     <Users size={14} />,
+  ai:      <Bot size={14} />,
+  billing: <CreditCard size={14} />,
+  cloud:   <Cloud size={14} />,
+};
+
+const TAB_COLORS: Record<TabId, string> = {
+  account: "text-indigo-600 border-indigo-600",
+  erp:     "text-blue-600 border-blue-600",
+  crm:     "text-violet-600 border-violet-600",
+  ai:      "text-emerald-600 border-emerald-600",
+  billing: "text-rose-600 border-rose-600",
+  cloud:   "text-sky-600 border-sky-600",
+};
 
 type PlaceholderTabId = Exclude<TabId, "account" | "cloud">;
 
@@ -350,40 +371,30 @@ export default function SettingsPageClient({
 
   return (
     <div className="text-slate-900" dir={dir}>
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md">
 
-        {/* ── Tab bar ── */}
-        <nav className="flex flex-row overflow-x-auto border-b border-slate-200 px-4 gap-0">
-          {TAB_ORDER.map((tabId) => (
-            <button
-              key={tabId}
-              type="button"
-              onClick={() => setActiveTab(tabId)}
-              className={`flex items-center gap-2 whitespace-nowrap px-4 py-4 text-sm font-bold border-b-2 transition-colors ${
-                activeTab === tabId
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              {t(`settings.${tabId}`)}
-            </button>
-          ))}
-        </nav>
-
-        {/* ── Content ── */}
-        <main className="min-w-0 flex-1 p-6 md:p-8">
-          <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-xl font-black tracking-tight text-slate-900">
-              {currentTitle}
-            </h3>
+        {/* ── Page hero ── */}
+        <div className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-l from-slate-900 to-slate-800 px-6 py-5">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-8 end-20 h-32 w-32 rounded-full bg-indigo-500/10 blur-[50px]" />
+          </div>
+          <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-md shadow-indigo-500/30">
+                <Settings size={18} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-white">{currentTitle}</h3>
+                <p className="text-[11px] text-slate-400">הגדרות המערכת והארגון</p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-500 disabled:opacity-50"
             >
-              <Save size={16} />
+              <Save size={15} />
               {activeTab === "account"
                 ? pendingOrg
                   ? t("common.loading")
@@ -393,6 +404,29 @@ export default function SettingsPageClient({
                   : t("settings.savePrefs")}
             </button>
           </div>
+        </div>
+
+        {/* ── Tab bar ── */}
+        <nav className="flex flex-row overflow-x-auto border-b border-slate-200 bg-slate-50/50 px-3 gap-0">
+          {TAB_ORDER.map((tabId) => (
+            <button
+              key={tabId}
+              type="button"
+              onClick={() => setActiveTab(tabId)}
+              className={`flex items-center gap-2 whitespace-nowrap px-4 py-3.5 text-[12px] font-bold border-b-2 transition-all ${
+                activeTab === tabId
+                  ? `border-b-2 bg-white ${TAB_COLORS[tabId]}`
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200"
+              }`}
+            >
+              <span className={activeTab === tabId ? "" : "text-slate-400"}>{TAB_ICONS[tabId]}</span>
+              {t(`settings.${tabId}`)}
+            </button>
+          ))}
+        </nav>
+
+        {/* ── Content ── */}
+        <main className="min-w-0 flex-1 p-5 md:p-7">
 
           {prefsMsg && (
             <p className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700">
@@ -402,9 +436,9 @@ export default function SettingsPageClient({
 
           {activeTab === "account" && (
             <div className="grid grid-cols-1 gap-6">
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                <h4 className="mb-4 flex items-center gap-2 text-base font-bold text-slate-800">
-                  <Shield size={18} className="text-emerald-600" /> פרופיל אישי
+              <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 p-6">
+                <h4 className="mb-4 flex items-center gap-2 text-base font-black text-slate-800">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Shield size={14} /></span> פרופיל אישי
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
                   <div className="bg-white p-4 rounded-2xl border border-slate-100">
@@ -423,9 +457,9 @@ export default function SettingsPageClient({
               </div>
 
               {initialOrg && (
-                <div className="p-6 md:p-8 bg-slate-50 rounded-2xl border border-slate-100">
-                  <h4 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
-                    <Building2 size={22} className="text-[var(--primary-color,#3b82f6)]" />
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-blue-50/30 p-6">
+                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><Building2 size={14} /></span>
                     חברה / ארגון
                   </h4>
                   <p className="text-slate-600 text-sm mb-6">
@@ -582,9 +616,9 @@ export default function SettingsPageClient({
               )}
 
               {initialOrg && canEditTaxProfile && (
-                <div className="p-6 md:p-8 bg-slate-50 rounded-2xl border border-slate-100">
-                  <h4 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
-                    <Globe size={22} className="text-[var(--primary-color,#3b82f6)]" />
+                <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50/40 to-cyan-50/30 p-6">
+                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-100 text-sky-600"><Globe size={14} /></span>
                     פורטל המנוי, דף הבית ודומיין
                   </h4>
                   <p className="text-slate-600 text-sm mb-6 leading-relaxed">
@@ -693,13 +727,9 @@ export default function SettingsPageClient({
                 </div>
               )}
 
-              <div className="p-6 md:p-8 bg-slate-50 rounded-2xl border border-slate-100 relative overflow-hidden">
-                <div
-                  className="absolute top-0 right-0 w-1 h-full"
-                  style={{ backgroundColor: "var(--primary-color, #3b82f6)" }}
-                />
-                <h4 className="text-lg font-bold mb-4 flex items-center gap-2 text-[var(--primary-color,#2563eb)]">
-                  <UserPlus size={22} /> ניהול צוות
+              <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50/40 to-purple-50/30 p-6">
+                <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-4">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><UserPlus size={14} /></span> ניהול צוות
                 </h4>
                 <p className="text-slate-600 text-sm mb-6 leading-relaxed">
                   <strong className="text-slate-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
@@ -836,9 +866,9 @@ export default function SettingsPageClient({
           {activeTab !== "account" && activeTab !== "cloud" && (
             <div className="grid grid-cols-1 gap-6">
               {activeTab === "billing" && initialOrg && canEditTaxProfile && (
-                <div className="p-6 md:p-8 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-sky-50/50">
-                  <h4 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
-                    <Wallet size={22} className="text-[#0070ba]" aria-hidden />
+                <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50/40 to-sky-50/30 p-6">
+                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#e8f4fd] text-[#0070ba]"><Wallet size={14} /></span>
                     PayPal של הארגון + רמת נתונים חיים
                   </h4>
                   <p className="text-sm text-slate-600 mb-6 leading-relaxed">
@@ -932,7 +962,7 @@ export default function SettingsPageClient({
               ) : null}
 
               {(activeTab === "ai" || activeTab === "billing") && (
-                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-blue-200 bg-gradient-to-l from-blue-50 to-indigo-50 p-4">
                   <Sparkles className="text-blue-600 shrink-0" size={22} />
                   <div className="flex-1 min-w-[200px] text-sm text-slate-700">
                     {activeTab === "ai" ? (
@@ -959,28 +989,24 @@ export default function SettingsPageClient({
                 </div>
               )}
               {activeTab === "erp" && (
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-600">
-                  ניהול מסמכים ודוחות —{" "}
-                  <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">
-                    פתיחת ERP
-                  </Link>
-                  .
+                <div className="flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4 text-sm text-slate-700">
+                  <Receipt size={16} className="text-blue-600 shrink-0" />
+                  <span>ניהול מסמכים ודוחות —{" "}
+                  <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">פתיחת ERP</Link>.</span>
                 </div>
               )}
               {activeTab === "crm" && (
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-sm text-slate-600">
-                  לקוחות ולידים —{" "}
-                  <Link href="/dashboard/crm" className="font-bold text-blue-700 underline">
-                    פתיחת CRM
-                  </Link>
-                  .
+                <div className="flex items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50/50 p-4 text-sm text-slate-700">
+                  <Users size={16} className="text-violet-600 shrink-0" />
+                  <span>לקוחות ולידים —{" "}
+                  <Link href="/dashboard/crm" className="font-bold text-violet-700 underline">פתיחת CRM</Link>.</span>
                 </div>
               )}
 
               {PLACEHOLDER_FIELDS[activeTab as PlaceholderTabId].map((field) => (
                 <div
                   key={field.key}
-                  className="p-5 bg-slate-50 rounded-2xl border border-slate-100"
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                 >
                   <label className="block font-bold text-slate-800 mb-1">{field.label}</label>
                   {field.hint && (
