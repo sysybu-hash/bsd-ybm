@@ -62,15 +62,17 @@ type MeckanoDepartment = {
 type MeckanoAttendance = {
   id: number;
   userId: number;
+  uts: number;
   ts: number;
-  bts?: number;
-  mts?: number;
-  uts?: number;
+  mts: number | null;
+  isOut: boolean;
+  flag: number;
+  disabled: boolean;
+  companyId: number;
+  userName?: string;
+  workerTag?: string;
   dateStr?: string;
   timeStr?: string;
-  entryType?: number;
-  note?: string | null;
-  userName?: string;
 };
 
 type MeckanoTask = {
@@ -234,13 +236,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     setAttLoading(true); setAttError(null);
     const from = Math.floor(new Date(attFrom).getTime() / 1000);
     const to = Math.floor(new Date(attTo + "T23:59:59").getTime() / 1000);
-    const params: Record<string, string> = { from: String(from), to: String(to) };
-    if (attUserId) params.userId = attUserId;
-    const r = await meckanoFetch<MeckanoAttendance[]>("attendance", params);
+    const r = await meckanoFetch<MeckanoAttendance[]>("time-entry", { from: String(from), to: String(to) });
     setAttLoading(false);
     if (r.status && r.data) setAttendance(r.data);
     else setAttError(r.error ?? "שגיאה בטעינת נוכחות");
-  }, [attFrom, attTo, attUserId]);
+  }, [attFrom, attTo]);
 
   const loadTasks = useCallback(async () => {
     setTasksLoading(true); setTasksError(null);
@@ -567,7 +567,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <input type="date" value={attTo} onChange={e => setAttTo(e.target.value)} className={inputCls} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">מזהה עובד (אופציונלי)</label>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">סינון עובד</label>
                   <select
                     value={attUserId}
                     onChange={e => setAttUserId(e.target.value)}
@@ -595,28 +595,34 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50 border-b border-slate-100">
                       <tr>
-                        {["עובד", "תאריך", "שעה", "סוג", "הערה"].map(h => (
+                        {["עובד", "מספר", "תאריך", "שעה", "כניסה/יציאה"].map(h => (
                           <th key={h} className="px-4 py-3 text-right text-xs font-bold text-slate-500">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {attendance.map(row => (
+                      {(attUserId ? attendance.filter(r => String(r.userId) === attUserId) : attendance).map(row => (
                         <tr key={row.id} className="hover:bg-slate-50 transition">
                           <td className="px-4 py-3 font-medium text-slate-900">{row.userName ?? `#${row.userId}`}</td>
+                          <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.workerTag ?? "—"}</td>
                           <td className="px-4 py-3 text-slate-600">{row.dateStr ?? tsToDate(row.ts)}</td>
                           <td className="px-4 py-3 text-slate-600" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
                           <td className="px-4 py-3">
-                            <CheckStateBadge state={row.entryType ?? 0} />
+                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${
+                              row.isOut ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"
+                            }`}>
+                              {row.isOut ? "יציאה" : "כניסה"}
+                            </span>
                           </td>
-                          <td className="px-4 py-3 text-slate-500 max-w-[200px] truncate">{row.note ?? "—"}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               )}
-              <p className="text-xs text-slate-400 text-left">{attendance.length} רשומות</p>
+              <p className="text-xs text-slate-400 text-left">
+                {attUserId ? attendance.filter(r => String(r.userId) === attUserId).length : attendance.length} רשומות
+              </p>
             </div>
           )}
 
