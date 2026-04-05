@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Users,
@@ -34,6 +35,9 @@ import {
   Info,
 } from "lucide-react";
 import { updateMeckanoApiKeyAction } from "@/app/actions/org-settings";
+
+// Dynamic import for Leaflet map (no SSR)
+const MeckanoMap = dynamic(() => import("./MeckanoMap"), { ssr: false, loading: () => <LoadingSpinner /> });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -102,6 +106,18 @@ type MeckanoTaskEntry = {
   userName?: string;
 };
 
+type MeckanoZone = {
+  id: string;
+  name: string;
+  address: string;
+  description?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  radius: number;
+  isActive: boolean;
+  syncedToCrm: boolean;
+};
+
 type ApiResult<T> = { status: boolean; data?: T; error?: string };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -167,6 +183,8 @@ const TABS = [
   { id: "employees", label: "עובדים", Icon: Users },
   { id: "departments", label: "מחלקות", Icon: Building2 },
   { id: "attendance", label: "נוכחות", Icon: Clock },
+  { id: "locations", label: "אזורי דיווח", Icon: Globe },
+  { id: "live-map", label: "מפה חיה", Icon: Activity },
   { id: "tasks", label: "משימות", Icon: CheckSquare },
   { id: "task-entries", label: "דיווח משימות", Icon: BarChart2 },
   { id: "settings", label: "הגדרות", Icon: Settings },
@@ -225,6 +243,16 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   // ── Overview (derived from employees once loaded) ──
   const [overviewLoading, setOverviewLoading] = useState(false);
 
+  // ── Zones / Locations ──
+  const [zones, setZones] = useState<MeckanoZone[]>([]);
+  const [zonesLoading, setZonesLoading] = useState(false);
+  const [zonesError, setZonesError] = useState<string | null>(null);
+  const [zoneSyncMsg, setZoneSyncMsg] = useState<string | null>(null);
+  const [zoneSyncPending, setZoneSyncPending] = useState(false);
+  const [showAddZone, setShowAddZone] = useState(false);
+  const [newZone, setNewZone] = useState({ name: "", address: "", description: "", radius: "150" });
+  const [addingZone, setAddingZone] = useState(false);
+
   // ── Load helpers ──
   const loadEmployees = useCallback(async () => {
     setEmpLoading(true); setEmpError(null);
@@ -270,6 +298,53 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     else setTeError(r.error ?? "שגיאה בטעינת דיווחי משימות");
   }, [teFrom, teTo]);
 
+  const loadZones = useCallback(async () => {
+    setZonesLoading(true); setZonesError(null);
+    try {
+      const res = await fetch("/api/meckano/zones");
+      const data = await res.json() as { status: boolean; data?: MeckanoZone[]; error?: string };
+      if (data.status && data.data) setZones(data.data);
+      else setZonesError(data.error ?? "שגיאה בטעינת אזורים");
+    } catch { setZonesError("שגיאת רשת"); }
+    setZonesLoading(false);
+  }, []);
+
+  const deleteZone = async (id: string) => {
+    await fetch(`/api/meckano/zones/${id}`, { method: "DELETE" });
+    setZones(z => z.filter(x => x.id !== id));
+  };
+
+  const addZone = async () => {
+    if (!newZone.name || !newZone.address) return;
+    setAddingZone(true);
+    try {
+      const res = await fetch("/api/meckano/zones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...newZone, radius: parseInt(newZone.radius) || 150 }),
+      });
+      const data = await res.json() as { status: boolean; data?: MeckanoZone };
+      if (data.status && data.data) {
+        setZones(z => [...z, data.data!]);
+        setNewZone({ name: "", address: "", description: "", radius: "150" });
+        setShowAddZone(false);
+      }
+    } finally { setAddingZone(false); }
+  };
+
+  const syncZonesToCrm = async () => {
+    setZoneSyncPending(true); setZoneSyncMsg(null);
+    try {
+      const res = await fetch("/api/meckano/sync/zones-to-crm", { method: "POST" });
+      const data = await res.json() as { synced?: number; message?: string; error?: string };
+      if (res.ok) {
+        setZoneSyncMsg(`✓ ${data.message ?? `סונכרנו ${data.synced} אזורים`}`);
+        loadZones();
+      } else setZoneSyncMsg(`שגיאה: ${data.error ?? "לא ידוע"}`);
+    } catch { setZoneSyncMsg("שגיאת רשת"); }
+    setZoneSyncPending(false);
+  };
+
   // Auto-load on tab switch
   useEffect(() => {
     if (!connected) return;
@@ -278,6 +353,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     if (activeTab === "attendance") loadAttendance();
     if (activeTab === "tasks" && tasks.length === 0) loadTasks();
     if (activeTab === "task-entries") loadTaskEntries();
+    if (activeTab === "locations" && zones.length === 0) loadZones();
+    if (activeTab === "live-map") {
+      if (employees.length === 0) loadEmployees();
+      if (zones.length === 0) loadZones();
+    }
     if (activeTab === "settings" && employees.length === 0) {
       setOverviewLoading(true);
       loadEmployees().finally(() => setOverviewLoading(false));
@@ -306,7 +386,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   };
 
   const inputCls = "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 transition";
-  const filtered = employees.filter(e => {
+  // Only show active employees (activeState === 1)
+  const activeEmployees = employees.filter(e => e.activeState === 1);
+  const filtered = activeEmployees.filter(e => {
     const q = empSearch.toLowerCase();
     const name = `${e.firstName ?? ""} ${e.lastName ?? ""} ${e.email ?? ""} ${e.workerTag ?? ""}`.toLowerCase();
     return name.includes(q);
@@ -467,8 +549,20 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 {emp.department.name}
                               </span>
                             )}
-                            <CheckStateBadge state={emp.lastCheckState ?? 0} />
-                            <StatusBadge active={emp.activeState === 1} />
+                            {/* Real-time status: green dot if checked in within last 24h */}
+                            {(() => {
+                              const now = Date.now() / 1000;
+                              const isIn = emp.lastCheckState === 1 && emp.lastCheckTime && now - emp.lastCheckTime < 86400;
+                              const isOut = emp.lastCheckState === 2;
+                              return (
+                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
+                                  isIn ? "bg-emerald-100 text-emerald-700" : isOut ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-400"
+                                }`}>
+                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isIn ? "bg-emerald-500 animate-pulse" : isOut ? "bg-orange-400" : "bg-slate-300"}`} />
+                                  {isIn ? "בעבודה" : isOut ? "יצא" : "לא פעיל"}
+                                </span>
+                              );
+                            })()}
                             {isOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
                           </div>
                         </button>
@@ -531,7 +625,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   })}
                 </div>
               )}
-              <p className="text-xs text-slate-400 text-left">{filtered.length} עובדים מוצגים</p>
+              <p className="text-xs text-slate-400 text-left">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
             </div>
           )}
 
@@ -637,6 +731,194 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               <p className="text-xs text-slate-400 text-left">
                 {attUserId ? attendance.filter(r => String(r.userId) === attUserId).length : attendance.length} רשומות
               </p>
+            </div>
+          )}
+
+          {/* ── LOCATIONS / AUTHORIZED ZONES ── */}
+          {activeTab === "locations" && (
+            <div className="space-y-4" dir="rtl">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-black text-slate-900 text-base">אזורי דיווח מורשים</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    אתרי עבודה לחתימת נוכחות — ניתן לסנכרן לCRM ול-ERP
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={loadZones} disabled={zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold hover:bg-slate-50 transition disabled:opacity-50">
+                    <RefreshCw size={14} className={zonesLoading ? "animate-spin" : ""} /> רענון
+                  </button>
+                  <button onClick={syncZonesToCrm} disabled={zoneSyncPending || zones.length === 0} className="flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700 transition disabled:opacity-50">
+                    {zoneSyncPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
+                    סנכרן ל-CRM
+                  </button>
+                  <button onClick={() => setShowAddZone(v => !v)} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition">
+                    <Hash size={14} /> הוסף אזור
+                  </button>
+                </div>
+              </div>
+
+              {zoneSyncMsg && (
+                <p className={`rounded-xl border px-4 py-2.5 text-sm font-medium ${zoneSyncMsg.startsWith("✓") ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-red-50 border-red-200 text-red-700"}`}>
+                  {zoneSyncMsg}
+                </p>
+              )}
+
+              {/* Add Zone Form */}
+              {showAddZone && (
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 space-y-3">
+                  <h4 className="font-black text-blue-900 text-sm">הוספת אזור דיווח חדש</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">שם האתר *</label>
+                      <input value={newZone.name} onChange={e => setNewZone(z => ({ ...z, name: e.target.value }))} placeholder='שנלר, תנובה, ממילא...' className={inputCls + " w-full"} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">כתובת מלאה *</label>
+                      <input value={newZone.address} onChange={e => setNewZone(z => ({ ...z, address: e.target.value }))} placeholder="שנלר, ירושלים" className={inputCls + " w-full"} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">תיאור (אופציונלי)</label>
+                      <input value={newZone.description} onChange={e => setNewZone(z => ({ ...z, description: e.target.value }))} placeholder="תיאור קצר" className={inputCls + " w-full"} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">רדיוס (מטרים)</label>
+                      <input type="number" value={newZone.radius} onChange={e => setNewZone(z => ({ ...z, radius: e.target.value }))} min={10} max={1000} className={inputCls + " w-full"} />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={addZone} disabled={addingZone || !newZone.name || !newZone.address} className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50">
+                      {addingZone ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />} שמור
+                    </button>
+                    <button onClick={() => setShowAddZone(false)} className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold hover:bg-slate-50 transition">ביטול</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Info banner */}
+              <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs text-amber-800 flex items-start gap-2">
+                <Info size={13} className="mt-0.5 shrink-0" />
+                <span>API מקאנו אינו חושף אזורי דיווח — הנתונים נשמרים מקומית ומוצגים על המפה החיה. ניתן לייצא ל-CRM ול-ERP.</span>
+              </div>
+
+              {zonesLoading ? <LoadingSpinner /> : zonesError ? (
+                <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{zonesError}</div>
+              ) : zones.length === 0 ? (
+                <EmptyState message="אין אזורי דיווח — הוסף את אתרי העבודה שלך" />
+              ) : (
+                <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 overflow-hidden">
+                  {zones.map(zone => (
+                    <div key={zone.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                        <Globe size={18} className="text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-black text-slate-900 text-sm">{zone.name}</p>
+                          {zone.syncedToCrm && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 px-2 py-0.5 text-xs font-bold">
+                              <CheckCircle2 size={10} /> CRM
+                            </span>
+                          )}
+                          {!zone.isActive && <span className="rounded-full bg-slate-100 text-slate-500 px-2 py-0.5 text-xs font-bold">לא פעיל</span>}
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">{zone.address}</p>
+                        {zone.description && <p className="text-xs text-slate-400">{zone.description}</p>}
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-bold text-slate-700">{zone.radius}מ׳</p>
+                        <p className="text-xs text-slate-400">רדיוס</p>
+                      </div>
+                      <button onClick={() => deleteZone(zone.id)} className="ml-2 rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition">
+                        <ArrowRight size={13} className="rotate-180" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-slate-400 text-left">{zones.filter(z => z.isActive).length} אזורים פעילים</p>
+            </div>
+          )}
+
+          {/* ── LIVE MAP ── */}
+          {activeTab === "live-map" && (
+            <div className="space-y-4" dir="rtl">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-black text-slate-900 text-base flex items-center gap-2">
+                    <Activity size={16} className="text-emerald-600" /> מפה חיה
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    אזורי דיווח על המפה + סטטוס נוכחות עובדים בזמן אמת
+                  </p>
+                </div>
+                <button onClick={() => { loadEmployees(); loadZones(); }} disabled={empLoading || zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold hover:bg-slate-50 transition disabled:opacity-50">
+                  <RefreshCw size={14} className={empLoading || zonesLoading ? "animate-spin" : ""} /> רענן
+                </button>
+              </div>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-4 text-xs text-slate-600">
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-3 w-3 rounded-full bg-emerald-500" />
+                  בעבודה ({activeEmployees.filter(e => e.lastCheckState === 1).length})
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-3 w-3 rounded-full bg-slate-400" />
+                  לא פעיל ({activeEmployees.filter(e => e.lastCheckState !== 1).length})
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block h-5 w-5 rounded-full border-2 border-blue-400 bg-blue-100" />
+                  אזור דיווח ({zones.filter(z => z.isActive).length})
+                </span>
+              </div>
+
+              {/* CSS for leaflet */}
+              <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+              {empLoading || zonesLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                  <MeckanoMap
+                    zones={zones}
+                    activeEmployees={activeEmployees.map(e => ({
+                      id: e.id,
+                      name: [e.firstName, e.lastName].filter(Boolean).join(" ") || e.workerTag || `#${e.id}`,
+                      workerTag: e.workerTag,
+                      lastCheckState: e.lastCheckState ?? 0,
+                      lastCheckTime: e.lastCheckTime ?? null,
+                    }))}
+                  />
+                </div>
+              )}
+
+              {/* Employee list overlay */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                {activeEmployees.map(emp => {
+                  const name = [emp.firstName, emp.lastName].filter(Boolean).join(" ") || emp.workerTag || `#${emp.id}`;
+                  const now = Date.now() / 1000;
+                  const isIn = emp.lastCheckState === 1 && emp.lastCheckTime && now - emp.lastCheckTime < 86400;
+                  return (
+                    <div key={emp.id} className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${isIn ? "border-emerald-200 bg-emerald-50" : "border-slate-100 bg-white"}`}>
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-black text-sm text-white ${isIn ? "bg-emerald-500" : "bg-slate-300"}`}>
+                        {name.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-slate-900 text-sm truncate">{name}</p>
+                        <p className="text-xs text-slate-500">
+                          {isIn
+                            ? `בעבודה מ-${emp.lastCheckTime ? tsToTime(emp.lastCheckTime) : "—"}`
+                            : emp.lastCheckState === 2
+                            ? `יצא ב-${emp.lastCheckTime ? tsToTime(emp.lastCheckTime) : "—"}`
+                            : "לא מחותם"}
+                        </p>
+                      </div>
+                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${isIn ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`} />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

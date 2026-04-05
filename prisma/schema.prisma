@@ -127,6 +127,26 @@ model Organization {
   organizationInvites OrganizationInvite[]
   /// API key לאינטגרציית מקאנו (שעון נוכחות / HR) — מוצפן בשרת בלבד
   meckanoApiKey        String?
+  meckanoZones         MeckanoZone[]
+}
+
+/// אזורי דיווח מורשים למקאנו — נקודות עבודה/אתרים לחתימה
+model MeckanoZone {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String       // שם האתר, ״שנלר״
+  address        String       // כתובת מלאה, ״שנלר, ירושלים״
+  description    String?      // תיאור נוסף
+  lat            Float?       // קו רוחב (geocoded)
+  lng            Float?       // קו אורך (geocoded)
+  radius         Int          @default(150) // רדיוס דיווח במטרים
+  isActive       Boolean      @default(true)
+  syncedToCrm    Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
 }
 
 /// הזמנה להצטרף לארגון קיים — אחרי הרשמה המשתמש מקבל את התפקיד שנבחר (ברירת מחדל: עובד)
