@@ -39,8 +39,7 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lng: numb
 
 export default function MeckanoMap({ zones, activeEmployees }: MeckanoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<ReturnType<typeof import('leaflet')['map']> | null>(null);
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -48,8 +47,7 @@ export default function MeckanoMap({ zones, activeEmployees }: MeckanoMapProps) 
     // Dynamically import leaflet (SSR-safe)
     import("leaflet").then((L) => {
       // Fix default icon URLs (webpack breaks them)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
