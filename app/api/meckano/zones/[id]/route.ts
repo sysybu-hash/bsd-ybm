@@ -17,7 +17,7 @@ export async function PUT(
     name?: string; address?: string; description?: string;
     lat?: number; lng?: number; radius?: number; isActive?: boolean;
     managerName?: string; startDate?: string | null; endDate?: string | null;
-    budgetHours?: number | null; projectNotes?: string | null;
+    budgetHours?: number | null; hourlyRate?: number | null; projectNotes?: string | null;
     assignedEmployeeIds?: number[];
   };
 
@@ -39,6 +39,7 @@ export async function PUT(
       startDate: body.startDate !== undefined ? (body.startDate ? new Date(body.startDate) : null) : existing.startDate,
       endDate: body.endDate !== undefined ? (body.endDate ? new Date(body.endDate) : null) : existing.endDate,
       budgetHours: body.budgetHours !== undefined ? body.budgetHours : existing.budgetHours,
+      hourlyRate: body.hourlyRate !== undefined ? body.hourlyRate : existing.hourlyRate,
       projectNotes: body.projectNotes !== undefined ? body.projectNotes : existing.projectNotes,
       assignedEmployeeIds: body.assignedEmployeeIds !== undefined ? body.assignedEmployeeIds : existing.assignedEmployeeIds,
     },

@@ -121,6 +121,7 @@ type MeckanoZone = {
   startDate?: string | null;
   endDate?: string | null;
   budgetHours?: number | null;
+  hourlyRate?: number | null;
   projectNotes?: string | null;
   assignedEmployeeIds?: number[];
 };
@@ -198,7 +199,7 @@ const TABS = [
   { id: "settings", label: "הגדרות", Icon: Settings },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
-type ReportType = "attendance" | "task-entries" | "summary";
+type ReportType = "attendance" | "task-entries" | "summary" | "project-cost";
 
 export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }) {
   const [activeTab, setActiveTab] = useState<TabId>("employees");
@@ -424,6 +425,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
         startDate: zone.startDate ? zone.startDate.slice(0, 10) : "",
         endDate: zone.endDate ? zone.endDate.slice(0, 10) : "",
         budgetHours: zone.budgetHours ?? undefined,
+        hourlyRate: zone.hourlyRate ?? undefined,
         projectNotes: zone.projectNotes ?? "",
         assignedEmployeeIds: zone.assignedEmployeeIds ?? [],
       },
@@ -480,7 +482,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
         selectedZone.assignedEmployeeIds.forEach(id => filterEmpIds.add(id));
       }
     }
-    if (reportType === "attendance" || reportType === "summary") {
+    if (reportType === "attendance" || reportType === "summary" || reportType === "project-cost") {
       const r = await meckanoFetch<MeckanoAttendance[]>("time-entry", { from: String(from), to: String(to) });
       if (r.status && r.data) {
         let data = r.data;
@@ -502,7 +504,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
   const exportCsv = () => {
     const zoneName = reportZoneId ? (zones.find(z => z.id === reportZoneId)?.name ?? "") : "";
-    const header = `# דוח מקאנו · ${reportType === "attendance" ? "נוכחות" : reportType === "task-entries" ? "משימות" : "סיכום שעות"} · ${reportFrom} – ${reportTo}${zoneName ? ` · אזור: ${zoneName}` : ""}\n`;
+    const header = `# דוח מקאנו · ${reportType === "attendance" ? "נוכחות" : reportType === "task-entries" ? "משימות" : reportType === "project-cost" ? "עלויות פרויקט" : "סיכום שעות"} · ${reportFrom} – ${reportTo}${zoneName ? ` · אזור: ${zoneName}` : ""}\n`;
     let body = "";
     if (reportType === "attendance") {
       body = "עובד,מס׳,תאריך,שעה,כניסה/יציאה\n";
@@ -522,6 +524,23 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
           else if (row.isOut && pendingIn !== null) { minutes += Math.round((row.ts - pendingIn) / 60); pendingIn = null; }
         });
         body += `"${sorted[0].userName ?? sorted[0].userId}","${sorted[0].workerTag ?? ""}","${days}","${(minutes / 60).toFixed(1)}","${sorted.length}"\n`;
+      });
+    } else if (reportType === "project-cost") {
+      const selectedZone = reportZoneId ? zones.find(z => z.id === reportZoneId) : null;
+      const rate = selectedZone?.hourlyRate ?? 0;
+      body = "עובד,מס׳,ימי עבודה,שעות,תעריף (₪/ש׳),עלות (₪)\n";
+      const byUser2: Record<number, MeckanoAttendance[]> = {};
+      reportAttendance.forEach(row => { if (!byUser2[row.userId]) byUser2[row.userId] = []; byUser2[row.userId].push(row); });
+      Object.values(byUser2).forEach(rows => {
+        const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+        const days = new Set(sorted.map(r => r.dateStr ?? tsToDate(r.ts))).size;
+        let minutes = 0; let pendingIn: number | null = null;
+        sorted.forEach(row => {
+          if (!row.isOut && pendingIn === null) pendingIn = row.ts;
+          else if (row.isOut && pendingIn !== null) { minutes += Math.round((row.ts - pendingIn) / 60); pendingIn = null; }
+        });
+        const hrs = minutes / 60;
+        body += `"${sorted[0].userName ?? sorted[0].userId}","${sorted[0].workerTag ?? ""}","${days}","${hrs.toFixed(1)}","${rate.toFixed(2)}","${(hrs * rate).toFixed(2)}"\n`;
       });
     } else {
       body = "עובד,משימה,תאריך,משך (דק׳),הערה\n";
@@ -1086,6 +1105,17 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
+                                <label className="block text-xs font-bold text-slate-600 mb-1">תעריף שעתי (₪)</label>
+                                <input
+                                  type="number"
+                                  value={edit.hourlyRate ?? ""}
+                                  placeholder="0.00"
+                                  step="0.01"
+                                  onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], hourlyRate: parseFloat(e.target.value) || undefined } }))}
+                                  className={inputCls + " w-full"}
+                                />
+                              </div>
+                              <div>
                                 <label className="block text-xs font-bold text-slate-600 mb-1">תיאור</label>
                                 <input
                                   value={edit.description ?? ""}
@@ -1360,6 +1390,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       { id: "attendance" as ReportType, label: "נוכחות", desc: "כניסות ויציאות לפי יום" },
                       { id: "summary" as ReportType, label: "סיכום שעות", desc: "שעות מחושבות לפי עובד" },
                       { id: "task-entries" as ReportType, label: "דיווח משימות", desc: "דיווח שעות לפי משימה" },
+                      { id: "project-cost" as ReportType, label: "עלויות פרויקט", desc: "שעות × תעריף לפי עובד" },
                     ]).map(({ id, label, desc }) => (
                       <button
                         key={id}
@@ -1588,6 +1619,87 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 <td className="px-4 py-3 text-slate-500">{row.entries}</td>
                               </tr>
                             ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : reportGenerated && reportType === "project-cost" && reportAttendance.length === 0 ? (
+                <EmptyState message="אין נתוני נוכחות לחישוב עלויות" />
+              ) : reportGenerated && reportType === "project-cost" && reportAttendance.length > 0 ? (
+                (() => {
+                  const selectedZone = reportZoneId ? zones.find(z => z.id === reportZoneId) : null;
+                  const rate = selectedZone?.hourlyRate ?? 0;
+                  const byUser: Record<number, MeckanoAttendance[]> = {};
+                  reportAttendance.forEach(row => { if (!byUser[row.userId]) byUser[row.userId] = []; byUser[row.userId].push(row); });
+                  const costRows = Object.values(byUser).map(rows => {
+                    const sorted = [...rows].sort((a, b) => a.ts - b.ts);
+                    const name = sorted[0].userName ?? `#${sorted[0].userId}`;
+                    const tag = sorted[0].workerTag ?? "";
+                    const days = new Set(sorted.map(r => r.dateStr ?? tsToDate(r.ts))).size;
+                    let minutes = 0; let pendingIn: number | null = null;
+                    sorted.forEach(row => {
+                      if (!row.isOut && pendingIn === null) pendingIn = row.ts;
+                      else if (row.isOut && pendingIn !== null) { minutes += Math.round((row.ts - pendingIn) / 60); pendingIn = null; }
+                    });
+                    const hours = minutes / 60;
+                    const cost = hours * rate;
+                    return { userId: sorted[0].userId, name, tag, days, hours, cost };
+                  }).sort((a, b) => b.cost - a.cost);
+                  const totalHours = costRows.reduce((s, r) => s + r.hours, 0);
+                  const totalCost = costRows.reduce((s, r) => s + r.cost, 0);
+                  return (
+                    <div className="space-y-4">
+                      {/* Summary cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+                          <p className="text-2xl font-black text-slate-900">{costRows.length}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">עובדים</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+                          <p className="text-2xl font-black text-blue-600">{totalHours.toFixed(1)}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">שעות כולל</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+                          <p className="text-2xl font-black text-slate-700">{rate > 0 ? `₪${rate.toFixed(0)}` : "—"}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">תעריף לשעה</p>
+                        </div>
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center">
+                          <p className="text-2xl font-black text-emerald-700">{rate > 0 ? `₪${totalCost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</p>
+                          <p className="text-xs text-emerald-600 mt-0.5">עלות כוללת</p>
+                        </div>
+                      </div>
+                      {rate === 0 && (
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+                          לא הוגדר תעריף שעתי לפרויקט זה — הגדר תעריף בלשונית &quot;פרויקטים&quot; כדי לחשב עלויות.
+                        </div>
+                      )}
+                      {/* Per-employee table */}
+                      <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table className="w-full text-sm">
+                          <thead className="bg-slate-50 border-b border-slate-100">
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-slate-500">{h}</th>)}</tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {costRows.map(row => (
+                              <tr key={row.userId} className="hover:bg-slate-50 transition">
+                                <td className="px-4 py-3 font-bold text-slate-900">{row.name}</td>
+                                <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.tag}</td>
+                                <td className="px-4 py-3 text-slate-700">{row.days}</td>
+                                <td className="px-4 py-3 font-black text-blue-600">{row.hours.toFixed(1)}</td>
+                                <td className="px-4 py-3 text-slate-600">{rate > 0 ? `₪${rate.toFixed(2)}` : "—"}</td>
+                                <td className="px-4 py-3 font-black text-emerald-600">{rate > 0 ? `₪${row.cost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</td>
+                              </tr>
+                            ))}
+                            {/* Totals row */}
+                            <tr className="bg-slate-50 font-black">
+                              <td className="px-4 py-3 text-slate-900" colSpan={2}>סה״כ</td>
+                              <td className="px-4 py-3 text-slate-700">—</td>
+                              <td className="px-4 py-3 text-blue-700">{totalHours.toFixed(1)}</td>
+                              <td className="px-4 py-3 text-slate-600">—</td>
+                              <td className="px-4 py-3 text-emerald-700">{rate > 0 ? `₪${totalCost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>

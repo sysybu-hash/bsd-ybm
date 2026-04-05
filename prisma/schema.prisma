@@ -148,6 +148,7 @@ model MeckanoZone {
   startDate      DateTime?    // תחילת הפרויקט
   endDate        DateTime?    // סיום מתוכנן
   budgetHours    Float?       // תקציב שעות
+  hourlyRate     Float?       // תעריף שעתי בש״ח (לחישוב עלות פרויקט)
   projectNotes   String?      @db.Text  // הערות פרויקט
   /// מזהי עובדים ממקאנו המשויכים לפרויקט (int[])
   assignedEmployeeIds Int[]   @default([])
