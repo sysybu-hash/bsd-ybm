@@ -111,7 +111,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? t("aiBubble.ariaClose") : "פתח עוזר AI"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-600 text-white shadow-xl shadow-indigo-600/35 ring-2 ring-white/90"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-2 ring-white/90"
       >
         {open ? <X size={26} aria-hidden /> : <Brain size={26} aria-hidden />}
       </motion.button>
@@ -125,7 +125,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
             className="absolute bottom-[calc(100%+0.75rem)] start-1/2 z-[220] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2"
           >
             <div
-              className={`overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-2xl ${
+              className={`overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60 ${
                 tab === "chat" ? "" : ""
               }`}
             >

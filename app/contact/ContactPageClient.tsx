@@ -16,7 +16,7 @@ export default function ContactPageClient() {
       <p className="mb-8 text-lg leading-relaxed text-gray-600">{t("contactPage.intro")}</p>
 
       <ul
-        className="card-avenue space-y-5 bg-white p-6 text-gray-800 shadow-lg shadow-gray-200/40"
+        className="card-avenue space-y-5 bg-white p-6 text-gray-800 shadow-sm"
         dir={dir}
       >
         <li>
@@ -55,7 +55,7 @@ export default function ContactPageClient() {
         href={WHATSAPP_HREF}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4 text-base font-black text-white shadow-xl shadow-green-900/30 transition hover:brightness-110"
+        className="mt-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4 text-base font-black text-white shadow-sm transition hover:brightness-110"
       >
         <MessageCircle className="h-5 w-5" aria-hidden />
         {t("marketingDrawer.whatsappQuick")}

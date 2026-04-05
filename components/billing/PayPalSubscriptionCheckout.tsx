@@ -108,7 +108,7 @@ export default function PayPalSubscriptionCheckout({
     return (
       <div id="paypal-subscription" className="scroll-mt-24">
         <div
-          className="card-avenue border-blue-200 bg-blue-50/80 px-4 py-3 text-sm text-blue-800"
+          className="card-avenue border-indigo-200 bg-indigo-50/80 px-4 py-3 text-sm text-indigo-800"
           dir={dir}
         >
           להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
@@ -137,23 +137,23 @@ export default function PayPalSubscriptionCheckout({
   return (
     <section
       id="paypal-subscription"
-      className="card-avenue scroll-mt-24 border-[#0070ba]/25 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/40"
+      className="card-avenue scroll-mt-24 border-indigo-100 bg-white p-6 shadow-sm md:p-8"
       dir={dir}
     >
-      <h2 className="text-xl font-black text-slate-900 mb-2">הפעלת מנוי — PayPal (Live)</h2>
-      <p className="text-sm text-slate-600 mb-4">
+      <h2 className="mb-2 text-xl font-black text-gray-900">הפעלת מנוי — PayPal (Live)</h2>
+      <p className="mb-4 text-sm text-gray-600">
         בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
       </p>
-      <div className="mb-6 rounded-xl border border-sky-100 bg-sky-50/90 px-4 py-3 text-xs text-slate-700 leading-relaxed">
-        <strong className="text-slate-900">חשבון חינם:</strong> רמת FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
+      <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-xs leading-relaxed text-gray-700">
+        <strong className="text-gray-900">חשבון חינם:</strong> רמת FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
         <strong>רק</strong> לשדרוג למשק בית / עוסק / חברה / תאגיד. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; ו־
         PayPal.Me של הארגון בהגדרות.
       </div>
 
       {successMsg ? (
-        <div className="mb-6 rounded-2xl border border-emerald-300 bg-gradient-to-br from-emerald-50 to-sky-50 px-5 py-6 text-center">
+        <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-6 text-center">
           <p className="text-lg font-black text-emerald-800 mb-2">הצלחה</p>
-          <p className="text-slate-800 font-medium leading-relaxed">{successMsg}</p>
+          <p className="font-medium leading-relaxed text-gray-800">{successMsg}</p>
         </div>
       ) : null}
 
@@ -173,8 +173,8 @@ export default function PayPalSubscriptionCheckout({
               onClick={() => setSelectedTier(t)}
               className={`rounded-2xl border px-4 py-3 text-sm font-bold transition-all ${
                 effectiveTier === t
-                  ? "border-[#0070ba] bg-[#0070ba]/10 text-[#005ea6] ring-2 ring-[#0070ba]/30"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"
+                  ? "border-indigo-300 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200"
+                  : "border-gray-200 bg-gray-50 text-gray-700 hover:border-indigo-200"
               }`}
             >
               {planLabelHe(t)} — ₪{pr?.toLocaleString("he-IL")}
@@ -184,10 +184,10 @@ export default function PayPalSubscriptionCheckout({
       </div>
 
       {price != null ? (
-        <div className="mb-4 text-center text-slate-600 text-sm">
-          סכום לחיוב: <span className="font-black text-slate-900">₪{price.toFixed(2)}</span>
+        <div className="mb-4 text-center text-sm text-gray-600">
+          סכום לחיוב: <span className="font-black text-gray-900">₪{price.toFixed(2)}</span>
           {subscriptionStatus !== "ACTIVE" ? (
-            <span className="block text-xs text-slate-500 mt-1">לאחר התשלום המנוי יסומן כ־ACTIVE</span>
+            <span className="mt-1 block text-xs text-gray-500">לאחר התשלום המנוי יסומן כ־ACTIVE</span>
           ) : null}
         </div>
       ) : null}

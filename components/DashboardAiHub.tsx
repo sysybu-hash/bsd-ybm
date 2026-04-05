@@ -171,7 +171,7 @@ ${formContext}
   };
 
   return (
-    <div className="flex flex-col gap-0 rounded-3xl border border-gray-100 bg-white shadow-sm overflow-hidden" dir={dir}>
+    <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" dir={dir}>
 
       {/* ══ HEADER ══ */}
       <div className="bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-5">

@@ -43,7 +43,7 @@ export default function BillingQuickPayments({ presets }: Props) {
 
   return (
     <section
-      className="rounded-[2rem] border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 to-white p-6 md:p-8 shadow-lg shadow-indigo-100/40"
+      className="rounded-2xl border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 to-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <div className="flex items-start gap-3 mb-4">
@@ -85,7 +85,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           type="button"
           disabled={pending}
           onClick={scrollToPayPalSubscribe}
-          className={`${btn} border-[#0070ba] bg-[#0070ba] text-white hover:bg-[#005ea6] inline-flex items-center gap-2`}
+          className={`${btn} inline-flex items-center gap-2 border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-700`}
         >
           <ArrowDown size={18} aria-hidden />
           מנוי חודשי — PayPal (למטה)

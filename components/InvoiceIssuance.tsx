@@ -260,15 +260,15 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-3xl border border-indigo-100 bg-white px-4 py-4">
+            <div className="rounded-2xl border border-indigo-100 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-500">סוג מסמך</p>
               <p className="mt-1 text-lg font-black text-gray-900">{typeLabel}</p>
             </div>
-            <div className="rounded-3xl border border-emerald-100 bg-white px-4 py-4">
+            <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-500">פריטים</p>
               <p className="mt-1 text-2xl font-black text-gray-900">{items.length}</p>
             </div>
-            <div className="rounded-3xl border border-violet-100 bg-white px-4 py-4">
+            <div className="rounded-2xl border border-violet-100 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-500">סה&quot;כ נוכחי</p>
               <p className="mt-1 text-2xl font-black text-gray-900">₪{total.toLocaleString()}</p>
             </div>

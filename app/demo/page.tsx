@@ -18,7 +18,7 @@ export default function DesignPreviewPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 max-w-7xl mx-auto">
 
         {/* A - AURORA DARK */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-purple-500/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+        <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-purple-500/60">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             A — Aurora Dark
           </div>
@@ -66,7 +66,7 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* B - NEON GLASS */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-cyan-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+        <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-cyan-400/60">
           <div className="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             B — Neon Glass
           </div>
@@ -114,7 +114,7 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* C - CLEAN MINIMAL */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-gray-400/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl bg-white">
+        <div className="cursor-pointer overflow-hidden rounded-2xl bg-white ring-1 ring-white/10 shadow-xl shadow-black/15 transition-all duration-300 hover:scale-[1.02] hover:ring-gray-400/40">
           <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             C — מינימלי לבן (Notion / Linear)
           </div>
@@ -163,7 +163,7 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* D - OBSIDIAN PRO */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-white/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+        <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-white/30">
           <div className="bg-white text-black text-center py-2.5 text-sm font-bold tracking-wide">
             D — Obsidian Pro (Vercel / Raycast)
           </div>
@@ -213,7 +213,7 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* E - INDIGO SAAS */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-indigo-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+        <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-indigo-400/60">
           <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             E — Indigo SaaS (Stripe / Linear)
           </div>
@@ -265,7 +265,7 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* F - SUNSET BOLD */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-orange-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
+        <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-orange-400/60">
           <div className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             F — Sunset Bold (עז ועתידני)
           </div>

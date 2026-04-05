@@ -62,7 +62,7 @@ export default function SignClient({
   if (quote.status === "CLOSED_WON") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 flex items-center justify-center p-6" dir="rtl">
-        <div className="max-w-md text-center space-y-4 rounded-[2rem] border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/50">
+        <div className="max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
           <p className="text-emerald-700 font-bold">ההצעה כבר אושרה וחתומה.</p>
           <Link href="/" className="text-indigo-600 font-bold underline underline-offset-2 hover:text-indigo-800">
             חזרה לאתר

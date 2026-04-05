@@ -93,7 +93,7 @@ export default function MissionControl() {
             key={sys.name}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-6 rounded-3xl border border-gray-100 flex items-center justify-between shadow-sm"
+            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
           >
             <div>
               <span className="font-bold">{sys.name}</span>
@@ -115,7 +115,7 @@ export default function MissionControl() {
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 flex flex-col bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 overflow-hidden min-h-[480px] max-h-[min(70vh,640px)] border border-gray-200">
+        <div className="lg:col-span-2 flex min-h-[480px] max-h-[min(70vh,640px)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="bg-gray-50 p-6 border-b border-gray-200 flex justify-between items-center text-gray-900 gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-indigo-600 rounded-lg shrink-0 text-white">
@@ -169,7 +169,7 @@ export default function MissionControl() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl">
+          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
             <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
               <Clock className="text-indigo-500" aria-hidden />
               תזמון בדיקות (הדגמה)
@@ -208,7 +208,7 @@ export default function MissionControl() {
             </div>
           </div>
 
-          <div className="bg-indigo-600 p-8 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden group">
+          <div className="group relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
             <ShieldCheck
               className="absolute top-[-10px] left-[-10px] text-white/10 pointer-events-none"
               size={150}

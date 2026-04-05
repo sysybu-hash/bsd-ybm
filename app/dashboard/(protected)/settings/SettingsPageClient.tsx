@@ -371,7 +371,7 @@ export default function SettingsPageClient({
 
   return (
     <div className="text-gray-900" dir={dir}>
-      <div className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
 
         {/* ── Page hero ── */}
         <div className="relative overflow-hidden border-b border-indigo-900/20 bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-5">
@@ -727,7 +727,7 @@ export default function SettingsPageClient({
                 </div>
               )}
 
-              <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50/40 to-purple-50/30 p-6">
+              <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-6">
                 <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-4">
                   <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><UserPlus size={14} /></span> ניהול צוות
                 </h4>
@@ -868,7 +868,7 @@ export default function SettingsPageClient({
               {activeTab === "billing" && initialOrg && canEditTaxProfile && (
                 <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-sky-50/30 p-6">
                   <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#e8f4fd] text-[#0070ba]"><Wallet size={14} /></span>
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><Wallet size={14} /></span>
                     PayPal של הארגון + רמת נתונים חיים
                   </h4>
                   <p className="text-sm text-gray-600 mb-6 leading-relaxed">
@@ -937,7 +937,7 @@ export default function SettingsPageClient({
                     <button
                       type="submit"
                       disabled={pendingPayment}
-                      className="rounded-2xl bg-[#0070ba] px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-[#005ea6] disabled:opacity-50"
+                      className="rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
                     >
                       {pendingPayment ? "שומר…" : "שמור הגדרות תשלום ונתונים"}
                     </button>

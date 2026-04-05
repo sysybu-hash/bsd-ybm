@@ -44,7 +44,7 @@ export default function ReportingCenter() {
 
   return (
     <div className="space-y-3">
-      <div className="bg-white text-gray-900 p-8 rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-200 flex flex-col md:flex-row items-center gap-6 group hover:border-indigo-200 transition-all">
+      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 shadow-sm transition-all group hover:border-indigo-200 md:flex-row">
         <div className="bg-indigo-50 p-5 rounded-2xl text-indigo-600 border border-indigo-100 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>

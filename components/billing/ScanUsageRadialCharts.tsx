@@ -136,7 +136,7 @@ export default function ScanUsageRadialCharts({
 
   return (
     <section
-      className="rounded-[1.75rem] border border-gray-200/90 bg-white/85 p-6 shadow-xl shadow-gray-200/40 backdrop-blur-md ring-1 ring-gray-100/90 md:p-8"
+      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-gray-100/90 md:p-8"
       dir="rtl"
     >
       <h2 className="mb-1 text-lg font-black text-gray-900">

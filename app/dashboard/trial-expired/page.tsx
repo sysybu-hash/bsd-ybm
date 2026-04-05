@@ -35,8 +35,8 @@ export default async function TrialExpiredPage() {
       className="min-h-[70vh] flex items-center justify-center p-4 text-right bg-gray-50"
       dir="rtl"
     >
-      <div className="max-w-md w-full bg-white rounded-[3rem] shadow-2xl p-10 border border-gray-100 text-center">
-        <div className="bg-red-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+      <div className="max-w-md w-full rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50">
           <Lock className="text-red-500" size={40} />
         </div>
 
@@ -54,7 +54,7 @@ export default async function TrialExpiredPage() {
         <div className="space-y-4">
           <Link
             href="/dashboard/billing"
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform shadow-lg shadow-indigo-200"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
             <Rocket size={20} /> שדרגו מנוי או רכשו בנדל סריקות
           </Link>

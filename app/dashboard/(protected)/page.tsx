@@ -101,9 +101,9 @@ export default async function DashboardHomePage() {
     <div className="space-y-7" dir="rtl">
 
       {/* ══ WELCOME BANNER ══ */}
-      <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8 md:py-8">
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8 md:py-8">
         {/* Decorative bar */}
-        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-3xl bg-gradient-to-b from-indigo-500 to-violet-600" />
+        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-2xl bg-indigo-600" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-bold text-indigo-700">
@@ -119,7 +119,7 @@ export default async function DashboardHomePage() {
           </div>
           <Link
             href="/dashboard/business"
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-indigo-600/25 transition-all hover:bg-indigo-700 hover:-translate-y-0.5"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
             פתח מרכז עסקי
             <ArrowLeft size={14} />

@@ -35,7 +35,7 @@ export default function PriceComparisonChart({
       : 0;
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-gray-100 space-y-6" dir={dir}>
+    <div className="space-y-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" dir={dir}>
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
           <h3 className="text-2xl font-black text-gray-900 tracking-tighter italic">
@@ -101,7 +101,7 @@ export default function PriceComparisonChart({
       )}
 
       {latest && previous ? (
-        <div className="bg-indigo-50/50 p-6 rounded-[2rem] border border-indigo-100 flex gap-4 items-start">
+        <div className="flex items-start gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
           <div className="bg-indigo-600 text-white p-2 rounded-xl shrink-0">
             <Lightbulb size={20} />
           </div>

@@ -9,10 +9,10 @@ export default function SimulationMode() {
 
   return (
     <div
-      className={`p-8 rounded-[3rem] border transition-all duration-500 ${
+      className={`rounded-2xl border p-8 transition-all duration-500 ${
         isSimulating
           ? "bg-indigo-600 border-indigo-400 text-white"
-          : "bg-gray-50 border-gray-100 text-gray-900"
+          : "bg-white border-gray-200 text-gray-900"
       }`}
       dir="rtl"
     >
@@ -28,10 +28,10 @@ export default function SimulationMode() {
         <button
           type="button"
           onClick={() => setIsSimulating(!isSimulating)}
-          className={`px-6 py-2 rounded-full font-bold text-sm shadow-lg transition-all ${
+          className={`rounded-xl px-6 py-2 text-sm font-bold transition-all ${
             isSimulating
-              ? "bg-white text-indigo-600"
-              : "bg-indigo-600 text-white"
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "bg-indigo-600 text-white shadow-sm"
           }`}
         >
           {isSimulating ? 'בטל סימולציה' : 'הפעל מצב "מה אם?"'}

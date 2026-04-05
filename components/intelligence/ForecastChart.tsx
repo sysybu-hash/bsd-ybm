@@ -47,6 +47,8 @@ const chartRows = forecastData.map((d, i, arr) => {
   };
 });
 
+const primary = "var(--primary-color, #4f46e5)";
+
 export default function ForecastChart() {
   const [insight] = useState(
     "יוחנן, שימת לב: בעוד 10 ימים (14/04) צפויה חריגה מהתקציב בגלל תשלומי מע״מ וביטוח לאומי. יתרה חזויה: ₪12,000. מומלץ להקדים גבייה מלקוח 'אקווה סטאר'.",
@@ -54,10 +56,10 @@ export default function ForecastChart() {
 
   return (
     <div
-      className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 font-sans"
+      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans shadow-sm"
       dir="rtl"
     >
-      <div className="flex flex-col md:flex-row gap-6 justify-between mb-10 border-b border-gray-100 pb-8">
+      <div className="mb-8 flex flex-col justify-between gap-6 border-b border-gray-100 pb-6 md:flex-row">
         <div>
           <h3 className="text-2xl font-black italic text-gray-950 flex items-center gap-2">
             <BrainCircuit className="text-indigo-500" /> חיזוי תזרים מזומנים AI
@@ -66,7 +68,7 @@ export default function ForecastChart() {
             ניתוח היסטורי וצפי 30 יום קדימה (Gemini Ultra)
           </p>
         </div>
-        <div className="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 max-w-xl text-sm text-gray-700 leading-relaxed flex items-start gap-3">
+        <div className="flex max-w-xl items-start gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-5 text-sm leading-relaxed text-gray-700">
           <AlertTriangle
             className="text-indigo-500 flex-shrink-0 mt-1"
             size={20}
@@ -91,22 +93,22 @@ export default function ForecastChart() {
               dataKey="day"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{
-                borderRadius: "20px",
-                border: "none",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
-                padding: "15px",
+                borderRadius: "16px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
+                padding: "12px",
               }}
               cursor={{
-                stroke: "var(--primary-color, #3b82f6)",
+                stroke: primary,
                 strokeWidth: 1,
               }}
             />
@@ -114,10 +116,10 @@ export default function ForecastChart() {
               type="monotone"
               dataKey="actual"
               name="בפועל"
-              stroke="var(--primary-color, #3b82f6)"
+              stroke={primary}
               strokeWidth={3}
               dot={{
-                stroke: "var(--primary-color, #3b82f6)",
+                stroke: primary,
                 strokeWidth: 2,
                 fill: "white",
                 r: 5,
@@ -129,11 +131,11 @@ export default function ForecastChart() {
               type="monotone"
               dataKey="forecast"
               name="חיזוי"
-              stroke="var(--primary-color, #3b82f6)"
+              stroke={primary}
               strokeWidth={3}
               strokeDasharray="6 4"
               dot={{
-                stroke: "var(--primary-color, #3b82f6)",
+                stroke: primary,
                 strokeWidth: 2,
                 fill: "white",
                 r: 4,

@@ -101,7 +101,7 @@ export default function CreateIssuedDocumentModal({
       aria-modal="true"
       aria-labelledby="issued-doc-modal-title"
     >
-      <div className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden my-8">
+      <div className="my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-200/60">
         <div className="bg-gradient-to-r from-indigo-700 to-indigo-600 p-8 text-white flex justify-between items-center gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div className="bg-white/20 p-3 rounded-2xl shrink-0">
@@ -235,7 +235,7 @@ export default function CreateIssuedDocumentModal({
             ))}
           </div>
 
-          <div className="bg-gray-50 p-8 rounded-[2.5rem] border border-gray-100 space-y-3">
+          <div className="space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-8">
             <div className="flex justify-between text-gray-500 font-bold">
               <span>סה״כ לפני מע״מ:</span>
               <span>₪{totals.net.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
@@ -267,7 +267,7 @@ export default function CreateIssuedDocumentModal({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={loading}
-            className="bg-gradient-to-r from-indigo-700 to-indigo-600 text-white px-12 py-4 rounded-2xl font-black shadow-xl shadow-indigo-200 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-700 to-indigo-600 px-12 py-4 font-black text-white shadow-sm transition-transform hover:scale-[1.02] disabled:opacity-50"
           >
             {loading ? (
               "מפיק מסמך..."

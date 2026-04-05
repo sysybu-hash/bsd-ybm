@@ -103,7 +103,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
 
   return (
     <div
-      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-xl shadow-gray-200/50 print:border-none print:shadow-none print:rounded-none"
+      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-sm print:border-none print:rounded-none print:shadow-none"
       dir={dir}
       id={`print-doc-${doc.number}`}
     >
@@ -126,7 +126,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
             </p>
           </div>
         </div>
-        <div className="w-full min-w-[12rem] shrink-0 rounded-3xl border border-gray-100 bg-gray-50 p-6 text-start md:w-auto">
+        <div className="w-full min-w-[12rem] shrink-0 rounded-2xl border border-gray-200 bg-gray-50 p-6 text-start md:w-auto">
           <h2 className="text-3xl font-black text-indigo-600 tracking-tight">
             {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
           </h2>
@@ -139,7 +139,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
       </div>
 
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex gap-4 items-start">
+        <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-8">
           <div className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 mt-1 shrink-0">
             <User2 size={20} />
           </div>
@@ -151,7 +151,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
             <p className="text-sm text-gray-500 font-medium mt-1">אימייל / טלפון הלקוח</p>
           </div>
         </div>
-        <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex flex-col items-center justify-center text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 p-8 text-center">
           <div
             className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-black shadow-sm ${badge.className}`}
           >
@@ -164,7 +164,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
         </div>
       </div>
 
-      <div className="relative z-10 bg-gray-50/50 rounded-3xl p-6 border border-gray-100 mb-12 overflow-x-auto">
+      <div className="relative z-10 mb-12 overflow-x-auto rounded-2xl border border-gray-200 bg-gray-50/50 p-6">
         <table className="w-full min-w-[520px] border-collapse text-start">
           <thead className="text-gray-500 text-[11px] font-black uppercase tracking-widest border-b-2 border-gray-200">
             <tr>
@@ -203,7 +203,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
       </div>
 
       <div className="relative z-10 flex justify-end">
-        <div className="w-full md:w-80 space-y-3 bg-gray-50 p-8 rounded-[2.5rem] border border-gray-200 shadow-lg shadow-gray-200/40 text-gray-800">
+        <div className="w-full space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-8 text-gray-800 shadow-sm md:w-80">
           <div className="flex justify-between text-gray-600 font-medium">
             <span>סה״כ לפני מע״מ:</span>
             <span>₪{money(doc.amount)}</span>

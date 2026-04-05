@@ -10,7 +10,7 @@ type Props = Readonly<{
 export default function AuthProfessionalCard({ children, title, subtitle, icon }: Props) {
   return (
     <div className="w-full max-w-md">
-      <div className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-lg shadow-indigo-900/8">
+      <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
         {/* Indigo top bar */}
         <div className="bg-gradient-to-r from-indigo-950 to-indigo-900 px-8 py-6">
           {icon ? <div className="mb-4 flex justify-center">{icon}</div> : null}

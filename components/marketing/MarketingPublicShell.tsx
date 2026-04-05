@@ -15,10 +15,10 @@ export default function MarketingPublicShell({ children, title }: Props) {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-b from-white via-slate-50 to-white text-gray-900 ${marketingSans.className}`}
+      className={`min-h-screen bg-gradient-to-b from-white via-gray-50 to-white text-gray-900 ${marketingSans.className}`}
       dir={dir}
     >
-      <header className="border-b border-gray-200 bg-white/90 shadow-sm shadow-gray-200/40 backdrop-blur-md">
+      <header className="border-b border-gray-200 bg-white shadow-sm shadow-gray-200/40">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link
             href="/"

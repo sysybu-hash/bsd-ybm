@@ -15,7 +15,7 @@ import RechartsBounded from "@/components/RechartsBounded";
 import { useI18n } from "@/components/I18nProvider";
 import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+const COLORS = ["#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#7c3aed"];
 
 type Variant = "dark" | "light";
 
@@ -43,7 +43,7 @@ export default function FinancialCharts({
   }, []);
 
   const cardClass =
-    "bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-gray-200/50";
+    "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm";
 
   const titlePieClass = "text-lg font-bold mb-4 text-gray-900";
   const titleBarClass = "text-lg font-bold mb-4 text-gray-900";
@@ -54,7 +54,7 @@ export default function FinancialCharts({
     borderRadius: "8px",
   };
 
-  const barFill = "var(--primary-color, #3b82f6)";
+  const barFill = "var(--primary-color, #4f46e5)";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">

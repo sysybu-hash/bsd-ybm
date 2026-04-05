@@ -20,6 +20,8 @@ const baseData = [
   { day: "30/04", balance: 60000, type: "forecast" as const },
 ];
 
+const primary = "#4f46e5";
+
 export default function ForecastSimulator() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [extraExpense, setExtraExpense] = useState(0);
@@ -31,7 +33,7 @@ export default function ForecastSimulator() {
 
   return (
     <div
-      className="bg-white p-10 rounded-[3.5rem] border border-gray-100 shadow-2xl shadow-gray-200/50"
+      className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
@@ -49,10 +51,10 @@ export default function ForecastSimulator() {
             setIsSimulating(!isSimulating);
             setExtraExpense(0);
           }}
-          className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${
+          className={`rounded-xl px-6 py-2 text-sm font-bold transition-colors ${
             isSimulating
-              ? "bg-rose-50 text-rose-600 border border-rose-100"
-              : "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
+              ? "border border-rose-200 bg-rose-50 text-rose-600"
+              : "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
           }`}
         >
           {isSimulating ? 'בטל סימולציה' : 'מצב "מה אם?"'}
@@ -63,7 +65,7 @@ export default function ForecastSimulator() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-6 bg-gray-50 rounded-3xl border border-gray-100 flex flex-wrap gap-4 items-center"
+          className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-5"
         >
           <span className="text-sm font-bold text-gray-600">
             הוסף הוצאה צפויה (₪):
@@ -71,7 +73,7 @@ export default function ForecastSimulator() {
           <input
             type="number"
             onChange={(e) => setExtraExpense(Number(e.target.value))}
-            className="bg-white border border-gray-200 p-2 rounded-lg w-32 font-bold text-indigo-600"
+            className="w-32 rounded-xl border border-gray-200 bg-white p-2 text-indigo-600 outline-none ring-0 transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
             placeholder="0"
           />
           {extraExpense > 20000 ? (
@@ -87,28 +89,28 @@ export default function ForecastSimulator() {
           <AreaChart data={displayData}>
             <defs>
               <linearGradient id="colorBal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="5%" stopColor={primary} stopOpacity={0.22} />
+                <stop offset="95%" stopColor={primary} stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="day"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
             />
             <YAxis hide />
             <Tooltip
               contentStyle={{
-                borderRadius: "20px",
-                border: "none",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
+                borderRadius: "16px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
               }}
             />
             <Area
               type="monotone"
               dataKey="balance"
-              stroke="#3b82f6"
+              stroke={primary}
               strokeWidth={4}
               fillOpacity={1}
               fill="url(#colorBal)"

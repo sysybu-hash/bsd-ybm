@@ -89,7 +89,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
         aria-label={isOpen ? "סגור תפריט נגישות" : "פתח נגישות וצבעים"}
         className="border border-gray-200 bg-white p-3.5 rounded-full shadow-lg hover:bg-gray-50 transition-colors text-gray-600"
       >
-        <Accessibility size={22} style={{ color: "var(--primary-color, #2563eb)" }} />
+        <Accessibility size={22} style={{ color: "var(--primary-color, #4f46e5)" }} />
       </motion.button>
 
       <AnimatePresence>
@@ -99,7 +99,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -12, scale: 0.97 }}
             transition={{ duration: 0.18 }}
-            className={`absolute w-60 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl shadow-gray-300/30 text-gray-900 ${
+            className={`absolute w-60 rounded-2xl border border-gray-200 bg-white p-5 shadow-lg shadow-gray-200/60 text-gray-900 ${
               dock
                 ? "bottom-[calc(100%+0.75rem)] start-1/2 -translate-x-1/2"
                 : "bottom-[4.5rem] start-0"
@@ -107,7 +107,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
           >
             {/* כותרת */}
             <h4 className="mb-4 flex items-center gap-2 text-sm font-black text-gray-800">
-              <Palette size={16} style={{ color: "var(--primary-color, #2563eb)" }} aria-hidden />
+              <Palette size={16} style={{ color: "var(--primary-color, #4f46e5)" }} aria-hidden />
               נראות וצבעים
             </h4>
 

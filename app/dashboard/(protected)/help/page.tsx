@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 export default function DashboardHelpPage() {
   return (
     <div className="space-y-5" dir="rtl">
-      <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
-        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-3xl bg-gradient-to-b from-indigo-500 to-violet-600" />
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
         <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
           <BookOpenCheck size={11} />
           מדריך תפעול מובנה

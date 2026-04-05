@@ -244,7 +244,7 @@ function ContactModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" dir="rtl">
       <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/60">
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
           <div className="flex items-center gap-3">
             {isEdit ? (

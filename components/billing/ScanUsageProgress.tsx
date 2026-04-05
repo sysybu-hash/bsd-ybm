@@ -25,7 +25,7 @@ export default function ScanUsageProgress({
 
   return (
     <section
-      className="rounded-[2rem] border border-gray-200 bg-white p-6 md:p-8 shadow-xl shadow-gray-200/30"
+      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <h2 className="text-lg font-black text-gray-900 mb-1">ניצול סריקות</h2>

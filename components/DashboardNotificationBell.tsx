@@ -85,7 +85,7 @@ export default function DashboardNotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
+        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60">
           <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
             <span className="text-xs font-black text-gray-800">הודעות</span>
             {unread > 0 ? (

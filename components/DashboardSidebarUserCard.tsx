@@ -25,7 +25,7 @@ export default function DashboardSidebarUserCard({
     <div
       key={email}
       dir={dir}
-      className="w-full rounded-xl border border-gray-200/70 bg-white/75 px-3 py-3 shadow-md shadow-gray-200/40 backdrop-blur-md ring-1 ring-gray-100/90"
+      className="w-full rounded-xl border border-gray-200 bg-white px-3 py-3 shadow-sm ring-1 ring-gray-100/90"
     >
       <div className="flex items-center gap-3">
         <div className="relative shrink-0">

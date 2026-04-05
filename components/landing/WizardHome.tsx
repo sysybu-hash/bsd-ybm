@@ -75,7 +75,7 @@ export default function WizardHome() {
     <div className="min-h-screen bg-white" dir="rtl">
 
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/95 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950 shadow-sm shadow-black/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white font-black text-sm shadow-lg shadow-indigo-600/30">

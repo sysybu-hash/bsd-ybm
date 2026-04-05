@@ -72,7 +72,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           NAVBAR
       ══════════════════════════════════ */}
-      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 shadow-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-xl font-black italic tracking-tight">
@@ -165,7 +165,7 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-44">
 
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-indigo-200 backdrop-blur-sm">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-indigo-200">
             <CheckCircle2 size={13} className="text-indigo-300" />
             פלטפורמת ניהול עסקי מבוססת AI — Made in Israel
           </div>
@@ -190,7 +190,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="#tutorial-videos"
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white transition-all hover:bg-white/15"
             >
               <Play size={16} className="text-indigo-300" />
               {t("landing.tutorialCta")}
@@ -212,7 +212,7 @@ export default function LandingPage() {
             {stats.map((s) => (
               <div
                 key={s.value}
-                className="rounded-2xl border border-white/10 bg-white/6 p-4 backdrop-blur-sm"
+                className="rounded-2xl border border-white/10 bg-white/6 p-4"
               >
                 <p className="text-2xl font-black text-white">{s.value}</p>
                 <p className="mt-1 text-xs font-semibold text-indigo-200/70">{s.label}</p>
@@ -256,10 +256,10 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <div
                 key={feat.title}
-                className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-gray-200"
+                className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gray-300"
               >
                 {/* Top gradient bar */}
-                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${feat.gradient} rounded-t-3xl opacity-80`} aria-hidden />
+                <div className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${feat.gradient} opacity-80`} aria-hidden />
 
                 <div className={`mb-5 inline-flex rounded-2xl p-3.5 ${feat.bg}`}>
                   <span className={feat.iconColor}>{feat.icon}</span>

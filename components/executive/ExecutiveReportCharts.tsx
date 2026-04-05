@@ -24,7 +24,7 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
   const intlTag = intlLocaleForApp(locale);
 
   return (
-    <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 md:p-10 shadow-2xl shadow-gray-200/50">
+    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm md:p-10">
       <h3 className="text-xl md:text-2xl font-black italic text-gray-900 tracking-tight mb-2">
         {t("executiveCharts.title", { year: String(year) })}
       </h3>
@@ -34,32 +34,32 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
           <AreaChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
             <defs>
               <linearGradient id="execIncome" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="0%" stopColor="#4f46e5" stopOpacity={0.28} />
+                <stop offset="100%" stopColor="#4f46e5" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="execExpense" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.3} />
                 <stop offset="100%" stopColor="#f43f5e" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="#f1f5f9" vertical={false} />
+            <CartesianGrid strokeDasharray="4 4" stroke="#f3f4f6" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 700 }}
+              tick={{ fill: "#9ca3af", fontSize: 11, fontWeight: 700 }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: "#94a3b8", fontSize: 11 }}
+              tick={{ fill: "#9ca3af", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `₪${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
               contentStyle={{
-                borderRadius: "1.25rem",
-                border: "none",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.12)",
+                borderRadius: "1rem",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 12px 28px rgba(15, 23, 42, 0.08)",
               }}
               formatter={(value: number, name: string) => [
                 `₪${value.toLocaleString(intlTag)}`,

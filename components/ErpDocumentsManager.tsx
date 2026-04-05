@@ -232,7 +232,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
           role="presentation"
         >
           <div
-            className="card-avenue max-h-[85vh] w-full max-w-2xl overflow-y-auto p-6 shadow-2xl"
+            className="card-avenue max-h-[85vh] w-full max-w-2xl overflow-y-auto p-6 shadow-lg shadow-gray-200/60"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -274,7 +274,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
           role="presentation"
         >
           <div
-            className="card-avenue max-h-[90vh] w-full max-w-2xl overflow-y-auto p-6 shadow-2xl"
+            className="card-avenue max-h-[90vh] w-full max-w-2xl overflow-y-auto p-6 shadow-lg shadow-gray-200/60"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"

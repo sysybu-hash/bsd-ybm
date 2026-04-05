@@ -36,7 +36,7 @@ export default function SupplierPriceBoard() {
   return (
     <section
       id="supplier-price-board"
-      className="card-avenue bg-white p-6 shadow-xl shadow-gray-200/50 md:p-8"
+      className="card-avenue bg-white p-6 shadow-sm md:p-8"
       dir={dir}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">

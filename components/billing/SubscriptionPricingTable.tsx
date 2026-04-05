@@ -21,7 +21,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
   const { dir } = useI18n();
 
   return (
-    <section className="card-avenue bg-gradient-to-b from-gray-50/80 to-white p-6 shadow-lg md:p-10" dir={dir}>
+    <section className="card-avenue bg-white p-6 shadow-sm md:p-10" dir={dir}>
       <div className="mb-10 text-center">
         <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-indigo-600">מחירון</p>
         <h2 className="text-2xl font-black italic tracking-tight text-gray-900 md:text-3xl">השוואת מנויים</h2>
@@ -37,8 +37,8 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
             tierPricesIls[tier] ?? a.monthlyPriceIls ?? (tier === "FREE" ? 0 : null);
           const highlight = a.recommended === true;
           const cardBase = highlight
-            ? "border-indigo-300 bg-gradient-to-b from-indigo-50 to-white shadow-xl shadow-indigo-200/40 ring-2 ring-indigo-400/40 md:scale-[1.02]"
-            : "border-gray-200/90 bg-white shadow-md hover:border-indigo-200/60 hover:shadow-lg";
+            ? "border-indigo-200 bg-white shadow-sm ring-1 ring-indigo-100"
+            : "border-gray-200/90 bg-white shadow-sm hover:border-indigo-200/60 hover:shadow-md"
           return (
             <article
               key={tier}

@@ -38,7 +38,7 @@ export default function AdminBroadcastNotifications() {
   }
 
   return (
-    <div className="mt-10 rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-xl shadow-gray-200/40">
+    <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
       <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-gray-900">
         <Megaphone className="text-violet-500" size={28} aria-hidden />
         שידור לכולם
@@ -99,7 +99,7 @@ export default function AdminBroadcastNotifications() {
         <button
           type="submit"
           disabled={loading || !title.trim() || !body.trim()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : <Megaphone size={18} />}
           שלח לכל המשתמשים

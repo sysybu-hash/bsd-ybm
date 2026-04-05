@@ -99,7 +99,7 @@ export default function AiBubble() {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label={isOpen ? t("aiBubble.ariaClose") : t("aiBubble.ariaOpen")}
-        className="p-5 rounded-full shadow-2xl text-white relative overflow-hidden"
+        className="relative overflow-hidden rounded-full p-5 text-white shadow-lg shadow-indigo-900/20"
         style={{ backgroundColor: primary }}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -121,7 +121,7 @@ export default function AiBubble() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-[4.75rem] end-0 w-[min(380px,calc(100vw-2rem))] h-[min(520px,calc(100dvh-8rem))] bg-white/95 backdrop-blur-2xl border border-gray-200 rounded-[2.5rem] shadow-2xl shadow-gray-300/50 flex flex-col overflow-hidden"
+            className="absolute bottom-[4.75rem] end-0 flex h-[min(520px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60"
             dir={dir}
           >
             <div

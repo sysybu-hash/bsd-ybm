@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { TrendingUp, Award, ArrowUpRight } from "lucide-react";
 
 export default function ValuationWidget({ value = 1250000 }: { value?: number }) {
-  const primaryColor = "var(--primary-color, #3b82f6)";
+  const primaryColor = "var(--primary-color, #4f46e5)";
 
   return (
     <div
-      className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-xl relative overflow-hidden group"
+      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
       dir="rtl"
     >
       <div className="absolute -top-10 -left-10 w-32 h-32 bg-indigo-50 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />

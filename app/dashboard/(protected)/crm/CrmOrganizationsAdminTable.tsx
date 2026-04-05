@@ -252,7 +252,7 @@ export default function CrmOrganizationsAdminTable({
       {aiModal ? (
         <div className="fixed inset-0 bg-gray-200/70 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
           <div
-            className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-2xl shadow-gray-900/15"
+            className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xl shadow-gray-900/10"
             dir={dir}
             role="dialog"
             aria-modal="true"

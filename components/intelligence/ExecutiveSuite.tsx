@@ -16,17 +16,17 @@ import { useI18n } from "@/components/I18nProvider";
 
 export default function ExecutiveSuite() {
   const { dir } = useI18n();
-  const primaryColor = "var(--primary-color, #3b82f6)";
+  const primaryColor = "var(--primary-color, #4f46e5)";
 
   return (
     <div className="min-h-screen bg-white p-6 font-sans text-gray-900 md:p-10" dir={dir}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card-avenue mb-12 flex flex-col gap-4 bg-gray-50 p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+        className="card-avenue mb-12 flex flex-col gap-4 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-lg">
+          <div className="rounded-2xl bg-indigo-600 p-3 text-white shadow-sm">
             <Clock size={24} aria-hidden />
           </div>
           <div>
@@ -46,25 +46,22 @@ export default function ExecutiveSuite() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="space-y-8">
-          <div className="card-avenue relative overflow-hidden bg-white p-8 shadow-xl group">
-            <div className="absolute -top-10 -left-10 w-32 h-32 bg-indigo-50 rounded-full blur-3xl opacity-50" />
-            <div className="relative z-10">
-              <div className="flex justify-between mb-6">
-                <div className="p-3 bg-indigo-50 rounded-2xl">
+          <div className="card-avenue bg-white p-6 shadow-sm">
+            <div className="flex justify-between mb-6">
+              <div className="rounded-2xl bg-indigo-50 p-3">
                   <TrendingUp style={{ color: primaryColor }} size={24} />
-                </div>
-                <span className="text-emerald-500 font-black text-xs flex items-center gap-1">
-                  <ArrowUpRight size={14} /> 14%
-                </span>
               </div>
-              <h4 className="text-gray-400 text-[10px] font-black uppercase mb-1">
-                שווי עסק מוערך
-              </h4>
-              <p className="text-4xl font-black italic tracking-tighter">₪1,250,000</p>
-              <p className="mt-4 text-[10px] text-gray-400 italic">
-                מבוסס על רווח וצמיחה ב-CRM.
-              </p>
+              <span className="flex items-center gap-1 text-xs font-black text-emerald-500">
+                <ArrowUpRight size={14} /> 14%
+              </span>
             </div>
+            <h4 className="mb-1 text-[10px] font-black uppercase text-gray-400">
+              שווי עסק מוערך
+            </h4>
+            <p className="text-4xl font-black italic tracking-tighter">₪1,250,000</p>
+            <p className="mt-4 text-[10px] italic text-gray-400">
+              מבוסס על רווח וצמיחה ב-CRM.
+            </p>
           </div>
 
           <div className="card-avenue bg-gray-50 p-8">
@@ -85,17 +82,17 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="lg:col-span-2 space-y-8">
-          <div className="card-avenue relative min-h-[350px] bg-white p-8 shadow-xl">
+          <div className="card-avenue min-h-[350px] bg-white p-8 shadow-sm">
             <h4 className="font-black italic mb-6 flex items-center gap-2">
               <Map className="text-emerald-500" aria-hidden /> פריסת לקוחות גאוגרפית (Heatmap)
             </h4>
-            <div className="w-full min-h-[220px] bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 font-bold italic border border-gray-100">
+            <div className="flex min-h-[220px] w-full items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 font-bold italic text-gray-300">
               [הדמיית מפה אינטראקטיבית — פוקוס: מרכז הארץ]
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-indigo-600 p-8 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+            <div className="relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
               <Globe2
                 className="absolute top-[-20px] left-[-20px] text-white/10"
                 size={120}
@@ -107,15 +104,15 @@ export default function ExecutiveSuite() {
               </p>
               <button
                 type="button"
-                className="bg-white text-indigo-600 px-6 py-2 rounded-xl text-xs font-black"
+                className="rounded-xl bg-white px-6 py-2 text-xs font-black text-indigo-600 shadow-sm"
               >
                 צור פוסטים
               </button>
             </div>
 
-            <div className="card-avenue bg-white p-8 shadow-lg">
+            <div className="card-avenue bg-white p-8 shadow-sm">
               <h4 className="font-black italic mb-4 flex items-center gap-2">
-                <PenTool className="text-purple-500" aria-hidden /> חתימה דיגיטלית
+                <PenTool className="text-indigo-500" aria-hidden /> חתימה דיגיטלית
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl gap-2">
@@ -134,7 +131,7 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="space-y-8">
-          <div className="card-avenue bg-white p-8 text-gray-900 shadow-2xl shadow-gray-200/40">
+          <div className="card-avenue bg-white p-8 text-gray-900 shadow-sm">
             <h4 className="text-xs font-black uppercase tracking-widest text-indigo-700 mb-6">
               סטטוס בנקים מאוחד
             </h4>
@@ -150,7 +147,7 @@ export default function ExecutiveSuite() {
             </div>
           </div>
 
-          <div className="card-avenue border-emerald-100 bg-emerald-50 p-8">
+          <div className="card-avenue border-emerald-200 bg-emerald-50 p-8">
             <h4 className="font-black italic text-emerald-900 mb-2 flex items-center gap-2">
               <ShieldCheck size={18} aria-hidden /> יועץ מס AI
             </h4>
@@ -159,7 +156,7 @@ export default function ExecutiveSuite() {
             </p>
           </div>
 
-          <div className="card-avenue bg-white p-8 text-center shadow-lg">
+          <div className="card-avenue bg-white p-8 text-center shadow-sm">
             <GraduationCap className="mx-auto text-indigo-500 mb-4" size={32} />
             <h4 className="text-sm font-black italic">איך קוראים דוח P&amp;L?</h4>
             <p className="text-[10px] text-gray-400 mb-4">מדריך קצר של 2 דקות מותאם לעסק שלך.</p>

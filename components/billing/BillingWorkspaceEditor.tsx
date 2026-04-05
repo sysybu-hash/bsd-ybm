@@ -66,7 +66,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
   };
 
   return (
-    <section className="card-avenue bg-white p-6 shadow-xl shadow-gray-200/30 md:p-8" dir={dir}>
+    <section className="card-avenue bg-white p-6 shadow-sm md:p-8" dir={dir}>
       <div className="flex items-center gap-3 mb-6">
         <div className="rounded-xl bg-indigo-50 p-2.5 text-indigo-700 border border-indigo-100">
           <ClipboardList size={22} aria-hidden />

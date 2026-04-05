@@ -16,7 +16,7 @@ export default function ProjectProfitability() {
 
   return (
     <div
-      className="min-h-screen bg-[#f8fafc] p-8 text-gray-900 font-sans"
+      className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900"
       dir="rtl"
     >
       <header className="mb-12">
@@ -54,7 +54,7 @@ export default function ProjectProfitability() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-lg shadow-gray-200/40"
+            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
           >
             <stat.icon className="text-gray-400 mb-4" size={24} />
             <p className="text-gray-500 text-sm mb-1 font-bold">{stat.label}</p>
@@ -65,7 +65,7 @@ export default function ProjectProfitability() {
         ))}
       </div>
 
-      <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/30">
+      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
         <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
           מד רווחיות פרויקט
         </h3>

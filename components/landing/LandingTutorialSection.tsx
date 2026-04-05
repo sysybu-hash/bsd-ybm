@@ -302,7 +302,7 @@ function AnimScanner({ step }: { step: number }) {
           <p className="text-[10px] font-black uppercase tracking-widest text-violet-600 mb-3">
             סורק מסמך... 🔍
           </p>
-          <div className="relative rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 p-4 overflow-hidden mb-3">
+          <div className="relative mb-3 overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-4">
             {/* Document preview mock */}
             <div className="space-y-1.5 opacity-60">
               {[80, 60, 90, 50, 70].map((w, i) => (
@@ -411,7 +411,7 @@ function TutorialCard({ index, title, subtitle, description, icon, accentColor, 
   const step = useStepCycle(4, 3750);
 
   return (
-    <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
       {/* Card header */}
       <div className={`px-5 pt-5 pb-4 ${accentColor}`}>
         <div className="flex items-center gap-3 mb-1">
@@ -468,7 +468,7 @@ export default function LandingTutorialSection() {
         <div className="grid gap-6 md:grid-cols-3">
 
           {/* Video 1 */}
-          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
             <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-indigo-700 to-indigo-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔄</span>
@@ -493,7 +493,7 @@ export default function LandingTutorialSection() {
           </div>
 
           {/* Video 2 */}
-          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
             <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-emerald-700 to-teal-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">📝</span>
@@ -518,7 +518,7 @@ export default function LandingTutorialSection() {
           </div>
 
           {/* Video 3 */}
-          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
             <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-violet-700 to-purple-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔍</span>

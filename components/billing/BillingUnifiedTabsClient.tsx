@@ -97,7 +97,7 @@ export default function BillingUnifiedTabsClient({
         </p>
 
         <div
-          className="mb-8 rounded-2xl border border-gray-200/90 bg-white/95 p-2 shadow-md shadow-gray-200/50 backdrop-blur-md ring-1 ring-gray-100/90"
+          className="mb-8 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm ring-1 ring-gray-100/90"
           role="tablist"
           aria-label="מקטעי מנויים"
         >

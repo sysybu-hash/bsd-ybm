@@ -98,7 +98,7 @@ export default function CookieConsentWall() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[240] bg-gray-200/55 backdrop-blur-[2px]"
+        className="fixed inset-0 z-[240] bg-gray-200/60"
         aria-hidden="true"
       />
       <div

@@ -366,7 +366,7 @@ export default function AdminSubscriptionControlCenter({
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`rounded-xl border px-3 py-2 text-sm shadow-lg backdrop-blur-md ${
+            className={`rounded-xl border px-3 py-2 text-sm shadow-sm ${
               t.type === "ok"
                 ? "border-emerald-200 bg-emerald-50/95 text-emerald-900"
                 : "border-rose-200 bg-rose-50/95 text-rose-900"
@@ -401,7 +401,7 @@ export default function AdminSubscriptionControlCenter({
       )}
 
       <div className="mx-auto max-w-[1800px] space-y-6 px-4 sm:px-8">
-        <div className="rounded-[1.5rem] border border-gray-200/80 bg-white/60 shadow-lg shadow-gray-200/30 backdrop-blur-sm">
+        <div className="rounded-2xl border border-gray-200/80 bg-white shadow-sm">
           <button
             type="button"
             onClick={() => setPlatformOpen((v) => !v)}
@@ -528,7 +528,7 @@ export default function AdminSubscriptionControlCenter({
           ) : null}
         </div>
 
-        <div className="rounded-[1.5rem] border border-gray-200/80 bg-white/60 shadow-lg shadow-gray-200/30 backdrop-blur-sm">
+        <div className="rounded-2xl border border-gray-200/80 bg-white shadow-sm">
           <button
             type="button"
             onClick={() => setToolsOpen((v) => !v)}
@@ -611,7 +611,7 @@ export default function AdminSubscriptionControlCenter({
           ) : null}
         </div>
 
-        <div className="rounded-[1.5rem] border border-indigo-300/40 bg-gradient-to-br from-white via-slate-50/90 to-indigo-50/20 p-1 shadow-xl shadow-indigo-200/15 ring-1 ring-gray-200/60">
+        <div className="rounded-2xl border border-indigo-200/60 bg-white p-1 shadow-sm ring-1 ring-gray-200/60">
           <div className="rounded-[1.35rem] bg-white/80 px-4 py-5 sm:px-6 sm:py-6">
             <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
@@ -661,7 +661,7 @@ export default function AdminSubscriptionControlCenter({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white/95">
+                <tbody className="bg-white">
                   {filteredOrgs.map((o) => (
                     <tr
                       key={o.id}
@@ -728,10 +728,10 @@ export default function AdminSubscriptionControlCenter({
             onClick={closeSheet}
           />
           <aside
-            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-indigo-400/40 bg-gradient-to-b from-white via-slate-50 to-indigo-50/30 shadow-2xl shadow-gray-900/20"
+            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-indigo-400/40 bg-gradient-to-b from-white via-gray-50 to-indigo-50/20 shadow-xl shadow-gray-900/12"
             dir={dir}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-indigo-200/50 bg-gradient-to-l from-gray-100/80 to-indigo-50/40 px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-indigo-200/50 bg-white px-5 py-4">
               <div>
                 <p className="text-xs font-black text-indigo-700/80">מנוי נבחר</p>
                 <h3 className="text-lg font-black text-gray-900">{selected.name}</h3>

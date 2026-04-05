@@ -5,7 +5,7 @@ import { ShieldCheck } from "lucide-react";
 export default function ProjectGuardian() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6" dir="rtl">
-      <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h4 className="font-black italic mb-4">רווחיות פרויקט חי</h4>
         <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden">
           <div className="h-full bg-emerald-500" style={{ width: "75%" }} />
@@ -15,7 +15,7 @@ export default function ProjectGuardian() {
         </p>
       </div>
 
-      <div className="bg-rose-50 p-8 rounded-[2.5rem] border border-rose-100">
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6">
         <h4 className="font-black italic text-rose-900 mb-2 flex items-center gap-2">
           <ShieldCheck size={20} aria-hidden /> AI Guardian
         </h4>

@@ -76,7 +76,7 @@ export default function LandingMarketing() {
             <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:gap-5">
               <Link
                 href="/dashboard"
-                className="inline-flex font-black px-10 py-4 rounded-[2rem] text-lg text-white shadow-2xl transition-transform hover:scale-[1.02] active:scale-95"
+                className="inline-flex rounded-2xl px-10 py-4 text-lg font-black text-white shadow-xl transition-transform hover:scale-[1.02] active:scale-95"
                 style={{
                   backgroundColor: primaryColor,
                   boxShadow:
@@ -93,7 +93,7 @@ export default function LandingMarketing() {
               </Link>
             </div>
           </div>
-          <div id="tutorial" className="bg-gray-50 p-6 sm:p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-indigo-500/5 scroll-mt-28">
+          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
             <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
               הדרכה מונפשת
             </p>
@@ -122,7 +122,7 @@ export default function LandingMarketing() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className={`p-10 rounded-[3rem] ${s.color} border border-gray-100 shadow-xl shadow-gray-200/50 transition-all hover:scale-[1.02] cursor-pointer`}
+                  className={`cursor-pointer rounded-2xl border border-gray-200 p-10 shadow-sm transition-all hover:scale-[1.02] ${s.color}`}
                 >
                   <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm">
                     <Icon style={{ color: primaryColor }} size={32} />
@@ -148,10 +148,10 @@ export default function LandingMarketing() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 + 0.4 }}
-                className={`p-10 rounded-[3.5rem] bg-white border ${
+                className={`rounded-2xl border bg-white p-10 ${
                   plan.level === "Premium"
-                    ? "border-indigo-200 shadow-2xl shadow-indigo-500/15"
-                    : "border-gray-100 shadow-xl shadow-gray-200/60"
+                    ? "border-indigo-200 shadow-lg shadow-indigo-200/60"
+                    : "border-gray-200 shadow-sm"
                 } relative`}
               >
                 {plan.level === "Premium" && (

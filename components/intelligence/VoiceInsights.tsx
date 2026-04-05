@@ -25,7 +25,7 @@ export default function VoiceInsights() {
 
   return (
     <div
-      className="bg-white text-gray-900 p-8 rounded-[3rem] border border-gray-200 shadow-xl shadow-gray-200/40 font-sans"
+      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans text-gray-900 shadow-sm"
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
@@ -53,10 +53,10 @@ export default function VoiceInsights() {
               type="button"
               onMouseDown={startRecording}
               onMouseUp={stopRecording}
-              className={`w-20 h-20 rounded-full flex items-center justify-center transition-all text-white ${
+              className={`flex h-20 w-20 items-center justify-center rounded-full text-white transition-all ${
                 isRecording
-                  ? "bg-rose-600 shadow-2xl shadow-rose-600/40 scale-110"
-                  : "bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/25"
+                  ? "scale-110 bg-rose-600 shadow-lg shadow-rose-200"
+                  : "bg-indigo-600 shadow-sm hover:bg-indigo-700"
               }`}
               aria-label={isRecording ? "הפסק הקלטה" : "התחל הקלטה"}
             >

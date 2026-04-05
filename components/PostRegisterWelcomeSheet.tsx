@@ -45,7 +45,7 @@ export default function PostRegisterWelcomeSheet() {
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"
     >
-      <div className="w-full max-w-md rounded-[2rem] border border-gray-200 bg-white p-8 shadow-2xl shadow-gray-200/50" dir="rtl">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/60" dir="rtl">
         <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-gray-900">
           ברוך הבא ל־BSD-YBM
         </h2>

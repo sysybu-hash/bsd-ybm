@@ -386,7 +386,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
       {org.paypalMeSlug || org.paypalMerchantEmail ? (
         <div className="mx-auto mb-6 max-w-[1600px] px-4 sm:px-8">
           <div
-            className="rounded-2xl border border-[#0070ba]/30 bg-gradient-to-r from-[#0070ba]/5 to-sky-50 p-5 text-sm text-gray-800"
+            className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 text-sm text-gray-800"
             dir="rtl"
           >
             <p className="font-bold text-gray-900 mb-2">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
@@ -407,7 +407,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
                   href={`https://paypal.me/${encodeURIComponent(org.paypalMeSlug)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#0070ba] px-4 py-2.5 font-bold text-white hover:bg-[#005ea6]"
+                  className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 font-bold text-white hover:bg-indigo-700"
                 >
                   פתיחת PayPal.Me לתשלום
                 </a>

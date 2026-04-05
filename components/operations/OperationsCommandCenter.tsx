@@ -94,27 +94,24 @@ export default function OperationsCommandCenter({
 
   return (
     <div className="space-y-6" dir="rtl">
-      <section className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm">
-        <div className="relative overflow-hidden border-b border-indigo-900/10 bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-7 md:px-8">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-8 end-20 h-40 w-40 rounded-full bg-indigo-400/10 blur-[60px]" />
-          </div>
+      <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-200 bg-gray-50 px-6 py-7 md:px-8">
           <div className="relative flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-400/20 px-3 py-1 text-[11px] font-bold text-indigo-200">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
                 <ListChecks size={11} />
                 מרכז תפעול
               </span>
-              <h1 className="mt-3 text-2xl font-black tracking-tight text-white">תמונה תפעולית אחת, בלי עומס מיותר</h1>
-              <p className="mt-1.5 text-sm leading-6 text-indigo-200/70">
+              <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">תמונה תפעולית אחת, בלי עומס מיותר</h1>
+              <p className="mt-1.5 text-sm leading-6 text-gray-500">
                 בריאות עסקית, אוטומציות, אינטגרציות ופעילות אחרונה.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href="/dashboard" className="rounded-2xl border border-indigo-700/50 bg-indigo-800/40 px-4 py-2 text-sm font-bold text-indigo-200 hover:bg-indigo-700/50 transition-colors">
+              <Link href="/dashboard" className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50">
                 חזרה למסך הבית
               </Link>
-              <Link href="/dashboard/operator" className="rounded-2xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-400 transition-colors">
+              <Link href="/dashboard/operator" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
                 פתח עוזר תפעולי
               </Link>
             </div>
@@ -256,15 +253,15 @@ function Panel({
 
 function Metric({ title, value, tone = "blue" }: { title: string; value: string; tone?: "blue" | "emerald" | "amber" | "violet" }) {
   const tones = {
-    blue: "bg-indigo-900/60 border-indigo-700/40 text-indigo-200",
-    emerald: "bg-emerald-900/50 border-emerald-700/30 text-emerald-200",
-    amber: "bg-amber-900/40 border-amber-700/30 text-amber-200",
-    violet: "bg-violet-900/50 border-violet-700/30 text-violet-200",
+    blue: "border-indigo-200 bg-indigo-50 text-indigo-700",
+    emerald: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    amber: "border-amber-200 bg-amber-50 text-amber-700",
+    violet: "border-violet-200 bg-violet-50 text-violet-700",
   };
   return (
     <div className={`rounded-2xl border px-4 py-3.5 ${tones[tone]}`}>
-      <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">{title}</p>
-      <p className="mt-1.5 text-2xl font-black text-white">{value}</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">{title}</p>
+      <p className="mt-1.5 text-2xl font-black text-gray-900">{value}</p>
     </div>
   );
 }

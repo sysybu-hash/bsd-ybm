@@ -73,7 +73,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
       </header>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <article className="card-avenue bg-gradient-to-br from-white via-blue-50/30 to-white p-8 shadow-xl shadow-gray-200/40 ring-1 ring-gray-50">
+        <article className="card-avenue bg-gradient-to-br from-white via-blue-50/30 to-white p-8 shadow-sm ring-1 ring-gray-50">
           <div className="mb-6 flex items-center justify-between gap-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
               <TrendingUp size={22} strokeWidth={2.5} />
@@ -89,7 +89,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.incomeHint")}</p>
         </article>
 
-        <article className="card-avenue bg-gradient-to-br from-white via-rose-50/25 to-white p-8 shadow-xl shadow-gray-200/40 ring-1 ring-gray-50">
+        <article className="card-avenue bg-gradient-to-br from-white via-rose-50/25 to-white p-8 shadow-sm ring-1 ring-gray-50">
           <div className="mb-6 flex items-center justify-between gap-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-500/25">
               <TrendingDown size={22} strokeWidth={2.5} />
@@ -105,7 +105,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.expenseHint")}</p>
         </article>
 
-        <article className="card-avenue bg-gradient-to-br from-white via-emerald-50/35 to-white p-8 shadow-xl shadow-gray-200/40 ring-1 ring-gray-50">
+        <article className="card-avenue bg-gradient-to-br from-white via-emerald-50/35 to-white p-8 shadow-sm ring-1 ring-gray-50">
           <div className="mb-6 flex items-center justify-between gap-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/25">
               <Building2 size={22} strokeWidth={2} />
@@ -136,7 +136,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
       <ExecutiveReportCharts data={flowSeries} year={year} />
 
       <section className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-        <div className="card-avenue bg-white p-8 shadow-2xl shadow-gray-200/50 md:p-10">
+        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
           <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.userActivity")}
           </h3>
@@ -176,7 +176,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           )}
         </div>
 
-        <div className="card-avenue bg-white p-8 shadow-2xl shadow-gray-200/50 md:p-10">
+        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
           <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.priceAlerts")}
           </h3>

@@ -75,7 +75,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-gray-200 bg-white shadow-2xl shadow-gray-300/30 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
+              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-gray-200 bg-white shadow-xl shadow-gray-200/70 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
             >
               {/* Header */}
               <div className="relative flex items-center justify-between gap-2 border-b border-gray-100 bg-white px-4 py-3.5">

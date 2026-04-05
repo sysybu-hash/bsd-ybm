@@ -124,7 +124,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="flex flex-col overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-xl shadow-gray-200/50"
+      className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
         {hasEmbed ? (

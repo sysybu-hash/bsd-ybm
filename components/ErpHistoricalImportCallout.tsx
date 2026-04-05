@@ -7,7 +7,7 @@ import { Archive, HardDrive, Cloud } from "lucide-react";
 export default function ErpHistoricalImportCallout() {
   return (
     <section
-      className="rounded-[2rem] border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-white to-sky-50/40 p-6 md:p-8 shadow-lg shadow-gray-200/30"
+      className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-white to-sky-50/40 p-6 shadow-sm md:p-8"
       dir="rtl"
       aria-labelledby="erp-archive-title"
     >

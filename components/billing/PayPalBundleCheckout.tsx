@@ -76,11 +76,11 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
   return (
     <section
       id="paypal-bundles"
-      className="scroll-mt-24 rounded-[2rem] border border-violet-200 bg-gradient-to-br from-violet-50/80 to-white p-6 md:p-8 shadow-lg shadow-violet-100/40"
+      className="scroll-mt-24 rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
-      <h2 className="text-xl font-black text-slate-900 mb-2">רכישת בנדל סריקות</h2>
-      <p className="text-sm text-slate-600 mb-4">
+      <h2 className="mb-2 text-xl font-black text-gray-900">רכישת בנדל סריקות</h2>
+      <p className="mb-4 text-sm text-gray-600">
         כשמכסת המנוי נגמרה — ניתן לרכוש חבילת סריקות חד־פעמית (נוסף על היתרה הקיימת).
       </p>
 
@@ -103,8 +103,8 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
             onClick={() => setBundleId(b.id)}
             className={`rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
               bundleId === b.id
-                ? "border-violet-600 bg-violet-600 text-white"
-                : "border-slate-200 bg-white text-slate-700"
+                ? "border-indigo-600 bg-indigo-600 text-white"
+                : "border-gray-200 bg-white text-gray-700 hover:border-indigo-200"
             }`}
           >
             {b.name} — ₪{b.priceIls.toFixed(2)}
@@ -113,7 +113,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
       </div>
 
       {selected ? (
-        <p className="text-sm text-slate-600 mb-4">
+        <p className="mb-4 text-sm text-gray-600">
           נוסף ליתרה: <strong>{selected.cheapAdds}</strong> סריקות זולות, <strong>{selected.premiumAdds}</strong>{" "}
           פרימיום · <strong>₪{selected.priceIls.toFixed(2)}</strong>
         </p>

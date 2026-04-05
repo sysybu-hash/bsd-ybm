@@ -8,7 +8,7 @@ export default function InteractivePulse() {
   const [voicePanelOpen, setVoicePanelOpen] = useState(false);
   return (
     <div
-      className="bg-white p-10 rounded-[3.5rem] text-gray-900 border border-gray-100 shadow-xl shadow-gray-200/40 space-y-8"
+      className="space-y-8 rounded-2xl border border-gray-200 bg-white p-10 text-gray-900 shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-center gap-4">
@@ -18,7 +18,7 @@ export default function InteractivePulse() {
           onClick={() => setVoicePanelOpen((v) => !v)}
           aria-expanded={voicePanelOpen}
           aria-label={voicePanelOpen ? "סגור פאנל קול" : "פתח פאנל קול"}
-          className="p-4 bg-indigo-600 rounded-full hover:scale-110 transition-all shadow-lg shadow-indigo-500/40"
+          className="rounded-full bg-indigo-600 p-4 shadow-sm transition-all hover:scale-110"
         >
           <Mic size={24} />
         </button>

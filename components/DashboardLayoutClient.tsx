@@ -274,7 +274,7 @@ export default function DashboardLayoutClient({
 
       {/* ══ MOBILE DRAWER ══ */}
       <aside
-        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col bg-indigo-950 shadow-2xl transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col bg-indigo-950 shadow-xl shadow-indigo-950/30 transition-transform duration-300 ease-out md:hidden ${
           mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none")
         }`}
         aria-hidden={!mobileOpen}
