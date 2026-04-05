@@ -10,6 +10,7 @@ import {
   deleteProjectAction,
 } from "@/app/actions/crm";
 import Link from "next/link";
+import { useCallback } from "react";
 import {
   Plus,
   Trash2,
@@ -41,7 +42,43 @@ import CrmOrganizationsAdminTable, {
 } from "./CrmOrganizationsAdminTable";
 import { useI18n } from "@/components/I18nProvider";
 
+/* ─── ERP invoice type labels ── */
+const DOC_TYPE_LABEL: Record<string, string> = {
+  INVOICE: "חשבונית מס",
+  RECEIPT: "קבלה",
+  INVOICE_RECEIPT: "חשבונית מס/קבלה",
+  CREDIT_NOTE: "זיכוי",
+};
+
+const DOC_STATUS_LABEL: Record<string, { label: string; cls: string }> = {
+  PENDING: { label: "ממתין לתשלום", cls: "bg-amber-100 text-amber-700" },
+  PAID:    { label: "שולם",         cls: "bg-emerald-100 text-emerald-700" },
+  CANCELLED: { label: "מבוטל",      cls: "bg-slate-100 text-slate-500" },
+};
+
 /* ─── Types ─────────────────────────────────────────────────────────────── */
+export type InvoiceRow = {
+  id: string;
+  type: string;
+  number: number;
+  clientName: string;
+  amount: number;
+  vat: number;
+  total: number;
+  status: string;
+  date: string;
+  dueDate: string | null;
+  items: { desc: string; qty: number; price: number }[];
+  createdAt: string;
+};
+
+export type ErpSummary = {
+  totalBilled: number;
+  totalPaid: number;
+  totalPending: number;
+  invoiceCount: number;
+};
+
 type ContactRow = {
   id: string;
   name: string;
@@ -52,6 +89,8 @@ type ContactRow = {
   status: string;
   project: { id: string; name: string } | null;
   createdAt: string;
+  issuedDocuments?: InvoiceRow[];
+  erp?: ErpSummary;
 };
 
 type ProjectRow = {
@@ -139,6 +178,37 @@ function ContactModal({
   const [notes, setNotes] = useState(c?.notes ?? "");
   const [err, setErr] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [erpLoading, setErpLoading] = useState(false);
+  const [invoices, setInvoices] = useState<InvoiceRow[]>(c?.issuedDocuments ?? []);
+  const [erpMsg, setErpMsg] = useState<string | null>(null);
+
+  /* טען ERP live בפתיחת עריכה */
+  const loadErpInvoices = useCallback(async () => {
+    if (!c?.id) return;
+    setErpLoading(true);
+    try {
+      const res = await fetch(`/api/crm/contacts?q=${encodeURIComponent(c.name)}`);
+      const data = await res.json();
+      const found = data.contacts?.find((x: { id: string; issuedDocuments?: InvoiceRow[] }) => x.id === c.id);
+      if (found?.issuedDocuments) setInvoices(found.issuedDocuments);
+    } catch { /* silent */ } finally { setErpLoading(false); }
+  }, [c]);
+
+  useState(() => { loadErpInvoices(); });
+
+  const markInvoice = async (invId: string, status: string) => {
+    setErpMsg(null);
+    try {
+      const res = await fetch(`/api/erp/issued-documents/${invId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error();
+      setInvoices(prev => prev.map(i => i.id === invId ? { ...i, status } : i));
+      setErpMsg(`✓ סטאטוס עודכן`);
+    } catch { setErpMsg("שגיאה בעדכון"); }
+  };
 
   const submit = () => {
     if (!name.trim()) { setErr("יש להזין שם"); return; }
@@ -247,6 +317,84 @@ function ContactModal({
             <label className="block text-xs font-bold text-slate-500 mb-1">הערות</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="הערות חופשיות..." rows={3} className={inputCls + " resize-none"} />
           </div>
+
+          {/* ── ERP סנכרון: חשבוניות משויכות ────────────────────────────── */}
+          {isEdit && (
+            <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-black text-indigo-800 flex items-center gap-1.5">
+                  <ReceiptText size={13} /> חשבוניות ERP משויכות
+                  {erpLoading && <Loader2 size={11} className="animate-spin text-indigo-400" />}
+                </p>
+                <Link
+                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c?.name ?? "")}&contactId=${c?.id ?? ""}`}
+                  className="text-[10px] font-black text-indigo-600 hover:underline flex items-center gap-1"
+                >
+                  + הנפק חדשה
+                </Link>
+              </div>
+              {erpMsg && <p className="text-[10px] text-emerald-700 font-bold">{erpMsg}</p>}
+              {invoices.length === 0 ? (
+                <p className="text-xs text-indigo-400">אין חשבוניות עדיין</p>
+              ) : (
+                <>
+                  {/* סיכום */}
+                  <div className="grid grid-cols-3 gap-2 border-b border-indigo-100 pb-3">
+                    <div className="text-center">
+                      <p className="text-[10px] text-slate-500 mb-0.5">סך חוייב</p>
+                      <p className="text-sm font-black text-slate-900">{fmtMoney(invoices.reduce((s, i) => s + i.total, 0))}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[10px] text-slate-500 mb-0.5">שולם</p>
+                      <p className="text-sm font-black text-emerald-700">{fmtMoney(invoices.filter(i => i.status === "PAID").reduce((s, i) => s + i.total, 0))}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[10px] text-slate-500 mb-0.5">פתוח</p>
+                      <p className="text-sm font-black text-amber-600">{fmtMoney(invoices.filter(i => i.status === "PENDING").reduce((s, i) => s + i.total, 0))}</p>
+                    </div>
+                  </div>
+                  {/* רשימת חשבוניות */}
+                  <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
+                    {invoices.map(inv => {
+                      const stMeta = DOC_STATUS_LABEL[inv.status] ?? DOC_STATUS_LABEL.PENDING;
+                      return (
+                        <div key={inv.id} className="flex items-center gap-2 rounded-xl bg-white border border-indigo-100 px-3 py-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] font-black text-slate-600">{DOC_TYPE_LABEL[inv.type] ?? inv.type} #{inv.number}</span>
+                              <span className={`text-[9px] font-black rounded-full px-1.5 py-0.5 ${stMeta.cls}`}>{stMeta.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs font-black text-slate-800">{fmtMoney(inv.total)}</span>
+                              <span className="text-[10px] text-slate-400">{fmtDate(inv.date ?? inv.createdAt)}</span>
+                            </div>
+                          </div>
+                          {inv.status === "PENDING" && (
+                            <div className="flex gap-1 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => markInvoice(inv.id, "PAID")}
+                                className="rounded-lg bg-emerald-50 px-2 py-1 text-[9px] font-black text-emerald-700 hover:bg-emerald-100 transition"
+                              >
+                                שולם
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => markInvoice(inv.id, "CANCELLED")}
+                                className="rounded-lg bg-slate-50 px-2 py-1 text-[9px] font-black text-slate-500 hover:bg-slate-100 transition"
+                              >
+                                בטל
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 bg-slate-50">
@@ -331,6 +479,20 @@ function ContactCard({
           </span>
         )}
       </div>
+
+      {/* ERP badge */}
+      {(contact.erp?.invoiceCount ?? 0) > 0 && (
+        <div className="mt-2 flex items-center gap-1.5 text-[10px] font-black text-indigo-600">
+          <ReceiptText size={10} />
+          <span>{contact.erp!.invoiceCount} חשבוניות</span>
+          {contact.erp!.totalPending > 0 && (
+            <span className="rounded-full bg-amber-100 text-amber-700 px-1.5 py-0.5">פתוח: {fmtMoney(contact.erp!.totalPending)}</span>
+          )}
+          {contact.erp!.totalPending === 0 && contact.erp!.totalPaid > 0 && (
+            <span className="rounded-full bg-emerald-100 text-emerald-700 px-1.5 py-0.5">שולם ✓</span>
+          )}
+        </div>
+      )}
 
       {(contact.email || contact.phone) && (
         <div className="mt-2.5 space-y-1">

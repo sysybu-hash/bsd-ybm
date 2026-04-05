@@ -146,6 +146,13 @@ export default async function BusinessPage() {
   }));
 
   /* ── CRM data ──────────────────────────────────── */
+  type InvoiceSerRow = {
+    id: string; type: string; number: number; clientName: string;
+    amount: number; vat: number; total: number; status: string;
+    date: string; dueDate: string | null;
+    items: { desc: string; qty: number; price: number }[]; createdAt: string;
+  };
+  type ErpSumRow = { totalBilled: number; totalPaid: number; totalPending: number; invoiceCount: number };
   type ContactSerialized = {
     id: string;
     name: string;
@@ -156,6 +163,8 @@ export default async function BusinessPage() {
     status: string;
     project: { id: string; name: string } | null;
     createdAt: string;
+    issuedDocuments: InvoiceSerRow[];
+    erp: ErpSumRow;
   };
   type ProjectSerialized = {
     id: string;
@@ -173,7 +182,17 @@ export default async function BusinessPage() {
     const [rawContacts, rawProjects] = await Promise.all([
       prisma.contact.findMany({
         where: { organizationId: orgId },
-        include: { project: { select: { id: true, name: true } } },
+        include: {
+          project: { select: { id: true, name: true } },
+          issuedDocuments: {
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true, type: true, number: true, clientName: true,
+              amount: true, vat: true, total: true, status: true,
+              date: true, dueDate: true, items: true, createdAt: true,
+            },
+          },
+        },
         orderBy: { createdAt: "desc" },
       }),
       prisma.project.findMany({
@@ -182,17 +201,42 @@ export default async function BusinessPage() {
       }),
     ]);
 
-    contacts = rawContacts.map((c) => ({
-      id: c.id,
-      name: c.name,
-      email: c.email,
-      phone: (c as any).phone ?? null,
-      notes: (c as any).notes ?? null,
-      value: (c as any).value ?? null,
-      status: c.status,
-      project: c.project,
-      createdAt: c.createdAt.toISOString(),
-    }));
+    contacts = rawContacts.map((c) => {
+      const invDocs = (c.issuedDocuments ?? []).map((d) => ({
+        id: d.id,
+        type: d.type,
+        number: d.number,
+        clientName: d.clientName,
+        amount: d.amount,
+        vat: d.vat,
+        total: d.total,
+        status: d.status,
+        date: d.date.toISOString(),
+        dueDate: d.dueDate?.toISOString() ?? null,
+        items: d.items as { desc: string; qty: number; price: number }[],
+        createdAt: d.createdAt.toISOString(),
+      }));
+      const totalBilled = invDocs.reduce((s, d) => s + d.total, 0);
+      const totalPaid = invDocs.filter((d) => d.status === "PAID").reduce((s, d) => s + d.total, 0);
+      return {
+        id: c.id,
+        name: c.name,
+        email: c.email,
+        phone: (c as { phone?: string | null }).phone ?? null,
+        notes: (c as { notes?: string | null }).notes ?? null,
+        value: (c as { value?: number | null }).value ?? null,
+        status: c.status,
+        project: c.project,
+        createdAt: c.createdAt.toISOString(),
+        issuedDocuments: invDocs,
+        erp: {
+          totalBilled,
+          totalPaid,
+          totalPending: totalBilled - totalPaid,
+          invoiceCount: invDocs.length,
+        },
+      };
+    });
 
     projects = rawProjects.map((p) => ({
       id: p.id,

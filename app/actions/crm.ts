@@ -164,7 +164,42 @@ export async function updateContactStatusAction(contactId: string, status: strin
   if (!row) return { ok: false as const, error: "לקוח לא נמצא" };
 
   await prisma.contact.update({ where: { id: contactId }, data: { status } });
+
+  /* ── סנכרון ERP: כשעסקה נסגרת בהצלחה — צור חשבונית ממתינה אוטומטית ── */
+  if (status === "CLOSED_WON") {
+    const existingInvoice = await prisma.issuedDocument.findFirst({
+      where: { contactId, organizationId: ctx.orgId },
+      select: { id: true },
+    });
+    if (!existingInvoice) {
+      const amount = row.value ?? 0;
+      const vat = Math.round(amount * 0.17 * 100) / 100;
+      const total = Math.round((amount + vat) * 100) / 100;
+      const last = await prisma.issuedDocument.findFirst({
+        where: { organizationId: ctx.orgId, type: "INVOICE" },
+        orderBy: { number: "desc" },
+        select: { number: true },
+      });
+      const nextNumber = (last?.number ?? 1000) + 1;
+      await prisma.issuedDocument.create({
+        data: {
+          type: "INVOICE",
+          number: nextNumber,
+          clientName: row.name,
+          amount,
+          vat,
+          total,
+          items: [{ desc: "שירותים / מוצרים — נסגרה עסקה ב-CRM", qty: 1, price: amount }] as unknown as object,
+          status: "PENDING",
+          organizationId: ctx.orgId,
+          contactId,
+        },
+      });
+    }
+  }
+
   revalidatePath("/dashboard/crm");
+  revalidatePath("/dashboard/business");
   return { ok: true as const };
 }
 

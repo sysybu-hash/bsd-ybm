@@ -29,6 +29,7 @@ import MultiEngineScanner from "@/components/MultiEngineScanner";
 import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout";
 import CrmClient from "../crm/CrmClient";
 import type { CrmAdminOrganizationRow } from "../crm/CrmOrganizationsAdminTable";
+import type { InvoiceRow, ErpSummary } from "../crm/CrmClient";
 import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
@@ -44,6 +45,8 @@ type ContactRow = {
   status: string;
   project: { id: string; name: string } | null;
   createdAt: string;
+  issuedDocuments?: InvoiceRow[];
+  erp?: ErpSummary;
 };
 
 type ProjectRow = {
@@ -437,6 +440,17 @@ function HubContent(props: Props) {
                         <p className="text-[10px] text-slate-400">
                           {c.project?.name ?? "ללא פרויקט"} · {fmtDate(c.createdAt)}
                         </p>
+                        {/* ERP sync data */}
+                        {(c.erp?.invoiceCount ?? 0) > 0 && (
+                          <p className="text-[10px] font-black text-indigo-600 mt-0.5">
+                            {c.erp!.invoiceCount} חשבוניות ·{" "}
+                            {c.erp!.totalPending > 0 ? (
+                              <span className="text-amber-600">פתוח: {fmtMoney(c.erp!.totalPending)}</span>
+                            ) : (
+                              <span className="text-emerald-600">שולם הכל ✓</span>
+                            )}
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         {c.value != null && (
@@ -453,7 +467,7 @@ function HubContent(props: Props) {
                         </span>
                         {c.status === "CLOSED_WON" && (
                           <Link
-                            href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                            href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                             className="rounded-lg bg-indigo-600 px-2 py-1 text-[10px] font-black text-white hover:bg-indigo-700 transition whitespace-nowrap"
                             title="הנפק חשבונית"
                           >
@@ -487,7 +501,7 @@ function HubContent(props: Props) {
                 {wonContacts.slice(0, 4).map((c) => (
                   <Link
                     key={c.id}
-                    href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                    href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                     className="rounded-xl bg-emerald-600 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-700 transition"
                   >
                     {c.name}

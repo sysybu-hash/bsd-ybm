@@ -345,6 +345,7 @@ model Contact {
   projectId      String?
   project        Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
   quotes         Quote[]
+  issuedDocuments IssuedDocument[]
   createdAt      DateTime     @default(now())
 
   @@index([organizationId])
@@ -378,12 +379,16 @@ model IssuedDocument {
   items          Json
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// קישור ל-CRM — לקוח שממנו הגיעה עסקה (אופציונלי, לסנכרון CRM↔ERP)
+  contactId      String?
+  contact        Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
   /// מספר מסמך ייחודי לכל סוג בתוך הארגון (למשל חשבונית #1001 וקבלה #1001 — שניהם חוקיים)
   @@unique([organizationId, type, number])
   @@index([organizationId])
+  @@index([contactId])
 }
 
 /// חשבונית / תשלום — עדכון סטטוס מ־PayPlus (או ספקים אחרים) דרך webhook

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -53,18 +53,52 @@ interface IssuedDoc {
 }
 
 /* ═══════════════════════════════════════════════════════════ */
-export default function InvoiceIssuance({ orgId, prefillClientName }: { orgId: string; prefillClientName?: string }) {
+export default function InvoiceIssuance({ orgId, prefillClientName, prefillContactId }: { orgId: string; prefillClientName?: string; prefillContactId?: string }) {
   void orgId; // used implicitly via session on the server
 
   /* ---------- state ---------- */
   const [docType, setDocType] = useState<DocType>("INVOICE");
   const [clientName, setClientName] = useState("");
+  const [contactId, setContactId] = useState<string | undefined>(prefillContactId);
   const [items, setItems] = useState<LineItem[]>([emptyItem()]);
   const [dueDate, setDueDate] = useState("");
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 4>(1);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState<IssuedDoc | null>(null);
   const [error, setError] = useState("");
+
+  /* ---------- CRM autocomplete ---------- */
+  const [crmSuggestions, setCrmSuggestions] = useState<{ id: string; name: string; value: number | null }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const crmFetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const fetchCrmSuggestions = useCallback(async (q: string) => {
+    if (!q.trim()) { setCrmSuggestions([]); return; }
+    try {
+      const res = await fetch(`/api/crm/contacts?q=${encodeURIComponent(q)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setCrmSuggestions((data.contacts ?? []).slice(0, 8).map((c: { id: string; name: string; value: number | null }) => ({ id: c.id, name: c.name, value: c.value })));
+    } catch { /* silent */ }
+  }, []);
+
+  const handleClientNameChange = (v: string) => {
+    setClientName(v);
+    setContactId(undefined);
+    if (crmFetchRef.current) clearTimeout(crmFetchRef.current);
+    crmFetchRef.current = setTimeout(() => fetchCrmSuggestions(v), 250);
+    setShowSuggestions(true);
+  };
+
+  const selectCrmContact = (c: { id: string; name: string; value: number | null }) => {
+    setClientName(c.name);
+    setContactId(c.id);
+    setCrmSuggestions([]);
+    setShowSuggestions(false);
+    if (c.value && c.value > 0 && items.length === 1 && !items[0].desc && items[0].price === 0) {
+      setItems([{ desc: "שירותיים / מוצרים", qty: 1, price: c.value }]);
+    }
+  };
 
   /* ---------- history ---------- */
   const [history, setHistory] = useState<IssuedDoc[]>([]);
@@ -117,7 +151,8 @@ export default function InvoiceIssuance({ orgId, prefillClientName }: { orgId: s
       setClientName(prefillClientName);
       setWizardStep(1);
     }
-  }, [prefillClientName]);
+    if (prefillContactId) setContactId(prefillContactId);
+  }, [prefillClientName, prefillContactId]);
 
   useEffect(() => {
     window.localStorage.setItem(INVOICE_STEP_KEY, String(wizardStep));
@@ -174,6 +209,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName }: { orgId: s
           clientName: clientName.trim(),
           items,
           dueDate: dueDate || undefined,
+          contactId: contactId || undefined,
         }),
       });
       if (!res.ok) {
@@ -330,15 +366,36 @@ export default function InvoiceIssuance({ orgId, prefillClientName }: { orgId: s
             </div>
 
             <div className="mb-6 grid gap-4 sm:grid-cols-2">
-              <div>
+              <div className="relative">
                 <label className="mb-1.5 block text-sm font-bold text-slate-600">שם לקוח</label>
                 <input
                   type="text"
                   value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  placeholder="לדוגמה: חברת אלפא בע״מ"
+                  onChange={(e) => handleClientNameChange(e.target.value)}
+                  onFocus={() => clientName && setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                  placeholder="לדוגמה: חברת אלפא בע״מ — או חפש מ-CRM"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
+                {contactId && (
+                  <span className="absolute end-3 top-10 text-[10px] font-black text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">CRM ✓</span>
+                )}
+                {showSuggestions && crmSuggestions.length > 0 && (
+                  <div className="absolute z-50 top-full mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden">
+                    <p className="px-3 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-100">לקוחות CRM</p>
+                    {crmSuggestions.map(c => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onMouseDown={() => selectCrmContact(c)}
+                        className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-indigo-50 transition"
+                      >
+                        <span className="font-bold text-slate-900">{c.name}</span>
+                        {c.value != null && <span className="text-xs text-emerald-600 font-black">₪{c.value.toLocaleString()}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-bold text-slate-600">תאריך יעד לתשלום</label>

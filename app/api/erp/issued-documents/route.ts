@@ -14,6 +14,11 @@ export async function GET() {
   const docs = await prisma.issuedDocument.findMany({
     where: { organizationId: orgId },
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true, type: true, number: true, date: true, dueDate: true,
+      clientName: true, amount: true, vat: true, total: true,
+      status: true, items: true, contactId: true, createdAt: true, updatedAt: true,
+    },
   });
 
   return NextResponse.json({ documents: docs });
@@ -28,11 +33,12 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { type, clientName, items, dueDate } = body as {
+  const { type, clientName, items, dueDate, contactId } = body as {
     type: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
     clientName: string;
     items: { desc: string; qty: number; price: number }[];
     dueDate?: string;
+    contactId?: string;
   };
 
   if (!type || !clientName || !Array.isArray(items) || items.length === 0) {
@@ -55,6 +61,16 @@ export async function POST(req: Request) {
   });
   const nextNumber = (last?.number ?? 1000) + 1;
 
+  /* אם נשלח contactId — וודא שהוא שייך לאותו ארגון */
+  let resolvedContactId: string | undefined;
+  if (contactId) {
+    const contact = await prisma.contact.findFirst({
+      where: { id: contactId, organizationId: orgId },
+      select: { id: true },
+    });
+    resolvedContactId = contact?.id;
+  }
+
   const doc = await prisma.issuedDocument.create({
     data: {
       type,
@@ -66,6 +82,7 @@ export async function POST(req: Request) {
       items: items as unknown as object,
       dueDate: dueDate ? new Date(dueDate) : undefined,
       organizationId: orgId,
+      contactId: resolvedContactId ?? null,
     },
   });
 
