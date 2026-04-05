@@ -25,6 +25,13 @@ import {
   Mail,
   Hash,
   Car,
+  Globe,
+  Briefcase,
+  Activity,
+  UserCheck,
+  UserX,
+  FileText,
+  Info,
 } from "lucide-react";
 import { updateMeckanoApiKeyAction } from "@/app/actions/org-settings";
 
@@ -215,6 +222,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   });
   const [teTo, setTeTo] = useState<string>(() => new Date().toISOString().slice(0, 10));
 
+  // ── Overview (derived from employees once loaded) ──
+  const [overviewLoading, setOverviewLoading] = useState(false);
+
   // ── Load helpers ──
   const loadEmployees = useCallback(async () => {
     setEmpLoading(true); setEmpError(null);
@@ -268,6 +278,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     if (activeTab === "attendance") loadAttendance();
     if (activeTab === "tasks" && tasks.length === 0) loadTasks();
     if (activeTab === "task-entries") loadTaskEntries();
+    if (activeTab === "settings" && employees.length === 0) {
+      setOverviewLoading(true);
+      loadEmployees().finally(() => setOverviewLoading(false));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, connected]);
 
@@ -706,79 +720,200 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
           )}
 
           {/* ── SETTINGS ── */}
-          {activeTab === "settings" && (
-            <div className="space-y-6 max-w-lg">
-              <div>
-                <h3 className="text-base font-black text-slate-900 mb-1 flex items-center gap-2">
-                  <Key size={16} className="text-blue-600" /> מפתח API
-                </h3>
-                <p className="text-sm text-slate-500 mb-4">
-                  ניתן לעדכן את מפתח ה-API של מקאנו. המפתח נשמר מוצפן בשרת ולעולם לא נחשף לצד-לקוח.
-                </p>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const fd = new FormData(e.currentTarget);
-                    startKeyTransition(async () => {
-                      const r = await updateMeckanoApiKeyAction(fd);
-                      setKeyMsg({ ok: r.ok, msg: r.ok ? "✓ מפתח עודכן בהצלחה" : (r.error ?? "שגיאה") });
-                    });
-                  }}
-                  className="space-y-3"
-                >
-                  <input
-                    name="meckanoApiKey"
-                    type="text"
-                    placeholder="מפתח API חדש"
-                    className={`${inputCls} w-full font-mono text-xs`}
-                    dir="ltr"
-                  />
-                  <button
-                    type="submit"
-                    disabled={pendingKey}
-                    className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50"
-                  >
-                    {pendingKey ? <Loader2 size={14} className="animate-spin" /> : <Key size={14} />}
-                    עדכן מפתח
-                  </button>
-                </form>
-                {keyMsg && (
-                  <p className={`mt-3 text-sm ${keyMsg.ok ? "text-emerald-700" : "text-red-600"}`}>{keyMsg.msg}</p>
-                )}
-              </div>
+          {activeTab === "settings" && (() => {
+            // Derive company overview from loaded employees
+            const companyName = employees.find(e => e.firstName || e.lastName)
+              ? (employees[0] as unknown as { companyName?: string }).companyName ?? "—"
+              : "—";
+            const totalEmp = employees.length;
+            const active = employees.filter(e => e.activeState === 1).length;
+            const inactive = totalEmp - active;
+            // Contract distribution
+            type EmployeeWithContract = MeckanoEmployee & { contractName?: string | null };
+            const contractMap: Record<string, number> = {};
+            employees.forEach(e => {
+              const cn = (e as EmployeeWithContract).contractName ?? "ללא חוזה";
+              contractMap[cn] = (contractMap[cn] ?? 0) + 1;
+            });
+            const contracts = Object.entries(contractMap).sort((a, b) => b[1] - a[1]);
+            // Timezone
+            type EmpWithTz = MeckanoEmployee & { userTimezone?: string; userCalendar?: number; companyId?: number };
+            const timezone = employees.length > 0 ? ((employees[0] as EmpWithTz).userTimezone ?? "—") : "—";
+            const companyId = employees.length > 0 ? ((employees[0] as EmpWithTz).companyId ?? "—") : "—";
+            const calendarNum = employees.length > 0 ? ((employees[0] as EmpWithTz).userCalendar ?? 1) : 1;
+            const calendarLabel = calendarNum === 1 ? "לוח שנה עברי" : calendarNum === 2 ? "לוח שנה ערבי" : "לוח שנה גרגוריאני";
 
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                <h4 className="font-bold text-slate-800 mb-2 text-sm">אינטגרציות מחוברות</h4>
-                <div className="space-y-2 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-emerald-500" />
-                    <span>עובדים ↔ CRM אנשי קשר (סנכרון ידני)</span>
+            return (
+              <div className="space-y-6" dir="rtl">
+
+                {/* Company Overview */}
+                <div>
+                  <h3 className="text-base font-black text-slate-900 mb-3 flex items-center gap-2">
+                    <Info size={16} className="text-blue-600" /> סקירת חברה
+                  </h3>
+                  {overviewLoading || empLoading ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {/* Company name + ID */}
+                      <div className="rounded-2xl border border-slate-200 bg-white p-5 flex items-start gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                          <Briefcase size={18} className="text-blue-600" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs text-slate-500 mb-0.5">שם חברה</p>
+                          <p className="font-black text-slate-900 text-sm leading-snug">{companyName}</p>
+                          <p className="text-xs text-slate-400 mt-1 font-mono">ID: {companyId}</p>
+                        </div>
+                      </div>
+                      {/* Employees */}
+                      <div className="rounded-2xl border border-slate-200 bg-white p-5 flex items-start gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50">
+                          <Users size={18} className="text-violet-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 mb-0.5">סה״כ עובדים</p>
+                          <p className="font-black text-slate-900 text-2xl leading-none">{totalEmp}</p>
+                          <div className="flex items-center gap-3 mt-2">
+                            <span className="flex items-center gap-1 text-xs text-emerald-700 font-bold">
+                              <UserCheck size={11} /> {active} פעילים
+                            </span>
+                            <span className="flex items-center gap-1 text-xs text-slate-500 font-bold">
+                              <UserX size={11} /> {inactive} לא פעילים
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Timezone & Calendar */}
+                      <div className="rounded-2xl border border-slate-200 bg-white p-5 flex items-start gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
+                          <Globe size={18} className="text-emerald-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 mb-0.5">אזור זמן</p>
+                          <p className="font-bold text-slate-900 text-sm" dir="ltr">{timezone}</p>
+                          <p className="text-xs text-slate-500 mt-1">{calendarLabel}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Contract Distribution */}
+                {contracts.length > 0 && (
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 mb-3 flex items-center gap-2">
+                      <FileText size={16} className="text-indigo-600" /> חוזי עבודה
+                    </h3>
+                    <div className="rounded-2xl border border-slate-200 overflow-hidden">
+                      {contracts.map(([name, count]) => {
+                        const pct = totalEmp > 0 ? Math.round((count / totalEmp) * 100) : 0;
+                        return (
+                          <div key={name} className="flex items-center gap-4 px-5 py-4 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-slate-900 text-sm truncate">{name}</p>
+                              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100">
+                                <div
+                                  className="h-1.5 rounded-full bg-indigo-400 transition-all"
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="text-lg font-black text-slate-900">{count}</span>
+                              <span className="text-xs text-slate-400 mr-1">עובדים</span>
+                              <p className="text-xs text-slate-400">{pct}%</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-emerald-500" />
-                    <span>נוכחות — צפייה ועיון לפי טווח תאריכים</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-emerald-500" />
-                    <span>משימות — ניהול ודיווח</span>
+                )}
+
+                {/* Activity indicator */}
+                <div>
+                  <h3 className="text-base font-black text-slate-900 mb-3 flex items-center gap-2">
+                    <Activity size={16} className="text-emerald-600" /> סטטוס אינטגרציה
+                  </h3>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3">
+                    {[
+                      { label: "עובדים ↔ CRM אנשי קשר", desc: "סנכרון ידני מלשונית עובדים", ok: true },
+                      { label: "נוכחות — time-entry", desc: "צפייה לפי טווח תאריכים (Unix timestamps)", ok: true },
+                      { label: "מחלקות", desc: "עדכון בזמן אמת", ok: true },
+                      { label: "משימות ודיווח שעות", desc: "צפייה מלאה + פילוח לפי עובד", ok: true },
+                    ].map(({ label, desc, ok }) => (
+                      <div key={label} className="flex items-start gap-3">
+                        <CheckCircle2 size={15} className={`mt-0.5 shrink-0 ${ok ? "text-emerald-500" : "text-slate-300"}`} />
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">{label}</p>
+                          <p className="text-xs text-slate-500">{desc}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
 
-              <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                <h4 className="font-bold text-blue-900 mb-1 text-sm">תיעוד API מקאנו</h4>
-                <p className="text-xs text-blue-700 mb-2">כל הנקודות: users, departments, attendance, tasks, task-entry</p>
-                <a
-                  href="https://meckano.co.il"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline"
-                >
-                  <Download size={12} /> פתח תיעוד מקאנו
-                </a>
+                {/* API Key */}
+                <div>
+                  <h3 className="text-base font-black text-slate-900 mb-1 flex items-center gap-2">
+                    <Key size={16} className="text-blue-600" /> מפתח API
+                  </h3>
+                  <p className="text-sm text-slate-500 mb-4">
+                    המפתח נשמר מוצפן בשרת ולעולם לא נחשף לצד-לקוח.
+                  </p>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const fd = new FormData(e.currentTarget);
+                      startKeyTransition(async () => {
+                        const r = await updateMeckanoApiKeyAction(fd);
+                        setKeyMsg({ ok: r.ok, msg: r.ok ? "✓ מפתח עודכן בהצלחה" : (r.error ?? "שגיאה") });
+                      });
+                    }}
+                    className="flex gap-3 max-w-lg"
+                  >
+                    <input
+                      name="meckanoApiKey"
+                      type="text"
+                      placeholder="מפתח API חדש"
+                      className={`${inputCls} flex-1 font-mono text-xs`}
+                      dir="ltr"
+                    />
+                    <button
+                      type="submit"
+                      disabled={pendingKey}
+                      className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50 shrink-0"
+                    >
+                      {pendingKey ? <Loader2 size={14} className="animate-spin" /> : <Key size={14} />}
+                      עדכן
+                    </button>
+                  </form>
+                  {keyMsg && (
+                    <p className={`mt-3 text-sm ${keyMsg.ok ? "text-emerald-700" : "text-red-600"}`}>{keyMsg.msg}</p>
+                  )}
+                </div>
+
+                {/* Docs link */}
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-bold text-blue-900 text-sm">תיעוד API מקאנו</p>
+                    <p className="text-xs text-blue-700 mt-0.5">כלים למתכנתים — REST API</p>
+                  </div>
+                  <a
+                    href="https://www.meckano.co.il/developers"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-white border border-blue-200 rounded-xl px-3 py-2 hover:bg-blue-50 transition"
+                  >
+                    <Download size={12} /> פתח תיעוד
+                  </a>
+                </div>
+
               </div>
-            </div>
-          )}
+            );
+          })()}
+
 
         </div>
       </div>
