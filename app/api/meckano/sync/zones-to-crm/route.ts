@@ -4,7 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // POST /api/meckano/sync/zones-to-crm
-// Syncs active MeckanoZones as CRM Contacts (type CLIENT, no email/phone mandatory)
+// Syncs active MeckanoZones as ERP Projects + CRM Contacts, and links Contact → Project.
+// Handles existing manually-created Projects/Contacts with matching names.
 export async function POST(_req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId)
@@ -19,28 +20,57 @@ export async function POST(_req: NextRequest) {
   if (zones.length === 0)
     return NextResponse.json({ synced: 0, message: "אין אזורים פעילים לסנכרון" });
 
-  let synced = 0;
+  let syncedProjects = 0;
+  let syncedContacts = 0;
+
   for (const zone of zones) {
-    // Upsert by name — contacts with same name treated as same site
-    const existing = await prisma.contact.findFirst({
+    // 1. Find or create ERP Project with zone name
+    let project = await prisma.project.findFirst({
       where: { organizationId: orgId, name: zone.name },
     });
-    if (!existing) {
+    if (!project) {
+      project = await prisma.project.create({
+        data: { organizationId: orgId, name: zone.name, isActive: true },
+      });
+      syncedProjects++;
+    }
+
+    // 2. Find or create CRM Contact with zone name, always link to project
+    const existingContact = await prisma.contact.findFirst({
+      where: { organizationId: orgId, name: zone.name },
+    });
+    if (existingContact) {
+      // Link to project if not already linked
+      if (existingContact.projectId !== project.id) {
+        await prisma.contact.update({
+          where: { id: existingContact.id },
+          data: { projectId: project.id, status: "ACTIVE" },
+        });
+      }
+    } else {
       await prisma.contact.create({
         data: {
           organizationId: orgId,
           name: zone.name,
-          status: "LEAD",
+          status: "ACTIVE",
+          projectId: project.id,
         },
       });
+      syncedContacts++;
     }
-    // Mark zone as synced
+
+    // 3. Mark zone as synced
     await prisma.meckanoZone.update({
       where: { id: zone.id },
       data: { syncedToCrm: true },
     });
-    synced++;
   }
 
-  return NextResponse.json({ synced, message: `סונכרנו ${synced} אתרים ל-CRM` });
+  const total = zones.length;
+  return NextResponse.json({
+    synced: total,
+    syncedProjects,
+    syncedContacts,
+    message: `סונכרנו ${total} אתרים — ${syncedProjects} פרויקטים חדשים ו-${syncedContacts} לקוחות חדשים נוצרו, הקיימים קושרו`,
+  });
 }

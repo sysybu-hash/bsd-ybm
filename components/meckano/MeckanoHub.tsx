@@ -509,7 +509,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </button>
                   <button onClick={syncToCrm} disabled={syncPending || !employees.length} className="flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700 transition disabled:opacity-50">
                     {syncPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                    סנכרן ל-CRM
+                    סנכרן עובדים ל-CRM
                   </button>
                 </div>
               </div>
@@ -750,7 +750,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </button>
                   <button onClick={syncZonesToCrm} disabled={zoneSyncPending || zones.length === 0} className="flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700 transition disabled:opacity-50">
                     {zoneSyncPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                    סנכרן ל-CRM
+                    סנכרן אתרים ל-CRM ופרויקטים
                   </button>
                   <button onClick={() => setShowAddZone(v => !v)} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition">
                     <Hash size={14} /> הוסף אזור

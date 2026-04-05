@@ -160,12 +160,51 @@ export default async function ErpPage({
 
   const priceComparison = orgId ? await getErpPriceComparisonForOrg(orgId) : null;
 
+  const activeProjects = orgId
+    ? await prisma.project.findMany({
+        where: { organizationId: orgId, isActive: true },
+        orderBy: { createdAt: "desc" },
+        include: {
+          _count: { select: { contacts: true } },
+        },
+      })
+    : [];
+
   return (
     <div
       className="animate-in fade-in duration-500 rounded-2xl bg-slate-50/60 text-slate-900 p-6 md:p-8 space-y-8"
       dir={pageDir}
     >
       <ErpScrollToHash />
+
+      {/* ── Active Projects / Work Sites ── */}
+      {activeProjects.length > 0 && (
+        <section id="erp-projects" className="scroll-mt-24 space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-black text-slate-900">פרויקטים פעילים</h2>
+              <p className="text-xs text-slate-500 mt-0.5">אתרי עבודה מסונכרנים ממקאנו</p>
+            </div>
+            <a href="/dashboard/crm" className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+              ניהול ב-CRM →
+            </a>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {activeProjects.map((proj) => (
+              <div key={proj.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-1 shadow-sm">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5 w-fit">פעיל</span>
+                <p className="font-black text-slate-900 text-sm mt-1">{proj.name}</p>
+                <p className="text-xs text-slate-500">{proj._count.contacts} לקוחות/אנשי קשר</p>
+                {proj.activeFrom && (
+                  <p className="text-xs text-slate-400">
+                    מתאריך: {new Date(proj.activeFrom).toLocaleDateString("he-IL")}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section id="erp-wizard" className="scroll-mt-24 rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
         <p className="mb-1 inline-flex rounded-full border border-cyan-300 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-700">
