@@ -94,30 +94,33 @@ export default function OperationsCommandCenter({
 
   return (
     <div className="space-y-6" dir="rtl">
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+      <section className="overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm">
+        <div className="relative overflow-hidden border-b border-indigo-900/10 bg-gradient-to-l from-indigo-950 to-indigo-900 px-6 py-7 md:px-8">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-8 end-20 h-40 w-40 rounded-full bg-indigo-400/10 blur-[60px]" />
+          </div>
+          <div className="relative flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">
-                <ListChecks size={13} />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-400/20 px-3 py-1 text-[11px] font-bold text-indigo-200">
+                <ListChecks size={11} />
                 מרכז תפעול
-              </p>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">תמונה תפעולית אחת, בלי עומס מיותר</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                המסך הזה מרכז רק את מה שצריך לבדוק עכשיו: בריאות עסקית, אוטומציות, אינטגרציות ופעילות אחרונה.
+              </span>
+              <h1 className="mt-3 text-2xl font-black tracking-tight text-white">תמונה תפעולית אחת, בלי עומס מיותר</h1>
+              <p className="mt-1.5 text-sm leading-6 text-indigo-200/70">
+                בריאות עסקית, אוטומציות, אינטגרציות ופעילות אחרונה.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href="/dashboard" className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">
+              <Link href="/dashboard" className="rounded-2xl border border-indigo-700/50 bg-indigo-800/40 px-4 py-2 text-sm font-bold text-indigo-200 hover:bg-indigo-700/50 transition-colors">
                 חזרה למסך הבית
               </Link>
-              <Link href="/dashboard/operator" className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800">
+              <Link href="/dashboard/operator" className="rounded-2xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-400 transition-colors">
                 פתח עוזר תפעולי
               </Link>
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 md:grid-cols-4">
+          <div className="relative mt-5 grid gap-3 md:grid-cols-4">
             <Metric title="הכנסות 30 יום" value={`₪${mrrLike.toLocaleString()}`} tone="blue" />
             <Metric title="משתמשים פעילים" value={`${data.usersActive}/${data.usersTotal}`} tone="emerald" />
             <Metric title="בריאות הכנסות" value={`${data.revenueHealth}%`} tone="amber" />
@@ -126,7 +129,7 @@ export default function OperationsCommandCenter({
         </div>
 
         <div className="grid gap-5 px-6 py-6 md:px-8 xl:grid-cols-[1.15fr_0.85fr]">
-          <section className="space-y-5">
+          <section className="space-y-4">
             <Panel
               title="מצב עסק ומערכת"
               description="מבט קצר על בסיס הלקוחות, ההכנסות והמנוי."
@@ -157,7 +160,7 @@ export default function OperationsCommandCenter({
             </Panel>
           </section>
 
-          <section className="space-y-5">
+          <section className="space-y-4">
             <Panel
               title="בריאות סביבת העבודה"
               description="חיבורים, AI והרשאות במסך אחד קצר."
@@ -183,18 +186,18 @@ export default function OperationsCommandCenter({
             >
               <div className="space-y-2">
                 {data.recentActivity.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                  <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-400">
                     אין פעילות אחרונה.
                   </div>
                 ) : (
                   data.recentActivity.map((activity, index) => (
-                    <div key={`${activity.action}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div key={`${activity.action}-${index}`} className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{activity.action}</p>
-                          {activity.details ? <p className="mt-1 text-xs text-slate-500">{activity.details}</p> : null}
+                          <p className="text-sm font-bold text-gray-900">{activity.action}</p>
+                          {activity.details ? <p className="mt-0.5 text-xs text-gray-400">{activity.details}</p> : null}
                         </div>
-                        <p className="shrink-0 text-[11px] font-semibold text-slate-400">
+                        <p className="shrink-0 text-[11px] font-semibold text-gray-400">
                           {new Date(activity.createdAtIso).toLocaleString("he-IL")}
                         </p>
                       </div>
@@ -206,11 +209,11 @@ export default function OperationsCommandCenter({
           </section>
         </div>
 
-        <div className="border-t border-slate-100 px-6 py-5 md:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[28px] bg-slate-50 px-5 py-4">
+        <div className="border-t border-gray-100 px-6 py-5 md:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-gray-50 px-5 py-4">
             <div>
-              <p className="text-sm font-black text-slate-900">קיצורי דרך שעדיין שייכים למסך הזה</p>
-              <p className="mt-1 text-xs text-slate-500">פחות קיצורים, רק מה שמקדם פעולה אמיתית.</p>
+              <p className="text-sm font-black text-gray-900">קיצורי דרך</p>
+              <p className="mt-1 text-xs text-gray-400">פחות קיצורים, רק מה שמקדם פעולה אמיתית.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <QuickLink href="/dashboard/help" label="מדריך" />
@@ -238,40 +241,39 @@ function Panel({
   children: ReactNode;
 }) {
   return (
-    <article className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50">{icon}</div>
+        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 border border-gray-100">{icon}</div>
         <div>
-          <h2 className="text-base font-black text-slate-900">{title}</h2>
-          <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
+          <h2 className="text-base font-black text-gray-900">{title}</h2>
+          <p className="mt-0.5 text-xs leading-5 text-gray-400">{description}</p>
         </div>
       </div>
-      <div className="mt-5">{children}</div>
+      <div className="mt-4">{children}</div>
     </article>
   );
 }
 
 function Metric({ title, value, tone = "blue" }: { title: string; value: string; tone?: "blue" | "emerald" | "amber" | "violet" }) {
   const tones = {
-    blue: "bg-blue-50 text-blue-700 border-blue-100",
-    emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
-    amber: "bg-amber-50 text-amber-700 border-amber-100",
-    violet: "bg-violet-50 text-violet-700 border-violet-100",
+    blue: "bg-indigo-900/60 border-indigo-700/40 text-indigo-200",
+    emerald: "bg-emerald-900/50 border-emerald-700/30 text-emerald-200",
+    amber: "bg-amber-900/40 border-amber-700/30 text-amber-200",
+    violet: "bg-violet-900/50 border-violet-700/30 text-violet-200",
   };
-
   return (
-    <div className={`rounded-3xl border px-4 py-4 ${tones[tone]}`}>
-      <p className="text-xs font-bold opacity-80">{title}</p>
-      <p className="mt-1 text-2xl font-black text-slate-900">{value}</p>
+    <div className={`rounded-2xl border px-4 py-3.5 ${tones[tone]}`}>
+      <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">{title}</p>
+      <p className="mt-1.5 text-2xl font-black text-white">{value}</p>
     </div>
   );
 }
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-      <p className="text-xs font-bold text-slate-500">{label}</p>
-      <p className="mt-1.5 text-sm font-bold leading-6 text-slate-900">{value}</p>
+    <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+      <p className="text-xs font-bold text-gray-400">{label}</p>
+      <p className="mt-1 text-sm font-bold leading-6 text-gray-900">{value}</p>
     </div>
   );
 }
@@ -291,13 +293,13 @@ function ToggleCard({
     <button
       type="button"
       onClick={onToggle}
-      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right hover:bg-slate-100"
+      className="flex w-full items-center justify-between gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-right hover:bg-gray-100 transition-colors"
     >
       <div>
-        <p className="text-sm font-bold text-slate-900">{label}</p>
-        <p className="mt-1 text-xs text-slate-500">{hint}</p>
+        <p className="text-sm font-bold text-gray-900">{label}</p>
+        <p className="mt-0.5 text-xs text-gray-400">{hint}</p>
       </div>
-      <span className={`rounded-full px-3 py-1 text-xs font-black ${on ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+      <span className={`rounded-full px-3 py-1 text-xs font-black ${on ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"}`}>
         {on ? "פעיל" : "כבוי"}
       </span>
     </button>
@@ -306,13 +308,12 @@ function ToggleCard({
 
 function QuickLink({ href, label, tone = "default" }: { href: string; label: string; tone?: "default" | "primary" | "warning" }) {
   const styles = {
-    default: "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-    primary: "bg-slate-900 text-white hover:bg-slate-800",
+    default: "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
     warning: "bg-amber-500 text-white hover:bg-amber-600",
   };
-
   return (
-    <Link href={href} className={`rounded-2xl px-4 py-2 text-sm font-bold transition-colors ${styles[tone]}`}>
+    <Link href={href} className={`rounded-xl px-4 py-2 text-sm font-bold transition-colors ${styles[tone]}`}>
       {label}
     </Link>
   );
@@ -330,10 +331,10 @@ function Health({
   missingLabel?: string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
-      <span className="font-semibold text-slate-700">{label}</span>
-      <span className={`inline-flex items-center gap-1.5 font-bold ${ok ? "text-emerald-700" : "text-amber-700"}`}>
-        {ok ? <CheckCircle2 size={14} /> : <Bot size={14} />}
+    <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm">
+      <span className="font-semibold text-gray-700">{label}</span>
+      <span className={`inline-flex items-center gap-1.5 font-bold ${ok ? "text-emerald-600" : "text-amber-600"}`}>
+        {ok ? <CheckCircle2 size={13} /> : <Bot size={13} />}
         {ok ? okLabel : missingLabel}
       </span>
     </div>

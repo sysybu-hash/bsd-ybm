@@ -7,19 +7,20 @@ export const dynamic = "force-dynamic";
 export default function DashboardHelpPage() {
   return (
     <div className="space-y-5" dir="rtl">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-          <BookOpenCheck size={14} />
+      <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-3xl bg-gradient-to-b from-indigo-500 to-violet-600" />
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+          <BookOpenCheck size={11} />
           מדריך תפעול מובנה
-        </p>
-        <h1 className="mt-3 text-3xl font-black text-slate-900">איך לתפעל את האתר בפשטות</h1>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+        </span>
+        <h1 className="mt-3 text-2xl font-black text-gray-900">איך לתפעל את האתר בפשטות</h1>
+        <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
           אם אינך טכני, עבוד לפי הרצף הזה. כל שלב כולל קישור ישיר לעמוד המתאים.
         </p>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <div className="space-y-4">
+      <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="space-y-3">
           <HelpStep
             icon={<CreditCard size={18} className="text-rose-600" />}
             step="1"
@@ -85,19 +86,41 @@ function HelpStep({
   secondaryHref: string;
   secondaryLabel: string;
 }) {
+  const STEP_COLORS = ["indigo", "blue", "violet", "emerald"];
+  const color = STEP_COLORS[(Number(step) - 1) % STEP_COLORS.length];
+  const bg: Record<string, string> = {
+    indigo: "border-indigo-100 bg-indigo-50/50",
+    blue: "border-blue-100 bg-blue-50/50",
+    violet: "border-violet-100 bg-violet-50/50",
+    emerald: "border-emerald-100 bg-emerald-50/50",
+  };
+  const numBg: Record<string, string> = {
+    indigo: "bg-indigo-600 text-white",
+    blue: "bg-blue-600 text-white",
+    violet: "bg-violet-600 text-white",
+    emerald: "bg-emerald-600 text-white",
+  };
+  const btnPrimary: Record<string, string> = {
+    indigo: "bg-indigo-600 hover:bg-indigo-700",
+    blue: "bg-blue-600 hover:bg-blue-700",
+    violet: "bg-violet-600 hover:bg-violet-700",
+    emerald: "bg-emerald-600 hover:bg-emerald-700",
+  };
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 md:flex-row md:items-center md:justify-between">
+    <article className={`flex flex-col gap-4 rounded-2xl border p-5 md:flex-row md:items-center md:justify-between ${bg[color]}`}>
       <div className="flex items-start gap-3">
-        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white bg-white shadow-sm">{icon}</div>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-base font-black shadow-sm ${numBg[color]}`}>{step}</div>
         <div>
-          <p className="text-xs font-bold text-slate-500">שלב {step}</p>
-          <h2 className="mt-1 text-lg font-black text-slate-900">{title}</h2>
-          <p className="mt-1 text-sm text-slate-600">{description}</p>
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white shadow-sm">{icon}</div>
+            <h2 className="text-base font-black text-gray-900">{title}</h2>
+          </div>
+          <p className="mt-1 text-sm text-gray-500">{description}</p>
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Link href={primaryHref} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800">{primaryLabel}</Link>
-        <Link href={secondaryHref} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">{secondaryLabel}</Link>
+        <Link href={primaryHref} className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors ${btnPrimary[color]}`}>{primaryLabel}</Link>
+        <Link href={secondaryHref} className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">{secondaryLabel}</Link>
       </div>
     </article>
   );

@@ -144,13 +144,13 @@ function HubContent(props: Props) {
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]" dir="rtl">
+    <div className="min-h-screen bg-gray-50" dir="rtl">
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-sm">
+      <div className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 backdrop-blur-sm shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <h1 className="font-black text-lg text-slate-900">מרכז עסקי</h1>
+            <h1 className="font-black text-lg text-gray-900">מרכז עסקי</h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               CRM × ERP מסונכרן
@@ -254,16 +254,16 @@ function HubContent(props: Props) {
         />
 
         {/* ── כלי ERP — מקופלים כברירת מחדל ── */}
-        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
           <button
             type="button"
             onClick={() => setErpOpen((v) => !v)}
-            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 transition"
           >
             <span className="flex items-center gap-2.5">
               <FileText size={14} className="text-indigo-500" />
               כלי ERP — סריקת מסמכים, דוחות וארכיון
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">
                 {docs.length} מסמכים
               </span>
             </span>
@@ -312,8 +312,8 @@ function FallbackLoader() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 size={36} className="animate-spin text-blue-600" />
-        <p className="text-sm font-bold text-slate-500">טוען מרכז עסקי...</p>
+        <Loader2 size={36} className="animate-spin text-indigo-600" />
+        <p className="text-sm font-bold text-gray-400">טוען מרכז עסקי...</p>
       </div>
     </div>
   );
