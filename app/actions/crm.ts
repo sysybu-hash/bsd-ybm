@@ -23,8 +23,11 @@ export async function createContactAction(formData: FormData) {
 
   const name = String(formData.get("name") || "").trim();
   const emailRaw = String(formData.get("email") || "").trim();
+  const phone = String(formData.get("phone") || "").trim();
   const status = String(formData.get("status") || "LEAD").trim();
   const projectRaw = String(formData.get("projectId") || "").trim();
+  const valueRaw = String(formData.get("value") || "").trim();
+  const notes = String(formData.get("notes") || "").trim();
 
   if (!name) {
     return { ok: false as const, error: "יש להזין שם לקוח" };
@@ -43,6 +46,9 @@ export async function createContactAction(formData: FormData) {
     data: {
       name,
       email: emailRaw || null,
+      phone: phone || null,
+      notes: notes || null,
+      value: valueRaw ? parseFloat(valueRaw) : null,
       status: status || "LEAD",
       organizationId: ctx.orgId,
       projectId: projectId ?? null,
@@ -101,8 +107,11 @@ export async function updateContactAction(input: {
   contactId: string;
   name: string;
   email: string;
+  phone: string;
   status: string;
   projectId: string;
+  value: string;
+  notes: string;
 }) {
   const ctx = await getOrgContext();
   if ("error" in ctx) return { ok: false as const, error: ctx.error };
@@ -133,11 +142,44 @@ export async function updateContactAction(input: {
     data: {
       name,
       email: input.email.trim() || null,
+      phone: input.phone.trim() || null,
       status: input.status.trim() || "LEAD",
       projectId,
+      value: input.value.trim() ? parseFloat(input.value) : null,
+      notes: input.notes.trim() || null,
     },
   });
 
+  revalidatePath("/dashboard/crm");
+  return { ok: true as const };
+}
+
+export async function updateContactStatusAction(contactId: string, status: string) {
+  const ctx = await getOrgContext();
+  if ("error" in ctx) return { ok: false as const, error: ctx.error };
+
+  const row = await prisma.contact.findFirst({
+    where: { id: contactId, organizationId: ctx.orgId },
+  });
+  if (!row) return { ok: false as const, error: "לקוח לא נמצא" };
+
+  await prisma.contact.update({ where: { id: contactId }, data: { status } });
+  revalidatePath("/dashboard/crm");
+  return { ok: true as const };
+}
+
+export async function deleteProjectAction(projectId: string) {
+  const ctx = await getOrgContext();
+  if ("error" in ctx) return { ok: false as const, error: ctx.error };
+
+  const row = await prisma.project.findFirst({
+    where: { id: projectId, organizationId: ctx.orgId },
+  });
+  if (!row) return { ok: false as const, error: "פרויקט לא נמצא" };
+
+  // Unlink contacts from this project before deleting
+  await prisma.contact.updateMany({ where: { projectId, organizationId: ctx.orgId }, data: { projectId: null } });
+  await prisma.project.delete({ where: { id: projectId } });
   revalidatePath("/dashboard/crm");
   return { ok: true as const };
 }

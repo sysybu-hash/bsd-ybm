@@ -336,6 +336,9 @@ model Contact {
   id             String       @id @default(cuid())
   name           String
   email          String?
+  phone          String?
+  notes          String?      @db.Text
+  value          Float?                   // שווי עסקה ב-₪
   status         String       @default("LEAD")
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])

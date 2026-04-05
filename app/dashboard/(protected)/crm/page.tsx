@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Plus } from "lucide-react";
 import { isAdmin } from "@/lib/is-admin";
 import CrmClient from "./CrmClient";
 import type { CrmAdminOrganizationRow } from "./CrmOrganizationsAdminTable";
@@ -88,32 +87,17 @@ export default async function CRMPage() {
   const hasOrganization = Boolean(orgId);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-6 md:p-10" dir="rtl">
-      <div className="max-w-[1400px] mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-[var(--heading-color,#2563eb)] italic tracking-tighter mb-2">
-              ניהול לקוחות (CRM)
-            </h1>
-            <p className="text-slate-500 text-sm font-semibold">
-              לקוחות, לידים, פרויקטים והצעות מחיר — הכל במקום אחד
-            </p>
-          </div>
-          <a
-            href="#crm-new-contact"
-            className="bg-gradient-to-l from-blue-600 to-indigo-600 hover:opacity-95 text-white px-8 py-3.5 rounded-2xl text-sm font-black inline-flex items-center gap-2 shadow-lg shadow-blue-600/25 transition-all border border-white/10"
-          >
-            <Plus size={18} /> הוספת לקוח חדש
-          </a>
-        </div>
-
-        <CrmClient
+    <div className="min-h-screen bg-[#f8fafc]" dir="rtl">
+      <CrmClient
           hasOrganization={hasOrganization}
           showUnifiedBillingLinks={platformDev}
           contacts={contacts.map((c) => ({
             id: c.id,
             name: c.name,
             email: c.email,
+            phone: (c as { phone?: string | null }).phone ?? null,
+            notes: (c as { notes?: string | null }).notes ?? null,
+            value: (c as { value?: number | null }).value ?? null,
             status: c.status,
             project: c.project ? { id: c.project.id, name: c.project.name } : null,
             createdAt: c.createdAt.toISOString(),
@@ -127,7 +111,6 @@ export default async function CRMPage() {
           }))}
           organizations={organizations}
         />
-      </div>
     </div>
   );
 }

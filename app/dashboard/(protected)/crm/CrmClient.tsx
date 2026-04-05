@@ -1,38 +1,52 @@
-"use client";
+﻿"use client";
 
-import { useState, useTransition, useMemo, useEffect } from "react";
+import { useState, useTransition, useMemo } from "react";
 import {
   createContactAction,
   createProjectAction,
   deleteContactAction,
   updateContactAction,
+  updateContactStatusAction,
+  deleteProjectAction,
 } from "@/app/actions/crm";
-import QuoteGenerator from "@/components/QuoteGenerator";
-import SignQuoteButton from "@/components/SignQuoteButton";
 import {
   Plus,
   Trash2,
   FolderPlus,
   UserPlus,
-  ListChecks,
-  Filter,
   Edit3,
   LayoutGrid,
   Shield,
   X,
   ChevronDown,
   Search,
+  Phone,
+  Mail,
+  StickyNote,
+  DollarSign,
+  TrendingUp,
+  Users,
+  CheckCircle2,
+  Briefcase,
+  Calendar,
+  MoreVertical,
+  BarChart2,
+  List,
+  Loader2,
 } from "lucide-react";
 import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
 } from "./CrmOrganizationsAdminTable";
 import { useI18n } from "@/components/I18nProvider";
-import { trackWizardEvent } from "@/lib/client-telemetry";
 
+/* ─── Types ─────────────────────────────────────────────────────────────── */
 type ContactRow = {
   id: string;
   name: string;
   email: string | null;
+  phone: string | null;
+  notes: string | null;
+  value: number | null;
   status: string;
   project: { id: string; name: string } | null;
   createdAt: string;
@@ -46,56 +60,319 @@ type ProjectRow = {
   activeTo: string | null;
 };
 
-const STATUS_OPTIONS = [
-  { value: "LEAD", label: "ליד" },
-  { value: "ACTIVE", label: "פעיל" },
-  { value: "PROPOSAL", label: "הצעה" },
-  { value: "CLOSED_WON", label: "נסגר בהצלחה" },
-  { value: "CLOSED_LOST", label: "נסגר שלילי" },
-];
+type View = "pipeline" | "list" | "projects";
 
-const STATUS_STYLE: Record<string, string> = {
-  LEAD: "bg-violet-100 text-violet-700 border-violet-200",
-  ACTIVE: "bg-sky-100 text-sky-700 border-sky-200",
-  PROPOSAL: "bg-blue-100 text-blue-700 border-blue-200",
-  CLOSED_WON: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  CLOSED_LOST: "bg-slate-100 text-slate-600 border-slate-200",
-};
+/* ─── Constants ──────────────────────────────────────────────────────────── */
+const STATUS_COLUMNS = [
+  { key: "LEAD",        label: "ליד",     bg: "bg-violet-50",  border: "border-violet-200", badge: "bg-violet-100 text-violet-700", dot: "bg-violet-400" },
+  { key: "ACTIVE",      label: "פעיל",    bg: "bg-sky-50",     border: "border-sky-200",    badge: "bg-sky-100 text-sky-700",       dot: "bg-sky-400"    },
+  { key: "PROPOSAL",    label: "הצעה",    bg: "bg-blue-50",    border: "border-blue-200",   badge: "bg-blue-100 text-blue-700",     dot: "bg-blue-500"   },
+  { key: "CLOSED_WON",  label: "נסגר ✓",  bg: "bg-emerald-50", border: "border-emerald-200",badge: "bg-emerald-100 text-emerald-700",dot: "bg-emerald-500"},
+  { key: "CLOSED_LOST", label: "נסגר ✗",  bg: "bg-rose-50",    border: "border-rose-200",   badge: "bg-rose-100 text-rose-600",     dot: "bg-rose-400"   },
+] as const;
 
-const STATUS_LABEL: Record<string, string> = {
-  LEAD: "ליד",
-  ACTIVE: "פעיל",
-  PROPOSAL: "הצעה",
-  CLOSED_WON: "נסגר ✓",
-  CLOSED_LOST: "נסגר ✗",
-};
-
-function formatRange(from: string | null, to: string | null): string {
-  if (!from && !to) return "ללא טווח תאריכים";
-  const a = from ? new Date(from).toLocaleDateString("he-IL") : "…";
-  const b = to ? new Date(to).toLocaleDateString("he-IL") : "פתוח";
-  return `${a} → ${b}`;
-}
+type StatusKey = (typeof STATUS_COLUMNS)[number]["key"];
 
 const inputCls =
-  "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 placeholder:text-slate-400";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 placeholder:text-slate-400";
 
-const CRM_WIZARD_STORAGE_KEY = "bsd-crm:wizard-step";
-const CRM_DRAFT_STORAGE_KEY = "bsd-crm:wizard-draft";
+function statusMeta(s: string) {
+  return STATUS_COLUMNS.find((c) => c.key === s) ?? STATUS_COLUMNS[0];
+}
 
-type CrmDraft = {
-  projectName: string;
-  projectFrom: string;
-  projectTo: string;
-  projectActive: boolean;
-  contactName: string;
-  contactEmail: string;
-  contactStatus: string;
-  contactProjectId: string;
-};
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit", year: "2-digit" });
+}
 
+function fmtMoney(v: number) {
+  return `₪${v.toLocaleString("he-IL", { maximumFractionDigits: 0 })}`;
+}
+
+function formatRange(from: string | null, to: string | null): string {
+  if (!from && !to) return "";
+  const a = from
+    ? new Date(from).toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit", year: "2-digit" })
+    : "…";
+  const b = to
+    ? new Date(to).toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit", year: "2-digit" })
+    : "פתוח";
+  return `${a} – ${b}`;
+}
+
+function initials(name: string) {
+  return name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
+const AVATAR_COLORS = ["#6366f1","#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6","#ec4899","#14b8a6"];
+function avatarColor(id: string) {
+  let h = 5381;
+  for (let i = 0; i < id.length; i++) h = ((h << 5) + h) + id.charCodeAt(i);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+
+/* ─── Edit/Add Modal ─────────────────────────────────────────────────────── */
+type ModalMode = "add" | "edit";
+type ModalState = { mode: ModalMode; contact?: ContactRow; defaultStatus?: StatusKey };
+
+function ContactModal({
+  state,
+  projects,
+  onClose,
+  onSaved,
+}: {
+  state: ModalState;
+  projects: ProjectRow[];
+  onClose: () => void;
+  onSaved: (msg: string) => void;
+}) {
+  const isEdit = state.mode === "edit";
+  const c = state.contact;
+
+  const [name, setName] = useState(c?.name ?? "");
+  const [email, setEmail] = useState(c?.email ?? "");
+  const [phone, setPhone] = useState(c?.phone ?? "");
+  const [status, setStatus] = useState<StatusKey>((c?.status as StatusKey) ?? state.defaultStatus ?? "LEAD");
+  const [projectId, setProjectId] = useState(c?.project?.id ?? "");
+  const [value, setValue] = useState(c?.value != null ? String(c.value) : "");
+  const [notes, setNotes] = useState(c?.notes ?? "");
+  const [err, setErr] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const submit = () => {
+    if (!name.trim()) { setErr("יש להזין שם"); return; }
+    setErr(null);
+    startTransition(async () => {
+      if (isEdit && c) {
+        const r = await updateContactAction({ contactId: c.id, name, email, phone, status, projectId, value, notes });
+        if (r.ok) { onSaved("✓ הלקוח עודכן"); onClose(); }
+        else setErr(r.error ?? "שגיאה");
+      } else {
+        const fd = new FormData();
+        fd.set("name", name); fd.set("email", email); fd.set("phone", phone);
+        fd.set("status", status);
+        if (projectId) fd.set("projectId", projectId);
+        if (value) fd.set("value", value);
+        fd.set("notes", notes);
+        const r = await createContactAction(fd);
+        if (r.ok) { onSaved("✓ הלקוח נוסף"); onClose(); }
+        else setErr(r.error ?? "שגיאה");
+      }
+    });
+  };
+
+  const deleteContact = () => {
+    if (!c) return;
+    if (!confirm(`למחוק את "${c.name}"?`)) return;
+    startTransition(async () => {
+      const r = await deleteContactAction(c.id);
+      if (r.ok) { onSaved("✓ נמחק"); onClose(); }
+      else setErr(r.error ?? "שגיאה");
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" dir="rtl">
+      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+          <div className="flex items-center gap-3">
+            {isEdit ? (
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-2xl text-white text-sm font-black"
+                style={{ backgroundColor: avatarColor(c?.id ?? "") }}
+              >
+                {initials(c?.name ?? "?")}
+              </div>
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                <UserPlus size={18} />
+              </div>
+            )}
+            <div>
+              <p className="font-black text-slate-900">{isEdit ? "עריכת לקוח" : "לקוח חדש"}</p>
+              {isEdit && c && <p className="text-xs text-slate-400">נוצר {fmtDate(c.createdAt)}</p>}
+            </div>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+          {err && (
+            <div className="rounded-xl bg-rose-50 border border-rose-200 px-3 py-2.5 text-sm text-rose-700">{err}</div>
+          )}
+          <div>
+            <label className="block text-xs font-bold text-slate-500 mb-1">שם *</label>
+            <input value={name} onChange={e => setName(e.target.value)} placeholder="שם לקוח / חברה" className={inputCls} autoFocus />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1">אימייל</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mail@example.com" className={inputCls} dir="ltr" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1">טלפון</label>
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="050-0000000" className={inputCls} dir="ltr" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1">סטטוס</label>
+              <div className="relative">
+                <select value={status} onChange={e => setStatus(e.target.value as StatusKey)} className={inputCls + " appearance-none"}>
+                  {STATUS_COLUMNS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                </select>
+                <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1">שווי עסקה (₪)</label>
+              <input type="number" min="0" step="100" value={value} onChange={e => setValue(e.target.value)} placeholder="0" className={inputCls} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 mb-1">פרויקט</label>
+            <div className="relative">
+              <select value={projectId} onChange={e => setProjectId(e.target.value)} className={inputCls + " appearance-none"}>
+                <option value="">— ללא פרויקט —</option>
+                {projects.map(p => <option key={p.id} value={p.id}>{p.name}{!p.isActive ? " (ארכיון)" : ""}</option>)}
+              </select>
+              <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 mb-1">הערות</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="הערות חופשיות..." rows={3} className={inputCls + " resize-none"} />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 bg-slate-50">
+          <div>
+            {isEdit && (
+              <button type="button" onClick={deleteContact} disabled={pending} className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition disabled:opacity-50">
+                <Trash2 size={13} /> מחק
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition">
+              ביטול
+            </button>
+            <button type="button" onClick={submit} disabled={pending} className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-50">
+              {pending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+              {isEdit ? "שמור" : "הוסף"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Contact Card (pipeline) ────────────────────────────────────────────── */
+function ContactCard({
+  contact,
+  onEdit,
+  onStatusChange,
+}: {
+  contact: ContactRow;
+  onEdit: (c: ContactRow) => void;
+  onStatusChange: (id: string, status: StatusKey) => void;
+}) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const meta = statusMeta(contact.status);
+
+  return (
+    <div
+      className="group relative rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => onEdit(contact)}
+    >
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white text-xs font-black"
+            style={{ backgroundColor: avatarColor(contact.id) }}
+          >
+            {initials(contact.name)}
+          </div>
+          <div>
+            <p className="text-sm font-black text-slate-900 leading-tight">{contact.name}</p>
+            {contact.project && <p className="text-[10px] text-slate-400 mt-0.5">{contact.project.name}</p>}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
+          className="opacity-0 group-hover:opacity-100 rounded-lg p-1 text-slate-400 hover:bg-slate-100 transition"
+        >
+          <MoreVertical size={14} />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold ${meta.badge}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+          {meta.label}
+        </span>
+        {contact.value != null && (
+          <span className="text-xs font-black text-emerald-600 bg-emerald-50 rounded-lg px-2 py-0.5">
+            {fmtMoney(contact.value)}
+          </span>
+        )}
+      </div>
+
+      {(contact.email || contact.phone) && (
+        <div className="mt-2.5 space-y-1">
+          {contact.phone && (
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-500" dir="ltr">
+              <Phone size={10} className="shrink-0" /> {contact.phone}
+            </div>
+          )}
+          {contact.email && (
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 truncate" dir="ltr">
+              <Mail size={10} className="shrink-0" /> {contact.email}
+            </div>
+          )}
+        </div>
+      )}
+
+      <p className="mt-2.5 text-[10px] text-slate-300">{fmtDate(contact.createdAt)}</p>
+
+      {menuOpen && (
+        <div
+          className="absolute left-0 top-full z-20 mt-1 min-w-[140px] rounded-2xl border border-slate-200 bg-white shadow-lg py-1.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <p className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">שנה סטטוס</p>
+          {STATUS_COLUMNS.map(s => (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => { onStatusChange(contact.id, s.key); setMenuOpen(false); }}
+              className={`flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold hover:bg-slate-50 transition ${contact.status === s.key ? "text-blue-600 bg-blue-50" : "text-slate-700"}`}
+            >
+              <span className={`h-2 w-2 rounded-full ${s.dot}`} /> {s.label}
+            </button>
+          ))}
+          <div className="border-t border-slate-100 mt-1 pt-1">
+            <button
+              type="button"
+              onClick={() => { onEdit(contact); setMenuOpen(false); }}
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+            >
+              <Edit3 size={12} /> ערוך
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Main Component ─────────────────────────────────────────────────────── */
 export default function CrmClient({
-  contacts,
+  contacts: initialContacts,
   projects,
   hasOrganization,
   organizations = [],
@@ -108,687 +385,486 @@ export default function CrmClient({
   showUnifiedBillingLinks?: boolean;
 }) {
   const { dir } = useI18n();
+  const [view, setView] = useState<View>("pipeline");
+  const [contacts, setContacts] = useState<ContactRow[]>(initialContacts);
+  const [modal, setModal] = useState<ModalState | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
-  const [msgDismissed, setMsgDismissed] = useState(false);
-  const [pending, startTransition] = useTransition();
-  const [contactMonthFilter, setContactMonthFilter] = useState("");
-  const [hideInactiveProjects, setHideInactiveProjects] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1);
-  const [draft, setDraft] = useState<CrmDraft>({
-    projectName: "",
-    projectFrom: "",
-    projectTo: "",
-    projectActive: true,
-    contactName: "",
-    contactEmail: "",
-    contactStatus: "LEAD",
-    contactProjectId: "",
-  });
+  const [, startTransition] = useTransition();
 
-  const projectsForSelect = useMemo(() => {
-    let list = projects;
-    if (hideInactiveProjects) list = list.filter((p) => p.isActive);
-    return list;
-  }, [projects, hideInactiveProjects]);
+  // List view filters
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterProject, setFilterProject] = useState("");
 
+  // Add project form
+  const [addProjOpen, setAddProjOpen] = useState(false);
+  const [projName, setProjName] = useState("");
+  const [projFrom, setProjFrom] = useState("");
+  const [projTo, setProjTo] = useState("");
+  const [projActive, setProjActive] = useState(true);
+  const [savingProj, setSavingProj] = useState(false);
+  const [projErr, setProjErr] = useState<string | null>(null);
+
+  /* ── KPIs ── */
+  const totalPipeline = contacts
+    .filter(c => c.status !== "CLOSED_LOST")
+    .reduce((s, c) => s + (c.value ?? 0), 0);
+  const wonTotal = contacts
+    .filter(c => c.status === "CLOSED_WON")
+    .reduce((s, c) => s + (c.value ?? 0), 0);
+  const closedAll = contacts.filter(c => c.status === "CLOSED_WON" || c.status === "CLOSED_LOST").length;
+  const wonCount = contacts.filter(c => c.status === "CLOSED_WON").length;
+  const winRate = closedAll > 0 ? Math.round((wonCount / closedAll) * 100) : null;
+  const activeCount = contacts.filter(c => c.status === "ACTIVE" || c.status === "PROPOSAL").length;
+
+  /* ── Filtered contacts ── */
   const filteredContacts = useMemo(() => {
     let list = contacts;
-    if (contactMonthFilter) {
-      const [y, m] = contactMonthFilter.split("-").map(Number);
-      if (y && m) {
-        list = list.filter((c) => {
-          const d = new Date(c.createdAt);
-          return d.getFullYear() === y && d.getMonth() + 1 === m;
-        });
-      }
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      list = list.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          (c.email ?? "").toLowerCase().includes(q) ||
-          (c.project?.name ?? "").toLowerCase().includes(q),
+    if (filterStatus) list = list.filter(c => c.status === filterStatus);
+    if (filterProject) list = list.filter(c => c.project?.id === filterProject);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        (c.email ?? "").toLowerCase().includes(q) ||
+        (c.phone ?? "").toLowerCase().includes(q) ||
+        (c.project?.name ?? "").toLowerCase().includes(q)
       );
     }
     return list;
-  }, [contacts, contactMonthFilter, searchQuery]);
+  }, [contacts, filterStatus, filterProject, search]);
 
-  useEffect(() => {
-    setMsgDismissed(false);
-  }, [msg]);
+  /* ── Status change (optimistic) ── */
+  const handleStatusChange = (id: string, status: StatusKey) => {
+    setContacts(prev => prev.map(c => c.id === id ? { ...c, status } : c));
+    startTransition(async () => {
+      const r = await updateContactStatusAction(id, status);
+      if (!r.ok) setMsg(r.error ?? "שגיאה");
+    });
+  };
 
-  useEffect(() => {
-    try {
-      const rawStep = window.localStorage.getItem(CRM_WIZARD_STORAGE_KEY);
-      if (rawStep === "1" || rawStep === "2" || rawStep === "3") {
-        setWizardStep(Number(rawStep) as 1 | 2 | 3);
-      }
-      const rawDraft = window.localStorage.getItem(CRM_DRAFT_STORAGE_KEY);
-      if (!rawDraft) return;
-      const parsed = JSON.parse(rawDraft) as Partial<CrmDraft>;
-      setDraft((prev) => ({
-        ...prev,
-        projectName: typeof parsed.projectName === "string" ? parsed.projectName : prev.projectName,
-        projectFrom: typeof parsed.projectFrom === "string" ? parsed.projectFrom : prev.projectFrom,
-        projectTo: typeof parsed.projectTo === "string" ? parsed.projectTo : prev.projectTo,
-        projectActive: typeof parsed.projectActive === "boolean" ? parsed.projectActive : prev.projectActive,
-        contactName: typeof parsed.contactName === "string" ? parsed.contactName : prev.contactName,
-        contactEmail: typeof parsed.contactEmail === "string" ? parsed.contactEmail : prev.contactEmail,
-        contactStatus: typeof parsed.contactStatus === "string" ? parsed.contactStatus : prev.contactStatus,
-        contactProjectId:
-          typeof parsed.contactProjectId === "string" ? parsed.contactProjectId : prev.contactProjectId,
-      }));
-    } catch {
-      // Ignore malformed local draft.
+  /* ── Save project ── */
+  const saveProject = async () => {
+    if (!projName.trim()) { setProjErr("יש להזין שם"); return; }
+    setSavingProj(true); setProjErr(null);
+    const fd = new FormData();
+    fd.set("name", projName);
+    if (projFrom) fd.set("activeFrom", projFrom);
+    if (projTo) fd.set("activeTo", projTo);
+    if (projActive) fd.set("isActive", "on");
+    const r = await createProjectAction(fd);
+    setSavingProj(false);
+    if (r.ok) {
+      setMsg("✓ הפרויקט נוסף");
+      setAddProjOpen(false);
+      setProjName(""); setProjFrom(""); setProjTo(""); setProjActive(true);
+    } else {
+      setProjErr(r.error ?? "שגיאה");
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    window.localStorage.setItem(CRM_WIZARD_STORAGE_KEY, String(wizardStep));
-  }, [wizardStep]);
+  /* ── Delete project ── */
+  const handleDeleteProject = (pid: string, name: string) => {
+    if (!confirm(`למחוק פרויקט "${name}"?`)) return;
+    startTransition(async () => {
+      const r = await deleteProjectAction(pid);
+      setMsg(r.ok ? "✓ הפרויקט נמחק" : (r.error ?? "שגיאה"));
+    });
+  };
 
-  useEffect(() => {
-    void trackWizardEvent("crm_step_view", `step=${wizardStep}`);
-  }, [wizardStep]);
-
-  useEffect(() => {
-    window.localStorage.setItem(CRM_DRAFT_STORAGE_KEY, JSON.stringify(draft));
-  }, [draft]);
-
-  /* ── No org state ── */
+  /* ── No org ── */
   if (!hasOrganization) {
     return (
-      <div className="space-y-8" dir={dir}>
+      <div className="p-6 space-y-8" dir={dir}>
         <div className="rounded-2xl border border-blue-100 bg-blue-50 p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white">
               <Shield size={20} />
             </div>
             <div>
               <p className="font-bold text-blue-900">אין ארגון משויך</p>
               <p className="mt-1 text-sm text-blue-800/80 leading-relaxed">
-                עבור ל<strong>הגדרות</strong>, שייך משתמש לארגון או התחבר מחדש. לאחר מכן תוכל להוסיף לקוחות ופרויקטים.
+                עבור ל<strong>הגדרות</strong>, שייך משתמש לארגון או התחבר מחדש.
               </p>
             </div>
           </div>
         </div>
-        {organizations.length > 0 ? (
+        {organizations.length > 0 && (
           <section className="space-y-4">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <h2 className="flex items-center gap-2 text-xl font-black tracking-tight text-slate-900">
-                  <LayoutGrid className="text-blue-600" size={20} aria-hidden />
-                  ארגונים במערכת
-                </h2>
-                <p className="mt-0.5 text-sm text-slate-500">הרשאת בעלים</p>
-              </div>
-              <span className="rounded-full border border-blue-200 bg-blue-100 px-4 py-1.5 text-xs font-bold text-blue-800">
-                הרשאת בעלים
-              </span>
-            </div>
+            <h2 className="flex items-center gap-2 text-xl font-black text-slate-900">
+              <LayoutGrid className="text-blue-600" size={20} /> ארגונים במערכת
+            </h2>
             <CrmOrganizationsAdminTable
               organizations={organizations}
               showUnifiedBillingLinks={showUnifiedBillingLinks}
             />
           </section>
-        ) : null}
+        )}
       </div>
     );
   }
 
+  /* ─────────────────────────────────────────────────────────────── */
   return (
-    <div className="space-y-6" dir={dir}>
+    <div className="flex flex-col min-h-screen" dir="rtl">
 
-      {/* ── Page header ── */}
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
-        <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">
-                <ListChecks size={12} />
-                CRM workspace
-              </p>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">מרכז לידים ולקוחות</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">ניהול פרויקטים, לקוחות והצעות במסך שקט יותר, עם פוקוס ברור על השלב הבא.</p>
+      {/* ── Top bar ── */}
+      <div className="border-b border-slate-200 bg-white px-6 py-4 md:px-8">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-xl font-black text-slate-900">CRM — מרכז לקוחות</h1>
+            <p className="text-xs text-slate-400 mt-0.5">לקוחות, לידים, פרויקטים והצעות מחיר</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-0.5">
+              <button type="button" onClick={() => setView("pipeline")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "pipeline" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"}`}>
+                <BarChart2 size={13} /> פייפליין
+              </button>
+              <button type="button" onClick={() => setView("list")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "list" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"}`}>
+                <List size={13} /> רשימה
+              </button>
+              <button type="button" onClick={() => setView("projects")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "projects" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"}`}>
+                <Briefcase size={13} /> פרויקטים
+              </button>
             </div>
-            <a
-              href="#crm-new-contact"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            <button
+              type="button"
+              onClick={() => setModal({ mode: "add" })}
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition shadow-sm"
             >
-              <UserPlus size={16} aria-hidden />
-              לקוח חדש
-            </a>
-          </div>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-3xl border border-blue-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">פרויקטים</p>
-              <p className="mt-1 text-2xl font-black text-slate-900">{projects.length}</p>
-            </div>
-            <div className="rounded-3xl border border-emerald-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">לקוחות</p>
-              <p className="mt-1 text-2xl font-black text-slate-900">{contacts.length}</p>
-            </div>
-            <div className="rounded-3xl border border-violet-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">שלב פעיל</p>
-              <p className="mt-1 text-lg font-black text-slate-900">{wizardStep === 1 ? "יצירת פרויקט" : wizardStep === 2 ? "הוספת לקוח" : "ניהול ומעקב"}</p>
-            </div>
+              <UserPlus size={15} /> לקוח חדש
+            </button>
           </div>
         </div>
+      </div>
 
-        <div id="crm-wizard" className="scroll-mt-24 border-t border-slate-100 px-6 py-5 md:px-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 className="text-base font-black text-slate-900">תהליך עבודה ב-3 צעדים</h2>
-              <p className="mt-1 text-sm text-slate-500">במקום להעמיס הכול בבת אחת, מתקדמים שלב אחד ברור בכל פעם.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {[1, 2, 3].map((step) => (
-                <button
-                  key={step}
-                  type="button"
-                  onClick={() => setWizardStep(step as 1 | 2 | 3)}
-                  className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
-                    wizardStep === step
-                      ? "bg-slate-900 text-white"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  }`}
-                >
-                  {step === 1 ? "1. פרויקט" : step === 2 ? "2. לקוח" : "3. ניהול"}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold text-slate-500">
-            <a href="#crm-new-project" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 1</a>
-            <a href="#crm-new-contact" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 2</a>
-            <a href="#crm-contacts-table" className="rounded-full bg-slate-100 px-3 py-1.5 hover:bg-slate-200">קפיצה לשלב 3</a>
-          </div>
-        </div>
-      </section>
+      <div className="flex-1 overflow-auto px-6 py-6 md:px-8">
+        <div className="max-w-[1400px] mx-auto space-y-6">
 
-      {/* ── Toast ── */}
-      {msg && !msgDismissed ? (
-        <div
-          className={`flex items-start gap-3 rounded-[24px] px-4 py-4 text-sm shadow-sm ${
-            msg.startsWith("✓")
-              ? "border border-emerald-200 bg-emerald-50 text-emerald-900"
-              : "border border-rose-200 bg-rose-50 text-rose-900"
-          }`}
-          role="status"
-        >
-          <p className="flex-1">{msg}</p>
-          <button
-            type="button"
-            onClick={() => setMsgDismissed(true)}
-            className="shrink-0 rounded-lg p-1 opacity-60 hover:opacity-100"
-            aria-label="סגור"
-          >
-            <X size={14} />
-          </button>
-        </div>
-      ) : null}
-
-      {/* ── Forms row ── */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-
-        {/* New project */}
-        <section
-          id="crm-new-project"
-          className={`scroll-mt-24 rounded-[28px] border bg-white p-6 shadow-sm ${
-            wizardStep === 1 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
-          }`}
-        >
-          <h2 className="mb-2 flex items-center gap-2 text-base font-black text-slate-900">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-              <FolderPlus size={17} aria-hidden />
-            </span>
-            פרויקט חדש
-          </h2>
-          <p className="mb-5 text-sm leading-6 text-slate-500">יוצרים קודם מעטפת עבודה מסודרת, ואז מתקדמים ללקוח עצמו.</p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setMsg(null);
-              const fd = new FormData();
-              fd.set("name", draft.projectName);
-              if (draft.projectFrom) fd.set("activeFrom", draft.projectFrom);
-              if (draft.projectTo) fd.set("activeTo", draft.projectTo);
-              if (draft.projectActive) fd.set("isActive", "on");
-              startTransition(async () => {
-                const r = await createProjectAction(fd);
-                setMsg(r.ok ? "✓ הפרויקט נשמר" : r.error || "שגיאה");
-                if (r.ok) {
-                  setDraft((prev) => ({
-                    ...prev,
-                    projectName: "",
-                    projectFrom: "",
-                    projectTo: "",
-                    projectActive: true,
-                  }));
-                  setWizardStep(2);
-                }
-              });
-            }}
-            className="space-y-3"
-          >
-            <input
-              name="name"
-              required
-              placeholder="שם פרויקט / עסק"
-              className={inputCls}
-              value={draft.projectName}
-              onChange={(e) => setDraft((prev) => ({ ...prev, projectName: e.target.value }))}
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  תחילת תקופה
-                </label>
-                <input
-                  type="date"
-                  name="activeFrom"
-                  className={inputCls}
-                  value={draft.projectFrom}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, projectFrom: e.target.value }))}
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  סיום מתוכנן
-                </label>
-                <input
-                  type="date"
-                  name="activeTo"
-                  className={inputCls}
-                  value={draft.projectTo}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, projectTo: e.target.value }))}
-                />
-              </div>
-            </div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600">
-              <input
-                type="checkbox"
-                name="isActive"
-                value="on"
-                checked={draft.projectActive}
-                onChange={(e) => setDraft((prev) => ({ ...prev, projectActive: e.target.checked }))}
-                className="rounded border-slate-300 accent-blue-600"
-              />
-              פרויקט פעיל
-            </label>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="submit"
-                disabled={pending}
-                className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-              >
-                <Plus size={15} />
-                הוסף פרויקט
-              </button>
-              <button
-                type="button"
-                onClick={() => setWizardStep(2)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
-              >
-                המשך לשלב הבא
-              </button>
-            </div>
-          </form>
-
-          {/* Existing projects mini-list */}
-          {projects.length > 0 && (
-            <div className="mt-6 border-t border-slate-100 pt-5">
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">פרויקטים קיימים</p>
-              <ul className="max-h-44 space-y-2 overflow-y-auto rounded-2xl bg-slate-50 p-2 pr-2">
-                {projects.map((p) => (
-                  <li
-                    key={p.id}
-                    className={`flex flex-wrap justify-between gap-2 rounded-2xl px-3 py-3 text-xs ${
-                      p.isActive
-                        ? "border border-slate-200 bg-white"
-                        : "border border-blue-100 bg-blue-50/60 text-slate-600"
-                    }`}
-                  >
-                    <span className="font-bold">{p.name}</span>
-                    <span className="text-slate-500">{formatRange(p.activeFrom, p.activeTo)}</span>
-                    {!p.isActive ? <span className="text-blue-700 font-bold">ארכיון</span> : null}
-                  </li>
-                ))}
-              </ul>
+          {/* ── Toast ── */}
+          {msg && (
+            <div className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm ${msg.startsWith("✓") ? "bg-emerald-50 border border-emerald-200 text-emerald-800" : "bg-rose-50 border border-rose-200 text-rose-800"}`}>
+              <p className="flex-1">{msg}</p>
+              <button type="button" onClick={() => setMsg(null)}><X size={14} /></button>
             </div>
           )}
-        </section>
 
-        {/* New contact */}
-        <section
-          id="crm-new-contact"
-          className={`scroll-mt-24 rounded-[28px] border bg-white p-6 shadow-sm ${
-            wizardStep === 2 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
-          }`}
-        >
-          <h2 className="mb-5 flex items-center gap-2 text-base font-black text-slate-900">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-              <UserPlus size={17} aria-hidden />
-            </span>
-            לקוח חדש
-          </h2>
-          <p className="mb-5 text-sm leading-6 text-slate-500">מוסיפים לקוח חדש רק עם השדות החשובים, בלי עומס שדות מיותר.</p>
-          <label className="mb-4 flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-500">
-            <input
-              type="checkbox"
-              checked={hideInactiveProjects}
-              onChange={(e) => setHideInactiveProjects(e.target.checked)}
-              className="rounded border-slate-300 accent-blue-600"
-            />
-            הצג רק פרויקטים פעילים
-          </label>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setMsg(null);
-              const fd = new FormData();
-              fd.set("name", draft.contactName);
-              if (draft.contactEmail) fd.set("email", draft.contactEmail);
-              fd.set("status", draft.contactStatus || "LEAD");
-              if (draft.contactProjectId) fd.set("projectId", draft.contactProjectId);
-              startTransition(async () => {
-                const r = await createContactAction(fd);
-                setMsg(r.ok ? "✓ הלקוח נוסף" : r.error || "שגיאה");
-                if (r.ok) {
-                  setDraft((prev) => ({
-                    ...prev,
-                    contactName: "",
-                    contactEmail: "",
-                    contactStatus: "LEAD",
-                    contactProjectId: "",
-                  }));
-                  setWizardStep(3);
-                }
-              });
-            }}
-            className="space-y-3"
-          >
-            <input
-              name="name"
-              required
-              placeholder="שם לקוח / חברה"
-              className={inputCls}
-              value={draft.contactName}
-              onChange={(e) => setDraft((prev) => ({ ...prev, contactName: e.target.value }))}
-            />
-            <input
-              name="email"
-              type="email"
-              placeholder="אימייל (אופציונלי)"
-              className={inputCls}
-              value={draft.contactEmail}
-              onChange={(e) => setDraft((prev) => ({ ...prev, contactEmail: e.target.value }))}
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="relative">
-                <select
-                  name="status"
-                  value={draft.contactStatus}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, contactStatus: e.target.value }))}
-                  className={`${inputCls} appearance-none`}
-                >
-                  {STATUS_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          {/* ── KPI row ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Users size={14} className="text-slate-400" />
+                <p className="text-xs text-slate-500 font-bold">{'סה"כ לקוחות'}</p>
               </div>
-              <div className="relative">
-                <select
-                  name="projectId"
-                  className={`${inputCls} appearance-none`}
-                  value={draft.contactProjectId}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, contactProjectId: e.target.value }))}
-                >
-                  <option value="">— ללא פרויקט —</option>
-                  {projectsForSelect.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <p className="text-2xl font-black text-slate-900">{contacts.length}</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">{contacts.filter(c => c.status === "LEAD").length} לידים</p>
+            </div>
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp size={14} className="text-blue-500" />
+                <p className="text-xs text-blue-600 font-bold">פייפליין פעיל</p>
               </div>
+              <p className="text-2xl font-black text-blue-700">{activeCount}</p>
+              <p className="text-[10px] text-blue-500 mt-0.5">{totalPipeline > 0 ? fmtMoney(totalPipeline) : "—"}</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="submit"
-                disabled={pending}
-                className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-              >
-                <Plus size={15} />
-                הוסף לקוח
-              </button>
-              <button
-                type="button"
-                onClick={() => setWizardStep(3)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
-              >
-                המשך לטבלת ניהול
-              </button>
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <CheckCircle2 size={14} className="text-emerald-500" />
+                <p className="text-xs text-emerald-600 font-bold">נסגרו בהצלחה</p>
+              </div>
+              <p className="text-2xl font-black text-emerald-700">{wonCount}</p>
+              <p className="text-[10px] text-emerald-500 mt-0.5">{wonTotal > 0 ? fmtMoney(wonTotal) : "—"}</p>
             </div>
-          </form>
-        </section>
-      </div>
-
-      {/* ── Contacts table ── */}
-      <div
-        id="crm-contacts-table"
-        className={`scroll-mt-24 overflow-hidden rounded-[28px] border bg-white shadow-sm ${
-          wizardStep === 3 ? "border-blue-200 ring-2 ring-blue-100" : "border-slate-200"
-        }`}
-      >
-        {/* Table header */}
-        <div className="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-base font-black text-slate-900">אנשי קשר</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
-              {filteredContacts.length} מתוך {contacts.length} לקוחות
-            </p>
+            <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <BarChart2 size={14} className="text-violet-500" />
+                <p className="text-xs text-violet-600 font-bold">אחוז הצלחה</p>
+              </div>
+              <p className="text-2xl font-black text-violet-700">{winRate != null ? `${winRate}%` : "—"}</p>
+              <p className="text-[10px] text-violet-400 mt-0.5">{closedAll} עסקאות סגורות</p>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Search */}
-            <div className="relative">
-              <Search size={14} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="search"
-                placeholder="חיפוש לקוח..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50 py-2 ps-8 pe-3 text-xs outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15"
-              />
-            </div>
-            {/* Month filter */}
-            <label className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">
-              <Filter size={12} aria-hidden />
-              <input
-                type="month"
-                value={contactMonthFilter}
-                onChange={(e) => setContactMonthFilter(e.target.value)}
-                className="bg-transparent outline-none"
-              />
-            </label>
-            {contactMonthFilter || searchQuery ? (
-              <button
-                type="button"
-                onClick={() => { setContactMonthFilter(""); setSearchQuery(""); }}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50"
-              >
-                נקה מסנן
-              </button>
-            ) : null}
-          </div>
-        </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] text-start">
-            <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/80">
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">שם</th>
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">פרויקט</th>
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">סטטוס</th>
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">אימייל</th>
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">נרשם</th>
-                <th className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-slate-400">פעולות</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {filteredContacts.map((contact) => {
-                const proj = projects.find((p) => p.id === contact.project?.id);
+          {/* ══════════ PIPELINE VIEW ══════════ */}
+          {view === "pipeline" && (
+            <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 400 }}>
+              {STATUS_COLUMNS.map((col) => {
+                const colContacts = contacts.filter(c => c.status === col.key);
+                const colValue = colContacts.reduce((s, c) => s + (c.value ?? 0), 0);
                 return (
-                  <tr key={contact.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black text-white"
-                          style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-                        >
-                          {contact.name.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm font-bold text-slate-900">{contact.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm text-slate-600">{contact.project?.name ?? "—"}</span>
-                      {proj ? (
-                        <span className="mt-0.5 block text-[10px] text-slate-400">
-                          {formatRange(proj.activeFrom, proj.activeTo)}
+                  <div key={col.key} className="flex flex-col min-w-[220px] w-[220px] shrink-0">
+                    <div className={`rounded-2xl ${col.bg} border ${col.border} px-3 py-3 mb-3`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`inline-flex items-center gap-1 text-xs font-black`}>
+                          <span className={`h-2 w-2 rounded-full ${col.dot}`} />
+                          <span className={col.badge.split(" ")[1]}>{col.label}</span>
                         </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`rounded-lg border px-2.5 py-1 text-[10px] font-bold ${STATUS_STYLE[contact.status] ?? "bg-slate-100 text-slate-600 border-slate-200"}`}
-                      >
-                        {STATUS_LABEL[contact.status] ?? contact.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-500" dir="ltr">
-                      {contact.email ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-400">
-                      {new Date(contact.createdAt).toLocaleDateString("he-IL")}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <QuoteGenerator quoteData={{ clientName: contact.name, amount: 5000 }} />
-                        <SignQuoteButton contactId={contact.id} amount={5000} />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const name = window.prompt("שם לקוח:", contact.name);
-                            if (name === null) return;
-                            const email = window.prompt("אימייל:", contact.email ?? "");
-                            if (email === null) return;
-                            const status = window.prompt(
-                              "סטטוס (LEAD / ACTIVE / PROPOSAL / CLOSED_WON / CLOSED_LOST):",
-                              contact.status,
-                            );
-                            if (status === null) return;
-                            const projectRaw = window.prompt(
-                              "מזהה פרויקט (השאר ריק להסרה):",
-                              contact.project?.id ?? "",
-                            );
-                            if (projectRaw === null) return;
-                            startTransition(async () => {
-                              const r = await updateContactAction({
-                                contactId: contact.id,
-                                name,
-                                email,
-                                status,
-                                projectId: projectRaw.trim(),
-                              });
-                              setMsg(r.ok ? "✓ עודכן" : r.error || "שגיאה");
-                            });
-                          }}
-                          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 transition-colors"
-                        >
-                          <Edit3 size={13} />
-                          ערוך
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (!confirm("למחוק לקוח זה?")) return;
-                            startTransition(async () => {
-                              const r = await deleteContactAction(contact.id);
-                              setMsg(r.ok ? "✓ נמחק" : r.error || "שגיאה");
-                            });
-                          }}
-                          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                        >
-                          <Trash2 size={13} />
-                          מחק
-                        </button>
+                        <span className="text-xs font-black text-slate-600 bg-white rounded-full px-2 py-0.5 border border-slate-200">
+                          {colContacts.length}
+                        </span>
                       </div>
-                    </td>
-                  </tr>
+                      {colValue > 0 && <p className="text-[10px] text-slate-500 mt-1">{fmtMoney(colValue)}</p>}
+                    </div>
+                    <div className="flex flex-col gap-2 flex-1">
+                      {colContacts.map(c => (
+                        <ContactCard
+                          key={c.id}
+                          contact={c}
+                          onEdit={c => setModal({ mode: "edit", contact: c })}
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setModal({ mode: "add", defaultStatus: col.key })}
+                        className="flex items-center gap-1.5 rounded-2xl border border-dashed border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-400 hover:border-blue-300 hover:text-blue-500 transition"
+                      >
+                        <Plus size={12} /> הוסף
+                      </button>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Empty state */}
-        {filteredContacts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
-            <UserPlus className="text-slate-200" size={36} strokeWidth={1.25} />
-            <div>
-              <p className="font-bold text-slate-700">
-                {contactMonthFilter || searchQuery ? "אין תוצאות למסנן זה" : "אין לקוחות עדיין"}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                {contactMonthFilter || searchQuery
-                  ? "נסו מסנן אחר או נקו את החיפוש."
-                  : 'השתמשו בטופס "לקוח חדש" למעלה.'}
-              </p>
             </div>
-            {!contactMonthFilter && !searchQuery ? (
-              <a
-                href="#crm-new-contact"
-                className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90"
-                style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-              >
-                <UserPlus size={15} />
-                הוספת לקוח
-              </a>
-            ) : null}
-          </div>
-        ) : null}
+          )}
+
+          {/* ══════════ LIST VIEW ══════════ */}
+          {view === "list" && (
+            <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+              <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 px-5 py-4">
+                <div className="relative flex-1 min-w-[160px]">
+                  <Search size={13} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="חיפוש שם, אימייל, טלפון..."
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 ps-8 pe-3 text-xs outline-none focus:border-blue-400"
+                  />
+                </div>
+                <div className="relative">
+                  <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="rounded-xl border border-slate-200 bg-white py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-blue-400">
+                    <option value="">כל הסטטוסים</option>
+                    {STATUS_COLUMNS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                  </select>
+                  <ChevronDown size={12} className="pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-slate-400" />
+                </div>
+                <div className="relative">
+                  <select value={filterProject} onChange={e => setFilterProject(e.target.value)} className="rounded-xl border border-slate-200 bg-white py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-blue-400">
+                    <option value="">כל הפרויקטים</option>
+                    {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <ChevronDown size={12} className="pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-slate-400" />
+                </div>
+                {(search || filterStatus || filterProject) && (
+                  <button type="button" onClick={() => { setSearch(""); setFilterStatus(""); setFilterProject(""); }} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50">
+                    נקה
+                  </button>
+                )}
+                <p className="text-xs text-slate-400 ms-auto">{filteredContacts.length} / {contacts.length}</p>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px] text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-100 bg-slate-50">
+                      {["שם", "סטטוס", "פרויקט", "טלפון", "אימייל", "שווי", "תאריך", ""].map(h => (
+                        <th key={h} className="px-4 py-3 text-right text-[10px] font-black uppercase tracking-wider text-slate-400">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {filteredContacts.map(c => {
+                      const meta = statusMeta(c.status);
+                      return (
+                        <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2.5">
+                              <div
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white text-xs font-black"
+                                style={{ backgroundColor: avatarColor(c.id) }}
+                              >
+                                {initials(c.name)}
+                              </div>
+                              <div>
+                                <p className="font-bold text-slate-900">{c.name}</p>
+                                {c.notes && <p className="text-[10px] text-slate-400 truncate max-w-[120px]">{c.notes}</p>}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold ${meta.badge}`}>
+                              <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />{meta.label}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-slate-600">{c.project?.name ?? "—"}</td>
+                          <td className="px-4 py-3 text-xs text-slate-500 font-mono" dir="ltr">{c.phone ?? "—"}</td>
+                          <td className="px-4 py-3 text-xs text-slate-500 truncate max-w-[140px]" dir="ltr">{c.email ?? "—"}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-emerald-600">{c.value != null ? fmtMoney(c.value) : "—"}</td>
+                          <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(c.createdAt)}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              type="button"
+                              onClick={() => setModal({ mode: "edit", contact: c })}
+                              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 transition"
+                            >
+                              <Edit3 size={12} /> ערוך
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {filteredContacts.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                    <Users size={36} className="mb-3 opacity-20" />
+                    <p className="font-bold">{search || filterStatus || filterProject ? "אין תוצאות" : "אין לקוחות עדיין"}</p>
+                    <button
+                      type="button"
+                      onClick={() => setModal({ mode: "add" })}
+                      className="mt-3 flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white"
+                    >
+                      <UserPlus size={12} /> הוסף לקוח
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ══════════ PROJECTS VIEW ══════════ */}
+          {view === "projects" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-bold text-slate-700">{projects.length} פרויקטים</p>
+                <button
+                  type="button"
+                  onClick={() => setAddProjOpen(v => !v)}
+                  className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-100 transition"
+                >
+                  <FolderPlus size={13} /> פרויקט חדש
+                </button>
+              </div>
+
+              {addProjOpen && (
+                <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-5 space-y-3">
+                  <p className="text-sm font-black text-slate-900">פרויקט חדש</p>
+                  {projErr && <p className="text-xs text-rose-600">{projErr}</p>}
+                  <input value={projName} onChange={e => setProjName(e.target.value)} placeholder="שם פרויקט" className={inputCls} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 mb-1">תחילה</label>
+                      <input type="date" value={projFrom} onChange={e => setProjFrom(e.target.value)} className={inputCls} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 mb-1">סיום</label>
+                      <input type="date" value={projTo} onChange={e => setProjTo(e.target.value)} className={inputCls} />
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                    <input type="checkbox" checked={projActive} onChange={e => setProjActive(e.target.checked)} className="rounded border-slate-300 accent-blue-600" />
+                    פרויקט פעיל
+                  </label>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={saveProject} disabled={savingProj} className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white disabled:opacity-50">
+                      {savingProj ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />} שמור
+                    </button>
+                    <button type="button" onClick={() => setAddProjOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600">
+                      ביטול
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {projects.map(p => {
+                  const pContacts = contacts.filter(c => c.project?.id === p.id);
+                  const pValue = pContacts.reduce((s, c) => s + (c.value ?? 0), 0);
+                  return (
+                    <div key={p.id} className={`rounded-2xl border bg-white p-5 ${p.isActive ? "border-slate-200" : "border-slate-100 opacity-70"}`}>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                            <Briefcase size={16} />
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-900 text-sm">{p.name}</p>
+                            <span className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${p.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                              {p.isActive ? "פעיל" : "ארכיון"}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteProject(p.id, p.name)}
+                          className="rounded-lg p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                      {(p.activeFrom || p.activeTo) && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-3">
+                          <Calendar size={11} /> {formatRange(p.activeFrom, p.activeTo)}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-slate-500">
+                          <strong className="text-slate-900">{pContacts.length}</strong> לקוחות
+                        </p>
+                        {pValue > 0 && <p className="text-xs font-black text-emerald-600">{fmtMoney(pValue)}</p>}
+                      </div>
+                      {pContacts.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {STATUS_COLUMNS.map(s => {
+                            const n = pContacts.filter(c => c.status === s.key).length;
+                            if (!n) return null;
+                            return (
+                              <span key={s.key} className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${s.badge}`}>
+                                {s.label}: {n}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                {projects.length === 0 && (
+                  <div className="col-span-full flex flex-col items-center py-16 text-slate-400">
+                    <Briefcase size={36} className="mb-3 opacity-20" />
+                    <p className="font-bold">אין פרויקטים עדיין</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── Admin table ── */}
+          {organizations.length > 0 && (
+            <section className="mt-8 space-y-4">
+              <div className="flex items-center gap-2">
+                <h2 className="flex items-center gap-2 text-xl font-black text-slate-900">
+                  <LayoutGrid className="text-blue-600" size={20} /> כל הארגונים במערכת
+                </h2>
+                <span className="rounded-full border border-blue-200 bg-blue-100 px-3 py-0.5 text-xs font-bold text-blue-800">הרשאת בעלים</span>
+              </div>
+              <CrmOrganizationsAdminTable
+                organizations={organizations}
+                showUnifiedBillingLinks={showUnifiedBillingLinks}
+              />
+            </section>
+          )}
+        </div>
       </div>
 
-      {/* ── Admin orgs table ── */}
-      {organizations.length > 0 && (
-        <section className="mt-4 space-y-4" dir={dir}>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="flex items-center gap-2 text-xl font-black tracking-tight text-slate-900">
-                <LayoutGrid className="text-blue-600" size={20} aria-hidden />
-                כל הארגונים במערכת
-              </h2>
-              <p className="mt-0.5 text-sm text-slate-500">תוכנית, חשבוניות וניהול — הרשאת בעלים</p>
-            </div>
-            <span className="rounded-full border border-blue-200 bg-blue-100 px-4 py-1.5 text-xs font-bold text-blue-800">
-              הרשאת בעלים
-            </span>
-          </div>
-          <CrmOrganizationsAdminTable
-            organizations={organizations}
-            showUnifiedBillingLinks={showUnifiedBillingLinks}
-          />
-        </section>
+      {/* ── Modal ── */}
+      {modal && (
+        <ContactModal
+          state={modal}
+          projects={projects}
+          onClose={() => setModal(null)}
+          onSaved={(m) => setMsg(m)}
+        />
       )}
     </div>
   );
