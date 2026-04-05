@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -31,7 +31,7 @@ import {
 import { compareSupplierPrices } from "@/app/actions/erp-compare";
 import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 
-const primary = "var(--primary-color, #2563eb)";
+const primary = "var(--primary-color, #4f46e5)";
 
 export type ErpStatCard = {
   label: string;
@@ -90,10 +90,10 @@ export default function ERPDashboard({
       {/* ── Page header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900">
+          <h1 className="text-2xl font-black tracking-tight text-gray-900">
             {t("erpDash.pageTitle")}
           </h1>
-          <p className="mt-0.5 text-sm text-slate-500">{t("erpDash.pageSubtitle")}</p>
+          <p className="mt-0.5 text-sm text-gray-500">{t("erpDash.pageSubtitle")}</p>
           {netFlow != null && (
             <p className="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
               {netFlow >= 0 ? (
@@ -110,11 +110,11 @@ export default function ERPDashboard({
         </div>
 
         {/* Quota pill */}
-        <div className="flex shrink-0 items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3 self-start">
-          <ScanLine size={16} className="text-blue-600" aria-hidden />
+        <div className="flex shrink-0 items-center gap-2 rounded-2xl border border-indigo-100 bg-indigo-50 px-5 py-3 self-start">
+          <ScanLine size={16} className="text-indigo-600" aria-hidden />
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500">{t("erpDash.quotaCaption")}</p>
-            <p className="text-sm font-black text-slate-900">{quotaLabel}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-500">{t("erpDash.quotaCaption")}</p>
+            <p className="text-sm font-black text-gray-900">{quotaLabel}</p>
           </div>
         </div>
       </div>
@@ -122,17 +122,17 @@ export default function ERPDashboard({
       {/* ── Flow summary cards ── */}
       {flowSummary ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                 <Box size={18} aria-hidden />
               </div>
-              <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold text-blue-700">
+              <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-[10px] font-bold text-indigo-700">
                 {t("erpDash.badgeInventory")}
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowItemsLabel")}</p>
-            <p className="mt-1.5 text-3xl font-black text-slate-900">{flowSummary.totalItems}</p>
+            <p className="text-xs font-medium text-gray-500">{t("erpDash.flowItemsLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-gray-900">{flowSummary.totalItems}</p>
           </div>
 
           <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
@@ -144,8 +144,8 @@ export default function ERPDashboard({
                 {t("erpDash.badgeIncome")}
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowIssuedLabel")}</p>
-            <p className="mt-1.5 text-3xl font-black text-slate-900">
+            <p className="text-xs font-medium text-gray-500">{t("erpDash.flowIssuedLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-gray-900">
               ₪{flowSummary.totalIssued.toLocaleString(intlTag)}
             </p>
           </div>
@@ -159,8 +159,8 @@ export default function ERPDashboard({
                 {t("erpDash.badgeExpense")}
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-500">{t("erpDash.flowExpenseLabel")}</p>
-            <p className="mt-1.5 text-3xl font-black text-slate-900">
+            <p className="text-xs font-medium text-gray-500">{t("erpDash.flowExpenseLabel")}</p>
+            <p className="mt-1.5 text-3xl font-black text-gray-900">
               ₪{flowSummary.totalExpenses.toLocaleString(intlTag)}
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function ERPDashboard({
       ) : null}
 
       {/* ── Scanner CTA ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: "radial-gradient(ellipse 60% 80% at 100% 50%, rgba(37,99,235,0.05) 0%, transparent 65%)" }}
@@ -178,19 +178,19 @@ export default function ERPDashboard({
           <div className="flex items-center gap-4">
             <div
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              style={{ backgroundColor: "var(--primary-color, #4f46e5)" }}
             >
               <FileSearch size={26} aria-hidden />
             </div>
             <div>
-              <h2 className="text-lg font-black text-slate-900">{t("erpDash.scannerTitle")}</h2>
-              <p className="mt-0.5 text-sm text-slate-500">{t("erpDash.scannerDesc")}</p>
+              <h2 className="text-lg font-black text-gray-900">{t("erpDash.scannerTitle")}</h2>
+              <p className="mt-0.5 text-sm text-gray-500">{t("erpDash.scannerDesc")}</p>
             </div>
           </div>
           <Link
             href="/dashboard/erp#erp-multi-scanner"
             className="inline-flex shrink-0 items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
-            style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+            style={{ backgroundColor: "var(--primary-color, #4f46e5)" }}
           >
             <Layers size={17} />
             {t("erpDash.scannerCta")}
@@ -212,8 +212,8 @@ export default function ERPDashboard({
                 className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-white p-4 md:flex-row md:items-center md:justify-between"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold text-slate-900">{s.description || s.normalizedKey}</p>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="font-bold text-gray-900">{s.description || s.normalizedKey}</p>
+                  <p className="mt-1 text-sm text-gray-600">
                     <span className="font-black text-rose-600">
                       {t("erpDash.spikeRise", { pct: s.changePercent.toFixed(1) })}
                     </span>{" "}
@@ -223,7 +223,7 @@ export default function ERPDashboard({
                     })}
                   </p>
                   {insightByKey[s.normalizedKey] ? (
-                    <p className="mt-2 border-t border-amber-100 pt-2 text-sm leading-relaxed text-slate-700">
+                    <p className="mt-2 border-t border-amber-100 pt-2 text-sm leading-relaxed text-gray-700">
                       {insightByKey[s.normalizedKey]}
                     </p>
                   ) : null}
@@ -233,7 +233,7 @@ export default function ERPDashboard({
                   disabled={isAiPending}
                   onClick={() => runAiForKey(s.normalizedKey)}
                   className="inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
-                  style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+                  style={{ backgroundColor: "var(--primary-color, #4f46e5)" }}
                 >
                   <Sparkles size={15} />
                   {t("erpDash.analyzeAi")}
@@ -252,11 +252,11 @@ export default function ERPDashboard({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+            <p className="text-xs font-medium text-gray-500">{stat.label}</p>
             <p className={`mt-2 text-3xl font-black ${stat.valueClass}`}>{stat.value}</p>
-            <div className="mt-3 inline-block rounded-lg bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
+            <div className="mt-3 inline-block rounded-lg bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-500">
               {stat.trend}
             </div>
           </motion.div>
@@ -264,27 +264,27 @@ export default function ERPDashboard({
       </div>
 
       {/* ── Chart ── */}
-      <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
+      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="flex items-center gap-2 text-base font-black text-slate-900">
-              <BarChart3 className="text-blue-600" size={20} aria-hidden />
+            <h2 className="flex items-center gap-2 text-base font-black text-gray-900">
+              <BarChart3 className="text-indigo-600" size={20} aria-hidden />
               {t("erpDash.chartTitle")}
             </h2>
-            <p className="mt-0.5 text-xs text-slate-500">הוצאות לפי תקופה — נתוני ERP</p>
+            <p className="mt-0.5 text-xs text-gray-500">הוצאות לפי תקופה — נתוני ERP</p>
           </div>
         </div>
         {chartData.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-            <BarChart3 className="text-slate-200" size={44} strokeWidth={1} aria-hidden />
+            <BarChart3 className="text-gray-200" size={44} strokeWidth={1} aria-hidden />
             <div>
-              <p className="font-bold text-slate-700">אין עדיין נתוני תרשים</p>
-              <p className="mt-1 text-sm text-slate-500">{t("erpDash.chartEmpty")}</p>
+              <p className="font-bold text-gray-700">אין עדיין נתוני תרשים</p>
+              <p className="mt-1 text-sm text-gray-500">{t("erpDash.chartEmpty")}</p>
             </div>
             <Link
               href="/dashboard/erp#erp-multi-scanner"
               className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90"
-              style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
+              style={{ backgroundColor: "var(--primary-color, #4f46e5)" }}
             >
               {t("erpDash.scannerCta")}
             </Link>
@@ -298,19 +298,19 @@ export default function ERPDashboard({
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  tick={{ fill: "#9ca3af", fontSize: 12 }}
                   tickMargin={8}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  tick={{ fill: "#9ca3af", fontSize: 12 }}
                   width={52}
                 />
                 <Tooltip
                   contentStyle={{
                     borderRadius: "12px",
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid #e5e7eb",
                     boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
                     fontSize: "13px",
                   }}

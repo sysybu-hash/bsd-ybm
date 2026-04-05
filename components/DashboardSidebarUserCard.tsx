@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { signOut, useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
@@ -25,7 +25,7 @@ export default function DashboardSidebarUserCard({
     <div
       key={email}
       dir={dir}
-      className="w-full rounded-xl border border-slate-200/70 bg-white/75 px-3 py-3 shadow-md shadow-slate-200/40 backdrop-blur-md ring-1 ring-slate-100/90"
+      className="w-full rounded-xl border border-gray-200/70 bg-white/75 px-3 py-3 shadow-md shadow-gray-200/40 backdrop-blur-md ring-1 ring-gray-100/90"
     >
       <div className="flex items-center gap-3">
         <div className="relative shrink-0">
@@ -34,27 +34,27 @@ export default function DashboardSidebarUserCard({
             title="מחובר"
             aria-hidden
           />
-          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-blue-400/70 ring-offset-2 ring-offset-white">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-white">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={image} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-slate-100 text-sm font-black text-blue-700">
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-50 text-sm font-black text-indigo-700">
                 {(loading ? "…" : email || "?").charAt(0).toUpperCase()}
               </div>
             )}
           </div>
         </div>
         <div className="min-w-0 flex-1 text-end">
-          <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
-          <p className="truncate text-[11px] font-medium text-slate-500" title={email || undefined}>
+          <p className="truncate text-sm font-bold text-gray-900">{displayName}</p>
+          <p className="truncate text-[11px] font-medium text-gray-500" title={email || undefined}>
             {loading ? "…" : email || "—"}
           </p>
         </div>
         <button
           type="button"
           onClick={() => void signOut({ callbackUrl: "/", redirect: true })}
-          className="shrink-0 rounded-xl border border-slate-200/80 bg-white/90 p-2.5 text-slate-500 transition hover:scale-105 hover:border-blue-200 hover:text-blue-700"
+          className="shrink-0 rounded-xl border border-gray-200/80 bg-white/90 p-2.5 text-gray-500 transition hover:scale-105 hover:border-indigo-200 hover:text-indigo-700"
           aria-label={t("dashboard.logout")}
         >
           <LogOut size={18} strokeWidth={2.25} />

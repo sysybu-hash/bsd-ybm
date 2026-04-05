@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
@@ -72,7 +72,7 @@ export default function DashboardNotificationBell() {
           setOpen((v) => !v);
           if (!open) void load();
         }}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50"
         aria-label="התראות"
         aria-expanded={open}
       >
@@ -85,14 +85,14 @@ export default function DashboardNotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-            <span className="text-xs font-black text-slate-800">הודעות</span>
+        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
+            <span className="text-xs font-black text-gray-800">הודעות</span>
             {unread > 0 ? (
               <button
                 type="button"
                 onClick={() => void markAll()}
-                className="text-[11px] font-bold text-blue-600 hover:underline"
+                className="text-[11px] font-bold text-indigo-600 hover:underline"
               >
                 סמן הכל כנקרא
               </button>
@@ -100,9 +100,9 @@ export default function DashboardNotificationBell() {
           </div>
           <div className="max-h-72 overflow-y-auto">
             {loading && items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-slate-500">טוען…</p>
+              <p className="p-4 text-center text-xs text-gray-500">טוען…</p>
             ) : items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-slate-500">אין הודעות</p>
+              <p className="p-4 text-center text-xs text-gray-500">אין הודעות</p>
             ) : (
               items.map((n) => (
                 <button
@@ -111,13 +111,13 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full text-right border-b border-slate-50 px-3 py-2.5 hover:bg-slate-50 ${
-                    n.read ? "opacity-70" : "bg-blue-50/40"
+                  className={`w-full text-right border-b border-gray-50 px-3 py-2.5 hover:bg-gray-50 ${
+                    n.read ? "opacity-70" : "bg-indigo-50/40"
                   }`}
                 >
-                  <p className="text-xs font-black text-slate-900">{n.title}</p>
-                  <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">{n.body}</p>
-                  <p className="text-[10px] text-slate-400 mt-1">
+                  <p className="text-xs font-black text-gray-900">{n.title}</p>
+                  <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">{n.body}</p>
+                  <p className="text-[10px] text-gray-400 mt-1">
                     {new Date(n.createdAt).toLocaleString("he-IL")}
                   </p>
                 </button>
