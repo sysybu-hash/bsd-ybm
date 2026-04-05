@@ -101,25 +101,26 @@ export default async function DashboardHomePage() {
     <div className="space-y-7" dir="rtl">
 
       {/* ══ WELCOME BANNER ══ */}
-      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8 md:py-8">
-        {/* Decorative bar */}
-        <div className="absolute inset-y-0 start-0 w-1.5 rounded-s-2xl bg-indigo-600" />
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-indigo-700 px-6 py-7 shadow-lg shadow-indigo-600/20 md:px-8 md:py-8">
+        {/* Decorative elements */}
+        <div className="absolute -end-8 -top-8 h-40 w-40 rounded-full bg-white/5" aria-hidden />
+        <div className="absolute -start-4 bottom-0 h-24 w-24 rounded-full bg-white/5" aria-hidden />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-bold text-indigo-700">
-              <Zap size={10} className="text-indigo-600" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white border border-white/20">
+              <Zap size={10} className="text-yellow-300" />
               BSD-YBM Platform
             </span>
-            <h1 className="mt-3 text-2xl font-black text-gray-900 tracking-tight md:text-3xl">
+            <h1 className="mt-3 text-2xl font-black text-white tracking-tight md:text-3xl">
               {greeting}, {userName} 👋
             </h1>
-            <p className="mt-2 max-w-lg text-sm text-gray-500 leading-relaxed">
+            <p className="mt-2 max-w-lg text-sm text-indigo-200 leading-relaxed">
               הכל מחובר ומסונכרן — ERP, CRM, סריקות ובינה מלאכותית.
             </p>
           </div>
           <Link
             href="/dashboard/business"
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-black text-indigo-700 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md"
           >
             פתח מרכז עסקי
             <ArrowLeft size={14} />
@@ -129,22 +130,22 @@ export default async function DashboardHomePage() {
 
       {/* ══ STATS ROW ══ */}
       <section>
-        <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-gray-400">סיכום</h2>
+        <h2 className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">סיכום</h2>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {stats.map(({ icon: Icon, label, value, href, chipBg, chipText, iconBg }) => (
             <Link
               key={label}
               href={href}
-              className="group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
+              className="group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
             >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
-                <Icon size={17} />
+              <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${iconBg} text-white shadow-md`}>
+                <Icon size={18} />
               </div>
               <div>
                 <p className="text-2xl font-black text-gray-900">{value}</p>
                 <p className="mt-0.5 text-[11px] font-semibold text-gray-400">{label}</p>
               </div>
-              <span className={`w-fit rounded-full px-2.5 py-0.5 text-[10px] font-bold ${chipBg} ${chipText}`}>
+              <span className={`w-fit rounded-full px-3 py-0.5 text-[10px] font-black ${chipBg} ${chipText}`}>
                 פתח →
               </span>
             </Link>
@@ -154,16 +155,16 @@ export default async function DashboardHomePage() {
 
       {/* ══ QUICK ACTIONS ══ */}
       <section>
-        <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-gray-400">פעולות ראשיות</h2>
+        <h2 className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">פעולות ראשיות</h2>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {quickActions.map(({ href, icon, title, description, badge, iconBg, badgeBg, hoverBorder }) => (
             <Link
               key={href}
               href={href}
-              className={`group flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${hoverBorder}`}
+              className={`group flex flex-col gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${hoverBorder}`}
             >
               <div className="flex items-start justify-between gap-2">
-                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${iconBg} text-white shadow-md`}>
                   {icon}
                 </div>
                 <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${badgeBg}`}>
@@ -174,7 +175,7 @@ export default async function DashboardHomePage() {
                 <h3 className="text-[14px] font-black text-gray-900">{title}</h3>
                 <p className="mt-1 text-[12px] leading-relaxed text-gray-500">{description}</p>
               </div>
-              <span className="mt-auto flex items-center gap-1 text-[12px] font-bold text-indigo-600 opacity-0 transition-all group-hover:opacity-100">
+              <span className="mt-auto flex items-center gap-1 text-[12px] font-black text-indigo-600 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-[-2px]">
                 פתח <ArrowLeft size={11} />
               </span>
             </Link>

@@ -94,8 +94,9 @@ export default function OperationsCommandCenter({
 
   return (
     <div className="space-y-6" dir="rtl">
-      <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 bg-gray-50 px-6 py-7 md:px-8">
+      <section className="overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
+        <div className="relative border-b border-gray-100 bg-white px-6 py-7 md:px-8">
+          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
           <div className="relative flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">

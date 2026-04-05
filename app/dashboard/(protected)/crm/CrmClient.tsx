@@ -704,13 +704,17 @@ export default function CrmClient({
 
   /* ─────────────────────────────────────────────────────────────── */
   return (
-    <div className="flex flex-col min-h-screen" dir="rtl">
+    <div className="flex flex-col gap-5 min-h-screen" dir="rtl">
 
       {/* ── Top bar ── */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-5 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-xl font-black text-gray-900">CRM — מרכז לקוחות</h1>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+              <Users size={11} /> ניהול לקוחות
+            </span>
+            <h1 className="mt-2 text-xl font-black text-gray-900">CRM — מרכז לקוחות</h1>
             <p className="text-xs text-gray-400 mt-0.5">לקוחות, לידים, פרויקטים והצעות מחיר</p>
           </div>
           <div className="flex items-center gap-2">
@@ -728,16 +732,16 @@ export default function CrmClient({
             <button
               type="button"
               onClick={() => setModal({ mode: "add" })}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm"
+              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/20"
             >
               <UserPlus size={15} /> לקוח חדש
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="flex-1 overflow-auto px-6 py-6 md:px-8">
-        <div className="max-w-[1400px] mx-auto space-y-6">
+      <div className="flex-1 overflow-auto px-0 py-0">
+        <div className="max-w-[1400px] mx-auto space-y-5">
 
           {/* ── Toast ── */}
           {msg && (

@@ -216,32 +216,37 @@ export default function GlobalBillingPageClient({
     <div className="space-y-8 text-start" dir={dir}>
 
       {/* ── Page header ── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900">מרכז פיננסי</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {organizationName}
-            {taxId ? <span className="ms-2 text-gray-400">· ח.פ {taxId}</span> : null}
-          </p>
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+              <ShieldCheck size={11} /> מרכז פיננסי
+            </span>
+            <h1 className="mt-2.5 text-2xl font-black tracking-tight text-gray-900">מסמכים ותשלומים</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {organizationName}
+              {taxId ? <span className="ms-2 text-gray-400">· ח.פ {taxId}</span> : null}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/dashboard/settings?tab=billing"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50"
+            >
+              הגדרות חשבונאיות
+            </Link>
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-indigo-600/25 transition hover:bg-indigo-700"
+            >
+              <FilePlus size={17} aria-hidden />
+              הפקת מסמך
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/dashboard/settings?tab=billing"
-            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50"
-          >
-            הגדרות חשבונאיות
-          </Link>
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
-            style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
-          >
-            <FilePlus size={17} aria-hidden />
-            הפקת מסמך
-          </button>
-        </div>
-      </div>
+      </section>
 
       {/* ── KPI cards ── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

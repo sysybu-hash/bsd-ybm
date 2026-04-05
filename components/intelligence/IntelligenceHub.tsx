@@ -64,37 +64,41 @@ export default function IntelligenceHub() {
   const primaryColor = "var(--primary-color, #4f46e5)";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 font-sans text-gray-900 md:p-8" dir={dir}>
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-        <div>
-          <h1
-            className="text-4xl font-black italic tracking-tighter"
-            style={{ color: primaryColor }}
-          >
-            Mission Control <span className="text-gray-900">.</span>
-          </h1>
-          <p className="text-gray-500 font-medium">
-            BSD Intelligence Hub — ניהול אוטונומי מלא
-          </p>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            מערכת ריפוי עצמי פעילה (Self-Healing)
+    <div className="space-y-6 bg-gray-50 p-4 font-sans text-gray-900 md:p-6" dir={dir}>
+      {/* ── Premium header ── */}
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+              <BrainCircuit size={11} /> BSD Intelligence Hub
+            </span>
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">
+              Mission Control <span className="text-indigo-600">.</span>
+            </h1>
+            <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
+              ניהול אוטונומי מלא — תחזיות, ניתוחים והמלצות בזמן אמת
+            </p>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold text-rose-700">
-            <ShieldAlert size={14} aria-hidden />
-            AI Guardian: נחסמה חשבונית כפולה
+          <div className="flex flex-wrap gap-2">
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Self-Healing פעיל
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-xs font-bold text-rose-700">
+              <ShieldAlert size={13} aria-hidden />
+              AI Guardian: חסם כפילות
+            </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-          <div className="card-avenue bg-white p-8 shadow-sm">
-            <div className="flex justify-between items-center mb-8 flex-wrap gap-3">
-              <h3 className="text-xl font-black italic flex items-center gap-2">
-                <BrainCircuit style={{ color: primaryColor }} /> חיזוי תזרים וסימולציה
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+              <h3 className="text-base font-black flex items-center gap-2 text-gray-900">
+                <BrainCircuit className="text-indigo-600" /> חיזוי תזרים וסימולציה
               </h3>
               <button
                 type="button"
@@ -154,16 +158,16 @@ export default function IntelligenceHub() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-xs italic text-indigo-700"
+                className="mt-5 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-xs text-indigo-700"
               >
                 הדמיה: הוספת הוצאה של ₪15,000 ב-14/04 תגרום לירידה מתחת לקו האדום.
               </motion.div>
             ) : null}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h4 className="font-black italic mb-4 flex items-center gap-2">
+              <h4 className="font-black mb-4 flex items-center gap-2 text-gray-900">
                 <Target className="text-indigo-500" aria-hidden /> רווחיות פרויקטים חי
               </h4>
               <div className="space-y-4">
@@ -181,8 +185,8 @@ export default function IntelligenceHub() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h4 className="font-black italic mb-4 flex items-center gap-2">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h4 className="font-black mb-4 flex items-center gap-2 text-gray-900">
                 <FileSearch className="text-indigo-500" aria-hidden /> לוביסט AI — חיסכון
               </h4>
               <p className="text-xs text-gray-600 leading-relaxed mb-4">
@@ -198,12 +202,12 @@ export default function IntelligenceHub() {
           </div>
         </div>
 
-        <div className="space-y-8">
-          <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 shadow-sm">
+        <div className="space-y-6">
+          <div className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white p-6 text-gray-900 shadow-sm">
             <div className="relative z-10">
-              <h3 className="text-xl font-black italic mb-6 flex items-center gap-2">
+              <h3 className="text-base font-black mb-5 flex items-center gap-2 text-gray-900">
                 <Mic
-                  size={20}
+                  size={16}
                   className={isRecording ? "text-rose-500 animate-pulse" : "text-indigo-600"}
                 />{" "}
                 Voice Insights
@@ -222,8 +226,8 @@ export default function IntelligenceHub() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-            <h4 className="font-black italic mb-6 flex items-center gap-2">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h4 className="font-black mb-5 flex items-center gap-2 text-gray-900">
               <MessageSquareHeart className="text-rose-400" aria-hidden /> שירות וגבייה
             </h4>
             <div className="space-y-4">
@@ -257,8 +261,8 @@ export default function IntelligenceHub() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-8 text-gray-900 shadow-sm">
-            <h4 className="mb-6 flex items-center gap-2 font-black italic text-indigo-900">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-6 text-gray-900 shadow-sm">
+            <h4 className="mb-5 flex items-center gap-2 font-black text-indigo-900">
               <Zap className="text-indigo-500" aria-hidden /> Business Pulse
             </h4>
             <div className="space-y-6">

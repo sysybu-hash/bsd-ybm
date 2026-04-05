@@ -663,20 +663,28 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   }
 
   return (
-    <div className="text-gray-900" dir="rtl">
-      {/* Header */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-gray-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-xs font-black text-white">M</span>
-          מקאנו
-        </h1>
-        <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full font-bold">
-          <CheckCircle2 size={13} />
-          מחובר
+    <div className="space-y-5 text-gray-900" dir="rtl">
+      {/* Premium Header */}
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-6 shadow-sm md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
+              <Clock size={11} /> מקאנו — ניהול נוכחות ומשימות
+            </span>
+            <h1 className="mt-2.5 flex items-center gap-2.5 text-2xl font-black tracking-tight text-gray-900">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-sm shadow-indigo-600/30">M</span>
+              מקאנו
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700">
+            <CheckCircle2 size={13} />
+            מחובר ופעיל
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Tabs */}
+      {/* Tabs panel */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         <nav className="flex gap-0 overflow-x-auto border-b border-gray-200 px-2">
           {TABS.map(({ id, label, Icon }) => (

@@ -68,12 +68,21 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
 };
 
 const TAB_COLORS: Record<TabId, string> = {
-  account: "text-indigo-600 border-indigo-600",
-  erp:     "text-indigo-600 border-indigo-600",
-  crm:     "text-indigo-600 border-indigo-600",
-  ai:      "text-emerald-600 border-emerald-600",
-  billing: "text-rose-600 border-rose-600",
-  cloud:   "text-sky-600 border-sky-600",
+  account: "text-indigo-600 border-indigo-500",
+  erp:     "text-indigo-600 border-indigo-500",
+  crm:     "text-indigo-600 border-indigo-500",
+  ai:      "text-emerald-600 border-emerald-500",
+  billing: "text-rose-600 border-rose-500",
+  cloud:   "text-sky-600 border-sky-500",
+};
+
+const TAB_ACTIVE_BG: Record<TabId, string> = {
+  account: "bg-indigo-600 text-white shadow-md shadow-indigo-600/30",
+  erp:     "bg-indigo-600 text-white shadow-md shadow-indigo-600/30",
+  crm:     "bg-indigo-600 text-white shadow-md shadow-indigo-600/30",
+  ai:      "bg-emerald-600 text-white shadow-md shadow-emerald-600/30",
+  billing: "bg-rose-600 text-white shadow-md shadow-rose-600/30",
+  cloud:   "bg-sky-600 text-white shadow-md shadow-sky-600/30",
 };
 
 type PlaceholderTabId = Exclude<TabId, "account" | "cloud">;
@@ -371,28 +380,29 @@ export default function SettingsPageClient({
 
   return (
     <div className="text-gray-900" dir={dir}>
-      <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
         {/* ── Page hero ── */}
-        <div className="relative overflow-hidden border-b border-gray-200 bg-gray-50 px-6 py-5">
-          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
-          <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 shadow-sm">
-                <Settings size={18} />
+        <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-900 px-6 py-6">
+          <div className="absolute -end-8 -top-8 h-32 w-32 rounded-full bg-white/5" aria-hidden />
+          <div className="absolute -start-4 -bottom-4 h-20 w-20 rounded-full bg-white/5" aria-hidden />
+          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 shadow-inner">
+                <Settings size={20} className="text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-gray-900">{currentTitle}</h3>
-                <p className="text-[11px] text-gray-500">הגדרות המערכת והארגון</p>
+                <h3 className="text-lg font-black text-white">{currentTitle}</h3>
+                <p className="text-[11px] text-gray-400">הגדרות המערכת והארגון</p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-black text-gray-900 shadow-sm transition-all hover:bg-gray-100 hover:shadow-md disabled:opacity-50"
             >
-              <Save size={15} />
+              <Save size={15} className="text-indigo-600" />
               {activeTab === "account"
                 ? pendingOrg
                   ? t("common.loading")
@@ -405,19 +415,19 @@ export default function SettingsPageClient({
         </div>
 
         {/* ── Tab bar ── */}
-        <nav className="flex flex-row overflow-x-auto border-b border-gray-100 bg-gray-50/60 px-3 gap-0">
+        <nav className="flex flex-row overflow-x-auto border-b border-gray-100 bg-gray-50/60 px-3 gap-1 py-2">
           {TAB_ORDER.map((tabId) => (
             <button
               key={tabId}
               type="button"
               onClick={() => setActiveTab(tabId)}
-              className={`flex items-center gap-2 whitespace-nowrap px-4 py-3.5 text-[12px] font-bold border-b-2 transition-all ${
+              className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-[12px] font-bold transition-all ${
                 activeTab === tabId
-                  ? `border-b-2 bg-white ${TAB_COLORS[tabId]}`
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200"
+                  ? TAB_ACTIVE_BG[tabId]
+                  : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
               }`}
             >
-              <span className={activeTab === tabId ? "" : "text-gray-400"}>{TAB_ICONS[tabId]}</span>
+              <span>{TAB_ICONS[tabId]}</span>
               {t(`settings.${tabId}`)}
             </button>
           ))}
@@ -427,27 +437,28 @@ export default function SettingsPageClient({
         <main className="min-w-0 flex-1 p-5 md:p-7">
 
           {prefsMsg && (
-            <p className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700">
-              {prefsMsg}
-            </p>
+            <div className="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3 shadow-sm">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <p className="text-sm font-bold text-emerald-700">{prefsMsg}</p>
+            </div>
           )}
 
           {activeTab === "account" && (
             <div className="grid grid-cols-1 gap-6">
-              <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 p-6">
-                <h4 className="mb-4 flex items-center gap-2 text-base font-black text-gray-800">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Shield size={14} /></span> פרופיל אישי
+              <div className="rounded-2xl border border-gray-100 bg-gradient-to-br from-indigo-50/60 to-sky-50/30 p-6 shadow-sm">
+                <h4 className="mb-4 flex items-center gap-2.5 text-base font-black text-gray-800">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm"><User size={15} /></span> פרופיל אישי
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                  <div className="bg-white p-4 rounded-2xl border border-gray-100">
-                    שם:{" "}
-                    <span className="text-gray-900 block font-bold text-lg mt-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
+                  <div className="rounded-2xl bg-white border border-gray-100 px-4 py-4 shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">שם מלא</p>
+                    <span className="text-gray-900 font-black text-lg">
                       {session?.user?.name ?? "—"}
                     </span>
                   </div>
-                  <div className="bg-white p-4 rounded-2xl border border-gray-100">
-                    אימייל:{" "}
-                    <span className="text-gray-900 block font-bold text-lg mt-1">
+                  <div className="rounded-2xl bg-white border border-gray-100 px-4 py-4 shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">כתובת אימייל</p>
+                    <span className="text-gray-900 font-black text-lg">
                       {session?.user?.email ?? "—"}
                     </span>
                   </div>
@@ -455,9 +466,9 @@ export default function SettingsPageClient({
               </div>
 
               {initialOrg && (
-                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-indigo-50/30 p-6">
-                  <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><Building2 size={14} /></span>
+                <div className="rounded-2xl border border-gray-100 bg-gradient-to-br from-indigo-50/40 to-indigo-50/20 p-6 shadow-sm">
+                  <h4 className="flex items-center gap-2.5 text-base font-black text-gray-900 mb-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm"><Building2 size={15} /></span>
                     חברה / ארגון
                   </h4>
                   <p className="text-gray-600 text-sm mb-6">
@@ -483,7 +494,7 @@ export default function SettingsPageClient({
                         name="name"
                         required
                         defaultValue={initialOrg.name}
-                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 text-sm font-medium shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
                       />
                     </div>
                     <div>
@@ -491,7 +502,7 @@ export default function SettingsPageClient({
                       <select
                         name="type"
                         defaultValue={initialOrg.type}
-                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white text-gray-900"
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
                       >
                         {ORG_TYPE_VALUES.map((o) => (
                           <option key={o.value} value={o.value}>
@@ -614,9 +625,9 @@ export default function SettingsPageClient({
               )}
 
               {initialOrg && canEditTaxProfile && (
-                <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50/40 to-cyan-50/30 p-6">
-                  <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-100 text-sky-600"><Globe size={14} /></span>
+                <div className="rounded-2xl border border-gray-100 bg-gradient-to-br from-sky-50/40 to-cyan-50/20 p-6 shadow-sm">
+                  <h4 className="flex items-center gap-2.5 text-base font-black text-gray-900 mb-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm"><Globe size={15} /></span>
                     פורטל המנוי, דף הבית ודומיין
                   </h4>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
@@ -725,9 +736,9 @@ export default function SettingsPageClient({
                 </div>
               )}
 
-              <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-6">
-                <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-4">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><UserPlus size={14} /></span> ניהול צוות
+              <div className="rounded-2xl border border-gray-100 bg-gradient-to-br from-indigo-50/40 to-sky-50/20 p-6 shadow-sm">
+                <h4 className="flex items-center gap-2.5 text-base font-black text-gray-900 mb-4">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm"><UserPlus size={15} /></span> ניהול צוות
                 </h4>
                 <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                   <strong className="text-gray-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
@@ -1004,9 +1015,9 @@ export default function SettingsPageClient({
               {PLACEHOLDER_FIELDS[activeTab as PlaceholderTabId].map((field) => (
                 <div
                   key={field.key}
-                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+                  className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:border-gray-200 hover:shadow-md transition-all"
                 >
-                  <label className="block font-bold text-gray-800 mb-1">{field.label}</label>
+                  <label className="block font-black text-gray-800 mb-1">{field.label}</label>
                   {field.hint && (
                     <p className="text-xs text-gray-500 mb-3">{field.hint}</p>
                   )}
@@ -1015,7 +1026,7 @@ export default function SettingsPageClient({
                     onChange={(e) =>
                       setPref(activeTab as PlaceholderTabId, field.key, e.target.value)
                     }
-                    className="w-full sm:w-72 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium"
+                    className="w-full sm:w-72 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 font-medium shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
                   >
                     {field.options.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>

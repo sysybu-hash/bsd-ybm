@@ -179,52 +179,55 @@ ${formContext}
     <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" dir={dir}>
 
       {/* ══ HEADER ══ */}
-      <div className="relative border-b border-gray-200 bg-gray-50/80 px-6 py-6">
-        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-600 to-indigo-700 px-6 py-7 shadow-md">
+        {/* Decorative circles */}
+        <div className="absolute -start-8 -top-8 h-32 w-32 rounded-full bg-white/5" aria-hidden />
+        <div className="absolute -end-4 -bottom-4 h-24 w-24 rounded-full bg-white/5" aria-hidden />
         <div className="relative flex flex-col gap-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 shadow-sm">
-                <Bot size={22} className="text-indigo-600" />
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 shadow-inner">
+                <Bot size={24} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-black tracking-tight text-gray-900">מרכז AI וסריקה</h1>
-                <p className="mt-1 text-sm text-gray-500">סריקת מסמכים, עבודה מול הנתונים ועזרה חכמה לטפסים במקום אחד.</p>
+                <h1 className="text-xl font-black tracking-tight text-white">מרכז AI וסריקה</h1>
+                <p className="mt-1 text-sm text-indigo-200">סריקת מסמכים, עבודה מול הנתונים ועזרה חכמה לטפסים במקום אחד.</p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {orgPlan ? (
-                    <span className="flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
-                      <Zap size={10} className="text-indigo-500" />
+                    <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white border border-white/20">
+                      <Zap size={10} className="text-yellow-300" />
                       {planLabel}
                     </span>
                   ) : null}
-                  <span className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-bold text-gray-600">
-                    <Sparkles size={10} className="text-indigo-500" />
+                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-indigo-100 border border-white/15">
+                    <Sparkles size={10} className="text-indigo-200" />
                     {configuredChatProviders.length} מנועי AI פעילים
                   </span>
-                  <span className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-bold text-gray-600">
-                    <ScanLine size={10} className="text-indigo-500" />
+                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-indigo-100 border border-white/15">
+                    <ScanLine size={10} className="text-indigo-200" />
                     {configuredScanProviders.length} מנועי סריקה · {scansLeft} סריקות
                   </span>
                 </div>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Link href="/dashboard/billing" className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
+              <Link href="/dashboard/billing" className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-bold text-indigo-700 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md">
                 מנוי וסריקות
               </Link>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm">
+          {/* Tab bar — inside the header */}
+          <div className="flex flex-wrap gap-1.5 rounded-2xl bg-black/20 p-1.5">
             {TABS.map(({ id, label, Icon }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setTab(id)}
-                className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[12px] font-bold transition-colors ${
+                className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[12px] font-bold transition-all ${
                   tab === id
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-white text-indigo-700 shadow-sm"
+                    : "text-indigo-200 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <Icon size={13} />

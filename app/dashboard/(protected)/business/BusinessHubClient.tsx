@@ -12,6 +12,7 @@ import {
   Loader2,
   ChevronDown,
   Layers,
+  AlertTriangle,
 } from "lucide-react";
 import ERPDashboard, {
   type ErpStatCard,
@@ -147,18 +148,21 @@ function HubContent(props: Props) {
     <div className="min-h-screen bg-gray-50" dir="rtl">
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
+      <div className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 shadow-sm" style={{ backdropFilter: "blur(8px)" }}>
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 shadow-sm">
+              <Layers size={14} className="text-white" />
+            </div>
             <h1 className="font-black text-lg text-gray-900">מרכז עסקי</h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              CRM × ERP מסונכרן
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              CRM × ERP
             </span>
           </div>
           <Link
             href="/dashboard/erp/invoice"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md transition-all"
           >
             <ReceiptText size={14} /> הנפק חשבונית
           </Link>
@@ -169,49 +173,59 @@ function HubContent(props: Props) {
 
         {/* ── KPI strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-            <div className="flex items-center gap-1.5 mb-2">
-              <TrendingUp size={13} className="text-emerald-500" />
-              <p className="text-xs font-bold text-emerald-600">הכנסות</p>
+          <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+                <TrendingUp size={13} />
+              </div>
+              <p className="text-xs font-bold text-gray-600">הכנסות</p>
             </div>
-            <p className="text-xl font-black text-emerald-700">{income > 0 ? fmtMoney(income) : "—"}</p>
-            <p className="text-[10px] text-emerald-500 mt-0.5">חשבוניות מונפקות</p>
+            <p className="text-2xl font-black text-gray-900">{income > 0 ? fmtMoney(income) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">חשבוניות מונפקות</p>
           </div>
-          <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4">
-            <div className="flex items-center gap-1.5 mb-2">
-              <ShoppingCart size={13} className="text-rose-500" />
-              <p className="text-xs font-bold text-rose-600">הוצאות</p>
+          <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-rose-600 text-white shadow-sm">
+                <ShoppingCart size={13} />
+              </div>
+              <p className="text-xs font-bold text-gray-600">הוצאות</p>
             </div>
-            <p className="text-xl font-black text-rose-700">{expenses > 0 ? fmtMoney(expenses) : "—"}</p>
-            <p className="text-[10px] text-rose-500 mt-0.5">{docs.length} מסמכים סרוקים</p>
+            <p className="text-2xl font-black text-gray-900">{expenses > 0 ? fmtMoney(expenses) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">{docs.length} מסמכים סרוקים</p>
           </div>
-          <div className={`rounded-2xl border p-4 ${profit >= 0 ? "border-indigo-100 bg-indigo-50" : "border-orange-100 bg-orange-50"}`}>
-            <div className="flex items-center gap-1.5 mb-2">
-              <CheckCircle2 size={13} className={profit >= 0 ? "text-indigo-500" : "text-orange-500"} />
-              <p className={`text-xs font-bold ${profit >= 0 ? "text-indigo-600" : "text-orange-600"}`}>רווח גולמי</p>
+          <div className={`rounded-2xl border p-5 bg-white shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 ${profit >= 0 ? "border-indigo-100" : "border-amber-100"}`}>
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className={`flex h-7 w-7 items-center justify-center rounded-xl text-white shadow-sm ${profit >= 0 ? "bg-indigo-600" : "bg-amber-500"}`}>
+                <CheckCircle2 size={13} />
+              </div>
+              <p className="text-xs font-bold text-gray-600">רווח גולמי</p>
             </div>
-            <p className={`text-xl font-black ${profit >= 0 ? "text-indigo-700" : "text-orange-700"}`}>
+            <p className={`text-2xl font-black ${profit >= 0 ? "text-indigo-700" : "text-amber-700"}`}>
               {income > 0 || expenses > 0 ? fmtMoney(profit) : "—"}
             </p>
-            <p className={`text-[10px] mt-0.5 ${profit >= 0 ? "text-indigo-500" : "text-orange-500"}`}>הכנסות פחות הוצאות</p>
+            <p className="text-[10px] text-gray-400 mt-1">הכנסות פחות הוצאות</p>
           </div>
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-            <div className="flex items-center gap-1.5 mb-2">
-              <Layers size={13} className="text-indigo-500" />
-              <p className="text-xs font-bold text-indigo-600">פייפליין CRM</p>
+          <div className="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+                <Layers size={13} />
+              </div>
+              <p className="text-xs font-bold text-gray-600">פייפליין CRM</p>
             </div>
-            <p className="text-xl font-black text-indigo-700">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
-            <p className="text-[10px] text-indigo-500 mt-0.5">
+            <p className="text-2xl font-black text-indigo-700">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">
               {contacts.filter((c) => !["CLOSED_WON", "CLOSED_LOST"].includes(c.status)).length} עסקאות פתוחות
             </p>
           </div>
-          <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
-            <div className="flex items-center gap-1.5 mb-2">
-              <CheckCircle2 size={13} className="text-sky-500" />
-              <p className="text-xs font-bold text-sky-600">אחוז הצלחה</p>
+          <div className="rounded-2xl border border-sky-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm">
+                <CheckCircle2 size={13} />
+              </div>
+              <p className="text-xs font-bold text-gray-600">אחוז הצלחה</p>
             </div>
-            <p className="text-xl font-black text-sky-700">{winRate != null ? `${winRate}%` : "—"}</p>
-            <p className="text-[10px] text-sky-500 mt-0.5">{wonCount} מתוך {closedCount} סגרו</p>
+            <p className="text-2xl font-black text-sky-700">{winRate != null ? `${winRate}%` : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">{wonCount} מתוך {closedCount} סגרו</p>
           </div>
         </div>
 
@@ -254,16 +268,21 @@ function HubContent(props: Props) {
         />
 
         {/* ── כלי ERP — מקופלים כברירת מחדל ── */}
-        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm">
           <button
             type="button"
             onClick={() => setErpOpen((v) => !v)}
-            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 transition"
+            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <span className="flex items-center gap-2.5">
-              <FileText size={14} className="text-indigo-500" />
-              כלי ERP — סריקת מסמכים, דוחות וארכיון
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+            <span className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50">
+                <FileText size={14} className="text-indigo-600" />
+              </span>
+              <span>
+                <span className="font-black text-gray-900">כלי ERP</span>
+                <span className="text-gray-500 ms-2 text-xs">סריקת מסמכים, דוחות וארכיון</span>
+              </span>
+              <span className="rounded-full border border-gray-200 bg-white px-2.5 py-0.5 text-[10px] font-bold text-gray-500">
                 {docs.length} מסמכים
               </span>
             </span>
@@ -275,9 +294,9 @@ function HubContent(props: Props) {
           {erpOpen && (
             <div className="border-t border-gray-100 space-y-6 p-5">
               {!geminiConfigured && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
-                  <strong>שים לב</strong>: מפתח Gemini חסר. סריקת AI לא תעבוד ללא{" "}
-                  <code className="bg-red-100 px-1 rounded">GOOGLE_GENERATIVE_AI_API_KEY</code>.
+                <div className="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
+                  <AlertTriangle size={16} className="shrink-0 text-rose-500" />
+                  <span><strong>שים לב</strong>: מפתח Gemini חסר. סריקת AI לא תעבוד ללא <code className="bg-rose-100 px-1 rounded">GOOGLE_GENERATIVE_AI_API_KEY</code>.</span>
                 </div>
               )}
               <ERPDashboard
