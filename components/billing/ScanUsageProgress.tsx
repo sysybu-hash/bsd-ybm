@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 
@@ -25,39 +25,39 @@ export default function ScanUsageProgress({
 
   return (
     <section
-      className="rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/30"
+      className="rounded-[2rem] border border-gray-200 bg-white p-6 md:p-8 shadow-xl shadow-gray-200/30"
       dir="rtl"
     >
-      <h2 className="text-lg font-black text-slate-900 mb-1">ניצול סריקות</h2>
-      <p className="text-xs text-slate-500 mb-6">
+      <h2 className="text-lg font-black text-gray-900 mb-1">ניצול סריקות</h2>
+      <p className="text-xs text-gray-500 mb-6">
         זולות (Gemini) מול פרימיום (OpenAI / Anthropic). הבר מציג יחס יתרה לעומת המכסה הבסיסית מהמנוי; רכישת בנדל מגדילה
         את היתרה.
       </p>
 
       <div className="space-y-6">
         <div>
-          <div className="flex justify-between text-sm font-bold text-slate-700 mb-2">
+          <div className="flex justify-between text-sm font-bold text-gray-700 mb-2">
             <span>סריקות זולות</span>
             <span className="tabular-nums">
               נותרו {formatCreditsForDisplay(cheapLeft)} · כלול במנוי עד {cheapIncluded}
             </span>
           </div>
-          <div className="h-3 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200/80">
+          <div className="h-3 rounded-full bg-gray-100 overflow-hidden ring-1 ring-gray-200/80">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-sky-500 to-blue-600 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-l from-sky-500 to-indigo-600 transition-all duration-500"
               style={{ width: `${cheapBar}%` }}
             />
           </div>
         </div>
 
         <div>
-          <div className="flex justify-between text-sm font-bold text-slate-700 mb-2">
+          <div className="flex justify-between text-sm font-bold text-gray-700 mb-2">
             <span>סריקות פרימיום</span>
             <span className="tabular-nums">
               נותרו {formatCreditsForDisplay(premiumLeft)} · כלול במנוי עד {premiumIncluded}
             </span>
           </div>
-          <div className="h-3 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200/80">
+          <div className="h-3 rounded-full bg-gray-100 overflow-hidden ring-1 ring-gray-200/80">
             <div
               className="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-600 transition-all duration-500"
               style={{ width: `${premBar}%` }}

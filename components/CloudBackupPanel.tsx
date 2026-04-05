@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { Cloud, RefreshCw, Loader2, ChevronDown } from "lucide-react";
@@ -146,15 +146,15 @@ export default function CloudBackupPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-3 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-        <Cloud className="text-blue-600 shrink-0 mt-0.5" size={22} />
-        <div className="text-sm text-slate-700 leading-relaxed">
-          <p className="font-bold text-slate-900">גיבוי וסריקה אוטונומית מול ענן</p>
+      <div className="flex items-start gap-3 p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
+        <Cloud className="text-indigo-600 shrink-0 mt-0.5" size={22} />
+        <div className="text-sm text-gray-700 leading-relaxed">
+          <p className="font-bold text-gray-900">גיבוי וסריקה אוטונומית מול ענן</p>
           <p className="mt-1">
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
           </p>
-          <p className="mt-2 text-slate-600 border-t border-blue-200/60 pt-2">
+          <p className="mt-2 text-gray-600 border-t border-indigo-200/60 pt-2">
             <strong>מסמכים ישנים מהמחשב:</strong> העלאה ופענוח אצלנו ב־ERP דרך &quot;סורק ה־AI&quot;
             (גרירה של כמה קבצים). חיבור ענן כאן מתאים בעיקר לגיבוי וסנכרון שוטפים אחרי שכבר עובדים
             במערכת.
@@ -170,7 +170,7 @@ export default function CloudBackupPanel() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="animate-spin text-blue-600" size={32} />
+          <Loader2 className="animate-spin text-indigo-600" size={32} />
         </div>
       ) : (
         <ul className="space-y-4">
@@ -183,20 +183,20 @@ export default function CloudBackupPanel() {
             return (
               <li
                 key={p.id}
-                className="rounded-2xl border border-slate-100 bg-slate-50 overflow-hidden"
+                className="rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden"
               >
                 <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-bold text-slate-900">{p.label}</p>
-                    <p className="text-xs text-slate-500">{p.hint}</p>
+                    <p className="font-bold text-gray-900">{p.label}</p>
+                    <p className="text-xs text-gray-500">{p.hint}</p>
                     {rec?.lastSyncAt && (
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         סנכרון אחרון: {new Date(rec.lastSyncAt).toLocaleString("he-IL")}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-2 shrink-0">
-                    <div className="inline-flex rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                    <div className="inline-flex rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
                       {!active || !rec ? (
                         <button
                           type="button"
@@ -204,7 +204,7 @@ export default function CloudBackupPanel() {
                           onClick={() =>
                             void toggleProvider(p.id, { autoScan: false, backupExports: true })
                           }
-                          className="px-4 py-2.5 text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+                          className="px-4 py-2.5 text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-50"
                         >
                           {saving === p.id ? (
                             <Loader2 className="animate-spin inline" size={16} />
@@ -214,7 +214,7 @@ export default function CloudBackupPanel() {
                         </button>
                       ) : (
                         <>
-                          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer px-3 py-2 border-l border-slate-100">
+                          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer px-3 py-2 border-l border-gray-100">
                             <input
                               type="checkbox"
                               checked={rec.autoScan}
@@ -239,7 +239,7 @@ export default function CloudBackupPanel() {
                       <button
                         type="button"
                         onClick={() => setOpenGuide(guideOpen ? null : p.id)}
-                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border-slate-100 border-l"
+                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 border-gray-100 border-l"
                       >
                         איך מחברים?
                         <ChevronDown
@@ -251,10 +251,10 @@ export default function CloudBackupPanel() {
                   </div>
                 </div>
                 {guideOpen ? (
-                  <div className="border-t border-slate-200 bg-white px-4 py-4 text-sm text-slate-700 space-y-3">
-                    <p className="font-black text-slate-900">{guide.title} — רשימת הכנה</p>
+                  <div className="border-t border-gray-200 bg-white px-4 py-4 text-sm text-gray-700 space-y-3">
+                    <p className="font-black text-gray-900">{guide.title} — רשימת הכנה</p>
                     <div>
-                      <p className="text-xs font-bold text-blue-700 mb-1">בשרת (Vercel / .env)</p>
+                      <p className="text-xs font-bold text-indigo-700 mb-1">בשרת (Vercel / .env)</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">
                         {guide.serverEnv.map((line) => (
                           <li key={line}>{line}</li>
@@ -262,7 +262,7 @@ export default function CloudBackupPanel() {
                       </ul>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-blue-700 mb-1">בפורטל הספק</p>
+                      <p className="text-xs font-bold text-indigo-700 mb-1">בפורטל הספק</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">
                         {guide.portalSteps.map((line) => (
                           <li key={line}>{line}</li>
@@ -280,7 +280,7 @@ export default function CloudBackupPanel() {
       <button
         type="button"
         onClick={() => void load()}
-        className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-blue-600"
+        className="flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-indigo-600"
       >
         <RefreshCw size={16} />
         רענון רשימה

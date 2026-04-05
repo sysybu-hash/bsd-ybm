@@ -35,7 +35,7 @@ export default async function DashboardHomePage() {
     },
     {
       icon: ReceiptText, label: "חשבוניות ERP", value: "—",  href: "/dashboard/erp/invoice",
-      chipBg: "bg-blue-100",   chipText: "text-blue-700",   iconBg: "bg-blue-600",
+      chipBg: "bg-indigo-100",   chipText: "text-indigo-700",   iconBg: "bg-indigo-600",
     },
     {
       icon: FileStack,   label: "מסמכים",       value: "—",  href: "/dashboard/business",
@@ -84,9 +84,9 @@ export default async function DashboardHomePage() {
       title: "הגדרות",
       description: "פרטי עסק, חיבורי תשלום, גיבויים ומשתמשים.",
       badge: "הגדרות",
-      iconBg: "bg-slate-600",
-      badgeBg: "bg-slate-100 text-slate-600",
-      hoverBorder: "hover:border-slate-300",
+      iconBg: "bg-gray-600",
+      badgeBg: "bg-gray-100 text-gray-600",
+      hoverBorder: "hover:border-gray-300",
     },
   ];
 

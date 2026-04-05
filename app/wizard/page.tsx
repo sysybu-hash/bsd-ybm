@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Bot, Building2, CreditCard, LayoutDashboard } from "lucide-react";
 
@@ -38,8 +38,8 @@ export default function WizardPage() {
   return (
     <div className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-black text-slate-900 sm:text-4xl">Wizard Control Center</h1>
-        <p className="mt-3 max-w-2xl text-slate-600">
+        <h1 className="text-3xl font-black text-gray-900 sm:text-4xl">Wizard Control Center</h1>
+        <p className="mt-3 max-w-2xl text-gray-600">
           This route provides one direct path across setup and operation. Use it when onboarding a new workspace or
           training users on the standard flow.
         </p>
@@ -51,17 +51,17 @@ export default function WizardPage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900 text-white">
                     <Icon size={18} />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Step {idx + 1}</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-gray-400">Step {idx + 1}</span>
                 </div>
-                <h2 className="text-xl font-black text-slate-900">{item.title}</h2>
-                <p className="mt-2 text-sm text-slate-600">{item.text}</p>
-                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-slate-800">
+                <h2 className="text-xl font-black text-gray-900">{item.title}</h2>
+                <p className="mt-2 text-sm text-gray-600">{item.text}</p>
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-gray-800">
                   Open stage
                   <ArrowRight size={14} />
                 </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -50,8 +50,8 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
           <Zap size={20} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-lg font-bold text-slate-900">כפתורי תשלום מהיר (דף החיוב)</h4>
-          <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+          <h4 className="text-lg font-bold text-gray-900">כפתורי תשלום מהיר (דף החיוב)</h4>
+          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
             עד 10 כפתורים. כל כפתור יוצר <strong>בקשת גבייה</strong> (לא מנוי חודשי). ריק = אין כפתורים מותאמים אישית —
             אפשר למחוק הכל ולשמור כדי להסיר את הרשימה (או להשתמש ב&quot;שחזר ברירת מחדל&quot;).
           </p>
@@ -60,7 +60,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
 
       <div className="space-y-3 mb-4">
         {presets.length === 0 ? (
-          <p className="text-sm text-blue-700 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+          <p className="text-sm text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
             אין כפתורים — בדף החיוב יוצגו רק &quot;מנוי חודשי&quot; ו&quot;סכום מותאם&quot;. לחצו &quot;שחזר ברירת מחדל&quot; או
             &quot;שורה נוספת&quot;.
           </p>
@@ -68,19 +68,19 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
         {presets.map((row, i) => (
           <div
             key={i}
-            className="flex flex-col lg:flex-row gap-2 lg:items-end p-3 rounded-xl bg-white border border-slate-100"
+            className="flex flex-col lg:flex-row gap-2 lg:items-end p-3 rounded-xl bg-white border border-gray-100"
           >
             <div className="flex-1 min-w-0">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">תווית בכפתור</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">תווית בכפתור</label>
               <input
                 type="text"
                 value={row.label}
                 onChange={(e) => updateRow(i, { label: e.target.value })}
-                className="w-full mt-0.5 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full mt-0.5 rounded-lg border border-gray-200 px-3 py-2 text-sm"
               />
             </div>
             <div className="w-full lg:w-28">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">סכום ₪</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">סכום ₪</label>
               <input
                 type="text"
                 inputMode="decimal"
@@ -90,17 +90,17 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
                   const n = Number(e.target.value.replace(",", "."));
                   updateRow(i, { amountNis: Number.isFinite(n) ? n : 0 });
                 }}
-                className="w-full mt-0.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-mono"
+                className="w-full mt-0.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono"
               />
             </div>
             <div className="flex-1 min-w-0 lg:min-w-[200px]">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">תיאור בחשבונית (אופציונלי)</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">תיאור בחשבונית (אופציונלי)</label>
               <input
                 type="text"
                 value={row.invoiceDescription ?? ""}
                 onChange={(e) => updateRow(i, { invoiceDescription: e.target.value })}
                 placeholder="ברירת מחדל: לפי התווית"
-                className="w-full mt-0.5 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full mt-0.5 rounded-lg border border-gray-200 px-3 py-2 text-sm"
               />
             </div>
             <button
@@ -120,7 +120,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
           type="button"
           onClick={addRow}
           disabled={pending || presets.length >= 10}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:bg-slate-50 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 disabled:opacity-50"
         >
           <Plus size={18} /> שורה נוספת
         </button>
@@ -128,7 +128,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
           type="button"
           onClick={restoreDefaults}
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50"
         >
           <RotateCcw size={18} /> שחזר ברירת מחדל
         </button>

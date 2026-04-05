@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useTransition, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
@@ -69,7 +69,7 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
 
 const TAB_COLORS: Record<TabId, string> = {
   account: "text-indigo-600 border-indigo-600",
-  erp:     "text-blue-600 border-blue-600",
+  erp:     "text-indigo-600 border-indigo-600",
   crm:     "text-violet-600 border-violet-600",
   ai:      "text-emerald-600 border-emerald-600",
   billing: "text-rose-600 border-rose-600",
@@ -437,19 +437,19 @@ export default function SettingsPageClient({
           {activeTab === "account" && (
             <div className="grid grid-cols-1 gap-6">
               <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 p-6">
-                <h4 className="mb-4 flex items-center gap-2 text-base font-black text-slate-800">
+                <h4 className="mb-4 flex items-center gap-2 text-base font-black text-gray-800">
                   <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Shield size={14} /></span> פרופיל אישי
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
-                  <div className="bg-white p-4 rounded-2xl border border-slate-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                  <div className="bg-white p-4 rounded-2xl border border-gray-100">
                     שם:{" "}
-                    <span className="text-slate-900 block font-bold text-lg mt-1">
+                    <span className="text-gray-900 block font-bold text-lg mt-1">
                       {session?.user?.name ?? "—"}
                     </span>
                   </div>
-                  <div className="bg-white p-4 rounded-2xl border border-slate-100">
+                  <div className="bg-white p-4 rounded-2xl border border-gray-100">
                     אימייל:{" "}
-                    <span className="text-slate-900 block font-bold text-lg mt-1">
+                    <span className="text-gray-900 block font-bold text-lg mt-1">
                       {session?.user?.email ?? "—"}
                     </span>
                   </div>
@@ -457,12 +457,12 @@ export default function SettingsPageClient({
               </div>
 
               {initialOrg && (
-                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-blue-50/30 p-6">
-                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-indigo-50/30 p-6">
+                  <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><Building2 size={14} /></span>
                     חברה / ארגון
                   </h4>
-                  <p className="text-slate-600 text-sm mb-6">
+                  <p className="text-gray-600 text-sm mb-6">
                     השם משמש לזיהוי הארגון במערכת (CRM, מסמכים וכו׳).
                   </p>
                   <form
@@ -478,22 +478,22 @@ export default function SettingsPageClient({
                     className="space-y-4 max-w-lg"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         שם העסק / הארגון
                       </label>
                       <input
                         name="name"
                         required
                         defaultValue={initialOrg.name}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">סוג</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">סוג</label>
                       <select
                         name="type"
                         defaultValue={initialOrg.type}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-slate-900"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white text-gray-900"
                       >
                         {ORG_TYPE_VALUES.map((o) => (
                           <option key={o.value} value={o.value}>
@@ -505,13 +505,13 @@ export default function SettingsPageClient({
                     {canEditTaxProfile ? (
                       <>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
                             סיווג מס (חשבוניות / מע״מ)
                           </label>
                           <select
                             name="companyType"
                             defaultValue={initialOrg.companyType}
-                            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-slate-900"
+                            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white text-gray-900"
                           >
                             {COMPANY_TYPE_VALUES.map((o) => (
                               <option key={o.value} value={o.value}>
@@ -521,64 +521,64 @@ export default function SettingsPageClient({
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
                             ח.פ / ע.מ
                           </label>
                           <input
                             name="taxId"
                             defaultValue={initialOrg.taxId ?? ""}
-                            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white"
+                            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white"
                             placeholder="למשל מספר עוסק מורשה"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">כתובת</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">כתובת</label>
                           <textarea
                             name="address"
                             rows={3}
                             defaultValue={initialOrg.address ?? ""}
-                            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white resize-y min-h-[5rem]"
+                            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white resize-y min-h-[5rem]"
                             placeholder="כתובת להצגה במסמכים"
                           />
                         </div>
-                        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 space-y-2">
-                          <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-slate-800">
+                        <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 space-y-2">
+                          <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-gray-800">
                             <input
                               type="checkbox"
                               name="isReportable"
                               defaultChecked={initialOrg.isReportable}
-                              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                              className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span>
                               ארגון מדווח למס (חשבוניות והפקות רשמיות)
-                              <span className="block text-xs font-normal text-slate-500 mt-1">
+                              <span className="block text-xs font-normal text-gray-500 mt-1">
                                 כבו את הסימון לניהול אישי בלבד — מסמכים יוצגו כמזכר פנימי ללא חישוב מע״מ.
                               </span>
                             </span>
                           </label>
                         </div>
-                        <div className="rounded-xl border border-sky-100 bg-sky-50/60 px-4 py-3 text-sm text-slate-700 leading-relaxed">
-                          <p className="font-bold text-slate-900 mb-1">הפקת מסמכים ותשלומים</p>
+                        <div className="rounded-xl border border-sky-100 bg-sky-50/60 px-4 py-3 text-sm text-gray-700 leading-relaxed">
+                          <p className="font-bold text-gray-900 mb-1">הפקת מסמכים ותשלומים</p>
                           <p>
                             לפי הסיווג והדיווח שמגדירים כאן (מנהל ארגון), ניתן להפיק בדף{" "}
-                            <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                            <Link href="/dashboard/billing" className="font-bold text-indigo-700 underline">
                               מנוי ותשלומים
                             </Link>{" "}
                             את <strong>כל סוגי המסמכים</strong> שבמערכת: חשבונית מס, קבלה, חשבונית
                             מס־קבלה וזיכוי. מע״מ וחישובים תואמים את סוג העוסק. גבייה מהלקוחות מתבצעת
                             לפי הגדרות התשלום (PayPal של הארגון בלשונית מנויים) והמנוי.
                           </p>
-                          <p className="mt-2 text-xs text-slate-600">
+                          <p className="mt-2 text-xs text-gray-600">
                             חשבון PayPal של <strong>מפעיל האתר</strong> מוגדר בשרת בלבד (משתני סביבה) ומוצג
                             בדף אדמין — לא כאן.
                           </p>
-                          <p className="mt-2 text-xs text-slate-600">
+                          <p className="mt-2 text-xs text-gray-600">
                             מסמכים סרוקים ישנים מהמחשב נכנסים דרך{" "}
-                            <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">
+                            <Link href="/dashboard/erp" className="font-bold text-indigo-700 underline">
                               תפעול וכספים (ERP)
                             </Link>{" "}
                             — סורק ה־AI עם העלאה מרובת־קבצים; חיבור ענן — בלשונית{" "}
-                            <Link href="/dashboard/settings?tab=cloud" className="font-bold text-blue-700 underline">
+                            <Link href="/dashboard/settings?tab=cloud" className="font-bold text-indigo-700 underline">
                               גיבוי ענן
                             </Link>
                             .
@@ -586,16 +586,16 @@ export default function SettingsPageClient({
                         </div>
                       </>
                     ) : (
-                      <p className="text-sm text-slate-500 bg-white border border-slate-100 rounded-xl px-4 py-3">
+                      <p className="text-sm text-gray-500 bg-white border border-gray-100 rounded-xl px-4 py-3">
                         פרטי מס וכתובת (ח.פ, סיווג עוסק) ניתנים לעדכון על ידי{" "}
                         <strong>מנהל ארגון</strong> בלבד. לשינוי — בקשו ממנהל הארגון או פנו לתמיכה.
-                        <span className="block mt-2 text-slate-600">
+                        <span className="block mt-2 text-gray-600">
                           הפקת כל סוגי המסמכים ותשלומי לקוחות — ב־
-                          <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                          <Link href="/dashboard/billing" className="font-bold text-indigo-700 underline">
                             מנוי ותשלומים
                           </Link>
                           ; ייבוא סריקות ישנות — ב־
-                          <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">
+                          <Link href="/dashboard/erp" className="font-bold text-indigo-700 underline">
                             ERP
                           </Link>
                           .
@@ -617,11 +617,11 @@ export default function SettingsPageClient({
 
               {initialOrg && canEditTaxProfile && (
                 <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50/40 to-cyan-50/30 p-6">
-                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                  <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-100 text-sky-600"><Globe size={14} /></span>
                     פורטל המנוי, דף הבית ודומיין
                   </h4>
-                  <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                     דומיין ציבורי (לאחר הגדרת DNS ב־Vercel), מיתוג JSON לעמוד הנחיתה, ולוח שנה עם סנכרון Google
                     — כאן מגדירים את חוויית האתר של הארגון.
                   </p>
@@ -637,7 +637,7 @@ export default function SettingsPageClient({
                     className="space-y-4 max-w-2xl"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         דומיין ציבורי (ללא https)
                       </label>
                       <input
@@ -646,25 +646,25 @@ export default function SettingsPageClient({
                         dir="ltr"
                         defaultValue={initialOrg.tenantPublicDomain ?? ""}
                         placeholder="app.example.co.il"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white font-mono text-sm"
                       />
                     </div>
-                    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-                      <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-slate-800">
+                    <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+                      <label className="flex items-start gap-3 cursor-pointer text-sm font-medium text-gray-800">
                         <input
                           type="checkbox"
                           name="calendarGoogleEnabled"
                           defaultChecked={initialOrg.calendarGoogleEnabled}
-                          className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                          className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         />
                         <span className="flex items-center gap-2">
-                          <CalendarDays size={16} className="text-blue-600 shrink-0" aria-hidden />
+                          <CalendarDays size={16} className="text-indigo-600 shrink-0" aria-hidden />
                           הצגת לוח שנה בדשבורד והכנה לסנכרון Google Calendar
                         </span>
                       </label>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         מיתוג אתר (JSON — אופציונלי)
                       </label>
                       <textarea
@@ -673,13 +673,13 @@ export default function SettingsPageClient({
                         dir="ltr"
                         defaultValue={initialOrg.tenantSiteBrandingJson}
                         placeholder='{ "landingTitle": "...", "tagline": "...", "primaryColor": "#2563eb" }'
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white resize-y min-h-[8rem] font-mono text-xs"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white resize-y min-h-[8rem] font-mono text-xs"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={pendingPortal}
-                      className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
                     >
                       {pendingPortal ? "שומר…" : "שמור הגדרות פורטל"}
                     </button>
@@ -694,12 +694,12 @@ export default function SettingsPageClient({
                     </p>
                   )}
                   {initialOrg.calendarGoogleEnabled ? (
-                    <div className="mt-8 space-y-4 border-t border-slate-200 pt-8">
+                    <div className="mt-8 space-y-4 border-t border-gray-200 pt-8">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm font-bold text-slate-800">לוח שנה</p>
+                        <p className="text-sm font-bold text-gray-800">לוח שנה</p>
                         <button
                           type="button"
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:bg-slate-50"
+                          className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50"
                           onClick={async () => {
                             setCalendarConnectHint(null);
                             try {
@@ -717,7 +717,7 @@ export default function SettingsPageClient({
                         </button>
                       </div>
                       {calendarConnectHint ? (
-                        <p className="text-sm text-slate-600 bg-white border border-slate-100 rounded-xl px-4 py-3">
+                        <p className="text-sm text-gray-600 bg-white border border-gray-100 rounded-xl px-4 py-3">
                           {calendarConnectHint}
                         </p>
                       ) : null}
@@ -728,11 +728,11 @@ export default function SettingsPageClient({
               )}
 
               <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50/40 to-purple-50/30 p-6">
-                <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-4">
+                <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-4">
                   <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><UserPlus size={14} /></span> ניהול צוות
                 </h4>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  <strong className="text-slate-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
+                <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+                  <strong className="text-gray-800">דרך מומלצת:</strong> שליחת קישור במייל — אתם בוחרים
                   תפקיד מראש, והנרשם <strong>לא</strong> מקבל ארגון משלו ולא הופך אוטומטית למנהל, אלא
                   מצטרף <strong>רק</strong> לארגון שלכם.
                 </p>
@@ -761,13 +761,13 @@ export default function SettingsPageClient({
                         type="email"
                         name="email"
                         placeholder="אימייל מוזמן"
-                        className="flex-1 min-w-[200px] bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm text-slate-900"
+                        className="flex-1 min-w-[200px] bg-white border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-900"
                         required
                       />
                       <select
                         name="role"
                         defaultValue="EMPLOYEE"
-                        className="sm:w-56 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900"
+                        className="sm:w-56 bg-white border border-gray-200 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900"
                         aria-label="תפקיד בהזמנה"
                       >
                         <option value="EMPLOYEE">עובד / צוות</option>
@@ -792,8 +792,8 @@ export default function SettingsPageClient({
                   )}
                 </div>
 
-                <details className="mb-4 text-sm text-slate-600 bg-white/80 rounded-2xl border border-slate-100 px-4 py-3">
-                  <summary className="cursor-pointer font-bold text-slate-800">
+                <details className="mb-4 text-sm text-gray-600 bg-white/80 rounded-2xl border border-gray-100 px-4 py-3">
+                  <summary className="cursor-pointer font-bold text-gray-800">
                     מה ההבדל בין תפקידים?
                   </summary>
                   <ul className="mt-2 space-y-2 list-disc list-inside pe-2">
@@ -809,7 +809,7 @@ export default function SettingsPageClient({
                   </ul>
                 </details>
 
-                <p className="text-slate-600 text-sm mb-3 font-bold text-slate-800">
+                <p className="text-gray-600 text-sm mb-3 font-bold text-gray-800">
                   2 — שיוך ידני (רק אחרי שכבר נכנסו פעם אחת עם Google)
                 </p>
                 <form onSubmit={handleInvite} className="flex flex-col gap-3">
@@ -819,13 +819,13 @@ export default function SettingsPageClient({
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="אימייל (Google)"
-                      className="flex-1 min-w-[200px] bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--primary-color,#3b82f6)] outline-none"
+                      className="flex-1 min-w-[200px] bg-white border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary-color,#3b82f6)] outline-none"
                       required
                     />
                     <select
                       value={inviteRole}
                       onChange={(e) => setInviteRole(e.target.value)}
-                      className="sm:w-56 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900"
+                      className="sm:w-56 bg-white border border-gray-200 rounded-2xl px-4 py-3 text-sm font-bold text-gray-900"
                       aria-label="תפקיד משתמש"
                     >
                       <option value="EMPLOYEE">תפקיד: עובד / צוות</option>
@@ -835,7 +835,7 @@ export default function SettingsPageClient({
                     </select>
                     <button
                       type="submit"
-                      className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-blue-600/20"
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-600/20"
                     >
                       שייך לארגון
                     </button>
@@ -866,16 +866,16 @@ export default function SettingsPageClient({
           {activeTab !== "account" && activeTab !== "cloud" && (
             <div className="grid grid-cols-1 gap-6">
               {activeTab === "billing" && initialOrg && canEditTaxProfile && (
-                <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50/40 to-sky-50/30 p-6">
-                  <h4 className="flex items-center gap-2 text-base font-black text-slate-900 mb-2">
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/40 to-sky-50/30 p-6">
+                  <h4 className="flex items-center gap-2 text-base font-black text-gray-900 mb-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#e8f4fd] text-[#0070ba]"><Wallet size={14} /></span>
                     PayPal של הארגון + רמת נתונים חיים
                   </h4>
-                  <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                     Stripe הוסר מהמערכת (לא מתאים לישראל). השדות למטה הם ל־<strong>לקוחות הארגון</strong>{" "}
                     (לא חשבון מפעיל האתר). בממשק המנויים תשלומי קצה מוצגים ב־PayPal לפי מה שמוגדר כאן —
                     ראו{" "}
-                    <Link href="/dashboard/billing" className="font-bold text-blue-700 underline">
+                    <Link href="/dashboard/billing" className="font-bold text-indigo-700 underline">
                       דף המנויים
                     </Link>
                     . כאן מגדירים את חשבון PayPal: מייל לקבלה ואופציונלית PayPal.Me לקישורי תשלום.
@@ -892,7 +892,7 @@ export default function SettingsPageClient({
                     className="space-y-4 max-w-xl"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         מייל חשבון PayPal (לקבלת תשלומים)
                       </label>
                       <input
@@ -901,11 +901,11 @@ export default function SettingsPageClient({
                         dir="ltr"
                         defaultValue={initialOrg.paypalMerchantEmail ?? ""}
                         placeholder="your-paypal@email.com"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white font-mono text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         שם משתמש PayPal.Me (אופציונלי)
                       </label>
                       <input
@@ -914,20 +914,20 @@ export default function SettingsPageClient({
                         dir="ltr"
                         defaultValue={initialOrg.paypalMeSlug ?? ""}
                         placeholder="למשל: MyBusiness"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 bg-white font-mono text-sm"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white font-mono text-sm"
                       />
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-gray-500">
                         רק השם — יוצג קישור ל־paypal.me/… לשיתוף עם לקוחות.
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         רמת נתונים חיים / הכנה לביטוח ושירותים
                       </label>
                       <select
                         name="liveDataTier"
                         defaultValue={initialOrg.liveDataTier || "basic"}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-slate-900 text-sm font-medium"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white text-gray-900 text-sm font-medium"
                       >
                         <option value="basic">בסיסי — ללא הזנת נתונים חיצוניים</option>
                         <option value="standard">מתקדם — מוכן לחיבור ספקים</option>
@@ -962,13 +962,13 @@ export default function SettingsPageClient({
               ) : null}
 
               {(activeTab === "ai" || activeTab === "billing") && (
-                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-blue-200 bg-gradient-to-l from-blue-50 to-indigo-50 p-4">
-                  <Sparkles className="text-blue-600 shrink-0" size={22} />
-                  <div className="flex-1 min-w-[200px] text-sm text-slate-700">
+                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-indigo-200 bg-gradient-to-l from-indigo-50 to-indigo-50 p-4">
+                  <Sparkles className="text-indigo-600 shrink-0" size={22} />
+                  <div className="flex-1 min-w-[200px] text-sm text-gray-700">
                     {activeTab === "ai" ? (
                       <>
                         לסריקה, צ׳אט והנחיות AI מלאות — פתחו את{" "}
-                        <Link href="/dashboard/ai" className="font-bold text-blue-700 underline">
+                        <Link href="/dashboard/ai" className="font-bold text-indigo-700 underline">
                           מרכז AI
                         </Link>
                         .
@@ -978,7 +978,7 @@ export default function SettingsPageClient({
                         ניהול מנוי ותשלומים —{" "}
                         <Link
                           href="/dashboard/billing"
-                          className="font-bold text-blue-700 underline inline-flex items-center gap-1"
+                          className="font-bold text-indigo-700 underline inline-flex items-center gap-1"
                         >
                           דף המנויים <ExternalLink size={14} />
                         </Link>
@@ -989,14 +989,14 @@ export default function SettingsPageClient({
                 </div>
               )}
               {activeTab === "erp" && (
-                <div className="flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4 text-sm text-slate-700">
-                  <Receipt size={16} className="text-blue-600 shrink-0" />
+                <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 text-sm text-gray-700">
+                  <Receipt size={16} className="text-indigo-600 shrink-0" />
                   <span>ניהול מסמכים ודוחות —{" "}
-                  <Link href="/dashboard/erp" className="font-bold text-blue-700 underline">פתיחת ERP</Link>.</span>
+                  <Link href="/dashboard/erp" className="font-bold text-indigo-700 underline">פתיחת ERP</Link>.</span>
                 </div>
               )}
               {activeTab === "crm" && (
-                <div className="flex items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50/50 p-4 text-sm text-slate-700">
+                <div className="flex items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50/50 p-4 text-sm text-gray-700">
                   <Users size={16} className="text-violet-600 shrink-0" />
                   <span>לקוחות ולידים —{" "}
                   <Link href="/dashboard/crm" className="font-bold text-violet-700 underline">פתיחת CRM</Link>.</span>
@@ -1006,18 +1006,18 @@ export default function SettingsPageClient({
               {PLACEHOLDER_FIELDS[activeTab as PlaceholderTabId].map((field) => (
                 <div
                   key={field.key}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
                 >
-                  <label className="block font-bold text-slate-800 mb-1">{field.label}</label>
+                  <label className="block font-bold text-gray-800 mb-1">{field.label}</label>
                   {field.hint && (
-                    <p className="text-xs text-slate-500 mb-3">{field.hint}</p>
+                    <p className="text-xs text-gray-500 mb-3">{field.hint}</p>
                   )}
                   <select
                     value={getPref(activeTab as PlaceholderTabId, field.key) || field.options[0].value}
                     onChange={(e) =>
                       setPref(activeTab as PlaceholderTabId, field.key, e.target.value)
                     }
-                    className="w-full sm:w-72 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 font-medium"
+                    className="w-full sm:w-72 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium"
                   >
                     {field.options.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -1025,7 +1025,7 @@ export default function SettingsPageClient({
                   </select>
                 </div>
               ))}
-              <p className="text-xs text-slate-500 italic">
+              <p className="text-xs text-gray-500 italic">
                 הגדרות אלו נשמרות מקומית בדפדפן; חיבור לשרת יגיע בעדכון עתידי.
               </p>
             </div>

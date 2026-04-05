@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import { CalendarDays } from "lucide-react";
@@ -29,12 +29,12 @@ export default function TenantCalendarMini() {
     today.getFullYear() === year;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" dir="rtl">
-      <div className="mb-3 flex items-center gap-2 text-sm font-black text-slate-800">
-        <CalendarDays size={18} className="text-blue-600" aria-hidden />
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm" dir="rtl">
+      <div className="mb-3 flex items-center gap-2 text-sm font-black text-gray-800">
+        <CalendarDays size={18} className="text-indigo-600" aria-hidden />
         {label}
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-gray-400">
         {WEEK.map((w) => (
           <div key={w} className="py-1">
             {w}
@@ -49,15 +49,15 @@ export default function TenantCalendarMini() {
               day == null
                 ? "text-transparent"
                 : isToday(day)
-                  ? "bg-blue-600 text-white font-black"
-                  : "text-slate-700 hover:bg-slate-50"
+                  ? "bg-indigo-600 text-white font-black"
+                  : "text-gray-700 hover:bg-gray-50"
             }`}
           >
             {day ?? "·"}
           </div>
         ))}
       </div>
-      <p className="mt-3 text-[10px] font-medium text-slate-400">
+      <p className="mt-3 text-[10px] font-medium text-gray-400">
         סנכרון אירועים מול Google Calendar יופעל לאחר חיבור OAuth בהגדרות Google של הארגון.
       </p>
     </div>

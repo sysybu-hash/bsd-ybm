@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, TrendingDown, Package } from "lucide-react";
@@ -36,7 +36,7 @@ export default function SupplierPriceBoard() {
   return (
     <section
       id="supplier-price-board"
-      className="card-avenue bg-white p-6 shadow-xl shadow-slate-200/50 md:p-8"
+      className="card-avenue bg-white p-6 shadow-xl shadow-gray-200/50 md:p-8"
       dir={dir}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -45,10 +45,10 @@ export default function SupplierPriceBoard() {
             <Package size={26} />
           </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-black italic text-slate-900">
+            <h2 className="text-xl md:text-2xl font-black italic text-gray-900">
               לוח ספקים והשוואת מחירים
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500">
               מבוסס על שורות מוצרים מסריקות AI (חשבוניות, קבלות, הצעות)
             </p>
           </div>
@@ -56,14 +56,14 @@ export default function SupplierPriceBoard() {
         <button
           type="button"
           onClick={() => void load()}
-          className="text-sm font-bold text-blue-600 hover:underline"
+          className="text-sm font-bold text-indigo-600 hover:underline"
         >
           רענון
         </button>
       </div>
 
       {loading && (
-        <div className="flex items-center gap-2 text-slate-500 py-8 justify-center">
+        <div className="flex items-center gap-2 text-gray-500 py-8 justify-center">
           <Loader2 className="animate-spin" size={22} /> טוען השוואות…
         </div>
       )}
@@ -73,11 +73,11 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && alerts.length > 0 && (
-        <div className="card-avenue mb-6 space-y-2 border-blue-200 bg-blue-50 p-4">
-          <p className="text-xs font-black text-blue-800 flex items-center gap-2">
+        <div className="card-avenue mb-6 space-y-2 border-indigo-200 bg-indigo-50 p-4">
+          <p className="text-xs font-black text-indigo-800 flex items-center gap-2">
             <TrendingDown size={16} /> נמצאו מחירים גבוהים ביחס לרכישה הזולה הידועה
           </p>
-          <ul className="text-xs text-blue-900 space-y-1">
+          <ul className="text-xs text-indigo-900 space-y-1">
             {alerts.slice(0, 5).map((r) => (
               <li key={r.normalizedKey}>
                 <strong>{r.description}</strong> — אצל {r.latestSupplier ?? "—"} נרשם ₪
@@ -91,15 +91,15 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && rows.length === 0 && (
-        <p className="card-avenue border-dashed border-slate-200 bg-slate-50/80 py-8 text-center text-sm italic text-slate-500">
+        <p className="card-avenue border-dashed border-gray-200 bg-gray-50/80 py-8 text-center text-sm italic text-gray-500">
           אין עדיין תצפיות מחיר — סרקו חשבונית או קבלה עם שורות מוצרים.
         </p>
       )}
 
       {!loading && rows.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border border-slate-100">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100">
           <table className="min-w-full text-sm text-right">
-            <thead className="bg-slate-50 text-slate-600 font-bold">
+            <thead className="bg-gray-50 text-gray-600 font-bold">
               <tr>
                 <th className="px-4 py-3">תיאור</th>
                 <th className="px-4 py-3">מחיר מיטבי</th>
@@ -111,19 +111,19 @@ export default function SupplierPriceBoard() {
               {rows.map((r) => (
                 <tr
                   key={r.normalizedKey}
-                  className={`border-t border-slate-100 ${r.cheaperAlternative ? "bg-rose-50/50" : ""}`}
+                  className={`border-t border-gray-100 ${r.cheaperAlternative ? "bg-rose-50/50" : ""}`}
                 >
-                  <td className="px-4 py-2 font-medium text-slate-900">{r.description}</td>
+                  <td className="px-4 py-2 font-medium text-gray-900">{r.description}</td>
                   <td className="px-4 py-2">
                     ₪{r.bestUnitPrice.toFixed(2)}
                     {r.bestSupplier ? (
-                      <span className="text-xs text-slate-500 block">{r.bestSupplier}</span>
+                      <span className="text-xs text-gray-500 block">{r.bestSupplier}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-2">
                     ₪{r.latestUnitPrice.toFixed(2)}
                     {r.latestSupplier ? (
-                      <span className="text-xs text-slate-500 block">{r.latestSupplier}</span>
+                      <span className="text-xs text-gray-500 block">{r.latestSupplier}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-2">

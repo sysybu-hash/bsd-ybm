@@ -16,13 +16,13 @@ function useStepCycle(totalSteps: number, msPerStep: number) {
 function ProgressBar({ step, total }: { step: number; total: number }) {
   return (
     <div className="mt-4 space-y-1.5">
-      <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+      <div className="flex items-center justify-between text-[11px] font-bold text-gray-500">
         <span>שלב {step + 1} מתוך {total}</span>
         <span>{Math.round(((step + 1) / total) * 100)}%</span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
         <div
-          className="h-full rounded-full bg-gradient-to-l from-blue-500 to-indigo-500 transition-all duration-700"
+          className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-indigo-500 transition-all duration-700"
           style={{ width: `${((step + 1) / total) * 100}%` }}
         />
       </div>
@@ -39,8 +39,8 @@ function AnimErpCrm({ step }: { step: number }) {
   ];
 
   const STATUS_COLOR: Record<string, string> = {
-    LEAD: "bg-slate-100 text-slate-600",
-    ACTIVE: "bg-blue-100 text-blue-700",
+    LEAD: "bg-gray-100 text-gray-600",
+    ACTIVE: "bg-indigo-100 text-indigo-700",
     PROPOSAL: "bg-amber-100 text-amber-700",
     "CLOSED_WON ✓": "bg-emerald-100 text-emerald-700",
   };
@@ -54,7 +54,7 @@ function AnimErpCrm({ step }: { step: number }) {
       {/* Step 0 / Step 1: Contact list */}
       {(step === 0 || step === 1) && (
         <div className="flex-1 space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
             {step === 0 ? "לקוחות CRM — פייפליין פעיל" : "עסקה נסגרה — CLOSED_WON"}
           </p>
           {mutatedContacts.map((c) => (
@@ -63,17 +63,17 @@ function AnimErpCrm({ step }: { step: number }) {
               className={`flex items-center justify-between rounded-xl border px-3 py-2.5 transition-all duration-500 ${
                 step === 1 && c.status === "CLOSED_WON ✓"
                   ? "border-emerald-300 bg-emerald-50 scale-[1.02]"
-                  : "border-slate-200 bg-white"
+                  : "border-gray-200 bg-white"
               }`}
             >
               <div className="flex items-center gap-2">
                 <div className="h-7 w-7 rounded-lg bg-indigo-100 flex items-center justify-center text-[10px] font-black text-indigo-600">
                   {c.name[0]}
                 </div>
-                <span className="text-[12px] font-bold text-slate-800">{c.name}</span>
+                <span className="text-[12px] font-bold text-gray-800">{c.name}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-500">{c.amount}</span>
+                <span className="text-[10px] font-bold text-gray-500">{c.amount}</span>
                 <span className={`rounded-full px-2 py-0.5 text-[9px] font-black ${STATUS_COLOR[c.status] ?? "bg-gray-100 text-gray-600"}`}>
                   {c.status}
                 </span>
@@ -86,30 +86,30 @@ function AnimErpCrm({ step }: { step: number }) {
       {/* Step 2: Invoice auto-creation */}
       {step === 2 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
             חשבונית ERP נוצרה אוטומטית ✨
           </p>
-          <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+          <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-50 p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-black uppercase text-blue-600">חשבונית מס #INV-0041</span>
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-black text-blue-700">ממתין לתשלום</span>
+              <span className="text-[10px] font-black uppercase text-indigo-600">חשבונית מס #INV-0041</span>
+              <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] font-black text-indigo-700">ממתין לתשלום</span>
             </div>
             <div className="flex items-center gap-2 mb-3">
               <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center text-[11px] font-black text-indigo-600">מ</div>
               <div>
-                <p className="text-[12px] font-black text-slate-800">ממן לוגיסטיקה</p>
-                <p className="text-[10px] text-slate-500">לקוח CRM → ERP</p>
+                <p className="text-[12px] font-black text-gray-800">ממן לוגיסטיקה</p>
+                <p className="text-[10px] text-gray-500">לקוח CRM → ERP</p>
               </div>
             </div>
             {[["שירות ניהול לוגיסטי", "₪14,000"], ["עמלת שירות", "₪4,400"]].map(([desc, amt]) => (
-              <div key={desc} className="flex justify-between py-1.5 border-t border-blue-100 text-[11px]">
-                <span className="text-slate-600">{desc}</span>
-                <span className="font-black text-slate-800">{amt}</span>
+              <div key={desc} className="flex justify-between py-1.5 border-t border-indigo-100 text-[11px]">
+                <span className="text-gray-600">{desc}</span>
+                <span className="font-black text-gray-800">{amt}</span>
               </div>
             ))}
-            <div className="flex justify-between pt-2 border-t-2 border-blue-200 text-[12px]">
-              <span className="font-black text-slate-700">סה״כ</span>
-              <span className="font-black text-blue-700">₪18,400</span>
+            <div className="flex justify-between pt-2 border-t-2 border-indigo-200 text-[12px]">
+              <span className="font-black text-gray-700">סה״כ</span>
+              <span className="font-black text-indigo-700">₪18,400</span>
             </div>
           </div>
         </div>
@@ -118,14 +118,14 @@ function AnimErpCrm({ step }: { step: number }) {
       {/* Step 3: Payment marked + ERP sync */}
       {step === 3 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
             תשלום אושר — ERP מסונכרן ✅
           </p>
           <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-4 mb-3">
             <div className="flex items-center gap-3 mb-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-lg font-black">✓</div>
               <div>
-                <p className="text-[13px] font-black text-slate-800">שולם ✓ — ₪18,400</p>
+                <p className="text-[13px] font-black text-gray-800">שולם ✓ — ₪18,400</p>
                 <p className="text-[10px] text-emerald-600">ממן לוגיסטיקה · INV-0041</p>
               </div>
             </div>
@@ -133,12 +133,12 @@ function AnimErpCrm({ step }: { step: number }) {
           <div className="grid grid-cols-2 gap-2">
             {[
               { label: "סטטוס CRM", val: "CLOSED_WON", color: "text-emerald-600" },
-              { label: "סטטוס ERP", val: "שולם", color: "text-blue-600" },
+              { label: "סטטוס ERP", val: "שולם", color: "text-indigo-600" },
               { label: "סוג מסמך", val: "חשבונית מס", color: "text-indigo-600" },
               { label: "סינכרון", val: "אוטומטי ✓", color: "text-emerald-600" },
             ].map(({ label, val, color }) => (
-              <div key={label} className="rounded-xl border border-slate-200 bg-white p-2.5">
-                <p className="text-[9px] text-slate-400 mb-0.5">{label}</p>
+              <div key={label} className="rounded-xl border border-gray-200 bg-white p-2.5">
+                <p className="text-[9px] text-gray-400 mb-0.5">{label}</p>
                 <p className={`text-[11px] font-black ${color}`}>{val}</p>
               </div>
             ))}
@@ -157,7 +157,7 @@ function AnimRegistration({ step }: { step: number }) {
       {/* Step 0: Register form */}
       {step === 0 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">הרשמה למערכת</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">הרשמה למערכת</p>
           <div className="space-y-2.5">
             {[
               { label: "שם מלא", placeholder: "דוד כהן", filled: true },
@@ -165,13 +165,13 @@ function AnimRegistration({ step }: { step: number }) {
               { label: "שם החברה", placeholder: "כהן אנד קו בע״מ", filled: true },
             ].map(({ label, placeholder, filled }) => (
               <div key={label}>
-                <p className="text-[10px] font-bold text-slate-600 mb-1">{label}</p>
-                <div className={`rounded-xl border px-3 py-2 text-[11px] transition-all ${filled ? "border-blue-300 bg-blue-50 text-slate-700 font-semibold" : "border-slate-200 bg-white text-slate-400"}`}>
+                <p className="text-[10px] font-bold text-gray-600 mb-1">{label}</p>
+                <div className={`rounded-xl border px-3 py-2 text-[11px] transition-all ${filled ? "border-indigo-300 bg-indigo-50 text-gray-700 font-semibold" : "border-gray-200 bg-white text-gray-400"}`}>
                   {placeholder}
                 </div>
               </div>
             ))}
-            <div className="rounded-xl bg-blue-600 py-2.5 text-center text-[12px] font-black text-white shadow-sm shadow-blue-600/30">
+            <div className="rounded-xl bg-indigo-600 py-2.5 text-center text-[12px] font-black text-white shadow-sm shadow-indigo-600/30">
               צור חשבון חינם ←
             </div>
           </div>
@@ -181,22 +181,22 @@ function AnimRegistration({ step }: { step: number }) {
       {/* Step 1: Plan selection */}
       {step === 1 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">בחר מנוי</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">בחר מנוי</p>
           <div className="space-y-2">
             {[
-              { name: "FREE", price: "חינם", color: "border-slate-200 bg-white", tag: "" },
-              { name: "BASIC", price: "₪99/חודש", color: "border-blue-300 bg-blue-50 scale-[1.02]", tag: "פופולרי" },
+              { name: "FREE", price: "חינם", color: "border-gray-200 bg-white", tag: "" },
+              { name: "BASIC", price: "₪99/חודש", color: "border-indigo-300 bg-indigo-50 scale-[1.02]", tag: "פופולרי" },
               { name: "PRO", price: "₪249/חודש", color: "border-indigo-200 bg-indigo-50", tag: "" },
             ].map(({ name, price, color, tag }) => (
               <div key={name} className={`flex items-center justify-between rounded-xl border px-3 py-2.5 transition-all ${color}`}>
                 <div className="flex items-center gap-2">
-                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${name === "BASIC" ? "border-blue-500 bg-blue-500" : "border-slate-300"}`}>
+                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${name === "BASIC" ? "border-indigo-500 bg-indigo-500" : "border-gray-300"}`}>
                     {name === "BASIC" && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
                   </div>
-                  <span className="text-[12px] font-black text-slate-800">{name}</span>
-                  {tag && <span className="rounded-full bg-blue-100 px-1.5 py-0.5 text-[8px] font-black text-blue-700">{tag}</span>}
+                  <span className="text-[12px] font-black text-gray-800">{name}</span>
+                  {tag && <span className="rounded-full bg-indigo-100 px-1.5 py-0.5 text-[8px] font-black text-indigo-700">{tag}</span>}
                 </div>
-                <span className="text-[11px] font-bold text-slate-600">{price}</span>
+                <span className="text-[11px] font-bold text-gray-600">{price}</span>
               </div>
             ))}
           </div>
@@ -206,26 +206,26 @@ function AnimRegistration({ step }: { step: number }) {
       {/* Step 2: Payment */}
       {step === 2 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">תשלום מאובטח</p>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">תשלום מאובטח</p>
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-600">תוכנית BASIC</span>
-              <span className="text-[13px] font-black text-slate-900">₪99 / חודש</span>
+              <span className="text-[11px] font-bold text-gray-600">תוכנית BASIC</span>
+              <span className="text-[13px] font-black text-gray-900">₪99 / חודש</span>
             </div>
-            <div className="h-px bg-slate-100" />
-            <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-3 flex items-center gap-2.5">
+            <div className="h-px bg-gray-100" />
+            <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-3 flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-[#003087] flex items-center justify-center">
                 <span className="text-[8px] font-black text-white">Pay</span>
               </div>
               <div>
-                <p className="text-[11px] font-black text-slate-800">PayPal</p>
-                <p className="text-[9px] text-slate-500">תשלום מאובטח ב-SSL</p>
+                <p className="text-[11px] font-black text-gray-800">PayPal</p>
+                <p className="text-[9px] text-gray-500">תשלום מאובטח ב-SSL</p>
               </div>
             </div>
-            <div className="rounded-xl bg-blue-600 py-2.5 text-center text-[12px] font-black text-white">
+            <div className="rounded-xl bg-indigo-600 py-2.5 text-center text-[12px] font-black text-white">
               שלם ₪99 ←
             </div>
-            <p className="text-center text-[9px] text-slate-400">🔒 מאובטח · ניתן לביטול בכל עת</p>
+            <p className="text-center text-[9px] text-gray-400">🔒 מאובטח · ניתן לביטול בכל עת</p>
           </div>
         </div>
       )}
@@ -234,11 +234,11 @@ function AnimRegistration({ step }: { step: number }) {
       {step === 3 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
           <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-3">ברוך הבא! ✓ המנוי פעיל</p>
-          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-blue-50 p-4 mb-3">
+          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-indigo-50 p-4 mb-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-lg">✓</div>
               <div>
-                <p className="text-[13px] font-black text-slate-800">כהן אנד קו — BASIC</p>
+                <p className="text-[13px] font-black text-gray-800">כהן אנד קו — BASIC</p>
                 <p className="text-[10px] text-emerald-600">מנוי פעיל · ₪99/חודש</p>
               </div>
             </div>
@@ -252,13 +252,13 @@ function AnimRegistration({ step }: { step: number }) {
               { icon: "🤖", label: "AI Chat" },
               { icon: "⚙️", label: "הגדרות" },
             ].map(({ icon, label }) => (
-              <div key={label} className="rounded-xl border border-slate-200 bg-white p-2 text-center">
+              <div key={label} className="rounded-xl border border-gray-200 bg-white p-2 text-center">
                 <div className="text-base mb-0.5">{icon}</div>
-                <p className="text-[9px] font-bold text-slate-600">{label}</p>
+                <p className="text-[9px] font-bold text-gray-600">{label}</p>
               </div>
             ))}
           </div>
-          <div className="mt-2 rounded-xl bg-blue-600 py-2 text-center text-[11px] font-black text-white">
+          <div className="mt-2 rounded-xl bg-indigo-600 py-2 text-center text-[11px] font-black text-white">
             כניסה לדשבורד ←
           </div>
         </div>
@@ -275,21 +275,21 @@ function AnimScanner({ step }: { step: number }) {
       {/* Step 0: Upload document */}
       {step === 0 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">העלאת מסמך</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">העלאת מסמך</p>
           <div className="rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50/50 p-5 text-center mb-3">
             <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100">
               <span className="text-2xl">📄</span>
             </div>
-            <p className="text-[12px] font-black text-slate-700">גרור קובץ לכאן</p>
-            <p className="text-[10px] text-slate-400 mt-1">PDF, JPG, PNG · עד 20MB</p>
+            <p className="text-[12px] font-black text-gray-700">גרור קובץ לכאן</p>
+            <p className="text-[10px] text-gray-400 mt-1">PDF, JPG, PNG · עד 20MB</p>
             <div className="mt-3 rounded-xl bg-violet-600 py-1.5 text-[11px] font-black text-white">
               בחר קובץ
             </div>
           </div>
           <div className="flex gap-2">
             {["חשבונית_012024.pdf", "קבלה_מס555.jpg"].map((f) => (
-              <div key={f} className="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-center">
-                <p className="text-[9px] font-bold text-slate-600 truncate">{f}</p>
+              <div key={f} className="flex-1 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center">
+                <p className="text-[9px] font-bold text-gray-600 truncate">{f}</p>
               </div>
             ))}
           </div>
@@ -306,7 +306,7 @@ function AnimScanner({ step }: { step: number }) {
             {/* Document preview mock */}
             <div className="space-y-1.5 opacity-60">
               {[80, 60, 90, 50, 70].map((w, i) => (
-                <div key={i} className="h-2 rounded-full bg-slate-300" style={{ width: `${w}%` }} />
+                <div key={i} className="h-2 rounded-full bg-gray-300" style={{ width: `${w}%` }} />
               ))}
             </div>
             {/* Scan line animation */}
@@ -315,14 +315,14 @@ function AnimScanner({ step }: { step: number }) {
           <div className="space-y-1.5">
             {[
               { label: "OCR טקסט", pct: 72, color: "bg-violet-500" },
-              { label: "זיהוי שדות", pct: 45, color: "bg-blue-500" },
+              { label: "זיהוי שדות", pct: 45, color: "bg-indigo-500" },
               { label: "AI מיפוי", pct: 18, color: "bg-indigo-500" },
             ].map(({ label, pct, color }) => (
               <div key={label}>
-                <div className="flex justify-between text-[9px] font-bold text-slate-500 mb-0.5">
+                <div className="flex justify-between text-[9px] font-bold text-gray-500 mb-0.5">
                   <span>{label}</span><span>{pct}%</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
                   <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%`, animation: 'bsd-tut-scan-prog 3s ease-out forwards' }} />
                 </div>
               </div>
@@ -347,15 +347,15 @@ function AnimScanner({ step }: { step: number }) {
             ].map(({ field, value, delay, done }) => (
               <div
                 key={field}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px]"
+                className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-2 text-[11px]"
                 style={{ animationDelay: delay }}
               >
-                <span className="text-slate-500 font-medium">{field}</span>
+                <span className="text-gray-500 font-medium">{field}</span>
                 <div className="flex items-center gap-1.5">
                   {done ? (
-                    <span className="font-black text-slate-800">{value}</span>
+                    <span className="font-black text-gray-800">{value}</span>
                   ) : (
-                    <span className="inline-flex h-2 w-16 rounded bg-slate-200 animate-pulse" />
+                    <span className="inline-flex h-2 w-16 rounded bg-gray-200 animate-pulse" />
                   )}
                   {done && <span className="text-emerald-500 text-[9px]">✓</span>}
                 </div>
@@ -381,14 +381,14 @@ function AnimScanner({ step }: { step: number }) {
               ["סה״כ לתשלום", "₪4,914"],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between text-[11px] border-b border-emerald-100 pb-1 last:border-0">
-                <span className="text-slate-500 font-medium">{k}</span>
-                <span className="font-black text-slate-800">{v}</span>
+                <span className="text-gray-500 font-medium">{k}</span>
+                <span className="font-black text-gray-800">{v}</span>
               </div>
             ))}
           </div>
           <div className="mt-2 flex gap-2">
             <div className="flex-1 rounded-xl bg-emerald-600 py-2 text-center text-[11px] font-black text-white">שמור ב-ERP</div>
-            <div className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-center text-[11px] font-bold text-slate-600">ייצא CSV</div>
+            <div className="flex-1 rounded-xl border border-gray-200 bg-white py-2 text-center text-[11px] font-bold text-gray-600">ייצא CSV</div>
           </div>
         </div>
       )}
@@ -411,7 +411,7 @@ function TutorialCard({ index, title, subtitle, description, icon, accentColor, 
   const step = useStepCycle(4, 3750);
 
   return (
-    <div className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Card header */}
       <div className={`px-5 pt-5 pb-4 ${accentColor}`}>
         <div className="flex items-center gap-3 mb-1">
@@ -434,9 +434,9 @@ function TutorialCard({ index, title, subtitle, description, icon, accentColor, 
       </div>
 
       {/* Description */}
-      <div className="border-t border-slate-100 px-5 py-4">
-        <p className="text-xs font-bold text-slate-500 leading-relaxed">{subtitle}</p>
-        <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">{description}</p>
+      <div className="border-t border-gray-100 px-5 py-4">
+        <p className="text-xs font-bold text-gray-500 leading-relaxed">{subtitle}</p>
+        <p className="mt-1 text-[11px] text-gray-400 leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -449,17 +449,17 @@ export default function LandingTutorialSection() {
   const t3 = useStepCycle(4, 3750);
 
   return (
-    <section id="tutorial-videos" className="bg-slate-50 py-20">
+    <section id="tutorial-videos" className="bg-gray-50 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6" dir="rtl">
         {/* Section header */}
         <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-violet-700">
             ▶ הדגמות חיות
           </span>
-          <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-black text-gray-900 sm:text-4xl">
             ראה איך המערכת עובדת — בפועל
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500">
             שלושה סרטוני הדגמה המציגים את יכולות הליבה. כל אנימציה רצה 15 שניות ולופת אוטומטית.
           </p>
         </div>
@@ -468,8 +468,8 @@ export default function LandingTutorialSection() {
         <div className="grid gap-6 md:grid-cols-3">
 
           {/* Video 1 */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-blue-700 to-indigo-700">
+          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-indigo-700 to-indigo-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔄</span>
                 <div>
@@ -484,16 +484,16 @@ export default function LandingTutorialSection() {
             <div className="px-4 pb-4">
               <ProgressBar step={t1} total={4} />
             </div>
-            <div className="border-t border-slate-100 px-5 py-4">
-              <p className="text-xs font-bold text-slate-600">עסקת CRM → חשבונית ERP אוטומטית</p>
-              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+            <div className="border-t border-gray-100 px-5 py-4">
+              <p className="text-xs font-bold text-gray-600">עסקת CRM → חשבונית ERP אוטומטית</p>
+              <p className="mt-1 text-[11px] text-gray-400 leading-relaxed">
                 כשעסקה נסגרת ב-CRM, הנתונים עוברים אוטומטית ל-ERP ומייצרים חשבונית מס — ללא עבודה ידנית.
               </p>
             </div>
           </div>
 
           {/* Video 2 */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-emerald-700 to-teal-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">📝</span>
@@ -509,16 +509,16 @@ export default function LandingTutorialSection() {
             <div className="px-4 pb-4">
               <ProgressBar step={t2} total={4} />
             </div>
-            <div className="border-t border-slate-100 px-5 py-4">
-              <p className="text-xs font-bold text-slate-600">הרשמה · בחירת מנוי · תשלום · כניסה</p>
-              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+            <div className="border-t border-gray-100 px-5 py-4">
+              <p className="text-xs font-bold text-gray-600">הרשמה · בחירת מנוי · תשלום · כניסה</p>
+              <p className="mt-1 text-[11px] text-gray-400 leading-relaxed">
                 תהליך ההרשמה אורך פחות מדקה: מילוי פרטים, בחירת המנוי המתאים, תשלום ב-PayPal, ופתיחת דשבורד מלא.
               </p>
             </div>
           </div>
 
           {/* Video 3 */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <div className="flex flex-col rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-violet-700 to-purple-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔍</span>
@@ -534,9 +534,9 @@ export default function LandingTutorialSection() {
             <div className="px-4 pb-4">
               <ProgressBar step={t3} total={4} />
             </div>
-            <div className="border-t border-slate-100 px-5 py-4">
-              <p className="text-xs font-bold text-slate-600">העלאה · סריקה · AI חילוץ · שמירה</p>
-              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+            <div className="border-t border-gray-100 px-5 py-4">
+              <p className="text-xs font-bold text-gray-600">העלאה · סריקה · AI חילוץ · שמירה</p>
+              <p className="mt-1 text-[11px] text-gray-400 leading-relaxed">
                 העלה חשבונית, קבלה או כל מסמך — ה-AI מפענח אוטומטית את כל השדות ושומר ישירות ב-ERP.
               </p>
             </div>
@@ -545,7 +545,7 @@ export default function LandingTutorialSection() {
         </div>
 
         {/* Duration note */}
-        <p className="mt-8 text-center text-[11px] text-slate-400">
+        <p className="mt-8 text-center text-[11px] text-gray-400">
           ⏱ כל סרטון מציג מחזור של 15 שניות · רץ בלופ אוטומטי
         </p>
       </div>

@@ -43,7 +43,7 @@ export default function DesignPreviewPage() {
               <div className="text-[10px] text-white/25 mb-1">בוקר טוב ✦</div>
               <h2 className="text-sm font-black text-white mb-4">לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {[{l:"לקוחות",c:"from-purple-500/15 to-indigo-500/15 border-purple-500/20"},{l:"חשבוניות",c:"from-blue-500/15 to-cyan-500/15 border-blue-500/20"},{l:"מסמכים",c:"from-emerald-500/15 to-teal-500/15 border-emerald-500/20"},{l:"הכנסות",c:"from-amber-500/15 to-orange-500/15 border-amber-500/20"}].map((s) => (
+                {[{l:"לקוחות",c:"from-purple-500/15 to-indigo-500/15 border-purple-500/20"},{l:"חשבוניות",c:"from-indigo-500/15 to-cyan-500/15 border-indigo-500/20"},{l:"מסמכים",c:"from-emerald-500/15 to-teal-500/15 border-emerald-500/20"},{l:"הכנסות",c:"from-amber-500/15 to-orange-500/15 border-amber-500/20"}].map((s) => (
                   <div key={s.l} className={`bg-gradient-to-br ${s.c} border rounded-2xl p-2.5`}>
                     <div className="text-[9px] text-white/40 mb-1">{s.l}</div>
                     <div className="text-sm font-black text-white/80">—</div>
@@ -67,7 +67,7 @@ export default function DesignPreviewPage() {
 
         {/* B - NEON GLASS */}
         <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-cyan-400/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl">
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+          <div className="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             B — Neon Glass
           </div>
           <div className="flex h-[400px] bg-[#050d1a]">
@@ -114,21 +114,21 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* C - CLEAN MINIMAL */}
-        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-slate-400/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl bg-white">
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white text-center py-2.5 text-sm font-bold tracking-wide">
+        <div className="rounded-3xl overflow-hidden ring-1 ring-white/10 hover:ring-gray-400/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-2xl bg-white">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             C — מינימלי לבן (Notion / Linear)
           </div>
           <div className="flex h-[400px]">
             <div className="w-[155px] bg-white border-l border-gray-100 flex flex-col py-5 px-3 shrink-0">
               <div className="flex items-center gap-2 mb-7 px-1">
-                <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white text-xs font-black">B</div>
-                <span className="text-xs font-black text-slate-900">BSD-YBM</span>
+                <div className="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center text-white text-xs font-black">B</div>
+                <span className="text-xs font-black text-gray-900">BSD-YBM</span>
               </div>
               {NAV.map((item, i) => (
                 <div key={item} className={`flex items-center gap-2 px-2 py-2 rounded-lg text-[11px] mb-0.5 font-medium ${
-                  i === 0 ? "bg-slate-100 text-slate-900" : "text-gray-400 hover:bg-gray-50"
+                  i === 0 ? "bg-gray-100 text-gray-900" : "text-gray-400 hover:bg-gray-50"
                 }`}>
-                  <div className={`w-1 h-3.5 rounded-full shrink-0 ${i === 0 ? "bg-slate-900" : "bg-transparent"}`} />
+                  <div className={`w-1 h-3.5 rounded-full shrink-0 ${i === 0 ? "bg-gray-900" : "bg-transparent"}`} />
                   {item}
                 </div>
               ))}
@@ -242,7 +242,7 @@ export default function DesignPreviewPage() {
                 <div className="bg-indigo-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Pro ✦</div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {[{l:"לקוחות",bg:"bg-violet-50 border-violet-100 text-violet-700"},{l:"חשבוניות",bg:"bg-blue-50 border-blue-100 text-blue-700"},{l:"מסמכים",bg:"bg-emerald-50 border-emerald-100 text-emerald-700"},{l:"הכנסות",bg:"bg-amber-50 border-amber-100 text-amber-700"}].map((s) => (
+                {[{l:"לקוחות",bg:"bg-violet-50 border-violet-100 text-violet-700"},{l:"חשבוניות",bg:"bg-indigo-50 border-indigo-100 text-indigo-700"},{l:"מסמכים",bg:"bg-emerald-50 border-emerald-100 text-emerald-700"},{l:"הכנסות",bg:"bg-amber-50 border-amber-100 text-amber-700"}].map((s) => (
                   <div key={s.l} className={`${s.bg} border rounded-xl p-2.5`}>
                     <div className="text-[9px] font-semibold mb-1 opacity-70 uppercase tracking-wider">{s.l}</div>
                     <div className="text-sm font-black">—</div>

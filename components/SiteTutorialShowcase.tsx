@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback, type ComponentType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,18 +27,18 @@ type Scene = {
 
 function BrowserChrome({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden text-right">
-      <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 border-b border-slate-200">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden text-right">
+      <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 border-b border-gray-200">
         <div className="flex gap-1.5">
           <span className="w-3 h-3 rounded-full bg-red-400/90" />
-          <span className="w-3 h-3 rounded-full bg-blue-400/90" />
+          <span className="w-3 h-3 rounded-full bg-indigo-400/90" />
           <span className="w-3 h-3 rounded-full bg-emerald-400/90" />
         </div>
-        <div className="flex-1 text-center text-[10px] text-slate-400 font-mono truncate px-2">
+        <div className="flex-1 text-center text-[10px] text-gray-400 font-mono truncate px-2">
           bsd-ybm.co.il
         </div>
       </div>
-      <div className="p-4 min-h-[200px] bg-slate-50/80">{children}</div>
+      <div className="p-4 min-h-[200px] bg-gray-50/80">{children}</div>
     </div>
   );
 }
@@ -50,7 +50,7 @@ function SceneHome() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-black italic text-slate-900"
+          className="text-2xl font-black italic text-gray-900"
         >
           BSD-YBM<span className="text-[var(--primary-color,#3b82f6)]">.</span>
         </motion.div>
@@ -58,7 +58,7 @@ function SceneHome() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-xs text-slate-500"
+          className="text-xs text-gray-500"
         >
           דף נחיתה — גלילה לסקטורים, בחירת מסלול, כניסה לדשבורד
         </motion.p>
@@ -68,10 +68,10 @@ function SceneHome() {
           transition={{ delay: 0.35 }}
           className="flex gap-2 justify-end flex-wrap"
         >
-          <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">
+          <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-bold">
             AI
           </span>
-          <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
+          <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-[10px] font-bold">
             ERP
           </span>
           <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
@@ -91,11 +91,11 @@ function SceneLogin() {
         <motion.button
           animate={{ scale: [1, 1.03, 1] }}
           transition={{ repeat: Infinity, duration: 2.2 }}
-          className="px-6 py-2 rounded-2xl bg-white border-2 border-slate-200 text-xs font-bold text-slate-800 shadow-sm"
+          className="px-6 py-2 rounded-2xl bg-white border-2 border-gray-200 text-xs font-bold text-gray-800 shadow-sm"
         >
           המשך עם Google
         </motion.button>
-        <p className="text-[10px] text-slate-500 text-center max-w-[220px]">
+        <p className="text-[10px] text-gray-500 text-center max-w-[220px]">
           התחברות מאובטחת — המערכת תזהה את הארגון שלך
         </p>
       </div>
@@ -110,7 +110,7 @@ function SceneDashboard() {
         <motion.aside
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="w-[38%] shrink-0 rounded-xl bg-white border border-slate-200 p-2 space-y-1"
+          className="w-[38%] shrink-0 rounded-xl bg-white border border-gray-200 p-2 space-y-1"
         >
           <div className="text-[9px] font-black text-[var(--primary-color,#3b82f6)] mb-1">BSD-YBM</div>
           {[
@@ -122,7 +122,7 @@ function SceneDashboard() {
             <div
               key={label}
               className={`flex items-center gap-1.5 flex-row-reverse text-[9px] p-1.5 rounded-lg ${
-                active ? "bg-blue-50 text-blue-800 font-bold" : "text-slate-600"
+                active ? "bg-indigo-50 text-indigo-800 font-bold" : "text-gray-600"
               }`}
             >
               <Icon size={12} /> {label}
@@ -133,7 +133,7 @@ function SceneDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.15 }}
-          className="flex-1 rounded-xl bg-white border border-dashed border-slate-200 p-3 text-[10px] text-slate-500"
+          className="flex-1 rounded-xl bg-white border border-dashed border-gray-200 p-3 text-[10px] text-gray-500"
         >
           אזור תוכן — חיפוש ארכיון, תובנות AI, ווידג׳טים
         </motion.div>
@@ -146,24 +146,24 @@ function SceneERP() {
   return (
     <BrowserChrome>
       <div className="space-y-3">
-        <div className="flex items-center gap-2 flex-row-reverse text-[11px] font-bold text-slate-800">
+        <div className="flex items-center gap-2 flex-row-reverse text-[11px] font-bold text-gray-800">
           <ScanLine className="text-[var(--primary-color,#3b82f6)]" size={18} />
           סורק AI — העלאת חשבוניות
         </div>
         <motion.div
           animate={{ borderColor: ["#e2e8f0", "#93c5fd", "#e2e8f0"] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="rounded-2xl border-2 border-dashed p-6 text-center text-[10px] text-slate-500 bg-white"
+          className="rounded-2xl border-2 border-dashed p-6 text-center text-[10px] text-gray-500 bg-white"
         >
           גרור קבצים או לחץ להפעלת סריקה חכמה
         </motion.div>
-        <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+        <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ repeat: Infinity, duration: 2.5, repeatDelay: 0.4, ease: "easeInOut" }}
             style={{ transformOrigin: "100% 50%" }}
-            className="h-full w-[85%] rounded-full bg-blue-500 ms-auto"
+            className="h-full w-[85%] rounded-full bg-indigo-500 ms-auto"
           />
         </div>
       </div>
@@ -175,18 +175,18 @@ function SceneCRM() {
   return (
     <BrowserChrome>
       <div className="text-[10px]">
-        <div className="font-bold text-slate-800 mb-2 flex items-center gap-1 flex-row-reverse">
+        <div className="font-bold text-gray-800 mb-2 flex items-center gap-1 flex-row-reverse">
           <Users size={14} className="text-emerald-600" />
           טבלת לקוחות
         </div>
-        <div className="rounded-lg border border-slate-200 overflow-hidden bg-white">
+        <div className="rounded-lg border border-gray-200 overflow-hidden bg-white">
           {["לקוח א", "לקוח ב"].map((name, i) => (
             <motion.div
               key={name}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.2 }}
-              className="flex justify-between items-center px-2 py-2 border-b border-slate-100 text-slate-700"
+              className="flex justify-between items-center px-2 py-2 border-b border-gray-100 text-gray-700"
             >
               <span className="text-emerald-700 text-[9px] bg-emerald-50 px-1 rounded">פעיל</span>
               <span>{name}</span>
@@ -205,11 +205,11 @@ function SceneAI() {
         <motion.div
           animate={{ y: [0, -4, 0] }}
           transition={{ repeat: Infinity, duration: 2.5 }}
-          className="absolute bottom-0 left-0 w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-lg"
+          className="absolute bottom-0 left-0 w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg"
         >
           <Bot className="text-white" size={22} />
         </motion.div>
-        <div className="me-14 rounded-2xl bg-white border border-slate-200 p-3 text-[9px] text-slate-600 leading-relaxed">
+        <div className="me-14 rounded-2xl bg-white border border-gray-200 p-3 text-[9px] text-gray-600 leading-relaxed">
           עוזר פיננסי — שאלו על הוצאות, מסמכים ותובנות מהמסד שלך
         </div>
       </div>
@@ -289,32 +289,32 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-800 text-xs font-bold mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-800 text-xs font-bold mb-4"
           >
             <Sparkles size={16} /> הדרכה ויזואלית
           </motion.div>
-          <h2 className="text-3xl font-black italic text-slate-900 mb-2">איך משתמשים ב-BSD-YBM</h2>
-          <p className="text-slate-500 text-sm max-w-lg mx-auto">
+          <h2 className="text-3xl font-black italic text-gray-900 mb-2">איך משתמשים ב-BSD-YBM</h2>
+          <p className="text-gray-500 text-sm max-w-lg mx-auto">
             סדרת שקפים מונפשת — מדגימה את זרימת העבודה מהדף הראשי ועד סריקת מסמכים ועוזר ה-AI
           </p>
         </div>
       )}
 
       <div
-        className={`rounded-[2rem] border border-slate-200 bg-gradient-to-b from-white to-slate-50/90 shadow-xl ${
+        className={`rounded-[2rem] border border-gray-200 bg-gradient-to-b from-white to-gray-50/90 shadow-xl ${
           embedded ? "p-4" : "p-6 md:p-8"
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h3 className="text-lg font-black text-slate-900">{scene.title}</h3>
-            <p className="text-sm text-slate-500 mt-1">{scene.subtitle}</p>
+            <h3 className="text-lg font-black text-gray-900">{scene.title}</h3>
+            <p className="text-sm text-gray-500 mt-1">{scene.subtitle}</p>
           </div>
           <div className="flex items-center gap-2 flex-row-reverse justify-end">
             <button
               type="button"
               onClick={() => setPlaying((p) => !p)}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors"
+              className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors"
               aria-label={playing ? "השהה" : "נגן"}
             >
               {playing ? <Pause size={18} /> : <Play size={18} />}
@@ -322,7 +322,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
             <button
               type="button"
               onClick={prev}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200"
+              className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200"
               aria-label="שקף קודם"
             >
               <ChevronRight size={18} />
@@ -330,7 +330,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
             <button
               type="button"
               onClick={next}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200"
+              className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200"
               aria-label="שקף הבא"
             >
               <ChevronLeft size={18} />
@@ -345,7 +345,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
               type="button"
               onClick={() => setIndex(i)}
               className={`h-1.5 rounded-full transition-all ${
-                i === index ? "w-8 bg-[var(--primary-color,#3b82f6)]" : "w-2 bg-slate-200"
+                i === index ? "w-8 bg-[var(--primary-color,#3b82f6)]" : "w-2 bg-gray-200"
               }`}
               aria-label={`שקף ${i + 1}`}
             />
@@ -368,13 +368,13 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 transition-colors"
             >
               כניסה לדשבורד
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-slate-200 text-slate-800 text-sm font-bold hover:bg-slate-50"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-gray-200 text-gray-800 text-sm font-bold hover:bg-gray-50"
             >
               התחברות
             </Link>
@@ -383,7 +383,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
       </div>
 
       {!embedded && (
-        <p className="text-center text-xs text-slate-400 mt-6 max-w-md mx-auto">
+        <p className="text-center text-xs text-gray-400 mt-6 max-w-md mx-auto">
           זו הדרכה אינטראקטיבית מובנית באתר. ליצירת קובץ וידאו (MP4) — ניתן להקליט את המסך בזמן ניגון
           ההדרכה או לייצא מהעורך שבו אתה עורך סרטונים.
         </p>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   BlobProvider,
@@ -51,7 +51,7 @@ export default function QuoteGenerator({
         <a
           href={url ?? undefined}
           download={url ? "quote.pdf" : undefined}
-          className="bg-blue-600 px-3 py-2 rounded-lg text-sm text-white inline-block"
+          className="bg-indigo-600 px-3 py-2 rounded-lg text-sm text-white inline-block"
           aria-disabled={loading || !url}
           onClick={(e) => {
             if (!url || loading) e.preventDefault();

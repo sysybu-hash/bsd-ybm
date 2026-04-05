@@ -48,20 +48,20 @@ const TABS: { id: HubTab; label: string; short: string; Icon: typeof ScanLine }[
 ];
 
 const DOC_TYPES = [
-  { id: "invoice",  label: "חשבונית",       Icon: Receipt,        color: "text-blue-600 bg-blue-50 border-blue-200" },
+  { id: "invoice",  label: "חשבונית",       Icon: Receipt,        color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
   { id: "receipt",  label: "קבלה",          Icon: FileText,       color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
   { id: "contract", label: "חוזה",          Icon: FileSignature,  color: "text-violet-600 bg-violet-50 border-violet-200" },
   { id: "id",       label: "תעודת זהות",    Icon: IdCard,         color: "text-amber-600 bg-amber-50 border-amber-200" },
   { id: "medical",  label: "מסמך רפואי",    Icon: Stethoscope,    color: "text-rose-600 bg-rose-50 border-rose-200" },
-  { id: "custom",   label: "מותאם אישית",   Icon: Wrench,         color: "text-slate-600 bg-slate-50 border-slate-200" },
+  { id: "custom",   label: "מותאם אישית",   Icon: Wrench,         color: "text-gray-600 bg-gray-50 border-gray-200" },
 ];
 
 const QUICK_LINKS = [
-  { href: "/dashboard/erp",          title: "ERP — תפעול",       desc: "מסמכים, לוחות ודוחות",   icon: <BarChart3 size={18} />,      color: "bg-blue-50 text-blue-600 border-blue-200" },
+  { href: "/dashboard/erp",          title: "ERP — תפעול",       desc: "מסמכים, לוחות ודוחות",   icon: <BarChart3 size={18} />,      color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   { href: "/dashboard/business",     title: "CRM — לקוחות",      desc: "אנשי קשר ופרויקטים",      icon: <Users size={18} />,          color: "bg-violet-50 text-violet-600 border-violet-200" },
   { href: "/dashboard",              title: "דשבורד ראשי",        desc: "סיכום ותובנות",            icon: <Sparkles size={18} />,       color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   { href: "/dashboard/billing",      title: "מנוי ותשלומים",      desc: "חבילות ומכסות סריקה",      icon: <CreditCard size={18} />,     color: "bg-rose-50 text-rose-600 border-rose-200" },
-  { href: "/dashboard/settings",     title: "הגדרות",             desc: "ארגון, API ומשתמשים",      icon: <Settings size={18} />,       color: "bg-slate-50 text-slate-600 border-slate-200" },
+  { href: "/dashboard/settings",     title: "הגדרות",             desc: "ארגון, API ומשתמשים",      icon: <Settings size={18} />,       color: "bg-gray-50 text-gray-600 border-gray-200" },
 ] as const;
 
 const MSG_PRESETS = [

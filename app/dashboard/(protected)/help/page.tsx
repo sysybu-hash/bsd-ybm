@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 import { BookOpenCheck, CreditCard, Settings, Shield, Users } from "lucide-react";
 
@@ -32,7 +32,7 @@ export default function DashboardHelpPage() {
             secondaryLabel="בקרת מנויים"
           />
           <HelpStep
-            icon={<Settings size={18} className="text-blue-600" />}
+            icon={<Settings size={18} className="text-indigo-600" />}
             step="2"
             title="השלמת הגדרות העסק"
             description="עדכן פרטי עסק, מס, כתובת ואינטגרציות בסיסיות."
@@ -90,19 +90,19 @@ function HelpStep({
   const color = STEP_COLORS[(Number(step) - 1) % STEP_COLORS.length];
   const bg: Record<string, string> = {
     indigo: "border-indigo-100 bg-indigo-50/50",
-    blue: "border-blue-100 bg-blue-50/50",
+    blue: "border-indigo-100 bg-indigo-50/50",
     violet: "border-violet-100 bg-violet-50/50",
     emerald: "border-emerald-100 bg-emerald-50/50",
   };
   const numBg: Record<string, string> = {
     indigo: "bg-indigo-600 text-white",
-    blue: "bg-blue-600 text-white",
+    blue: "bg-indigo-600 text-white",
     violet: "bg-violet-600 text-white",
     emerald: "bg-emerald-600 text-white",
   };
   const btnPrimary: Record<string, string> = {
     indigo: "bg-indigo-600 hover:bg-indigo-700",
-    blue: "bg-blue-600 hover:bg-blue-700",
+    blue: "bg-indigo-600 hover:bg-indigo-700",
     violet: "bg-violet-600 hover:bg-violet-700",
     emerald: "bg-emerald-600 hover:bg-emerald-700",
   };

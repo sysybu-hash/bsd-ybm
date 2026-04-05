@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -31,15 +31,15 @@ export default function ForecastSimulator() {
 
   return (
     <div
-      className="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50"
+      className="bg-white p-10 rounded-[3.5rem] border border-gray-100 shadow-2xl shadow-gray-200/50"
       dir="rtl"
     >
       <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
         <div>
-          <h3 className="text-2xl font-black italic flex items-center gap-2 text-slate-900">
-            <BrainCircuit className="text-blue-500" /> חיזוי וסימולציה AI
+          <h3 className="text-2xl font-black italic flex items-center gap-2 text-gray-900">
+            <BrainCircuit className="text-indigo-500" /> חיזוי וסימולציה AI
           </h3>
-          <p className="text-slate-400 text-sm italic font-medium">
+          <p className="text-gray-400 text-sm italic font-medium">
             נתח את העתיד ושחק עם תרחישים פיננסיים
           </p>
         </div>
@@ -52,7 +52,7 @@ export default function ForecastSimulator() {
           className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${
             isSimulating
               ? "bg-rose-50 text-rose-600 border border-rose-100"
-              : "bg-blue-600 text-white shadow-lg shadow-blue-200"
+              : "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
           }`}
         >
           {isSimulating ? 'בטל סימולציה' : 'מצב "מה אם?"'}
@@ -63,15 +63,15 @@ export default function ForecastSimulator() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-wrap gap-4 items-center"
+          className="mb-8 p-6 bg-gray-50 rounded-3xl border border-gray-100 flex flex-wrap gap-4 items-center"
         >
-          <span className="text-sm font-bold text-slate-600">
+          <span className="text-sm font-bold text-gray-600">
             הוסף הוצאה צפויה (₪):
           </span>
           <input
             type="number"
             onChange={(e) => setExtraExpense(Number(e.target.value))}
-            className="bg-white border border-slate-200 p-2 rounded-lg w-32 font-bold text-blue-600"
+            className="bg-white border border-gray-200 p-2 rounded-lg w-32 font-bold text-indigo-600"
             placeholder="0"
           />
           {extraExpense > 20000 ? (

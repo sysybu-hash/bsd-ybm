@@ -98,7 +98,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_BADGE: Record<string, string> = {
   LEAD: "bg-violet-100 text-violet-700",
   ACTIVE: "bg-sky-100 text-sky-700",
-  PROPOSAL: "bg-blue-100 text-blue-700",
+  PROPOSAL: "bg-indigo-100 text-indigo-700",
   CLOSED_WON: "bg-emerald-100 text-emerald-700",
   CLOSED_LOST: "bg-rose-100 text-rose-600",
 };
@@ -185,15 +185,15 @@ function HubContent(props: Props) {
             <p className="text-xl font-black text-rose-700">{expenses > 0 ? fmtMoney(expenses) : "—"}</p>
             <p className="text-[10px] text-rose-500 mt-0.5">{docs.length} מסמכים סרוקים</p>
           </div>
-          <div className={`rounded-2xl border p-4 ${profit >= 0 ? "border-blue-100 bg-blue-50" : "border-orange-100 bg-orange-50"}`}>
+          <div className={`rounded-2xl border p-4 ${profit >= 0 ? "border-indigo-100 bg-indigo-50" : "border-orange-100 bg-orange-50"}`}>
             <div className="flex items-center gap-1.5 mb-2">
-              <CheckCircle2 size={13} className={profit >= 0 ? "text-blue-500" : "text-orange-500"} />
-              <p className={`text-xs font-bold ${profit >= 0 ? "text-blue-600" : "text-orange-600"}`}>רווח גולמי</p>
+              <CheckCircle2 size={13} className={profit >= 0 ? "text-indigo-500" : "text-orange-500"} />
+              <p className={`text-xs font-bold ${profit >= 0 ? "text-indigo-600" : "text-orange-600"}`}>רווח גולמי</p>
             </div>
-            <p className={`text-xl font-black ${profit >= 0 ? "text-blue-700" : "text-orange-700"}`}>
+            <p className={`text-xl font-black ${profit >= 0 ? "text-indigo-700" : "text-orange-700"}`}>
               {income > 0 || expenses > 0 ? fmtMoney(profit) : "—"}
             </p>
-            <p className={`text-[10px] mt-0.5 ${profit >= 0 ? "text-blue-500" : "text-orange-500"}`}>הכנסות פחות הוצאות</p>
+            <p className={`text-[10px] mt-0.5 ${profit >= 0 ? "text-indigo-500" : "text-orange-500"}`}>הכנסות פחות הוצאות</p>
           </div>
           <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
             <div className="flex items-center gap-1.5 mb-2">
@@ -269,11 +269,11 @@ function HubContent(props: Props) {
             </span>
             <ChevronDown
               size={14}
-              className={`text-slate-400 transition-transform duration-200 ${erpOpen ? "rotate-180" : ""}`}
+              className={`text-gray-400 transition-transform duration-200 ${erpOpen ? "rotate-180" : ""}`}
             />
           </button>
           {erpOpen && (
-            <div className="border-t border-slate-100 space-y-6 p-5">
+            <div className="border-t border-gray-100 space-y-6 p-5">
               {!geminiConfigured && (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
                   <strong>שים לב</strong>: מפתח Gemini חסר. סריקת AI לא תעבוד ללא{" "}

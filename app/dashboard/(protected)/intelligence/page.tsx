@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+﻿import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import {
@@ -28,16 +28,16 @@ export default async function IntelligenceDashboardPage() {
 
   return (
     <div className="space-y-10 pb-16" dir={dir}>
-      <header className="flex flex-col gap-3 border-b border-slate-200/80 pb-6">
+      <header className="flex flex-col gap-3 border-b border-gray-200/80 pb-6">
         <div>
           <h1 className="text-2xl font-black text-[var(--primary-color,#3b82f6)] md:text-3xl">
             {t("intelligencePage.title")}
           </h1>
-          <p className="mt-2 text-sm font-medium text-slate-600">
+          <p className="mt-2 text-sm font-medium text-gray-600">
             {t("intelligencePage.subtitle", { role: String(role ?? "—") })}
           </p>
           {showExecutive ? (
-            <p className="mt-2 text-xs font-semibold text-blue-700/90">{t("intelligencePage.executiveBelow")}</p>
+            <p className="mt-2 text-xs font-semibold text-indigo-700/90">{t("intelligencePage.executiveBelow")}</p>
           ) : null}
         </div>
       </header>
@@ -47,15 +47,15 @@ export default async function IntelligenceDashboardPage() {
       {showExecutive ? (
         <section
           id="executive-suite"
-          className="scroll-mt-24 space-y-6 border-t border-slate-200 pt-10"
+          className="scroll-mt-24 space-y-6 border-t border-gray-200 pt-10"
           aria-label={t("intelligencePage.dividerLabel")}
         >
           <div className="flex flex-wrap items-center gap-3">
-            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-blue-200 to-blue-400/80" />
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-blue-200 to-indigo-400/80" />
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600">
               {t("intelligencePage.dividerLabel")}
             </h2>
-            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-200 to-blue-400/80" />
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-200 to-indigo-400/80" />
           </div>
           <ExecutiveDashboardSection embedded userEmail={email} />
         </section>

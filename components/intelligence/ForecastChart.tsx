@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -54,21 +54,21 @@ export default function ForecastChart() {
 
   return (
     <div
-      className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 font-sans"
+      className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 font-sans"
       dir="rtl"
     >
-      <div className="flex flex-col md:flex-row gap-6 justify-between mb-10 border-b border-slate-100 pb-8">
+      <div className="flex flex-col md:flex-row gap-6 justify-between mb-10 border-b border-gray-100 pb-8">
         <div>
-          <h3 className="text-2xl font-black italic text-slate-950 flex items-center gap-2">
-            <BrainCircuit className="text-blue-500" /> חיזוי תזרים מזומנים AI
+          <h3 className="text-2xl font-black italic text-gray-950 flex items-center gap-2">
+            <BrainCircuit className="text-indigo-500" /> חיזוי תזרים מזומנים AI
           </h3>
-          <p className="text-slate-400 text-sm font-medium">
+          <p className="text-gray-400 text-sm font-medium">
             ניתוח היסטורי וצפי 30 יום קדימה (Gemini Ultra)
           </p>
         </div>
-        <div className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 max-w-xl text-sm text-slate-700 leading-relaxed flex items-start gap-3">
+        <div className="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 max-w-xl text-sm text-gray-700 leading-relaxed flex items-start gap-3">
           <AlertTriangle
-            className="text-blue-500 flex-shrink-0 mt-1"
+            className="text-indigo-500 flex-shrink-0 mt-1"
             size={20}
             aria-hidden
           />

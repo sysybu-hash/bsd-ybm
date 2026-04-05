@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   LineChart,
@@ -35,13 +35,13 @@ export default function PriceComparisonChart({
       : 0;
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-slate-100 space-y-6" dir={dir}>
+    <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-gray-100 space-y-6" dir={dir}>
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
-          <h3 className="text-2xl font-black text-slate-900 tracking-tighter italic">
+          <h3 className="text-2xl font-black text-gray-900 tracking-tighter italic">
             {t("priceCompare.title", { name: productName })}
           </h3>
-          <p className="text-slate-500 font-medium">{t("priceCompare.subtitle")}</p>
+          <p className="text-gray-500 font-medium">{t("priceCompare.subtitle")}</p>
         </div>
         <div
           className={`p-4 rounded-2xl flex items-center gap-2 font-black ${
@@ -58,7 +58,7 @@ export default function PriceComparisonChart({
       </div>
 
       {ordered.length === 0 ? (
-        <p className="text-center text-slate-400 py-16">{t("priceCompare.noData")}</p>
+        <p className="text-center text-gray-400 py-16">{t("priceCompare.noData")}</p>
       ) : (
         <RechartsBounded height={250}>
           <ResponsiveContainer width="100%" height="100%">
@@ -101,15 +101,15 @@ export default function PriceComparisonChart({
       )}
 
       {latest && previous ? (
-        <div className="bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100 flex gap-4 items-start">
-          <div className="bg-blue-600 text-white p-2 rounded-xl shrink-0">
+        <div className="bg-indigo-50/50 p-6 rounded-[2rem] border border-indigo-100 flex gap-4 items-start">
+          <div className="bg-indigo-600 text-white p-2 rounded-xl shrink-0">
             <Lightbulb size={20} />
           </div>
           <div>
-            <p className="text-blue-900 font-black text-sm uppercase tracking-widest">
+            <p className="text-indigo-900 font-black text-sm uppercase tracking-widest">
               {t("priceCompare.insightKicker")}
             </p>
-            <p className="text-blue-800 text-sm mt-1 leading-relaxed">
+            <p className="text-indigo-800 text-sm mt-1 leading-relaxed">
               {t("priceCompare.insightBody", {
                 diff: (latest.price - previous.price).toFixed(2),
               })}

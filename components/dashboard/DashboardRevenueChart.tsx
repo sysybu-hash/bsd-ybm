@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   Bar,
@@ -18,9 +18,9 @@ type Props = {
 
 export default function DashboardRevenueChart({ data }: Props) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-      <h4 className="text-lg font-bold text-slate-900 mb-1">הכנסות לפי חודש (מסמכים שהונפקו)</h4>
-      <p className="text-xs text-slate-500 mb-6 font-medium">
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <h4 className="text-lg font-bold text-gray-900 mb-1">הכנסות לפי חודש (מסמכים שהונפקו)</h4>
+      <p className="text-xs text-gray-500 mb-6 font-medium">
         סכום כולל מחשבוניות / קבלות שהונפקו ב־ERP — שישה חודשים אחרונים
       </p>
       <RechartsBounded height={260}>
@@ -55,7 +55,7 @@ export default function DashboardRevenueChart({ data }: Props) {
       <p className="mt-4 text-center">
         <a
           href="/dashboard/erp"
-          className="text-sm font-bold text-blue-700 hover:text-blue-800 underline underline-offset-2"
+          className="text-sm font-bold text-indigo-700 hover:text-indigo-800 underline underline-offset-2"
         >
           ניהול מסמכים ב־ERP
         </a>

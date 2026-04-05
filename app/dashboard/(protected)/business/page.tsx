@@ -70,7 +70,7 @@ export default async function BusinessPage() {
       label: t("erpPage.statDocsInView"),
       value: String(rawDocs.length),
       trend: t("erpPage.trendAllDocs"),
-      valueClass: "text-slate-900",
+      valueClass: "text-gray-900",
     },
     {
       label: t("erpPage.statAvgInvoice"),

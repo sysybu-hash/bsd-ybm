@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -239,17 +239,17 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
   return (
     <div className="mx-auto max-w-5xl space-y-6" dir="rtl">
       {/* ---- Header ---- */}
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-[32px] border border-gray-200 bg-white shadow-sm">
         <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-blue-700">Invoice workspace</p>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900">הנפקת מסמכים</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">חשבוניות, קבלות וזיכויים במסך פשוט יותר: פרטים, פריטים, בדיקה, סיום.</p>
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-white px-3 py-1 text-xs font-black text-indigo-700">Invoice workspace</p>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-gray-900">הנפקת מסמכים</h1>
+              <p className="mt-2 text-sm leading-6 text-gray-600">חשבוניות, קבלות וזיכויים במסך פשוט יותר: פרטים, פריטים, בדיקה, סיום.</p>
             </div>
             <button
               onClick={loadHistory}
-              className="flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+              className="flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
               היסטוריה
               <ChevronDown
@@ -260,26 +260,26 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-3xl border border-blue-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">סוג מסמך</p>
-              <p className="mt-1 text-lg font-black text-slate-900">{typeLabel}</p>
+            <div className="rounded-3xl border border-indigo-100 bg-white px-4 py-4">
+              <p className="text-xs font-bold text-gray-500">סוג מסמך</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{typeLabel}</p>
             </div>
             <div className="rounded-3xl border border-emerald-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">פריטים</p>
-              <p className="mt-1 text-2xl font-black text-slate-900">{items.length}</p>
+              <p className="text-xs font-bold text-gray-500">פריטים</p>
+              <p className="mt-1 text-2xl font-black text-gray-900">{items.length}</p>
             </div>
             <div className="rounded-3xl border border-violet-100 bg-white px-4 py-4">
-              <p className="text-xs font-bold text-slate-500">סה&quot;כ נוכחי</p>
-              <p className="mt-1 text-2xl font-black text-slate-900">₪{total.toLocaleString()}</p>
+              <p className="text-xs font-bold text-gray-500">סה&quot;כ נוכחי</p>
+              <p className="mt-1 text-2xl font-black text-gray-900">₪{total.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-slate-100 px-6 py-5 md:px-8">
+        <div className="border-t border-gray-100 px-6 py-5 md:px-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-base font-black text-slate-900">התקדמות מונחית</h2>
-              <p className="mt-1 text-sm text-slate-500">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
+              <h2 className="text-base font-black text-gray-900">התקדמות מונחית</h2>
+              <p className="mt-1 text-sm text-gray-500">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {[1, 2, 3, 4].map((s) => (
@@ -289,8 +289,8 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onClick={() => setWizardStep(s as 1 | 2 | 3 | 4)}
                   className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
                     wizardStep === s
-                      ? "bg-slate-900 text-white"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                      ? "bg-gray-900 text-white"
+                      : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {s === 1 ? "1. פרטים" : s === 2 ? "2. פריטים" : s === 3 ? "3. בדיקה" : "4. סיום"}
@@ -341,12 +341,12 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
       {/* ════════ Form Card ════════ */}
       <motion.div
         layout
-        className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+        className="rounded-[30px] border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
       >
         {wizardStep === 1 && (
           <>
-            <label className="mb-2 block text-sm font-bold text-slate-600">סוג מסמך</label>
-            <p className="mb-5 text-sm leading-6 text-slate-500">בוחרים קודם את סוג המסמך ואת פרטי הלקוח, ורק אחר כך ממשיכים לפריטים.</p>
+            <label className="mb-2 block text-sm font-bold text-gray-600">סוג מסמך</label>
+            <p className="mb-5 text-sm leading-6 text-gray-500">בוחרים קודם את סוג המסמך ואת פרטי הלקוח, ורק אחר כך ממשיכים לפריטים.</p>
             <div className="mb-6 flex flex-wrap gap-2">
               {DOC_TYPES.map(({ value, label, icon: Icon }) => (
                 <button
@@ -356,7 +356,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
                     docType === value
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
-                      : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                      : "border border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
                   }`}
                 >
                   <Icon size={16} />
@@ -367,7 +367,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
 
             <div className="mb-6 grid gap-4 sm:grid-cols-2">
               <div className="relative">
-                <label className="mb-1.5 block text-sm font-bold text-slate-600">שם לקוח</label>
+                <label className="mb-1.5 block text-sm font-bold text-gray-600">שם לקוח</label>
                 <input
                   type="text"
                   value={clientName}
@@ -375,14 +375,14 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onFocus={() => clientName && setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   placeholder="לדוגמה: חברת אלפא בע״מ — או חפש מ-CRM"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
                 {contactId && (
                   <span className="absolute end-3 top-10 text-[10px] font-black text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">CRM ✓</span>
                 )}
                 {showSuggestions && crmSuggestions.length > 0 && (
-                  <div className="absolute z-50 top-full mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden">
-                    <p className="px-3 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-100">לקוחות CRM</p>
+                  <div className="absolute z-50 top-full mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-xl overflow-hidden">
+                    <p className="px-3 py-1.5 text-[9px] font-black text-gray-400 uppercase tracking-wider border-b border-gray-100">לקוחות CRM</p>
                     {crmSuggestions.map(c => (
                       <button
                         key={c.id}
@@ -390,7 +390,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                         onMouseDown={() => selectCrmContact(c)}
                         className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-indigo-50 transition"
                       >
-                        <span className="font-bold text-slate-900">{c.name}</span>
+                        <span className="font-bold text-gray-900">{c.name}</span>
                         {c.value != null && <span className="text-xs text-emerald-600 font-black">₪{c.value.toLocaleString()}</span>}
                       </button>
                     ))}
@@ -398,12 +398,12 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                 )}
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-bold text-slate-600">תאריך יעד לתשלום</label>
+                <label className="mb-1.5 block text-sm font-bold text-gray-600">תאריך יעד לתשלום</label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
               </div>
             </div>
@@ -419,55 +419,55 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
 
         {wizardStep === 2 && (
           <>
-            <label className="mb-2 block text-sm font-bold text-slate-600">פריטים</label>
-            <p className="mb-5 text-sm leading-6 text-slate-500">כל שורה נשארת פשוטה: תיאור, כמות, מחיר וסכום שורה.</p>
+            <label className="mb-2 block text-sm font-bold text-gray-600">פריטים</label>
+            <p className="mb-5 text-sm leading-6 text-gray-500">כל שורה נשארת פשוטה: תיאור, כמות, מחיר וסכום שורה.</p>
             <div className="space-y-3">
               {items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-wrap items-end gap-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3 sm:flex-nowrap"
+                  className="flex flex-wrap items-end gap-2 rounded-xl border border-gray-100 bg-gray-50/60 p-3 sm:flex-nowrap"
                 >
                   <div className="min-w-0 flex-1">
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">תיאור</label>
+                    <label className="mb-1 block text-xs font-semibold text-gray-500">תיאור</label>
                     <input
                       type="text"
                       value={item.desc}
                       onChange={(e) => updateItem(idx, "desc", e.target.value)}
                       placeholder="תיאור הפריט"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                     />
                   </div>
                   <div className="w-20">
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">כמות</label>
+                    <label className="mb-1 block text-xs font-semibold text-gray-500">כמות</label>
                     <input
                       type="number"
                       min={1}
                       value={item.qty}
                       onChange={(e) => updateItem(idx, "qty", Math.max(1, +e.target.value))}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                     />
                   </div>
                   <div className="w-28">
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">מחיר ליח׳ ₪</label>
+                    <label className="mb-1 block text-xs font-semibold text-gray-500">מחיר ליח׳ ₪</label>
                     <input
                       type="number"
                       min={0}
                       step={0.01}
                       value={item.price || ""}
                       onChange={(e) => updateItem(idx, "price", Math.max(0, +e.target.value))}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                     />
                   </div>
                   <div className="w-24 text-left">
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">סה״כ</label>
-                    <span className="block py-2 text-sm font-bold text-slate-700">
+                    <label className="mb-1 block text-xs font-semibold text-gray-500">סה״כ</label>
+                    <span className="block py-2 text-sm font-bold text-gray-700">
                       ₪{(item.qty * item.price).toLocaleString()}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeItem(idx)}
-                    className="mb-0.5 rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                    className="mb-0.5 rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
                     aria-label="הסר פריט"
                   >
                     <Trash2 size={16} />
@@ -487,7 +487,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <button
                 type="button"
                 onClick={() => setWizardStep(1)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50"
               >
                 חזרה לפרטי מסמך
               </button>
@@ -504,22 +504,22 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
 
         {wizardStep === 3 && (
           <>
-            <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 text-sm">
-              <p className="font-bold text-slate-800">סיכום לפני הנפקה</p>
-              <p className="mt-1 text-slate-600">{typeLabel} עבור {clientName || "לקוח ללא שם"}</p>
-              <p className="text-slate-600">פריטים: {items.length}</p>
+            <div className="rounded-[24px] border border-gray-200 bg-gray-50 p-5 text-sm">
+              <p className="font-bold text-gray-800">סיכום לפני הנפקה</p>
+              <p className="mt-1 text-gray-600">{typeLabel} עבור {clientName || "לקוח ללא שם"}</p>
+              <p className="text-gray-600">פריטים: {items.length}</p>
             </div>
 
-            <div className="mt-6 space-y-1 border-t border-slate-100 pt-4 text-left">
-              <div className="flex justify-between text-sm text-slate-500">
+            <div className="mt-6 space-y-1 border-t border-gray-100 pt-4 text-left">
+              <div className="flex justify-between text-sm text-gray-500">
                 <span>סכום לפני מע״מ</span>
-                <span className="font-semibold text-slate-700">₪{subtotal.toLocaleString()}</span>
+                <span className="font-semibold text-gray-700">₪{subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-sm text-slate-500">
+              <div className="flex justify-between text-sm text-gray-500">
                 <span>מע״מ (17%)</span>
-                <span className="font-semibold text-slate-700">₪{vat.toLocaleString()}</span>
+                <span className="font-semibold text-gray-700">₪{vat.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-base font-extrabold text-slate-800">
+              <div className="flex justify-between text-base font-extrabold text-gray-800">
                 <span>סה״כ לתשלום</span>
                 <span className="text-indigo-600">₪{total.toLocaleString()}</span>
               </div>
@@ -529,7 +529,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <button
                 type="button"
                 onClick={() => setWizardStep(2)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50"
               >
                 חזרה לעריכת פריטים
               </button>
@@ -581,39 +581,39 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
+            className="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-sm"
           >
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="text-lg font-extrabold text-slate-800">מסמכים שהונפקו</h2>
+            <div className="border-b border-gray-100 px-6 py-4">
+              <h2 className="text-lg font-extrabold text-gray-800">מסמכים שהונפקו</h2>
             </div>
             {history.length === 0 ? (
-              <p className="px-6 py-8 text-center text-sm text-slate-400">
+              <p className="px-6 py-8 text-center text-sm text-gray-400">
                 לא הונפקו מסמכים עדיין
               </p>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-gray-100">
                 {history.map((doc) => {
                   const dt = DOC_TYPES.find((t) => t.value === doc.type);
                   const Icon = dt?.icon ?? FileText;
                   return (
                     <div
                       key={doc.id}
-                      className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-slate-50"
+                      className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                         <Icon size={18} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-bold text-slate-700">
+                        <p className="truncate text-sm font-bold text-gray-700">
                           {dt?.label} #{doc.number}
                         </p>
-                        <p className="text-xs text-slate-400">{doc.clientName}</p>
+                        <p className="text-xs text-gray-400">{doc.clientName}</p>
                       </div>
                       <div className="text-left">
-                        <p className="text-sm font-bold text-slate-700">
+                        <p className="text-sm font-bold text-gray-700">
                           ₪{doc.total.toLocaleString()}
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-gray-400">
                           {new Date(doc.date).toLocaleDateString("he-IL")}
                         </p>
                       </div>

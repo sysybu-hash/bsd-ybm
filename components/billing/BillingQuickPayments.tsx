@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -51,8 +51,8 @@ export default function BillingQuickPayments({ presets }: Props) {
           <Zap size={22} aria-hidden />
         </div>
         <div>
-          <h2 className="text-xl font-black text-slate-900">אפשרויות תשלום וגבייה</h2>
-          <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+          <h2 className="text-xl font-black text-gray-900">אפשרויות תשלום וגבייה</h2>
+          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
             <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
             <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
             <Link href="/dashboard/settings?tab=billing" className="font-bold text-indigo-700 underline">
@@ -94,7 +94,7 @@ export default function BillingQuickPayments({ presets }: Props) {
 
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end max-w-xl">
         <div className="flex-1">
-          <label className="block text-xs font-bold text-slate-500 mb-1">סכום מותאם (בקשת גבייה)</label>
+          <label className="block text-xs font-bold text-gray-500 mb-1">סכום מותאם (בקשת גבייה)</label>
           <input
             type="text"
             inputMode="decimal"
@@ -102,14 +102,14 @@ export default function BillingQuickPayments({ presets }: Props) {
             onChange={(e) => setCustom(e.target.value)}
             placeholder="למשל: 150"
             dir="ltr"
-            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 font-mono text-sm"
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 font-mono text-sm"
           />
         </div>
         <button
           type="button"
           disabled={pending}
           onClick={applyCustom}
-          className="rounded-xl bg-blue-600 text-white px-6 py-2.5 text-sm font-black hover:bg-blue-700 disabled:opacity-50 shrink-0"
+          className="rounded-xl bg-indigo-600 text-white px-6 py-2.5 text-sm font-black hover:bg-indigo-700 disabled:opacity-50 shrink-0"
         >
           צור בקשה
         </button>

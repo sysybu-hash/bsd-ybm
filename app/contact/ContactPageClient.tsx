@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
@@ -13,38 +13,38 @@ export default function ContactPageClient() {
 
   return (
     <MarketingPublicShell title={t("contactPage.title")}>
-      <p className="mb-8 text-lg leading-relaxed text-slate-600">{t("contactPage.intro")}</p>
+      <p className="mb-8 text-lg leading-relaxed text-gray-600">{t("contactPage.intro")}</p>
 
       <ul
-        className="card-avenue space-y-5 bg-white p-6 text-slate-800 shadow-lg shadow-slate-200/40"
+        className="card-avenue space-y-5 bg-white p-6 text-gray-800 shadow-lg shadow-gray-200/40"
         dir={dir}
       >
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-700/90">
             {t("contactPage.addressLabel")}
           </span>
-          <span className="mt-1 block text-base font-medium text-slate-900">
+          <span className="mt-1 block text-base font-medium text-gray-900">
             {t("marketingDrawer.contactAddress")}
           </span>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-700/90">
             {t("contactPage.phoneLabel")}
           </span>
           <a
             href="tel:+972525640021"
-            className="mt-1 block text-lg font-semibold text-blue-700 hover:text-blue-900 underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-indigo-700 hover:text-indigo-900 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactPhone")}
           </a>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-blue-700/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-700/90">
             {t("contactPage.emailLabel")}
           </span>
           <a
             href="mailto:sysybu@gmail.com"
-            className="mt-1 block text-lg font-semibold text-blue-700 hover:text-blue-900 underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-indigo-700 hover:text-indigo-900 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactEmail")}
           </a>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 
 type Props = Readonly<{
@@ -8,7 +8,7 @@ type Props = Readonly<{
 
 export default function AuthPageShell({ children, secondaryNav }: Props) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f5ff] text-slate-900" dir="rtl">
+    <div className="min-h-screen flex flex-col bg-[#f5f5ff] text-gray-900" dir="rtl">
       {/* Navbar */}
       <header className="bg-indigo-950 border-b border-indigo-800/40">
         <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-4 sm:px-6">

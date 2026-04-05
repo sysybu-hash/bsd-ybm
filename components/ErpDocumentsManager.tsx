@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -78,15 +78,15 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
   if (sorted.length === 0) {
     return (
       <div
-        className="col-span-full flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/80 px-6 py-16 text-center"
+        className="col-span-full flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/80 px-6 py-16 text-center"
         dir={dir}
       >
-        <div className="rounded-2xl bg-blue-50 p-4 text-blue-600 ring-1 ring-blue-100">
+        <div className="rounded-2xl bg-indigo-50 p-4 text-indigo-600 ring-1 ring-indigo-100">
           <FileText size={40} strokeWidth={1.25} aria-hidden />
         </div>
         <div>
-          <h3 className="text-lg font-black text-slate-900">אין מסמכים בספרייה</h3>
-          <p className="mt-1 max-w-md text-sm text-slate-500">
+          <h3 className="text-lg font-black text-gray-900">אין מסמכים בספרייה</h3>
+          <p className="mt-1 max-w-md text-sm text-gray-500">
             העלו חשבונית או מסמך דרך אזור הסריקה בדף ERP — המסמכים יופיעו כאן בטבלה מסודרת.
           </p>
         </div>
@@ -102,11 +102,11 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
     <div className="col-span-full space-y-4" dir={dir}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-black italic text-slate-900 flex items-center gap-2">
-            <FileText className="text-blue-600" size={22} aria-hidden />
+          <h2 className="text-xl font-black italic text-gray-900 flex items-center gap-2">
+            <FileText className="text-indigo-600" size={22} aria-hidden />
             מסמכים ופענוח AI
           </h2>
-          <p className="mt-0.5 text-sm text-slate-500">ניהול, תצוגה מקדימה ועריכת שדות שחולצו</p>
+          <p className="mt-0.5 text-sm text-gray-500">ניהול, תצוגה מקדימה ועריכת שדות שחולצו</p>
         </div>
       </div>
 
@@ -117,20 +117,20 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
           return (
             <div key={doc.id} className="card-avenue p-4">
               <div className="mb-3 flex items-start justify-between gap-2">
-                <span className="flex items-center gap-1 text-xs text-slate-400">
+                <span className="flex items-center gap-1 text-xs text-gray-400">
                   <Calendar size={12} aria-hidden />
                   {new Date(doc.createdAt).toLocaleDateString("he-IL")}
                 </span>
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-600">
                   {doc.status}
                 </span>
               </div>
-              <p className="truncate text-xs text-slate-500" title={doc.fileName}>
+              <p className="truncate text-xs text-gray-500" title={doc.fileName}>
                 {doc.fileName}
               </p>
-              <h3 className="text-base font-black text-slate-900">{ai.vendor || "ספק כללי"}</h3>
-              <p className="text-lg font-black text-slate-900">₪{ai.total ?? 0}</p>
-              <p className="mt-1 line-clamp-2 min-h-8 text-xs italic text-slate-500">
+              <h3 className="text-base font-black text-gray-900">{ai.vendor || "ספק כללי"}</h3>
+              <p className="text-lg font-black text-gray-900">₪{ai.total ?? 0}</p>
+              <p className="mt-1 line-clamp-2 min-h-8 text-xs italic text-gray-500">
                 {ai.summary ? `„${ai.summary}"` : "לא חולץ תקציר"}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -157,16 +157,16 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
       </div>
 
       {/* דסקטופ — טבלה */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-100/80">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-gray-200/90 bg-white shadow-sm ring-1 ring-gray-100/80">
         <table className="min-w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-blue-50/90 text-start">
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">תאריך</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">קובץ</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">ספק</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">סכום</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">סטטוס</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-blue-900">פעולות</th>
+            <tr className="border-b border-gray-200 bg-indigo-50/90 text-start">
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">תאריך</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">קובץ</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">ספק</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">סכום</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">סטטוס</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-indigo-900">פעולות</th>
             </tr>
           </thead>
           <tbody>
@@ -175,18 +175,18 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
               return (
                 <tr
                   key={doc.id}
-                  className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50/80"
+                  className="border-b border-gray-100 transition-colors last:border-0 hover:bg-gray-50/80"
                 >
-                  <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                  <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                     {new Date(doc.createdAt).toLocaleDateString("he-IL")}
                   </td>
-                  <td className="max-w-[10rem] truncate px-4 py-3 font-medium text-slate-800" title={doc.fileName}>
+                  <td className="max-w-[10rem] truncate px-4 py-3 font-medium text-gray-800" title={doc.fileName}>
                     {doc.fileName}
                   </td>
-                  <td className="px-4 py-3 font-bold text-slate-900">{ai.vendor || "—"}</td>
-                  <td className="px-4 py-3 font-black tabular-nums text-slate-900">₪{ai.total ?? 0}</td>
+                  <td className="px-4 py-3 font-bold text-gray-900">{ai.vendor || "—"}</td>
+                  <td className="px-4 py-3 font-black tabular-nums text-gray-900">₪{ai.total ?? 0}</td>
                   <td className="px-4 py-3">
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">
+                    <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600">
                       {doc.status}
                     </span>
                   </td>
@@ -227,7 +227,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
 
       {previewDoc ? (
         <div
-          className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[220] flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-sm"
           onClick={() => setPreviewDoc(null)}
           role="presentation"
         >
@@ -238,28 +238,28 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             aria-modal="true"
             aria-labelledby="preview-doc-title"
           >
-            <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <h3 id="preview-doc-title" className="text-xl font-black text-slate-900">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4">
+              <h3 id="preview-doc-title" className="text-xl font-black text-gray-900">
                 תצוגה מקדימה
               </h3>
               <button
                 type="button"
                 onClick={() => setPreviewDoc(null)}
-                className="rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-50"
+                className="rounded-xl border border-gray-200 p-2 text-gray-600 transition hover:bg-gray-50"
                 aria-label="סגור"
               >
                 <X size={18} />
               </button>
             </div>
-            <p className="text-sm text-slate-600">
-              <span className="font-bold text-slate-800">שם קובץ:</span> {previewDoc.fileName}
+            <p className="text-sm text-gray-600">
+              <span className="font-bold text-gray-800">שם קובץ:</span> {previewDoc.fileName}
             </p>
-            <p className="mt-1 text-sm text-slate-600">
-              <span className="font-bold text-slate-800">סוג:</span> {previewDoc.type}
+            <p className="mt-1 text-sm text-gray-600">
+              <span className="font-bold text-gray-800">סוג:</span> {previewDoc.type}
             </p>
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">JSON פענוח</p>
-              <pre className="max-h-[40vh] overflow-auto text-xs text-slate-700 whitespace-pre-wrap break-all">
+            <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">JSON פענוח</p>
+              <pre className="max-h-[40vh] overflow-auto text-xs text-gray-700 whitespace-pre-wrap break-all">
                 {JSON.stringify(previewDoc.aiData ?? {}, null, 2)}
               </pre>
             </div>
@@ -269,7 +269,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
 
       {editDoc ? (
         <div
-          className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[220] flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-sm"
           onClick={() => setEditDoc(null)}
           role="presentation"
         >
@@ -280,14 +280,14 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             aria-modal="true"
             aria-labelledby="edit-doc-title"
           >
-            <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <h3 id="edit-doc-title" className="text-xl font-black text-slate-900">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4">
+              <h3 id="edit-doc-title" className="text-xl font-black text-gray-900">
                 עריכת מסמך
               </h3>
               <button
                 type="button"
                 onClick={() => setEditDoc(null)}
-                className="rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-50"
+                className="rounded-xl border border-gray-200 p-2 text-gray-600 transition hover:bg-gray-50"
                 aria-label="סגור"
               >
                 <X size={18} />
@@ -295,31 +295,31 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             </div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <label className="block md:col-span-2">
-                <span className="mb-1 block text-xs font-bold text-slate-500">שם קובץ</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">שם קובץ</span>
                 <input
                   value={editDoc.fileName}
                   onChange={(e) => setEditDoc({ ...editDoc, fileName: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block">
-                <span className="mb-1 block text-xs font-bold text-slate-500">סוג</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">סוג</span>
                 <input
                   value={editDoc.type}
                   onChange={(e) => setEditDoc({ ...editDoc, type: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block">
-                <span className="mb-1 block text-xs font-bold text-slate-500">סטטוס</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">סטטוס</span>
                 <input
                   value={editDoc.status}
                   onChange={(e) => setEditDoc({ ...editDoc, status: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block">
-                <span className="mb-1 block text-xs font-bold text-slate-500">ספק</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">ספק</span>
                 <input
                   value={String(readAi(editDoc.aiData).vendor ?? "")}
                   onChange={(e) =>
@@ -328,11 +328,11 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                       aiData: { ...readAi(editDoc.aiData), vendor: e.target.value },
                     })
                   }
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block">
-                <span className="mb-1 block text-xs font-bold text-slate-500">סכום כולל</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">סכום כולל</span>
                 <input
                   value={String(readAi(editDoc.aiData).total ?? "")}
                   onChange={(e) =>
@@ -341,11 +341,11 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                       aiData: { ...readAi(editDoc.aiData), total: e.target.value },
                     })
                   }
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block md:col-span-2">
-                <span className="mb-1 block text-xs font-bold text-slate-500">סוג מסמך</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">סוג מסמך</span>
                 <input
                   value={String(readAi(editDoc.aiData).docType ?? "")}
                   onChange={(e) =>
@@ -354,11 +354,11 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                       aiData: { ...readAi(editDoc.aiData), docType: e.target.value },
                     })
                   }
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
               <label className="block md:col-span-2">
-                <span className="mb-1 block text-xs font-bold text-slate-500">תקציר</span>
+                <span className="mb-1 block text-xs font-bold text-gray-500">תקציר</span>
                 <textarea
                   value={String(readAi(editDoc.aiData).summary ?? "")}
                   onChange={(e) =>
@@ -368,16 +368,16 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                     })
                   }
                   rows={4}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
             </div>
-            <div className="mt-6 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+            <div className="mt-6 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
               <button type="button" disabled={saving} onClick={() => void saveEdit()} className="btn-primary text-sm">
                 <Save size={16} aria-hidden />
                 {saving ? "שומר…" : "שמור שינויים"}
               </button>
-              <button type="button" onClick={() => setEditDoc(null)} className="btn-ghost border border-slate-200 text-sm">
+              <button type="button" onClick={() => setEditDoc(null)} className="btn-ghost border border-gray-200 text-sm">
                 ביטול
               </button>
             </div>

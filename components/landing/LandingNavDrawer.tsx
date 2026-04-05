@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -46,10 +46,10 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-200 hover:bg-blue-50/60"
+      className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition hover:border-indigo-200 hover:bg-indigo-50/60"
     >
-      <span className="rounded-lg bg-blue-50 p-1.5">
-        <Icon className="h-4 w-4 text-blue-600" aria-hidden />
+      <span className="rounded-lg bg-indigo-50 p-1.5">
+        <Icon className="h-4 w-4 text-indigo-600" aria-hidden />
       </span>
       {label}
     </Link>
@@ -67,7 +67,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
     <Dialog open={open} onClose={onClose} className="relative z-[200]">
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[201] bg-slate-900/30 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
+        className="fixed inset-0 z-[201] bg-gray-900/30 backdrop-blur-sm transition duration-300 ease-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 z-[202] overflow-hidden" dir={dir}>
@@ -75,10 +75,10 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-slate-200 bg-white shadow-2xl shadow-slate-300/30 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
+              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-gray-200 bg-white shadow-2xl shadow-gray-300/30 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
             >
               {/* Header */}
-              <div className="relative flex items-center justify-between gap-2 border-b border-slate-100 bg-white px-4 py-3.5">
+              <div className="relative flex items-center justify-between gap-2 border-b border-gray-100 bg-white px-4 py-3.5">
                 <DialogTitle className="sr-only">
                   {t("marketingDrawer.navAria")}
                 </DialogTitle>
@@ -88,7 +88,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <button
                   type="button"
                   onClick={close}
-                  className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                  className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
                   aria-label={t("marketingDrawer.closeMenu")}
                 >
                   <X className="h-5 w-5" aria-hidden />
@@ -96,7 +96,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
               </div>
 
               {/* לוגו */}
-              <div className="border-b border-slate-100 px-4 py-4">
+              <div className="border-b border-gray-100 px-4 py-4">
                 <div className="mx-auto max-h-20 w-full max-w-[14rem]">
                   <Image
                     src={HERO_LOGO}
@@ -119,21 +119,21 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <NavRow href="/contact" icon={Mail} label={t("marketingDrawer.contact")} onNavigate={close} />
 
                 {/* כרטיס פרטי קשר */}
-                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700">
-                  <p className="mb-2 font-bold text-slate-900">
+                <div className="mt-2 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm leading-relaxed text-gray-700">
+                  <p className="mb-2 font-bold text-gray-900">
                     {t("marketingDrawer.contact")}
                   </p>
-                  <p className="text-slate-600 text-xs">{t("marketingDrawer.contactAddress")}</p>
+                  <p className="text-gray-600 text-xs">{t("marketingDrawer.contactAddress")}</p>
                   <a
                     href="tel:+972525640021"
-                    className="mt-2 block font-medium text-slate-800 hover:text-blue-700"
+                    className="mt-2 block font-medium text-gray-800 hover:text-indigo-700"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactPhone")}
                   </a>
                   <a
                     href="mailto:sysybu@gmail.com"
-                    className="mt-1 block font-medium text-blue-600 hover:text-blue-800"
+                    className="mt-1 block font-medium text-indigo-600 hover:text-indigo-800"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactEmail")}
@@ -155,7 +155,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   href={pricingHref}
                   scroll={pathname === "/"}
                   onClick={close}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3.5 text-sm font-black text-blue-700 shadow-sm transition hover:bg-blue-100"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3.5 text-sm font-black text-indigo-700 shadow-sm transition hover:bg-indigo-100"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden />
                   {t("marketingDrawer.subscribe")}
@@ -164,14 +164,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/dashboard/billing"
                   onClick={close}
-                  className="text-center text-xs font-semibold text-slate-400 underline-offset-2 hover:text-blue-700 hover:underline"
+                  className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-indigo-700 hover:underline"
                 >
                   {t("marketingDrawer.billingLink")}
                 </Link>
               </nav>
 
               {/* Footer — כניסה/הרשמה */}
-              <div className="relative border-t border-slate-100 px-4 py-5 space-y-2">
+              <div className="relative border-t border-gray-100 px-4 py-5 space-y-2">
                 <Link
                   href="/login"
                   onClick={close}
@@ -183,11 +183,11 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/dashboard"
                   onClick={close}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-100"
                 >
                   <LayoutDashboard size={15} /> לדשבורד
                 </Link>
-                <p className="text-center text-[0.8rem] font-medium italic leading-snug text-slate-500 pt-1">
+                <p className="text-center text-[0.8rem] font-medium italic leading-snug text-gray-500 pt-1">
                   {t("marketingDrawer.brandQuote")}
                 </p>
               </div>

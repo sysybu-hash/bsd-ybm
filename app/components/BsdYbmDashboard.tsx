@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -149,8 +149,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
   const quickCards = [
     { href: "/dashboard/crm", icon: <Users size={20} />, label: "לקוחות", desc: "ניהול CRM", gradient: "from-violet-500 to-purple-600", shadow: "shadow-violet-500/25" },
     { href: "/dashboard/erp", icon: <FileText size={20} />, label: "מסמכים", desc: "חשבוניות והצעות", gradient: "from-emerald-500 to-teal-600", shadow: "shadow-emerald-500/25" },
-    { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", gradient: "from-indigo-500 to-blue-600", shadow: "shadow-indigo-500/25" },
-    { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", gradient: "from-slate-500 to-slate-700", shadow: "shadow-slate-500/25" },
+    { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", gradient: "from-indigo-500 to-indigo-600", shadow: "shadow-indigo-500/25" },
+    { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", gradient: "from-gray-500 to-gray-700", shadow: "shadow-gray-500/25" },
   ];
 
   return (
@@ -179,7 +179,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <h1 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
               {greeting}, {firstName}
             </h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-gray-400">
               {new Date().toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
             </p>
           </div>
@@ -210,14 +210,14 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <Link
             key={c.href}
             href={c.href}
-            className="group relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            className="group relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
           >
             <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${c.gradient} text-white shadow-lg ${c.shadow}`}>
               {c.icon}
             </div>
-            <p className="text-sm font-black text-slate-900">{c.label}</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">{c.desc}</p>
-            <ArrowUpRight size={14} className="absolute top-4 end-4 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100" />
+            <p className="text-sm font-black text-gray-900">{c.label}</p>
+            <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
+            <ArrowUpRight size={14} className="absolute top-4 end-4 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
         ))}
       </div>
@@ -228,22 +228,22 @@ export default function BsdYbmDashboard({ homeData }: Props) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
         {/* Revenue card — 5 cols */}
-        <div className="lg:col-span-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
+        <div className="lg:col-span-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
                 <BarChart3 size={15} className="text-indigo-600" />
               </div>
-              <p className="text-sm font-black text-slate-900">הכנסות</p>
+              <p className="text-sm font-black text-gray-900">הכנסות</p>
             </div>
             <Link href="/dashboard/erp" className="text-[11px] font-bold text-indigo-600 hover:underline">
               ERP
             </Link>
           </div>
-          <p className="text-[10px] text-slate-400 mb-4">{monthTitle}</p>
+          <p className="text-[10px] text-gray-400 mb-4">{monthTitle}</p>
 
           <div className="mb-5">
-            <p className="text-4xl font-black tabular-nums text-slate-900 tracking-tight">
+            <p className="text-4xl font-black tabular-nums text-gray-900 tracking-tight">
               &#8362;{fmt(animatedRevenue)}
             </p>
             {monthChangePct !== null ? (
@@ -254,16 +254,16 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 {Math.abs(monthChangePct).toFixed(1)}%
               </span>
             ) : (
-              <p className="mt-1 text-[11px] text-slate-400">הנפיקו מסמכים ב-ERP</p>
+              <p className="mt-1 text-[11px] text-gray-400">הנפיקו מסמכים ב-ERP</p>
             )}
           </div>
 
           {monthlySeries.length > 0 ? (
             <DashboardRevenueChart data={monthlySeries} />
           ) : (
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
-              <PieChart className="text-slate-300" size={28} strokeWidth={1.25} />
-              <p className="text-xs text-slate-500">עוד אין נתונים</p>
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
+              <PieChart className="text-gray-300" size={28} strokeWidth={1.25} />
+              <p className="text-xs text-gray-500">עוד אין נתונים</p>
             </div>
           )}
         </div>
@@ -278,7 +278,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               background: "linear-gradient(135deg, #312e81 0%, #4338ca 50%, #3730a3 100%)",
             }}
           >
-            <div className="pointer-events-none absolute -top-10 -end-10 h-40 w-40 rounded-full bg-blue-400/20 blur-2xl" aria-hidden />
+            <div className="pointer-events-none absolute -top-10 -end-10 h-40 w-40 rounded-full bg-indigo-400/20 blur-2xl" aria-hidden />
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -339,13 +339,13 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           </div>
 
           {/* Recent contacts */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100 flex-1">
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 flex-1">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
                   <Users size={15} className="text-violet-600" />
                 </div>
-                <p className="text-sm font-black text-slate-900">לקוחות אחרונים</p>
+                <p className="text-sm font-black text-gray-900">לקוחות אחרונים</p>
               </div>
               <Link href="/dashboard/crm" className="text-[11px] font-bold text-violet-600 hover:underline">
                 הכל
@@ -353,9 +353,9 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             </div>
 
             {recentContacts.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
-                <Users className="text-slate-300" size={24} strokeWidth={1.25} />
-                <p className="text-xs text-slate-500">אין לקוחות עדיין</p>
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
+                <Users className="text-gray-300" size={24} strokeWidth={1.25} />
+                <p className="text-xs text-gray-500">אין לקוחות עדיין</p>
                 <Link href="/dashboard/crm" className="text-xs font-bold text-violet-600 hover:underline">
                   הוספת לקוח
                 </Link>
@@ -366,20 +366,20 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                   <Link
                     key={c.id}
                     href="/dashboard/crm"
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 hover:bg-slate-50 transition-colors group"
+                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 hover:bg-gray-50 transition-colors group"
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-400 to-indigo-500 text-[11px] font-black text-white">
                         {c.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-slate-800">{c.name}</p>
-                        <p className="truncate text-[10px] text-slate-400" dir="ltr">{c.email ?? "—"}</p>
+                        <p className="truncate text-sm font-bold text-gray-800">{c.name}</p>
+                        <p className="truncate text-[10px] text-gray-400" dir="ltr">{c.email ?? "—"}</p>
                       </div>
                     </div>
                     <span className={`shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-bold ${
                       c.status === "CLOSED_WON" ? "bg-emerald-50 text-emerald-700" :
-                      c.status === "CLOSED_LOST" ? "bg-slate-100 text-slate-500" :
+                      c.status === "CLOSED_LOST" ? "bg-gray-100 text-gray-500" :
                       c.status === "PROPOSAL" ? "bg-indigo-50 text-indigo-700" :
                       "bg-violet-50 text-violet-700"
                     }`}>{c.statusLabel}</span>

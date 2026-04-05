@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
@@ -317,7 +317,7 @@ export default function MultiEngineScanner({
     processing || files.length === 0 || status !== "authenticated" || selectedIds.length === 0;
 
   const crystalActionClass =
-    "border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/60 transition-colors";
+    "border border-gray-200 bg-white text-gray-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/60 transition-colors";
 
   const onSaveToDocumentInbox = async () => {
     const out = await executeMultiScan();
@@ -348,12 +348,12 @@ export default function MultiEngineScanner({
 
   const shellClass = `flex flex-col scroll-mt-24 bg-white relative overflow-hidden ${
     fillHeight
-      ? "min-h-[min(92vh,860px)] flex-1 rounded-2xl border border-slate-200/80 p-6 shadow-sm md:p-8"
-      : "min-h-[320px] rounded-2xl border border-slate-200/80 p-8 shadow-sm lg:p-10"
+      ? "min-h-[min(92vh,860px)] flex-1 rounded-2xl border border-gray-200/80 p-6 shadow-sm md:p-8"
+      : "min-h-[320px] rounded-2xl border border-gray-200/80 p-8 shadow-sm lg:p-10"
   }`;
 
   const dropIdle =
-    "border-slate-200 bg-slate-50/50 hover:bg-indigo-50/30 hover:border-indigo-300 transition-colors";
+    "border-gray-200 bg-gray-50/50 hover:bg-indigo-50/30 hover:border-indigo-300 transition-colors";
 
   const dropActive = "border-indigo-500 bg-indigo-50/40 scale-[0.995]";
 
@@ -373,10 +373,10 @@ export default function MultiEngineScanner({
             <Brain className="text-indigo-600" size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-extrabold text-slate-800">
+            <h2 className="text-xl font-extrabold text-gray-800">
               סורק ה-AI הרב-מנועי
             </h2>
-            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+            <p className="mt-1 text-sm leading-relaxed text-gray-500">
               {SCAN_ACCEPT_SUMMARY}. ניתן להעלות מספר קבצים יחד.
               בחר מנוע אחד או כולם — לאחר הפענוח תוצג השוואה והמלצה.
             </p>
@@ -397,14 +397,14 @@ export default function MultiEngineScanner({
                     ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                     : done
                       ? "bg-emerald-50 text-emerald-700"
-                      : "bg-slate-100 text-slate-400"
+                      : "bg-gray-100 text-gray-400"
                 }`}
               >
                 <span>{done ? <CheckCircle2 size={13} /> : s.n}</span>
                 <span>{s.t}</span>
               </div>
               {i < steps.length - 1 && (
-                <div className={`mx-1 h-px w-4 ${done ? "bg-emerald-300" : "bg-slate-200"}`} />
+                <div className={`mx-1 h-px w-4 ${done ? "bg-emerald-300" : "bg-gray-200"}`} />
               )}
             </div>
           );
@@ -414,7 +414,7 @@ export default function MultiEngineScanner({
       {/* בחירת מנועים */}
       <div className="mb-6 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="shrink-0 text-xs font-bold text-slate-500">מנועי פענוח:</span>
+          <span className="shrink-0 text-xs font-bold text-gray-500">מנועי פענוח:</span>
           <button
             type="button"
             onClick={selectAllEngines}
@@ -425,7 +425,7 @@ export default function MultiEngineScanner({
           <button
             type="button"
             onClick={clearEngines}
-            className="rounded-xl border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-50"
+            className="rounded-xl border border-gray-200 px-3.5 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-gray-50"
           >
             נקה
           </button>
@@ -433,7 +433,7 @@ export default function MultiEngineScanner({
             <span className="text-xs text-indigo-500">טוען רשימת מנועים…</span>
           )}
           {scanEngineRows.length > 0 && (
-            <span className="text-[11px] font-semibold text-slate-400">בחירת המנועים נשמרת אוטומטית להמשך</span>
+            <span className="text-[11px] font-semibold text-gray-400">בחירת המנועים נשמרת אוטומטית להמשך</span>
           )}
         </div>
         <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
@@ -454,10 +454,10 @@ export default function MultiEngineScanner({
                 onClick={() => toggleProvider(p.id)}
                 className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all ${
                   !ok
-                    ? "cursor-not-allowed border-dashed border-slate-200 bg-slate-50 text-slate-400 opacity-60"
+                    ? "cursor-not-allowed border-dashed border-gray-200 bg-gray-50 text-gray-400 opacity-60"
                     : on
                       ? "border-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:bg-indigo-50"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:bg-indigo-50"
                 }`}
               >
                 <Sparkles size={14} className={on && ok ? "opacity-100" : "opacity-40"} />
@@ -489,11 +489,11 @@ export default function MultiEngineScanner({
               exit={{ opacity: 0 }}
               className="text-center"
             >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white shadow-sm">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-100 bg-white shadow-sm">
                 <UploadCloud size={24} className="text-indigo-400" />
               </div>
-              <p className="font-semibold text-slate-600">גרור קבצים או לחץ לבחירה</p>
-              <p className="mt-1 text-xs text-slate-400">{SCAN_ACCEPT_SUMMARY}</p>
+              <p className="font-semibold text-gray-600">גרור קבצים או לחץ לבחירה</p>
+              <p className="mt-1 text-xs text-gray-400">{SCAN_ACCEPT_SUMMARY}</p>
               {files.length > 0 && (
                 <div className="mt-4 flex flex-wrap justify-center gap-2">
                   {files.map((f, i) => (
@@ -516,7 +516,7 @@ export default function MultiEngineScanner({
               className="flex flex-col items-center gap-3"
             >
               <Loader2 className="animate-spin text-indigo-500" size={36} />
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-gray-500">
                 מריץ פענוח מול {eligibleSelectedCount} מנועים לכל קובץ…
               </p>
             </motion.div>
@@ -541,7 +541,7 @@ export default function MultiEngineScanner({
           <button
             type="button"
             onClick={clearFiles}
-            className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors"
           >
             נקה רשימת קבצים
           </button>
@@ -549,7 +549,7 @@ export default function MultiEngineScanner({
       )}
 
       {files.length > 0 && !processing && compareResults.length === 0 && (
-        <p className="mt-2 text-center text-xs text-slate-400">
+        <p className="mt-2 text-center text-xs text-gray-400">
           או בחרו פעולה ספציפית למטה (שמירה בתיבת מסמכים, שיוך לפרויקט...)
         </p>
       )}
@@ -563,10 +563,10 @@ export default function MultiEngineScanner({
       {processing && (
         <div className="mt-6 space-y-2">
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-slate-500">התקדמות פענוח</span>
-            <span className="text-slate-700">{progress}%</span>
+            <span className="text-gray-500">התקדמות פענוח</span>
+            <span className="text-gray-700">{progress}%</span>
           </div>
-          <div className="w-full rounded-full h-2 overflow-hidden bg-slate-100">
+          <div className="w-full rounded-full h-2 overflow-hidden bg-gray-100">
             <div className="h-full transition-all duration-300 bg-indigo-600"
               style={{ width: `${progress}%` }}
             />
@@ -576,16 +576,16 @@ export default function MultiEngineScanner({
 
       {/* השוואה ותצוגה מקדימה */}
       {compareResults.length > 0 && (
-        <div className="mt-8 space-y-6 text-slate-800">
+        <div className="mt-8 space-y-6 text-gray-800">
           {compareResults.map((row, idx) => (
             <div
               key={`${row.fileName}-${idx}`}
-              className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+              className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm"
             >
               <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
-                <div className="border-b border-slate-100 bg-slate-50/40 p-5 lg:border-b-0 lg:border-l">
-                  <p className="mb-2 text-xs font-bold text-slate-400">תצוגה מקדימה</p>
-                  <p className="mb-3 truncate text-sm font-bold text-slate-700" title={row.fileName}>
+                <div className="border-b border-gray-100 bg-gray-50/40 p-5 lg:border-b-0 lg:border-l">
+                  <p className="mb-2 text-xs font-bold text-gray-400">תצוגה מקדימה</p>
+                  <p className="mb-3 truncate text-sm font-bold text-gray-700" title={row.fileName}>
                     {row.fileName}
                   </p>
                   {row.previewUrl && row.isImage ? (
@@ -593,20 +593,20 @@ export default function MultiEngineScanner({
                     <img
                       src={row.previewUrl}
                       alt=""
-                      className="max-h-64 w-full object-contain rounded-2xl border border-slate-100"
+                      className="max-h-64 w-full object-contain rounded-2xl border border-gray-100"
                     />
                   ) : row.previewUrl && row.isPdf ? (
                     <iframe
                       title={row.fileName}
                       src={row.previewUrl}
-                      className="w-full h-64 rounded-2xl border border-slate-100 bg-white"
+                      className="w-full h-64 rounded-2xl border border-gray-100 bg-white"
                     />
                   ) : (
-                    <p className="text-xs text-slate-500">אין תצוגה מקדימה לסוג קובץ זה — העמודה מציגה רק את הפענוח.</p>
+                    <p className="text-xs text-gray-500">אין תצוגה מקדימה לסוג קובץ זה — העמודה מציגה רק את הפענוח.</p>
                   )}
                 </div>
                 <div className="p-4 space-y-4">
-                  <p className="text-xs font-black text-slate-500">פענוח לפי מנוע (עברית)</p>
+                  <p className="text-xs font-black text-gray-500">פענוח לפי מנוע (עברית)</p>
                   {row.recommendedIndex >= 0 && row.engines[row.recommendedIndex]?.ok ? (
                     <div
                       className="rounded-2xl px-3 py-2 text-xs font-black flex items-center gap-2 bg-emerald-100 text-emerald-900"
@@ -616,7 +616,7 @@ export default function MultiEngineScanner({
                     </div>
                   ) : (
                     <div
-                      className="rounded-2xl px-3 py-2 text-xs font-bold flex items-center gap-2 bg-blue-50 text-blue-800"
+                      className="rounded-2xl px-3 py-2 text-xs font-bold flex items-center gap-2 bg-indigo-50 text-indigo-800"
                     >
                       <AlertCircle size={16} />
                       לא נמצאה תוצאה מוצלחת — בדוק מנוע או קובץ.
@@ -643,7 +643,7 @@ export default function MultiEngineScanner({
                         <div
                           key={`${e.providerId}-${ei}`}
                           className={`rounded-2xl border p-3 text-xs space-y-1 ${
-                            rec ? "border-emerald-300 bg-emerald-50/80" : "border-slate-100 bg-white"
+                            rec ? "border-emerald-300 bg-emerald-50/80" : "border-gray-100 bg-white"
                           }`}
                         >
                           <div className="flex justify-between gap-2 font-black">
@@ -670,11 +670,11 @@ export default function MultiEngineScanner({
                               <p>
                                 <strong>שורות מוצר:</strong> {lines}
                               </p>
-                              <p className="italic text-slate-600">
+                              <p className="italic text-gray-600">
                                 <strong>תקציר:</strong> {summary}
                               </p>
                               {e.notice ? (
-                                <p className="text-[10px] text-blue-700 font-medium">{e.notice}</p>
+                                <p className="text-[10px] text-indigo-700 font-medium">{e.notice}</p>
                               ) : null}
                             </>
                           )}
@@ -736,7 +736,7 @@ export default function MultiEngineScanner({
         </motion.button>
       </div>
       {processing ? (
-        <p className="mt-2 text-center text-xs font-medium text-slate-500">
+        <p className="mt-2 text-center text-xs font-medium text-gray-500">
           מריצים פענוח מול המנועים הנבחרים — כל כפתורי הפעולה משתמשים באותו פענוח, ואז ממשיכים לפי הבחירה שלך.
         </p>
       ) : null}

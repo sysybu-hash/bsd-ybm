@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+﻿import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -88,7 +88,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
               href="/dashboard/admin?section=broadcast"
               className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                 activeSection === "broadcast"
-                  ? "bg-blue-600 text-white shadow-sm"
+                  ? "bg-indigo-600 text-white shadow-sm"
                   : "text-gray-600 hover:bg-white"
               }`}
             >
@@ -126,12 +126,12 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           <h2 className="text-3xl font-black text-amber-700">₪{pendingRevenue.toLocaleString()}</h2>
         </div>
 
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+        <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Building size={18} /></div>
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 opacity-70">לקוחות פעילים</p>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><Building size={18} /></div>
+            <p className="text-xs font-bold uppercase tracking-widest text-indigo-600 opacity-70">לקוחות פעילים</p>
           </div>
-          <h2 className="text-3xl font-black text-blue-700">{totalOrganizations}</h2>
+          <h2 className="text-3xl font-black text-indigo-700">{totalOrganizations}</h2>
         </div>
 
         <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
@@ -150,7 +150,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-black text-gray-900 flex items-center gap-2">
-            <Building className="text-blue-500" size={18} /> לקוחות ומנויים אחרונים
+            <Building className="text-indigo-500" size={18} /> לקוחות ומנויים אחרונים
           </h3>
           <Link
             href="/dashboard/billing?tab=control"

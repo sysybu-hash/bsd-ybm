@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
@@ -64,12 +64,12 @@ type Props = {
 function statusBadgeClass(status: string): string {
   const u = status.toUpperCase();
   if (u === "ACTIVE" || u === "TRIAL") {
-    return "bg-gradient-to-r from-blue-100/90 via-blue-50 to-slate-100 text-blue-900 ring-1 ring-blue-400/50 shadow-sm shadow-blue-200/40";
+    return "bg-gradient-to-r from-indigo-100/90 via-blue-50 to-gray-100 text-indigo-900 ring-1 ring-indigo-400/50 shadow-sm shadow-indigo-200/40";
   }
   if (u === "CANCELED" || u === "PAST_DUE") {
-    return "bg-gradient-to-r from-rose-100 to-slate-100 text-rose-900 ring-1 ring-rose-300/40";
+    return "bg-gradient-to-r from-rose-100 to-gray-100 text-rose-900 ring-1 ring-rose-300/40";
   }
-  return "bg-gradient-to-r from-slate-200/80 to-slate-100 text-slate-800 ring-1 ring-slate-400/30";
+  return "bg-gradient-to-r from-gray-200/80 to-gray-100 text-gray-800 ring-1 ring-gray-400/30";
 }
 
 function UsageBar({
@@ -94,20 +94,20 @@ function UsageBar({
 
   return (
     <div className="space-y-1.5">
-      <div className="flex justify-between text-xs font-bold text-slate-600">
+      <div className="flex justify-between text-xs font-bold text-gray-600">
         <span>{label}</span>
-        <span className="font-mono text-[11px] text-slate-500" dir="ltr">
+        <span className="font-mono text-[11px] text-gray-500" dir="ltr">
           {usedLabel}
         </span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-slate-200/80 ring-1 ring-slate-300/40">
+      <div className="h-2.5 overflow-hidden rounded-full bg-gray-200/80 ring-1 ring-gray-300/40">
         <div
           className={`h-full rounded-full transition-all ${
             unlimited
-              ? "bg-gradient-to-l from-blue-400 via-blue-300 to-slate-300"
+              ? "bg-gradient-to-l from-indigo-400 via-blue-300 to-gray-300"
               : pct > 25
                 ? "bg-gradient-to-l from-emerald-500 to-teal-400"
-                : "bg-gradient-to-l from-blue-500 to-rose-400"
+                : "bg-gradient-to-l from-indigo-500 to-rose-400"
           }`}
           style={{ width: `${unlimited ? 100 : pct}%` }}
         />
@@ -215,11 +215,11 @@ export default function AdminSubscriptionControlCenter({
     const t = window.setTimeout(() => {
       const el = document.getElementById(`admin-sub-row-${id}`);
       el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      el?.classList.add("ring-2", "ring-blue-400", "ring-offset-2", "bg-blue-50/80");
+      el?.classList.add("ring-2", "ring-indigo-400", "ring-offset-2", "bg-indigo-50/80");
       const o = orgs.find((x) => x.id === id);
       if (o) openRow(o);
       window.setTimeout(() => {
-        el?.classList.remove("ring-2", "ring-blue-400", "ring-offset-2", "bg-blue-50/80");
+        el?.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2", "bg-indigo-50/80");
       }, 4000);
     }, 320);
     return () => window.clearTimeout(t);
@@ -378,7 +378,7 @@ export default function AdminSubscriptionControlCenter({
               <button
                 type="button"
                 onClick={() => dismissToast(t.id)}
-                className="rounded-md p-1 text-slate-500 hover:bg-white/70"
+                className="rounded-md p-1 text-gray-500 hover:bg-white/70"
                 aria-label="סגור התראה"
               >
                 <X size={14} />
@@ -401,68 +401,68 @@ export default function AdminSubscriptionControlCenter({
       )}
 
       <div className="mx-auto max-w-[1800px] space-y-6 px-4 sm:px-8">
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/60 shadow-lg shadow-slate-200/30 backdrop-blur-sm">
+        <div className="rounded-[1.5rem] border border-gray-200/80 bg-white/60 shadow-lg shadow-gray-200/30 backdrop-blur-sm">
           <button
             type="button"
             onClick={() => setPlatformOpen((v) => !v)}
             className="flex w-full items-center justify-between gap-3 px-5 py-4 text-start"
           >
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-blue-700/70">
+              <p className="text-xs font-black uppercase tracking-wider text-indigo-700/70">
                 Avenue — תצורת פלטפורמה
               </p>
-              <p className="text-base font-black text-slate-900">גבייה, חבילות סריקה והזמנות הצטרפות</p>
+              <p className="text-base font-black text-gray-900">גבייה, חבילות סריקה והזמנות הצטרפות</p>
             </div>
-            {platformOpen ? <ChevronUp className="shrink-0 text-slate-500" /> : <ChevronDown className="shrink-0 text-slate-500" />}
+            {platformOpen ? <ChevronUp className="shrink-0 text-gray-500" /> : <ChevronDown className="shrink-0 text-gray-500" />}
           </button>
           {platformOpen ? (
-            <div className="space-y-8 border-t border-slate-200/60 px-5 pb-8 pt-6">
-              <section className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50/80 p-6 shadow-inner shadow-slate-200/20">
-                <h3 className="mb-4 text-lg font-black text-slate-900">גבייה ו־PayPal</h3>
+            <div className="space-y-8 border-t border-gray-200/60 px-5 pb-8 pt-6">
+              <section className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/80 p-6 shadow-inner shadow-gray-200/20">
+                <h3 className="mb-4 text-lg font-black text-gray-900">גבייה ו־PayPal</h3>
                 <form className="space-y-4" onSubmit={onBillingSubmit}>
-                  <label className="block text-sm font-bold text-slate-700">
+                  <label className="block text-sm font-bold text-gray-700">
                     PayPal Client ID (ציבורי)
                     <input
                       name="paypalClientId"
                       defaultValue={billingConfig?.paypalClientIdPublic ?? ""}
                       placeholder="ריק = מ־NEXT_PUBLIC_PAYPAL_CLIENT_ID"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 font-mono text-sm"
+                      className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 font-mono text-sm"
                       dir="ltr"
                     />
                   </label>
-                  <label className="block text-sm font-bold text-slate-700">
+                  <label className="block text-sm font-bold text-gray-700">
                     מחירי מנוי חודשיים (JSON ₪)
                     <textarea
                       name="tierPricesJson"
                       rows={6}
                       defaultValue={defaultPricesJson}
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 font-mono text-sm"
+                      className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 font-mono text-sm"
                       dir="ltr"
                     />
                   </label>
                   <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-xl bg-gradient-to-l from-slate-700 to-slate-900 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-slate-400/30 disabled:opacity-50"
+                    className="rounded-xl bg-gradient-to-l from-gray-700 to-gray-900 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-gray-400/30 disabled:opacity-50"
                   >
                     שמירת הגדרות גבייה
                   </button>
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-blue-200/60 bg-gradient-to-br from-blue-50/40 to-slate-50/50 p-6">
-                <h3 className="mb-3 text-lg font-black text-slate-900">הזמנת הצטרפות במייל</h3>
+              <section className="rounded-2xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/40 to-gray-50/50 p-6">
+                <h3 className="mb-3 text-lg font-black text-gray-900">הזמנת הצטרפות במייל</h3>
                 <form className="grid gap-3 md:grid-cols-2" onSubmit={onInviteSubmit}>
                   <input
                     name="email"
                     type="email"
                     required
                     placeholder="לקוח@דומיין"
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-sm"
                     dir="ltr"
                   />
-                  <input name="headline" placeholder="כותרת המייל" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                  <select name="tierHint" className="rounded-xl border border-slate-200 px-3 py-2 text-sm md:col-span-2">
+                  <input name="headline" placeholder="כותרת המייל" className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+                  <select name="tierHint" className="rounded-xl border border-gray-200 px-3 py-2 text-sm md:col-span-2">
                     <option value="">ללא ציון רמה</option>
                     {tierOptions.map((o) => (
                       <option key={o.value} value={o.value}>
@@ -474,48 +474,48 @@ export default function AdminSubscriptionControlCenter({
                     name="bodyText"
                     rows={3}
                     placeholder="גוף ההודעה (אופציונלי)"
-                    className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                    className="md:col-span-2 rounded-xl border border-gray-200 px-3 py-2 text-sm"
                   />
                   <button
                     type="submit"
                     disabled={pending}
-                    className="md:col-span-2 rounded-xl bg-gradient-to-l from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                    className="md:col-span-2 rounded-xl bg-gradient-to-l from-indigo-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                   >
                     שליחת הזמנה
                   </button>
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-md shadow-slate-200/25">
-                <h3 className="mb-4 text-lg font-black text-slate-900">חבילות סריקה — מחירים</h3>
+              <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md shadow-gray-200/25">
+                <h3 className="mb-4 text-lg font-black text-gray-900">חבילות סריקה — מחירים</h3>
                 <ul className="space-y-3">
                   {bundles.map((b) => (
                     <li
                       key={b.id}
-                      className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4"
+                      className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-100 bg-gray-50/80 p-4"
                     >
                       <div className="min-w-[200px] flex-1">
-                        <p className="font-bold text-slate-900">{b.name}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="font-bold text-gray-900">{b.name}</p>
+                        <p className="text-xs text-gray-500">
                           +{b.cheapAdds} זולות · +{b.premiumAdds} פרימיום
                         </p>
                       </div>
                       <form className="flex items-center gap-2" onSubmit={onBundleSubmit(b.id)}>
-                        <label className="text-xs font-bold text-slate-600">
+                        <label className="text-xs font-bold text-gray-600">
                           ₪
                           <input
                             name="price"
                             type="number"
                             step="0.01"
                             defaultValue={b.priceIls}
-                            className="me-1 w-28 rounded-lg border border-slate-200 px-2 py-1 text-sm font-mono"
+                            className="me-1 w-28 rounded-lg border border-gray-200 px-2 py-1 text-sm font-mono"
                             dir="ltr"
                           />
                         </label>
                         <button
                           type="submit"
                           disabled={pending}
-                          className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white disabled:opacity-50"
+                          className="rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-bold text-white disabled:opacity-50"
                         >
                           עדכון
                         </button>
@@ -528,66 +528,66 @@ export default function AdminSubscriptionControlCenter({
           ) : null}
         </div>
 
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/60 shadow-lg shadow-slate-200/30 backdrop-blur-sm">
+        <div className="rounded-[1.5rem] border border-gray-200/80 bg-white/60 shadow-lg shadow-gray-200/30 backdrop-blur-sm">
           <button
             type="button"
             onClick={() => setToolsOpen((v) => !v)}
             className="flex w-full items-center justify-between gap-3 px-5 py-4 text-start"
           >
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-slate-500">כלים</p>
-              <p className="text-base font-black text-slate-900">יצירת משתמש, הזמנת רמה וייצוא</p>
+              <p className="text-xs font-black uppercase tracking-wider text-gray-500">כלים</p>
+              <p className="text-base font-black text-gray-900">יצירת משתמש, הזמנת רמה וייצוא</p>
             </div>
-            {toolsOpen ? <ChevronUp className="shrink-0 text-slate-500" /> : <ChevronDown className="shrink-0 text-slate-500" />}
+            {toolsOpen ? <ChevronUp className="shrink-0 text-gray-500" /> : <ChevronDown className="shrink-0 text-gray-500" />}
           </button>
           {toolsOpen ? (
-            <div className="space-y-8 border-t border-slate-200/60 px-5 pb-8 pt-6">
+            <div className="space-y-8 border-t border-gray-200/60 px-5 pb-8 pt-6">
               <div className="grid gap-8 lg:grid-cols-2">
-                <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="mb-3 text-base font-black text-slate-900">יצירת משתמש ידנית</h3>
+                <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-3 text-base font-black text-gray-900">יצירת משתמש ידנית</h3>
                   <form className="grid gap-3" onSubmit={onCreateUser}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                    <input name="name" placeholder="שם (אופציונלי)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                    <input name="organizationName" required placeholder="שם ארגון" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                    <select name="orgType" className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+                    <input name="name" placeholder="שם (אופציונלי)" className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+                    <input name="organizationName" required placeholder="שם ארגון" className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+                    <select name="orgType" className="rounded-xl border border-gray-200 px-3 py-2 text-sm">
                       {ORG_TYPES.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <select name="tier" className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                    <select name="tier" className="rounded-xl border border-gray-200 px-3 py-2 text-sm">
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <label className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                      <input type="checkbox" name="vip" className="rounded border-slate-300" />
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                      <input type="checkbox" name="vip" className="rounded border-gray-300" />
                       VIP
                     </label>
                     <button
                       type="submit"
                       disabled={pending}
-                      className="rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                      className="rounded-xl bg-gradient-to-l from-gray-800 to-gray-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                     >
                       צור משתמש וארגון
                     </button>
                   </form>
                 </section>
-                <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="mb-3 text-base font-black text-slate-900">הזמנה לרמת מנוי (טוקן)</h3>
+                <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-3 text-base font-black text-gray-900">הזמנה לרמת מנוי (טוקן)</h3>
                   <form className="grid gap-3" onSubmit={onTierInvite}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                    <select name="tier" required className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+                    <select name="tier" required className="rounded-xl border border-gray-200 px-3 py-2 text-sm">
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <input name="validDays" type="number" min={1} max={90} defaultValue={14} className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
+                    <input name="validDays" type="number" min={1} max={90} defaultValue={14} className="rounded-xl border border-gray-200 px-3 py-2 text-sm" />
                     <button
                       type="submit"
                       disabled={pending}
@@ -602,7 +602,7 @@ export default function AdminSubscriptionControlCenter({
                 <button
                   type="button"
                   onClick={exportCsv}
-                  className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-gradient-to-br from-slate-100 to-white px-4 py-2 text-xs font-black text-slate-800 shadow-sm ring-1 ring-slate-200/80"
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-gradient-to-br from-gray-100 to-white px-4 py-2 text-xs font-black text-gray-800 shadow-sm ring-1 ring-gray-200/80"
                 >
                   <Download size={14} /> ייצוא CSV (מסונן)
                 </button>
@@ -611,52 +611,52 @@ export default function AdminSubscriptionControlCenter({
           ) : null}
         </div>
 
-        <div className="rounded-[1.5rem] border border-blue-300/40 bg-gradient-to-br from-white via-slate-50/90 to-blue-50/20 p-1 shadow-xl shadow-blue-200/15 ring-1 ring-slate-200/60">
+        <div className="rounded-[1.5rem] border border-indigo-300/40 bg-gradient-to-br from-white via-slate-50/90 to-indigo-50/20 p-1 shadow-xl shadow-indigo-200/15 ring-1 ring-gray-200/60">
           <div className="rounded-[1.35rem] bg-white/80 px-4 py-5 sm:px-6 sm:py-6">
             <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-transparent bg-clip-text bg-gradient-to-l from-slate-500 via-blue-700 to-slate-600">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-transparent bg-clip-text bg-gradient-to-l from-gray-500 via-blue-700 to-gray-600">
                   מרכז שליטה במנויים
                 </p>
-                <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+                <h2 className="mt-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
                   כל המנויים — טבלה אחת
                 </h2>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-1 text-sm text-gray-600">
                   לחיצה על שורה פותחת כרטיס ניהול בצד.
                 </p>
               </div>
               <label className="relative w-full md:max-w-md">
-                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-blue-600/50" />
+                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-indigo-600/50" />
                 <input
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="חיפוש לפי שם או אימייל…"
-                  className="w-full rounded-2xl border border-slate-200/90 bg-white py-3.5 pe-12 ps-4 text-sm font-medium shadow-inner shadow-slate-200/40 ring-1 ring-blue-200/30 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300/40"
+                  className="w-full rounded-2xl border border-gray-200/90 bg-white py-3.5 pe-12 ps-4 text-sm font-medium shadow-inner shadow-gray-200/40 ring-1 ring-indigo-200/30 placeholder:text-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/40"
                 />
               </label>
             </div>
 
-            <div className="overflow-x-auto rounded-xl ring-1 ring-slate-200/80">
+            <div className="overflow-x-auto rounded-xl ring-1 ring-gray-200/80">
               <table className="w-full min-w-[920px] border-collapse text-right text-sm">
                 <thead>
-                  <tr className="bg-gradient-to-bl from-slate-200/95 via-white to-blue-100/50 text-slate-900 shadow-sm">
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                  <tr className="bg-gradient-to-bl from-gray-200/95 via-white to-indigo-100/50 text-gray-900 shadow-sm">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       שם
                     </th>
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       אימייל
                     </th>
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       רמה
                     </th>
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       סריקות נוכחיות
                     </th>
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       דומיין
                     </th>
-                    <th className="border-b border-blue-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-slate-700">
+                    <th className="border-b border-indigo-400/35 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-700">
                       סטטוס
                     </th>
                   </tr>
@@ -675,24 +675,24 @@ export default function AdminSubscriptionControlCenter({
                           openRow(o);
                         }
                       }}
-                      className="cursor-pointer border-b border-slate-100 transition-colors hover:bg-gradient-to-l hover:from-blue-50/50 hover:to-transparent focus:bg-blue-50/60 focus:outline-none"
+                      className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gradient-to-l hover:from-indigo-50/50 hover:to-transparent focus:bg-indigo-50/60 focus:outline-none"
                     >
-                      <td className="px-4 py-3.5 font-bold text-slate-900">{o.name}</td>
-                      <td className="px-4 py-3.5 font-mono text-xs text-slate-600" dir="ltr">
+                      <td className="px-4 py-3.5 font-bold text-gray-900">{o.name}</td>
+                      <td className="px-4 py-3.5 font-mono text-xs text-gray-600" dir="ltr">
                         {o.primaryEmail ?? "—"}
                       </td>
-                      <td className="px-4 py-3.5 font-semibold text-slate-800">
-                        <span className="rounded-lg bg-gradient-to-l from-slate-100 to-blue-50 px-2 py-1 text-xs font-black ring-1 ring-blue-200/50">
+                      <td className="px-4 py-3.5 font-semibold text-gray-800">
+                        <span className="rounded-lg bg-gradient-to-l from-gray-100 to-indigo-50 px-2 py-1 text-xs font-black ring-1 ring-indigo-200/50">
                           {tierLabelHe(o.subscriptionTier)}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-xs text-slate-700">
+                      <td className="px-4 py-3.5 text-xs text-gray-700">
                         <span className="font-mono" dir="ltr">
                           זול {formatCreditsForDisplay(o.cheapScansRemaining)} · פרימיום{" "}
                           {formatCreditsForDisplay(o.premiumScansRemaining)}
                         </span>
                       </td>
-                      <td className="max-w-[10rem] truncate px-4 py-3.5 font-mono text-xs text-slate-600" dir="ltr" title={o.tenantPublicDomain ?? ""}>
+                      <td className="max-w-[10rem] truncate px-4 py-3.5 font-mono text-xs text-gray-600" dir="ltr" title={o.tenantPublicDomain ?? ""}>
                         {o.tenantPublicDomain || "—"}
                       </td>
                       <td className="px-4 py-3.5">
@@ -707,12 +707,12 @@ export default function AdminSubscriptionControlCenter({
                 </tbody>
               </table>
               {filteredOrgs.length === 0 ? (
-                <div className="border-t border-slate-100 bg-slate-50/80 px-6 py-12 text-center text-sm font-medium text-slate-500">
+                <div className="border-t border-gray-100 bg-gray-50/80 px-6 py-12 text-center text-sm font-medium text-gray-500">
                   לא נמצאו תוצאות בשם או אימייל זה.
                 </div>
               ) : null}
             </div>
-            <p className="mt-3 text-center text-xs text-slate-500">
+            <p className="mt-3 text-center text-xs text-gray-500">
               מוצגים {filteredOrgs.length} מתוך {orgs.length} ארגונים
             </p>
           </div>
@@ -724,33 +724,33 @@ export default function AdminSubscriptionControlCenter({
           <button
             type="button"
             aria-label="סגור"
-            className="fixed inset-0 z-[300] bg-slate-950/40 backdrop-blur-[2px] transition-opacity"
+            className="fixed inset-0 z-[300] bg-gray-950/40 backdrop-blur-[2px] transition-opacity"
             onClick={closeSheet}
           />
           <aside
-            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-blue-400/40 bg-gradient-to-b from-white via-slate-50 to-blue-50/30 shadow-2xl shadow-slate-900/20"
+            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s-2 border-indigo-400/40 bg-gradient-to-b from-white via-slate-50 to-indigo-50/30 shadow-2xl shadow-gray-900/20"
             dir={dir}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-blue-200/50 bg-gradient-to-l from-slate-100/80 to-blue-50/40 px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-indigo-200/50 bg-gradient-to-l from-gray-100/80 to-indigo-50/40 px-5 py-4">
               <div>
-                <p className="text-xs font-black text-blue-700/80">מנוי נבחר</p>
-                <h3 className="text-lg font-black text-slate-900">{selected.name}</h3>
-                <p className="mt-0.5 font-mono text-[11px] text-slate-500" dir="ltr">
+                <p className="text-xs font-black text-indigo-700/80">מנוי נבחר</p>
+                <h3 className="text-lg font-black text-gray-900">{selected.name}</h3>
+                <p className="mt-0.5 font-mono text-[11px] text-gray-500" dir="ltr">
                   {selected.primaryEmail ?? "— אימייל"}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={closeSheet}
-                className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50"
+                className="rounded-xl border border-gray-200 bg-white p-2 text-gray-600 hover:bg-gray-50"
               >
                 <X size={20} />
               </button>
             </div>
 
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
-              <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
-                <h4 className="mb-3 text-sm font-black text-slate-900">הקמת אתר — דומיין מותאם</h4>
+              <section className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
+                <h4 className="mb-3 text-sm font-black text-gray-900">הקמת אתר — דומיין מותאם</h4>
                 <form
                   className="space-y-3"
                   onSubmit={(e) => {
@@ -779,29 +779,29 @@ export default function AdminSubscriptionControlCenter({
                   }}
                 >
                   <input type="hidden" name="organizationId" value={selected.id} />
-                  <label className="block text-xs font-bold text-slate-600">
+                  <label className="block text-xs font-bold text-gray-600">
                     דומיין ציבורי
                     <input
                       name="tenantPublicDomain"
                       key={selected.id + (selected.tenantPublicDomain ?? "")}
                       defaultValue={selected.tenantPublicDomain ?? ""}
                       placeholder="דוגמה: app.client.com"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 font-mono text-sm"
+                      className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 font-mono text-sm"
                       dir="ltr"
                     />
                   </label>
                   <button
                     type="submit"
                     disabled={pending}
-                    className="w-full rounded-xl bg-gradient-to-l from-slate-800 to-slate-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                    className="w-full rounded-xl bg-gradient-to-l from-gray-800 to-gray-950 py-2.5 text-sm font-bold text-white disabled:opacity-50"
                   >
                     שמירת דומיין
                   </button>
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
-                <h4 className="mb-4 text-sm font-black text-slate-900">מוניטור שימוש</h4>
+              <section className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
+                <h4 className="mb-4 text-sm font-black text-gray-900">מוניטור שימוש</h4>
                 {selectedAllow ? (
                   <div className="space-y-4">
                     <UsageBar
@@ -816,13 +816,13 @@ export default function AdminSubscriptionControlCenter({
                     />
                   </div>
                 ) : null}
-                <p className="mt-3 text-[11px] text-slate-500">
+                <p className="mt-3 text-[11px] text-gray-500">
                   מכסות ברירת מחדש לפי רמה; ארגוני VIP או חבילות עלולים לחרוג מהסרגל.
                 </p>
               </section>
 
-              <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
-                <h4 className="mb-3 text-sm font-black text-slate-900">עקיפה ידנית — סריקות</h4>
+              <section className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
+                <h4 className="mb-3 text-sm font-black text-gray-900">עקיפה ידנית — סריקות</h4>
                 <form
                   className="mb-4 flex flex-wrap gap-2"
                   onSubmit={(ev) => {
@@ -839,9 +839,9 @@ export default function AdminSubscriptionControlCenter({
                   }}
                 >
                   <input type="hidden" name="organizationId" value={selected.id} />
-                  <input name="cheapDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-slate-200 px-2 py-1.5 text-sm" />
-                  <input name="premiumDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-slate-200 px-2 py-1.5 text-sm" />
-                  <button type="submit" disabled={pending} className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white">
+                  <input name="cheapDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 px-2 py-1.5 text-sm" />
+                  <input name="premiumDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 px-2 py-1.5 text-sm" />
+                  <button type="submit" disabled={pending} className="rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-bold text-white">
                     החל שינוי
                   </button>
                 </form>
@@ -864,7 +864,7 @@ export default function AdminSubscriptionControlCenter({
                           } else pushToast("err", r.error);
                         });
                       }}
-                      className="rounded-lg border border-blue-200/80 bg-blue-50/50 px-2.5 py-1 text-[11px] font-bold text-blue-900"
+                      className="rounded-lg border border-indigo-200/80 bg-indigo-50/50 px-2.5 py-1 text-[11px] font-bold text-indigo-900"
                     >
                       זול {d > 0 ? `+${d}` : d}
                     </button>
@@ -897,8 +897,8 @@ export default function AdminSubscriptionControlCenter({
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
-                <h4 className="mb-3 text-sm font-black text-slate-900">רמת מנוי וסטטוס</h4>
+              <section className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
+                <h4 className="mb-3 text-sm font-black text-gray-900">רמת מנוי וסטטוס</h4>
                 <form
                   className="flex flex-col gap-3"
                   onSubmit={(ev) => {
@@ -914,7 +914,7 @@ export default function AdminSubscriptionControlCenter({
                     });
                   }}
                 >
-                  <select name="tier" defaultValue={selected.subscriptionTier} className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                  <select name="tier" defaultValue={selected.subscriptionTier} className="rounded-xl border border-gray-200 px-3 py-2 text-sm">
                     {tierOptions.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.label}
@@ -924,14 +924,14 @@ export default function AdminSubscriptionControlCenter({
                   <input
                     name="subscriptionStatus"
                     defaultValue={selected.subscriptionStatus}
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm uppercase"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-sm uppercase"
                   />
                   <button type="submit" disabled={pending} className="rounded-xl bg-indigo-800 py-2 text-sm font-bold text-white">
                     שמור רמה וסטטוס
                   </button>
                 </form>
-                <div className="mt-4 space-y-2 border-t border-slate-100 pt-4">
-                  <p className="text-xs font-bold text-slate-600">החלה מהירה (כל המכסות לפי מצב)</p>
+                <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
+                  <p className="text-xs font-bold text-gray-600">החלה מהירה (כל המכסות לפי מצב)</p>
                   <div className="flex flex-wrap gap-2">
                     {MANUAL_MODES.map((m) => (
                       <button
@@ -962,7 +962,7 @@ export default function AdminSubscriptionControlCenter({
                       </button>
                     ))}
                   </div>
-                  <select id={`sheet-tier-${selected.id}`} defaultValue={selected.subscriptionTier} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs">
+                  <select id={`sheet-tier-${selected.id}`} defaultValue={selected.subscriptionTier} className="mt-1 w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs">
                     {tierOptions.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.label}
@@ -972,19 +972,19 @@ export default function AdminSubscriptionControlCenter({
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm">
-                <h4 className="mb-3 text-sm font-black text-slate-900">שיוך — CRM / ERP</h4>
-                <p className="mb-3 text-xs text-slate-600">
-                  מודולי CRM ו־ERP נשמים על <strong className="text-slate-800">הארגון המחובר כרגע</strong>. להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
+              <section className="rounded-2xl border border-gray-200 bg-white/90 p-4 shadow-sm">
+                <h4 className="mb-3 text-sm font-black text-gray-900">שיוך — CRM / ERP</h4>
+                <p className="mb-3 text-xs text-gray-600">
+                  מודולי CRM ו־ERP נשמים על <strong className="text-gray-800">הארגון המחובר כרגע</strong>. להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
-                  <code className="rounded-lg bg-slate-100 px-2 py-1 font-mono text-[11px]" dir="ltr">
+                  <code className="rounded-lg bg-gray-100 px-2 py-1 font-mono text-[11px]" dir="ltr">
                     {selected.id}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyId(selected.id)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-700"
+                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-bold text-gray-700"
                   >
                     <Copy size={12} /> העתק
                   </button>
@@ -992,13 +992,13 @@ export default function AdminSubscriptionControlCenter({
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                   <a
                     href="/dashboard/crm"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-gradient-to-br from-white to-slate-100 py-2.5 text-center text-sm font-black text-slate-800 ring-1 ring-slate-200/80"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gradient-to-br from-white to-gray-100 py-2.5 text-center text-sm font-black text-gray-800 ring-1 ring-gray-200/80"
                   >
                     <ExternalLink size={14} /> מערכת CRM
                   </a>
                   <a
                     href="/dashboard/erp"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-gradient-to-br from-white to-slate-100 py-2.5 text-center text-sm font-black text-slate-800 ring-1 ring-slate-200/80"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gradient-to-br from-white to-gray-100 py-2.5 text-center text-sm font-black text-gray-800 ring-1 ring-gray-200/80"
                   >
                     <ExternalLink size={14} /> ERP
                   </a>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { UserPlus, CheckCircle2, KeyRound, Loader2 } from "lucide-react";
@@ -67,34 +67,34 @@ export default function AdminSubscriptionTools({
 
   return (
     <div className="space-y-10">
-      <section className="rounded-2xl border border-blue-200 bg-blue-50/50 p-6 md:p-8">
-        <h2 className="text-xl font-black italic text-blue-900 mb-2 flex items-center gap-2">
-          <CheckCircle2 className="text-blue-600" size={22} />
+      <section className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-6 md:p-8">
+        <h2 className="text-xl font-black italic text-indigo-900 mb-2 flex items-center gap-2">
+          <CheckCircle2 className="text-indigo-600" size={22} />
           משתמשים ממתינים לאישור והגדרה
         </h2>
-        <p className="text-sm text-blue-900/80 mb-6">
+        <p className="text-sm text-indigo-900/80 mb-6">
           לכל רישום חדש ניתן לקבוע תפקיד וחבילה, לאשר ולהפעיל מיד.
         </p>
         {pendingUsers.length === 0 ? (
-          <p className="text-slate-600 text-sm">אין משתמשים ממתינים.</p>
+          <p className="text-gray-600 text-sm">אין משתמשים ממתינים.</p>
         ) : (
           <ul className="space-y-3">
             {pendingUsers.map((u) => (
               <li
                 key={u.id}
-                className="bg-white rounded-xl border border-blue-100 p-4 flex flex-col gap-3"
+                className="bg-white rounded-xl border border-indigo-100 p-4 flex flex-col gap-3"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="font-bold text-slate-900">
+                    <p className="font-bold text-gray-900">
                       {u.name || "ללא שם"} · {u.email}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-gray-500">
                       ארגון: {u.organizationName} · נוצר{" "}
                       {new Date(u.createdAt).toLocaleDateString("he-IL")}
                     </p>
                   </div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-[11px] text-gray-500">
                     מצב ארגון: {u.organizationStatus} · תוכנית נוכחית: {u.organizationPlan}
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function AdminSubscriptionTools({
                   <select
                     id={`pending-role-${u.id}`}
                     defaultValue={u.role || "ORG_ADMIN"}
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white"
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>
@@ -113,7 +113,7 @@ export default function AdminSubscriptionTools({
                   <select
                     id={`pending-plan-${u.id}`}
                     defaultValue={u.organizationPlan || "FREE"}
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white"
                   >
                     {ADMIN_PLAN_OPTIONS.map((p) => (
                       <option key={p} value={p}>
@@ -149,7 +149,7 @@ export default function AdminSubscriptionTools({
                         }
                       });
                     }}
-                    className="rounded-xl bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 text-sm font-bold disabled:opacity-50 inline-flex items-center gap-2"
+                    className="rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 text-sm font-bold disabled:opacity-50 inline-flex items-center gap-2"
                   >
                     {pending ? <Loader2 className="animate-spin" size={16} /> : null}
                     אשר רישום
@@ -161,27 +161,27 @@ export default function AdminSubscriptionTools({
         )}
       </section>
 
-      <section className="rounded-2xl border border-blue-200 bg-blue-50/50 p-6 md:p-8">
-        <h2 className="text-xl font-black italic text-blue-800 mb-2 flex items-center gap-2">
-          <CheckCircle2 className="text-blue-600" size={22} />
+      <section className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-6 md:p-8">
+        <h2 className="text-xl font-black italic text-indigo-800 mb-2 flex items-center gap-2">
+          <CheckCircle2 className="text-indigo-600" size={22} />
           בקשות הרשמה ממתינות לאישור
         </h2>
-        <p className="text-sm text-blue-900/80 mb-6">
+        <p className="text-sm text-indigo-900/80 mb-6">
           לאחר אישור — המשתמש יוכל להתחבר עם Google (אם חשבון קיים) או עם סיסמה אם יצרת משתמש
           בפריסה יזומה.
         </p>
         {pendingOrgs.length === 0 ? (
-          <p className="text-slate-600 text-sm">אין בקשות ממתינות.</p>
+          <p className="text-gray-600 text-sm">אין בקשות ממתינות.</p>
         ) : (
           <ul className="space-y-4">
             {pendingOrgs.map((o) => (
               <li
                 key={o.id}
-                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-blue-100 p-4"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-indigo-100 p-4"
               >
                 <div>
-                  <p className="font-bold text-slate-900">{o.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-bold text-gray-900">{o.name}</p>
+                  <p className="text-xs text-gray-500">
                     תוכנית נוכחית (בקשה): {o.plan} · נוצר{" "}
                     {new Date(o.createdAt).toLocaleDateString("he-IL")}
                   </p>
@@ -189,7 +189,7 @@ export default function AdminSubscriptionTools({
                 <div className="flex flex-wrap items-center gap-2">
                   <select
                     id={`plan-${o.id}`}
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white"
+                    className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white"
                     defaultValue="FREE"
                   >
                     {ADMIN_PLAN_OPTIONS.map((p) => (
@@ -220,12 +220,12 @@ export default function AdminSubscriptionTools({
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
-        <h2 className="text-xl font-black italic text-slate-900 mb-2 flex items-center gap-2">
-          <UserPlus className="text-blue-600" size={22} />
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-sm">
+        <h2 className="text-xl font-black italic text-gray-900 mb-2 flex items-center gap-2">
+          <UserPlus className="text-indigo-600" size={22} />
           יצירת משתמש ומנוי (סיסמה)
         </h2>
-        <p className="text-sm text-slate-600 mb-6">
+        <p className="text-sm text-gray-600 mb-6">
           מחולל סיסמה; ניתן לשלוח אימייל אוטומטי (דורש RESEND_API_KEY) או להעתיק מהמסך. אם האימייל כבר
           קיים באותו ארגון (למשל אחרי הרשמה) — תעודכן הסיסמה והחשבון יופעל.
         </p>
@@ -253,24 +253,24 @@ export default function AdminSubscriptionTools({
           className="grid gap-4 max-w-xl"
         >
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">אימייל</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">אימייל</label>
             <input
               name="email"
               type="email"
               required
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">שם תצוגה</label>
-            <input name="name" className="w-full rounded-xl border border-slate-200 px-4 py-2.5" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">שם תצוגה</label>
+            <input name="name" className="w-full rounded-xl border border-gray-200 px-4 py-2.5" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">ארגון</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">ארגון</label>
             <select
               name="organizationId"
               required
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white"
             >
               <option value="">בחרו…</option>
               {allOrgs.map((o) => (
@@ -281,10 +281,10 @@ export default function AdminSubscriptionTools({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">הרשאה</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">הרשאה</label>
             <select
               name="role"
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 bg-white"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 bg-white"
               defaultValue="EMPLOYEE"
             >
               {ROLES.map((r) => (
@@ -294,14 +294,14 @@ export default function AdminSubscriptionTools({
               ))}
             </select>
           </div>
-          <div className="flex flex-wrap items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
               <input type="checkbox" name="useGenerated" defaultChecked />
               מחולל סיסמה אוטומטי
             </label>
             <button
               type="button"
-              className="text-sm font-bold text-blue-600 flex items-center gap-1"
+              className="text-sm font-bold text-indigo-600 flex items-center gap-1"
               onClick={() => setGenPassword(generateProvisionPassword(14))}
             >
               <KeyRound size={16} />
@@ -309,7 +309,7 @@ export default function AdminSubscriptionTools({
             </button>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               או סיסמה ידנית (כבו &quot;אוטומטי&quot; למעלה)
             </label>
             <input
@@ -317,7 +317,7 @@ export default function AdminSubscriptionTools({
               type="text"
               autoComplete="new-password"
               placeholder="השאירו ריק אם מסומן אוטומטי"
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5"
             />
           </div>
           <label className="flex items-center gap-2 text-sm">
@@ -327,7 +327,7 @@ export default function AdminSubscriptionTools({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 disabled:opacity-50"
+            className="rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 disabled:opacity-50"
           >
             {pending ? "שומר…" : "צור משתמש"}
           </button>

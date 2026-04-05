@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -264,7 +264,7 @@ export default async function ControlCenterPage() {
         {/* Funnel metrics */}
         <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
           <h2 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
-            <BarChart3 size={16} className="text-blue-600" />
+            <BarChart3 size={16} className="text-indigo-600" />
             דוח שימוש — מסלולים
           </h2>
           <p className="mb-4 text-xs text-gray-400">
@@ -366,7 +366,7 @@ function MetricChip({
   value: string;
   tone?: "slate" | "blue" | "green";
 }) {
-  const toneClass = tone === "blue" ? "text-blue-700" : tone === "green" ? "text-emerald-700" : "text-gray-800";
+  const toneClass = tone === "blue" ? "text-indigo-700" : tone === "green" ? "text-emerald-700" : "text-gray-800";
   return (
     <div className="rounded-lg bg-white border border-gray-100 p-1.5">
       <p className="text-[9px] text-gray-400">{label}</p>
@@ -378,7 +378,7 @@ function MetricChip({
 const QUICK_LINK_COLORS: Record<string, string> = {
   indigo: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
   violet: "border-violet-100 hover:border-violet-300 hover:bg-violet-50/40",
-  blue: "border-blue-100 hover:border-blue-300 hover:bg-blue-50/40",
+  blue: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
   amber: "border-amber-100 hover:border-amber-300 hover:bg-amber-50/40",
   emerald: "border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/40",
   slate: "border-gray-100 hover:border-gray-300 hover:bg-gray-50",

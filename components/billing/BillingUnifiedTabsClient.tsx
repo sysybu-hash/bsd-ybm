@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -87,17 +87,17 @@ export default function BillingUnifiedTabsClient({
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-transparent font-sans text-slate-900" dir={dir}>
+    <div className="min-h-screen bg-transparent font-sans text-gray-900" dir={dir}>
       <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
-        <h1 className="mb-1 text-2xl font-black italic tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="mb-1 text-2xl font-black italic tracking-tight text-gray-900 sm:text-3xl">
           מנויים ותשלומים
         </h1>
-        <p className="mb-6 text-sm font-medium text-slate-600">
+        <p className="mb-6 text-sm font-medium text-gray-600">
           סקירה עם גרפים — או מרכז שליטה אחד לניהול כל המנויים (למפעילי פלטפורמה בלבד).
         </p>
 
         <div
-          className="mb-8 rounded-2xl border border-slate-200/90 bg-white/95 p-2 shadow-md shadow-slate-200/50 backdrop-blur-md ring-1 ring-slate-100/90"
+          className="mb-8 rounded-2xl border border-gray-200/90 bg-white/95 p-2 shadow-md shadow-gray-200/50 backdrop-blur-md ring-1 ring-gray-100/90"
           role="tablist"
           aria-label="מקטעי מנויים"
         >
@@ -113,22 +113,22 @@ export default function BillingUnifiedTabsClient({
                   onClick={() => setTabAndUrl(id)}
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
-                      ? "bg-gradient-to-br from-blue-50 via-white to-slate-50 text-slate-900 shadow-md shadow-blue-200/40 ring-1 ring-blue-300/80"
-                      : "border border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-gradient-to-br from-indigo-50 via-white to-gray-50 text-gray-900 shadow-md shadow-indigo-200/40 ring-1 ring-indigo-300/80"
+                      : "border border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-xs font-black text-blue-700/80">
+                  <span className="flex items-center gap-2 text-xs font-black text-indigo-700/80">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-700"
+                        active ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700"
                       }`}
                     >
                       {step}
                     </span>
-                    <Icon size={16} className={active ? "text-blue-600" : "text-slate-400"} strokeWidth={2} />
-                    <span className="font-black text-slate-900">{label}</span>
+                    <Icon size={16} className={active ? "text-indigo-600" : "text-gray-400"} strokeWidth={2} />
+                    <span className="font-black text-gray-900">{label}</span>
                   </span>
-                  <span className="pe-8 text-[11px] font-medium text-slate-500">{hint}</span>
+                  <span className="pe-8 text-[11px] font-medium text-gray-500">{hint}</span>
                 </button>
               );
             })}

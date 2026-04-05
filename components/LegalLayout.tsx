@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,17 +10,17 @@ type Props = {
   children: ReactNode;
 };
 
-const sectionClass = "space-y-4 text-slate-700 leading-relaxed text-[15px]";
-const h2Class = "text-xl font-bold text-slate-900 mt-10 mb-3 scroll-mt-28";
+const sectionClass = "space-y-4 text-gray-700 leading-relaxed text-[15px]";
+const h2Class = "text-xl font-bold text-gray-900 mt-10 mb-3 scroll-mt-28";
 const noteClass =
-  "rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950 not-italic";
+  "rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-950 not-italic";
 
 export default function LegalLayout({ title, subtitle, children }: Props) {
   return (
     <div className="min-h-screen bg-white" dir="rtl">
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 pb-20 pt-28 md:pt-32">
-        <nav className="text-sm text-slate-500 mb-8">
+        <nav className="text-sm text-gray-500 mb-8">
           <Link href="/" className="hover:text-[var(--primary-color)]">
             דף הבית
           </Link>
@@ -29,18 +29,18 @@ export default function LegalLayout({ title, subtitle, children }: Props) {
             מסמכים משפטיים
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-slate-800 font-medium">{title}</span>
+          <span className="text-gray-800 font-medium">{title}</span>
         </nav>
 
-        <header className="mb-10 border-b border-slate-100 pb-8">
-          <h1 className="text-3xl md:text-4xl font-black italic text-slate-900 tracking-tight">
+        <header className="mb-10 border-b border-gray-100 pb-8">
+          <h1 className="text-3xl md:text-4xl font-black italic text-gray-900 tracking-tight">
             {title}
           </h1>
           {subtitle ? (
-            <p className="mt-3 text-slate-600 text-lg">{subtitle}</p>
+            <p className="mt-3 text-gray-600 text-lg">{subtitle}</p>
           ) : null}
-          <p className="mt-4 text-sm text-slate-500">
-            מפעיל: <strong className="text-slate-800">{legalSite.operatorDisplayName}</strong>
+          <p className="mt-4 text-sm text-gray-500">
+            מפעיל: <strong className="text-gray-800">{legalSite.operatorDisplayName}</strong>
             {" · "}
             עדכון מסמכים (מוצג): {legalSite.documentsLastUpdated}
           </p>
@@ -53,7 +53,7 @@ export default function LegalLayout({ title, subtitle, children }: Props) {
 
         <article className={sectionClass}>{children}</article>
 
-        <footer className="mt-16 pt-8 border-t border-slate-100 text-sm text-slate-500">
+        <footer className="mt-16 pt-8 border-t border-gray-100 text-sm text-gray-500">
           <p>
             פניות בנושא מסמכים אלו:{" "}
             <a

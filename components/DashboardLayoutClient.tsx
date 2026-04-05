@@ -56,7 +56,7 @@ const ACCENT: Record<string, { bg: string; text: string; border: string; dot: st
   sky:     { bg: "bg-sky-500/20",     text: "text-sky-200",     border: "border-r-sky-400",     dot: "bg-sky-400",     iconActive: "bg-sky-400/30 text-sky-200" },
   rose:    { bg: "bg-rose-500/20",    text: "text-rose-200",    border: "border-r-rose-400",    dot: "bg-rose-400",    iconActive: "bg-rose-400/30 text-rose-200" },
   amber:   { bg: "bg-amber-400/20",   text: "text-amber-200",   border: "border-r-amber-400",   dot: "bg-amber-400",   iconActive: "bg-amber-400/30 text-amber-200" },
-  blue:    { bg: "bg-blue-500/20",    text: "text-blue-200",    border: "border-r-blue-400",    dot: "bg-blue-400",    iconActive: "bg-blue-400/30 text-blue-200" },
+  blue:    { bg: "bg-indigo-500/20",    text: "text-indigo-200",    border: "border-r-blue-400",    dot: "bg-indigo-400",    iconActive: "bg-indigo-400/30 text-indigo-200" },
 };
 
 function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: NavLinkProps) {

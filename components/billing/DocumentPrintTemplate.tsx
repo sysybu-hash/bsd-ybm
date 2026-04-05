@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import { CompanyType, DocType, DocStatus } from "@prisma/client";
@@ -64,7 +64,7 @@ function statusBadge(status: DocStatus): { className: string; icon: typeof Check
     return { className: "bg-emerald-100 text-emerald-800", icon: CheckCircle };
   }
   if (status === DocStatus.CANCELLED) {
-    return { className: "bg-slate-200 text-slate-800", icon: XCircle };
+    return { className: "bg-gray-200 text-gray-800", icon: XCircle };
   }
   return { className: "bg-amber-100 text-amber-800", icon: AlertTriangle };
 }
@@ -103,70 +103,70 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
 
   return (
     <div
-      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-xl shadow-slate-200/50 print:border-none print:shadow-none print:rounded-none"
+      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-xl shadow-gray-200/50 print:border-none print:shadow-none print:rounded-none"
       dir={dir}
       id={`print-doc-${doc.number}`}
     >
-      <div className="pointer-events-none absolute end-0 top-0 z-0 h-64 w-64 -mt-32 -me-32 rounded-full bg-slate-50/50" />
+      <div className="pointer-events-none absolute end-0 top-0 z-0 h-64 w-64 -mt-32 -me-32 rounded-full bg-gray-50/50" />
 
-      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b-2 border-slate-900 pb-10 mb-10">
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b-2 border-gray-900 pb-10 mb-10">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="p-4 bg-slate-100 rounded-2xl text-slate-600 shadow-sm shrink-0">
+          <div className="p-4 bg-gray-100 rounded-2xl text-gray-600 shadow-sm shrink-0">
             <Building2 size={32} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-4xl font-black text-slate-950 tracking-tighter break-words">
+            <h1 className="text-4xl font-black text-gray-950 tracking-tighter break-words">
               {org.name}
             </h1>
-            <p className="text-base font-bold text-slate-700 mt-1">
+            <p className="text-base font-bold text-gray-700 mt-1">
               {org.address?.trim() || "כתובת העסק"}
             </p>
-            <p className="text-sm text-slate-500 font-medium">
+            <p className="text-sm text-gray-500 font-medium">
               ח.פ / ע.מ: {org.taxId?.trim() || "—"}
             </p>
           </div>
         </div>
-        <div className="w-full min-w-[12rem] shrink-0 rounded-3xl border border-slate-100 bg-slate-50 p-6 text-start md:w-auto">
-          <h2 className="text-3xl font-black text-blue-600 tracking-tight">
+        <div className="w-full min-w-[12rem] shrink-0 rounded-3xl border border-gray-100 bg-gray-50 p-6 text-start md:w-auto">
+          <h2 className="text-3xl font-black text-indigo-600 tracking-tight">
             {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
           </h2>
           {internalMemo ? (
-            <p className="text-sm font-bold text-blue-700 mt-2">{headerMeta.subTitle}</p>
+            <p className="text-sm font-bold text-indigo-700 mt-2">{headerMeta.subTitle}</p>
           ) : null}
-          <p className="text-xl font-bold text-slate-800 mt-1">מספר: {doc.number}</p>
-          <p className="text-sm text-slate-500 italic mt-1 font-medium">תאריך: {dateLabel}</p>
+          <p className="text-xl font-bold text-gray-800 mt-1">מספר: {doc.number}</p>
+          <p className="text-sm text-gray-500 italic mt-1 font-medium">תאריך: {dateLabel}</p>
         </div>
       </div>
 
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex gap-4 items-start">
-          <div className="p-3 bg-white rounded-2xl shadow-sm text-slate-400 mt-1 shrink-0">
+        <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex gap-4 items-start">
+          <div className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 mt-1 shrink-0">
             <User2 size={20} />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">לכבוד:</p>
-            <h3 className="text-2xl font-black text-slate-900 tracking-tight break-words">
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">לכבוד:</p>
+            <h3 className="text-2xl font-black text-gray-900 tracking-tight break-words">
               {doc.clientName}
             </h3>
-            <p className="text-sm text-slate-500 font-medium mt-1">אימייל / טלפון הלקוח</p>
+            <p className="text-sm text-gray-500 font-medium mt-1">אימייל / טלפון הלקוח</p>
           </div>
         </div>
-        <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex flex-col items-center justify-center text-center">
+        <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex flex-col items-center justify-center text-center">
           <div
             className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-black shadow-sm ${badge.className}`}
           >
             <StatusIcon size={14} />
             {DOC_STATUS_LABEL[doc.status]}
           </div>
-          <p className="text-sm text-slate-500 mt-2 font-medium">
+          <p className="text-sm text-gray-500 mt-2 font-medium">
             {internalMemo ? "מסמך פנימי — ללא ערך לדיווח מס" : "אנא שמרו מסמך זה לצרכי מס"}
           </p>
         </div>
       </div>
 
-      <div className="relative z-10 bg-slate-50/50 rounded-3xl p-6 border border-slate-100 mb-12 overflow-x-auto">
+      <div className="relative z-10 bg-gray-50/50 rounded-3xl p-6 border border-gray-100 mb-12 overflow-x-auto">
         <table className="w-full min-w-[520px] border-collapse text-start">
-          <thead className="text-slate-500 text-[11px] font-black uppercase tracking-widest border-b-2 border-slate-200">
+          <thead className="text-gray-500 text-[11px] font-black uppercase tracking-widest border-b-2 border-gray-200">
             <tr>
               <th className="p-5 text-start align-middle">
                 <span className="inline-flex items-center gap-2">
@@ -179,10 +179,10 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
               <th className="p-5 text-end align-middle font-black">סה״כ (₪)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+          <tbody className="divide-y divide-gray-100 text-gray-800 font-medium">
             {lines.length === 0 ? (
               <tr>
-                <td colSpan={4} className="p-8 text-center text-slate-400 text-sm">
+                <td colSpan={4} className="p-8 text-center text-gray-400 text-sm">
                   אין פירוט שורות
                 </td>
               </tr>
@@ -190,8 +190,8 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
               lines.map((item, i) => (
                 <tr key={i} className="hover:bg-white transition-colors">
                   <td className="p-5 font-bold">{item.desc || "—"}</td>
-                  <td className="p-5 text-center font-bold text-slate-600">{item.qty}</td>
-                  <td className="p-5 text-center font-bold text-slate-600">₪{money(item.price)}</td>
+                  <td className="p-5 text-center font-bold text-gray-600">{item.qty}</td>
+                  <td className="p-5 text-center font-bold text-gray-600">₪{money(item.price)}</td>
                   <td className="p-5 text-end font-black text-lg tracking-tight">
                     ₪{money(item.qty * item.price)}
                   </td>
@@ -203,29 +203,29 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
       </div>
 
       <div className="relative z-10 flex justify-end">
-        <div className="w-full md:w-80 space-y-3 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200 shadow-lg shadow-slate-200/40 text-slate-800">
-          <div className="flex justify-between text-slate-600 font-medium">
+        <div className="w-full md:w-80 space-y-3 bg-gray-50 p-8 rounded-[2.5rem] border border-gray-200 shadow-lg shadow-gray-200/40 text-gray-800">
+          <div className="flex justify-between text-gray-600 font-medium">
             <span>סה״כ לפני מע״מ:</span>
             <span>₪{money(doc.amount)}</span>
           </div>
           {!internalMemo && !isExempt ? (
-            <div className="flex justify-between text-slate-500 font-medium">
+            <div className="flex justify-between text-gray-500 font-medium">
               <span>מע״מ ({vatPercentLabel}):</span>
               <span>₪{money(doc.vat)}</span>
             </div>
           ) : null}
-          <div className="flex justify-between text-2xl font-black text-slate-900 pt-3 border-t border-slate-200 leading-none tracking-tight">
+          <div className="flex justify-between text-2xl font-black text-gray-900 pt-3 border-t border-gray-200 leading-none tracking-tight">
             <span>סה״כ לתשלום:</span>
-            <span className="italic text-blue-700">₪{money(doc.total)}</span>
+            <span className="italic text-indigo-700">₪{money(doc.total)}</span>
           </div>
         </div>
       </div>
 
-      <div className="relative z-10 mt-20 text-center border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 px-6">
-        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest italic flex items-center gap-2">
+      <div className="relative z-10 mt-20 text-center border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 px-6">
+        <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest italic flex items-center gap-2">
           BSD-YBM Intelligence System | השדרה שמחברת בין כולם
         </p>
-        <p className="text-[11px] text-slate-500 font-bold bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
+        <p className="text-[11px] text-gray-500 font-bold bg-gray-50 px-4 py-1.5 rounded-full border border-gray-100">
           {internalMemo
             ? "מזכר פנימי — לשימוש ארגוני בלבד"
             : "מסמך ממוחשב — שמירה לצרכי תיעוד ומס באחריות המוציא"}

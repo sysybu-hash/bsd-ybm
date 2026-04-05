@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -24,9 +24,9 @@ export default function LandingPage() {
       icon: <Users size={22} />,
       desc: t("landing.featureCrmDesc"),
       color: "blue",
-      gradient: "from-blue-500 to-blue-600",
-      bg: "bg-blue-50",
-      iconColor: "text-blue-600",
+      gradient: "from-indigo-500 to-indigo-600",
+      bg: "bg-indigo-50",
+      iconColor: "text-indigo-600",
     },
     {
       title: t("landing.featureInvTitle"),
@@ -67,12 +67,12 @@ export default function LandingPage() {
     : <ChevronRight size={16} />;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-white text-slate-900" dir={dir}>
+    <div className="relative min-h-screen overflow-x-hidden bg-white text-gray-900" dir={dir}>
 
       {/* ══════════════════════════════════
           NAVBAR
       ══════════════════════════════════ */}
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-xl font-black italic tracking-tight">
@@ -81,7 +81,7 @@ export default function LandingPage() {
               style={{ backgroundColor: "var(--primary-color)" }}
             >B</span>
             <span style={{ color: "var(--primary-color)" }}>BSD-</span>
-            <span className="text-slate-900">YBM</span>
+            <span className="text-gray-900">YBM</span>
           </Link>
 
           {/* Desktop nav */}
@@ -90,7 +90,7 @@ export default function LandingPage() {
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600"
+                className="text-sm font-semibold text-gray-600 transition-colors hover:text-indigo-600"
               >
                 {["פתרונות", "הדגמות", "מחירים"][i]}
               </Link>
@@ -103,7 +103,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={() => setNavOpen(true)}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2.5 text-slate-700 hover:bg-slate-50 transition-colors md:hidden"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-200 p-2.5 text-gray-700 hover:bg-gray-50 transition-colors md:hidden"
               aria-label="פתח תפריט"
             >
               <Menu className="h-5 w-5" />
@@ -113,7 +113,7 @@ export default function LandingPage() {
 
             <Link
               href="/login"
-              className="hidden text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600 sm:inline px-2 py-1.5"
+              className="hidden text-sm font-semibold text-gray-600 transition-colors hover:text-indigo-600 sm:inline px-2 py-1.5"
             >
               {t("nav.login")}
             </Link>
@@ -165,8 +165,8 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-44">
 
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-blue-200 backdrop-blur-sm">
-            <CheckCircle2 size={13} className="text-blue-300" />
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-indigo-200 backdrop-blur-sm">
+            <CheckCircle2 size={13} className="text-indigo-300" />
             פלטפורמת ניהול עסקי מבוססת AI — Made in Israel
           </div>
 
@@ -176,7 +176,7 @@ export default function LandingPage() {
           </h1>
 
           {/* Subtitle */}
-          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-blue-100/80 sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg font-medium leading-relaxed text-indigo-100/80 sm:text-xl">
             {t("landing.heroSubtitle")}
           </p>
 
@@ -184,7 +184,7 @@ export default function LandingPage() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-black text-white shadow-xl shadow-blue-900/40 transition-all hover:bg-blue-500 hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-black text-white shadow-xl shadow-indigo-900/40 transition-all hover:bg-indigo-500 hover:scale-[1.02]"
             >
               {t("landing.ctaStart")} {chevron}
             </Link>
@@ -192,7 +192,7 @@ export default function LandingPage() {
               href="#tutorial-videos"
               className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/15"
             >
-              <Play size={16} className="text-blue-300" />
+              <Play size={16} className="text-indigo-300" />
               {t("landing.tutorialCta")}
             </Link>
           </div>
@@ -200,8 +200,8 @@ export default function LandingPage() {
           {/* Trust strip */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2 text-xs font-semibold text-blue-200/80">
-                <span className="text-blue-400">{item.icon}</span>
+              <span key={i} className="flex items-center gap-2 text-xs font-semibold text-indigo-200/80">
+                <span className="text-indigo-400">{item.icon}</span>
                 {item.text}
               </span>
             ))}
@@ -215,7 +215,7 @@ export default function LandingPage() {
                 className="rounded-2xl border border-white/10 bg-white/6 p-4 backdrop-blur-sm"
               >
                 <p className="text-2xl font-black text-white">{s.value}</p>
-                <p className="mt-1 text-xs font-semibold text-blue-200/70">{s.label}</p>
+                <p className="mt-1 text-xs font-semibold text-indigo-200/70">{s.label}</p>
               </div>
             ))}
           </div>
@@ -232,7 +232,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           TUTORIAL VIDEOS
       ══════════════════════════════════ */}
-      <div className="bg-slate-50">
+      <div className="bg-gray-50">
         <LandingTutorialSection />
       </div>
 
@@ -244,10 +244,10 @@ export default function LandingPage() {
 
           <div className="mb-14 text-center">
             <span className="section-badge">יכולות ליבה</span>
-            <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
               כל מה שהעסק שלכם צריך
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base text-slate-500">
+            <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
               מערכת All-in-One המשלבת AI, ניהול לקוחות ותפעול — בממשק אחד חכם
             </p>
           </div>
@@ -256,7 +256,7 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <div
                 key={feat.title}
-                className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-slate-200"
+                className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-gray-200"
               >
                 {/* Top gradient bar */}
                 <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${feat.gradient} rounded-t-3xl opacity-80`} aria-hidden />
@@ -265,8 +265,8 @@ export default function LandingPage() {
                   <span className={feat.iconColor}>{feat.icon}</span>
                 </div>
 
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{feat.title}</p>
-                <h3 className="mt-2 text-xl font-black leading-snug text-slate-900">{feat.desc}</h3>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">{feat.title}</p>
+                <h3 className="mt-2 text-xl font-black leading-snug text-gray-900">{feat.desc}</h3>
 
                 <div className={`mt-6 inline-flex items-center gap-1 text-xs font-bold ${feat.iconColor} opacity-0 transition-opacity group-hover:opacity-100`}>
                   גלה עוד {chevron}
@@ -289,7 +289,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           WHY US — Social proof strip
       ══════════════════════════════════ */}
-      <section className="bg-slate-900 py-16">
+      <section className="bg-gray-900 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             {[1,2,3,4,5].map(i => <Star key={i} size={18} className="fill-amber-400 text-amber-400" />)}
@@ -297,30 +297,30 @@ export default function LandingPage() {
           <p className="text-2xl font-black text-white sm:text-3xl max-w-2xl mx-auto">
             &ldquo;BSD-YBM שינתה את הדרך שאנחנו מנהלים את העסק — חסכנו 12 שעות בשבוע&rdquo;
           </p>
-          <p className="mt-4 text-sm font-semibold text-slate-400">יעקב לוי, מנכ&quot;ל פיינטק IL</p>
+          <p className="mt-4 text-sm font-semibold text-gray-400">יעקב לוי, מנכ&quot;ל פיינטק IL</p>
         </div>
       </section>
 
       {/* ══════════════════════════════════
           PRICING
       ══════════════════════════════════ */}
-      <div dir={dir} className="bg-slate-50">
+      <div dir={dir} className="bg-gray-50">
         <PricingSection />
       </div>
 
       {/* ══════════════════════════════════
           FOOTER
       ══════════════════════════════════ */}
-      <footer className="border-t border-slate-200 bg-white">
+      <footer className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <Link href="/" className="flex items-center gap-1.5 text-xl font-black italic tracking-tight">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black" style={{ backgroundColor: "var(--primary-color)" }}>B</span>
               <span style={{ color: "var(--primary-color)" }}>BSD-</span>
-              <span className="text-slate-900">YBM</span>
+              <span className="text-gray-900">YBM</span>
             </Link>
 
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-500">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-gray-500">
               {[
                 ["/about",   "אודות"],
                 ["/contact", "צור קשר"],
@@ -328,11 +328,11 @@ export default function LandingPage() {
                 ["/privacy", "פרטיות"],
                 ["/terms",   "תנאים"],
               ].map(([href, label]) => (
-                <Link key={href} href={href} className="hover:text-slate-800 transition-colors">{label}</Link>
+                <Link key={href} href={href} className="hover:text-gray-800 transition-colors">{label}</Link>
               ))}
             </div>
 
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-gray-400">
               © {new Date().getFullYear()} BSD-YBM · {t("landing.footerTagline")}
             </p>
           </div>

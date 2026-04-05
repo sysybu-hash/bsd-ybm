@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -33,10 +33,10 @@ const ORG_TYPE_OPTIONS = [
     label: "עצמאי / עוסק",
     desc: "פרילנסר, יועץ, בעל מקצוע",
     Icon: Briefcase,
-    activeBg: "bg-blue-50",
-    activeBorder: "border-blue-400",
-    activeText: "text-blue-700",
-    activeRing: "ring-blue-300",
+    activeBg: "bg-indigo-50",
+    activeBorder: "border-indigo-400",
+    activeText: "text-indigo-700",
+    activeRing: "ring-indigo-300",
   },
   {
     value: "COMPANY",
@@ -190,13 +190,13 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
   }, [form, inviteToken, orgInviteToken, isTeamJoin]);
 
   const inputCls =
-    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/15 transition";
+    "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15 transition";
 
   // ── Loading preview ────────────────────────────────────────────────────────
   if (previewLoading) {
     return (
       <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
-        <div className="flex items-center gap-3 text-slate-500">
+        <div className="flex items-center gap-3 text-gray-500">
           <Loader2 className="animate-spin" size={20} />
           טוען פרטי הזמנה…
         </div>
@@ -212,7 +212,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
           <p className="font-medium text-red-700">{previewErr}</p>
           <Link
             href="/login"
-            className="mt-4 inline-block text-sm text-blue-600 hover:underline"
+            className="mt-4 inline-block text-sm text-indigo-600 hover:underline"
           >
             חזרה לכניסה
           </Link>
@@ -229,17 +229,17 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
             <CheckCircle2 className="h-8 w-8 text-emerald-600" />
           </div>
-          <h1 className="text-2xl font-black text-slate-900">
+          <h1 className="text-2xl font-black text-gray-900">
             {isTeamJoin ? "ברוכים הבאים לצוות!" : "הבקשה נשלחה בהצלחה!"}
           </h1>
-          <p className="mt-3 leading-relaxed text-sm text-slate-500">
+          <p className="mt-3 leading-relaxed text-sm text-gray-500">
             {isTeamJoin
               ? `הצטרפתם ל־${preview?.orgName ?? "הארגון"} בתור ${ROLE_LABELS[preview?.role ?? ""] ?? preview?.role ?? ""}. כעת היכנסו עם Google.`
               : "קיבלנו את בקשתכם — מנהל המערכת יאשר תוך 24 שעות. לאחר אישור תוכלו להיכנס."}
           </p>
           <Link
             href="/login?registered=1"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition"
           >
             מעבר לכניסה
             <ArrowLeft size={15} />
@@ -256,28 +256,28 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
     <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
       <div className="w-full max-w-lg" dir="rtl">
         {/* Card */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
           {/* Progress bar */}
-          <div className="h-1 w-full bg-slate-100">
+          <div className="h-1 w-full bg-gray-100">
             <div
-              className="h-full bg-blue-600 transition-all duration-500"
+              className="h-full bg-indigo-600 transition-all duration-500"
               style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
             />
           </div>
 
           {/* Step indicators */}
-          <div className="flex items-center justify-center gap-0 border-b border-slate-100 px-6 py-4">
+          <div className="flex items-center justify-center gap-0 border-b border-gray-100 px-6 py-4">
             {steps.map((label, i) => (
               <div key={i} className="flex items-center">
                 <div
                   title={label}
                   className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-black transition-all ${
                     i < step
-                      ? "bg-blue-600 text-white"
+                      ? "bg-indigo-600 text-white"
                       : i === step
-                        ? "bg-blue-600 text-white ring-4 ring-blue-100"
-                        : "bg-slate-100 text-slate-400"
+                        ? "bg-indigo-600 text-white ring-4 ring-indigo-100"
+                        : "bg-gray-100 text-gray-400"
                   }`}
                 >
                   {i < step ? "✓" : i + 1}
@@ -285,7 +285,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                 {i < steps.length - 1 && (
                   <div
                     className={`mx-1.5 h-0.5 w-8 sm:w-14 transition-colors ${
-                      i < step ? "bg-blue-400" : "bg-slate-100"
+                      i < step ? "bg-indigo-400" : "bg-gray-100"
                     }`}
                   />
                 )}
@@ -295,10 +295,10 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
 
           {/* Content */}
           <div className="px-8 pb-8 pt-6">
-            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-blue-600">
+            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-indigo-600">
               שלב {step + 1} מתוך {totalSteps}
             </p>
-            <h1 className="mb-6 text-xl font-black text-slate-900">{steps[step]}</h1>
+            <h1 className="mb-6 text-xl font-black text-gray-900">{steps[step]}</h1>
 
             {/* ── STEP: סוג עסק (regular, step 0) ── */}
             {!isTeamJoin && step === 0 && (
@@ -314,21 +314,21 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                         className={`flex flex-col items-center rounded-2xl border-2 p-5 text-center transition-all ${
                           active
                             ? `${activeBg} ${activeBorder} ring-2 ${activeRing}`
-                            : "border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white"
+                            : "border-gray-100 bg-gray-50 hover:border-gray-200 hover:bg-white"
                         }`}
                       >
                         <Icon
                           size={28}
-                          className={active ? activeText : "text-slate-400"}
+                          className={active ? activeText : "text-gray-400"}
                         />
                         <span
                           className={`mt-2 block text-sm font-black ${
-                            active ? activeText : "text-slate-700"
+                            active ? activeText : "text-gray-700"
                           }`}
                         >
                           {label}
                         </span>
-                        <span className="mt-1 block text-xs leading-tight text-slate-400">
+                        <span className="mt-1 block text-xs leading-tight text-gray-400">
                           {desc}
                         </span>
                       </button>
@@ -350,7 +350,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                   </div>
                 )}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
+                  <label className="mb-1.5 block text-xs font-bold text-gray-600">
                     שם מלא
                   </label>
                   <input
@@ -363,7 +363,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
+                  <label className="mb-1.5 block text-xs font-bold text-gray-600">
                     אימייל
                   </label>
                   <input
@@ -375,12 +375,12 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                     readOnly={isTeamJoin && !!preview?.emailHint}
                     className={`${inputCls} ${
                       isTeamJoin && preview?.emailHint
-                        ? "bg-slate-50 text-slate-600"
+                        ? "bg-gray-50 text-gray-600"
                         : ""
                     }`}
                   />
                   {!isTeamJoin && (
-                    <p className="mt-1.5 text-xs text-slate-400">
+                    <p className="mt-1.5 text-xs text-gray-400">
                       השתמשו באימייל Google — הכניסה למערכת תהיה עם אותו כתובת
                     </p>
                   )}
@@ -392,7 +392,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
             {!isTeamJoin && step === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
+                  <label className="mb-1.5 block text-xs font-bold text-gray-600">
                     {form.orgType === "HOME"
                       ? "שם המשפחה / שם לניהול"
                       : form.orgType === "FREELANCER"
@@ -414,7 +414,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                     autoFocus
                   />
                 </div>
-                <p className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-500">
+                <p className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-xs leading-relaxed text-gray-500">
                   השם יופיע בחשבוניות, במסמכים ובממשק המערכת. ניתן לשנות בהגדרות לאחר
                   ההרשמה.
                 </p>
@@ -424,11 +424,11 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
             {/* ── STEP: אישור ושליחה (last) ── */}
             {isLast && (
               <div className="space-y-4">
-                <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200">
+                <div className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-200">
                   {!isTeamJoin && selectedType && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-slate-500">סוג עסק</span>
-                      <span className="flex items-center gap-1.5 font-black text-slate-800">
+                      <span className="text-gray-500">סוג עסק</span>
+                      <span className="flex items-center gap-1.5 font-black text-gray-800">
                         <selectedType.Icon size={14} className={selectedType.activeText} />
                         {selectedType.label}
                       </span>
@@ -436,23 +436,23 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                   )}
                   {!isTeamJoin && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-slate-500">שם הארגון</span>
-                      <span className="font-black text-slate-800">{form.organizationName}</span>
+                      <span className="text-gray-500">שם הארגון</span>
+                      <span className="font-black text-gray-800">{form.organizationName}</span>
                     </div>
                   )}
                   {isTeamJoin && preview && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-slate-500">הצטרפות ל</span>
-                      <span className="font-black text-slate-800">{preview.orgName}</span>
+                      <span className="text-gray-500">הצטרפות ל</span>
+                      <span className="font-black text-gray-800">{preview.orgName}</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-slate-500">שם</span>
-                    <span className="font-black text-slate-800">{form.name || "—"}</span>
+                    <span className="text-gray-500">שם</span>
+                    <span className="font-black text-gray-800">{form.name || "—"}</span>
                   </div>
                   <div className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-slate-500">אימייל</span>
-                    <span dir="ltr" className="font-mono text-xs font-bold text-slate-800">
+                    <span className="text-gray-500">אימייל</span>
+                    <span dir="ltr" className="font-mono text-xs font-bold text-gray-800">
                       {form.email}
                     </span>
                   </div>
@@ -468,7 +468,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                   type="button"
                   disabled={loading}
                   onClick={handleSubmit}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-4 text-sm font-black text-white hover:bg-blue-700 transition disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 text-sm font-black text-white hover:bg-indigo-700 transition disabled:opacity-60"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin" size={17} />
@@ -486,7 +486,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                 <button
                   type="button"
                   onClick={() => { setErr(null); setStep((s) => s - 1); }}
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition"
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition"
                 >
                   <ArrowRight size={15} />
                   חזרה
@@ -494,7 +494,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-700 transition"
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition"
                 >
                   <ArrowRight size={15} />
                   חזרה לכניסה
@@ -506,7 +506,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
                   type="button"
                   disabled={!canAdvance()}
                   onClick={() => setStep((s) => s + 1)}
-                  className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition disabled:opacity-40"
+                  className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-40"
                 >
                   המשך
                   <ArrowLeft size={15} />
@@ -516,9 +516,9 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
           </div>
         </div>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
+        <p className="mt-4 text-center text-xs text-gray-400">
           כבר רשומים?{" "}
-          <Link href="/login" className="font-bold text-blue-600 hover:underline">
+          <Link href="/login" className="font-bold text-indigo-600 hover:underline">
             כניסה למערכת
           </Link>
         </p>

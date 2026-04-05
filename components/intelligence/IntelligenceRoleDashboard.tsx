@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { IntelligenceModuleId } from "@/lib/intelligence-access";
 import { INTELLIGENCE_MODULE_ORDER } from "@/lib/intelligence-access";
@@ -27,7 +27,7 @@ export default function IntelligenceRoleDashboard({ modules }: Props) {
         switch (id) {
           case "hub":
             return (
-              <section key={id} className="rounded-[2rem] border border-slate-200 bg-[#f8fafc]">
+              <section key={id} className="rounded-[2rem] border border-gray-200 bg-[#f8fafc]">
                 <IntelligenceHub />
               </section>
             );
@@ -41,7 +41,7 @@ export default function IntelligenceRoleDashboard({ modules }: Props) {
             return <VoiceInsights key={id} />;
           case "profitability":
             return (
-              <div key={id} className="rounded-[2rem] border border-slate-200 overflow-hidden">
+              <div key={id} className="rounded-[2rem] border border-gray-200 overflow-hidden">
                 <ProjectProfitability />
               </div>
             );
@@ -55,9 +55,9 @@ export default function IntelligenceRoleDashboard({ modules }: Props) {
             return (
               <section
                 key={id}
-                className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm"
+                className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm"
               >
-                <h3 className="text-sm font-black text-slate-600 mb-4">
+                <h3 className="text-sm font-black text-gray-600 mb-4">
                   דמו סנטימנט לקוח
                 </h3>
                 <div className="flex flex-wrap gap-3">

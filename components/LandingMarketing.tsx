@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { Zap, Shield, Briefcase, Building2, Brain, CheckCircle2, Star } from "lucide-react";
@@ -8,10 +8,10 @@ import EuComplianceStrip from "@/components/EuComplianceStrip";
 import LandingVideoTutorials from "@/components/LandingVideoTutorials";
 
 const sectors = [
-  { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-blue-50" },
+  { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-indigo-50" },
   { title: "עוסק מורשה", desc: "הנהלת חשבונות חכמה, ניהול לקוחות (CRM) ודיווחים מהירים.", icon: Shield, color: "bg-emerald-50" },
   { title: "חברה", desc: "שליטה במלאי, ניהול צוותים, ERP תפעולי ודוחות רווח והפסד.", icon: Briefcase, color: "bg-purple-50" },
-  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-blue-50" },
+  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-indigo-50" },
 ];
 
 const plans = [
@@ -49,14 +49,14 @@ export default function LandingMarketing() {
   const primaryColor = "var(--primary-color, #3b82f6)";
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 overflow-hidden font-sans" dir="rtl">
+    <div className="min-h-screen bg-white text-gray-900 overflow-hidden font-sans" dir="rtl">
       <main className="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-6">
         <section
           id="ai-solutions"
           className="text-center mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center scroll-mt-28"
         >
           <div className="text-right">
-            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-slate-50 border border-slate-100 text-slate-500 text-xs font-bold uppercase tracking-widest">
+            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-gray-50 border border-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest">
               <Brain size={14} style={{ color: primaryColor }} /> AI-Powered Business Intelligence
             </p>
             <motion.h1
@@ -67,9 +67,9 @@ export default function LandingMarketing() {
             >
               <span style={{ color: primaryColor }}>BSD-YBM.</span>
               <br />
-              <span className="text-slate-900">Intelligence.</span>
+              <span className="text-gray-900">Intelligence.</span>
             </motion.h1>
-            <p className="max-w-xl text-slate-500 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
+            <p className="max-w-xl text-gray-500 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
               פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
               וחברות בדומיין אחד.
             </p>
@@ -87,14 +87,14 @@ export default function LandingMarketing() {
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-bold text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-[var(--primary-color)]"
+                className="text-sm font-bold text-gray-600 underline decoration-slate-300 underline-offset-4 hover:text-[var(--primary-color)]"
               >
                 יש לך חשבון? התחברות עם Google
               </Link>
             </div>
           </div>
-          <div id="tutorial" className="bg-slate-50 p-6 sm:p-10 rounded-[3rem] border border-slate-100 shadow-2xl shadow-blue-500/5 scroll-mt-28">
-            <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+          <div id="tutorial" className="bg-gray-50 p-6 sm:p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-indigo-500/5 scroll-mt-28">
+            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
               הדרכה מונפשת
             </p>
             <SiteTutorialShowcase variant="embedded" />
@@ -110,7 +110,7 @@ export default function LandingMarketing() {
         </section>
 
         <section id="erp" className="scroll-mt-28">
-          <h2 className="text-3xl font-black mb-12 italic text-center text-slate-900">
+          <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
             פתרון מותאם לכל סוג ישות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-32">
@@ -122,13 +122,13 @@ export default function LandingMarketing() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className={`p-10 rounded-[3rem] ${s.color} border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] cursor-pointer`}
+                  className={`p-10 rounded-[3rem] ${s.color} border border-gray-100 shadow-xl shadow-gray-200/50 transition-all hover:scale-[1.02] cursor-pointer`}
                 >
                   <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm">
                     <Icon style={{ color: primaryColor }} size={32} />
                   </div>
-                  <h3 className="text-2xl font-black mb-3 italic text-slate-900">{s.title}</h3>
-                  <p className="text-slate-500 leading-relaxed text-sm font-medium">{s.desc}</p>
+                  <h3 className="text-2xl font-black mb-3 italic text-gray-900">{s.title}</h3>
+                  <p className="text-gray-500 leading-relaxed text-sm font-medium">{s.desc}</p>
                 </motion.div>
               );
             })}
@@ -138,7 +138,7 @@ export default function LandingMarketing() {
         <LandingVideoTutorials />
 
         <section id="crm" className="scroll-mt-28">
-          <h2 className="text-3xl font-black mb-12 italic text-center text-slate-900">
+          <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
             בחר את המסלול המתאים לך
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -150,29 +150,29 @@ export default function LandingMarketing() {
                 transition={{ delay: i * 0.1 + 0.4 }}
                 className={`p-10 rounded-[3.5rem] bg-white border ${
                   plan.level === "Premium"
-                    ? "border-blue-200 shadow-2xl shadow-blue-500/15"
-                    : "border-slate-100 shadow-xl shadow-slate-200/60"
+                    ? "border-indigo-200 shadow-2xl shadow-indigo-500/15"
+                    : "border-gray-100 shadow-xl shadow-gray-200/60"
                 } relative`}
               >
                 {plan.level === "Premium" && (
-                  <div className="absolute top-6 start-6 text-blue-500 p-2 bg-blue-400/15 rounded-full animate-pulse">
+                  <div className="absolute top-6 start-6 text-indigo-500 p-2 bg-indigo-400/15 rounded-full animate-pulse">
                     <Star size={18} fill="currentColor" />
                   </div>
                 )}
-                <h3 className="text-2xl font-black mb-1 italic text-slate-950">{plan.name}</h3>
-                <p className="text-slate-400 text-sm mb-6">{plan.desc}</p>
+                <h3 className="text-2xl font-black mb-1 italic text-gray-950">{plan.name}</h3>
+                <p className="text-gray-400 text-sm mb-6">{plan.desc}</p>
                 <p
-                  className="text-5xl font-black mb-8 italic text-slate-900"
+                  className="text-5xl font-black mb-8 italic text-gray-900"
                   style={plan.level === "Premium" ? { color: primaryColor } : undefined}
                 >
                   {plan.price}
-                  <span className="text-sm font-medium text-slate-400 not-italic"> / חודש</span>
+                  <span className="text-sm font-medium text-gray-400 not-italic"> / חודש</span>
                 </p>
 
-                <ul className="space-y-3 mb-10 text-sm font-medium text-slate-600">
+                <ul className="space-y-3 mb-10 text-sm font-medium text-gray-600">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2">
-                      <CheckCircle2 size={16} className="text-blue-500 shrink-0" /> {f}
+                      <CheckCircle2 size={16} className="text-indigo-500 shrink-0" /> {f}
                     </li>
                   ))}
                 </ul>
@@ -181,8 +181,8 @@ export default function LandingMarketing() {
                   href="/dashboard/billing"
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-100 text-slate-950"
+                      ? "bg-indigo-600 text-white"
+                      : "bg-gray-100 text-gray-950"
                   }`}
                 >
                   בחר מסלול
@@ -190,7 +190,7 @@ export default function LandingMarketing() {
               </motion.div>
             ))}
           </div>
-          <p className="text-center text-xs text-slate-400 mt-8">
+          <p className="text-center text-xs text-gray-400 mt-8">
             *במסלול תאגיד — בהתאם להסכם שירות. המחירים להמחשה בלבד.
           </p>
         </section>

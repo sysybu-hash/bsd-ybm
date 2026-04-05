@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -133,7 +133,7 @@ export default function OperationsCommandCenter({
             <Panel
               title="מצב עסק ומערכת"
               description="מבט קצר על בסיס הלקוחות, ההכנסות והמנוי."
-              icon={<Gauge size={17} className="text-blue-600" />}
+              icon={<Gauge size={17} className="text-indigo-600" />}
             >
               <div className="grid gap-3 sm:grid-cols-2">
                 <MiniStat label="ארגון" value={`${data.organizationName} · ${data.organizationType}`} />

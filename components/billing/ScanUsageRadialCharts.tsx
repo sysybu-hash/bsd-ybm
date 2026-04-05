@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useId } from "react";
 import {
@@ -48,7 +48,7 @@ function Ring({
   return (
     <div className="flex min-h-[200px] flex-col items-center justify-center">
       <p
-        className={`mb-2 text-xs font-bold uppercase tracking-wider ${isLight ? "text-slate-500" : "text-slate-400"}`}
+        className={`mb-2 text-xs font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-gray-400"}`}
       >
         {title}
       </p>
@@ -113,7 +113,7 @@ function Ring({
         </ResponsiveContainer>
       </div>
       <p
-        className={`mt-2 text-sm font-medium tabular-nums ${isLight ? "text-slate-600" : "text-slate-300"}`}
+        className={`mt-2 text-sm font-medium tabular-nums ${isLight ? "text-gray-600" : "text-gray-300"}`}
       >
         {formatCreditsForDisplay(left)} נותרו · עד {included} במנוי
       </p>
@@ -136,13 +136,13 @@ export default function ScanUsageRadialCharts({
 
   return (
     <section
-      className="rounded-[1.75rem] border border-slate-200/90 bg-white/85 p-6 shadow-xl shadow-slate-200/40 backdrop-blur-md ring-1 ring-slate-100/90 md:p-8"
+      className="rounded-[1.75rem] border border-gray-200/90 bg-white/85 p-6 shadow-xl shadow-gray-200/40 backdrop-blur-md ring-1 ring-gray-100/90 md:p-8"
       dir="rtl"
     >
-      <h2 className="mb-1 text-lg font-black text-slate-900">
+      <h2 className="mb-1 text-lg font-black text-gray-900">
         ניצול סריקות
       </h2>
-      <p className="mb-8 max-w-xl text-xs font-medium leading-relaxed text-slate-600">
+      <p className="mb-8 max-w-xl text-xs font-medium leading-relaxed text-gray-600">
         זולות (Gemini) מול פרימיום (OpenAI / Claude). הטבעת מציגה יחס יתרה לעומת תקרת התצוגה (מכסת המנוי או
         היתרה הגבוהה יותר).
       </p>

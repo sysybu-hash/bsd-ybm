@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { PenLine } from "lucide-react";
@@ -49,7 +49,7 @@ export default function SignQuoteButton({
         <PenLine size={14} />
         {loading ? "יוצר קישור..." : "חתום ואשר (קישור ללקוח)"}
       </button>
-      {msg && <span className="text-[10px] text-slate-500 max-w-[180px]">{msg}</span>}
+      {msg && <span className="text-[10px] text-gray-500 max-w-[180px]">{msg}</span>}
     </div>
   );
 }

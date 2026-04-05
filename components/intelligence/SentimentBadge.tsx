@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Smile, Frown, Meh, AlertCircle } from "lucide-react";
 
@@ -16,8 +16,8 @@ export default function SentimentBadge({
     },
     neutral: {
       icon: Meh,
-      color: "text-slate-400",
-      bg: "bg-slate-50",
+      color: "text-gray-400",
+      bg: "bg-gray-50",
       text: "סטטוס רגיל",
     },
     angry: {
