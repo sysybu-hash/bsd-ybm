@@ -49,7 +49,7 @@ export default function LandingMarketing() {
   const primaryColor = "var(--primary-color, #3b82f6)";
 
   return (
-    <div className="min-h-screen bg-white text-white overflow-hidden font-sans" dir="rtl">
+    <div className="min-h-screen bg-white text-gray-900 overflow-hidden font-sans" dir="rtl">
       <main className="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-6">
         <section
           id="ai-solutions"
@@ -67,7 +67,7 @@ export default function LandingMarketing() {
             >
               <span style={{ color: primaryColor }}>BSD-YBM.</span>
               <br />
-              <span className="text-white">Intelligence.</span>
+              <span className="text-indigo-600">Intelligence.</span>
             </motion.h1>
             <p className="max-w-xl text-gray-400 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
               פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
@@ -110,7 +110,7 @@ export default function LandingMarketing() {
         </section>
 
         <section id="erp" className="scroll-mt-28">
-          <h2 className="text-3xl font-black mb-12 italic text-center text-white">
+          <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
             פתרון מותאם לכל סוג ישות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-32">
@@ -127,7 +127,7 @@ export default function LandingMarketing() {
                   <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm">
                     <Icon style={{ color: primaryColor }} size={32} />
                   </div>
-                  <h3 className="text-2xl font-black mb-3 italic text-white">{s.title}</h3>
+                  <h3 className="text-2xl font-black mb-3 italic text-gray-900">{s.title}</h3>
                   <p className="text-gray-400 leading-relaxed text-sm font-medium">{s.desc}</p>
                 </motion.div>
               );
@@ -138,7 +138,7 @@ export default function LandingMarketing() {
         <LandingVideoTutorials />
 
         <section id="crm" className="scroll-mt-28">
-          <h2 className="text-3xl font-black mb-12 italic text-center text-white">
+          <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
             בחר את המסלול המתאים לך
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -162,7 +162,7 @@ export default function LandingMarketing() {
                 <h3 className="text-2xl font-black mb-1 italic text-gray-950">{plan.name}</h3>
                 <p className="text-gray-400 text-sm mb-6">{plan.desc}</p>
                 <p
-                  className="text-5xl font-black mb-8 italic text-white"
+                  className="text-5xl font-black mb-8 italic text-gray-900"
                   style={plan.level === "Premium" ? { color: primaryColor } : undefined}
                 >
                   {plan.price}

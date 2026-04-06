@@ -20,10 +20,10 @@ export default function PricingSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* כותרת */}
         <div className="mb-14 text-center">
-          <span className="inline-block rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-300">
+          <span className="inline-block rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-600">
             {t("landing.pricingBadge")}
           </span>
-          <h2 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
             {t("landing.pricingHeadline")}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-gray-400 sm:text-base">
@@ -45,11 +45,11 @@ export default function PricingSection() {
                 className={`relative flex flex-col rounded-2xl border p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${
                   popular
                     ? "border-indigo-500/40 bg-indigo-600 text-white shadow-indigo-200/60 ring-2 ring-indigo-200"
-                    : "border-gray-200 bg-white text-white hover:border-indigo-500/30"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-indigo-500/30"
                 }`}
               >
                 {popular ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-4 py-1 text-[10px] font-black text-indigo-300 shadow-md ring-1 ring-indigo-200">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-4 py-1 text-[10px] font-black text-indigo-600 shadow-md ring-1 ring-indigo-200">
                     ⭐ מומלץ
                   </span>
                 ) : null}
@@ -57,7 +57,7 @@ export default function PricingSection() {
                 {/* Badge tier */}
                 <span
                   className={`inline-block w-fit rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
-                    popular ? "bg-white/20 text-white" : "bg-white/[0.05] text-gray-500"
+                    popular ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
                   }`}
                 >
                   {tierLabelHe(tierKey)}
@@ -65,7 +65,7 @@ export default function PricingSection() {
 
                 {/* מחיר */}
                 <div className="mt-5">
-                  <span className={`text-4xl font-black tabular-nums ${popular ? "text-white" : "text-white"}`}>
+                  <span className={`text-4xl font-black tabular-nums ${popular ? "text-white" : "text-gray-900"}`}>
                     {price}
                   </span>
                   <span className={`text-xs font-medium ms-1 ${popular ? "text-indigo-100" : "text-gray-400"}`}>
