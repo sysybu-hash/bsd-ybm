@@ -25,7 +25,7 @@ export default function VoiceInsights() {
 
   return (
     <div
-      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans text-white shadow-sm"
+      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans text-gray-900 shadow-sm"
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
@@ -33,7 +33,7 @@ export default function VoiceInsights() {
           <BrainCircuit className="text-indigo-400" size={24} aria-hidden />
         </div>
         <div>
-          <h4 className="font-black text-xl italic text-white tracking-tighter">
+          <h4 className="font-black text-xl italic text-gray-900 tracking-tighter">
             Voice Insights Live
           </h4>
           <p className="text-gray-400 text-xs">
@@ -45,7 +45,7 @@ export default function VoiceInsights() {
       <div className="space-y-6">
         <div className="flex justify-center mb-8">
           {isProcessing ? (
-            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center animate-pulse border border-gray-200">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center animate-pulse border border-gray-200">
               <Loader2 className="animate-spin text-indigo-400" size={32} />
             </div>
           ) : (
@@ -66,7 +66,7 @@ export default function VoiceInsights() {
         </div>
 
         {response ? (
-          <div className="bg-white/[0.03] p-5 rounded-2xl border border-gray-200 text-sm text-gray-600 leading-relaxed animate-in fade-in">
+          <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 text-sm text-gray-600 leading-relaxed animate-in fade-in">
             {response}
           </div>
         ) : null}

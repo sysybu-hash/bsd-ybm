@@ -51,7 +51,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           <Zap size={22} aria-hidden />
         </div>
         <div>
-          <h2 className="text-xl font-black text-white">אפשרויות תשלום וגבייה</h2>
+          <h2 className="text-xl font-black text-gray-900">אפשרויות תשלום וגבייה</h2>
           <p className="text-sm text-gray-500 mt-1 leading-relaxed">
             <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
             <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
@@ -76,7 +76,7 @@ export default function BillingQuickPayments({ presets }: Props) {
                   `בקשת תשלום — ${p.label} (₪${p.amountNis.toLocaleString("he-IL")})`,
               )
             }
-            className={`${btn} border-indigo-500/30 bg-white text-white hover:bg-indigo-500/15`}
+            className={`${btn} border-indigo-500/30 bg-white text-indigo-700 hover:bg-indigo-500/15`}
           >
             {p.label}
           </button>
@@ -102,7 +102,7 @@ export default function BillingQuickPayments({ presets }: Props) {
             onChange={(e) => setCustom(e.target.value)}
             placeholder="למשל: 150"
             dir="ltr"
-            className="w-full rounded-xl border border-gray-100 px-4 py-2.5 text-white font-mono text-sm"
+            className="w-full rounded-xl border border-gray-100 px-4 py-2.5 text-gray-900 font-mono text-sm"
           />
         </div>
         <button

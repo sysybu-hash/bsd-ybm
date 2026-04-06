@@ -11,7 +11,7 @@ type Props = {
 };
 
 const sectionClass = "space-y-4 text-gray-600 leading-relaxed text-[15px]";
-const h2Class = "text-xl font-bold text-white mt-10 mb-3 scroll-mt-28";
+const h2Class = "text-xl font-bold text-gray-900 mt-10 mb-3 scroll-mt-28";
 const noteClass =
   "rounded-2xl border border-indigo-500/30 bg-indigo-500/15 px-4 py-3 text-sm text-indigo-950 not-italic";
 
@@ -33,7 +33,7 @@ export default function LegalLayout({ title, subtitle, children }: Props) {
         </nav>
 
         <header className="mb-10 border-b border-gray-100 pb-8">
-          <h1 className="text-3xl md:text-4xl font-black italic text-white tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-black italic text-gray-900 tracking-tight">
             {title}
           </h1>
           {subtitle ? (

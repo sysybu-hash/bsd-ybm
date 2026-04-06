@@ -28,12 +28,12 @@ export default async function IntelligenceDashboardPage() {
 
   return (
     <div className="space-y-10 pb-16" dir={dir}>
-      <header className="flex flex-col gap-3 border-b border-white/[0.07] pb-6">
+      <header className="flex flex-col gap-3 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-2xl font-black text-indigo-400 md:text-3xl">
             {t("intelligencePage.title")}
           </h1>
-          <p className="mt-2 text-sm font-medium text-white/55">
+          <p className="mt-2 text-sm font-medium text-gray-500">
             {t("intelligencePage.subtitle", { role: String(role ?? "—") })}
           </p>
           {showExecutive ? (
@@ -47,7 +47,7 @@ export default async function IntelligenceDashboardPage() {
       {showExecutive ? (
         <section
           id="executive-suite"
-          className="scroll-mt-24 space-y-6 border-t border-white/[0.07] pt-10"
+          className="scroll-mt-24 space-y-6 border-t border-gray-100 pt-10"
           aria-label={t("intelligencePage.dividerLabel")}
         >
           <div className="flex flex-wrap items-center gap-3">

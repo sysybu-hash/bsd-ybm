@@ -72,7 +72,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
           <ClipboardList size={22} aria-hidden />
         </div>
         <div>
-          <h2 className="text-xl font-black text-white">ביטוח, המלצות וטקסט לחברים</h2>
+          <h2 className="text-xl font-black text-gray-900">ביטוח, המלצות וטקסט לחברים</h2>
           <p className="text-sm text-gray-400 mt-0.5">
             טיוטה לשימושכם — סיכום הוצאות להצגה לחברת ביטוח, רמת חום של חברים מהמופע, והודעה לפני הרשמה.
           </p>
@@ -134,7 +134,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
             >
               <Plus size={18} /> שורה נוספת
             </button>
-            <p className="text-sm font-black text-white">
+            <p className="text-sm font-black text-gray-900">
               סה״כ טיוטה:{" "}
               <span className="text-indigo-400">₪{total.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </p>

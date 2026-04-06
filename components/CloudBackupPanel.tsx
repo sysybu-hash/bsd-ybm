@@ -149,7 +149,7 @@ export default function CloudBackupPanel() {
       <div className="flex items-start gap-3 p-4 rounded-2xl bg-indigo-500/15 border border-indigo-500/20">
         <Cloud className="text-indigo-400 shrink-0 mt-0.5" size={22} />
         <div className="text-sm text-gray-600 leading-relaxed">
-          <p className="font-bold text-white">גיבוי וסריקה אוטונומית מול ענן</p>
+          <p className="font-bold text-gray-900">גיבוי וסריקה אוטונומית מול ענן</p>
           <p className="mt-1">
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
@@ -183,11 +183,11 @@ export default function CloudBackupPanel() {
             return (
               <li
                 key={p.id}
-                className="rounded-2xl border border-gray-100 bg-white/[0.03] overflow-hidden"
+                className="rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden"
               >
                 <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-bold text-white">{p.label}</p>
+                    <p className="font-bold text-gray-900">{p.label}</p>
                     <p className="text-xs text-gray-400">{p.hint}</p>
                     {rec?.lastSyncAt && (
                       <p className="text-xs text-gray-400 mt-1">
@@ -239,7 +239,7 @@ export default function CloudBackupPanel() {
                       <button
                         type="button"
                         onClick={() => setOpenGuide(guideOpen ? null : p.id)}
-                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-gray-600 bg-white/[0.05] hover:bg-white/[0.08] border-gray-100 border-l"
+                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 border-gray-100 border-l"
                       >
                         איך מחברים?
                         <ChevronDown
@@ -252,7 +252,7 @@ export default function CloudBackupPanel() {
                 </div>
                 {guideOpen ? (
                   <div className="border-t border-gray-200 bg-white px-4 py-4 text-sm text-gray-600 space-y-3">
-                    <p className="font-black text-white">{guide.title} — רשימת הכנה</p>
+                    <p className="font-black text-gray-900">{guide.title} — רשימת הכנה</p>
                     <div>
                       <p className="text-xs font-bold text-indigo-300 mb-1">בשרת (Vercel / .env)</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">

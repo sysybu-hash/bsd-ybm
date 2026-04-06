@@ -244,7 +244,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <p className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-white px-3 py-1 text-xs font-black text-indigo-300">Invoice workspace</p>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-white">הנפקת מסמכים</h1>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-gray-900">הנפקת מסמכים</h1>
               <p className="mt-2 text-sm leading-6 text-gray-500">חשבוניות, קבלות וזיכויים במסך פשוט יותר: פרטים, פריטים, בדיקה, סיום.</p>
             </div>
             <button
@@ -262,15 +262,15 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
           <div className="mt-6 grid gap-3 md:grid-cols-3">
             <div className="rounded-2xl border border-indigo-500/20 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-400">סוג מסמך</p>
-              <p className="mt-1 text-lg font-black text-white">{typeLabel}</p>
+              <p className="mt-1 text-lg font-black text-gray-900">{typeLabel}</p>
             </div>
             <div className="rounded-2xl border border-emerald-100 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-400">פריטים</p>
-              <p className="mt-1 text-2xl font-black text-white">{items.length}</p>
+              <p className="mt-1 text-2xl font-black text-gray-900">{items.length}</p>
             </div>
             <div className="rounded-2xl border border-indigo-500/20 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-400">סה&quot;כ נוכחי</p>
-              <p className="mt-1 text-2xl font-black text-white">₪{total.toLocaleString()}</p>
+              <p className="mt-1 text-2xl font-black text-gray-900">₪{total.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
         <div className="border-t border-gray-100 px-6 py-5 md:px-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-base font-black text-white">התקדמות מונחית</h2>
+              <h2 className="text-base font-black text-gray-900">התקדמות מונחית</h2>
               <p className="mt-1 text-sm text-gray-400">הטיוטה נשמרת אוטומטית גם אם יוצאים מהעמוד.</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -356,7 +356,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
                     docType === value
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
-                      : "border border-gray-200 bg-white/[0.03] text-gray-500 hover:bg-gray-50"
+                      : "border border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-50"
                   }`}
                 >
                   <Icon size={16} />
@@ -375,7 +375,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onFocus={() => clientName && setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   placeholder="לדוגמה: חברת אלפא בע״מ — או חפש מ-CRM"
-                  className="w-full rounded-xl border border-gray-200 bg-white/[0.03] px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
                 {contactId && (
                   <span className="absolute end-3 top-10 text-[10px] font-black text-emerald-400 bg-emerald-500/15 rounded-full px-2 py-0.5">CRM ✓</span>
@@ -390,7 +390,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                         onMouseDown={() => selectCrmContact(c)}
                         className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-indigo-500/15 transition"
                       >
-                        <span className="font-bold text-white">{c.name}</span>
+                        <span className="font-bold text-gray-900">{c.name}</span>
                         {c.value != null && <span className="text-xs text-emerald-400 font-black">₪{c.value.toLocaleString()}</span>}
                       </button>
                     ))}
@@ -403,7 +403,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 bg-white/[0.03] px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
                 />
               </div>
             </div>
@@ -425,7 +425,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               {items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-wrap items-end gap-2 rounded-xl border border-gray-100 bg-white/[0.03]/60 p-3 sm:flex-nowrap"
+                  className="flex flex-wrap items-end gap-2 rounded-xl border border-gray-100 bg-gray-50/60 p-3 sm:flex-nowrap"
                 >
                   <div className="min-w-0 flex-1">
                     <label className="mb-1 block text-xs font-semibold text-gray-400">תיאור</label>
@@ -504,7 +504,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
 
         {wizardStep === 3 && (
           <>
-            <div className="rounded-[24px] border border-gray-200 bg-white/[0.03] p-5 text-sm">
+            <div className="rounded-[24px] border border-gray-200 bg-gray-50 p-5 text-sm">
               <p className="font-bold text-gray-700">סיכום לפני הנפקה</p>
               <p className="mt-1 text-gray-500">{typeLabel} עבור {clientName || "לקוח ללא שם"}</p>
               <p className="text-gray-500">פריטים: {items.length}</p>
@@ -591,7 +591,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                 לא הונפקו מסמכים עדיין
               </p>
             ) : (
-              <div className="divide-y divide-white/[0.07]">
+              <div className="divide-y divide-gray-100">
                 {history.map((doc) => {
                   const dt = DOC_TYPES.find((t) => t.value === doc.type);
                   const Icon = dt?.icon ?? FileText;

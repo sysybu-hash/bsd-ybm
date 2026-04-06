@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -317,7 +317,7 @@ export default function DashboardLayoutClient({
                   <Zap size={16} />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-white">
+                  <p className="text-sm font-black text-gray-900">
                     {trialBannerDaysLeft === 1
                       ? t("layout.trialBannerOne")
                       : t("layout.trialBannerMany", { days: String(trialBannerDaysLeft) })}

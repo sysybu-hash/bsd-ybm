@@ -23,7 +23,7 @@ export default function ContactPageClient() {
           <span className="block text-xs font-bold uppercase tracking-wide text-indigo-300/90">
             {t("contactPage.addressLabel")}
           </span>
-          <span className="mt-1 block text-base font-medium text-white">
+          <span className="mt-1 block text-base font-medium text-gray-700">
             {t("marketingDrawer.contactAddress")}
           </span>
         </li>
@@ -33,7 +33,7 @@ export default function ContactPageClient() {
           </span>
           <a
             href="tel:+972525640021"
-            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-white underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-indigo-600 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactPhone")}
           </a>
@@ -44,7 +44,7 @@ export default function ContactPageClient() {
           </span>
           <a
             href="mailto:sysybu@gmail.com"
-            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-white underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-indigo-600 underline-offset-2 hover:underline"
           >
             {t("marketingDrawer.contactEmail")}
           </a>

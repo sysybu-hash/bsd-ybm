@@ -31,7 +31,7 @@ export default function SuccessPage() {
         ברוך הבא למסלול PRO!
       </h1>
 
-      <p className="text-white/55 text-lg mb-10 max-w-md">
+      <p className="text-gray-500 text-lg mb-10 max-w-md">
         התשלום עובד בהצלחה. בנק הסריקות שלך עודכן ב-100 קרדיטים חדשים והגישה לכל כלי ה-AI של
         BSD-YBM פתוחה עבורך.
       </p>
@@ -48,7 +48,7 @@ export default function SuccessPage() {
         <button
           type="button"
           onClick={() => router.push("/dashboard")}
-          className="text-white/45 hover:text-white transition-colors text-sm font-medium"
+          className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium"
         >
           חזרה לדשבורד
         </button>

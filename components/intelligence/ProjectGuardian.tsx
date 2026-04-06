@@ -7,7 +7,7 @@ export default function ProjectGuardian() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6" dir="rtl">
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h4 className="font-black italic mb-4">רווחיות פרויקט חי</h4>
-        <div className="h-4 w-full bg-white/[0.05] rounded-full overflow-hidden">
+        <div className="h-4 w-full bg-gray-50 rounded-full overflow-hidden">
           <div className="h-full bg-emerald-500/15" style={{ width: "75%" }} />
         </div>
         <p className="mt-2 text-xs font-bold text-emerald-400">

@@ -38,7 +38,7 @@ export default function ForecastSimulator() {
     >
       <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
         <div>
-          <h3 className="text-2xl font-black italic flex items-center gap-2 text-white">
+          <h3 className="text-2xl font-black italic flex items-center gap-2 text-gray-900">
             <BrainCircuit className="text-indigo-500" /> חיזוי וסימולציה AI
           </h3>
           <p className="text-gray-400 text-sm italic font-medium">
@@ -65,7 +65,7 @@ export default function ForecastSimulator() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white/[0.03] p-5"
+          className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-5"
         >
           <span className="text-sm font-bold text-gray-500">
             הוסף הוצאה צפויה (₪):

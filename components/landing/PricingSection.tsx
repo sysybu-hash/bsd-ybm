@@ -105,7 +105,7 @@ export default function PricingSection() {
                   className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-black transition hover:opacity-90 ${
                     popular
                       ? "bg-white text-indigo-300 shadow-sm"
-                      : "border border-gray-200 bg-white/[0.03] text-gray-700 hover:border-indigo-500/30 hover:bg-indigo-500/15 hover:text-indigo-300"
+                      : "border border-gray-200 bg-gray-50 text-gray-700 hover:border-indigo-500/30 hover:bg-indigo-500/15 hover:text-indigo-300"
                   }`}
                 >
                   {t("landing.pricingChoose")}

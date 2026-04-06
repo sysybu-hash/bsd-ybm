@@ -74,7 +74,7 @@ const STATUS_LABEL: Record<DocStatus, string> = {
 const STATUS_STYLE: Record<DocStatus, string> = {
   PAID: "bg-emerald-500/15 text-emerald-400",
   PENDING: "bg-orange-500/15 text-orange-400",
-  CANCELLED: "bg-white/[0.08] text-gray-400",
+  CANCELLED: "bg-gray-100 text-gray-400",
 };
 
 function formatMoney(n: number) {
@@ -125,7 +125,7 @@ function rowMatchesSearch(row: UnifiedRow, q: string): boolean {
 function paypalStatusClass(status: string) {
   if (status === "PAID") return "bg-emerald-500/15 text-emerald-400";
   if (status === "PENDING") return "bg-orange-500/15 text-orange-400";
-  return "bg-white/[0.08] text-gray-400";
+  return "bg-gray-100 text-gray-400";
 }
 
 function paypalStatusLabel(status: string) {
@@ -229,7 +229,7 @@ export default function GlobalBillingPageClient({
             <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/15 px-3 py-1 text-[11px] font-bold text-indigo-300">
               <ShieldCheck size={11} /> מרכז פיננסי
             </span>
-            <h1 className="mt-2.5 text-2xl font-black tracking-tight text-white">מסמכים ותשלומים</h1>
+            <h1 className="mt-2.5 text-2xl font-black tracking-tight text-gray-900">מסמכים ותשלומים</h1>
             <p className="mt-1 text-sm text-gray-400">
               {organizationName}
               {taxId ? <span className="ms-2 text-gray-400">· ח.פ {taxId}</span> : null}
@@ -269,7 +269,7 @@ export default function GlobalBillingPageClient({
               </div>
               <p className="text-xs font-bold text-gray-400">{card.title}</p>
             </div>
-            <p className="text-2xl font-black text-white">{card.value}</p>
+            <p className="text-2xl font-black text-gray-900">{card.value}</p>
             <p className="mt-1.5 text-xs text-gray-400">{card.sub}</p>
           </div>
         ))}
@@ -298,7 +298,7 @@ export default function GlobalBillingPageClient({
               className="rounded-xl border border-gray-100 bg-white py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
             />
           </div>
-          <div className="flex gap-1 rounded-xl border border-gray-100 bg-white/[0.03] p-1">
+          <div className="flex gap-1 rounded-xl border border-gray-100 bg-gray-50 p-1">
             {([["all", "הכל"], ["invoices", "חשבוניות"], ["receipts", "קבלות"], ["credits", "זיכויים"]] as const).map(([key, label]) => (
               <button key={key} type="button" onClick={() => setTab(key)}
                 className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? "bg-indigo-500/15 text-indigo-300 shadow-sm" : "text-gray-400 hover:text-gray-700"}`}>
@@ -312,7 +312,7 @@ export default function GlobalBillingPageClient({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-start">
             <thead>
-              <tr className="border-b border-gray-100 bg-white/[0.03]">
+              <tr className="border-b border-gray-100 bg-gray-50">
                 <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-gray-400">סוג / מספר</th>
                 <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-gray-400">לקוח</th>
                 <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">סטטוס</th>
@@ -348,7 +348,7 @@ export default function GlobalBillingPageClient({
                             #{row.doc.number}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-white">{DOC_TYPE_LABEL[row.doc.docType]}</p>
+                            <p className="text-sm font-bold text-gray-900">{DOC_TYPE_LABEL[row.doc.docType]}</p>
                             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">{COMPANY_BADGE[companyType]}</p>
                           </div>
                         </div>
@@ -362,7 +362,7 @@ export default function GlobalBillingPageClient({
                           {STATUS_LABEL[row.doc.status]}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-end font-black text-white">{formatMoney(row.doc.total)}</td>
+                      <td className="px-5 py-3.5 text-end font-black text-gray-900">{formatMoney(row.doc.total)}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
                           <button type="button" title="תצוגה מקדימה" onClick={() => setPreviewRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-400 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
@@ -385,7 +385,7 @@ export default function GlobalBillingPageClient({
                             #{row.inv.number}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-white">{row.inv.description}</p>
+                            <p className="text-sm font-bold text-gray-900">{row.inv.description}</p>
                             <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">PayPal</p>
                           </div>
                         </div>
@@ -400,7 +400,7 @@ export default function GlobalBillingPageClient({
                           {paypalStatusLabel(row.inv.status)}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-end font-black text-white">{formatMoney(row.inv.amount)}</td>
+                      <td className="px-5 py-3.5 text-end font-black text-gray-900">{formatMoney(row.inv.amount)}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex flex-col items-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
                           {row.inv.status !== "PAID" && paypalMeSlug?.trim() ? (

@@ -79,7 +79,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
       className="scroll-mt-24 rounded-2xl border border-indigo-500/20 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
-      <h2 className="mb-2 text-xl font-black text-white">רכישת בנדל סריקות</h2>
+      <h2 className="mb-2 text-xl font-black text-gray-900">רכישת בנדל סריקות</h2>
       <p className="mb-4 text-sm text-gray-500">
         כשמכסת המנוי נגמרה — ניתן לרכוש חבילת סריקות חד־פעמית (נוסף על היתרה הקיימת).
       </p>

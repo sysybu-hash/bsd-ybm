@@ -113,7 +113,7 @@ function Ring({
         </ResponsiveContainer>
       </div>
       <p
-        className={`mt-2 text-sm font-medium tabular-nums ${isLight ? "text-gray-500" : "text-white/25"}`}
+        className={`mt-2 text-sm font-medium tabular-nums ${isLight ? "text-gray-500" : "text-gray-400"}`}
       >
         {formatCreditsForDisplay(left)} נותרו · עד {included} במנוי
       </p>
@@ -139,7 +139,7 @@ export default function ScanUsageRadialCharts({
       className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-gray-100/90 md:p-8"
       dir="rtl"
     >
-      <h2 className="mb-1 text-lg font-black text-white">
+      <h2 className="mb-1 text-lg font-black text-gray-900">
         ניצול סריקות
       </h2>
       <p className="mb-8 max-w-xl text-xs font-medium leading-relaxed text-gray-500">

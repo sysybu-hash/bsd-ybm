@@ -21,7 +21,7 @@ export default function EuComplianceStrip() {
                 <BadgeCheck size={14} aria-hidden />
                 מוכנות תקינה אירופית
               </p>
-              <h2 id="eu-strip-heading" className="text-xl font-black text-white md:text-2xl">
+              <h2 id="eu-strip-heading" className="text-xl font-black text-gray-900 md:text-2xl">
                 פרטיות, שקיפות והתאמה למסגרת GDPR
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500">

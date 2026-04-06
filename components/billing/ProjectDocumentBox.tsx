@@ -44,7 +44,7 @@ const DOC_TYPE_LABEL: Record<DocType, string> = {
 const STATUS_META: Record<DocStatus, { label: string; cls: string; icon: typeof CheckCircle2 }> = {
   PAID: { label: "שולם", cls: "bg-emerald-100 text-emerald-400", icon: CheckCircle2 },
   PENDING: { label: "בהמתנה", cls: "bg-amber-100 text-amber-400", icon: Clock },
-  CANCELLED: { label: "בוטל", cls: "bg-white/[0.05] text-gray-400", icon: XCircle },
+  CANCELLED: { label: "בוטל", cls: "bg-gray-50 text-gray-400", icon: XCircle },
 };
 
 function fmtMoney(n: number) {
@@ -101,7 +101,7 @@ export default function ProjectDocumentBox({
             <FileText size={15} />
           </div>
           <div>
-            <p className="text-sm font-black text-white">תיבת מסמכים</p>
+            <p className="text-sm font-black text-gray-900">תיבת מסמכים</p>
             <p className="text-[10px] text-gray-400">{docs.length} מסמכים</p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function ProjectDocumentBox({
 
       {/* Stats row */}
       {docs.length > 0 && (
-        <div className="grid grid-cols-3 divide-x divide-x-reverse divide-white/[0.07] border-b border-gray-100">
+        <div className="grid grid-cols-3 divide-x divide-x-reverse divide-gray-100 border-b border-gray-100">
           <div className="px-4 py-3 text-center">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">סך חוייב</p>
             <p className="mt-0.5 text-sm font-black text-gray-700">{fmtMoney(totalBilled)}</p>
@@ -142,7 +142,7 @@ export default function ProjectDocumentBox({
           <div className="px-5 py-6 text-center text-sm text-rose-600">{error}</div>
         ) : docs.length === 0 ? (
           <div className="flex flex-col items-center gap-3 px-5 py-10 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.03] text-white/25">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-400">
               <Inbox size={24} />
             </div>
             <p className="text-sm font-bold text-gray-400">אין מסמכים עדיין</p>
@@ -161,7 +161,7 @@ export default function ProjectDocumentBox({
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white truncate">{DOC_TYPE_LABEL[doc.docType]}</p>
+                  <p className="text-sm font-bold text-gray-900 truncate">{DOC_TYPE_LABEL[doc.docType]}</p>
                   <div className="mt-0.5 flex items-center gap-2 flex-wrap">
                     <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold ${meta.cls}`}>
                       <StatusIcon size={9} /> {meta.label}

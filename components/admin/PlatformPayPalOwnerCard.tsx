@@ -24,7 +24,7 @@ export default function PlatformPayPalOwnerCard() {
             <Wallet size={24} aria-hidden />
           </div>
           <div className="min-w-0">
-            <h2 id="platform-paypal-title" className="text-lg font-black text-white">
+            <h2 id="platform-paypal-title" className="text-lg font-black text-gray-900">
               PayPal של מפעיל הפלטפורמה (רק אצלך)
             </h2>
             <p className="mt-1 text-sm leading-relaxed text-gray-500">
@@ -40,7 +40,7 @@ export default function PlatformPayPalOwnerCard() {
         <div className="mt-5 flex flex-col gap-3 border-t border-indigo-500/30 pt-5 text-sm">
           {merchantEmail ? (
             <p className="text-gray-600">
-              <span className="font-bold text-white">מייל: </span>
+              <span className="font-bold text-gray-700">מייל: </span>
               <span className="font-mono" dir="ltr">
                 {merchantEmail}
               </span>

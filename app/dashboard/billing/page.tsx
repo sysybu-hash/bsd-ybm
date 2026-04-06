@@ -113,7 +113,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
 
   if (!orgId) {
     return (
-      <div className="min-h-0 p-8 text-center text-white/50" dir="rtl">
+      <div className="min-h-0 p-8 text-center text-gray-500" dir="rtl">
         <p className="font-bold">אין ארגון משויך — לא ניתן להציג מרכז פיננסי.</p>
       </div>
     );
@@ -237,7 +237,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
 
   if (!org) {
     return (
-      <div className="min-h-0 p-8 text-center text-white/50" dir="rtl">
+      <div className="min-h-0 p-8 text-center text-gray-500" dir="rtl">
         <p className="font-bold">הארגון לא נמצא.</p>
       </div>
     );
@@ -296,25 +296,25 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
     <>
       {/* שלב 1 — סיכום ארגון */}
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8">
-        <p className="mb-2 text-xs font-black uppercase tracking-wider text-white/30">
+        <p className="mb-2 text-xs font-black uppercase tracking-wider text-gray-400">
           שלב 1 — סיכום ארגון
         </p>
-        <div className="mb-8 rounded-[1.25rem] border border-gray-200 bg-white/[0.03] p-6 text-sm text-white/60">
-          <p className="mb-1 flex items-center gap-2 font-bold text-white">
+        <div className="mb-8 rounded-[1.25rem] border border-gray-200 bg-gray-50 p-6 text-sm text-gray-500">
+          <p className="mb-1 flex items-center gap-2 font-bold text-gray-900">
             <ShieldCheck size={18} className="shrink-0 text-emerald-400" />
             {org.name}
           </p>
           <p>
             מנוי:{" "}
-            <span className="font-semibold text-white/85">
+            <span className="font-semibold text-gray-700">
               {tierLabelHe(org.subscriptionTier)} ({org.subscriptionTier})
             </span>
             {" · "}
-            סטטוס: <span className="font-semibold text-white/85">{org.subscriptionStatus}</span>
+            סטטוס: <span className="font-semibold text-gray-700">{org.subscriptionStatus}</span>
             {" · "}
-            סיווג מס: <span className="font-semibold text-white/85">{org.companyType}</span>
+            סיווג מס: <span className="font-semibold text-gray-700">{org.companyType}</span>
             {" · "}
-            חברות מקס׳: <span className="font-semibold text-white/85">{org.maxCompanies}</span>
+            חברות מקס׳: <span className="font-semibold text-gray-700">{org.maxCompanies}</span>
           </p>
           <p className="mt-1">
             סריקות זולות נותרו:{" "}
@@ -327,7 +327,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
               {formatCreditsForDisplay(org.premiumScansRemaining)}
             </span>
           </p>
-          <p className="mt-2 text-xs text-white/30">
+          <p className="mt-2 text-xs text-gray-400">
             רמת נתונים חיים:{" "}
             <span className="font-bold text-gray-500">
               {org.liveDataTier === "premium"
@@ -348,7 +348,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
 
       {/* שלב 2 — גרפי שימוש (מוקד ויזואלי) */}
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
-        <p className="mb-3 text-xs font-black uppercase tracking-wider text-white/30">
+        <p className="mb-3 text-xs font-black uppercase tracking-wider text-gray-400">
           שלב 2 — שימוש במנוי (גרפים)
         </p>
         <ScanUsageRadialCharts
@@ -362,7 +362,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
 
       {/* שלב 3 — מחירון ופעולות תשלום */}
       <div className="mx-auto mb-10 max-w-[1600px] px-4 sm:px-8">
-        <p className="mb-3 text-xs font-black uppercase tracking-wider text-white/30">
+        <p className="mb-3 text-xs font-black uppercase tracking-wider text-gray-400">
           שלב 3 — מנויים, חבילות ותשלום
         </p>
         <SubscriptionPricingTable tierPricesIls={tierPricesForTable} />
@@ -389,12 +389,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
             className="rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.07] p-5 text-sm text-gray-600"
             dir="rtl"
           >
-            <p className="mb-2 font-bold text-white">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
+            <p className="mb-2 font-bold text-gray-900">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
             <p className="mb-2 text-xs text-gray-400">
               זה חשבון <strong className="text-gray-500">של הארגון</strong> להפניית לקוחות — לא חשבון מפעיל האתר.
             </p>
             {org.paypalMerchantEmail ? (
-              <p className="text-white/50">
+              <p className="text-gray-500">
                 חשבון PayPal:{" "}
                 <span className="font-mono font-medium text-gray-700" dir="ltr">
                   {org.paypalMerchantEmail}
@@ -451,7 +451,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Sear
     <Suspense
       fallback={
         <div
-          className="flex min-h-screen items-center justify-center bg-white text-white/50 text-sm font-medium"
+          className="flex min-h-screen items-center justify-center bg-white text-gray-500 text-sm font-medium"
           dir="rtl"
         >
           טוען מנויים ותשלומים…

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export default function Navbar() {
   const { t, dir } = useI18n();
 
   return (
-    <nav className="sticky top-0 z-[100] border-b border-white/[0.07] bg-white/95 backdrop-blur-sm" dir={dir}>
+    <nav className="sticky top-0 z-[100] border-b border-gray-100 bg-white/95 backdrop-blur-sm" dir={dir}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 transition hover:opacity-80">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white text-sm font-black shadow-sm shadow-indigo-600/30">

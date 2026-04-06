@@ -8,7 +8,7 @@ export default function InteractivePulse() {
   const [voicePanelOpen, setVoicePanelOpen] = useState(false);
   return (
     <div
-      className="space-y-8 rounded-2xl border border-gray-200 bg-white p-10 text-white shadow-sm"
+      className="space-y-8 rounded-2xl border border-gray-200 bg-white p-10 text-gray-900 shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-center gap-4">
@@ -43,7 +43,7 @@ export default function InteractivePulse() {
           <span>יעד הכנסות חודשי</span>
           <span>80% הושלם</span>
         </div>
-        <div className="h-2 w-full bg-white/[0.08] rounded-full overflow-hidden">
+        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "80%" }}

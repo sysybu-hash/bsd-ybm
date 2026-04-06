@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+﻿import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import {
@@ -79,18 +79,18 @@ export default async function DashboardHomePage() {
 
       {/* ── WELCOME ── */}
       <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 px-7 py-8 shadow-lg shadow-indigo-200">
-        <div className="pointer-events-none absolute -start-10 -top-10 h-40 w-40 rounded-full bg-white/[0.06]" />
-        <div className="pointer-events-none absolute -end-8 bottom-0 h-28 w-28 rounded-full bg-white/[0.04]" />
+        <div className="pointer-events-none absolute -start-10 -top-10 h-40 w-40 rounded-full bg-gray-50" />
+        <div className="pointer-events-none absolute -end-8 bottom-0 h-28 w-28 rounded-full bg-gray-50" />
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-3 py-1 text-[11px] font-bold text-white">
               <Zap size={10} className="text-yellow-300" />
               BSD-YBM Platform — אפריל 2026
             </span>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-white md:text-3xl">
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900 md:text-3xl">
               {greeting}, {userName} 👋
             </h1>
-            <p className="mt-2 max-w-md text-sm text-white/75 leading-relaxed">
+            <p className="mt-2 max-w-md text-sm text-gray-600 leading-relaxed">
               ERP + CRM מסונכרנים, בינה מלאכותית, וסריקת מסמכים — הכל במקום אחד.
             </p>
           </div>

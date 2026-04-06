@@ -150,7 +150,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
     { href: "/dashboard/crm", icon: <Users size={20} />, label: "לקוחות", desc: "ניהול CRM", iconBg: "bg-indigo-500/15", iconText: "text-indigo-400" },
     { href: "/dashboard/erp", icon: <FileText size={20} />, label: "מסמכים", desc: "חשבוניות והצעות", iconBg: "bg-emerald-500/15", iconText: "text-emerald-400" },
     { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", iconBg: "bg-indigo-500/15", iconText: "text-indigo-400" },
-    { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", iconBg: "bg-white/[0.05]", iconText: "text-gray-600" },
+    { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", iconBg: "bg-gray-50", iconText: "text-gray-600" },
   ];
 
   return (
@@ -167,7 +167,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-bold text-indigo-300">{subscriptionTier}</span>
             </div>
-            <h1 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
+            <h1 className="mt-4 text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
               {greeting}, {firstName}
             </h1>
             <p className="mt-2 text-sm text-gray-400">
@@ -177,15 +177,15 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
           {/* Mini stats in hero */}
           <div className="flex gap-3">
-            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-white/[0.03] px-5 py-3.5">
+            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">הכנסות</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-white">
+              <p className="mt-1 text-2xl font-black tabular-nums text-gray-900">
                 <span className="text-lg text-indigo-500">&#8362;</span>{fmt(animatedRevenue)}
               </p>
             </div>
-            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-white/[0.03] px-5 py-3.5">
+            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">צנרת</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-white">
+              <p className="mt-1 text-2xl font-black tabular-nums text-gray-900">
                 <span className="text-lg text-gray-400">&#8362;</span>{fmt(animatedPipeline)}
               </p>
             </div>
@@ -206,9 +206,9 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl ${c.iconBg} ${c.iconText}`}>
               {c.icon}
             </div>
-            <p className="text-sm font-black text-white">{c.label}</p>
+            <p className="text-sm font-black text-gray-900">{c.label}</p>
             <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
-            <ArrowUpRight size={14} className="absolute top-4 end-4 text-white/25 opacity-0 transition-opacity group-hover:opacity-100" />
+            <ArrowUpRight size={14} className="absolute top-4 end-4 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
         ))}
       </div>
@@ -225,7 +225,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15">
                 <BarChart3 size={15} className="text-indigo-400" />
               </div>
-              <p className="text-sm font-black text-white">הכנסות</p>
+              <p className="text-sm font-black text-gray-900">הכנסות</p>
             </div>
             <Link href="/dashboard/erp" className="text-[11px] font-bold text-indigo-400 hover:underline">
               ERP
@@ -234,7 +234,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <p className="text-[10px] text-gray-400 mb-4">{monthTitle}</p>
 
           <div className="mb-5">
-            <p className="text-4xl font-black tabular-nums text-white tracking-tight">
+            <p className="text-4xl font-black tabular-nums text-gray-900 tracking-tight">
               &#8362;{fmt(animatedRevenue)}
             </p>
             {monthChangePct !== null ? (
@@ -252,8 +252,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           {monthlySeries.length > 0 ? (
             <DashboardRevenueChart data={monthlySeries} />
           ) : (
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-white/[0.03] py-8 text-center">
-              <PieChart className="text-white/25" size={28} strokeWidth={1.25} />
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
+              <PieChart className="text-gray-400" size={28} strokeWidth={1.25} />
               <p className="text-xs text-gray-400">עוד אין נתונים</p>
             </div>
           )}
@@ -270,7 +270,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                   <Sparkles size={16} className="text-indigo-500" />
                   <span className="text-xs font-black uppercase tracking-widest text-indigo-400">AI Scanner</span>
                 </div>
-                <h3 className="text-lg font-black leading-tight text-white">סריקה חכמה</h3>
+                <h3 className="text-lg font-black leading-tight text-gray-900">סריקה חכמה</h3>
                 <p className="mt-1 max-w-xs text-xs text-gray-400">
                   העלו מסמך לפענוח מיידי עם בינה מלאכותית
                 </p>
@@ -289,13 +289,13 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
               {/* Scan credits mini */}
               <div className="flex gap-2 sm:flex-col">
-                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-white/[0.03] px-4 py-3 text-center">
+                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
                   <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">Flash</p>
-                  <p className="text-xl font-black text-white">{formatCreditsForDisplay(cheapScansRemaining)}</p>
+                  <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(cheapScansRemaining)}</p>
                 </div>
-                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-white/[0.03] px-4 py-3 text-center">
+                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
                   <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">Pro</p>
-                  <p className="text-xl font-black text-white">{formatCreditsForDisplay(premiumScansRemaining)}</p>
+                  <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(premiumScansRemaining)}</p>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                   ].map(({ label, value }) => (
                     <div key={label}>
                       <p className="text-[9px] text-indigo-500">{label}</p>
-                      <p className="text-sm font-bold text-white">{value}</p>
+                      <p className="text-sm font-bold text-gray-900">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -330,7 +330,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15">
                   <Users size={15} className="text-indigo-400" />
                 </div>
-                <p className="text-sm font-black text-white">לקוחות אחרונים</p>
+                <p className="text-sm font-black text-gray-900">לקוחות אחרונים</p>
               </div>
               <Link href="/dashboard/crm" className="text-[11px] font-bold text-indigo-400 hover:underline">
                 הכל
@@ -338,8 +338,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             </div>
 
             {recentContacts.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-white/[0.03] py-8 text-center">
-                <Users className="text-white/25" size={24} strokeWidth={1.25} />
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
+                <Users className="text-gray-400" size={24} strokeWidth={1.25} />
                 <p className="text-xs text-gray-400">אין לקוחות עדיין</p>
                 <Link href="/dashboard/crm" className="text-xs font-bold text-indigo-400 hover:underline">
                   הוספת לקוח
@@ -364,7 +364,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     </div>
                     <span className={`shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-bold ${
                       c.status === "CLOSED_WON" ? "bg-emerald-500/15 text-emerald-400" :
-                      c.status === "CLOSED_LOST" ? "bg-white/[0.05] text-gray-400" :
+                      c.status === "CLOSED_LOST" ? "bg-gray-50 text-gray-400" :
                       c.status === "PROPOSAL" ? "bg-indigo-500/15 text-indigo-300" :
                       "bg-indigo-500/15 text-indigo-300"
                     }`}>{c.statusLabel}</span>

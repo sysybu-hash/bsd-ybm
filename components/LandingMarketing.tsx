@@ -56,7 +56,7 @@ export default function LandingMarketing() {
           className="text-center mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center scroll-mt-28"
         >
           <div className="text-right">
-            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-white/[0.03] border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest">
+            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-gray-50 border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest">
               <Brain size={14} style={{ color: primaryColor }} /> AI-Powered Business Intelligence
             </p>
             <motion.h1
@@ -93,7 +93,7 @@ export default function LandingMarketing() {
               </Link>
             </div>
           </div>
-          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-white/[0.03] p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
+          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
             <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
               הדרכה מונפשת
             </p>
@@ -182,7 +182,7 @@ export default function LandingMarketing() {
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
                       ? "bg-indigo-600 text-white"
-                      : "bg-white/[0.05] text-gray-950"
+                      : "bg-gray-50 text-gray-950"
                   }`}
                 >
                   בחר מסלול

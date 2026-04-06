@@ -489,7 +489,7 @@ ${formContext}
                       className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[12px] font-bold ring-1 transition-all ${
                         docType === id
                           ? color
-                          : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.07] hover:text-white/65"
+                          : "bg-gray-50 text-gray-400 ring-gray-200 hover:bg-gray-50 hover:text-gray-600"
                       }`}
                     >
                       <Icon size={13} />

@@ -28,7 +28,7 @@ export default function ScanUsageProgress({
       className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
-      <h2 className="text-lg font-black text-white mb-1">ניצול סריקות</h2>
+      <h2 className="text-lg font-black text-gray-900 mb-1">ניצול סריקות</h2>
       <p className="text-xs text-gray-400 mb-6">
         זולות (Gemini) מול פרימיום (OpenAI / Anthropic). הבר מציג יחס יתרה לעומת המכסה הבסיסית מהמנוי; רכישת בנדל מגדילה
         את היתרה.
@@ -42,7 +42,7 @@ export default function ScanUsageProgress({
               נותרו {formatCreditsForDisplay(cheapLeft)} · כלול במנוי עד {cheapIncluded}
             </span>
           </div>
-          <div className="h-3 rounded-full bg-white/[0.05] overflow-hidden ring-1 ring-gray-200/80">
+          <div className="h-3 rounded-full bg-gray-50 overflow-hidden ring-1 ring-gray-200/80">
             <div
               className="h-full rounded-full bg-gradient-to-l from-sky-500 to-indigo-600 transition-all duration-500"
               style={{ width: `${cheapBar}%` }}
@@ -57,7 +57,7 @@ export default function ScanUsageProgress({
               נותרו {formatCreditsForDisplay(premiumLeft)} · כלול במנוי עד {premiumIncluded}
             </span>
           </div>
-          <div className="h-3 rounded-full bg-white/[0.05] overflow-hidden ring-1 ring-gray-200/80">
+          <div className="h-3 rounded-full bg-gray-50 overflow-hidden ring-1 ring-gray-200/80">
             <div
               className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-500 transition-all duration-500"
               style={{ width: `${premBar}%` }}

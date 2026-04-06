@@ -19,7 +19,7 @@ type Props = {
 export default function DashboardRevenueChart({ data }: Props) {
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <h4 className="text-lg font-bold text-white mb-1">הכנסות לפי חודש (מסמכים שהונפקו)</h4>
+      <h4 className="text-lg font-bold text-gray-900 mb-1">הכנסות לפי חודש (מסמכים שהונפקו)</h4>
       <p className="text-xs text-gray-400 mb-6 font-medium">
         סכום כולל מחשבוניות / קבלות שהונפקו ב־ERP — שישה חודשים אחרונים
       </p>

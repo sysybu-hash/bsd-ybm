@@ -19,7 +19,7 @@ export default function ExecutiveSuite() {
   const primaryColor = "var(--primary-color, #4f46e5)";
 
   return (
-    <div className="min-h-screen bg-white p-6 font-sans text-white md:p-10" dir={dir}>
+    <div className="min-h-screen bg-white p-6 font-sans text-gray-900 md:p-10" dir={dir}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export default function ExecutiveSuite() {
             </p>
           </div>
 
-          <div className="card-avenue bg-white/[0.03] p-8">
+          <div className="card-avenue bg-gray-50 p-8">
             <h4 className="font-black italic mb-4 flex items-center gap-2 text-sm">
               <ShoppingCart size={18} aria-hidden /> עוזר רכש AI
             </h4>
@@ -86,7 +86,7 @@ export default function ExecutiveSuite() {
             <h4 className="font-black italic mb-6 flex items-center gap-2">
               <Map className="text-emerald-500" aria-hidden /> פריסת לקוחות גאוגרפית (Heatmap)
             </h4>
-            <div className="flex min-h-[220px] w-full items-center justify-center rounded-2xl border border-gray-200 bg-white/[0.03] font-bold italic text-white/25">
+            <div className="flex min-h-[220px] w-full items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 font-bold italic text-gray-400">
               [הדמיית מפה אינטראקטיבית — פוקוס: מרכז הארץ]
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function ExecutiveSuite() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
               <Globe2
-                className="absolute top-[-20px] left-[-20px] text-white/10"
+                className="absolute top-[-20px] left-[-20px] text-gray-200"
                 size={120}
                 aria-hidden
               />
@@ -115,7 +115,7 @@ export default function ExecutiveSuite() {
                 <PenTool className="text-indigo-500" aria-hidden /> חתימה דיגיטלית
               </h4>
               <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-white/[0.03] rounded-xl gap-2">
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl gap-2">
                   <span className="text-[10px] font-bold">חוזה שירות — אקווה</span>
                   <span className="text-[10px] text-indigo-500 font-black italic shrink-0">ממתין</span>
                 </div>
@@ -131,7 +131,7 @@ export default function ExecutiveSuite() {
         </div>
 
         <div className="space-y-8">
-          <div className="card-avenue bg-white p-8 text-white shadow-sm">
+          <div className="card-avenue bg-white p-8 text-gray-900 shadow-sm">
             <h4 className="text-xs font-black uppercase tracking-widest text-indigo-300 mb-6">
               סטטוס בנקים מאוחד
             </h4>

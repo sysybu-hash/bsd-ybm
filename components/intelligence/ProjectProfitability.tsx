@@ -16,7 +16,7 @@ export default function ProjectProfitability() {
 
   return (
     <div
-      className="min-h-screen bg-white/[0.03] p-8 font-sans text-white"
+      className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900"
       dir="rtl"
     >
       <header className="mb-12">
@@ -69,7 +69,7 @@ export default function ProjectProfitability() {
         <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
           מד רווחיות פרויקט
         </h3>
-        <div className="w-full bg-white/[0.05] h-6 rounded-full overflow-hidden border border-gray-200 p-1 flex items-center relative">
+        <div className="w-full bg-gray-50 h-6 rounded-full overflow-hidden border border-gray-200 p-1 flex items-center relative">
           <div className="absolute top-0 left-1/2 w-0.5 h-full bg-gray-300" />
           <motion.div
             initial={{ width: 0 }}

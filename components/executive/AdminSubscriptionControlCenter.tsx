@@ -69,7 +69,7 @@ function statusBadgeClass(status: string): string {
   if (u === "CANCELED" || u === "PAST_DUE") {
     return "bg-rose-500/15 text-rose-300 ring-1 ring-rose-500/30";
   }
-  return "bg-white/[0.08] text-gray-500 ring-1 ring-white/[0.12]";
+  return "bg-gray-100 text-gray-500 ring-1 ring-white/[0.12]";
 }
 
 function UsageBar({
@@ -96,11 +96,11 @@ function UsageBar({
     <div className="space-y-1.5">
       <div className="flex justify-between text-xs font-bold text-gray-500">
         <span>{label}</span>
-        <span className="font-mono text-[11px] text-white/40" dir="ltr">
+        <span className="font-mono text-[11px] text-gray-400" dir="ltr">
           {usedLabel}
         </span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-white/[0.10] ring-1 ring-white/[0.06]">
+      <div className="h-2.5 overflow-hidden rounded-full bg-gray-100 ring-1 ring-white/[0.06]">
         <div
           className={`h-full rounded-full transition-all ${
             unlimited
@@ -378,7 +378,7 @@ export default function AdminSubscriptionControlCenter({
               <button
                 type="button"
                 onClick={() => dismissToast(t.id)}
-                className="rounded-md p-1 text-white/40 hover:bg-white/[0.08]"
+                className="rounded-md p-1 text-gray-400 hover:bg-gray-100"
                 aria-label="סגור התראה"
               >
                 <X size={14} />
@@ -411,14 +411,14 @@ export default function AdminSubscriptionControlCenter({
               <p className="text-xs font-black uppercase tracking-wider text-indigo-400/80">
                 Avenue — תצורת פלטפורמה
               </p>
-              <p className="text-base font-black text-white">גבייה, חבילות סריקה והזמנות הצטרפות</p>
+              <p className="text-base font-black text-gray-900">גבייה, חבילות סריקה והזמנות הצטרפות</p>
             </div>
             {platformOpen ? <ChevronUp className="shrink-0 text-gray-400" /> : <ChevronDown className="shrink-0 text-gray-400" />}
           </button>
           {platformOpen ? (
             <div className="space-y-8 border-t border-gray-100 px-5 pb-8 pt-6">
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.03] p-6">
-                <h3 className="mb-4 text-lg font-black text-white">גבייה ו־PayPal</h3>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+                <h3 className="mb-4 text-lg font-black text-gray-900">גבייה ו־PayPal</h3>
                 <form className="space-y-4" onSubmit={onBillingSubmit}>
                   <label className="block text-sm font-bold text-gray-600">
                     PayPal Client ID (ציבורי)
@@ -426,7 +426,7 @@ export default function AdminSubscriptionControlCenter({
                       name="paypalClientId"
                       defaultValue={billingConfig?.paypalClientIdPublic ?? ""}
                       placeholder="ריק = מ־NEXT_PUBLIC_PAYPAL_CLIENT_ID"
-                      className="mt-1 w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 font-mono text-sm text-white placeholder:text-white/30"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400"
                       dir="ltr"
                     />
                   </label>
@@ -436,14 +436,14 @@ export default function AdminSubscriptionControlCenter({
                       name="tierPricesJson"
                       rows={6}
                       defaultValue={defaultPricesJson}
-                      className="mt-1 w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 font-mono text-sm text-white placeholder:text-white/30"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400"
                       dir="ltr"
                     />
                   </label>
                   <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-xl bg-white border border-white/[0.12] px-5 py-2.5 text-sm font-bold text-white hover:bg-white/[0.08] disabled:opacity-50"
+                    className="rounded-xl bg-white border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                   >
                     שמירת הגדרות גבייה
                   </button>
@@ -451,17 +451,17 @@ export default function AdminSubscriptionControlCenter({
               </section>
 
               <section className="rounded-2xl border border-indigo-500/20 bg-indigo-500/\[0.06\] p-6">
-                <h3 className="mb-3 text-lg font-black text-white">הזמנת הצטרפות במייל</h3>
+                <h3 className="mb-3 text-lg font-black text-gray-900">הזמנת הצטרפות במייל</h3>
                 <form className="grid gap-3 md:grid-cols-2" onSubmit={onInviteSubmit}>
                   <input
                     name="email"
                     type="email"
                     required
                     placeholder="לקוח@דומיין"
-                    className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30"
+                    className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
                   />
-                  <input name="headline" placeholder="כותרת המייל" className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30"/>
-                  <select name="tierHint" className="rounded-xl border border-white/[0.10] bg-white px-3 py-2 text-sm text-white md:col-span-2">
+                  <input name="headline" placeholder="כותרת המייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"/>
+                  <select name="tierHint" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 md:col-span-2">
                     <option value="">ללא ציון רמה</option>
                     {tierOptions.map((o) => (
                       <option key={o.value} value={o.value}>
@@ -473,7 +473,7 @@ export default function AdminSubscriptionControlCenter({
                     name="bodyText"
                     rows={3}
                     placeholder="גוף ההודעה (אופציונלי)"
-                    className="md:col-span-2 rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30"
+                    className="md:col-span-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
                   />
                   <button
                     type="submit"
@@ -485,16 +485,16 @@ export default function AdminSubscriptionControlCenter({
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.03] p-6">
-                <h3 className="mb-4 text-lg font-black text-white">חבילות סריקה — מחירים</h3>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+                <h3 className="mb-4 text-lg font-black text-gray-900">חבילות סריקה — מחירים</h3>
                 <ul className="space-y-3">
                   {bundles.map((b) => (
                     <li
                       key={b.id}
-                      className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-100 bg-white/[0.03] p-4"
+                      className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4"
                     >
                       <div className="min-w-[200px] flex-1">
-                        <p className="font-bold text-white">{b.name}</p>
+                        <p className="font-bold text-gray-900">{b.name}</p>
                         <p className="text-xs text-gray-400">{`+${b.cheapAdds} זולות · +${b.premiumAdds} פרימיום`}</p>
                       </div>
                       <form className="flex items-center gap-2" onSubmit={onBundleSubmit(b.id)}>
@@ -505,14 +505,14 @@ export default function AdminSubscriptionControlCenter({
                             type="number"
                             step="0.01"
                             defaultValue={b.priceIls}
-                            className="me-1 w-28 rounded-lg border border-white/[0.10] bg-white/[0.05] px-2 py-1 text-sm font-mono text-white"
+                            className="me-1 w-28 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1 text-sm font-mono text-gray-900"
                             dir="ltr"
                           />
                         </label>
                         <button
                           type="submit"
                           disabled={pending}
-                          className="rounded-lg bg-white/[0.10] px-3 py-1.5 text-xs font-bold text-white hover:bg-white/[0.15] disabled:opacity-50"
+                          className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                         >
                           עדכון
                         </button>
@@ -533,27 +533,27 @@ export default function AdminSubscriptionControlCenter({
           >
             <div>
               <p className="text-xs font-black uppercase tracking-wider text-gray-400">כלים</p>
-              <p className="text-base font-black text-white">יצירת משתמש, הזמנת רמה וייצוא</p>
+              <p className="text-base font-black text-gray-900">יצירת משתמש, הזמנת רמה וייצוא</p>
             </div>
             {toolsOpen ? <ChevronUp className="shrink-0 text-gray-400" /> : <ChevronDown className="shrink-0 text-gray-400" />}
           </button>
           {toolsOpen ? (
             <div className="space-y-8 border-t border-gray-100 px-5 pb-8 pt-6">
               <div className="grid gap-8 lg:grid-cols-2">
-                <section className="rounded-2xl border border-gray-100 bg-white/[0.03] p-6">
-                  <h3 className="mb-3 text-base font-black text-white">יצירת משתמש ידנית</h3>
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+                  <h3 className="mb-3 text-base font-black text-gray-900">יצירת משתמש ידנית</h3>
                   <form className="grid gap-3" onSubmit={onCreateUser}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30" />
-                    <input name="name" placeholder="שם (אופציונלי)" className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30" />
-                    <input name="organizationName" required placeholder="שם ארגון" className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30" />
-                    <select name="orgType" className="rounded-xl border border-white/[0.10] bg-white px-3 py-2 text-sm text-white">
+                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
+                    <input name="name" placeholder="שם (אופציונלי)" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
+                    <input name="organizationName" required placeholder="שם ארגון" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
+                    <select name="orgType" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
                       {ORG_TYPES.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <select name="tier" className="rounded-xl border border-white/[0.10] bg-white px-3 py-2 text-sm text-white">
+                    <select name="tier" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
@@ -561,30 +561,30 @@ export default function AdminSubscriptionControlCenter({
                       ))}
                     </select>
                     <label className="flex items-center gap-2 text-sm font-bold text-gray-600">
-                      <input type="checkbox" name="vip" className="rounded border-white/[0.20]" />
+                      <input type="checkbox" name="vip" className="rounded border-gray-300" />
                       VIP
                     </label>
                     <button
                       type="submit"
                       disabled={pending}
-                      className="rounded-xl bg-white border border-white/[0.12] py-2.5 text-sm font-bold text-white hover:bg-white/[0.08] disabled:opacity-50"
+                      className="rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                     >
                       צור משתמש וארגון
                     </button>
                   </form>
                 </section>
-                <section className="rounded-2xl border border-gray-100 bg-white/[0.03] p-6">
-                  <h3 className="mb-3 text-base font-black text-white">הזמנה לרמת מנוי (טוקן)</h3>
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+                  <h3 className="mb-3 text-base font-black text-gray-900">הזמנה לרמת מנוי (טוקן)</h3>
                   <form className="grid gap-3" onSubmit={onTierInvite}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30" />
-                    <select name="tier" required className="rounded-xl border border-white/[0.10] bg-white px-3 py-2 text-sm text-white">
+                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
+                    <select name="tier" required className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <input name="validDays" type="number" min={1} max={90} defaultValue={14} className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white" />
+                    <input name="validDays" type="number" min={1} max={90} defaultValue={14} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900" />
                     <button
                       type="submit"
                       disabled={pending}
@@ -599,7 +599,7 @@ export default function AdminSubscriptionControlCenter({
                 <button
                   type="button"
                   onClick={exportCsv}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.05] px-4 py-2 text-xs font-black text-gray-600 hover:bg-white/[0.09]"
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-black text-gray-600 hover:bg-gray-100"
                 >
                   <Download size={14} /> ייצוא CSV (מסונן)
                 </button>
@@ -609,13 +609,13 @@ export default function AdminSubscriptionControlCenter({
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-1">
-          <div className="rounded-[1.35rem] bg-white/[0.02] px-4 py-5 sm:px-6 sm:py-6">
+          <div className="rounded-[1.35rem] bg-gray-50 px-4 py-5 sm:px-6 sm:py-6">
             <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-indigo-400">
                   מרכז שליטה במנויים
                 </p>
-                <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">
+                <h2 className="mt-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
                   כל המנויים — טבלה אחת
                 </h2>
                 <p className="mt-1 text-sm text-gray-400">
@@ -629,12 +629,12 @@ export default function AdminSubscriptionControlCenter({
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="חיפוש לפי שם או אימייל…"
-                  className="w-full rounded-2xl border border-white/[0.10] bg-white/[0.05] py-3.5 pe-12 ps-4 text-sm font-medium text-white placeholder:text-white/30 focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full rounded-2xl border border-gray-200 bg-gray-50 py-3.5 pe-12 ps-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </label>
             </div>
 
-            <div className="overflow-x-auto rounded-xl ring-1 ring-white/[0.07]">
+            <div className="overflow-x-auto rounded-xl ring-1 ring-gray-200">
               <table className="w-full min-w-[920px] border-collapse text-right text-sm">
                 <thead>
                   <tr className="bg-indigo-500/[0.10] text-white">
@@ -672,13 +672,13 @@ export default function AdminSubscriptionControlCenter({
                           openRow(o);
                         }
                       }}
-                      className="cursor-pointer border-b border-white/[0.05] transition-colors hover:bg-indigo-500/[0.06] focus:bg-indigo-500/[0.08] focus:outline-none"
+                      className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-indigo-500/[0.06] focus:bg-indigo-500/[0.08] focus:outline-none"
                     >
-                      <td className="px-4 py-3.5 font-bold text-white">{o.name}</td>
+                      <td className="px-4 py-3.5 font-bold text-gray-900">{o.name}</td>
                       <td className="px-4 py-3.5 font-mono text-xs text-gray-500" dir="ltr">
                         {o.primaryEmail ?? "—"}
                       </td>
-                      <td className="px-4 py-3.5 font-semibold text-white">
+                      <td className="px-4 py-3.5 font-semibold text-gray-900">
                         <span className="rounded-lg bg-indigo-500/15 px-2 py-1 text-xs font-black text-indigo-300 ring-1 ring-indigo-500/25">
                           {tierLabelHe(o.subscriptionTier)}
                         </span>
@@ -704,7 +704,7 @@ export default function AdminSubscriptionControlCenter({
                 </tbody>
               </table>
               {filteredOrgs.length === 0 ? (
-                <div className="border-t border-gray-100 bg-white/[0.02] px-6 py-12 text-center text-sm font-medium text-gray-400">
+                <div className="border-t border-gray-100 bg-gray-50 px-6 py-12 text-center text-sm font-medium text-gray-400">
                   לא נמצאו תוצאות בשם או אימייל זה.
                 </div>
               ) : null}
@@ -725,13 +725,13 @@ export default function AdminSubscriptionControlCenter({
             onClick={closeSheet}
           />
           <aside
-            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s border-white/[0.12] bg-white shadow-2xl"
+            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s border-gray-200 bg-white shadow-2xl"
             dir={dir}
           >
             <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
               <div>
                 <p className="text-xs font-black text-indigo-400">מנוי נבחר</p>
-                <h3 className="text-lg font-black text-white">{selected.name}</h3>
+                <h3 className="text-lg font-black text-gray-900">{selected.name}</h3>
                 <p className="mt-0.5 font-mono text-[11px] text-gray-400" dir="ltr">
                   {selected.primaryEmail ?? "— אימייל"}
                 </p>
@@ -739,15 +739,15 @@ export default function AdminSubscriptionControlCenter({
               <button
                 type="button"
                 onClick={closeSheet}
-                className="rounded-xl border border-white/[0.10] bg-white/[0.05] p-2 text-gray-500 hover:bg-white/[0.10]"
+                className="rounded-xl border border-gray-200 bg-gray-50 p-2 text-gray-500 hover:bg-gray-100"
               >
                 <X size={20} />
               </button>
             </div>
 
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
-                <h4 className="mb-3 text-sm font-black text-white">הקמת אתר — דומיין מותאם</h4>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <h4 className="mb-3 text-sm font-black text-gray-900">הקמת אתר — דומיין מותאם</h4>
                 <form
                   className="space-y-3"
                   onSubmit={(e) => {
@@ -783,22 +783,22 @@ export default function AdminSubscriptionControlCenter({
                       key={selected.id + (selected.tenantPublicDomain ?? "")}
                       defaultValue={selected.tenantPublicDomain ?? ""}
                       placeholder="דוגמה: app.client.com"
-                      className="mt-1 w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 font-mono text-sm text-white placeholder:text-white/30"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400"
                       dir="ltr"
                     />
                   </label>
                   <button
                     type="submit"
                     disabled={pending}
-                    className="w-full rounded-xl bg-white border border-white/[0.12] py-2.5 text-sm font-bold text-white hover:bg-white/[0.08] disabled:opacity-50"
+                    className="w-full rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                   >
                     שמירת דומיין
                   </button>
                 </form>
               </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
-                <h4 className="mb-4 text-sm font-black text-white">מוניטור שימוש</h4>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <h4 className="mb-4 text-sm font-black text-gray-900">מוניטור שימוש</h4>
                 {selectedAllow ? (
                   <div className="space-y-4">
                     <UsageBar
@@ -813,13 +813,13 @@ export default function AdminSubscriptionControlCenter({
                     />
                   </div>
                 ) : null}
-                <p className="mt-3 text-[11px] text-white/40">
+                <p className="mt-3 text-[11px] text-gray-400">
                   מכסות ברירת מחדש לפי רמה; ארגוני VIP או חבילות עלולים לחרוג מהסרגל.
                 </p>
               </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
-                <h4 className="mb-3 text-sm font-black text-white">עקיפה ידנית — סריקות</h4>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <h4 className="mb-3 text-sm font-black text-gray-900">עקיפה ידנית — סריקות</h4>
                 <form
                   className="mb-4 flex flex-wrap gap-2"
                   onSubmit={(ev) => {
@@ -836,9 +836,9 @@ export default function AdminSubscriptionControlCenter({
                   }}
                 >
                   <input type="hidden" name="organizationId" value={selected.id} />
-                  <input name="cheapDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-white/[0.10] bg-white/[0.05] px-2 py-1.5 text-sm text-white" />
-                  <input name="premiumDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-white/[0.10] bg-white/[0.05] px-2 py-1.5 text-sm text-white" />
-                  <button type="submit" disabled={pending} className="rounded-lg bg-white/[0.10] px-3 py-1.5 text-xs font-bold text-white hover:bg-white/[0.15]">
+                  <input name="cheapDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900" />
+                  <input name="premiumDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900" />
+                  <button type="submit" disabled={pending} className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-900 hover:bg-gray-100">
                     החל שינוי
                   </button>
                 </form>
@@ -894,8 +894,8 @@ export default function AdminSubscriptionControlCenter({
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
-                <h4 className="mb-3 text-sm font-black text-white">רמת מנוי וסטטוס</h4>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <h4 className="mb-3 text-sm font-black text-gray-900">רמת מנוי וסטטוס</h4>
                 <form
                   className="flex flex-col gap-3"
                   onSubmit={(ev) => {
@@ -911,7 +911,7 @@ export default function AdminSubscriptionControlCenter({
                     });
                   }}
                 >
-                  <select name="tier" defaultValue={selected.subscriptionTier} className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30">
+                  <select name="tier" defaultValue={selected.subscriptionTier} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400">
                     {tierOptions.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.label}
@@ -921,7 +921,7 @@ export default function AdminSubscriptionControlCenter({
                   <input
                     name="subscriptionStatus"
                     defaultValue={selected.subscriptionStatus}
-                    className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm uppercase text-white"
+                    className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm uppercase text-gray-900"
                   />
                   <button type="submit" disabled={pending} className="rounded-xl bg-indigo-500 py-2 text-sm font-bold text-white hover:bg-indigo-400 shadow-sm shadow-indigo-500/20">
                     שמור רמה וסטטוס
@@ -959,7 +959,7 @@ export default function AdminSubscriptionControlCenter({
                       </button>
                     ))}
                   </div>
-                  <select id={`sheet-tier-${selected.id}`} defaultValue={selected.subscriptionTier} className="mt-1 w-full rounded-lg border border-white/[0.10] bg-white px-2 py-1.5 text-xs text-white">
+                  <select id={`sheet-tier-${selected.id}`} defaultValue={selected.subscriptionTier} className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-900">
                     {tierOptions.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.label}
@@ -969,19 +969,19 @@ export default function AdminSubscriptionControlCenter({
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
-                <h4 className="mb-3 text-sm font-black text-white">שיוך — CRM / ERP</h4>
+              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                <h4 className="mb-3 text-sm font-black text-gray-900">שיוך — CRM / ERP</h4>
                 <p className="mb-3 text-xs text-gray-500">
-                  מודולי CRM ו־ERP נשמים על <strong className="text-white">הארגון המחובר כרגע</strong>. להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
+                  מודולי CRM ו־ERP נשמים על <strong className="text-gray-900">הארגון המחובר כרגע</strong>. להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
-                  <code className="rounded-lg bg-white/[0.08] px-2 py-1 font-mono text-[11px] text-white" dir="ltr">
+                  <code className="rounded-lg bg-gray-100 px-2 py-1 font-mono text-[11px] text-gray-900" dir="ltr">
                     {selected.id}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyId(selected.id)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-white/[0.10] bg-white/[0.05] px-2 py-1 text-xs font-bold text-white"
+                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-bold text-gray-900"
                   >
                     <Copy size={12} /> העתק
                   </button>
@@ -989,13 +989,13 @@ export default function AdminSubscriptionControlCenter({
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                   <a
                     href="/dashboard/crm"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/[0.10] bg-white/[0.05] py-2.5 text-center text-sm font-black text-white hover:bg-white/[0.09]"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
                   >
                     <ExternalLink size={14} /> מערכת CRM
                   </a>
                   <a
                     href="/dashboard/erp"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/[0.10] bg-white/[0.05] py-2.5 text-center text-sm font-black text-white hover:bg-white/[0.09]"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
                   >
                     <ExternalLink size={14} /> ERP
                   </a>

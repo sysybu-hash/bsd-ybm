@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Archive, HardDrive, Cloud } from "lucide-react";
 
 /**
@@ -16,16 +16,16 @@ export default function ErpHistoricalImportCallout() {
           <Archive size={28} strokeWidth={2} aria-hidden />
         </div>
         <div className="min-w-0 space-y-3">
-          <h2 id="erp-archive-title" className="text-xl font-black text-white tracking-tight">
+          <h2 id="erp-archive-title" className="text-xl font-black text-gray-900 tracking-tight">
             מסמכים ישנים מהמחשב — &quot;להתחיל מחדש&quot; עם הארכיון
           </h2>
-          <p className="text-sm text-white/65 leading-relaxed">
+          <p className="text-sm text-gray-600 leading-relaxed">
             אם יש לכם תיקיות עם חשבוניות / קבלות סרוקות מהעבודה השוטפת, אפשר{" "}
             <strong>לגרור כמה קבצים בבת אחת</strong> לאזור הסריקה למטה. המערכת מפענחת כל קובץ,
             שומרת אותו ברשימת המסמכים ב־ERP, ומצטרף לגרפים ולסיכומים — בלי לאבד את ההיסטוריה
             כשעוברים לעבודה במערכת.
           </p>
-          <div className="text-sm text-white/55 space-y-3">
+          <div className="text-sm text-gray-500 space-y-3">
             <p className="flex flex-wrap items-start gap-2">
               <HardDrive size={18} className="text-emerald-400 shrink-0 mt-0.5" aria-hidden />
               <span>

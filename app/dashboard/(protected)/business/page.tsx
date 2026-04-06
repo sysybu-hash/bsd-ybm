@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -70,7 +70,7 @@ export default async function BusinessPage() {
       label: t("erpPage.statDocsInView"),
       value: String(rawDocs.length),
       trend: t("erpPage.trendAllDocs"),
-      valueClass: "text-white",
+      valueClass: "text-gray-900",
     },
     {
       label: t("erpPage.statAvgInvoice"),

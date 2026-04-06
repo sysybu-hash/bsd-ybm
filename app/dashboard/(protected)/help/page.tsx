@@ -13,7 +13,7 @@ export default function DashboardHelpPage() {
           <BookOpenCheck size={11} />
           מדריך תפעול מובנה
         </span>
-        <h1 className="mt-3 text-2xl font-black text-white">איך לתפעול את האתר בפשטות</h1>
+        <h1 className="mt-3 text-2xl font-black text-gray-900">איך לתפעול את האתר בפשטות</h1>
         <p className="mt-1.5 text-sm leading-relaxed text-gray-400">
           אם אינך טכני, עבוד לפי הרצף הזה. כל שלב כולל קישור ישיר לעמוד המתאים.
         </p>
@@ -109,15 +109,15 @@ function HelpStep({
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-base font-black shadow-sm ${numBg[color]}`}>{step}</div>
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/[0.08] shadow-sm">{icon}</div>
-            <h2 className="text-base font-black text-white">{title}</h2>
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gray-100 shadow-sm">{icon}</div>
+            <h2 className="text-base font-black text-gray-900">{title}</h2>
           </div>
           <p className="mt-1 text-sm text-gray-400">{description}</p>
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
         <Link href={primaryHref} className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors ${btnPrimary[color]}`}>{primaryLabel}</Link>
-        <Link href={secondaryHref} className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/70 hover:bg-white/[0.08] transition-colors">{secondaryLabel}</Link>
+        <Link href={secondaryHref} className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors">{secondaryLabel}</Link>
       </div>
     </article>
   );

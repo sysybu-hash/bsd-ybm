@@ -116,7 +116,7 @@ export default function MissionControl() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 flex min-h-[480px] max-h-[min(70vh,640px)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="bg-white/[0.03] p-6 border-b border-gray-200 flex justify-between items-center text-white gap-4 flex-wrap">
+          <div className="bg-gray-50 p-6 border-b border-gray-200 flex justify-between items-center text-gray-900 gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-indigo-600 rounded-lg shrink-0 text-white">
                 <Zap size={20} aria-hidden />
@@ -135,7 +135,7 @@ export default function MissionControl() {
                 <div
                   className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
                     m.role === "ai"
-                      ? "bg-white/[0.05] text-gray-700 border border-gray-200"
+                      ? "bg-gray-50 text-gray-700 border border-gray-200"
                       : "bg-indigo-600 text-white"
                   }`}
                 >
@@ -147,7 +147,7 @@ export default function MissionControl() {
 
           <form
             onSubmit={onSubmit}
-            className="p-6 bg-white/[0.03] border-t border-gray-200 flex gap-4"
+            className="p-6 bg-gray-50 border-t border-gray-200 flex gap-4"
           >
             <input
               type="text"
@@ -155,7 +155,7 @@ export default function MissionControl() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKeyDown}
               placeholder="הערות תפעול, בדיקות, משימות..."
-              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
               aria-label="הודעה לבקרה"
             />
             <button
@@ -180,7 +180,7 @@ export default function MissionControl() {
             </p>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-2xl gap-3 flex-wrap">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl gap-3 flex-wrap">
                 <span className="font-bold text-sm">שעה מועדפת</span>
                 <input
                   type="time"
@@ -210,7 +210,7 @@ export default function MissionControl() {
 
           <div className="group relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
             <ShieldCheck
-              className="absolute top-[-10px] left-[-10px] text-white/10 pointer-events-none"
+              className="absolute top-[-10px] left-[-10px] text-gray-200 pointer-events-none"
               size={150}
               aria-hidden
             />

@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+﻿import { TrendingUp } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getServerLocale } from "@/lib/i18n/server";
 import { isRtlLocale } from "@/lib/i18n/config";
@@ -29,7 +29,7 @@ export default async function FinancialInsightsWidget({
 
   return (
     <div
-      className="card-avenue border-emerald-500/25/90 bg-gradient-to-b from-emerald-50/80 to-white p-6 text-white/75 shadow-sm"
+      className="card-avenue border-emerald-500/25/90 bg-gradient-to-b from-emerald-50/80 to-white p-6 text-gray-600 shadow-sm"
       dir={dir}
     >
       <div className="mb-3 flex items-center gap-2">
@@ -39,12 +39,12 @@ export default async function FinancialInsightsWidget({
       {insight ? (
         <>
           <p className="whitespace-pre-wrap text-sm leading-relaxed">{insight.content}</p>
-          <p className="mt-4 text-xs text-white/45">
+          <p className="mt-4 text-xs text-gray-500">
             עודכן: {new Date(insight.updatedAt).toLocaleString("he-IL")}
           </p>
         </>
       ) : (
-        <p className="text-sm text-white/55">
+        <p className="text-sm text-gray-500">
           התובנות ייווצרו אוטומטית (Cron יומי) לאחר שיהיו מספיק נתונים ב-ERP/CRM.
         </p>
       )}

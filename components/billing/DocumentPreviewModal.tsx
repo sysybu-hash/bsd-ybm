@@ -80,7 +80,7 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
           <span className="px-2 text-sm font-black text-gray-600">
             תצוגה מקדימה — מסמך #{doc.number}
           </span>
-          <div className="h-5 w-px bg-white/[0.08]" />
+          <div className="h-5 w-px bg-gray-100" />
           <button
             type="button"
             onClick={handlePrint}

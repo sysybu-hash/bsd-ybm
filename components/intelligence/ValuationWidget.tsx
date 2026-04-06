@@ -30,13 +30,13 @@ export default function ValuationWidget({ value = 1250000 }: { value?: number })
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-4xl font-black italic tracking-tighter text-white"
+            className="text-4xl font-black italic tracking-tighter text-gray-900"
           >
             ₪{value.toLocaleString()}
           </motion.span>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-white/[0.05] flex items-center gap-2">
+        <div className="mt-6 pt-6 border-t border-gray-100 flex items-center gap-2">
           <TrendingUp size={14} className="text-gray-400" aria-hidden />
           <p className="text-[10px] text-gray-400 font-medium italic">
             מבוסס על מכפיל רווח X4 וצמיחת לקוחות ב-CRM.

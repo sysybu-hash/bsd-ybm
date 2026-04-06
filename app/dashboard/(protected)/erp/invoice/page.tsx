@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+﻿import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import InvoiceIssuance from "@/components/InvoiceIssuance";
@@ -18,7 +18,7 @@ export default async function InvoicePage({
   const prefillContactId = sp.contactId ? decodeURIComponent(sp.contactId) : undefined;
 
   return (
-    <section className="min-h-screen bg-white/[0.03]/60 px-4 py-8 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-gray-50/60 px-4 py-8 sm:px-6 lg:px-8">
       <InvoiceIssuance
         orgId={session.user.organizationId}
         prefillClientName={prefillClient}

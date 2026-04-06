@@ -78,14 +78,14 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
   if (sorted.length === 0) {
     return (
       <div
-        className="col-span-full flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-gray-200 bg-white/[0.03]/80 px-6 py-16 text-center"
+        className="col-span-full flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/80 px-6 py-16 text-center"
         dir={dir}
       >
         <div className="rounded-2xl bg-indigo-500/15 p-4 text-indigo-400 ring-1 ring-indigo-100">
           <FileText size={40} strokeWidth={1.25} aria-hidden />
         </div>
         <div>
-          <h3 className="text-lg font-black text-white">אין מסמכים בספרייה</h3>
+          <h3 className="text-lg font-black text-gray-900">אין מסמכים בספרייה</h3>
           <p className="mt-1 max-w-md text-sm text-gray-400">
             העלו חשבונית או מסמך דרך אזור הסריקה בדף ERP — המסמכים יופיעו כאן בטבלה מסודרת.
           </p>
@@ -102,7 +102,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
     <div className="col-span-full space-y-4" dir={dir}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-black italic text-white flex items-center gap-2">
+          <h2 className="text-xl font-black italic text-gray-900 flex items-center gap-2">
             <FileText className="text-indigo-400" size={22} aria-hidden />
             מסמכים ופענוח AI
           </h2>
@@ -121,15 +121,15 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                   <Calendar size={12} aria-hidden />
                   {new Date(doc.createdAt).toLocaleDateString("he-IL")}
                 </span>
-                <span className="rounded-full bg-white/[0.05] px-2 py-0.5 text-[10px] font-bold text-gray-500">
+                <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-bold text-gray-500">
                   {doc.status}
                 </span>
               </div>
               <p className="truncate text-xs text-gray-400" title={doc.fileName}>
                 {doc.fileName}
               </p>
-              <h3 className="text-base font-black text-white">{ai.vendor || "ספק כללי"}</h3>
-              <p className="text-lg font-black text-white">₪{ai.total ?? 0}</p>
+              <h3 className="text-base font-black text-gray-900">{ai.vendor || "ספק כללי"}</h3>
+              <p className="text-lg font-black text-gray-900">₪{ai.total ?? 0}</p>
               <p className="mt-1 line-clamp-2 min-h-8 text-xs italic text-gray-400">
                 {ai.summary ? `„${ai.summary}"` : "לא חולץ תקציר"}
               </p>
@@ -161,12 +161,12 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
         <table className="min-w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-indigo-500/15 text-start">
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">תאריך</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">קובץ</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">ספק</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">סכום</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">סטטוס</th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-white">פעולות</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">תאריך</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">קובץ</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">ספק</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">סכום</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">סטטוס</th>
+              <th className="px-4 py-3 text-xs font-black uppercase tracking-wide text-gray-900">פעולות</th>
             </tr>
           </thead>
           <tbody>
@@ -183,10 +183,10 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                   <td className="max-w-[10rem] truncate px-4 py-3 font-medium text-gray-700" title={doc.fileName}>
                     {doc.fileName}
                   </td>
-                  <td className="px-4 py-3 font-bold text-white">{ai.vendor || "—"}</td>
-                  <td className="px-4 py-3 font-black tabular-nums text-white">₪{ai.total ?? 0}</td>
+                  <td className="px-4 py-3 font-bold text-gray-900">{ai.vendor || "—"}</td>
+                  <td className="px-4 py-3 font-black tabular-nums text-gray-900">₪{ai.total ?? 0}</td>
                   <td className="px-4 py-3">
-                    <span className="rounded-full bg-white/[0.05] px-2 py-1 text-xs font-bold text-gray-500">
+                    <span className="rounded-full bg-gray-50 px-2 py-1 text-xs font-bold text-gray-500">
                       {doc.status}
                     </span>
                   </td>
@@ -239,7 +239,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             aria-labelledby="preview-doc-title"
           >
             <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4">
-              <h3 id="preview-doc-title" className="text-xl font-black text-white">
+              <h3 id="preview-doc-title" className="text-xl font-black text-gray-900">
                 תצוגה מקדימה
               </h3>
               <button
@@ -257,7 +257,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             <p className="mt-1 text-sm text-gray-500">
               <span className="font-bold text-gray-700">סוג:</span> {previewDoc.type}
             </p>
-            <div className="mt-4 rounded-2xl border border-gray-200 bg-white/[0.03] p-4">
+            <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
               <p className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-400">JSON פענוח</p>
               <pre className="max-h-[40vh] overflow-auto text-xs text-gray-600 whitespace-pre-wrap break-all">
                 {JSON.stringify(previewDoc.aiData ?? {}, null, 2)}
@@ -281,7 +281,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             aria-labelledby="edit-doc-title"
           >
             <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-100 pb-4">
-              <h3 id="edit-doc-title" className="text-xl font-black text-white">
+              <h3 id="edit-doc-title" className="text-xl font-black text-gray-900">
                 עריכת מסמך
               </h3>
               <button

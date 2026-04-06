@@ -46,13 +46,13 @@ export default function PostRegisterWelcomeSheet() {
       aria-labelledby="bsd-welcome-title"
     >
       <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/60" dir="rtl">
-        <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-white">
+        <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-gray-900">
           ברוך הבא ל־BSD-YBM
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">החשבון שלך מחובר ומוכן לעבודה</p>
 
         <div className="mt-8 flex flex-col items-center gap-4">
-          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-500/20 bg-white/[0.05] shadow-inner">
+          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-500/20 bg-gray-50 shadow-inner">
             {img ? (
               <Image src={img} alt="" fill className="object-cover" sizes="96px" unoptimized />
             ) : (
@@ -62,7 +62,7 @@ export default function PostRegisterWelcomeSheet() {
             )}
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-white">{name}</p>
+            <p className="text-lg font-bold text-gray-900">{name}</p>
             <p className="text-sm text-gray-400">{email}</p>
           </div>
           <div

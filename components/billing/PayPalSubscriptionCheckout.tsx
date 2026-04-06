@@ -140,7 +140,7 @@ export default function PayPalSubscriptionCheckout({
       className="card-avenue scroll-mt-24 border-indigo-500/20 bg-white p-6 shadow-sm md:p-8"
       dir={dir}
     >
-      <h2 className="mb-2 text-xl font-black text-white">הפעלת מנוי — PayPal (Live)</h2>
+      <h2 className="mb-2 text-xl font-black text-gray-900">הפעלת מנוי — PayPal (Live)</h2>
       <p className="mb-4 text-sm text-gray-500">
         בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
       </p>
@@ -174,7 +174,7 @@ export default function PayPalSubscriptionCheckout({
               className={`rounded-2xl border px-4 py-3 text-sm font-bold transition-all ${
                 effectiveTier === t
                   ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-200"
-                  : "border-gray-200 bg-white/[0.03] text-gray-600 hover:border-indigo-500/30"
+                  : "border-gray-200 bg-gray-50 text-gray-600 hover:border-indigo-500/30"
               }`}
             >
               {planLabelHe(t)} — ₪{pr?.toLocaleString("he-IL")}
@@ -185,7 +185,7 @@ export default function PayPalSubscriptionCheckout({
 
       {price != null ? (
         <div className="mb-4 text-center text-sm text-gray-500">
-          סכום לחיוב: <span className="font-black text-white">₪{price.toFixed(2)}</span>
+          סכום לחיוב: <span className="font-black text-gray-900">₪{price.toFixed(2)}</span>
           {subscriptionStatus !== "ACTIVE" ? (
             <span className="mt-1 block text-xs text-gray-400">לאחר התשלום המנוי יסומן כ־ACTIVE</span>
           ) : null}

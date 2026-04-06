@@ -64,7 +64,7 @@ function AnimatedClip({ id }: { id: string }) {
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="h-2 bg-white/[0.08] rounded-full mb-2"
+              className="h-2 bg-gray-100 rounded-full mb-2"
             />
             ווידג׳טים חיים, חיפוש גלובלי, והפניות מהירות לפעולות מרכזיות.
           </div>
@@ -83,7 +83,7 @@ function AnimatedClip({ id }: { id: string }) {
           >
             העלאת חשבונית
           </motion.div>
-          <div className="w-40 h-2 rounded-full bg-white/[0.08] overflow-hidden">
+          <div className="w-40 h-2 rounded-full bg-gray-100 overflow-hidden">
             <motion.div
               className="h-full bg-indigo-500/15"
               animate={{ width: ["0%", "100%"] }}
@@ -126,7 +126,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
       transition={{ duration: 0.45, delay: index * 0.08 }}
       className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-white/[0.05]">
+      <div className="relative aspect-video w-full overflow-hidden bg-gray-50">
         {hasEmbed ? (
           <iframe
             title={item.title}
@@ -151,7 +151,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
             <Icon size={22} aria-hidden />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white">{item.title}</h3>
+            <h3 className="text-lg font-black text-gray-900">{item.title}</h3>
             <p className="mt-1 text-sm leading-relaxed text-gray-500">{item.description}</p>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function LandingVideoTutorials() {
         </motion.p>
         <h2
           id="video-tutorials-heading"
-          className="text-3xl font-black italic text-white md:text-4xl"
+          className="text-3xl font-black italic text-gray-900 md:text-4xl"
         >
           הכירו את המערכת — שלב אחר שלב
         </h2>

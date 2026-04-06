@@ -24,7 +24,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
     <section className="card-avenue bg-white p-6 shadow-sm md:p-10" dir={dir}>
       <div className="mb-10 text-center">
         <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-indigo-400">מחירון</p>
-        <h2 className="text-2xl font-black italic tracking-tight text-white md:text-3xl">השוואת מנויים</h2>
+        <h2 className="text-2xl font-black italic tracking-tight text-gray-900 md:text-3xl">השוואת מנויים</h2>
         <p className="mx-auto mt-2 max-w-2xl text-sm font-medium text-gray-400">
           חמש רמות — מנוע Gemini כסריקה „זולה”, OpenAI ו־Claude כפרימיום. התשלום ב־PayPal בשקלים.
         </p>
@@ -49,11 +49,11 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
                   מומלץ
                 </span>
               ) : null}
-              <h3 className="mb-1 text-lg font-black text-white">{tierLabelHe(tier)}</h3>
+              <h3 className="mb-1 text-lg font-black text-gray-900">{tierLabelHe(tier)}</h3>
               <p className="mb-4 text-[10px] font-bold uppercase tracking-wider text-gray-400">{tier}</p>
               <div className="mb-4">
                 {price != null ? (
-                  <p className="text-3xl font-black tabular-nums text-white">
+                  <p className="text-3xl font-black tabular-nums text-gray-900">
                     ₪{price.toFixed(1)}
                     <span className="text-sm font-semibold text-gray-400"> /חודש</span>
                   </p>
@@ -65,15 +65,15 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
                 <tbody>
                   <tr className="border-b border-gray-200/80">
                     <td className="py-2.5 pe-2 ps-0 font-semibold text-indigo-400">זול (Flash)</td>
-                    <td className="py-2.5 text-end font-black tabular-nums text-white">{a.cheapScans}</td>
+                    <td className="py-2.5 text-end font-black tabular-nums text-gray-900">{a.cheapScans}</td>
                   </tr>
                   <tr className="border-b border-gray-200/80">
                     <td className="py-2.5 pe-2 ps-0 font-semibold text-gray-600">פרימיום (Pro)</td>
-                    <td className="py-2.5 text-end font-black tabular-nums text-white">{a.premiumScans}</td>
+                    <td className="py-2.5 text-end font-black tabular-nums text-gray-900">{a.premiumScans}</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 pe-2 ps-0 font-semibold text-gray-400">חברות</td>
-                    <td className="py-2.5 text-end font-bold text-white">
+                    <td className="py-2.5 text-end font-bold text-gray-900">
                       {a.unlimitedCompanies ? (
                         <>ללא הגבלה (מעשית)</>
                       ) : (

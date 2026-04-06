@@ -353,7 +353,7 @@ export default function MultiEngineScanner({
   }`;
 
   const dropIdle =
-    "border-gray-200 bg-white/[0.03]/50 hover:bg-indigo-500/15 hover:border-indigo-500/40 transition-colors";
+    "border-gray-200 bg-gray-50/50 hover:bg-indigo-500/15 hover:border-indigo-500/40 transition-colors";
 
   const dropActive = "border-indigo-500 bg-indigo-500/15 scale-[0.995]";
 
@@ -397,18 +397,18 @@ export default function MultiEngineScanner({
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
                     : done
                       ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
-                      : "bg-white/[0.03] text-gray-400 border border-gray-100"
+                      : "bg-gray-50 text-gray-400 border border-gray-100"
                 }`}
               >
                 <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
-                  current ? "bg-white/20 text-white" : done ? "bg-emerald-100 text-emerald-400" : "bg-white/[0.08] text-gray-400"
+                  current ? "bg-white/20 text-white" : done ? "bg-emerald-100 text-emerald-400" : "bg-gray-100 text-gray-400"
                 }`}>
                   {done ? <CheckCircle2 size={12} /> : s.n}
                 </span>
                 <span>{s.t}</span>
               </div>
               {i < steps.length - 1 && (
-                <div className={`mx-1 h-px w-5 ${done ? "bg-emerald-300" : "bg-white/[0.08]"}`} />
+                <div className={`mx-1 h-px w-5 ${done ? "bg-emerald-300" : "bg-gray-100"}`} />
               )}
             </div>
           );
@@ -461,7 +461,7 @@ export default function MultiEngineScanner({
                 onClick={() => toggleProvider(p.id)}
                 className={`inline-flex shrink-0 items-center gap-2.5 rounded-2xl border px-4 py-2.5 text-xs font-bold transition-all duration-150 ${
                   !ok
-                    ? "cursor-not-allowed border-dashed border-gray-200 bg-white/[0.03] text-gray-400 opacity-50"
+                    ? "cursor-not-allowed border-dashed border-gray-200 bg-gray-50 text-gray-400 opacity-50"
                     : on
                       ? "border-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-[1.01]"
                       : "border-gray-200 bg-white text-gray-600 hover:border-indigo-500/40 hover:bg-indigo-500/15 hover:text-indigo-300 hover:shadow-sm"
@@ -471,7 +471,7 @@ export default function MultiEngineScanner({
                   <Sparkles size={13} className={on && ok ? "text-white" : "text-gray-400"} />
                 </span>
                 {p.label}
-                {!ok ? <span className="rounded-full bg-white/[0.08] px-1.5 py-0.5 text-[9px] font-semibold text-gray-400">{!p.configured ? "לא מוגדר" : "מנוי"}</span> : null}
+                {!ok ? <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[9px] font-semibold text-gray-400">{!p.configured ? "לא מוגדר" : "מנוי"}</span> : null}
                 {on && ok ? <span className="h-1.5 w-1.5 rounded-full bg-white/60" /> : null}
               </button>
             );
@@ -608,10 +608,10 @@ export default function MultiEngineScanner({
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100">
                   <Brain size={15} className="text-indigo-400" />
                 </div>
-                <p className="font-black text-white truncate text-sm">{row.fileName}</p>
+                <p className="font-black text-gray-900 truncate text-sm">{row.fileName}</p>
               </div>
               <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
-                <div className="border-b border-gray-100 bg-white/[0.03]/40 p-5 lg:border-b-0 lg:border-e">
+                <div className="border-b border-gray-100 bg-gray-50/40 p-5 lg:border-b-0 lg:border-e">
                   <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-gray-400">תצוגה מקדימה</p>
                   {row.previewUrl && row.isImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -628,7 +628,7 @@ export default function MultiEngineScanner({
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-100 bg-white py-8">
-                      <Brain size={20} className="text-white/25" />
+                      <Brain size={20} className="text-gray-400" />
                       <p className="text-xs text-gray-400">אין תצוגה מקדימה לסוג קובץ זה</p>
                     </div>
                   )}
@@ -667,7 +667,7 @@ export default function MultiEngineScanner({
                         <div
                           key={`${e.providerId}-${ei}`}
                           className={`rounded-2xl border p-4 text-xs space-y-1.5 transition-all ${
-                            rec ? "border-emerald-300 bg-emerald-500/15 shadow-sm" : "border-gray-100 bg-white/[0.03]/50"
+                            rec ? "border-emerald-300 bg-emerald-500/15 shadow-sm" : "border-gray-100 bg-gray-50/50"
                           }`}
                         >
                           <div className="flex justify-between gap-2 font-black">

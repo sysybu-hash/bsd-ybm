@@ -106,7 +106,7 @@ export default function EditIssuedDocumentModal({
     });
   };
 
-  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15";
+  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15";
 
   return (
     <div
@@ -124,14 +124,14 @@ export default function EditIssuedDocumentModal({
               <Edit3 size={18} />
             </div>
             <div>
-              <p className="font-black text-white">עריכת מסמך #{doc.number}</p>
+              <p className="font-black text-gray-900">עריכת מסמך #{doc.number}</p>
               <p className="text-xs text-gray-400">שינויים יישמרו ויחשבו מחדש</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-2 text-gray-400 hover:bg-white/[0.08] transition"
+            className="rounded-xl p-2 text-gray-400 hover:bg-gray-100 transition"
             aria-label="סגור"
           >
             <X size={18} />
@@ -192,7 +192,7 @@ export default function EditIssuedDocumentModal({
                 const colors: Record<DocStatus, string> = {
                   PENDING: "border-amber-500/30 bg-amber-500/15 text-amber-400",
                   PAID: "border-emerald-500/30 bg-emerald-500/15 text-emerald-400",
-                  CANCELLED: "border-white/[0.10] bg-white/[0.05] text-gray-500",
+                  CANCELLED: "border-gray-200 bg-gray-50 text-gray-500",
                 };
                 return (
                   <button
@@ -262,7 +262,7 @@ export default function EditIssuedDocumentModal({
                     type="button"
                     onClick={() => removeItem(idx)}
                     disabled={items.length <= 1}
-                    className="text-white/25 hover:text-rose-500 transition disabled:opacity-30"
+                    className="text-gray-400 hover:text-rose-500 transition disabled:opacity-30"
                     aria-label="מחק שורה"
                   >
                     <Trash2 size={15} />
@@ -273,7 +273,7 @@ export default function EditIssuedDocumentModal({
           </div>
 
           {/* Totals */}
-          <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-4 space-y-2">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 space-y-2">
             <div className="flex justify-between text-sm text-gray-400 font-medium">
               <span>סה״כ לפני מע״מ:</span>
               <span>₪{totals.net.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
@@ -292,7 +292,7 @@ export default function EditIssuedDocumentModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-gray-100 bg-white/[0.03] px-6 py-4">
+        <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-6 py-4">
           <div>
             {!confirmDelete ? (
               <button

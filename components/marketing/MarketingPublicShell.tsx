@@ -22,7 +22,7 @@ export default function MarketingPublicShell({ children, title }: Props) {
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link
             href="/"
-            className="text-xl font-black italic tracking-tighter text-white"
+            className="text-xl font-black italic tracking-tighter text-indigo-700"
           >
             BSD-<span className="text-indigo-400">YBM</span>
           </Link>
@@ -36,7 +36,7 @@ export default function MarketingPublicShell({ children, title }: Props) {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-        <h1 className="mb-8 text-3xl font-black tracking-tight text-white sm:text-4xl">
+        <h1 className="mb-8 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
           {title}
         </h1>
         {children}

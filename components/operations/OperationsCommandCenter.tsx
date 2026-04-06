@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -328,8 +328,8 @@ function Health({
   missingLabel?: string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-2.5 text-sm">
-      <span className="font-semibold text-white/65">{label}</span>
+    <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm">
+      <span className="font-semibold text-gray-600">{label}</span>
       <span className={`inline-flex items-center gap-1.5 font-bold ${ok ? "text-emerald-600" : "text-amber-600"}`}>
         {ok ? <CheckCircle2 size={13} /> : <Bot size={13} />}
         {ok ? okLabel : missingLabel}

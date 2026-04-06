@@ -21,7 +21,7 @@ export default function BillingOnboardingCallout({ text }: { text: string }) {
       className="rounded-2xl border border-emerald-500/25/90 bg-gradient-to-br from-emerald-50/90 to-sky-50/50 p-5 sm:p-6 text-sm text-gray-700 shadow-sm"
       dir="rtl"
     >
-      <p className="font-black text-white mb-2 flex items-center gap-2">
+      <p className="font-black text-gray-900 mb-2 flex items-center gap-2">
         <span className="rounded-lg bg-emerald-600 text-white text-xs px-2 py-0.5">חינם</span>
         מה לומר לחבר לפני שהוא נרשם (והיכן PayPal נכנס)
       </p>

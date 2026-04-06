@@ -46,7 +46,7 @@ export default function DashboardSidebarUserCard({
           </div>
         </div>
         <div className="min-w-0 flex-1 text-end">
-          <p className="truncate text-sm font-bold text-white">{displayName}</p>
+          <p className="truncate text-sm font-bold text-gray-900">{displayName}</p>
           <p className="truncate text-[11px] font-medium text-gray-400" title={email || undefined}>
             {loading ? "…" : email || "—"}
           </p>

@@ -27,7 +27,7 @@ export default function PayPalInvoicesSection({
 
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-6 sm:p-8">
-      <h2 className="mb-2 text-2xl font-black text-white">תשלומים PayPal</h2>
+      <h2 className="mb-2 text-2xl font-black text-gray-900">תשלומים PayPal</h2>
       <p className="mb-4 text-sm font-medium text-gray-400">
         <strong>בקשות תשלום</strong> (חשבוניות עסקה לגבייה) מוצגות בטבלת המסמכים למעלה — בלשוניות{" "}
         <span className="font-bold text-gray-600">״הכל״</span> ו־<span className="font-bold text-gray-600">״חשבוניות״</span>
@@ -41,8 +41,8 @@ export default function PayPalInvoicesSection({
         .
       </p>
 
-      <div className="mx-auto max-w-3xl rounded-2xl border border-dashed border-gray-100 bg-white/[0.03] p-8 text-center text-gray-400 sm:p-10">
-        <FileText className="mx-auto mb-4 text-white/25" size={44} strokeWidth={1.25} />
+      <div className="mx-auto max-w-3xl rounded-2xl border border-dashed border-gray-100 bg-gray-50 p-8 text-center text-gray-400 sm:p-10">
+        <FileText className="mx-auto mb-4 text-gray-400" size={44} strokeWidth={1.25} />
         <p className="mb-1 font-bold text-gray-600">אין עדיין מסמכים שהונפקו?</p>
         <p className="text-sm max-w-lg mx-auto mb-2">
           השתמשו ב־״הפקת מסמך״ למעלה לחשבונית מס רשמית, או צרו חשבונית בדיקה לגבייה ב־PayPal.

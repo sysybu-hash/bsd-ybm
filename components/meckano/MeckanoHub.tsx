@@ -783,7 +783,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                           </div>
                         </button>
                         {isOpen && (
-                          <div className="border-t border-white/[0.07] bg-gray-50 px-5 py-4">
+                          <div className="border-t border-gray-100 bg-gray-50 px-5 py-4">
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-sm">
                               {emp.email && (
                                 <div className="flex items-center gap-2 text-gray-500">
@@ -860,7 +860,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {departments.map(dept => (
-                    <div key={dept.id} className="rounded-2xl border border-white/[0.07] bg-gray-50 p-5">
+                    <div key={dept.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-sm font-black text-indigo-300">
                           {dept.number ?? "—"}
@@ -917,14 +917,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
-                    <thead className="border-b border-white/[0.07] bg-gray-50">
+                    <thead className="border-b border-gray-100 bg-gray-50">
                       <tr>
                         {["עובד", "מספר", "תאריך", "שעה", "כניסה/יציאה"].map(h => (
                           <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/[0.07]">
+                    <tbody className="divide-y divide-gray-100">
                       {(attUserId ? attendance.filter(r => String(r.userId) === attUserId) : attendance).map(row => (
                         <tr key={row.id} className="transition hover:bg-gray-50">
                           <td className="px-4 py-3 font-medium text-gray-900">{row.userName ?? `#${row.userId}`}</td>
@@ -1081,7 +1081,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                         {/* Expanded: project detail form */}
                         {isExpanded && edit && (
-                          <div className="space-y-5 border-t border-white/[0.07] bg-gray-50 p-5">
+                          <div className="space-y-5 border-t border-gray-100 bg-gray-50 p-5">
                             <h4 className="flex items-center gap-2 text-sm font-black text-gray-900">
                               <Briefcase size={14} className="text-indigo-400" /> פרטי פרויקט: {zone.name}
                             </h4>
@@ -1393,14 +1393,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
-                    <thead className="border-b border-white/[0.07] bg-gray-50">
+                    <thead className="border-b border-gray-100 bg-gray-50">
                       <tr>
                         {["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => (
                           <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/[0.07]">
+                    <tbody className="divide-y divide-gray-100">
                       {taskEntries.map(entry => (
                         <tr key={entry.id} className="transition hover:bg-gray-50">
                           <td className="px-4 py-3 font-medium text-gray-900">{entry.userName ?? `#${entry.userId}`}</td>
@@ -1623,10 +1623,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <p className="text-xs text-gray-400">{reportAttendance.length} רשומות נוכחות</p>
                   <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
-                      <thead className="border-b border-white/[0.07] bg-gray-50">
+                      <thead className="border-b border-gray-100 bg-gray-50">
                         <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
-                      <tbody className="divide-y divide-white/[0.07]">
+                      <tbody className="divide-y divide-gray-100">
                         {reportAttendance.map(row => (
                           <tr key={row.id} className="transition hover:bg-gray-50">
                             <td className="px-4 py-3 font-medium text-gray-900">{row.userName ?? `#${row.userId}`}</td>
@@ -1649,10 +1649,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <p className="text-xs text-gray-400">{reportTaskEntries.length} רשומות</p>
                   <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
-                      <thead className="border-b border-white/[0.07] bg-gray-50">
+                      <thead className="border-b border-gray-100 bg-gray-50">
                         <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
-                      <tbody className="divide-y divide-white/[0.07]">
+                      <tbody className="divide-y divide-gray-100">
                         {reportTaskEntries.map(entry => (
                           <tr key={entry.id} className="transition hover:bg-gray-50">
                             <td className="px-4 py-3 font-medium text-gray-900">{entry.userName ?? `#${entry.userId}`}</td>
@@ -1687,10 +1687,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       <p className="text-xs text-gray-400">סיכום {summaryRows.length} עובדים · {reportFrom} עד {reportTo}</p>
                       <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
-                          <thead className="border-b border-white/[0.07] bg-gray-50">
+                          <thead className="border-b border-gray-100 bg-gray-50">
                             <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
-                          <tbody className="divide-y divide-white/[0.07]">
+                          <tbody className="divide-y divide-gray-100">
                             {summaryRows.map(row => (
                               <tr key={row.userId} className="transition hover:bg-gray-50">
                                 <td className="px-4 py-3 font-bold text-gray-900">{row.name}</td>
@@ -1759,10 +1759,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       {/* Per-employee table */}
                       <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
-                          <thead className="border-b border-white/[0.07] bg-gray-50">
+                          <thead className="border-b border-gray-100 bg-gray-50">
                             <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
-                          <tbody className="divide-y divide-white/[0.07]">
+                          <tbody className="divide-y divide-gray-100">
                             {costRows.map(row => (
                               <tr key={row.userId} className="transition hover:bg-gray-50">
                                 <td className="px-4 py-3 font-bold text-gray-900">{row.name}</td>
@@ -1868,9 +1868,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                           {/* Employees */}
                           {zs.employees.map((emp, ei) => (
-                            <div key={emp.userId} className={ei > 0 ? "border-t border-white/[0.07]" : ""}>
+                            <div key={emp.userId} className={ei > 0 ? "border-t border-gray-100" : ""}>
                               {/* Employee sub-header */}
-                              <div className="flex items-center gap-3 border-b border-white/[0.07] bg-gray-50 px-5 py-2">
+                              <div className="flex items-center gap-3 border-b border-gray-100 bg-gray-50 px-5 py-2">
                                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-black text-white">
                                   {(emp.name[0] ?? "?").toUpperCase()}
                                 </div>
@@ -2035,7 +2035,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       {contracts.map(([name, count]) => {
                         const pct = totalEmp > 0 ? Math.round((count / totalEmp) * 100) : 0;
                         return (
-                          <div key={name} className="flex items-center gap-4 border-b border-white/[0.07] px-5 py-4 transition last:border-0 hover:bg-gray-50">
+                          <div key={name} className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 transition last:border-0 hover:bg-gray-50">
                             <div className="flex-1 min-w-0">
                               <p className="truncate text-sm font-bold text-gray-900">{name}</p>
                               <div className="mt-1.5 h-1.5 w-full rounded-full bg-gray-100">

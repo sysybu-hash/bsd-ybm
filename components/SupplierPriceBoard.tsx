@@ -45,7 +45,7 @@ export default function SupplierPriceBoard() {
             <Package size={26} />
           </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-black italic text-white">
+            <h2 className="text-xl md:text-2xl font-black italic text-gray-900">
               לוח ספקים והשוואת מחירים
             </h2>
             <p className="text-sm text-gray-400">
@@ -77,7 +77,7 @@ export default function SupplierPriceBoard() {
           <p className="text-xs font-black text-indigo-800 flex items-center gap-2">
             <TrendingDown size={16} /> נמצאו מחירים גבוהים ביחס לרכישה הזולה הידועה
           </p>
-          <ul className="text-xs text-white space-y-1">
+          <ul className="text-xs text-indigo-900 space-y-1">
             {alerts.slice(0, 5).map((r) => (
               <li key={r.normalizedKey}>
                 <strong>{r.description}</strong> — אצל {r.latestSupplier ?? "—"} נרשם ₪
@@ -91,7 +91,7 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && rows.length === 0 && (
-        <p className="card-avenue border-dashed border-gray-200 bg-white/[0.03]/80 py-8 text-center text-sm italic text-gray-400">
+        <p className="card-avenue border-dashed border-gray-200 bg-gray-50/80 py-8 text-center text-sm italic text-gray-400">
           אין עדיין תצפיות מחיר — סרקו חשבונית או קבלה עם שורות מוצרים.
         </p>
       )}
@@ -99,7 +99,7 @@ export default function SupplierPriceBoard() {
       {!loading && rows.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-gray-100">
           <table className="min-w-full text-sm text-right">
-            <thead className="bg-white/[0.03] text-gray-500 font-bold">
+            <thead className="bg-gray-50 text-gray-500 font-bold">
               <tr>
                 <th className="px-4 py-3">תיאור</th>
                 <th className="px-4 py-3">מחיר מיטבי</th>
@@ -113,7 +113,7 @@ export default function SupplierPriceBoard() {
                   key={r.normalizedKey}
                   className={`border-t border-gray-100 ${r.cheaperAlternative ? "bg-rose-50/50" : ""}`}
                 >
-                  <td className="px-4 py-2 font-medium text-white">{r.description}</td>
+                  <td className="px-4 py-2 font-medium text-gray-900">{r.description}</td>
                   <td className="px-4 py-2">
                     ₪{r.bestUnitPrice.toFixed(2)}
                     {r.bestSupplier ? (

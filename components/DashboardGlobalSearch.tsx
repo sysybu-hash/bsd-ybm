@@ -28,7 +28,7 @@ export default function DashboardGlobalSearch() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ארכיון חכם – חפש מסמך, ספק, סיכום AI..."
-            className="w-full bg-white border border-gray-200 rounded-full py-2 pr-10 pl-4 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 shadow-sm"
+            className="w-full bg-white border border-gray-200 rounded-full py-2 pr-10 pl-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 shadow-sm"
             dir="rtl"
           />
         </div>

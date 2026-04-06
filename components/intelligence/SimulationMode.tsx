@@ -12,7 +12,7 @@ export default function SimulationMode() {
       className={`rounded-2xl border p-8 transition-all duration-500 ${
         isSimulating
           ? "bg-indigo-600 border-indigo-400 text-white"
-          : "bg-white border-gray-200 text-white"
+          : "bg-white border-gray-200 text-gray-900"
       }`}
       dir="rtl"
     >
@@ -55,12 +55,12 @@ export default function SimulationMode() {
             <input
               type="number"
               placeholder="סכום (₪)"
-              className="p-3 rounded-xl bg-white/95 border border-white/50 text-white placeholder:text-gray-400 shadow-sm"
+              className="p-3 rounded-xl bg-white/95 border border-gray-200 text-gray-900 placeholder:text-gray-400 shadow-sm"
             />
-            <select className="p-3 rounded-xl bg-white/95 border border-white/50 text-white shadow-sm">
-              <option className="text-white">הוצאה חד פעמית</option>
-              <option className="text-white">הוצאה חודשית קבועה</option>
-              <option className="text-white">הכנסה חזויה</option>
+            <select className="p-3 rounded-xl bg-white/95 border border-gray-200 text-gray-900 shadow-sm">
+              <option>הוצאה חד פעמית</option>
+              <option>הוצאה חודשית קבועה</option>
+              <option>הכנסה חזויה</option>
             </select>
           </motion.div>
         ) : null}
@@ -69,7 +69,7 @@ export default function SimulationMode() {
       {isSimulating ? (
         <div className="mt-8 p-4 bg-white/20 rounded-2xl flex items-start gap-3 border border-white/25">
           <TrendingDown className="text-rose-200 flex-shrink-0" aria-hidden />
-          <p className="text-xs italic text-white/95">
+          <p className="text-xs italic text-gray-800">
             שים לב: הוספת הוצאה קבועה של ₪5,000 תוריד את יתרת המזומנים שלך מתחת
             ל&quot;קו האדום&quot; בחודש יולי. כדאי לשקול דחייה.
           </p>

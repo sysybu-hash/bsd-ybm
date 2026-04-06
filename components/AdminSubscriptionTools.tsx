@@ -68,11 +68,11 @@ export default function AdminSubscriptionTools({
   return (
     <div className="space-y-10">
       <section className="rounded-2xl border border-indigo-500/30 bg-indigo-500/15 p-6 md:p-8">
-        <h2 className="text-xl font-black italic text-white mb-2 flex items-center gap-2">
+        <h2 className="text-xl font-black italic text-gray-900 mb-2 flex items-center gap-2">
           <CheckCircle2 className="text-indigo-400" size={22} />
           משתמשים ממתינים לאישור והגדרה
         </h2>
-        <p className="text-sm text-white/80 mb-6">
+        <p className="text-sm text-gray-700 mb-6">
           לכל רישום חדש ניתן לקבוע תפקיד וחבילה, לאשר ולהפעיל מיד.
         </p>
         {pendingUsers.length === 0 ? (
@@ -86,7 +86,7 @@ export default function AdminSubscriptionTools({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="font-bold text-white">
+                    <p className="font-bold text-gray-900">
                       {u.name || "ללא שם"} · {u.email}
                     </p>
                     <p className="text-xs text-gray-400">
@@ -166,7 +166,7 @@ export default function AdminSubscriptionTools({
           <CheckCircle2 className="text-indigo-400" size={22} />
           בקשות הרשמה ממתינות לאישור
         </h2>
-        <p className="text-sm text-white/80 mb-6">
+        <p className="text-sm text-gray-700 mb-6">
           לאחר אישור — המשתמש יוכל להתחבר עם Google (אם חשבון קיים) או עם סיסמה אם יצרת משתמש
           בפריסה יזומה.
         </p>
@@ -180,7 +180,7 @@ export default function AdminSubscriptionTools({
                 className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-indigo-500/20 p-4"
               >
                 <div>
-                  <p className="font-bold text-white">{o.name}</p>
+                  <p className="font-bold text-gray-900">{o.name}</p>
                   <p className="text-xs text-gray-400">
                     תוכנית נוכחית (בקשה): {o.plan} · נוצר{" "}
                     {new Date(o.createdAt).toLocaleDateString("he-IL")}
@@ -221,7 +221,7 @@ export default function AdminSubscriptionTools({
       </section>
 
       <section className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-sm">
-        <h2 className="text-xl font-black italic text-white mb-2 flex items-center gap-2">
+        <h2 className="text-xl font-black italic text-gray-900 mb-2 flex items-center gap-2">
           <UserPlus className="text-indigo-400" size={22} />
           יצירת משתמש ומנוי (סיסמה)
         </h2>
@@ -294,7 +294,7 @@ export default function AdminSubscriptionTools({
               ))}
             </select>
           </div>
-          <div className="flex flex-wrap items-center gap-4 p-4 bg-white/[0.03] rounded-xl border border-gray-100">
+          <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
               <input type="checkbox" name="useGenerated" defaultChecked />
               מחולל סיסמה אוטומטי

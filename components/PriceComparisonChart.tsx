@@ -38,7 +38,7 @@ export default function PriceComparisonChart({
     <div className="space-y-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" dir={dir}>
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
-          <h3 className="text-2xl font-black text-white tracking-tighter italic">
+          <h3 className="text-2xl font-black text-gray-900 tracking-tighter italic">
             {t("priceCompare.title", { name: productName })}
           </h3>
           <p className="text-gray-400 font-medium">{t("priceCompare.subtitle")}</p>
@@ -106,7 +106,7 @@ export default function PriceComparisonChart({
             <Lightbulb size={20} />
           </div>
           <div>
-            <p className="text-white font-black text-sm uppercase tracking-widest">
+            <p className="text-gray-900 font-black text-sm uppercase tracking-widest">
               {t("priceCompare.insightKicker")}
             </p>
             <p className="text-indigo-800 text-sm mt-1 leading-relaxed">

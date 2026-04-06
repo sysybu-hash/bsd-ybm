@@ -45,7 +45,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
             {t("executive.kicker")}
           </p>
-          <h2 className="text-2xl font-black italic tracking-tight text-white md:text-3xl">
+          <h2 className="text-2xl font-black italic tracking-tight text-gray-900 md:text-3xl">
             {t("executive.title")}
           </h2>
           <p className="mt-2 max-w-xl font-medium text-gray-400">{t("executive.subtitle")}</p>
@@ -83,7 +83,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
             </span>
           </div>
           <p className="mb-1 text-sm font-semibold text-gray-400">{t("executive.incomeMeta")}</p>
-          <p className="text-2xl font-black tabular-nums text-white md:text-3xl">
+          <p className="text-2xl font-black tabular-nums text-gray-900 md:text-3xl">
             {fmt(totals.totalIncome)}
           </p>
           <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.incomeHint")}</p>
@@ -99,7 +99,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
             </span>
           </div>
           <p className="mb-1 text-sm font-semibold text-gray-400">{t("executive.expenseMeta")}</p>
-          <p className="text-2xl font-black tabular-nums text-white md:text-3xl">
+          <p className="text-2xl font-black tabular-nums text-gray-900 md:text-3xl">
             {fmt(totals.totalExpenses)}
           </p>
           <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.expenseHint")}</p>
@@ -137,7 +137,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
 
       <section className="grid grid-cols-1 gap-8 xl:grid-cols-2">
         <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
-          <h3 className="mb-2 text-xl font-black italic tracking-tight text-white md:text-2xl">
+          <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.userActivity")}
           </h3>
           <p className="mb-8 text-sm font-medium text-gray-400">{t("executive.userActivitySub")}</p>
@@ -148,10 +148,10 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
               {recentUsers.map((u) => (
                 <li
                   key={u.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white/[0.03]/60 px-5 py-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-gray-50/60 px-5 py-4"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-bold text-white">
+                    <p className="truncate font-bold text-gray-900">
                       {u.name || u.email || t("executive.userFallback")}
                     </p>
                     <p className="truncate text-xs text-gray-400">{u.email}</p>
@@ -177,7 +177,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
         </div>
 
         <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
-          <h3 className="mb-2 text-xl font-black italic tracking-tight text-white md:text-2xl">
+          <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.priceAlerts")}
           </h3>
           <p className="mb-8 text-sm font-medium text-gray-400">{t("executive.priceAlertsSub")}</p>
@@ -195,7 +195,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold leading-snug text-white">{s.description}</p>
+                      <p className="font-bold leading-snug text-gray-900">{s.description}</p>
                       <p className="mt-1 text-xs font-medium text-gray-400">{s.organizationName}</p>
                     </div>
                     <span className="shrink-0 text-lg font-black tabular-nums text-indigo-300">

@@ -27,7 +27,7 @@ export default function IntelligenceRoleDashboard({ modules }: Props) {
         switch (id) {
           case "hub":
             return (
-              <section key={id} className="rounded-2xl border border-gray-200 bg-white/[0.03]">
+              <section key={id} className="rounded-2xl border border-gray-200 bg-gray-50">
                 <IntelligenceHub />
               </section>
             );

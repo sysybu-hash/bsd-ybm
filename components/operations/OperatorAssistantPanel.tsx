@@ -58,12 +58,12 @@ export default function OperatorAssistantPanel() {
             <Bot size={13} />
             Operator Agent
           </p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-white">עוזר תפעולי</h1>
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-gray-900">עוזר תפעולי</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">מסך אחד לשאלה אחת בכל פעם. בלי לוח עמוס, בלי קיצורי דרך מיותרים, רק תשובה תפעולית מהירה ובטוחה.</p>
 
           <div className="mt-6 grid gap-3 md:grid-cols-2">
             <div className="rounded-[28px] border border-gray-200 bg-white p-4">
-              <p className="text-sm font-black text-white">שאלות מהירות</p>
+              <p className="text-sm font-black text-gray-900">שאלות מהירות</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <QuickBtn label="תן סטטוס מערכת" onClick={() => setInput("תן סטטוס מערכת")} />
                 <QuickBtn label="מה מצב המנוי שלי" onClick={() => setInput("מה מצב המנוי שלי")} />
@@ -85,10 +85,10 @@ export default function OperatorAssistantPanel() {
 
       <section className="rounded-[28px] border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-sm font-black text-white">שיחה</h2>
-          <span className="rounded-full bg-white/[0.05] px-2.5 py-1 text-xs font-bold text-gray-500">מצב בטוח</span>
+          <h2 className="text-sm font-black text-gray-900">שיחה</h2>
+          <span className="rounded-full bg-gray-50 px-2.5 py-1 text-xs font-bold text-gray-500">מצב בטוח</span>
         </div>
-        <div className="max-h-[46vh] space-y-2 overflow-y-auto rounded-[24px] border border-gray-200 bg-white/[0.03] p-3.5">
+        <div className="max-h-[46vh] space-y-2 overflow-y-auto rounded-[24px] border border-gray-200 bg-gray-50 p-3.5">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}>
               <div className={`max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-sm leading-6 ${m.role === "user" ? "bg-indigo-600 text-white" : "border border-gray-200 bg-white text-gray-700"}`}>
@@ -112,7 +112,7 @@ export default function OperatorAssistantPanel() {
               }
             }}
             placeholder="כתוב הוראת תפעול..."
-            className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white/[0.03] px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/15"
+            className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/15"
           />
           <button
             type="button"

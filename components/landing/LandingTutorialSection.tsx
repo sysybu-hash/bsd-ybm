@@ -20,7 +20,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
         <span>שלב {step + 1} מתוך {total}</span>
         <span>{Math.round(((step + 1) / total) * 100)}%</span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
         <div
           className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-indigo-500 transition-all duration-700"
           style={{ width: `${((step + 1) / total) * 100}%` }}
@@ -39,7 +39,7 @@ function AnimErpCrm({ step }: { step: number }) {
   ];
 
   const STATUS_COLOR: Record<string, string> = {
-    LEAD: "bg-white/[0.05] text-gray-500",
+    LEAD: "bg-gray-50 text-gray-500",
     ACTIVE: "bg-indigo-100 text-indigo-300",
     PROPOSAL: "bg-amber-100 text-amber-400",
     "CLOSED_WON ✓": "bg-emerald-100 text-emerald-400",
@@ -74,7 +74,7 @@ function AnimErpCrm({ step }: { step: number }) {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-gray-400">{c.amount}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[9px] font-black ${STATUS_COLOR[c.status] ?? "bg-white/[0.05] text-gray-500"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-[9px] font-black ${STATUS_COLOR[c.status] ?? "bg-gray-50 text-gray-500"}`}>
                   {c.status}
                 </span>
               </div>
@@ -215,7 +215,7 @@ function AnimRegistration({ step }: { step: number }) {
             <div className="h-px bg-gray-100" />
             <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/15 px-3 py-3 flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-[#003087] flex items-center justify-center">
-                <span className="text-[8px] font-black text-white">Pay</span>
+                <span className="text-[8px] font-black text-gray-900">Pay</span>
               </div>
               <div>
                 <p className="text-[11px] font-black text-gray-700">PayPal</p>
@@ -322,7 +322,7 @@ function AnimScanner({ step }: { step: number }) {
                 <div className="flex justify-between text-[9px] font-bold text-gray-400 mb-0.5">
                   <span>{label}</span><span>{pct}%</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-white/[0.08] overflow-hidden">
+                <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
                   <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%`, animation: 'bsd-tut-scan-prog 3s ease-out forwards' }} />
                 </div>
               </div>
@@ -355,7 +355,7 @@ function AnimScanner({ step }: { step: number }) {
                   {done ? (
                     <span className="font-black text-gray-700">{value}</span>
                   ) : (
-                    <span className="inline-flex h-2 w-16 rounded bg-white/[0.08] animate-pulse" />
+                    <span className="inline-flex h-2 w-16 rounded bg-gray-100 animate-pulse" />
                   )}
                   {done && <span className="text-emerald-500 text-[9px]">✓</span>}
                 </div>
@@ -417,8 +417,8 @@ function TutorialCard({ index, title, subtitle, description, icon, accentColor, 
         <div className="flex items-center gap-3 mb-1">
           <span className="text-2xl">{icon}</span>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-white/60">סרטון {index}</p>
-            <h3 className="text-sm font-black text-white leading-tight">{title}</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">סרטון {index}</p>
+            <h3 className="text-sm font-black text-gray-900 leading-tight">{title}</h3>
           </div>
         </div>
       </div>
@@ -473,8 +473,8 @@ export default function LandingTutorialSection() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔄</span>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/60">סרטון 1</p>
-                  <h3 className="text-sm font-black text-white">מערכת ERP ו-CRM משולבת</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">סרטון 1</p>
+                  <h3 className="text-sm font-black text-gray-900">מערכת ERP ו-CRM משולבת</h3>
                 </div>
               </div>
             </div>
@@ -498,8 +498,8 @@ export default function LandingTutorialSection() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">📝</span>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/60">סרטון 2</p>
-                  <h3 className="text-sm font-black text-white">הרשמה ומנוי</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">סרטון 2</p>
+                  <h3 className="text-sm font-black text-gray-900">הרשמה ומנוי</h3>
                 </div>
               </div>
             </div>
@@ -523,8 +523,8 @@ export default function LandingTutorialSection() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔍</span>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/60">סרטון 3</p>
-                  <h3 className="text-sm font-black text-white">סריקה ופענוח AI</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">סרטון 3</p>
+                  <h3 className="text-sm font-black text-gray-900">סריקה ופענוח AI</h3>
                 </div>
               </div>
             </div>

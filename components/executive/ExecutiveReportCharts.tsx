@@ -25,7 +25,7 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm md:p-10">
-      <h3 className="text-xl md:text-2xl font-black italic text-white tracking-tight mb-2">
+      <h3 className="text-xl md:text-2xl font-black italic text-gray-900 tracking-tight mb-2">
         {t("executiveCharts.title", { year: String(year) })}
       </h3>
       <p className="text-sm text-gray-400 font-medium mb-8">{t("executiveCharts.subtitle")}</p>

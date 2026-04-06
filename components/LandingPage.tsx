@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -72,12 +72,12 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           NAVBAR
       ══════════════════════════════════ */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.08]/80 bg-white/95 shadow-sm">
+      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/95 shadow-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-xl font-black italic tracking-tight">
             <span
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black shadow"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-900 text-xs font-black shadow"
               style={{ backgroundColor: "var(--primary-color)" }}
             >B</span>
             <span style={{ color: "var(--primary-color)" }}>BSD-</span>
@@ -135,7 +135,7 @@ export default function LandingPage() {
           HERO — Dark gradient
       ══════════════════════════════════ */}
       <section
-        className="relative overflow-hidden border-b border-white/[0.08]/80"
+        className="relative overflow-hidden border-b border-gray-200/80"
         style={{
           background: "linear-gradient(180deg, #ffffff 0%, #eef2ff 55%, #f8fafc 100%)",
         }}
@@ -315,7 +315,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <Link href="/" className="flex items-center gap-1.5 text-xl font-black italic tracking-tight">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-white text-xs font-black" style={{ backgroundColor: "var(--primary-color)" }}>B</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-900 text-xs font-black" style={{ backgroundColor: "var(--primary-color)" }}>B</span>
               <span style={{ color: "var(--primary-color)" }}>BSD-</span>
               <span className="text-gray-900">YBM</span>
             </Link>

@@ -51,10 +51,10 @@ const items = [
 
 export default function LegalHubPage() {
   return (
-    <div className="min-h-screen bg-white/[0.03]" dir="rtl">
+    <div className="min-h-screen bg-gray-50" dir="rtl">
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 py-24 pt-32 pb-16">
-        <h1 className="text-4xl font-black italic text-white mb-3">מסמכים משפטיים</h1>
+        <h1 className="text-4xl font-black italic text-gray-900 mb-3">מסמכים משפטיים</h1>
         <p className="text-gray-500 mb-2">
           כל המסמכים הרשמיים של <strong>{legalSite.siteName}</strong> במקום אחד. יש להשלים נוסח
           סופי מול יועץ משפטי לפני הסתמכות עסקית.
@@ -80,7 +80,7 @@ export default function LegalHubPage() {
                   <Icon size={24} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">{title}</h2>
+                  <h2 className="text-lg font-bold text-gray-900">{title}</h2>
                   <p className="text-gray-500 text-sm mt-1">{desc}</p>
                 </div>
               </Link>

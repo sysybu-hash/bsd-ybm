@@ -129,8 +129,8 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 tab === "chat" ? "" : ""
               }`}
             >
-              <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-white/[0.03] px-3 py-2.5">
-                <div className="flex min-w-0 items-center gap-2 text-xs font-black text-white">
+              <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
+                <div className="flex min-w-0 items-center gap-2 text-xs font-black text-gray-900">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-400">
                     <Sparkles size={14} className="shrink-0" aria-hidden />
                   </div>
@@ -162,7 +162,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 <>
                   <div
                     ref={scrollRef}
-                    className="h-56 space-y-2 overflow-y-auto bg-white/[0.03] p-3 text-sm"
+                    className="h-56 space-y-2 overflow-y-auto bg-gray-50 p-3 text-sm"
                   >
                     {messages.map((m, i) => (
                       <div
@@ -210,7 +210,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                       }}
                       disabled={sending}
                       placeholder={t("aiBubble.placeholder")}
-                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs text-gray-900 outline-none focus:border-indigo-500"
                     />
                     <button
                       type="button"

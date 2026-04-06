@@ -111,11 +111,11 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full text-right border-b border-white/[0.05] px-3 py-2.5 hover:bg-gray-50 ${
+                  className={`w-full text-right border-b border-gray-100 px-3 py-2.5 hover:bg-gray-50 ${
                     n.read ? "opacity-70" : "bg-indigo-500/15"
                   }`}
                 >
-                  <p className="text-xs font-black text-white">{n.title}</p>
+                  <p className="text-xs font-black text-gray-900">{n.title}</p>
                   <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{n.body}</p>
                   <p className="text-[10px] text-gray-400 mt-1">
                     {new Date(n.createdAt).toLocaleString("he-IL")}

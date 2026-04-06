@@ -39,7 +39,7 @@ export default function AdminBroadcastNotifications() {
 
   return (
     <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-      <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-white">
+      <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-gray-900">
         <Megaphone className="text-indigo-500" size={28} aria-hidden />
         שידור לכולם
       </h3>
@@ -59,7 +59,7 @@ export default function AdminBroadcastNotifications() {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={160}
             required
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-white outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
             placeholder="למשל: עדכון מהפלטפורמה"
             disabled={loading}
           />
@@ -75,7 +75,7 @@ export default function AdminBroadcastNotifications() {
             maxLength={4000}
             required
             rows={5}
-            className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-white outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
             placeholder="הטקסט שיוצג בהתראה..."
             disabled={loading}
           />

@@ -65,7 +65,7 @@ export default function OperatorOnboardingPanel() {
             <Rocket size={12} />
             Onboarding
           </p>
-          <h2 className="mt-1 text-lg font-black text-white">צ&apos;קליסט מנהל חדש</h2>
+          <h2 className="mt-1 text-lg font-black text-gray-900">צ&apos;קליסט מנהל חדש</h2>
         </div>
         <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-indigo-800">{progress}% הושלם</span>
       </div>

@@ -44,7 +44,7 @@ export default function ReportingCenter() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-100 bg-white p-8 text-white shadow-sm transition-all group hover:border-indigo-500/30 md:flex-row">
+      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-100 bg-white p-8 text-gray-900 shadow-sm transition-all group hover:border-indigo-500/30 md:flex-row">
         <div className="bg-indigo-500/15 p-5 rounded-2xl text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>
@@ -54,7 +54,7 @@ export default function ReportingCenter() {
             ייצוא נתוני מס לרואה חשבון בפורמט CSV
           </p>
         </div>
-        <div className="flex gap-2 bg-white/[0.03] p-2 rounded-2xl border border-gray-100">
+        <div className="flex gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100">
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
@@ -62,7 +62,7 @@ export default function ReportingCenter() {
             aria-label="חודש"
           >
             {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1} className="bg-white text-white">
+              <option key={i + 1} value={i + 1} className="bg-white text-gray-900">
                 {i + 1}
               </option>
             ))}
@@ -74,7 +74,7 @@ export default function ReportingCenter() {
             aria-label="שנה"
           >
             {yearOptions.map((y) => (
-              <option key={y} value={y} className="bg-white text-white">
+              <option key={y} value={y} className="bg-white text-gray-900">
                 {y}
               </option>
             ))}

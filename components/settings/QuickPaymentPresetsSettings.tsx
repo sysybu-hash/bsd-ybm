@@ -50,7 +50,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
           <Zap size={20} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-lg font-bold text-white">כפתורי תשלום מהיר (דף החיוב)</h4>
+          <h4 className="text-lg font-bold text-gray-900">כפתורי תשלום מהיר (דף החיוב)</h4>
           <p className="text-sm text-gray-500 mt-1 leading-relaxed">
             עד 10 כפתורים. כל כפתור יוצר <strong>בקשת גבייה</strong> (לא מנוי חודשי). ריק = אין כפתורים מותאמים אישית —
             אפשר למחוק הכל ולשמור כדי להסיר את הרשימה (או להשתמש ב&quot;שחזר ברירת מחדל&quot;).

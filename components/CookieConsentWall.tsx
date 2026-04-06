@@ -98,7 +98,7 @@ export default function CookieConsentWall() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[240] bg-white/[0.08]/60"
+        className="fixed inset-0 z-[240] bg-gray-100/60"
         aria-hidden="true"
       />
       <div
@@ -115,7 +115,7 @@ export default function CookieConsentWall() {
                 <Cookie size={22} aria-hidden />
               </div>
               <div>
-                <h2 id="cookie-wall-title" className="text-lg font-black text-white">
+                <h2 id="cookie-wall-title" className="text-lg font-black text-gray-900">
                   {t("cookie.wallTitle")}
                 </h2>
                 <p className="mt-1 text-sm leading-relaxed text-gray-500">
@@ -151,7 +151,7 @@ export default function CookieConsentWall() {
           </div>
 
           {customOpen ? (
-            <div className="mt-5 space-y-3 rounded-2xl border border-gray-100 bg-white/[0.03]/80 p-4">
+            <div className="mt-5 space-y-3 rounded-2xl border border-gray-100 bg-gray-50/80 p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm font-bold text-gray-700">{t("cookie.necessary")}</span>
                 <span className="text-xs font-medium text-gray-400">{t("cookie.necessaryNote")}</span>
