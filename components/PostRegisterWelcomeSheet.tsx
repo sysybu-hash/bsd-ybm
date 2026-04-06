@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -45,11 +45,11 @@ export default function PostRegisterWelcomeSheet() {
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-xl shadow-gray-200/60" dir="rtl">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/60" dir="rtl">
         <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-white">
           ברוך הבא ל־BSD-YBM
         </h2>
-        <p className="mt-2 text-center text-sm text-white/45">החשבון שלך מחובר ומוכן לעבודה</p>
+        <p className="mt-2 text-center text-sm text-gray-400">החשבון שלך מחובר ומוכן לעבודה</p>
 
         <div className="mt-8 flex flex-col items-center gap-4">
           <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-500/20 bg-white/[0.05] shadow-inner">
@@ -63,7 +63,7 @@ export default function PostRegisterWelcomeSheet() {
           </div>
           <div className="text-center">
             <p className="text-lg font-bold text-white">{name}</p>
-            <p className="text-sm text-white/45">{email}</p>
+            <p className="text-sm text-gray-400">{email}</p>
           </div>
           <div
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold ${

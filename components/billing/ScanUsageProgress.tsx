@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 
@@ -25,18 +25,18 @@ export default function ScanUsageProgress({
 
   return (
     <section
-      className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 shadow-sm md:p-8"
+      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <h2 className="text-lg font-black text-white mb-1">ניצול סריקות</h2>
-      <p className="text-xs text-white/45 mb-6">
+      <p className="text-xs text-gray-400 mb-6">
         זולות (Gemini) מול פרימיום (OpenAI / Anthropic). הבר מציג יחס יתרה לעומת המכסה הבסיסית מהמנוי; רכישת בנדל מגדילה
         את היתרה.
       </p>
 
       <div className="space-y-6">
         <div>
-          <div className="flex justify-between text-sm font-bold text-white/65 mb-2">
+          <div className="flex justify-between text-sm font-bold text-gray-600 mb-2">
             <span>סריקות זולות</span>
             <span className="tabular-nums">
               נותרו {formatCreditsForDisplay(cheapLeft)} · כלול במנוי עד {cheapIncluded}
@@ -51,7 +51,7 @@ export default function ScanUsageProgress({
         </div>
 
         <div>
-          <div className="flex justify-between text-sm font-bold text-white/65 mb-2">
+          <div className="flex justify-between text-sm font-bold text-gray-600 mb-2">
             <span>סריקות פרימיום</span>
             <span className="tabular-nums">
               נותרו {formatCreditsForDisplay(premiumLeft)} · כלול במנוי עד {premiumIncluded}

@@ -43,13 +43,13 @@
   --border-color: #e2e8f0;
   --border-strong: #cbd5e1;
 
-  /* Sidebar — Indigo 950 */
-  --sidebar-bg: #1e1b4b;
-  --sidebar-border: rgba(99,102,241,0.15);
-  --sidebar-text: rgba(199,210,254,0.55);
-  --sidebar-text-active: #e0e7ff;
-  --sidebar-active-bg: rgba(99,102,241,0.2);
-  --sidebar-hover-bg: rgba(255,255,255,0.05);
+  /* Sidebar — Light Pro (white) */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-text: #64748b;
+  --sidebar-text-active: #4f46e5;
+  --sidebar-active-bg: #eef2ff;
+  --sidebar-hover-bg: #f8fafc;
 
   /* Elevation shadows */
   --shadow-xs: 0 1px 2px 0 rgba(0,0,0,.04);
@@ -293,19 +293,19 @@ html.high-contrast { filter: contrast(1.15) saturate(1.1); }
   height: 0;
 }
 
-/* Thin scrollbar for sidebar (indigo-950) */
+/* Thin scrollbar for sidebar (light) */
 .thin-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(99,102,241,0.25) transparent;
+  scrollbar-color: #e2e8f0 transparent;
 }
 .thin-scrollbar::-webkit-scrollbar { width: 4px; }
 .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(99,102,241,0.25);
+  background: #e2e8f0;
   border-radius: 4px;
 }
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(99,102,241,0.45);
+  background: #cbd5e1;
 }
 
 /* ─────────────────────────────────────────

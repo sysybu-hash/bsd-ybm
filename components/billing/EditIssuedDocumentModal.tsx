@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -106,7 +106,7 @@ export default function EditIssuedDocumentModal({
     });
   };
 
-  const inputCls = "w-full rounded-xl border border-white/[0.08] bg-[#0d0e1c] px-3 py-2.5 text-sm text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15";
+  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15";
 
   return (
     <div
@@ -115,9 +115,9 @@ export default function EditIssuedDocumentModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="my-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0d0e1c] shadow-xl">
+      <div className="my-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl">
         {/* Header */}
-        <div className="relative flex items-center justify-between gap-4 border-b border-white/[0.07] px-6 py-5">
+        <div className="relative flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5">
           <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400">
@@ -125,13 +125,13 @@ export default function EditIssuedDocumentModal({
             </div>
             <div>
               <p className="font-black text-white">עריכת מסמך #{doc.number}</p>
-              <p className="text-xs text-white/35">שינויים יישמרו ויחשבו מחדש</p>
+              <p className="text-xs text-gray-400">שינויים יישמרו ויחשבו מחדש</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-2 text-white/35 hover:bg-white/[0.08] transition"
+            className="rounded-xl p-2 text-gray-400 hover:bg-white/[0.08] transition"
             aria-label="סגור"
           >
             <X size={18} />
@@ -150,7 +150,7 @@ export default function EditIssuedDocumentModal({
           {/* Type + client row */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-white/45 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
                 <Receipt size={12} /> סוג מסמך
               </label>
               <div className="relative">
@@ -167,7 +167,7 @@ export default function EditIssuedDocumentModal({
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-white/45 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
                 <User size={12} /> שם לקוח
               </label>
               <input
@@ -181,7 +181,7 @@ export default function EditIssuedDocumentModal({
 
           {/* Status */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-white/45 flex items-center gap-1.5">
+            <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
               <FileText size={12} /> סטטוס
             </label>
             <div className="flex gap-2">
@@ -192,7 +192,7 @@ export default function EditIssuedDocumentModal({
                 const colors: Record<DocStatus, string> = {
                   PENDING: "border-amber-500/30 bg-amber-500/15 text-amber-400",
                   PAID: "border-emerald-500/30 bg-emerald-500/15 text-emerald-400",
-                  CANCELLED: "border-white/[0.10] bg-white/[0.05] text-white/55",
+                  CANCELLED: "border-white/[0.10] bg-white/[0.05] text-gray-500",
                 };
                 return (
                   <button
@@ -200,7 +200,7 @@ export default function EditIssuedDocumentModal({
                     type="button"
                     onClick={() => setStatus(s)}
                     className={`rounded-xl border px-4 py-2 text-xs font-bold transition ${
-                      status === s ? colors[s] + " ring-2 ring-offset-1 ring-current/30" : "border-white/[0.08] bg-[#0d0e1c] text-white/45 hover:bg-white/[0.03]"
+                      status === s ? colors[s] + " ring-2 ring-offset-1 ring-current/30" : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
                     }`}
                   >
                     {labels[s]}
@@ -212,8 +212,8 @@ export default function EditIssuedDocumentModal({
 
           {/* Line items */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-white/[0.07] pb-2">
-              <h3 className="text-sm font-black text-white/75 flex items-center gap-1.5">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+              <h3 className="text-sm font-black text-gray-700 flex items-center gap-1.5">
                 <Calculator size={14} /> פירוט שורות
               </h3>
               <button
@@ -273,18 +273,18 @@ export default function EditIssuedDocumentModal({
           </div>
 
           {/* Totals */}
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4 space-y-2">
-            <div className="flex justify-between text-sm text-white/45 font-medium">
+          <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-4 space-y-2">
+            <div className="flex justify-between text-sm text-gray-400 font-medium">
               <span>סה״כ לפני מע״מ:</span>
               <span>₪{totals.net.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </div>
             {isReportable && companyType !== CompanyType.EXEMPT_DEALER && (
-              <div className="flex justify-between text-xs text-white/35">
+              <div className="flex justify-between text-xs text-gray-400">
                 <span>מע״מ ({vatPercentLabel}):</span>
                 <span>₪{totals.vat.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
               </div>
             )}
-            <div className="flex justify-between text-lg font-black text-white border-t border-white/[0.08] pt-2">
+            <div className="flex justify-between text-lg font-black text-white border-t border-gray-200 pt-2">
               <span>סה״כ לתשלום:</span>
               <span className="text-indigo-300">₪{totals.total.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </div>
@@ -292,7 +292,7 @@ export default function EditIssuedDocumentModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-white/[0.07] bg-white/[0.03] px-6 py-4">
+        <div className="flex items-center justify-between border-t border-gray-100 bg-white/[0.03] px-6 py-4">
           <div>
             {!confirmDelete ? (
               <button
@@ -315,7 +315,7 @@ export default function EditIssuedDocumentModal({
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(false)}
-                  className="rounded-xl border border-white/[0.08] bg-[#0d0e1c] px-3 py-1.5 text-xs font-bold text-white/55 hover:bg-white/[0.03] transition"
+                  className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
                 >
                   ביטול
                 </button>
@@ -326,7 +326,7 @@ export default function EditIssuedDocumentModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-white/[0.08] bg-[#0d0e1c] px-4 py-2 text-sm font-bold text-white/65 hover:bg-white/[0.03] transition"
+              className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
             >
               ביטול
             </button>

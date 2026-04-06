@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -55,11 +55,11 @@ export default function LegalHubPage() {
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 py-24 pt-32 pb-16">
         <h1 className="text-4xl font-black italic text-white mb-3">מסמכים משפטיים</h1>
-        <p className="text-white/55 mb-2">
+        <p className="text-gray-500 mb-2">
           כל המסמכים הרשמיים של <strong>{legalSite.siteName}</strong> במקום אחד. יש להשלים נוסח
           סופי מול יועץ משפטי לפני הסתמכות עסקית.
         </p>
-        <p className="text-sm text-white/45 mb-10">
+        <p className="text-sm text-gray-400 mb-10">
           פניות:{" "}
           <a
             href={`mailto:${legalSite.contactEmail}`}
@@ -74,14 +74,14 @@ export default function LegalHubPage() {
             <li key={href}>
               <Link
                 href={href}
-                className="flex gap-4 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 shadow-sm transition-all hover:border-indigo-500/30 hover:shadow-md"
+                className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-indigo-500/30 hover:shadow-md"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-[var(--primary-color)]">
                   <Icon size={24} />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">{title}</h2>
-                  <p className="text-white/55 text-sm mt-1">{desc}</p>
+                  <p className="text-gray-500 text-sm mt-1">{desc}</p>
                 </div>
               </Link>
             </li>

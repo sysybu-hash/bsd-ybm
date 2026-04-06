@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Mic, MicOff, BrainCircuit, Loader2 } from "lucide-react";
@@ -25,7 +25,7 @@ export default function VoiceInsights() {
 
   return (
     <div
-      className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 font-sans text-white shadow-sm"
+      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans text-white shadow-sm"
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
@@ -36,7 +36,7 @@ export default function VoiceInsights() {
           <h4 className="font-black text-xl italic text-white tracking-tighter">
             Voice Insights Live
           </h4>
-          <p className="text-white/45 text-xs">
+          <p className="text-gray-400 text-xs">
             שאל את BSD Intelligence על הפיננסיים והלקוחות שלך
           </p>
         </div>
@@ -45,7 +45,7 @@ export default function VoiceInsights() {
       <div className="space-y-6">
         <div className="flex justify-center mb-8">
           {isProcessing ? (
-            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center animate-pulse border border-white/[0.08]">
+            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center animate-pulse border border-gray-200">
               <Loader2 className="animate-spin text-indigo-400" size={32} />
             </div>
           ) : (
@@ -66,7 +66,7 @@ export default function VoiceInsights() {
         </div>
 
         {response ? (
-          <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/[0.08] text-sm text-white/65 leading-relaxed animate-in fade-in">
+          <div className="bg-white/[0.03] p-5 rounded-2xl border border-gray-200 text-sm text-gray-600 leading-relaxed animate-in fade-in">
             {response}
           </div>
         ) : null}

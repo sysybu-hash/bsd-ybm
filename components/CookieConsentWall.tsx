@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -102,7 +102,7 @@ export default function CookieConsentWall() {
         aria-hidden="true"
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-[250] border-t border-white/[0.08] bg-[#0a0b14] shadow-[0_-12px_40px_rgba(15,23,42,0.12)]"
+        className="fixed inset-x-0 bottom-0 z-[250] border-t border-gray-200 bg-white shadow-[0_-12px_40px_rgba(15,23,42,0.12)]"
         dir={dir}
         role="dialog"
         aria-modal="true"
@@ -118,7 +118,7 @@ export default function CookieConsentWall() {
                 <h2 id="cookie-wall-title" className="text-lg font-black text-white">
                   {t("cookie.wallTitle")}
                 </h2>
-                <p className="mt-1 text-sm leading-relaxed text-white/55">
+                <p className="mt-1 text-sm leading-relaxed text-gray-500">
                   {t("cookie.wallBody")}{" "}
                   <Link href="/privacy" className="font-medium text-[var(--primary-color)] underline-offset-2 hover:underline">
                     {t("cookie.privacy")}
@@ -143,7 +143,7 @@ export default function CookieConsentWall() {
                   essentialOnly();
                 }
               }}
-              className="self-start rounded-xl p-2 text-white/35 transition hover:bg-white/[0.05] hover:text-white/65"
+              className="self-start rounded-xl p-2 text-gray-400 transition hover:bg-gray-50 hover:text-gray-600"
               aria-label={hadConsentOnOpen ? t("cookie.ariaClose") : t("cookie.ariaReject")}
             >
               <X size={20} />
@@ -151,13 +151,13 @@ export default function CookieConsentWall() {
           </div>
 
           {customOpen ? (
-            <div className="mt-5 space-y-3 rounded-2xl border border-white/[0.07] bg-white/[0.03]/80 p-4">
+            <div className="mt-5 space-y-3 rounded-2xl border border-gray-100 bg-white/[0.03]/80 p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-bold text-white/75">{t("cookie.necessary")}</span>
-                <span className="text-xs font-medium text-white/45">{t("cookie.necessaryNote")}</span>
+                <span className="text-sm font-bold text-gray-700">{t("cookie.necessary")}</span>
+                <span className="text-xs font-medium text-gray-400">{t("cookie.necessaryNote")}</span>
               </div>
-              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#0a0b14] p-3 shadow-sm">
-                <span className="text-sm text-white/65">{t("cookie.analytics")}</span>
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm">
+                <span className="text-sm text-gray-600">{t("cookie.analytics")}</span>
                 <input
                   type="checkbox"
                   className="h-5 w-5 rounded border-gray-300"
@@ -165,8 +165,8 @@ export default function CookieConsentWall() {
                   onChange={(e) => setDraft((d) => ({ ...d, analytics: e.target.checked }))}
                 />
               </label>
-              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#0a0b14] p-3 shadow-sm">
-                <span className="text-sm text-white/65">{t("cookie.marketing")}</span>
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm">
+                <span className="text-sm text-gray-600">{t("cookie.marketing")}</span>
                 <input
                   type="checkbox"
                   className="h-5 w-5 rounded border-gray-300"
@@ -181,7 +181,7 @@ export default function CookieConsentWall() {
             <button
               type="button"
               onClick={() => setCustomOpen((v) => !v)}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-4 py-3 text-sm font-bold text-white/75 transition hover:bg-white/[0.03]"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 transition hover:bg-gray-50"
             >
               <Settings2 size={18} aria-hidden />
               {customOpen ? t("cookie.customizeClose") : t("cookie.customize")}
@@ -189,7 +189,7 @@ export default function CookieConsentWall() {
             <button
               type="button"
               onClick={essentialOnly}
-              className="inline-flex items-center justify-center rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-4 py-3 text-sm font-bold text-white/75 transition hover:bg-white/[0.03]"
+              className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 transition hover:bg-gray-50"
             >
               {t("cookie.essentialOnly")}
             </button>

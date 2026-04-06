@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { BadgeCheck, Shield } from "lucide-react";
@@ -13,7 +13,7 @@ export default function EuComplianceStrip() {
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#0a0b14] shadow-md shadow-indigo-500/10 ring-1 ring-indigo-100">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-md shadow-indigo-500/10 ring-1 ring-indigo-100">
               <Shield className="text-[var(--primary-color)]" size={28} aria-hidden />
             </div>
             <div>
@@ -24,7 +24,7 @@ export default function EuComplianceStrip() {
               <h2 id="eu-strip-heading" className="text-xl font-black text-white md:text-2xl">
                 פרטיות, שקיפות והתאמה למסגרת GDPR
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500">
                 BSD-YBM מיועדת לעמוד בעקרונות הגנת המידע האירופיים (GDPR) ובדרישות ePrivacy לגבי
                 עוגיות. מוצגים כאן מסמכים משפטיים, ניהול הסכמה לעוגיות וזכויות נושאי מידע — יש להשלים
                 ניסוח סופי מול יועץ משפטי לפני הסתמכות עסקית.
@@ -40,7 +40,7 @@ export default function EuComplianceStrip() {
             </Link>
             <Link
               href="/privacy"
-              className="inline-flex items-center justify-center rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-5 py-3 text-center text-sm font-bold text-white/75 transition hover:bg-white/[0.03]"
+              className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-center text-sm font-bold text-gray-700 transition hover:bg-gray-50"
             >
               מדיניות פרטיות
             </Link>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState, useTransition } from "react";
 import { CompanyType, DocType, type DocStatus } from "@prisma/client";
@@ -74,7 +74,7 @@ const STATUS_LABEL: Record<DocStatus, string> = {
 const STATUS_STYLE: Record<DocStatus, string> = {
   PAID: "bg-emerald-500/15 text-emerald-400",
   PENDING: "bg-orange-500/15 text-orange-400",
-  CANCELLED: "bg-white/[0.08] text-white/45",
+  CANCELLED: "bg-white/[0.08] text-gray-400",
 };
 
 function formatMoney(n: number) {
@@ -125,7 +125,7 @@ function rowMatchesSearch(row: UnifiedRow, q: string): boolean {
 function paypalStatusClass(status: string) {
   if (status === "PAID") return "bg-emerald-500/15 text-emerald-400";
   if (status === "PENDING") return "bg-orange-500/15 text-orange-400";
-  return "bg-white/[0.08] text-white/45";
+  return "bg-white/[0.08] text-gray-400";
 }
 
 function paypalStatusLabel(status: string) {
@@ -222,7 +222,7 @@ export default function GlobalBillingPageClient({
     <div className="space-y-8 text-start" dir={dir}>
 
       {/* ── Page header ── */}
-      <section className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-[#0a0b14] px-6 py-7 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-white px-6 py-7 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -230,15 +230,15 @@ export default function GlobalBillingPageClient({
               <ShieldCheck size={11} /> מרכז פיננסי
             </span>
             <h1 className="mt-2.5 text-2xl font-black tracking-tight text-white">מסמכים ותשלומים</h1>
-            <p className="mt-1 text-sm text-white/45">
+            <p className="mt-1 text-sm text-gray-400">
               {organizationName}
-              {taxId ? <span className="ms-2 text-white/35">· ח.פ {taxId}</span> : null}
+              {taxId ? <span className="ms-2 text-gray-400">· ח.פ {taxId}</span> : null}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link
               href="/dashboard/settings?tab=billing"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#0d0e1c] px-4 py-2.5 text-sm font-bold text-white/65 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-500/15"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-2.5 text-sm font-bold text-gray-600 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-500/15"
             >
               הגדרות חשבונאיות
             </Link>
@@ -262,15 +262,15 @@ export default function GlobalBillingPageClient({
           { title: "תשלומים בהמתנה", value: formatMoney(stats.pendingAmount), sub: stats.pendingInvoiceCount > 0 ? `${stats.pendingInvoiceCount} חשבוניות פתוחות` : "אין ממתינות", color: "text-orange-400", iconBg: "bg-orange-500/15", icon: <History size={20} /> },
           { title: "שולם החודש (גולמי)", value: formatMoney(stats.paidMonthGross), sub: "לפני עמלות PayPal", color: "text-emerald-400", iconBg: "bg-emerald-500/15", icon: <CheckCircle2 size={20} /> },
         ].map((card, i) => (
-          <div key={i} className="flex flex-col justify-between rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5 transition-shadow hover:shadow-md">
+          <div key={i} className="flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-5 transition-shadow hover:shadow-md">
             <div className="mb-4 flex items-center gap-3">
               <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${card.iconBg} ${card.color}`}>
                 {card.icon}
               </div>
-              <p className="text-xs font-bold text-white/45">{card.title}</p>
+              <p className="text-xs font-bold text-gray-400">{card.title}</p>
             </div>
             <p className="text-2xl font-black text-white">{card.value}</p>
-            <p className="mt-1.5 text-xs text-white/35">{card.sub}</p>
+            <p className="mt-1.5 text-xs text-gray-400">{card.sub}</p>
           </div>
         ))}
       </div>
@@ -278,30 +278,30 @@ export default function GlobalBillingPageClient({
       <ReportingCenter />
 
       <div className="flex justify-end">
-        <button type="button" onClick={() => handleExportAccountantCsv()} disabled={exportPending} className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#0d0e1c] px-4 py-2.5 text-sm font-bold text-white/65 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-500/15 disabled:opacity-50">
+        <button type="button" onClick={() => handleExportAccountantCsv()} disabled={exportPending} className="inline-flex items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-2.5 text-sm font-bold text-gray-600 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-500/15 disabled:opacity-50">
           <Download size={16} aria-hidden />
           {exportPending ? "מייצא…" : "ייצוא לרואה חשבון (CSV)"}
         </button>
       </div>
 
       {/* ── Documents table ── */}
-      <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14]">
+      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white">
         {/* Table toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
           <div className="relative">
-            <Search className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-white/35" size={16} aria-hidden />
+            <Search className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} aria-hidden />
             <input
               type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="חיפוש לקוח או מסמך..."
-              className="rounded-xl border border-white/[0.08] bg-[#0a0b14] py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
+              className="rounded-xl border border-gray-100 bg-white py-2.5 ps-4 pe-9 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
             />
           </div>
-          <div className="flex gap-1 rounded-xl border border-white/[0.07] bg-white/[0.03] p-1">
+          <div className="flex gap-1 rounded-xl border border-gray-100 bg-white/[0.03] p-1">
             {([["all", "הכל"], ["invoices", "חשבוניות"], ["receipts", "קבלות"], ["credits", "זיכויים"]] as const).map(([key, label]) => (
               <button key={key} type="button" onClick={() => setTab(key)}
-                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? "bg-indigo-500/15 text-indigo-300 shadow-sm" : "text-white/45 hover:text-white/75"}`}>
+                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${tab === key ? "bg-indigo-500/15 text-indigo-300 shadow-sm" : "text-gray-400 hover:text-gray-700"}`}>
                 {label}
               </button>
             ))}
@@ -312,11 +312,11 @@ export default function GlobalBillingPageClient({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-start">
             <thead>
-              <tr className="border-b border-white/[0.07] bg-white/[0.03]">
-                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-white/35">סוג / מספר</th>
-                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-white/35">לקוח</th>
-                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-white/35">סטטוס</th>
-                <th className="px-5 py-3 text-end text-[10px] font-bold uppercase tracking-wider text-white/35">סכום</th>
+              <tr className="border-b border-gray-100 bg-white/[0.03]">
+                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-gray-400">סוג / מספר</th>
+                <th className="px-5 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-gray-400">לקוח</th>
+                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">סטטוס</th>
+                <th className="px-5 py-3 text-end text-[10px] font-bold uppercase tracking-wider text-gray-400">סכום</th>
                 <th className="w-20 px-5 py-3" />
               </tr>
             </thead>
@@ -328,8 +328,8 @@ export default function GlobalBillingPageClient({
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-400">
                         <FilePlus size={28} strokeWidth={1.5} />
                       </div>
-                      <p className="font-bold text-white/65">{!hasAnyRows ? "אין עדיין מסמכים" : "אין תוצאות לסינון"}</p>
-                      <p className="text-sm text-white/45">{!hasAnyRows ? "הפיקו מסמך ראשון דרך הכפתור למעלה." : "נסו חיפוש אחר."}</p>
+                      <p className="font-bold text-gray-600">{!hasAnyRows ? "אין עדיין מסמכים" : "אין תוצאות לסינון"}</p>
+                      <p className="text-sm text-gray-400">{!hasAnyRows ? "הפיקו מסמך ראשון דרך הכפתור למעלה." : "נסו חיפוש אחר."}</p>
                       {!hasAnyRows ? (
                         <button type="button" onClick={() => setCreateOpen(true)} className="mt-1 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90" style={{ backgroundColor: "var(--primary-color, #2563eb)" }}>
                           <FilePlus size={15} /> הפקת מסמך
@@ -341,7 +341,7 @@ export default function GlobalBillingPageClient({
               ) : (
                 filtered.map((row) =>
                   row.kind === "issued" ? (
-                    <tr key={`i-${row.doc.id}`} className="group transition-colors hover:bg-white/[0.03]">
+                    <tr key={`i-${row.doc.id}`} className="group transition-colors hover:bg-gray-50">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-xs font-black text-indigo-400">
@@ -349,13 +349,13 @@ export default function GlobalBillingPageClient({
                           </div>
                           <div>
                             <p className="text-sm font-bold text-white">{DOC_TYPE_LABEL[row.doc.docType]}</p>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">{COMPANY_BADGE[companyType]}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">{COMPANY_BADGE[companyType]}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-3.5">
-                        <p className="text-sm font-bold text-white/65">{row.doc.clientName}</p>
-                        <p className="text-xs text-white/35">{row.doc.dateLabel}</p>
+                        <p className="text-sm font-bold text-gray-600">{row.doc.clientName}</p>
+                        <p className="text-xs text-gray-400">{row.doc.dateLabel}</p>
                       </td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`inline-block rounded-lg border px-3 py-1 text-[10px] font-bold ${STATUS_STYLE[row.doc.status]} border-current/20`}>
@@ -365,20 +365,20 @@ export default function GlobalBillingPageClient({
                       <td className="px-5 py-3.5 text-end font-black text-white">{formatMoney(row.doc.total)}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button type="button" title="תצוגה מקדימה" onClick={() => setPreviewRow(row.doc)} className="rounded-lg border border-white/[0.07] bg-[#1e2035] p-2 text-white/45 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
+                          <button type="button" title="תצוגה מקדימה" onClick={() => setPreviewRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-400 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
                             <Eye size={15} />
                           </button>
-                          <button type="button" title="הדפס" onClick={() => setPrintRow(row.doc)} className="rounded-lg border border-white/[0.07] bg-[#1e2035] p-2 text-white/45 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
+                          <button type="button" title="הדפס" onClick={() => setPrintRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-400 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
                             <Download size={15} />
                           </button>
-                          <button type="button" title="עריכה" onClick={() => setEditRow(row.doc)} className="rounded-lg border border-white/[0.07] bg-[#1e2035] p-2 text-white/45 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
+                          <button type="button" title="עריכה" onClick={() => setEditRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-400 shadow-sm transition hover:border-indigo-500/40 hover:text-indigo-400">
                             <Edit3 size={15} />
                           </button>
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    <tr key={`p-${row.inv.id}`} className="group transition-colors hover:bg-white/[0.03]">
+                    <tr key={`p-${row.inv.id}`} className="group transition-colors hover:bg-gray-50">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-xs font-black text-indigo-400">
@@ -391,9 +391,9 @@ export default function GlobalBillingPageClient({
                         </div>
                       </td>
                       <td className="px-5 py-3.5">
-                        <p className="text-sm font-bold text-white/65">{row.inv.customerName}</p>
-                        <p className="text-xs text-white/35">{row.inv.date}</p>
-                        {row.inv.customerEmail ? <p className="text-[11px] font-mono text-white/35" dir="ltr">{row.inv.customerEmail}</p> : null}
+                        <p className="text-sm font-bold text-gray-600">{row.inv.customerName}</p>
+                        <p className="text-xs text-gray-400">{row.inv.date}</p>
+                        {row.inv.customerEmail ? <p className="text-[11px] font-mono text-gray-400" dir="ltr">{row.inv.customerEmail}</p> : null}
                       </td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`inline-block rounded-lg px-3 py-1 text-[10px] font-bold ${paypalStatusClass(row.inv.status)}`}>
@@ -409,7 +409,7 @@ export default function GlobalBillingPageClient({
                             </a>
                           ) : null}
                           {row.inv.status !== "PAID" && paypalMerchantEmail?.trim() && !paypalMeSlug?.trim() ? (
-                            <span className="max-w-[140px] text-right text-[10px] text-white/45" dir="ltr">{paypalMerchantEmail.trim()}</span>
+                            <span className="max-w-[140px] text-right text-[10px] text-gray-400" dir="ltr">{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
                             <Link href="/dashboard/settings?tab=billing" className="text-[10px] font-bold text-indigo-400 underline">הגדרת PayPal</Link>

@@ -53,7 +53,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
     <div className="space-y-6" dir="rtl">
 
       {/* HEADER */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14] px-6 py-7 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white px-6 py-7 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-500" />
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -61,15 +61,15 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
               <ShieldCheck size={11} /> הרשאת בעלים
             </span>
             <h1 className="mt-3 text-2xl font-black tracking-tight text-white">חדר מצב <span className="text-indigo-400">BSD-YBM</span></h1>
-            <p className="mt-1 text-sm text-white/45">ניהול לקוחות, מנויים והכנסות במבט על</p>
+            <p className="mt-1 text-sm text-gray-400">ניהול לקוחות, מנויים והכנסות במבט על</p>
           </div>
-          <div className="flex flex-wrap gap-1.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-1.5">
+          <div className="flex flex-wrap gap-1.5 rounded-2xl border border-gray-100 bg-white/[0.03] p-1.5">
             <Link
               href="/dashboard/admin"
               className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                 activeSection === "overview"
                   ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                  : "text-gray-500 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
               סקירה כללית
@@ -79,7 +79,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
               className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                 activeSection === "subscriptions"
                   ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                  : "text-gray-500 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
               MASTER — מנויים
@@ -89,14 +89,14 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
               className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                 activeSection === "broadcast"
                   ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                  : "text-gray-500 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
               שידור והתראות
             </Link>
             <Link
               href="/dashboard/control-center"
-              className="rounded-xl px-4 py-2 text-sm font-bold text-white/55 hover:bg-white/[0.06] hover:text-white transition"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-gray-500 hover:bg-white/[0.06] hover:text-white transition"
             >
               מרכז תפעול
             </Link>
@@ -110,7 +110,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
       {activeSection === "overview" ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-        <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+        <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400"><CreditCard size={18} /></div>
             <p className="text-xs font-bold uppercase tracking-widest text-emerald-400/70">הכנסות (שולם)</p>
@@ -118,7 +118,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           <h2 className="text-3xl font-black text-white">₪{totalRevenue.toLocaleString()}</h2>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+        <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400"><Clock size={18} /></div>
             <p className="text-xs font-bold uppercase tracking-widest text-amber-400/70">ממתין לתשלום</p>
@@ -126,7 +126,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           <h2 className="text-3xl font-black text-white">₪{pendingRevenue.toLocaleString()}</h2>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+        <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400"><Building size={18} /></div>
             <p className="text-xs font-bold uppercase tracking-widest text-indigo-400/70">לקוחות פעילים</p>
@@ -134,7 +134,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           <h2 className="text-3xl font-black text-white">{totalOrganizations}</h2>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+        <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400"><Users size={18} /></div>
             <p className="text-xs font-bold uppercase tracking-widest text-indigo-400/70">משתמשים רשומים</p>
@@ -147,7 +147,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
 
       {/* Clients table */}
       {activeSection === "overview" ? (
-      <div className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-6">
+      <div className="rounded-2xl border border-gray-100 bg-white p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-black text-white flex items-center gap-2">
             <Building className="text-indigo-400" size={18} /> לקוחות ומנויים אחרונים
@@ -162,7 +162,7 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
         <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
           <table className="w-full min-w-[640px] text-right">
             <thead>
-              <tr className="border-b border-white/[0.07] text-white/35 text-xs">
+              <tr className="border-b border-gray-100 text-gray-400 text-xs">
                 <th className="pb-3 font-bold uppercase tracking-wide">שם הלקוח / חברה</th>
                 <th className="pb-3 font-bold uppercase tracking-wide">אימייל איש קשר</th>
                 <th className="pb-3 font-bold uppercase tracking-wide">תאריך הצטרפות</th>
@@ -172,20 +172,20 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
             <tbody>
               {recentClients.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-sm text-white/35">
+                  <td colSpan={4} className="py-8 text-center text-sm text-gray-400">
                     אין עדיין לקוחות במערכת.
                   </td>
                 </tr>
               ) : (
                 recentClients.map((client) => (
-                  <tr key={client.id} className="border-b border-white/[0.05] hover:bg-white/[0.03] transition-colors">
+                  <tr key={client.id} className="border-b border-white/[0.05] hover:bg-gray-50 transition-colors">
                     <td className="py-4 font-bold text-white">
                       {client.name || 'ארגון ללא שם'}
                     </td>
-                    <td className="py-4 text-white/45 text-sm">
+                    <td className="py-4 text-gray-400 text-sm">
                       {client.users[0]?.email || 'אין אימייל'}
                     </td>
-                    <td className="py-4 text-white/45 text-sm">
+                    <td className="py-4 text-gray-400 text-sm">
                       {client.createdAt.toLocaleDateString('he-IL')}
                     </td>
                     <td className="py-4">
@@ -207,10 +207,10 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
 
       {activeSection === "subscriptions" ? (
       <section id="subscriptions" className="space-y-4">
-        <div className="rounded-2xl border border-white/[0.07] bg-indigo-500/[0.08] p-6">
+        <div className="rounded-2xl border border-gray-100 bg-indigo-500/[0.08] p-6">
           <p className="text-xs font-black uppercase tracking-wider text-indigo-400 mb-1">MASTER ADMIN</p>
           <h2 className="text-xl font-black text-white">ניהול מנויים מרוכז</h2>
-          <p className="text-sm text-white/45 mt-1">כל פעולות עריכה/מחיקה זמינות במסך הבילינג המאוחד.</p>
+          <p className="text-sm text-gray-400 mt-1">כל פעולות עריכה/מחיקה זמינות במסך הבילינג המאוחד.</p>
         </div>
         <Link
           href="/dashboard/billing?tab=control"

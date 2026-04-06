@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   Bar,
@@ -18,9 +18,9 @@ type Props = {
 
 export default function DashboardRevenueChart({ data }: Props) {
   return (
-    <div className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-6 shadow-sm">
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <h4 className="text-lg font-bold text-white mb-1">הכנסות לפי חודש (מסמכים שהונפקו)</h4>
-      <p className="text-xs text-white/45 mb-6 font-medium">
+      <p className="text-xs text-gray-400 mb-6 font-medium">
         סכום כולל מחשבוניות / קבלות שהונפקו ב־ERP — שישה חודשים אחרונים
       </p>
       <RechartsBounded height={260}>

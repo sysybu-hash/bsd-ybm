@@ -56,7 +56,7 @@ const DOC_TYPE_LABEL: Record<string, string> = {
 const DOC_STATUS_LABEL: Record<string, { label: string; cls: string }> = {
   PENDING: { label: "ממתין לתשלום", cls: "bg-amber-500/[0.15] text-amber-300" },
   PAID:    { label: "שולם",         cls: "bg-emerald-500/[0.12] text-emerald-300" },
-  CANCELLED: { label: "מבוטל",      cls: "bg-white/[0.05] text-white/45" },
+  CANCELLED: { label: "מבוטל",      cls: "bg-white/[0.05] text-gray-400" },
 };
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
@@ -116,17 +116,17 @@ type View = "pipeline" | "list" | "projects";
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 const STATUS_COLUMNS = [
-  { key: "LEAD",        label: "ליד",     bg: "bg-indigo-500/[0.08]",  border: "border-indigo-500/20",  badge: "bg-indigo-500/[0.12] text-indigo-300",  dot: "bg-indigo-400" },
-  { key: "ACTIVE",      label: "פעיל",    bg: "bg-sky-500/[0.08]",     border: "border-sky-500/20",     badge: "bg-sky-500/[0.12] text-sky-300",        dot: "bg-sky-400"    },
-  { key: "PROPOSAL",    label: "הצעה",    bg: "bg-violet-500/[0.08]",  border: "border-violet-500/20",  badge: "bg-violet-500/[0.12] text-violet-300",  dot: "bg-violet-500" },
-  { key: "CLOSED_WON",  label: "נסגר ✓",  bg: "bg-emerald-500/[0.08]", border: "border-emerald-500/20", badge: "bg-emerald-500/[0.12] text-emerald-300", dot: "bg-emerald-500" },
-  { key: "CLOSED_LOST", label: "נסגר ✗",  bg: "bg-rose-500/[0.08]",    border: "border-rose-500/20",    badge: "bg-rose-500/[0.12] text-rose-300",      dot: "bg-rose-400"   },
+  { key: "LEAD",        label: "ליד",     bg: "bg-indigo-50",   border: "border-indigo-200",  badge: "bg-indigo-50 text-indigo-700 border-indigo-200",   dot: "bg-indigo-500" },
+  { key: "ACTIVE",      label: "פעיל",    bg: "bg-sky-50",     border: "border-sky-200",     badge: "bg-sky-50 text-sky-700 border-sky-200",           dot: "bg-sky-500"    },
+  { key: "PROPOSAL",    label: "הצעה",    bg: "bg-violet-50",  border: "border-violet-200",  badge: "bg-violet-50 text-violet-700 border-violet-200",  dot: "bg-violet-500" },
+  { key: "CLOSED_WON",  label: "נסגר ✓",  bg: "bg-emerald-50", border: "border-emerald-200", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
+  { key: "CLOSED_LOST", label: "נסגר ✗",  bg: "bg-rose-50",    border: "border-rose-200",    badge: "bg-rose-50 text-rose-700 border-rose-200",       dot: "bg-rose-500"   },
 ] as const;
 
 type StatusKey = (typeof STATUS_COLUMNS)[number]["key"];
 
 const inputCls =
-  "w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2.5 text-sm text-white outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/[0.15] placeholder:text-white/30";
+  "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder:text-gray-400";
 
 function statusMeta(s: string) {
   return STATUS_COLUMNS.find((c) => c.key === s) ?? STATUS_COLUMNS[0];
@@ -256,8 +256,8 @@ function ContactModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" dir="rtl">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0e1c] shadow-xl shadow-black/50">
-        <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-5">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-black/50">
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
           <div className="flex items-center gap-3">
             {isEdit ? (
               <div
@@ -273,10 +273,10 @@ function ContactModal({
             )}
             <div>
               <p className="font-black text-white">{isEdit ? "עריכת לקוח" : "לקוח חדש"}</p>
-              {isEdit && c && <p className="text-xs text-white/35">נוצר {fmtDate(c.createdAt)}</p>}
+              {isEdit && c && <p className="text-xs text-gray-400">נוצר {fmtDate(c.createdAt)}</p>}
             </div>
           </div>
-          <button type="button" onClick={onClose} className="rounded-xl p-2 text-white/35 hover:bg-white/[0.07] hover:text-white/70 transition">
+          <button type="button" onClick={onClose} className="rounded-xl p-2 text-gray-400 hover:bg-white/[0.07] hover:text-white/70 transition">
             <X size={18} />
           </button>
         </div>
@@ -286,46 +286,46 @@ function ContactModal({
             <div className="rounded-xl border border-rose-500/20 bg-rose-500/[0.08] px-3 py-2.5 text-sm text-rose-300">{err}</div>
           )}
           <div>
-            <label className="block text-xs font-bold text-white/45 mb-1">שם *</label>
+            <label className="block text-xs font-bold text-gray-400 mb-1">שם *</label>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="שם לקוח / חברה" className={inputCls} autoFocus />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-white/45 mb-1">אימייל</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1">אימייל</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mail@example.com" className={inputCls} dir="ltr" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-white/45 mb-1">טלפון</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1">טלפון</label>
               <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="050-0000000" className={inputCls} dir="ltr" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-white/45 mb-1">סטטוס</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1">סטטוס</label>
               <div className="relative">
                 <select value={status} onChange={e => setStatus(e.target.value as StatusKey)} className={inputCls + " appearance-none bg-[#0f1020]"}>
                   {STATUS_COLUMNS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                 </select>
-                <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-white/35" />
+                <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-white/45 mb-1">שווי עסקה (₪)</label>
+              <label className="block text-xs font-bold text-gray-400 mb-1">שווי עסקה (₪)</label>
               <input type="number" min="0" step="100" value={value} onChange={e => setValue(e.target.value)} placeholder="0" className={inputCls} />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-white/45 mb-1">פרויקט</label>
+            <label className="block text-xs font-bold text-gray-400 mb-1">פרויקט</label>
             <div className="relative">
               <select value={projectId} onChange={e => setProjectId(e.target.value)} className={inputCls + " appearance-none bg-[#0f1020]"}>
                 <option value="">— ללא פרויקט —</option>
                 {projects.map(p => <option key={p.id} value={p.id}>{p.name}{!p.isActive ? " (ארכיון)" : ""}</option>)}
               </select>
-              <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-white/35" />
+              <ChevronDown size={13} className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-white/45 mb-1">הערות</label>
+            <label className="block text-xs font-bold text-gray-400 mb-1">הערות</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="הערות חופשיות..." rows={3} className={inputCls + " resize-none"} />
           </div>
 
@@ -350,7 +350,7 @@ function ContactModal({
               ) : (
                 <>
                   {/* סיכום */}
-                  <div className="grid grid-cols-3 gap-2 border-b border-white/[0.07] pb-3">
+                  <div className="grid grid-cols-3 gap-2 border-b border-gray-100 pb-3">
                     <div className="text-center">
                       <p className="text-[10px] text-white/40 mb-0.5">סך חוייב</p>
                       <p className="text-sm font-black text-white">{fmtMoney(invoices.reduce((s, i) => s + i.total, 0))}</p>
@@ -369,15 +369,15 @@ function ContactModal({
                     {invoices.map(inv => {
                       const stMeta = DOC_STATUS_LABEL[inv.status] ?? DOC_STATUS_LABEL.PENDING;
                       return (
-                        <div key={inv.id} className="flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.04] px-3 py-2">
+                        <div key={inv.id} className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white/[0.04] px-3 py-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] font-black text-white/65">{DOC_TYPE_LABEL[inv.type] ?? inv.type} #{inv.number}</span>
+                              <span className="text-[10px] font-black text-gray-600">{DOC_TYPE_LABEL[inv.type] ?? inv.type} #{inv.number}</span>
                               <span className={`text-[9px] font-black rounded-full px-1.5 py-0.5 ${stMeta.cls}`}>{stMeta.label}</span>
                             </div>
                             <div className="flex items-center gap-2 mt-0.5">
                               <span className="text-xs font-black text-white">{fmtMoney(inv.total)}</span>
-                              <span className="text-[10px] text-white/35">{fmtDate(inv.date ?? inv.createdAt)}</span>
+                              <span className="text-[10px] text-gray-400">{fmtDate(inv.date ?? inv.createdAt)}</span>
                             </div>
                           </div>
                           {inv.status === "PENDING" && (
@@ -392,7 +392,7 @@ function ContactModal({
                               <button
                                 type="button"
                                 onClick={() => markInvoice(inv.id, "CANCELLED")}
-                                className="rounded-lg bg-white/[0.05] px-2 py-1 text-[9px] font-black text-white/45 hover:bg-white/[0.09] transition"
+                                className="rounded-lg bg-white/[0.05] px-2 py-1 text-[9px] font-black text-gray-400 hover:bg-white/[0.09] transition"
                               >
                                 בטל
                               </button>
@@ -408,7 +408,7 @@ function ContactModal({
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[0.07] px-6 py-4 bg-black/20">
+        <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-black/20">
           <div className="flex items-center gap-2">
             {isEdit && (
               <button type="button" onClick={deleteContact} disabled={pending} className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/[0.10] transition disabled:opacity-50">
@@ -425,7 +425,7 @@ function ContactModal({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={onClose} className="rounded-xl border border-white/[0.09] bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/65 hover:bg-white/[0.09] transition">
+            <button type="button" onClick={onClose} className="rounded-xl border border-white/[0.09] bg-white/[0.05] px-4 py-2 text-sm font-bold text-gray-600 hover:bg-white/[0.09] transition">
               ביטול
             </button>
             <button type="button" onClick={submit} disabled={pending} className="flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-2 text-sm font-bold text-white hover:bg-indigo-400 transition disabled:opacity-50 shadow-sm shadow-indigo-500/25">
@@ -454,7 +454,7 @@ function ContactCard({
 
   return (
     <div
-      className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4 hover:border-white/[0.12] hover:bg-white/[0.05] transition-all cursor-pointer"
+      className="group relative rounded-2xl border border-gray-100 bg-white/[0.03] p-4 hover:border-white/[0.12] hover:bg-white/[0.05] transition-all cursor-pointer"
       onClick={() => onEdit(contact)}
     >
       <div className="flex items-start justify-between gap-2 mb-3">
@@ -467,13 +467,13 @@ function ContactCard({
           </div>
           <div>
             <p className="text-sm font-black text-white leading-tight">{contact.name}</p>
-            {contact.project && <p className="text-[10px] text-white/35 mt-0.5">{contact.project.name}</p>}
+            {contact.project && <p className="text-[10px] text-gray-400 mt-0.5">{contact.project.name}</p>}
           </div>
         </div>
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
-          className="opacity-0 group-hover:opacity-100 rounded-lg p-1 text-white/35 hover:bg-white/[0.08] transition"
+          className="opacity-0 group-hover:opacity-100 rounded-lg p-1 text-gray-400 hover:bg-white/[0.08] transition"
         >
           <MoreVertical size={14} />
         </button>
@@ -534,7 +534,7 @@ function ContactCard({
 
       {menuOpen && (
         <div
-          className="absolute left-0 top-full z-20 mt-1 min-w-[140px] rounded-2xl border border-white/[0.09] bg-[#0d0e1c] shadow-lg shadow-black/40 py-1.5"
+          className="absolute left-0 top-full z-20 mt-1 min-w-[140px] rounded-2xl border border-white/[0.09] bg-white shadow-lg shadow-black/40 py-1.5"
           onClick={(e) => e.stopPropagation()}
         >
           <p className="px-3 py-1 text-[10px] font-bold text-white/30 uppercase tracking-wider">שנה סטטוס</p>
@@ -543,16 +543,16 @@ function ContactCard({
               key={s.key}
               type="button"
               onClick={() => { onStatusChange(contact.id, s.key); setMenuOpen(false); }}
-              className={`flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold hover:bg-white/[0.06] transition ${contact.status === s.key ? "text-indigo-300 bg-indigo-500/[0.08]" : "text-white/65"}`}
+              className={`flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold hover:bg-white/[0.06] transition ${contact.status === s.key ? "text-indigo-300 bg-indigo-500/[0.08]" : "text-gray-600"}`}
             >
               <span className={`h-2 w-2 rounded-full ${s.dot}`} /> {s.label}
             </button>
           ))}
-          <div className="border-t border-white/[0.07] mt-1 pt-1">
+          <div className="border-t border-gray-100 mt-1 pt-1">
             <button
               type="button"
               onClick={() => { onEdit(contact); setMenuOpen(false); }}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-white/65 hover:bg-white/[0.06]"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-white/[0.06]"
             >
               <Edit3 size={12} /> ערוך
             </button>
@@ -697,7 +697,7 @@ export default function CrmClient({
             </div>
             <div>
               <p className="font-bold text-white">אין ארגון משויך</p>
-              <p className="mt-1 text-sm text-white/55 leading-relaxed">
+              <p className="mt-1 text-sm text-gray-500 leading-relaxed">
                 עבור ל<strong className="text-white/80">הגדרות</strong>, שייך משתמש לארגון או התחבר מחדש.
               </p>
             </div>
@@ -722,7 +722,7 @@ export default function CrmClient({
     <div className="flex flex-col gap-5 min-h-screen" dir="rtl">
 
       {/* ── Top bar ── */}
-      <section className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-[#0d0e1c] px-6 py-5 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-white px-6 py-5 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-500" />
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -730,17 +730,17 @@ export default function CrmClient({
               <Users size={11} /> ניהול לקוחות
             </span>
             <h1 className="mt-2 text-xl font-black text-white">CRM — מרכז לקוחות</h1>
-            <p className="text-xs text-white/35 mt-0.5">לקוחות, לידים, פרויקטים והצעות מחיר</p>
+            <p className="text-xs text-gray-400 mt-0.5">לקוחות, לידים, פרויקטים והצעות מחיר</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="inline-flex rounded-xl border border-white/[0.09] bg-white/[0.04] p-0.5">
-              <button type="button" onClick={() => setView("pipeline")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "pipeline" ? "bg-white/[0.10] text-white shadow-sm" : "text-white/45 hover:text-white/70"}`}>
+              <button type="button" onClick={() => setView("pipeline")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "pipeline" ? "bg-white/[0.10] text-white shadow-sm" : "text-gray-400 hover:text-white/70"}`}>
                 <BarChart2 size={13} /> פייפליין
               </button>
-              <button type="button" onClick={() => setView("list")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "list" ? "bg-white/[0.10] text-white shadow-sm" : "text-white/45 hover:text-white/70"}`}>
+              <button type="button" onClick={() => setView("list")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "list" ? "bg-white/[0.10] text-white shadow-sm" : "text-gray-400 hover:text-white/70"}`}>
                 <List size={13} /> רשימה
               </button>
-              <button type="button" onClick={() => setView("projects")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "projects" ? "bg-white/[0.10] text-white shadow-sm" : "text-white/45 hover:text-white/70"}`}>
+              <button type="button" onClick={() => setView("projects")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${view === "projects" ? "bg-white/[0.10] text-white shadow-sm" : "text-gray-400 hover:text-white/70"}`}>
                 <Briefcase size={13} /> פרויקטים
               </button>
             </div>
@@ -768,10 +768,10 @@ export default function CrmClient({
 
           {/* ── KPI row ── */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
+            <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-4">
               <div className="flex items-center gap-2 mb-1">
-                <Users size={14} className="text-white/35" />
-                <p className="text-xs text-white/45 font-bold">{'סה"כ לקוחות'}</p>
+                <Users size={14} className="text-gray-400" />
+                <p className="text-xs text-gray-400 font-bold">{'סה"כ לקוחות'}</p>
               </div>
               <p className="text-2xl font-black text-white">{contacts.length}</p>
               <p className="text-[10px] text-white/30 mt-0.5">{contacts.filter(c => c.status === "LEAD").length} לידים</p>
@@ -816,11 +816,11 @@ export default function CrmClient({
                           <span className={`h-2 w-2 rounded-full ${col.dot}`} />
                           <span className="text-white/70">{col.label}</span>
                         </span>
-                        <span className="text-xs font-black text-white/50 bg-white/[0.07] rounded-full px-2 py-0.5 border border-white/[0.08]">
+                        <span className="text-xs font-black text-white/50 bg-white/[0.07] rounded-full px-2 py-0.5 border border-gray-200">
                           {colContacts.length}
                         </span>
                       </div>
-                      {colValue > 0 && <p className="text-[10px] text-white/35 mt-1">{fmtMoney(colValue)}</p>}
+                      {colValue > 0 && <p className="text-[10px] text-gray-400 mt-1">{fmtMoney(colValue)}</p>}
                     </div>
                     <div className="flex flex-col gap-2 flex-1">
                       {colContacts.map(c => (
@@ -834,7 +834,7 @@ export default function CrmClient({
                       <button
                         type="button"
                         onClick={() => setModal({ mode: "add", defaultStatus: col.key })}
-                        className="flex items-center gap-1.5 rounded-2xl border border-dashed border-white/[0.12] px-3 py-2.5 text-xs font-bold text-white/35 hover:border-indigo-400/40 hover:text-indigo-400 transition"
+                        className="flex items-center gap-1.5 rounded-2xl border border-dashed border-white/[0.12] px-3 py-2.5 text-xs font-bold text-gray-400 hover:border-indigo-400/40 hover:text-indigo-400 transition"
                       >
                         <Plus size={12} /> הוסף
                       </button>
@@ -847,8 +847,8 @@ export default function CrmClient({
 
           {/* ══════════ LIST VIEW ══════════ */}
           {view === "list" && (
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] overflow-hidden">
-              <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.07] px-5 py-4">
+            <div className="rounded-2xl border border-gray-100 bg-white/[0.03] overflow-hidden">
+              <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
                 <div className="relative flex-1 min-w-[160px]">
                   <Search size={13} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-white/30" />
                   <input
@@ -859,14 +859,14 @@ export default function CrmClient({
                   />
                 </div>
                 <div className="relative">
-                  <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="rounded-xl border border-white/[0.09] bg-[#0f1020] text-white/65 py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-indigo-500/50">
+                  <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="rounded-xl border border-white/[0.09] bg-[#0f1020] text-gray-600 py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-indigo-500/50">
                     <option value="">כל הסטטוסים</option>
                     {STATUS_COLUMNS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                   </select>
                   <ChevronDown size={12} className="pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-white/30" />
                 </div>
                 <div className="relative">
-                  <select value={filterProject} onChange={e => setFilterProject(e.target.value)} className="rounded-xl border border-white/[0.09] bg-[#0f1020] text-white/65 py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-indigo-500/50">
+                  <select value={filterProject} onChange={e => setFilterProject(e.target.value)} className="rounded-xl border border-white/[0.09] bg-[#0f1020] text-gray-600 py-2 ps-3 pe-7 text-xs appearance-none outline-none focus:border-indigo-500/50">
                     <option value="">כל הפרויקטים</option>
                     {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
@@ -883,7 +883,7 @@ export default function CrmClient({
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px] text-sm">
                   <thead>
-                    <tr className="border-b border-white/[0.07] bg-white/[0.02]">
+                    <tr className="border-b border-gray-100 bg-white/[0.02]">
                       {["שם", "סטטוס", "פרויקט", "טלפון", "אימייל", "שווי", "תאריך", ""].map(h => (
                         <th key={h} className="px-4 py-3 text-right text-[10px] font-black uppercase tracking-wider text-white/30">{h}</th>
                       ))}
@@ -893,7 +893,7 @@ export default function CrmClient({
                     {filteredContacts.map(c => {
                       const meta = statusMeta(c.status);
                       return (
-                        <tr key={c.id} className="hover:bg-white/[0.03] transition-colors">
+                        <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2.5">
                               <div
@@ -913,7 +913,7 @@ export default function CrmClient({
                               <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />{meta.label}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-xs text-white/45">{c.project?.name ?? "—"}</td>
+                          <td className="px-4 py-3 text-xs text-gray-400">{c.project?.name ?? "—"}</td>
                           <td className="px-4 py-3 text-xs text-white/40 font-mono" dir="ltr">{c.phone ?? "—"}</td>
                           <td className="px-4 py-3 text-xs text-white/40 truncate max-w-[140px]" dir="ltr">{c.email ?? "—"}</td>
                           <td className="px-4 py-3 text-xs font-bold text-emerald-300">{c.value != null ? fmtMoney(c.value) : "—"}</td>
@@ -963,7 +963,7 @@ export default function CrmClient({
           {view === "projects" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-white/55">{projects.length} פרויקטים</p>
+                <p className="text-sm font-bold text-gray-500">{projects.length} פרויקטים</p>
                 <button
                   type="button"
                   onClick={() => setAddProjOpen(v => !v)}
@@ -988,7 +988,7 @@ export default function CrmClient({
                       <input type="date" value={projTo} onChange={e => setProjTo(e.target.value)} className={inputCls} />
                     </div>
                   </div>
-                  <label className="flex items-center gap-2 text-xs font-bold text-white/65 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs font-bold text-gray-600 cursor-pointer">
                     <input type="checkbox" checked={projActive} onChange={e => setProjActive(e.target.checked)} className="rounded border-white/20 accent-indigo-500" />
                     פרויקט פעיל
                   </label>
@@ -996,7 +996,7 @@ export default function CrmClient({
                     <button type="button" onClick={saveProject} disabled={savingProj} className="flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-xs font-bold text-white disabled:opacity-50">
                       {savingProj ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />} שמור
                     </button>
-                    <button type="button" onClick={() => setAddProjOpen(false)} className="rounded-xl border border-white/[0.09] bg-white/[0.05] px-4 py-2 text-xs font-bold text-white/55">
+                    <button type="button" onClick={() => setAddProjOpen(false)} className="rounded-xl border border-white/[0.09] bg-white/[0.05] px-4 py-2 text-xs font-bold text-gray-500">
                       ביטול
                     </button>
                   </div>
@@ -1016,7 +1016,7 @@ export default function CrmClient({
                           </div>
                           <div>
                             <p className="font-black text-white text-sm">{p.name}</p>
-                            <span className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${p.isActive ? "bg-emerald-500/[0.12] text-emerald-300" : "bg-white/[0.06] text-white/35"}`}>
+                            <span className={`text-[10px] font-bold rounded-full px-2 py-0.5 ${p.isActive ? "bg-emerald-500/[0.12] text-emerald-300" : "bg-white/[0.06] text-gray-400"}`}>
                               {p.isActive ? "פעיל" : "ארכיון"}
                             </span>
                           </div>
@@ -1030,7 +1030,7 @@ export default function CrmClient({
                         </button>
                       </div>
                       {(p.activeFrom || p.activeTo) && (
-                        <div className="flex items-center gap-1.5 text-xs text-white/35 mb-3">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3">
                           <Calendar size={11} /> {formatRange(p.activeFrom, p.activeTo)}
                         </div>
                       )}

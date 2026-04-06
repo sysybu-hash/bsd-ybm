@@ -122,7 +122,7 @@ export default function ERPDashboard({
       {/* ── Flow summary cards ── */}
       {flowSummary ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+          <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/[0.15] text-indigo-400">
                 <Box size={18} aria-hidden />
@@ -209,11 +209,11 @@ export default function ERPDashboard({
             {priceSpikes.map((s) => (
               <li
                 key={s.normalizedKey}
-                className="flex flex-col gap-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 md:flex-row md:items-center md:justify-between"
+                className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white/[0.03] p-4 md:flex-row md:items-center md:justify-between"
               >
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-white">{s.description || s.normalizedKey}</p>
-                  <p className="mt-1 text-sm text-white/55">
+                  <p className="mt-1 text-sm text-gray-500">
                     <span className="font-black text-rose-300">
                       {t("erpDash.spikeRise", { pct: s.changePercent.toFixed(1) })}
                     </span>{" "}
@@ -223,7 +223,7 @@ export default function ERPDashboard({
                     })}
                   </p>
                   {insightByKey[s.normalizedKey] ? (
-                    <p className="mt-2 border-t border-white/[0.07] pt-2 text-sm leading-relaxed text-white/65">
+                    <p className="mt-2 border-t border-gray-100 pt-2 text-sm leading-relaxed text-gray-600">
                       {insightByKey[s.normalizedKey]}
                     </p>
                   ) : null}
@@ -252,7 +252,7 @@ export default function ERPDashboard({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-shadow hover:border-white/[0.12]"
+            className="rounded-2xl border border-gray-100 bg-white/[0.03] p-5 transition-shadow hover:border-white/[0.12]"
           >
             <p className="text-xs font-medium text-white/50">{stat.label}</p>
             <p className={`mt-2 text-3xl font-black ${stat.valueClass}`}>{stat.value}</p>
@@ -264,7 +264,7 @@ export default function ERPDashboard({
       </div>
 
       {/* ── Chart ── */}
-      <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-6 md:p-8">
+      <div className="rounded-2xl border border-gray-100 bg-white/[0.03] p-6 md:p-8">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="flex items-center gap-2 text-base font-black text-white">
@@ -278,8 +278,8 @@ export default function ERPDashboard({
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
             <BarChart3 className="text-white/10" size={44} strokeWidth={1} aria-hidden />
             <div>
-              <p className="font-bold text-white/55">אין עדיין נתוני תרשים</p>
-              <p className="mt-1 text-sm text-white/35">{t("erpDash.chartEmpty")}</p>
+              <p className="font-bold text-gray-500">אין עדיין נתוני תרשים</p>
+              <p className="mt-1 text-sm text-gray-400">{t("erpDash.chartEmpty")}</p>
             </div>
             <Link
               href="/dashboard/erp#erp-multi-scanner"

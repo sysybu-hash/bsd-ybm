@@ -1,4 +1,4 @@
-import { Wallet } from "lucide-react";
+﻿import { Wallet } from "lucide-react";
 import { getPlatformPayPalConfig } from "@/lib/platform-paypal";
 
 /**
@@ -27,7 +27,7 @@ export default function PlatformPayPalOwnerCard() {
             <h2 id="platform-paypal-title" className="text-lg font-black text-white">
               PayPal של מפעיל הפלטפורמה (רק אצלך)
             </h2>
-            <p className="mt-1 text-sm leading-relaxed text-white/55">
+            <p className="mt-1 text-sm leading-relaxed text-gray-500">
               הפרטים כאן מגיעים מ־<code className="text-xs bg-white/80 px-1 rounded">.env</code> — לקבלת
               תשלומים <strong>אליך</strong> (מנויים, שירות וכו׳). זה <strong>לא</strong> מוצג ללקוחות
               הארגונים בדף המנויים שלהם; שם נשאר רק ה־PayPal שכל ארגון מגדיר בהגדרות.
@@ -39,7 +39,7 @@ export default function PlatformPayPalOwnerCard() {
       {configured ? (
         <div className="mt-5 flex flex-col gap-3 border-t border-indigo-500/30 pt-5 text-sm">
           {merchantEmail ? (
-            <p className="text-white/65">
+            <p className="text-gray-600">
               <span className="font-bold text-white">מייל: </span>
               <span className="font-mono" dir="ltr">
                 {merchantEmail}
@@ -61,7 +61,7 @@ export default function PlatformPayPalOwnerCard() {
         </div>
       ) : (
         <p className="mt-4 text-sm font-medium text-indigo-800">
-          לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-[#0a0b14] px-1 rounded">.env.local</code>:{" "}
+          לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-white px-1 rounded">.env.local</code>:{" "}
           <code className="text-xs">PLATFORM_PAYPAL_MERCHANT_EMAIL</code> ו/או{" "}
           <code className="text-xs">PLATFORM_PAYPAL_ME_SLUG</code>.
         </p>

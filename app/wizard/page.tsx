@@ -38,8 +38,8 @@ export default function WizardPage() {
   return (
     <div className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-black text-white sm:text-4xl">Wizard Control Center</h1>
-        <p className="mt-3 max-w-2xl text-white/55">
+        <h1 className="text-3xl font-black text-gray-900 sm:text-4xl">אשף הטמעה — BSD-YBM פתרונות AI</h1>
+        <p className="mt-3 max-w-2xl text-gray-500">
           This route provides one direct path across setup and operation. Use it when onboarding a new workspace or
           training users on the standard flow.
         </p>
@@ -51,17 +51,17 @@ export default function WizardPage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900 text-white">
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                     <Icon size={18} />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/35">Step {idx + 1}</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-gray-400">שלב {idx + 1}</span>
                 </div>
-                <h2 className="text-xl font-black text-white">{item.title}</h2>
-                <p className="mt-2 text-sm text-white/55">{item.text}</p>
-                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-white/75">
+                <h2 className="text-xl font-black text-gray-900">{item.title}</h2>
+                <p className="mt-2 text-sm text-gray-500">{item.text}</p>
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-indigo-600">
                   Open stage
                   <ArrowRight size={14} />
                 </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback, useEffect, type FormEvent, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
@@ -93,11 +93,11 @@ export default function MissionControl() {
             key={sys.name}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 shadow-sm"
+            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
           >
             <div>
               <span className="font-bold">{sys.name}</span>
-              <p className="text-[10px] text-white/45">{sys.detail}</p>
+              <p className="text-[10px] text-gray-400">{sys.detail}</p>
             </div>
             <div
               className={`w-3 h-3 rounded-full ${
@@ -110,23 +110,23 @@ export default function MissionControl() {
           </motion.div>
         ))}
       </div>
-      <p className="text-[11px] text-white/45 mb-6">
+      <p className="text-[11px] text-gray-400 mb-6">
         סטטוס חי מתעדכן כל 15 שניות{liveAt ? ` · בדיקה אחרונה: ${new Date(liveAt).toLocaleTimeString("he-IL")}` : ""}
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 flex min-h-[480px] max-h-[min(70vh,640px)] flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-sm">
-          <div className="bg-white/[0.03] p-6 border-b border-white/[0.08] flex justify-between items-center text-white gap-4 flex-wrap">
+        <div className="lg:col-span-2 flex min-h-[480px] max-h-[min(70vh,640px)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <div className="bg-white/[0.03] p-6 border-b border-gray-200 flex justify-between items-center text-white gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-indigo-600 rounded-lg shrink-0 text-white">
                 <Zap size={20} aria-hidden />
               </div>
               <span className="font-black italic">BSD AI — לוג תפעול</span>
             </div>
-            <span className="text-xs text-white/45">תצוגה מקומית בלבד</span>
+            <span className="text-xs text-gray-400">תצוגה מקומית בלבד</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#0a0b14]">
+          <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-white">
             {messages.map((m, i) => (
               <div
                 key={`${i}-${m.content.slice(0, 12)}`}
@@ -135,7 +135,7 @@ export default function MissionControl() {
                 <div
                   className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
                     m.role === "ai"
-                      ? "bg-white/[0.05] text-white/75 border border-white/[0.08]"
+                      ? "bg-white/[0.05] text-gray-700 border border-gray-200"
                       : "bg-indigo-600 text-white"
                   }`}
                 >
@@ -147,7 +147,7 @@ export default function MissionControl() {
 
           <form
             onSubmit={onSubmit}
-            className="p-6 bg-white/[0.03] border-t border-white/[0.08] flex gap-4"
+            className="p-6 bg-white/[0.03] border-t border-gray-200 flex gap-4"
           >
             <input
               type="text"
@@ -155,7 +155,7 @@ export default function MissionControl() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKeyDown}
               placeholder="הערות תפעול, בדיקות, משימות..."
-              className="flex-1 bg-[#0a0b14] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
               aria-label="הודעה לבקרה"
             />
             <button
@@ -169,12 +169,12 @@ export default function MissionControl() {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm">
+          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
             <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
               <Clock className="text-indigo-500" aria-hidden />
               תזמון בדיקות (הדגמה)
             </h3>
-            <p className="text-white/45 text-sm mb-6">
+            <p className="text-gray-400 text-sm mb-6">
               שעה לתזכורת בדיקות או סריקות מתוזמנות במערכת (Cron פעיל בפרויקט — ניתן לחבר
               לכאן בהמשך).
             </p>
@@ -186,7 +186,7 @@ export default function MissionControl() {
                   type="time"
                   value={repairTime}
                   onChange={(e) => setRepairTime(e.target.value)}
-                  className="bg-[#0a0b14] border border-white/[0.08] p-2 rounded-lg font-bold"
+                  className="bg-white border border-gray-200 p-2 rounded-lg font-bold"
                 />
               </div>
               <button

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   LineChart,
@@ -35,13 +35,13 @@ export default function PriceComparisonChart({
       : 0;
 
   return (
-    <div className="space-y-6 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm" dir={dir}>
+    <div className="space-y-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" dir={dir}>
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
           <h3 className="text-2xl font-black text-white tracking-tighter italic">
             {t("priceCompare.title", { name: productName })}
           </h3>
-          <p className="text-white/45 font-medium">{t("priceCompare.subtitle")}</p>
+          <p className="text-gray-400 font-medium">{t("priceCompare.subtitle")}</p>
         </div>
         <div
           className={`p-4 rounded-2xl flex items-center gap-2 font-black ${
@@ -58,7 +58,7 @@ export default function PriceComparisonChart({
       </div>
 
       {ordered.length === 0 ? (
-        <p className="text-center text-white/35 py-16">{t("priceCompare.noData")}</p>
+        <p className="text-center text-gray-400 py-16">{t("priceCompare.noData")}</p>
       ) : (
         <RechartsBounded height={250}>
           <ResponsiveContainer width="100%" height="100%">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { COOKIE_LOCALE, SELECTABLE_LOCALES, LOCALE_LABELS, type AppLocale } from "@/lib/i18n/config";
 import { useI18n } from "@/components/I18nProvider";
@@ -18,8 +18,8 @@ export default function LanguageSwitcher({ className, showLabel, tone = "default
 
   const isDark = tone === "dark";
   const selectClass = isDark
-    ? "min-w-[9rem] rounded-xl border border-white/30 bg-white/15 px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-400/50 [&>option]:bg-[#0a0b14] [&>option]:text-white"
-    : "rounded-xl border border-white/[0.08] bg-[#0a0b14] px-3 py-2 text-sm font-medium text-white min-w-[9rem]";
+    ? "min-w-[9rem] rounded-xl border border-white/30 bg-white/15 px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-400/50 [&>option]:bg-white [&>option]:text-white"
+    : "rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-white min-w-[9rem]";
 
   return (
     <label className={`inline-flex items-center gap-2 ${className ?? ""}`}>
@@ -30,7 +30,7 @@ export default function LanguageSwitcher({ className, showLabel, tone = "default
       />
       {showLabel ? (
         <span
-          className={`text-sm font-medium whitespace-nowrap ${isDark ? "text-white/90" : "text-white/55"}`}
+          className={`text-sm font-medium whitespace-nowrap ${isDark ? "text-white/90" : "text-gray-500"}`}
         >
           {t("language.label")}
         </span>

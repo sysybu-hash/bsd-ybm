@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { ShieldCheck } from "lucide-react";
 
 export default function ProjectGuardian() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6" dir="rtl">
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h4 className="font-black italic mb-4">רווחיות פרויקט חי</h4>
         <div className="h-4 w-full bg-white/[0.05] rounded-full overflow-hidden">
           <div className="h-full bg-emerald-500/15" style={{ width: "75%" }} />

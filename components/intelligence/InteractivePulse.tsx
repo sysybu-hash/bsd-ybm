@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,7 +8,7 @@ export default function InteractivePulse() {
   const [voicePanelOpen, setVoicePanelOpen] = useState(false);
   return (
     <div
-      className="space-y-8 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-10 text-white shadow-sm"
+      className="space-y-8 rounded-2xl border border-gray-200 bg-white p-10 text-white shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-center gap-4">
@@ -50,7 +50,7 @@ export default function InteractivePulse() {
             className="h-full bg-indigo-500/15 shadow-[0_0_15px_#3b82f6]"
           />
         </div>
-        <p className="mt-4 text-xs italic text-white/45">
+        <p className="mt-4 text-xs italic text-gray-400">
           עוד ₪10,000 להשגת בונוס &quot;צמיחה מהירה&quot;!
         </p>
       </div>

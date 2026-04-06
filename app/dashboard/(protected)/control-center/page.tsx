@@ -184,7 +184,7 @@ export default async function ControlCenterPage() {
     <div className="space-y-6" dir="rtl">
 
       {/* HEADER */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14] px-6 py-7 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white px-6 py-7 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-500" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -192,27 +192,27 @@ export default async function ControlCenterPage() {
               <CircleCheckBig size={11} /> מצב תפעול פשוט
             </span>
             <h1 className="mt-3 text-2xl font-black tracking-tight text-white">מרכז שליטה ותפעול</h1>
-            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-white/45">
+            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-400">
               כל הפעולות החשובות מרוכזות כאן. ניהול מנוי, צוות, ניתוח שימוש והמלצות.
             </p>
           </div>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4">
+          <div className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400/70">ארגון</p>
             <p className="mt-1.5 text-lg font-black text-white">{org?.name ?? "לא נמצא"}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4">
+          <div className="rounded-2xl border border-gray-100 bg-white/[0.04] p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400/70">מנוי</p>
             <p className="mt-1.5 text-lg font-black text-white">{org?.subscriptionTier ?? "-"}</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-emerald-500/[0.08] p-4">
+          <div className="rounded-2xl border border-gray-100 bg-emerald-500/[0.08] p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/70">משתמשים פעילים</p>
             <p className="mt-1.5 text-lg font-black text-white">{activeUsers}</p>
           </div>
-          <div className={`rounded-2xl border p-4 ${pendingUsers > 0 ? "border-amber-500/25 bg-amber-500/[0.08]" : "border-white/[0.07] bg-white/[0.03]"}`}>
-            <p className={`text-[10px] font-bold uppercase tracking-widest ${pendingUsers > 0 ? "text-amber-400/70" : "text-white/35"}`}>ממתינים לאישור</p>
-            <p className={`mt-1.5 text-lg font-black ${pendingUsers > 0 ? "text-amber-400" : "text-white/45"}`}>{pendingUsers}</p>
+          <div className={`rounded-2xl border p-4 ${pendingUsers > 0 ? "border-amber-500/25 bg-amber-500/[0.08]" : "border-gray-100 bg-white/[0.03]"}`}>
+            <p className={`text-[10px] font-bold uppercase tracking-widest ${pendingUsers > 0 ? "text-amber-400/70" : "text-gray-400"}`}>ממתינים לאישור</p>
+            <p className={`mt-1.5 text-lg font-black ${pendingUsers > 0 ? "text-amber-400" : "text-gray-400"}`}>{pendingUsers}</p>
           </div>
         </div>
       </section>
@@ -225,15 +225,15 @@ export default async function ControlCenterPage() {
         </div>
 
         {/* Next best action */}
-        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5">
+        <article className="rounded-2xl border border-gray-100 bg-white p-5">
           <h2 className="mb-1 flex items-center gap-2 text-base font-black text-white">
             <Zap size={16} className="text-indigo-400" />
             מה לעשות עכשיו
           </h2>
-          <p className="mb-4 text-xs text-white/35">המלצה אחת ברורה לפי הנתונים הנוכחיים</p>
+          <p className="mb-4 text-xs text-gray-400">המלצה אחת ברורה לפי הנתונים הנוכחיים</p>
           <div className="rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.08] p-4">
             <p className="text-sm font-black text-white">{recommendedAction.title}</p>
-            <p className="mt-2 text-sm leading-6 text-white/55">{recommendedAction.description}</p>
+            <p className="mt-2 text-sm leading-6 text-gray-500">{recommendedAction.description}</p>
             <Link
               href={recommendedAction.href}
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-500/25 hover:bg-indigo-400 transition-colors"
@@ -262,22 +262,22 @@ export default async function ControlCenterPage() {
         </article>
 
         {/* Funnel metrics */}
-        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5">
+        <article className="rounded-2xl border border-gray-100 bg-white p-5">
           <h2 className="mb-1 flex items-center gap-2 text-base font-black text-white">
             <BarChart3 size={16} className="text-indigo-400" />
             דוח שימוש — מסלולים
           </h2>
-          <p className="mb-4 text-xs text-white/35">
+          <p className="mb-4 text-xs text-gray-400">
             {latestWizardEventAt
               ? `עדכון: ${new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short" }).format(latestWizardEventAt)}`
               : "אין עדיין נתוני Wizard."}
           </p>
           <div className="space-y-3">
             {funnel.map((row) => (
-              <div key={row.route} className="rounded-xl border border-white/[0.07] bg-white/[0.03] p-3">
+              <div key={row.route} className="rounded-xl border border-gray-100 bg-white/[0.03] p-3">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <p className="text-[13px] font-bold text-white">{row.route}</p>
-                  <span className="rounded-full bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[10px] font-bold text-white/55">
+                  <span className="rounded-full bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[10px] font-bold text-gray-500">
                     {pct(row.completion, row.views)} השלמה
                   </span>
                 </div>
@@ -298,7 +298,7 @@ export default async function ControlCenterPage() {
         </article>
 
         {/* Quick shortcuts */}
-        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5 lg:col-span-2">
+        <article className="rounded-2xl border border-gray-100 bg-white p-5 lg:col-span-2">
           <h2 className="mb-4 flex items-center gap-2 text-base font-black text-white">
             <Shield size={16} className="text-emerald-400" />
             קיצורי דרך חשובים
@@ -347,11 +347,11 @@ function QuickPanel({
   cta: string;
   accent?: "rose" | "indigo" | "slate";
 }) {
-  const borderClass = accent === "rose" ? "border-rose-500/25 bg-rose-500/[0.08]" : accent === "indigo" ? "border-indigo-500/25 bg-indigo-500/[0.08]" : "border-white/[0.07] bg-white/[0.03]";
+  const borderClass = accent === "rose" ? "border-rose-500/25 bg-rose-500/[0.08]" : accent === "indigo" ? "border-indigo-500/25 bg-indigo-500/[0.08]" : "border-gray-100 bg-white/[0.03]";
   return (
     <div className={`rounded-xl border p-3 ${borderClass}`}>
       <p className="inline-flex items-center gap-2 text-sm font-black text-white">{icon}{title}</p>
-      <p className="mt-1 text-xs text-white/45">{description}</p>
+      <p className="mt-1 text-xs text-gray-400">{description}</p>
       <Link href={href} className="mt-2 inline-flex rounded-lg border border-white/[0.10] bg-white/[0.05] px-3 py-1.5 text-xs font-bold text-white/70 hover:bg-white/[0.08] transition-colors">{cta}</Link>
     </div>
   );
@@ -368,8 +368,8 @@ function MetricChip({
 }) {
   const toneClass = tone === "blue" ? "text-indigo-300" : tone === "green" ? "text-emerald-300" : "text-white";
   return (
-    <div className="rounded-lg bg-white/[0.05] border border-white/[0.07] p-1.5">
-      <p className="text-[9px] text-white/35">{label}</p>
+    <div className="rounded-lg bg-white/[0.05] border border-gray-100 p-1.5">
+      <p className="text-[9px] text-gray-400">{label}</p>
       <p className={`text-sm font-black ${toneClass}`}>{value}</p>
     </div>
   );
@@ -380,14 +380,14 @@ const QUICK_LINK_COLORS: Record<string, string> = {
   blue: "border-indigo-500/25 hover:border-indigo-500/40 hover:bg-indigo-500/[0.08]",
   amber: "border-amber-500/25 hover:border-amber-500/40 hover:bg-amber-500/[0.08]",
   emerald: "border-emerald-500/25 hover:border-emerald-500/40 hover:bg-emerald-500/[0.08]",
-  slate: "border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.05]",
+  slate: "border-gray-100 hover:border-white/[0.15] hover:bg-gray-50",
 };
 
 function QuickLink({ href, title, subtitle, color = "slate" }: { href: string; title: string; subtitle: string; color?: string }) {
   return (
     <Link href={href} className={`rounded-2xl border bg-white/[0.03] p-4 transition-all ${QUICK_LINK_COLORS[color] ?? QUICK_LINK_COLORS.slate}`}>
       <p className="text-sm font-black text-white">{title}</p>
-      <p className="mt-1 text-xs text-white/45">{subtitle}</p>
+      <p className="mt-1 text-xs text-gray-400">{subtitle}</p>
     </Link>
   );
 }

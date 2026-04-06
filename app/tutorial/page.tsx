@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function TutorialPage() {
   return (
-    <div className="relative min-h-screen bg-[#0a0b14]">
+    <div className="relative min-h-screen bg-gray-50">
       <Navbar />
       <main className="pt-24 pb-16">
         <SiteTutorialShowcase variant="page" />

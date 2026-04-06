@@ -46,10 +46,10 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-[#0a0b14] px-4 py-3 text-sm font-semibold text-white/75 transition hover:border-indigo-500/30 hover:bg-indigo-500/15"
+      className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-indigo-200 hover:bg-indigo-50"
     >
       <span className="rounded-lg bg-indigo-500/15 p-1.5">
-        <Icon className="h-4 w-4 text-indigo-400" aria-hidden />
+        <Icon className="h-4 w-4 text-indigo-600" aria-hidden />
       </span>
       {label}
     </Link>
@@ -75,10 +75,10 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-white/[0.08] bg-[#0a0b14] shadow-xl shadow-gray-200/70 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
+              className={`pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-gray-200 bg-white shadow-xl shadow-gray-200/70 transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
             >
               {/* Header */}
-              <div className="relative flex items-center justify-between gap-2 border-b border-white/[0.07] bg-[#0a0b14] px-4 py-3.5">
+              <div className="relative flex items-center justify-between gap-2 border-b border-gray-100 bg-white px-4 py-3.5">
                 <DialogTitle className="sr-only">
                   {t("marketingDrawer.navAria")}
                 </DialogTitle>
@@ -88,7 +88,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <button
                   type="button"
                   onClick={close}
-                  className="rounded-lg p-2 text-white/45 transition hover:bg-white/[0.05] hover:text-white"
+                  className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-50 hover:text-gray-600"
                   aria-label={t("marketingDrawer.closeMenu")}
                 >
                   <X className="h-5 w-5" aria-hidden />
@@ -96,7 +96,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
               </div>
 
               {/* לוגו */}
-              <div className="border-b border-white/[0.07] px-4 py-4">
+              <div className="border-b border-gray-100 px-4 py-4">
                 <div className="mx-auto max-h-20 w-full max-w-[14rem]">
                   <Image
                     src={HERO_LOGO}
@@ -119,14 +119,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <NavRow href="/contact" icon={Mail} label={t("marketingDrawer.contact")} onNavigate={close} />
 
                 {/* כרטיס פרטי קשר */}
-                <div className="mt-2 rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 text-sm leading-relaxed text-white/65">
-                  <p className="mb-2 font-bold text-white">
+                <div className="mt-2 rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm leading-relaxed text-gray-600">
+                  <p className="mb-2 font-bold text-gray-900">
                     {t("marketingDrawer.contact")}
                   </p>
-                  <p className="text-white/55 text-xs">{t("marketingDrawer.contactAddress")}</p>
+                  <p className="text-gray-500 text-xs">{t("marketingDrawer.contactAddress")}</p>
                   <a
                     href="tel:+972525640021"
-                    className="mt-2 block font-medium text-white/75 hover:text-indigo-300"
+                    className="mt-2 block font-medium text-gray-700 hover:text-indigo-600"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactPhone")}
@@ -155,7 +155,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   href={pricingHref}
                   scroll={pathname === "/"}
                   onClick={close}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/15 px-4 py-3.5 text-sm font-black text-indigo-300 shadow-sm transition hover:bg-indigo-500/25"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3.5 text-sm font-black text-indigo-600 shadow-sm transition hover:bg-indigo-100"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden />
                   {t("marketingDrawer.subscribe")}
@@ -164,14 +164,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/dashboard/billing"
                   onClick={close}
-                  className="text-center text-xs font-semibold text-white/35 underline-offset-2 hover:text-indigo-300 hover:underline"
+                  className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-indigo-600 hover:underline"
                 >
                   {t("marketingDrawer.billingLink")}
                 </Link>
               </nav>
 
               {/* Footer — כניסה/הרשמה */}
-              <div className="relative border-t border-white/[0.07] px-4 py-5 space-y-2">
+              <div className="relative border-t border-gray-100 px-4 py-5 space-y-2">
                 <Link
                   href="/login"
                   onClick={close}
@@ -183,11 +183,11 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/dashboard"
                   onClick={close}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] py-2.5 text-sm font-bold text-white/65 transition hover:bg-white/[0.05]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
                 >
                   <LayoutDashboard size={15} /> לדשבורד
                 </Link>
-                <p className="text-center text-[0.8rem] font-medium italic leading-snug text-white/45 pt-1">
+                <p className="text-center text-[0.8rem] font-medium italic leading-snug text-gray-400 pt-1">
                   {t("marketingDrawer.brandQuote")}
                 </p>
               </div>

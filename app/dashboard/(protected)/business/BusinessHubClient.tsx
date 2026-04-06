@@ -98,11 +98,11 @@ const STATUS_LABEL: Record<string, string> = {
   CLOSED_LOST: "נסגר ✗",
 };
 const STATUS_BADGE: Record<string, string> = {
-  LEAD:        "bg-indigo-500/[0.12] text-indigo-300",
-  ACTIVE:      "bg-sky-500/[0.12] text-sky-300",
-  PROPOSAL:    "bg-violet-500/[0.12] text-violet-300",
-  CLOSED_WON:  "bg-emerald-500/[0.12] text-emerald-300",
-  CLOSED_LOST: "bg-rose-500/[0.12] text-rose-300",
+  LEAD:        "bg-indigo-50 text-indigo-700 border-indigo-200",
+  ACTIVE:      "bg-sky-50 text-sky-700 border-sky-200",
+  PROPOSAL:    "bg-violet-50 text-violet-700 border-violet-200",
+  CLOSED_WON:  "bg-emerald-50 text-emerald-700 border-emerald-200",
+  CLOSED_LOST: "bg-rose-50 text-rose-700 border-rose-200",
 };
 
 /* ─── Inner component ────────────────────────────────────────────────────── */
@@ -147,24 +147,24 @@ function HubContent(props: Props) {
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-[#050508]" dir="rtl">
+    <div className="min-h-screen bg-gray-50" dir="rtl">
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-30 border-b border-white/[0.07] bg-black/80 shadow-sm" style={{ backdropFilter: "blur(12px)" }}>
+      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm" style={{ backdropFilter: "blur(12px)" }}>
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 shadow-sm">
               <Layers size={14} className="text-white" />
             </div>
-            <h1 className="font-black text-lg text-white">מרכז עסקי</h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/[0.10] px-2.5 py-0.5 text-[11px] font-bold text-emerald-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <h1 className="font-black text-lg text-gray-900">מרכז עסקי</h1>
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               CRM × ERP
             </span>
           </div>
           <Link
             href="/dashboard/erp/invoice"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-500/25 hover:bg-indigo-400 transition-all"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all"
           >
             <ReceiptText size={14} /> הנפק חשבונית
           </Link>
@@ -175,71 +175,71 @@ function HubContent(props: Props) {
 
         {/* ── KPI strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:-translate-y-0.5 hover:bg-white/[0.05]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-sm">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                 <TrendingUp size={13} />
               </div>
-              <p className="text-xs font-bold text-white/55">הכנסות</p>
+              <p className="text-xs font-bold text-gray-500">הכנסות</p>
             </div>
-            <p className="text-2xl font-black text-white">{income > 0 ? fmtMoney(income) : "—"}</p>
-            <p className="text-[10px] text-white/35 mt-1">חשבוניות מונפקות</p>
+            <p className="text-2xl font-black text-gray-900">{income > 0 ? fmtMoney(income) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">חשבוניות מונפקות</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:-translate-y-0.5 hover:bg-white/[0.05]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-rose-500 text-white shadow-sm">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
                 <ShoppingCart size={13} />
               </div>
-              <p className="text-xs font-bold text-white/55">הוצאות</p>
+              <p className="text-xs font-bold text-gray-500">הוצאות</p>
             </div>
-            <p className="text-2xl font-black text-white">{expenses > 0 ? fmtMoney(expenses) : "—"}</p>
-            <p className="text-[10px] text-white/35 mt-1">{docs.length} מסמכים סרוקים</p>
+            <p className="text-2xl font-black text-gray-900">{expenses > 0 ? fmtMoney(expenses) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">{docs.length} מסמכים סרוקים</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:-translate-y-0.5 hover:bg-white/[0.05]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-xl text-white shadow-sm ${profit >= 0 ? "bg-indigo-500" : "bg-amber-500"}`}>
+              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${profit >= 0 ? "bg-indigo-50 text-indigo-600" : "bg-amber-50 text-amber-600"}`}>
                 <CheckCircle2 size={13} />
               </div>
-              <p className="text-xs font-bold text-white/55">רווח גולמי</p>
+              <p className="text-xs font-bold text-gray-500">רווח גולמי</p>
             </div>
-            <p className={`text-2xl font-black ${profit >= 0 ? "text-indigo-300" : "text-amber-300"}`}>
+            <p className={`text-2xl font-black ${profit >= 0 ? "text-indigo-600" : "text-amber-600"}`}>
               {income > 0 || expenses > 0 ? fmtMoney(profit) : "—"}
             </p>
-            <p className="text-[10px] text-white/35 mt-1">הכנסות פחות הוצאות</p>
+            <p className="text-[10px] text-gray-400 mt-1">הכנסות פחות הוצאות</p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:-translate-y-0.5 hover:bg-white/[0.05]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-sm">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                 <Layers size={13} />
               </div>
-              <p className="text-xs font-bold text-white/55">פייפליין CRM</p>
+              <p className="text-xs font-bold text-gray-500">פייפליין CRM</p>
             </div>
-            <p className="text-2xl font-black text-indigo-300">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
-            <p className="text-[10px] text-white/35 mt-1">
+            <p className="text-2xl font-black text-indigo-600">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">
               {contacts.filter((c) => !["CLOSED_WON", "CLOSED_LOST"].includes(c.status)).length} עסקאות פתוחות
             </p>
           </div>
-          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:-translate-y-0.5 hover:bg-white/[0.05]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-500 text-white shadow-sm">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
                 <CheckCircle2 size={13} />
               </div>
-              <p className="text-xs font-bold text-white/55">אחוז הצלחה</p>
+              <p className="text-xs font-bold text-gray-500">אחוז הצלחה</p>
             </div>
-            <p className="text-2xl font-black text-sky-300">{winRate != null ? `${winRate}%` : "—"}</p>
-            <p className="text-[10px] text-white/35 mt-1">{wonCount} מתוך {closedCount} סגרו</p>
+            <p className="text-2xl font-black text-sky-600">{winRate != null ? `${winRate}%` : "—"}</p>
+            <p className="text-[10px] text-gray-400 mt-1">{wonCount} מתוך {closedCount} סגרו</p>
           </div>
         </div>
 
         {/* ── Alert: עסקאות שנסגרו ללא חשבונית ── */}
         {wonContacts.length > 0 && (
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] px-5 py-4 flex items-center gap-4">
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 flex items-center gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-white">
               <CheckCircle2 size={18} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-black text-emerald-200">{wonContacts.length} עסקאות נסגרו — ממתינות לחשבונית</p>
-              <p className="text-sm text-emerald-400 mt-0.5">לחץ על שם הלקוח להנפקה מהירה עם הפרטים מולאו אוטומטית</p>
+              <p className="font-black text-emerald-800">{wonContacts.length} עסקאות נסגרו — ממתינות לחשבונית</p>
+              <p className="text-sm text-emerald-600 mt-0.5">לחץ על שם הלקוח להנפקה מהירה עם הפרטים מולאו אוטומטית</p>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {wonContacts.slice(0, 3).map((c) => (
@@ -271,34 +271,34 @@ function HubContent(props: Props) {
         />
 
         {/* ── כלי ERP — מקופלים כברירת מחדל ── */}
-        <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] overflow-hidden">
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
           <button
             type="button"
             onClick={() => setErpOpen((v) => !v)}
-            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-white/65 hover:bg-white/[0.04] transition-colors"
+            className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <span className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/[0.15]">
-                <FileText size={14} className="text-indigo-400" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50">
+                <FileText size={14} className="text-indigo-600" />
               </span>
               <span>
-                <span className="font-black text-white">כלי ERP</span>
-                <span className="text-white/40 ms-2 text-xs">סריקת מסמכים, דוחות וארכיון</span>
+                <span className="font-black text-gray-900">כלי ERP</span>
+                <span className="text-gray-400 ms-2 text-xs">סריקת מסמכים, דוחות וארכיון</span>
               </span>
-              <span className="rounded-full border border-white/[0.08] bg-white/[0.05] px-2.5 py-0.5 text-[10px] font-bold text-white/40">
+              <span className="rounded-full border border-gray-200 bg-gray-100 px-2.5 py-0.5 text-[10px] font-bold text-gray-500">
                 {docs.length} מסמכים
               </span>
             </span>
             <ChevronDown
               size={14}
-              className={`text-white/35 transition-transform duration-200 ${erpOpen ? "rotate-180" : ""}`}
+              className={`text-gray-400 transition-transform duration-200 ${erpOpen ? "rotate-180" : ""}`}
             />
           </button>
           {erpOpen && (
-            <div className="border-t border-white/[0.07] space-y-6 p-5">
+            <div className="border-t border-gray-100 space-y-6 p-5">
               {!geminiConfigured && (
-                <div className="flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/[0.07] px-4 py-3 text-sm text-rose-200" role="alert">
-                  <AlertTriangle size={16} className="shrink-0 text-rose-400" />
+                <div className="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
+                  <AlertTriangle size={16} className="shrink-0 text-rose-500" />
                   <span><strong>שים לב</strong>: מפתח Gemini חסר. סריקת AI לא תעבוד ללא <code className="bg-rose-500/[0.15] px-1 rounded">GOOGLE_GENERATIVE_AI_API_KEY</code>.</span>
                 </div>
               )}
@@ -332,10 +332,10 @@ function HubContent(props: Props) {
 /* ─── Export with Suspense wrapper ───────────────────────────────────────── */
 function FallbackLoader() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center bg-[#050508]">
+    <div className="flex min-h-[60vh] items-center justify-center bg-gray-50">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 size={36} className="animate-spin text-indigo-400" />
-        <p className="text-sm font-bold text-white/35">טוען מרכז עסקי...</p>
+        <Loader2 size={36} className="animate-spin text-indigo-500" />
+        <p className="text-sm font-bold text-gray-400">טוען מרכז עסקי...</p>
       </div>
     </div>
   );

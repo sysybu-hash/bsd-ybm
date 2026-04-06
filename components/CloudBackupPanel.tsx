@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { Cloud, RefreshCw, Loader2, ChevronDown } from "lucide-react";
@@ -148,13 +148,13 @@ export default function CloudBackupPanel() {
     <div className="space-y-6">
       <div className="flex items-start gap-3 p-4 rounded-2xl bg-indigo-500/15 border border-indigo-500/20">
         <Cloud className="text-indigo-400 shrink-0 mt-0.5" size={22} />
-        <div className="text-sm text-white/65 leading-relaxed">
+        <div className="text-sm text-gray-600 leading-relaxed">
           <p className="font-bold text-white">גיבוי וסריקה אוטונומית מול ענן</p>
           <p className="mt-1">
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
           </p>
-          <p className="mt-2 text-white/55 border-t border-indigo-500/30/60 pt-2">
+          <p className="mt-2 text-gray-500 border-t border-indigo-500/30/60 pt-2">
             <strong>מסמכים ישנים מהמחשב:</strong> העלאה ופענוח אצלנו ב־ERP דרך &quot;סורק ה־AI&quot;
             (גרירה של כמה קבצים). חיבור ענן כאן מתאים בעיקר לגיבוי וסנכרון שוטפים אחרי שכבר עובדים
             במערכת.
@@ -183,20 +183,20 @@ export default function CloudBackupPanel() {
             return (
               <li
                 key={p.id}
-                className="rounded-2xl border border-white/[0.07] bg-white/[0.03] overflow-hidden"
+                className="rounded-2xl border border-gray-100 bg-white/[0.03] overflow-hidden"
               >
                 <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-bold text-white">{p.label}</p>
-                    <p className="text-xs text-white/45">{p.hint}</p>
+                    <p className="text-xs text-gray-400">{p.hint}</p>
                     {rec?.lastSyncAt && (
-                      <p className="text-xs text-white/35 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         סנכרון אחרון: {new Date(rec.lastSyncAt).toLocaleString("he-IL")}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-2 shrink-0">
-                    <div className="inline-flex rounded-xl border border-white/[0.08] bg-[#0a0b14] overflow-hidden shadow-sm">
+                    <div className="inline-flex rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
                       {!active || !rec ? (
                         <button
                           type="button"
@@ -214,7 +214,7 @@ export default function CloudBackupPanel() {
                         </button>
                       ) : (
                         <>
-                          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer px-3 py-2 border-l border-white/[0.07]">
+                          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer px-3 py-2 border-l border-gray-100">
                             <input
                               type="checkbox"
                               checked={rec.autoScan}
@@ -239,7 +239,7 @@ export default function CloudBackupPanel() {
                       <button
                         type="button"
                         onClick={() => setOpenGuide(guideOpen ? null : p.id)}
-                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-white/65 bg-white/[0.05] hover:bg-white/[0.08] border-white/[0.07] border-l"
+                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-gray-600 bg-white/[0.05] hover:bg-white/[0.08] border-gray-100 border-l"
                       >
                         איך מחברים?
                         <ChevronDown
@@ -251,7 +251,7 @@ export default function CloudBackupPanel() {
                   </div>
                 </div>
                 {guideOpen ? (
-                  <div className="border-t border-white/[0.08] bg-[#0a0b14] px-4 py-4 text-sm text-white/65 space-y-3">
+                  <div className="border-t border-gray-200 bg-white px-4 py-4 text-sm text-gray-600 space-y-3">
                     <p className="font-black text-white">{guide.title} — רשימת הכנה</p>
                     <div>
                       <p className="text-xs font-bold text-indigo-300 mb-1">בשרת (Vercel / .env)</p>
@@ -280,7 +280,7 @@ export default function CloudBackupPanel() {
       <button
         type="button"
         onClick={() => void load()}
-        className="flex items-center gap-2 text-sm font-bold text-white/55 hover:text-indigo-400"
+        className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-indigo-400"
       >
         <RefreshCw size={16} />
         רענון רשימה

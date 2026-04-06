@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { Zap, Shield, Briefcase, Building2, Brain, CheckCircle2, Star } from "lucide-react";
@@ -49,14 +49,14 @@ export default function LandingMarketing() {
   const primaryColor = "var(--primary-color, #3b82f6)";
 
   return (
-    <div className="min-h-screen bg-[#0a0b14] text-white overflow-hidden font-sans" dir="rtl">
+    <div className="min-h-screen bg-white text-white overflow-hidden font-sans" dir="rtl">
       <main className="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-6">
         <section
           id="ai-solutions"
           className="text-center mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center scroll-mt-28"
         >
           <div className="text-right">
-            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-white/[0.03] border border-white/[0.07] text-white/45 text-xs font-bold uppercase tracking-widest">
+            <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-white/[0.03] border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest">
               <Brain size={14} style={{ color: primaryColor }} /> AI-Powered Business Intelligence
             </p>
             <motion.h1
@@ -69,7 +69,7 @@ export default function LandingMarketing() {
               <br />
               <span className="text-white">Intelligence.</span>
             </motion.h1>
-            <p className="max-w-xl text-white/45 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
+            <p className="max-w-xl text-gray-400 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
               פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
               וחברות בדומיין אחד.
             </p>
@@ -87,14 +87,14 @@ export default function LandingMarketing() {
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-bold text-white/55 underline decoration-slate-300 underline-offset-4 hover:text-[var(--primary-color)]"
+                className="text-sm font-bold text-gray-500 underline decoration-slate-300 underline-offset-4 hover:text-[var(--primary-color)]"
               >
                 יש לך חשבון? התחברות עם Google
               </Link>
             </div>
           </div>
-          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
-            <p className="text-center text-xs font-bold text-white/35 uppercase tracking-widest mb-4">
+          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-white/[0.03] p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
+            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
               הדרכה מונפשת
             </p>
             <SiteTutorialShowcase variant="embedded" />
@@ -122,13 +122,13 @@ export default function LandingMarketing() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className={`cursor-pointer rounded-2xl border border-white/[0.08] p-10 shadow-sm transition-all hover:scale-[1.02] ${s.color}`}
+                  className={`cursor-pointer rounded-2xl border border-gray-200 p-10 shadow-sm transition-all hover:scale-[1.02] ${s.color}`}
                 >
-                  <div className="w-16 h-16 bg-[#0a0b14] rounded-2xl flex items-center justify-center mb-8 shadow-sm">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm">
                     <Icon style={{ color: primaryColor }} size={32} />
                   </div>
                   <h3 className="text-2xl font-black mb-3 italic text-white">{s.title}</h3>
-                  <p className="text-white/45 leading-relaxed text-sm font-medium">{s.desc}</p>
+                  <p className="text-gray-400 leading-relaxed text-sm font-medium">{s.desc}</p>
                 </motion.div>
               );
             })}
@@ -148,10 +148,10 @@ export default function LandingMarketing() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 + 0.4 }}
-                className={`rounded-2xl border bg-[#0a0b14] p-10 ${
+                className={`rounded-2xl border bg-white p-10 ${
                   plan.level === "Premium"
                     ? "border-indigo-500/30 shadow-lg shadow-indigo-200/60"
-                    : "border-white/[0.08] shadow-sm"
+                    : "border-gray-200 shadow-sm"
                 } relative`}
               >
                 {plan.level === "Premium" && (
@@ -160,16 +160,16 @@ export default function LandingMarketing() {
                   </div>
                 )}
                 <h3 className="text-2xl font-black mb-1 italic text-gray-950">{plan.name}</h3>
-                <p className="text-white/35 text-sm mb-6">{plan.desc}</p>
+                <p className="text-gray-400 text-sm mb-6">{plan.desc}</p>
                 <p
                   className="text-5xl font-black mb-8 italic text-white"
                   style={plan.level === "Premium" ? { color: primaryColor } : undefined}
                 >
                   {plan.price}
-                  <span className="text-sm font-medium text-white/35 not-italic"> / חודש</span>
+                  <span className="text-sm font-medium text-gray-400 not-italic"> / חודש</span>
                 </p>
 
-                <ul className="space-y-3 mb-10 text-sm font-medium text-white/55">
+                <ul className="space-y-3 mb-10 text-sm font-medium text-gray-500">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2">
                       <CheckCircle2 size={16} className="text-indigo-500 shrink-0" /> {f}
@@ -190,7 +190,7 @@ export default function LandingMarketing() {
               </motion.div>
             ))}
           </div>
-          <p className="text-center text-xs text-white/35 mt-8">
+          <p className="text-center text-xs text-gray-400 mt-8">
             *במסלול תאגיד — בהתאם להסכם שירות. המחירים להמחשה בלבד.
           </p>
         </section>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -125,23 +125,23 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
             className="absolute bottom-[calc(100%+0.75rem)] start-1/2 z-[220] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2"
           >
             <div
-              className={`overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-lg shadow-gray-200/60 ${
+              className={`overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60 ${
                 tab === "chat" ? "" : ""
               }`}
             >
-              <div className="flex items-center justify-between gap-2 border-b border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
+              <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-white/[0.03] px-3 py-2.5">
                 <div className="flex min-w-0 items-center gap-2 text-xs font-black text-white">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-400">
                     <Sparkles size={14} className="shrink-0" aria-hidden />
                   </div>
                   <span className="truncate">{title}</span>
                 </div>
-                <div className="flex shrink-0 gap-1 rounded-xl border border-white/[0.08] bg-[#0a0b14] p-0.5 shadow-sm">
+                <div className="flex shrink-0 gap-1 rounded-xl border border-gray-200 bg-white p-0.5 shadow-sm">
                   <button
                     type="button"
                     onClick={() => setTab("chat")}
                     className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "chat" ? "bg-indigo-600 text-white" : "text-white/45 hover:bg-white/[0.03]"
+                      tab === "chat" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-gray-50"
                     }`}
                   >
                     צ׳אט
@@ -150,7 +150,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                     type="button"
                     onClick={() => setTab("finance")}
                     className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "finance" ? "bg-indigo-600 text-white" : "text-white/45 hover:bg-white/[0.03]"
+                      tab === "finance" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-gray-50"
                     }`}
                   >
                     כספים
@@ -173,7 +173,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                           className={`max-w-[88%] rounded-2xl px-3 py-2 text-xs font-medium leading-relaxed ${
                             m.role === "user"
                               ? "rounded-br-sm bg-indigo-600 text-white"
-                              : "rounded-bl-sm border border-white/[0.08] bg-[#0a0b14] text-white/75"
+                              : "rounded-bl-sm border border-gray-200 bg-white text-gray-700"
                           }`}
                         >
                           {m.content}
@@ -181,13 +181,13 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                       </div>
                     ))}
                     {sending ? (
-                      <div className="flex justify-end text-xs text-white/35">
+                      <div className="flex justify-end text-xs text-gray-400">
                         <Loader2 className="animate-spin" size={14} />
                       </div>
                     ) : null}
                   </div>
                   {loggedIn ? (
-                    <div className="border-t border-white/[0.07] px-2 py-1 text-center">
+                    <div className="border-t border-gray-100 px-2 py-1 text-center">
                       <Link
                         href="/dashboard/ai"
                         onClick={() => setOpen(false)}
@@ -197,7 +197,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                       </Link>
                     </div>
                   ) : null}
-                  <div className="flex gap-2 border-t border-white/[0.08] bg-[#0a0b14] p-2">
+                  <div className="flex gap-2 border-t border-gray-200 bg-white p-2">
                     <input
                       type="text"
                       value={input}
@@ -210,7 +210,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                       }}
                       disabled={sending}
                       placeholder={t("aiBubble.placeholder")}
-                      className="min-w-0 flex-1 rounded-xl border border-white/[0.08] px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
                     />
                     <button
                       type="button"
@@ -224,16 +224,16 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                   </div>
                 </>
               ) : (
-                <div className="bg-[#0a0b14]">
-                  <div className="flex items-center gap-2 border-b border-white/[0.07] bg-indigo-500/15 px-3 py-2 text-xs font-bold text-white">
+                <div className="bg-white">
+                  <div className="flex items-center gap-2 border-b border-gray-100 bg-indigo-500/15 px-3 py-2 text-xs font-bold text-white">
                     <Bot size={14} aria-hidden />
                     שאלות על הוצאות, הכנסות ומסמכים
                   </div>
-                  <div className="h-44 overflow-y-auto p-3 text-xs text-white/65">
+                  <div className="h-44 overflow-y-auto p-3 text-xs text-gray-600">
                     {fAnswer ? (
                       <p className="whitespace-pre-wrap leading-relaxed">{fAnswer}</p>
                     ) : (
-                      <p className="italic text-white/45">
+                      <p className="italic text-gray-400">
                         לדוגמה: &quot;כמה הוצאנו החודש על חשמל?&quot;
                       </p>
                     )}
@@ -241,12 +241,12 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                       <Loader2 className="mt-2 animate-spin text-indigo-400" size={18} />
                     ) : null}
                   </div>
-                  <div className="flex gap-2 border-t border-white/[0.08] p-2">
+                  <div className="flex gap-2 border-t border-gray-200 p-2">
                     <input
                       value={fQuery}
                       onChange={(e) => setFQuery(e.target.value)}
                       placeholder="שאל את ה-AI..."
-                      className="min-w-0 flex-1 rounded-xl border border-white/[0.08] px-3 py-2 text-xs"
+                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs"
                     />
                     <button
                       type="button"

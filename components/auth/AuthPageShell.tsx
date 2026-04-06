@@ -8,38 +8,35 @@ type Props = Readonly<{
 
 export default function AuthPageShell({ children, secondaryNav }: Props) {
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#050508] text-white overflow-hidden" dir="rtl">
+    <div className="relative min-h-screen flex flex-col bg-gray-50 text-gray-900 overflow-hidden" dir="rtl">
 
-      {/* Mesh gradient background */}
+      {/* Subtle top gradient accent */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <div className="absolute -top-40 right-1/3 h-[600px] w-[600px] rounded-full bg-indigo-600/[0.15] blur-[130px]" />
-        <div className="absolute top-2/3 left-0 h-[400px] w-[400px] rounded-full bg-violet-700/[0.10] blur-[100px]" />
-        {/* grid */}
-        <div className="absolute inset-0 opacity-[0.02]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "56px 56px" }} />
+        <div className="absolute -top-40 right-1/3 h-[400px] w-[400px] rounded-full bg-indigo-100 blur-[120px] opacity-60" />
+        <div className="absolute top-2/3 left-0 h-[300px] w-[300px] rounded-full bg-violet-100 blur-[100px] opacity-50" />
       </div>
 
       {/* Navbar */}
-      <header className="relative z-10 border-b border-white/[0.07] bg-[#050508]/80 backdrop-blur-xl">
+      <header className="relative z-10 border-b border-gray-200 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[60px] max-w-2xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 group">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-black text-white shadow-lg shadow-indigo-500/30 transition group-hover:shadow-indigo-500/50">
               B
             </span>
-            <span className="text-[15px] font-black tracking-tight text-white">
-              BSD<span className="text-indigo-400">-YBM</span>
+            <span className="text-[15px] font-black tracking-tight text-gray-900">
+              BSD<span className="text-indigo-600">-YBM</span>
             </span>
           </Link>
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="hidden text-[12px] font-medium text-white/40 transition hover:text-white sm:inline"
+              className="hidden text-[12px] font-medium text-gray-400 transition hover:text-gray-700 sm:inline"
             >
               לאתר הראשי
             </Link>
             <Link
               href={secondaryNav.href}
-              className="rounded-lg border border-white/[0.1] bg-white/[0.06] px-4 py-2 text-[12px] font-bold text-white/80 transition hover:bg-white/[0.10] hover:text-white"
+              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50 hover:text-gray-900"
             >
               {secondaryNav.label}
             </Link>
@@ -53,7 +50,7 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/[0.05] py-4 text-center text-[11px] text-white/20">
+      <footer className="relative z-10 border-t border-gray-200 py-4 text-center text-[11px] text-gray-400">
         © {new Date().getFullYear()} BSD-YBM Platform · כל הזכויות שמורות
       </footer>
     </div>

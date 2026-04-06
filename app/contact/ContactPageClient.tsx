@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
@@ -13,10 +13,10 @@ export default function ContactPageClient() {
 
   return (
     <MarketingPublicShell title={t("contactPage.title")}>
-      <p className="mb-8 text-lg leading-relaxed text-white/55">{t("contactPage.intro")}</p>
+      <p className="mb-8 text-lg leading-relaxed text-gray-500">{t("contactPage.intro")}</p>
 
       <ul
-        className="card-avenue space-y-5 bg-[#0a0b14] p-6 text-white/75 shadow-sm"
+        className="card-avenue space-y-5 bg-white p-6 text-gray-700 shadow-sm"
         dir={dir}
       >
         <li>

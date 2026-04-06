@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { X, Printer, Download } from "lucide-react";
@@ -76,8 +76,8 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
     >
       {/* Floating toolbar */}
       <div className="pointer-events-none fixed top-4 inset-x-0 z-[201] flex justify-center">
-        <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-3 py-2 shadow-lg shadow-gray-200/60">
-          <span className="px-2 text-sm font-black text-white/65">
+        <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-gray-100 bg-white px-3 py-2 shadow-lg shadow-gray-200/60">
+          <span className="px-2 text-sm font-black text-gray-600">
             תצוגה מקדימה — מסמך #{doc.number}
           </span>
           <div className="h-5 w-px bg-white/[0.08]" />
@@ -91,7 +91,7 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-[#0a0b14] px-3 py-2 text-sm font-bold text-white/65 hover:bg-white/[0.03] transition"
+            className="flex items-center gap-1.5 rounded-xl border border-gray-100 bg-white px-3 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
           >
             <X size={15} /> סגור
           </button>

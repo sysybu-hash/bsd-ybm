@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -155,10 +155,10 @@ export default function WizardHome() {
   const FeedIcon = feedItem.icon;
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white overflow-x-hidden" dir="rtl">
+    <div className="min-h-screen bg-white text-white overflow-x-hidden" dir="rtl">
 
       {/* ════════════════ NAVBAR ════════════════ */}
-      <nav className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#050508]/85 backdrop-blur-2xl">
+      <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/85 backdrop-blur-2xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-[60px] flex items-center justify-between gap-4">
 
           {/* Logo */}
@@ -173,7 +173,7 @@ export default function WizardHome() {
           </div>
 
           {/* AI Live ticker */}
-          <div className="hidden lg:flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-3.5 py-1.5 text-[11px] font-medium text-white/50 max-w-xs overflow-hidden">
+          <div className="hidden lg:flex items-center gap-2 rounded-full border border-gray-200 bg-white/[0.04] px-3.5 py-1.5 text-[11px] font-medium text-white/50 max-w-xs overflow-hidden">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400 animate-pulse" />
             <span className={`truncate transition-opacity duration-300 ${feedItem.color}`}>
               AI: {feedItem.text}
@@ -184,7 +184,7 @@ export default function WizardHome() {
           <div className="hidden md:flex items-center gap-0.5">
             {[["#features", "יכולות"], ["#compare", "השוואה"], ["#tutorial-videos", "הדגמה"], ["#pricing", "מחירים"]].map(([href, label]) => (
               <a key={href} href={href}
-                className="px-3 py-2 text-[13px] font-medium text-white/55 hover:text-white transition-colors rounded-lg hover:bg-white/[0.05]">
+                className="px-3 py-2 text-[13px] font-medium text-gray-500 hover:text-white transition-colors rounded-lg hover:bg-gray-50">
                 {label}
               </a>
             ))}
@@ -193,11 +193,11 @@ export default function WizardHome() {
           {/* CTA */}
           <div className="flex items-center gap-2 shrink-0">
             <Link href="/login"
-              className="hidden sm:inline-flex items-center px-3 py-2 text-[13px] font-medium text-white/55 hover:text-white transition rounded-lg hover:bg-white/[0.05]">
+              className="hidden sm:inline-flex items-center px-3 py-2 text-[13px] font-medium text-gray-500 hover:text-white transition rounded-lg hover:bg-gray-50">
               התחבר
             </Link>
             <Link href="/register"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#0a0b14] px-4 py-2 text-[13px] font-bold text-white hover:bg-white/[0.05] transition shadow-lg shadow-white/10">
+              className="inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-[13px] font-bold text-white hover:bg-gray-50 transition shadow-lg shadow-white/10">
               ניסיון חינם <ArrowLeft size={12} />
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default function WizardHome() {
               [Globe, "עברית · English · العربية · Русский"],
               [Zap, "הגדרה תוך 3 דקות"],
             ] as const).map(([Icon, text], i) => (
-              <span key={i} className="flex items-center gap-1.5 text-[11px] font-medium text-white/35">
+              <span key={i} className="flex items-center gap-1.5 text-[11px] font-medium text-gray-400">
                 <Icon size={11} className="text-indigo-400 shrink-0" />
                 {text}
               </span>
@@ -286,9 +286,9 @@ export default function WizardHome() {
               { v: "₪99", l: "החל מ-/חודש" },
               { v: "30 יום", l: "ניסיון חינם" },
             ].map(({ v, l }) => (
-              <div key={l} className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4 text-center">
+              <div key={l} className="rounded-2xl border border-gray-100 bg-white/[0.03] p-4 text-center">
                 <p className="text-[17px] font-black text-white">{v}</p>
-                <p className="mt-0.5 text-[10px] font-medium text-white/35">{l}</p>
+                <p className="mt-0.5 text-[10px] font-medium text-gray-400">{l}</p>
               </div>
             ))}
           </div>
@@ -341,8 +341,8 @@ export default function WizardHome() {
                   onClick={() => setActiveTab(i)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-bold transition-all ${
                     active
-                      ? "bg-[#0a0b14] text-white shadow-lg"
-                      : "border border-white/[0.08] text-white/50 hover:border-white/20 hover:text-white/80"
+                      ? "bg-white text-white shadow-lg"
+                      : "border border-gray-200 text-white/50 hover:border-white/20 hover:text-white/80"
                   }`}
                 >
                   <Icon size={14} />
@@ -375,7 +375,7 @@ export default function WizardHome() {
                   </ul>
                 </div>
                 {/* Visual card */}
-                <div className={`rounded-3xl border border-white/[0.08] bg-gradient-to-br ${tab.accent}/[0.07] p-7 min-h-[260px] flex flex-col justify-between`}>
+                <div className={`rounded-3xl border border-gray-200 bg-gradient-to-br ${tab.accent}/[0.07] p-7 min-h-[260px] flex flex-col justify-between`}>
                   <div className="flex items-center gap-2 mb-4">
                     <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${tab.accent}`} />
                     <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">Live Preview</span>
@@ -409,7 +409,7 @@ export default function WizardHome() {
               { n: "02", title: "חבר ויבא", desc: "ייבא לקוחות, סרוק מסמך ראשון, הנפק חשבונית ראשונה.", icon: FileText },
               { n: "03", title: "ה-AI לוקח אחריות", desc: "מכאן המערכת לומדת, מנתחת, ומפעילה פעולות אוטומטית.", icon: Brain },
             ].map(({ n, title, desc, icon: Icon }, idx) => (
-              <div key={n} className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] p-7">
+              <div key={n} className="relative rounded-2xl border border-gray-200 bg-white/[0.03] p-7">
                 {idx < 2 && (
                   <ArrowLeft size={14} className="absolute -left-3 top-1/2 hidden -translate-y-1/2 text-white/15 sm:block" />
                 )}
@@ -441,7 +441,7 @@ export default function WizardHome() {
             <h2 className="text-3xl font-black text-white sm:text-4xl">השוואה כנה עם המתחרים</h2>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+          <div className="overflow-x-auto rounded-2xl border border-gray-200">
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-white/[0.06]">
@@ -476,12 +476,12 @@ export default function WizardHome() {
       </section>
 
       {/* ════════════════ TUTORIAL VIDEOS ════════════════ */}
-      <section id="tutorial-videos" className="border-t border-white/[0.06] bg-[#0a0b14]">
+      <section id="tutorial-videos" className="border-t border-white/[0.06] bg-white">
         <LandingTutorialSection />
       </section>
 
       {/* ════════════════ PRICING ════════════════ */}
-      <section id="pricing" className="bg-[#0a0b14]">
+      <section id="pricing" className="bg-white">
         <PricingSection />
       </section>
 
@@ -500,12 +500,12 @@ export default function WizardHome() {
                 שעובדים חכם יותר
               </span>
             </h2>
-            <p className="mx-auto mt-5 max-w-md text-base text-white/45">
+            <p className="mx-auto mt-5 max-w-md text-base text-gray-400">
               30 יום ניסיון מלא. ללא כרטיס אשראי. ביטול בכל עת ללא תנאים.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#0a0b14] px-9 py-4 text-[15px] font-bold text-white shadow-2xl transition hover:bg-white/[0.05]">
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-9 py-4 text-[15px] font-bold text-white shadow-2xl transition hover:bg-gray-50">
                 התחל ניסיון חינם <ArrowLeft size={15} />
               </Link>
               <Link href="/login"

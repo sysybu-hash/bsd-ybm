@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -66,14 +66,14 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
   };
 
   return (
-    <section className="card-avenue bg-[#0a0b14] p-6 shadow-sm md:p-8" dir={dir}>
+    <section className="card-avenue bg-white p-6 shadow-sm md:p-8" dir={dir}>
       <div className="flex items-center gap-3 mb-6">
         <div className="rounded-xl bg-indigo-500/15 p-2.5 text-indigo-300 border border-indigo-500/20">
           <ClipboardList size={22} aria-hidden />
         </div>
         <div>
           <h2 className="text-xl font-black text-white">ביטוח, המלצות וטקסט לחברים</h2>
-          <p className="text-sm text-white/45 mt-0.5">
+          <p className="text-sm text-gray-400 mt-0.5">
             טיוטה לשימושכם — סיכום הוצאות להצגה לחברת ביטוח, רמת חום של חברים מהמופע, והודעה לפני הרשמה.
           </p>
         </div>
@@ -81,8 +81,8 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
 
       <div className="space-y-8">
         <div>
-          <h3 className="text-sm font-black text-white/75 mb-2">טיוטת הוצאות (להערכת ביטוח)</h3>
-          <p className="text-xs text-white/45 mb-3">
+          <h3 className="text-sm font-black text-gray-700 mb-2">טיוטת הוצאות (להערכת ביטוח)</h3>
+          <p className="text-xs text-gray-400 mb-3">
             הזינו שורות (למשל: מנוי תוכנה, רואה חשבון, ציוד). הסכום הוא ב־₪ לשנה או לתקופה — לפי מה שתרצו להציג
             למבטח.
           </p>
@@ -97,7 +97,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
                     setLines((prev) => prev.map((x, j) => (j === i ? { ...x, label: v } : x)));
                   }}
                   placeholder="תיאור הוצאה"
-                  className="flex-1 min-w-[160px] rounded-xl border border-white/[0.08] px-3 py-2 text-sm"
+                  className="flex-1 min-w-[160px] rounded-xl border border-gray-100 px-3 py-2 text-sm"
                 />
                 <input
                   type="text"
@@ -113,7 +113,7 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
                     );
                   }}
                   placeholder="₪"
-                  className="w-28 rounded-xl border border-white/[0.08] px-3 py-2 text-sm font-mono"
+                  className="w-28 rounded-xl border border-gray-100 px-3 py-2 text-sm font-mono"
                 />
                 <button
                   type="button"
@@ -142,11 +142,11 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
         </div>
 
         <div>
-          <h3 className="text-sm font-black text-white/75 mb-2">חברים שראו את המופע — רמת המלצה</h3>
+          <h3 className="text-sm font-black text-gray-700 mb-2">חברים שראו את המופע — רמת המלצה</h3>
           <select
             value={referralLevel}
             onChange={(e) => setReferralLevel(e.target.value as BillingWorkspaceV1["referralLevel"])}
-            className="w-full max-w-md rounded-xl border border-white/[0.08] px-3 py-2.5 text-sm font-medium bg-[#0a0b14]"
+            className="w-full max-w-md rounded-xl border border-gray-100 px-3 py-2.5 text-sm font-medium bg-white"
           >
             {REFERRAL_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -154,25 +154,25 @@ export default function BillingWorkspaceEditor({ initial }: Props) {
               </option>
             ))}
           </select>
-          <label className="block text-xs font-bold text-white/45 mt-3 mb-1">הערות (שמות, מועד מעקב…)</label>
+          <label className="block text-xs font-bold text-gray-400 mt-3 mb-1">הערות (שמות, מועד מעקב…)</label>
           <textarea
             value={referralNotes}
             onChange={(e) => setReferralNotes(e.target.value)}
             rows={3}
-            className="w-full rounded-xl border border-white/[0.08] px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-gray-100 px-3 py-2 text-sm"
             placeholder="למשל: דני — יחזור אחרי החגים"
           />
         </div>
 
         <div>
-          <h3 className="text-sm font-black text-white/75 mb-2">טקסט &quot;חינם + PayPal&quot; לפני הרשמה</h3>
+          <h3 className="text-sm font-black text-gray-700 mb-2">טקסט &quot;חינם + PayPal&quot; לפני הרשמה</h3>
           <textarea
             value={pitch}
             onChange={(e) => setPitch(e.target.value)}
             rows={5}
-            className="w-full rounded-xl border border-white/[0.08] px-3 py-2 text-sm leading-relaxed"
+            className="w-full rounded-xl border border-gray-100 px-3 py-2 text-sm leading-relaxed"
           />
-          <p className="text-xs text-white/35 mt-1">
+          <p className="text-xs text-gray-400 mt-1">
             מוצג למעלה בכרטיס &quot;מה לומר לחבר&quot; — עדכנו לפי הסגנון שלכם.
           </p>
         </div>

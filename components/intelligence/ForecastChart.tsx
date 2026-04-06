@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -56,19 +56,19 @@ export default function ForecastChart() {
 
   return (
     <div
-      className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 font-sans shadow-sm"
+      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans shadow-sm"
       dir="rtl"
     >
-      <div className="mb-8 flex flex-col justify-between gap-6 border-b border-white/[0.07] pb-6 md:flex-row">
+      <div className="mb-8 flex flex-col justify-between gap-6 border-b border-gray-100 pb-6 md:flex-row">
         <div>
           <h3 className="text-2xl font-black italic text-gray-950 flex items-center gap-2">
             <BrainCircuit className="text-indigo-500" /> חיזוי תזרים מזומנים AI
           </h3>
-          <p className="text-white/35 text-sm font-medium">
+          <p className="text-gray-400 text-sm font-medium">
             ניתוח היסטורי וצפי 30 יום קדימה (Gemini Ultra)
           </p>
         </div>
-        <div className="flex max-w-xl items-start gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/15 p-5 text-sm leading-relaxed text-white/65">
+        <div className="flex max-w-xl items-start gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/15 p-5 text-sm leading-relaxed text-gray-600">
           <AlertTriangle
             className="text-indigo-500 flex-shrink-0 mt-1"
             size={20}

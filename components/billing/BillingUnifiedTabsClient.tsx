@@ -87,7 +87,7 @@ export default function BillingUnifiedTabsClient({
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-[#050508] font-sans text-white" dir={dir}>
+    <div className="min-h-screen bg-white font-sans text-white" dir={dir}>
       <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
         <h1 className="mb-1 text-2xl font-black tracking-tight text-white sm:text-3xl">
           מנויים ותשלומים
@@ -97,7 +97,7 @@ export default function BillingUnifiedTabsClient({
         </p>
 
         <div
-          className="mb-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2"
+          className="mb-8 rounded-2xl border border-gray-100 bg-white/[0.03] p-2"
           role="tablist"
           aria-label="מקטעי מנויים"
         >
@@ -114,13 +114,13 @@ export default function BillingUnifiedTabsClient({
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
                       ? "bg-white/[0.10] text-white shadow-sm ring-1 ring-white/15"
-                      : "text-white/35 hover:bg-white/[0.06] hover:text-white/65"
+                      : "text-gray-400 hover:bg-white/[0.06] hover:text-gray-600"
                   }`}
                 >
                   <span className="flex items-center gap-2 text-xs font-black">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-indigo-500 text-white" : "bg-white/[0.08] text-white/45"
+                        active ? "bg-indigo-500 text-white" : "bg-white/[0.08] text-gray-400"
                       }`}
                     >
                       {step}

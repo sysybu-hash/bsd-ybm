@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, TrendingDown, Package } from "lucide-react";
@@ -36,7 +36,7 @@ export default function SupplierPriceBoard() {
   return (
     <section
       id="supplier-price-board"
-      className="card-avenue bg-[#0a0b14] p-6 shadow-sm md:p-8"
+      className="card-avenue bg-white p-6 shadow-sm md:p-8"
       dir={dir}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -48,7 +48,7 @@ export default function SupplierPriceBoard() {
             <h2 className="text-xl md:text-2xl font-black italic text-white">
               לוח ספקים והשוואת מחירים
             </h2>
-            <p className="text-sm text-white/45">
+            <p className="text-sm text-gray-400">
               מבוסס על שורות מוצרים מסריקות AI (חשבוניות, קבלות, הצעות)
             </p>
           </div>
@@ -63,7 +63,7 @@ export default function SupplierPriceBoard() {
       </div>
 
       {loading && (
-        <div className="flex items-center gap-2 text-white/45 py-8 justify-center">
+        <div className="flex items-center gap-2 text-gray-400 py-8 justify-center">
           <Loader2 className="animate-spin" size={22} /> טוען השוואות…
         </div>
       )}
@@ -91,15 +91,15 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && rows.length === 0 && (
-        <p className="card-avenue border-dashed border-white/[0.08] bg-white/[0.03]/80 py-8 text-center text-sm italic text-white/45">
+        <p className="card-avenue border-dashed border-gray-200 bg-white/[0.03]/80 py-8 text-center text-sm italic text-gray-400">
           אין עדיין תצפיות מחיר — סרקו חשבונית או קבלה עם שורות מוצרים.
         </p>
       )}
 
       {!loading && rows.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border border-white/[0.07]">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100">
           <table className="min-w-full text-sm text-right">
-            <thead className="bg-white/[0.03] text-white/55 font-bold">
+            <thead className="bg-white/[0.03] text-gray-500 font-bold">
               <tr>
                 <th className="px-4 py-3">תיאור</th>
                 <th className="px-4 py-3">מחיר מיטבי</th>
@@ -111,19 +111,19 @@ export default function SupplierPriceBoard() {
               {rows.map((r) => (
                 <tr
                   key={r.normalizedKey}
-                  className={`border-t border-white/[0.07] ${r.cheaperAlternative ? "bg-rose-50/50" : ""}`}
+                  className={`border-t border-gray-100 ${r.cheaperAlternative ? "bg-rose-50/50" : ""}`}
                 >
                   <td className="px-4 py-2 font-medium text-white">{r.description}</td>
                   <td className="px-4 py-2">
                     ₪{r.bestUnitPrice.toFixed(2)}
                     {r.bestSupplier ? (
-                      <span className="text-xs text-white/45 block">{r.bestSupplier}</span>
+                      <span className="text-xs text-gray-400 block">{r.bestSupplier}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-2">
                     ₪{r.latestUnitPrice.toFixed(2)}
                     {r.latestSupplier ? (
-                      <span className="text-xs text-white/45 block">{r.latestSupplier}</span>
+                      <span className="text-xs text-gray-400 block">{r.latestSupplier}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-2">

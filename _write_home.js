@@ -1,4 +1,6 @@
-import { getServerSession } from "next-auth";
+const fs = require('fs');
+
+const content = `import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import {
@@ -114,7 +116,7 @@ export default async function DashboardHomePage() {
               href={href}
               className="group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-md"
             >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} ${icon2} border ${border}`}>
+              <div className={\`flex h-10 w-10 items-center justify-center rounded-xl \${bg} \${icon2} border \${border}\`}>
                 <Icon size={18} />
               </div>
               <div>
@@ -137,13 +139,13 @@ export default async function DashboardHomePage() {
             <Link
               key={href}
               href={href}
-              className={`group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-2 ring-transparent transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-md ${ring}`}
+              className={\`group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-2 ring-transparent transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-md \${ring}\`}
             >
               <div className="flex items-center justify-between">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
+                <span className={\`flex h-10 w-10 items-center justify-center rounded-xl \${iconBg} text-white shadow-sm\`}>
                   {icon}
                 </span>
-                <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${badgeBg}`}>{badge}</span>
+                <span className={\`rounded-full border px-2.5 py-0.5 text-[10px] font-bold \${badgeBg}\`}>{badge}</span>
               </div>
               <div>
                 <p className="text-[15px] font-black text-gray-900">{title}</p>
@@ -182,3 +184,7 @@ export default async function DashboardHomePage() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('C:/Users/User/Desktop/BSD-YBM/app/dashboard/(protected)/page.tsx', content, 'utf8');
+console.log('Done. Lines:', content.split('\n').length);

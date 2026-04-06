@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -33,7 +33,7 @@ export default function ForecastSimulator() {
 
   return (
     <div
-      className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm"
+      className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
@@ -41,7 +41,7 @@ export default function ForecastSimulator() {
           <h3 className="text-2xl font-black italic flex items-center gap-2 text-white">
             <BrainCircuit className="text-indigo-500" /> חיזוי וסימולציה AI
           </h3>
-          <p className="text-white/35 text-sm italic font-medium">
+          <p className="text-gray-400 text-sm italic font-medium">
             נתח את העתיד ושחק עם תרחישים פיננסיים
           </p>
         </div>
@@ -65,15 +65,15 @@ export default function ForecastSimulator() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5"
+          className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white/[0.03] p-5"
         >
-          <span className="text-sm font-bold text-white/55">
+          <span className="text-sm font-bold text-gray-500">
             הוסף הוצאה צפויה (₪):
           </span>
           <input
             type="number"
             onChange={(e) => setExtraExpense(Number(e.target.value))}
-            className="w-32 rounded-xl border border-white/[0.08] bg-[#0a0b14] p-2 text-indigo-400 outline-none ring-0 transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            className="w-32 rounded-xl border border-gray-200 bg-white p-2 text-indigo-400 outline-none ring-0 transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
             placeholder="0"
           />
           {extraExpense > 20000 ? (

@@ -1,4 +1,6 @@
-"use client";
+const fs = require('fs');
+
+const content = `"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -18,11 +20,11 @@ import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 function routeActive(pathname: string, href: string): boolean {
-  const p = pathname.replace(/\/$/, "") || "/";
-  const h = href.replace(/\/$/, "") || "/";
+  const p = pathname.replace(/\\/$/, "") || "/";
+  const h = href.replace(/\\/$/, "") || "/";
   if (h === "/dashboard") return p === "/dashboard";
   if (h === "/dashboard/admin") return p === "/dashboard/admin";
-  return p === h || p.startsWith(`${h}/`);
+  return p === h || p.startsWith(\`\${h}/\`);
 }
 
 const COLOR_MAP: Record<string, { active: string; dot: string }> = {
@@ -45,22 +47,22 @@ function SidebarLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-150 ${
+      className={\`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-150 \${
         isActive
-          ? `${c.active} border`
+          ? \`\${c.active} border\`
           : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
-      }`}
+      }\`}
     >
-      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+      <span className={\`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg \${
         isActive ? "text-current" : "text-gray-400 group-hover:text-gray-600"
-      }`}>
+      }\`}>
         {icon}
       </span>
       <span className="flex-1 truncate leading-none">{label}</span>
       {badge && (
         <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">{badge}</span>
       )}
-      {isActive && <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${c.dot}`} />}
+      {isActive && <span className={\`h-1.5 w-1.5 shrink-0 rounded-full \${c.dot}\`} />}
     </Link>
   );
 }
@@ -243,9 +245,9 @@ export default function DashboardLayoutClient({
 
       {/* MOBILE DRAWER */}
       <aside
-        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col border-e border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-out md:hidden ${
+        className={\`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col border-e border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-out md:hidden \${
           mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none")
-        }`}
+        }\`}
         aria-hidden={!mobileOpen}
       >
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
@@ -356,3 +358,7 @@ export default function DashboardLayoutClient({
     </div>
   );
 }
+`;
+
+fs.writeFileSync('C:/Users/User/Desktop/BSD-YBM/components/DashboardLayoutClient.tsx', content, 'utf8');
+console.log('Done. Lines:', content.split('\n').length);

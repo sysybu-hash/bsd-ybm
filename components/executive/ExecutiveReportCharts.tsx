@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   Area,
@@ -24,11 +24,11 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
   const intlTag = intlLocaleForApp(locale);
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm md:p-10">
+    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm md:p-10">
       <h3 className="text-xl md:text-2xl font-black italic text-white tracking-tight mb-2">
         {t("executiveCharts.title", { year: String(year) })}
       </h3>
-      <p className="text-sm text-white/45 font-medium mb-8">{t("executiveCharts.subtitle")}</p>
+      <p className="text-sm text-gray-400 font-medium mb-8">{t("executiveCharts.subtitle")}</p>
       <RechartsBounded height={340}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
@@ -87,7 +87,7 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
           </AreaChart>
         </ResponsiveContainer>
       </RechartsBounded>
-      <p className="mt-4 flex flex-wrap gap-4 text-xs font-bold text-white/45 justify-center">
+      <p className="mt-4 flex flex-wrap gap-4 text-xs font-bold text-gray-400 justify-center">
         <span className="inline-flex items-center gap-2">
           <span className="h-2 w-6 rounded-full bg-indigo-600" /> {t("executiveCharts.legendIncome")}
         </span>

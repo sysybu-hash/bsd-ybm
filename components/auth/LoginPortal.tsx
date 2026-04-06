@@ -101,8 +101,8 @@ export default function LoginPortal() {
     <AuthPageShell secondaryNav={{ href: "/register", label: "הרשמה" }}>
       <AuthProfessionalCard
         icon={
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/15">
-            <ShieldCheck className="h-6 w-6 text-indigo-400" aria-hidden />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
+            <ShieldCheck className="h-6 w-6 text-indigo-600" aria-hidden />
           </div>
         }
         title="כניסה למערכת"
@@ -111,18 +111,18 @@ export default function LoginPortal() {
         {/* Session probe */}
         {sessionProbe === "loading" && (
           <div className="mt-4 flex justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-white/35" aria-hidden />
+            <Loader2 className="h-5 w-5 animate-spin text-gray-400" aria-hidden />
           </div>
         )}
 
         {/* Already connected banner */}
         {showActiveBanner ? (
-          <div className="mt-5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3">
+          <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
             <div className="flex items-center gap-3">
-              <UserCircle className="h-5 w-5 shrink-0 text-indigo-400" aria-hidden />
+              <UserCircle className="h-5 w-5 shrink-0 text-indigo-600" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-white/75">מחוברים כ־{sessionName || sessionEmail}</p>
-                {sessionName ? <p className="text-xs text-white/45 break-all">{sessionEmail}</p> : null}
+                <p className="text-sm font-bold text-gray-800">מחוברים כ־{sessionName || sessionEmail}</p>
+                {sessionName ? <p className="text-xs text-gray-400 break-all">{sessionEmail}</p> : null}
               </div>
             </div>
             <div className="mt-3 flex gap-2">
@@ -136,7 +136,7 @@ export default function LoginPortal() {
               <button
                 type="button"
                 onClick={() => handleSwitchAccount()}
-                className="flex items-center justify-center gap-1.5 rounded-xl border border-white/[0.08] bg-[#0a0b14] px-3 py-2 text-xs font-bold text-white/65 hover:bg-white/[0.03] transition"
+                className="flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition"
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden />
                 החלף חשבון
@@ -147,7 +147,7 @@ export default function LoginPortal() {
 
         {/* Error messages */}
         {(oauthError || reasonText) && (
-          <p className="mt-5 rounded-xl border border-rose-500/25 bg-rose-500/[0.08] px-4 py-3 text-center text-sm text-rose-300">
+          <p className="mt-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm text-rose-700">
             {reasonText ?? oauthError}
           </p>
         )}
@@ -157,10 +157,10 @@ export default function LoginPortal() {
           type="button"
           disabled={loadingGoogle}
           onClick={handleGoogle}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-white/[0.10] bg-white/[0.05] py-3.5 text-sm font-bold text-white hover:bg-white/[0.08] transition disabled:opacity-60"
+          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-800 hover:bg-gray-50 transition disabled:opacity-60 shadow-sm"
         >
           {loadingGoogle ? (
-            <Loader2 className="h-5 w-5 animate-spin text-white/45" />
+            <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
           ) : (
             <>
               <GoogleMark className="h-5 w-5 shrink-0" />
@@ -171,9 +171,9 @@ export default function LoginPortal() {
 
         {/* Divider */}
         <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-white/[0.08]" />
-          <span className="text-xs font-medium text-white/25">או</span>
-          <div className="h-px flex-1 bg-white/[0.08]" />
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs font-medium text-gray-400">או</span>
+          <div className="h-px flex-1 bg-gray-200" />
         </div>
 
         {/* Credentials form */}
@@ -217,8 +217,8 @@ export default function LoginPortal() {
             navigateHard(dest);
           }}
         >
-          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-white/45">
-            <KeyRound size={14} className="text-indigo-400" aria-hidden />
+          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-gray-500">
+            <KeyRound size={14} className="text-indigo-600" aria-hidden />
             אימייל וסיסמה (מנהל מערכת)
           </div>
           <input
@@ -227,21 +227,21 @@ export default function LoginPortal() {
             required
             autoComplete="email"
             placeholder="email@example.com"
-            className="w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
           />
           <input
             name="password"
             type="password"
             required
             autoComplete="current-password"
-            placeholder="סיסמה"
-            className="w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
+            placeholder="סיסמא"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
           />
-          {credError ? <p className="text-center text-sm text-rose-400">{credError}</p> : null}
+          {credError ? <p className="text-center text-sm text-rose-600">{credError}</p> : null}
           <button
             type="submit"
             disabled={loadingCreds}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500/15 py-3.5 text-sm font-bold text-white hover:bg-indigo-400 transition disabled:opacity-60 shadow-lg shadow-indigo-500/25"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm"
           >
             {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
             כניסה
@@ -250,15 +250,15 @@ export default function LoginPortal() {
 
         {/* Footer links */}
         <div className="mt-5 flex flex-col items-center gap-3">
-          <p className="text-xs text-white/45">
+          <p className="text-xs text-gray-500">
             אין לכם חשבון?{" "}
-            <Link href="/register" className="font-bold text-indigo-400 hover:underline">
+            <Link href="/register" className="font-bold text-indigo-600 hover:underline">
               הרשמה
             </Link>
           </p>
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-xs font-medium text-white/35 hover:text-white/70 transition"
+            className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition"
           >
             <ArrowRight size={13} aria-hidden />
             חזרה לאתר

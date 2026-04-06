@@ -235,16 +235,16 @@ const PLACEHOLDER_FIELDS: Record<
   ],
 };
 
-// ─── Dark input/select class helpers ───────────────────────────────────────
+// ─── Light input/select class helpers ────────────────────────────────────────────
 const inputCls =
-  "w-full rounded-xl border border-white/[0.10] bg-white/[0.05] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/15";
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
 const selectCls =
-  "w-full rounded-xl border border-white/[0.10] bg-[#0f1020] px-4 py-3 text-sm text-white outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/15";
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
 const cardCls =
-  "rounded-2xl border border-white/[0.07] bg-white/[0.03] p-6";
-const labelCls = "mb-1.5 block text-sm font-bold text-white/65";
+  "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm";
+const labelCls = "mb-1.5 block text-sm font-bold text-gray-700";
 const saveBtnCls =
-  "inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-400 disabled:opacity-50";
+  "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50";
 
 export default function SettingsPageClient({
   initialOrg,
@@ -349,28 +349,26 @@ export default function SettingsPageClient({
   const currentTitle = t(`settings.${activeTab}`);
 
   return (
-    <div className="text-white" dir={dir}>
-      <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14] shadow-2xl shadow-black/40">
+    <div className="" dir={dir}>
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
         {/* ── Page hero ── */}
-        <div className="relative overflow-hidden border-b border-white/[0.06] bg-gradient-to-br from-slate-700/20 via-[#0d0e1a] to-indigo-700/10 px-6 py-6">
-          <div className="pointer-events-none absolute -end-12 -top-12 h-40 w-40 rounded-full bg-indigo-600/[0.08] blur-3xl" />
-          <div className="pointer-events-none absolute -start-8 -bottom-8 h-32 w-32 rounded-full bg-violet-600/[0.06] blur-3xl" />
+        <div className="relative overflow-hidden border-b border-gray-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 px-6 py-6">
           <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.08] ring-1 ring-white/[0.10]">
-                <Settings size={20} className="text-white/70" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 ring-1 ring-indigo-200">
+                <Settings size={20} className="text-indigo-600" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">{currentTitle}</h3>
-                <p className="text-[11px] text-white/35">הגדרות המערכת והארגון</p>
+                <h3 className="text-lg font-black text-gray-900">{currentTitle}</h3>
+                <p className="text-[11px] text-gray-500">הגדרות המערכת והארגון</p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleHeaderSave}
               disabled={activeTab === "account" ? pendingOrg : false}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-400 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50"
             >
               <Save size={15} />
               {activeTab === "account"
@@ -381,7 +379,7 @@ export default function SettingsPageClient({
         </div>
 
         {/* ── Tab bar ── */}
-        <nav className="flex overflow-x-auto border-b border-white/[0.06] bg-black/20 px-3 py-2 gap-1">
+        <nav className="flex overflow-x-auto border-b border-gray-100 bg-gray-50 px-3 py-2 gap-1">
           {TAB_ORDER.map((tabId) => (
             <button
               key={tabId}
@@ -389,8 +387,8 @@ export default function SettingsPageClient({
               onClick={() => setActiveTab(tabId)}
               className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-[12px] font-bold transition-all ${
                 activeTab === tabId
-                  ? "bg-white/[0.10] text-white ring-1 ring-white/15 shadow-sm"
-                  : "text-white/35 hover:bg-white/[0.06] hover:text-white/65"
+                  ? "bg-white text-indigo-700 ring-1 ring-indigo-200 shadow-sm"
+                  : "text-gray-500 hover:bg-white hover:text-gray-700"
               }`}
             >
               <span className="opacity-70">{TAB_ICONS[tabId]}</span>
@@ -400,13 +398,13 @@ export default function SettingsPageClient({
         </nav>
 
         {/* ── Content ── */}
-        <main className="min-w-0 flex-1 bg-[#050508] p-5 md:p-7">
+        <main className="min-w-0 flex-1 bg-gray-50 p-5 md:p-7">
 
           {/* Prefs saved notice */}
           {prefsMsg && (
-            <div className="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.08] px-4 py-3">
-              <CheckCircle2 size={16} className="shrink-0 text-emerald-400" />
-              <p className="text-sm font-bold text-emerald-300">{prefsMsg}</p>
+            <div className="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+              <p className="text-sm font-bold text-emerald-800">{prefsMsg}</p>
             </div>
           )}
 
@@ -416,20 +414,20 @@ export default function SettingsPageClient({
 
               {/* Profile card */}
               <div className={cardCls}>
-                <h4 className="mb-4 flex items-center gap-2.5 text-base font-black text-white">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/20 ring-1 ring-indigo-500/30">
-                    <User size={15} className="text-indigo-300" />
+                <h4 className="mb-4 flex items-center gap-2.5 text-base font-black text-gray-900">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 ring-1 ring-indigo-200">
+                    <User size={15} className="text-indigo-600" />
                   </span>
                   פרופיל אישי
                 </h4>
                 <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
-                  <div className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-4">
-                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-white/25">שם מלא</p>
-                    <span className="text-lg font-black text-white">{session?.user?.name ?? "—"}</span>
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-4">
+                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">שם מלא</p>
+                    <span className="text-lg font-black text-gray-900">{session?.user?.name ?? "—"}</span>
                   </div>
-                  <div className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-4">
-                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-white/25">כתובת אימייל</p>
-                    <span className="text-lg font-black text-white">{session?.user?.email ?? "—"}</span>
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-4">
+                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">כתובת אימייל</p>
+                    <span className="text-lg font-black text-gray-900">{session?.user?.email ?? "—"}</span>
                   </div>
                 </div>
               </div>
@@ -437,13 +435,13 @@ export default function SettingsPageClient({
               {/* Org form */}
               {initialOrg && (
                 <div className={cardCls}>
-                  <h4 className="mb-2 flex items-center gap-2.5 text-base font-black text-white">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/20 ring-1 ring-indigo-500/30">
-                      <Building2 size={15} className="text-indigo-300" />
+                  <h4 className="mb-2 flex items-center gap-2.5 text-base font-black text-gray-900">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 ring-1 ring-indigo-200">
+                      <Building2 size={15} className="text-indigo-600" />
                     </span>
                     חברה / ארגון
                   </h4>
-                  <p className="mb-6 text-sm text-white/45 leading-relaxed">
+                  <p className="mb-6 text-sm text-gray-500 leading-relaxed">
                     השם משמש לזיהוי הארגון במערכת (CRM, מסמכים וכו׳).
                   </p>
                   <form
@@ -488,30 +486,30 @@ export default function SettingsPageClient({
                           <label className={labelCls}>כתובת</label>
                           <textarea name="address" rows={3} defaultValue={initialOrg.address ?? ""} className={`${inputCls} resize-y min-h-[5rem]`} placeholder="כתובת להצגה במסמכים" />
                         </div>
-                        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3">
-                          <label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-white/75">
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                          <label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-gray-700">
                             <input
                               type="checkbox"
                               name="isReportable"
                               defaultChecked={initialOrg.isReportable}
-                              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/[0.05] text-indigo-500 focus:ring-indigo-500"
+                              className="mt-1 h-4 w-4 rounded border-gray-300 bg-white text-indigo-600 focus:ring-indigo-500"
                             />
                             <span>
                               ארגון מדווח למס (חשבוניות והפקות רשמיות)
-                              <span className="mt-1 block text-xs font-normal text-white/35">
+                              <span className="mt-1 block text-xs font-normal text-gray-400">
                                 כבו את הסימון לניהול אישי בלבד — מסמכים יוצגו כמזכר פנימי ללא חישוב מע״מ.
                               </span>
                             </span>
                           </label>
                         </div>
-                        <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/[0.07] px-4 py-3 text-sm text-white/60 leading-relaxed">
-                          <p className="mb-1 font-bold text-white/80">הפקת מסמכים ותשלומים</p>
+                        <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm text-gray-600 leading-relaxed">
+                          <p className="mb-1 font-bold text-indigo-900">הפקת מסמכים ותשלומים</p>
                           <p>
                             לפי הסיווג והדיווח שמגדירים כאן, ניתן להפיק ב{" "}
-                            <Link href="/dashboard/billing" className="font-bold text-indigo-300 underline">מנוי ותשלומים</Link>{" "}
-                            את כל סוגי המסמכים. מע״מ וחישובים תואמים את סוג העוסק.
+                            <Link href="/dashboard/billing" className="font-bold text-indigo-600 underline">מנוי ותשלומים</Link>{" "}
+                            את כל סוגי המסמכים. מע״ו וחישובים תואמים את סוג העוסק.
                           </p>
-                          <p className="mt-2 text-xs text-white/35">
+                          <p className="mt-2 text-xs text-gray-400">
                             מסמכים סרוקים ישנים — ב{" "}
                             <Link href="/dashboard/erp" className="font-bold text-indigo-300 underline">ERP</Link>
                             {" · "}
@@ -521,13 +519,13 @@ export default function SettingsPageClient({
                         </div>
                       </>
                     ) : (
-                      <p className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm text-white/45">
-                        פרטי מס וכתובת ניתנים לעדכון על ידי <strong className="text-white/70">מנהל ארגון</strong> בלבד.
-                        <span className="mt-2 block text-white/35">
+                      <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                        פרטי מס וכתובת ניתנים לעדכון על ידי <strong className="text-gray-700">מנהל ארגון</strong> בלבד.
+                        <span className="mt-2 block text-gray-400">
                           הפקת מסמכים —{" "}
-                          <Link href="/dashboard/billing" className="font-bold text-indigo-300 underline">מנויים</Link>
+                          <Link href="/dashboard/billing" className="font-bold text-indigo-600 underline">מנויים</Link>
                           {" · "}
-                          ייבוא סריקות — <Link href="/dashboard/erp" className="font-bold text-indigo-300 underline">ERP</Link>.
+                          ייבוא סריקות — <Link href="/dashboard/erp" className="font-bold text-indigo-600 underline">ERP</Link>.
                         </span>
                       </p>
                     )}
@@ -543,13 +541,13 @@ export default function SettingsPageClient({
               {/* Portal settings */}
               {initialOrg && canEditTaxProfile && (
                 <div className={cardCls}>
-                  <h4 className="mb-2 flex items-center gap-2.5 text-base font-black text-white">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/20 ring-1 ring-sky-500/30">
-                      <Globe size={15} className="text-sky-300" />
+                  <h4 className="mb-2 flex items-center gap-2.5 text-base font-black text-gray-900">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-100 ring-1 ring-sky-200">
+                      <Globe size={15} className="text-sky-600" />
                     </span>
                     פורטל המנוי, דף הבית ודומיין
                   </h4>
-                  <p className="mb-6 text-sm text-white/45 leading-relaxed">
+                  <p className="mb-6 text-sm text-gray-500 leading-relaxed">
                     דומיין ציבורי (לאחר הגדרת DNS ב-Vercel), מיתוג JSON, ולוח שנה עם סנכרון Google.
                   </p>
                   <form
@@ -567,16 +565,16 @@ export default function SettingsPageClient({
                       <label className={labelCls}>דומיין ציבורי (ללא https)</label>
                       <input name="tenantPublicDomain" type="text" dir="ltr" defaultValue={initialOrg.tenantPublicDomain ?? ""} placeholder="app.example.co.il" className={inputCls} />
                     </div>
-                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3">
-                      <label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-white/75">
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                      <label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-gray-700">
                         <input
                           type="checkbox"
                           name="calendarGoogleEnabled"
                           defaultChecked={initialOrg.calendarGoogleEnabled}
-                          className="mt-1 h-4 w-4 rounded border-white/20 bg-white/[0.05] text-indigo-500 focus:ring-indigo-500"
+                          className="mt-1 h-4 w-4 rounded border-gray-300 bg-white text-indigo-600 focus:ring-indigo-500"
                         />
                         <span className="flex items-center gap-2">
-                          <CalendarDays size={16} className="shrink-0 text-indigo-300" />
+                          <CalendarDays size={16} className="shrink-0 text-indigo-600" />
                           הצגת לוח שנה בדשבורד והכנה לסנכרון Google Calendar
                         </span>
                       </label>
@@ -602,12 +600,12 @@ export default function SettingsPageClient({
                     </p>
                   )}
                   {initialOrg.calendarGoogleEnabled && (
-                    <div className="mt-8 space-y-4 border-t border-white/[0.06] pt-8">
+                    <div className="mt-8 space-y-4 border-t border-gray-100 pt-8">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm font-bold text-white/75">לוח שנה</p>
+                        <p className="text-sm font-bold text-gray-700">לוח שנה</p>
                         <button
                           type="button"
-                          className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/60 transition hover:bg-white/[0.08] hover:text-white"
+                          className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
                           onClick={async () => {
                             setCalendarConnectHint(null);
                             try {
@@ -623,7 +621,7 @@ export default function SettingsPageClient({
                         </button>
                       </div>
                       {calendarConnectHint && (
-                        <p className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm text-white/55">
+                        <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                           {calendarConnectHint}
                         </p>
                       )}
@@ -635,20 +633,20 @@ export default function SettingsPageClient({
 
               {/* Team management */}
               <div className={cardCls}>
-                <h4 className="mb-4 flex items-center gap-2.5 text-base font-black text-white">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 ring-1 ring-emerald-500/30">
-                    <UserPlus size={15} className="text-emerald-300" />
+                <h4 className="mb-4 flex items-center gap-2.5 text-base font-black text-gray-900">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 ring-1 ring-emerald-200">
+                    <UserPlus size={15} className="text-emerald-600" />
                   </span>
                   ניהול צוות
                 </h4>
-                <p className="mb-6 text-sm text-white/45 leading-relaxed">
-                  <strong className="text-white/70">דרך מומלצת:</strong> שליחת קישור במייל — הנרשם מצטרף{" "}
-                  <strong className="text-white/70">רק</strong> לארגון שלכם.
+                <p className="mb-6 text-sm text-gray-500 leading-relaxed">
+                  <strong className="text-gray-700">דרך מומלצת:</strong> שליחת קישור במייל — הנרשם מצטרף{" "}
+                  <strong className="text-gray-700">רק</strong> לארגון שלכם.
                 </p>
 
                 {/* Invite by email */}
-                <div className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-5">
-                  <p className="mb-3 text-sm font-bold text-emerald-300">1 — הזמנת צוות במייל (קישור)</p>
+                <div className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                  <p className="mb-3 text-sm font-bold text-emerald-700">1 — הזמנת צוות במייל (קישור)</p>
                   <form
                     className="flex flex-col gap-3"
                     onSubmit={(e) => {
@@ -672,12 +670,12 @@ export default function SettingsPageClient({
                         name="email"
                         placeholder="אימייל מוזמן"
                         required
-                        className="min-w-[200px] flex-1 rounded-2xl border border-white/[0.09] bg-white/[0.04] px-5 py-3 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/[0.12]"
+                        className="min-w-[200px] flex-1 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                       />
                       <select
                         name="role"
                         defaultValue="EMPLOYEE"
-                        className="rounded-2xl border border-white/[0.09] bg-[#0f1020] px-4 py-3 text-sm font-bold text-white outline-none sm:w-56"
+                        className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-900 outline-none sm:w-56"
                         aria-label="תפקיד בהזמנה"
                       >
                         <option value="EMPLOYEE">עובד / צוות</option>
@@ -696,22 +694,22 @@ export default function SettingsPageClient({
                     </div>
                   </form>
                   {teamInviteMsg && (
-                    <p className="mt-3 break-all whitespace-pre-wrap text-xs text-emerald-300">{teamInviteMsg}</p>
+                    <p className="mt-3 break-all whitespace-pre-wrap text-xs text-emerald-700">{teamInviteMsg}</p>
                   )}
                 </div>
 
                 {/* Role reference */}
-                <details className="mb-4 rounded-2xl border border-white/[0.07] bg-white/[0.02] px-4 py-3 text-sm text-white/45">
-                  <summary className="cursor-pointer font-bold text-white/70">מה ההבדל בין תפקידים?</summary>
+                <details className="mb-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                  <summary className="cursor-pointer font-bold text-gray-700">מה ההבדל בין תפקידים?</summary>
                   <ul className="mt-2 list-inside list-disc space-y-1.5 pe-2">
-                    <li><strong className="text-white/65">עובד / צוות</strong> — שגרה; בלי ניהול צוות.</li>
-                    <li><strong className="text-white/65">מנהל פרויקטים / לקוח</strong> — גישה מצומצמת.</li>
-                    <li><strong className="text-white/65">מנהל ארגון</strong> — שיוך משתמשים והגדרות.</li>
+                    <li><strong className="text-gray-700">עובד / צוות</strong> — שגרה; בלי ניהול צוות.</li>
+                    <li><strong className="text-gray-700">מנהל פרויקטים / לקוח</strong> — גישה מצומצמת.</li>
+                    <li><strong className="text-gray-700">מנהל ארגון</strong> — שיוך משתמשים והגדרות.</li>
                   </ul>
                 </details>
 
                 {/* Manual assign */}
-                <p className="mb-3 text-sm font-bold text-white/65">
+                <p className="mb-3 text-sm font-bold text-gray-700">
                   2 — שיוך ידני (רק אחרי כניסה ראשונה עם Google)
                 </p>
                 <form onSubmit={handleInvite} className="flex flex-col gap-3">
@@ -722,12 +720,12 @@ export default function SettingsPageClient({
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="אימייל (Google)"
                       required
-                      className="min-w-[200px] flex-1 rounded-2xl border border-white/[0.09] bg-white/[0.04] px-5 py-3 text-sm text-white placeholder:text-white/25 outline-none focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/[0.12]"
+                      className="min-w-[200px] flex-1 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                     />
                     <select
                       value={inviteRole}
                       onChange={(e) => setInviteRole(e.target.value)}
-                      className="rounded-2xl border border-white/[0.09] bg-[#0f1020] px-4 py-3 text-sm font-bold text-white outline-none sm:w-56"
+                      className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-900 outline-none sm:w-56"
                       aria-label="תפקיד משתמש"
                     >
                       <option value="EMPLOYEE">תפקיד: עובד / צוות</option>
@@ -746,8 +744,8 @@ export default function SettingsPageClient({
                 {status && (
                   <div className={`mt-6 flex items-center gap-3 rounded-2xl p-4 ${
                     status.type === "success"
-                      ? "border border-emerald-500/25 bg-emerald-500/[0.08] text-emerald-300"
-                      : "border border-red-500/25 bg-red-500/[0.08] text-red-300"
+                      ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                      : "border border-red-200 bg-red-50 text-red-700"
                   }`}>
                     {status.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                     <span className="text-sm font-medium">{status.msg}</span>
@@ -767,15 +765,15 @@ export default function SettingsPageClient({
               {/* PayPal + live data tier (billing tab only) */}
               {activeTab === "billing" && initialOrg && canEditTaxProfile && (
                 <div className={cardCls}>
-                  <h4 className="mb-2 flex items-center gap-2 text-base font-black text-white">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-500/20 ring-1 ring-indigo-500/30">
-                      <Wallet size={14} className="text-indigo-300" />
+                  <h4 className="mb-2 flex items-center gap-2 text-base font-black text-gray-900">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-100 ring-1 ring-indigo-200">
+                      <Wallet size={14} className="text-indigo-600" />
                     </span>
                     PayPal של הארגון + רמת נתונים חיים
                   </h4>
-                  <p className="mb-6 text-sm text-white/45 leading-relaxed">
-                    שדות אלו הם ל<strong className="text-white/65">לקוחות הארגון</strong> (לא חשבון מפעיל האתר).{" "}
-                    <Link href="/dashboard/billing" className="font-bold text-indigo-300 underline">דף המנויים ←</Link>
+                  <p className="mb-6 text-sm text-gray-500 leading-relaxed">
+                    שדות אלו הם ל<strong className="text-gray-700">לקוחות הארגון</strong> (לא חשבון מפעיל האתר).{" "}
+                    <Link href="/dashboard/billing" className="font-bold text-indigo-600 underline">דף המנויים ←</Link>
                   </p>
                   <form
                     action={(fd) => {
@@ -795,7 +793,7 @@ export default function SettingsPageClient({
                     <div>
                       <label className={labelCls}>שם משתמש PayPal.Me (אופציונלי)</label>
                       <input name="paypalMeSlug" type="text" dir="ltr" defaultValue={initialOrg.paypalMeSlug ?? ""} placeholder="למשל: MyBusiness" className={inputCls} />
-                      <p className="mt-1 text-xs text-white/30">רק השם — יוצג קישור ל-paypal.me/… לשיתוף עם לקוחות.</p>
+                      <p className="mt-1 text-xs text-gray-400">רק השם — יוצג קישור ל-paypal.me/… לשיתוף עם לקוחות.</p>
                     </div>
                     <div>
                       <label className={labelCls}>רמת נתונים חיים / הכנה לביטוח ושירותים</label>
@@ -827,18 +825,18 @@ export default function SettingsPageClient({
 
               {/* AI / Billing shortcut strip */}
               {(activeTab === "ai" || activeTab === "billing") && (
-                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.07] p-4">
-                  <Sparkles className="shrink-0 text-indigo-400" size={20} />
-                  <div className="flex-1 min-w-[200px] text-sm text-white/55">
+                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+                  <Sparkles className="shrink-0 text-indigo-600" size={20} />
+                  <div className="flex-1 min-w-[200px] text-sm text-gray-600">
                     {activeTab === "ai" ? (
                       <>
                         לסריקה, צ׳אט והנחיות AI מלאות —{" "}
-                        <Link href="/dashboard/ai" className="font-bold text-indigo-300 underline">מרכז AI ←</Link>
+                        <Link href="/dashboard/ai" className="font-bold text-indigo-600 underline">מרכז AI ←</Link>
                       </>
                     ) : (
                       <>
                         ניהול מנוי ותשלומים —{" "}
-                        <Link href="/dashboard/billing" className="inline-flex items-center gap-1 font-bold text-indigo-300 underline">
+                        <Link href="/dashboard/billing" className="inline-flex items-center gap-1 font-bold text-indigo-600 underline">
                           דף המנויים <ExternalLink size={13} />
                         </Link>
                       </>
@@ -849,17 +847,17 @@ export default function SettingsPageClient({
 
               {/* ERP shortcut */}
               {activeTab === "erp" && (
-                <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.06] p-4 text-sm text-white/55">
-                  <Receipt size={16} className="shrink-0 text-indigo-400" />
-                  <span>ניהול מסמכים ודוחות — <Link href="/dashboard/erp" className="font-bold text-indigo-300 underline">פתיחת ERP ←</Link></span>
+                <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-gray-600">
+                  <Receipt size={16} className="shrink-0 text-indigo-600" />
+                  <span>ניהול מסמכים ודוחות — <Link href="/dashboard/erp" className="font-bold text-indigo-600 underline">פתיחת ERP ←</Link></span>
                 </div>
               )}
 
               {/* CRM shortcut */}
               {activeTab === "crm" && (
-                <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.06] p-4 text-sm text-white/55">
-                  <Users size={16} className="shrink-0 text-indigo-400" />
-                  <span>לקוחות ולידים — <Link href="/dashboard/crm" className="font-bold text-indigo-300 underline">פתיחת CRM ←</Link></span>
+                <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-gray-600">
+                  <Users size={16} className="shrink-0 text-indigo-600" />
+                  <span>לקוחות ולידים — <Link href="/dashboard/crm" className="font-bold text-indigo-600 underline">פתיחת CRM ←</Link></span>
                 </div>
               )}
 
@@ -867,14 +865,14 @@ export default function SettingsPageClient({
               {PLACEHOLDER_FIELDS[activeTab as PlaceholderTabId].map((field) => (
                 <div
                   key={field.key}
-                  className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 transition-all hover:border-white/[0.10] hover:bg-white/[0.04]"
+                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md"
                 >
-                  <label className="mb-1 block font-black text-white/80">{field.label}</label>
-                  {field.hint && <p className="mb-3 text-xs text-white/30">{field.hint}</p>}
+                  <label className="mb-1 block font-black text-gray-800">{field.label}</label>
+                  {field.hint && <p className="mb-3 text-xs text-gray-400">{field.hint}</p>}
                   <select
                     value={getPref(activeTab as PlaceholderTabId, field.key) || field.options[0].value}
                     onChange={(e) => setPref(activeTab as PlaceholderTabId, field.key, e.target.value)}
-                    className="w-full rounded-xl border border-white/[0.09] bg-[#0f1020] px-4 py-2.5 text-sm font-medium text-white outline-none focus:border-indigo-500/45 focus:ring-2 focus:ring-indigo-500/12 sm:w-72"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 sm:w-72"
                   >
                     {field.options.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -883,7 +881,7 @@ export default function SettingsPageClient({
                 </div>
               ))}
 
-              <p className="text-xs italic text-white/20">
+              <p className="text-xs italic text-gray-400">
                 הגדרות אלו נשמרות מקומית בדפדפן; חיבור לשרת יגיע בעדכון עתידי.
               </p>
             </div>

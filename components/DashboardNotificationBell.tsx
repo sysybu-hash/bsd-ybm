@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
@@ -72,7 +72,7 @@ export default function DashboardNotificationBell() {
           setOpen((v) => !v);
           if (!open) void load();
         }}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-[#0a0b14] text-white/55 shadow-sm hover:bg-white/[0.03]"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50"
         aria-label="התראות"
         aria-expanded={open}
       >
@@ -85,9 +85,9 @@ export default function DashboardNotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-lg shadow-gray-200/60">
-          <div className="flex items-center justify-between border-b border-white/[0.07] px-3 py-2">
-            <span className="text-xs font-black text-white/75">הודעות</span>
+        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60">
+          <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
+            <span className="text-xs font-black text-gray-700">הודעות</span>
             {unread > 0 ? (
               <button
                 type="button"
@@ -100,9 +100,9 @@ export default function DashboardNotificationBell() {
           </div>
           <div className="max-h-72 overflow-y-auto">
             {loading && items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-white/45">טוען…</p>
+              <p className="p-4 text-center text-xs text-gray-400">טוען…</p>
             ) : items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-white/45">אין הודעות</p>
+              <p className="p-4 text-center text-xs text-gray-400">אין הודעות</p>
             ) : (
               items.map((n) => (
                 <button
@@ -111,13 +111,13 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full text-right border-b border-white/[0.05] px-3 py-2.5 hover:bg-white/[0.03] ${
+                  className={`w-full text-right border-b border-white/[0.05] px-3 py-2.5 hover:bg-gray-50 ${
                     n.read ? "opacity-70" : "bg-indigo-500/15"
                   }`}
                 >
                   <p className="text-xs font-black text-white">{n.title}</p>
-                  <p className="text-[11px] text-white/55 mt-0.5 leading-snug">{n.body}</p>
-                  <p className="text-[10px] text-white/35 mt-1">
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{n.body}</p>
+                  <p className="text-[10px] text-gray-400 mt-1">
                     {new Date(n.createdAt).toLocaleString("he-IL")}
                   </p>
                 </button>
