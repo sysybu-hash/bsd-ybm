@@ -96,6 +96,93 @@ export async function createIssuedDocument(
   }
 }
 
+/* ─── Update existing issued document ────────────────────────────────────── */
+
+export type UpdateIssuedDocumentInput = {
+  id: string;
+  type: DocType;
+  clientName: string;
+  netAmount: number;
+  items: unknown;
+  status: DocStatus;
+};
+
+export type UpdateIssuedDocumentResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+export async function updateIssuedDocument(
+  data: UpdateIssuedDocumentInput,
+): Promise<UpdateIssuedDocumentResult> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.organizationId) {
+    return { ok: false, error: "יש להתחבר למערכת." };
+  }
+  const orgId = session.user.organizationId;
+
+  const clientName = data.clientName.trim();
+  if (!clientName) return { ok: false, error: "נא למלא שם לקוח." };
+  if (!Object.values(DocType).includes(data.type)) return { ok: false, error: "סוג מסמך לא תקין." };
+  if (!Object.values(DocStatus).includes(data.status)) return { ok: false, error: "סטטוס לא תקין." };
+
+  const netAmount = Number(data.netAmount);
+  if (!Number.isFinite(netAmount) || netAmount < 0) return { ok: false, error: "סכום לא תקין." };
+
+  const doc = await prisma.issuedDocument.findFirst({
+    where: { id: data.id, organizationId: orgId },
+    select: { id: true },
+  });
+  if (!doc) return { ok: false, error: "מסמך לא נמצא." };
+
+  const org = await prisma.organization.findUnique({
+    where: { id: orgId },
+    select: { companyType: true, isReportable: true },
+  });
+  if (!org) return { ok: false, error: "ארגון לא נמצא." };
+
+  const { vat, total } = calculateIssuedDocumentTotals(netAmount, org.companyType, org.isReportable);
+  const itemsJson: Prisma.InputJsonValue = Array.isArray(data.items) ? (data.items as Prisma.InputJsonValue) : [];
+
+  try {
+    await prisma.issuedDocument.update({
+      where: { id: data.id },
+      data: { type: data.type, clientName, amount: netAmount, vat, total, items: itemsJson, status: data.status },
+    });
+    revalidatePath("/dashboard/billing");
+    return { ok: true };
+  } catch (e) {
+    console.error("updateIssuedDocument", e);
+    return { ok: false, error: "עדכון המסמך נכשל." };
+  }
+}
+
+/* ─── Delete issued document ─────────────────────────────────────────────── */
+
+export type DeleteIssuedDocumentResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+export async function deleteIssuedDocument(id: string): Promise<DeleteIssuedDocumentResult> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.organizationId) return { ok: false, error: "יש להתחבר." };
+  const orgId = session.user.organizationId;
+
+  const doc = await prisma.issuedDocument.findFirst({
+    where: { id, organizationId: orgId },
+    select: { id: true },
+  });
+  if (!doc) return { ok: false, error: "מסמך לא נמצא." };
+
+  try {
+    await prisma.issuedDocument.delete({ where: { id } });
+    revalidatePath("/dashboard/billing");
+    return { ok: true };
+  } catch (e) {
+    console.error("deleteIssuedDocument", e);
+    return { ok: false, error: "מחיקת המסמך נכשלה." };
+  }
+}
+
 function csvCell(value: string | number): string {
   const s = String(value);
   if (/[",\n\r]/.test(s)) {

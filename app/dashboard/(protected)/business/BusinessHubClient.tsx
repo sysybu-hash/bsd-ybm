@@ -26,7 +26,7 @@ import MultiEngineScanner from "@/components/MultiEngineScanner";
 import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout";
 import CrmClient from "../crm/CrmClient";
 import type { CrmAdminOrganizationRow } from "../crm/CrmOrganizationsAdminTable";
-import type { InvoiceRow, ErpSummary } from "../crm/CrmClient";
+import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "../crm/CrmClient";
 import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
@@ -75,6 +75,7 @@ type Props = {
   hasOrganization: boolean;
   organizations: CrmAdminOrganizationRow[];
   showUnifiedBillingLinks: boolean;
+  orgBilling: OrgBillingInfo | null;
 };
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
@@ -120,6 +121,7 @@ function HubContent(props: Props) {
     hasOrganization,
     organizations,
     showUnifiedBillingLinks,
+    orgBilling,
   } = props;
 
   const [erpOpen, setErpOpen] = useState(false);
@@ -265,6 +267,7 @@ function HubContent(props: Props) {
           hasOrganization={hasOrganization}
           organizations={organizations}
           showUnifiedBillingLinks={showUnifiedBillingLinks}
+          orgBilling={orgBilling}
         />
 
         {/* ── כלי ERP — מקופלים כברירת מחדל ── */}

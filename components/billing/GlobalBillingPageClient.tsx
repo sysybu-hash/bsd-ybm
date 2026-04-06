@@ -13,12 +13,16 @@ import {
   MoreVertical,
   CheckCircle2,
   ExternalLink,
+  Eye,
+  Edit3,
 } from "lucide-react";
 import Link from "next/link";
 import CreateIssuedDocumentModal, {
   type CrmContactOption,
 } from "@/components/billing/CreateIssuedDocumentModal";
 import DocumentPrintTemplate from "@/components/billing/DocumentPrintTemplate";
+import EditIssuedDocumentModal from "@/components/billing/EditIssuedDocumentModal";
+import DocumentPreviewModal from "@/components/billing/DocumentPreviewModal";
 import ReportingCenter from "@/components/billing/ReportingCenter";
 import type { PayPalInvoiceRow } from "@/components/billing/PayPalInvoicesSection";
 import { exportAccountantMonthCsvAction } from "@/app/dashboard/billing/export-accountant-csv";
@@ -164,6 +168,8 @@ export default function GlobalBillingPageClient({
   const [tab, setTab] = useState<TabKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [printRow, setPrintRow] = useState<IssuedDocRow | null>(null);
+  const [editRow, setEditRow] = useState<IssuedDocRow | null>(null);
+  const [previewRow, setPreviewRow] = useState<IssuedDocRow | null>(null);
   const [exportPending, startExport] = useTransition();
 
   const handleExportAccountantCsv = () => {
@@ -359,11 +365,14 @@ export default function GlobalBillingPageClient({
                       <td className="px-5 py-3.5 text-end font-black text-gray-900">{formatMoney(row.doc.total)}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center justify-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button type="button" title="הדפסה" onClick={() => setPrintRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-500 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
+                          <button type="button" title="תצוגה מקדימה" onClick={() => setPreviewRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-500 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
+                            <Eye size={15} />
+                          </button>
+                          <button type="button" title="הדפס" onClick={() => setPrintRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-500 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
                             <Download size={15} />
                           </button>
-                          <button type="button" title="עוד" className="rounded-lg border border-gray-100 bg-white p-2 text-gray-400 shadow-sm transition hover:bg-gray-100">
-                            <MoreVertical size={15} />
+                          <button type="button" title="עריכה" onClick={() => setEditRow(row.doc)} className="rounded-lg border border-gray-100 bg-white p-2 text-gray-500 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
+                            <Edit3 size={15} />
                           </button>
                         </div>
                       </td>
@@ -424,45 +433,31 @@ export default function GlobalBillingPageClient({
         isReportable={isReportable}
       />
 
-      {printRow ? (
-        <div
-          className="fixed inset-0 z-[200] overflow-y-auto bg-gray-200/60 print:static print:bg-white print:overflow-visible"
-          role="dialog"
-          aria-modal="true"
-          aria-label="תצוגת הדפסה"
-        >
-          <div className="sticky top-0 z-10 print:hidden flex flex-wrap justify-center gap-3 border-b border-gray-200 bg-white p-4 shadow-sm">
-            <button type="button" onClick={() => window.print()} className="btn-primary px-6 py-3">
-              הדפס
-            </button>
-            <button type="button" onClick={() => setPrintRow(null)} className="btn-secondary px-6 py-3">
-              סגור
-            </button>
-          </div>
-          <div className="flex justify-center p-4 pb-16 print:p-0 print:block">
-            <DocumentPrintTemplate
-              doc={{
-                type: printRow.docType,
-                number: printRow.number,
-                date: printRow.dateIso,
-                clientName: printRow.clientName,
-                status: printRow.status,
-                amount: printRow.amount,
-                vat: printRow.vat,
-                total: printRow.total,
-                items: printRow.items,
-              }}
-              org={{
-                name: organizationName,
-                address: orgAddress,
-                taxId,
-                companyType,
-                isReportable,
-              }}
-            />
-          </div>
-        </div>
-      ) : null}
+      {editRow && (
+        <EditIssuedDocumentModal
+          doc={editRow}
+          companyType={companyType}
+          isReportable={isReportable}
+          onClose={() => setEditRow(null)}
+          onSaved={() => { setEditRow(null); }}
+        />
+      )}
+
+      {previewRow && (
+        <DocumentPreviewModal
+          doc={previewRow}
+          org={{ name: organizationName, address: orgAddress, taxId, companyType, isReportable }}
+          onClose={() => setPreviewRow(null)}
+        />
+      )}
+
+      {printRow && (
+        <DocumentPreviewModal
+          doc={printRow}
+          org={{ name: organizationName, address: orgAddress, taxId, companyType, isReportable }}
+          onClose={() => setPrintRow(null)}
+        />
+      )}
     </div>
   );
 }

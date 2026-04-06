@@ -40,6 +40,10 @@ import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
 } from "./CrmOrganizationsAdminTable";
 import { useI18n } from "@/components/I18nProvider";
+import ProjectDocumentBox from "@/components/billing/ProjectDocumentBox";
+import EditIssuedDocumentModal from "@/components/billing/EditIssuedDocumentModal";
+import DocumentPreviewModal from "@/components/billing/DocumentPreviewModal";
+import type { IssuedDocRow } from "@/components/billing/GlobalBillingPageClient";
 
 /* ─── ERP invoice type labels ── */
 const DOC_TYPE_LABEL: Record<string, string> = {
@@ -76,6 +80,14 @@ export type ErpSummary = {
   totalPaid: number;
   totalPending: number;
   invoiceCount: number;
+};
+
+export type OrgBillingInfo = {
+  name: string;
+  address: string | null;
+  taxId: string | null;
+  companyType: import("@prisma/client").CompanyType;
+  isReportable: boolean;
 };
 
 type ContactRow = {
@@ -558,12 +570,14 @@ export default function CrmClient({
   hasOrganization,
   organizations = [],
   showUnifiedBillingLinks = false,
+  orgBilling = null,
 }: {
   contacts: ContactRow[];
   projects: ProjectRow[];
   hasOrganization: boolean;
   organizations?: CrmAdminOrganizationRow[];
   showUnifiedBillingLinks?: boolean;
+  orgBilling?: OrgBillingInfo | null;
 }) {
   const { dir } = useI18n();
   const [view, setView] = useState<View>("pipeline");
@@ -571,6 +585,8 @@ export default function CrmClient({
   const [modal, setModal] = useState<ModalState | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+  const [editDocRow, setEditDocRow] = useState<IssuedDocRow | null>(null);
+  const [previewDocRow, setPreviewDocRow] = useState<IssuedDocRow | null>(null);
 
   /* ── Refresh contacts from server after any mutation ── */
   const refreshContacts = useCallback(async () => {
@@ -1038,6 +1054,18 @@ export default function CrmClient({
                           })}
                         </div>
                       )}
+                      {orgBilling && (
+                        <div className="mt-4">
+                          <ProjectDocumentBox
+                            projectId={p.id}
+                            org={orgBilling}
+                            companyType={orgBilling.companyType}
+                            isReportable={orgBilling.isReportable}
+                            onEditDoc={setEditDocRow}
+                            onPreviewDoc={setPreviewDocRow}
+                          />
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -1076,6 +1104,24 @@ export default function CrmClient({
           projects={projects}
           onClose={() => setModal(null)}
           onSaved={(m) => { setMsg(m); refreshContacts(); }}
+        />
+      )}
+
+      {editDocRow && orgBilling && (
+        <EditIssuedDocumentModal
+          doc={editDocRow}
+          companyType={orgBilling.companyType}
+          isReportable={orgBilling.isReportable}
+          onClose={() => setEditDocRow(null)}
+          onSaved={() => setEditDocRow(null)}
+        />
+      )}
+
+      {previewDocRow && orgBilling && (
+        <DocumentPreviewModal
+          doc={previewDocRow}
+          org={orgBilling}
+          onClose={() => setPreviewDocRow(null)}
         />
       )}
     </div>

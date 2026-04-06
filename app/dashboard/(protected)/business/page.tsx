@@ -145,6 +145,23 @@ export default async function BusinessPage() {
     aiData: d.aiData,
   }));
 
+  /* ── Org billing info (for document preview/edit in CRM) ──────────────── */
+  let orgBilling: {
+    name: string;
+    address: string | null;
+    taxId: string | null;
+    companyType: import("@prisma/client").CompanyType;
+    isReportable: boolean;
+  } | null = null;
+
+  if (orgId) {
+    const ob = await prisma.organization.findUnique({
+      where: { id: orgId },
+      select: { name: true, address: true, taxId: true, companyType: true, isReportable: true },
+    });
+    if (ob) orgBilling = ob;
+  }
+
   /* ── CRM data ──────────────────────────────────── */
   type InvoiceSerRow = {
     id: string; type: string; number: number; clientName: string;
@@ -292,6 +309,7 @@ export default async function BusinessPage() {
       hasOrganization={Boolean(orgId)}
       organizations={organizations}
       showUnifiedBillingLinks={platformDev}
+      orgBilling={orgBilling}
     />
   );
 }
