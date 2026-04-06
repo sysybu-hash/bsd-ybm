@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -197,7 +197,7 @@ export default function WizardHome() {
               התחבר
             </Link>
             <Link href="/register"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-[13px] font-bold text-gray-900 hover:bg-gray-100 transition shadow-lg shadow-white/10">
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#0a0b14] px-4 py-2 text-[13px] font-bold text-white hover:bg-white/[0.05] transition shadow-lg shadow-white/10">
               ניסיון חינם <ArrowLeft size={12} />
             </Link>
           </div>
@@ -252,7 +252,7 @@ export default function WizardHome() {
           {/* CTAs */}
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link href="/register"
-              className="group relative inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-8 py-3.5 text-[15px] font-bold text-white shadow-2xl shadow-indigo-500/30 transition hover:bg-indigo-400 hover:shadow-indigo-400/40">
+              className="group relative inline-flex items-center gap-2 rounded-xl bg-indigo-500/15 px-8 py-3.5 text-[15px] font-bold text-white shadow-2xl shadow-indigo-500/30 transition hover:bg-indigo-400 hover:shadow-indigo-400/40">
               <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 transition group-hover:opacity-100" />
               התחל ניסיון חינם — 30 יום
               <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-0.5" />
@@ -341,7 +341,7 @@ export default function WizardHome() {
                   onClick={() => setActiveTab(i)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-bold transition-all ${
                     active
-                      ? "bg-white text-gray-900 shadow-lg"
+                      ? "bg-[#0a0b14] text-white shadow-lg"
                       : "border border-white/[0.08] text-white/50 hover:border-white/20 hover:text-white/80"
                   }`}
                 >
@@ -426,7 +426,7 @@ export default function WizardHome() {
           </div>
           <div className="mt-10">
             <Link href="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-8 py-3.5 text-[15px] font-bold text-white shadow-xl shadow-indigo-500/20 transition hover:bg-indigo-400">
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500/15 px-8 py-3.5 text-[15px] font-bold text-white shadow-xl shadow-indigo-500/20 transition hover:bg-indigo-400">
               פתח חשבון חינם <ArrowLeft size={15} />
             </Link>
           </div>
@@ -476,12 +476,12 @@ export default function WizardHome() {
       </section>
 
       {/* ════════════════ TUTORIAL VIDEOS ════════════════ */}
-      <section id="tutorial-videos" className="border-t border-white/[0.06] bg-white">
+      <section id="tutorial-videos" className="border-t border-white/[0.06] bg-[#0a0b14]">
         <LandingTutorialSection />
       </section>
 
       {/* ════════════════ PRICING ════════════════ */}
-      <section id="pricing" className="bg-white">
+      <section id="pricing" className="bg-[#0a0b14]">
         <PricingSection />
       </section>
 
@@ -505,7 +505,7 @@ export default function WizardHome() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-9 py-4 text-[15px] font-bold text-gray-900 shadow-2xl transition hover:bg-gray-100">
+                className="inline-flex items-center gap-2 rounded-xl bg-[#0a0b14] px-9 py-4 text-[15px] font-bold text-white shadow-2xl transition hover:bg-white/[0.05]">
                 התחל ניסיון חינם <ArrowLeft size={15} />
               </Link>
               <Link href="/login"

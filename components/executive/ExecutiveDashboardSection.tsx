@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import ExecutiveReportCharts from "@/components/executive/ExecutiveReportCharts";
 import {
   getAnnualFlowSeries,
@@ -42,19 +42,19 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
     <div className="space-y-10 pb-8" dir={dir}>
       <header className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end md:justify-between">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-white/35">
             {t("executive.kicker")}
           </p>
-          <h2 className="text-2xl font-black italic tracking-tight text-gray-900 md:text-3xl">
+          <h2 className="text-2xl font-black italic tracking-tight text-white md:text-3xl">
             {t("executive.title")}
           </h2>
-          <p className="mt-2 max-w-xl font-medium text-gray-500">{t("executive.subtitle")}</p>
+          <p className="mt-2 max-w-xl font-medium text-white/45">{t("executive.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-3 self-start">
           {showSuperManage ? (
             <Link
               href="/dashboard/billing?tab=control"
-              className="inline-flex items-center gap-2 rounded-2xl border border-indigo-300/80 bg-gradient-to-br from-indigo-50 to-gray-50 px-5 py-3 text-sm font-bold text-indigo-900 shadow-sm ring-1 ring-indigo-200/60 transition-colors hover:border-indigo-400"
+              className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/40/80 bg-gradient-to-br from-indigo-50 to-gray-50 px-5 py-3 text-sm font-bold text-white shadow-sm ring-1 ring-indigo-200/60 transition-colors hover:border-indigo-400"
             >
               <ArrowRight size={18} />
               מרכז שליטה במנויים
@@ -63,7 +63,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           {!embedded ? (
             <Link
               href="/dashboard/intelligence"
-              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:border-indigo-200 hover:text-indigo-700"
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-5 py-3 text-sm font-bold text-white/65 shadow-sm transition-colors hover:border-indigo-500/30 hover:text-indigo-300"
             >
               <ArrowRight size={18} />
               {t("executive.linkIntelligence")}
@@ -78,15 +78,15 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
               <TrendingUp size={22} strokeWidth={2.5} />
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600/80">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400/80">
               {t("executive.incomeBadge")}
             </span>
           </div>
-          <p className="mb-1 text-sm font-semibold text-gray-500">{t("executive.incomeMeta")}</p>
-          <p className="text-2xl font-black tabular-nums text-gray-900 md:text-3xl">
+          <p className="mb-1 text-sm font-semibold text-white/45">{t("executive.incomeMeta")}</p>
+          <p className="text-2xl font-black tabular-nums text-white md:text-3xl">
             {fmt(totals.totalIncome)}
           </p>
-          <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.incomeHint")}</p>
+          <p className="mt-4 text-xs leading-relaxed text-white/35">{t("executive.incomeHint")}</p>
         </article>
 
         <article className="card-avenue bg-gradient-to-br from-white via-rose-50/25 to-white p-8 shadow-sm ring-1 ring-gray-50">
@@ -98,11 +98,11 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
               {t("executive.expenseBadge")}
             </span>
           </div>
-          <p className="mb-1 text-sm font-semibold text-gray-500">{t("executive.expenseMeta")}</p>
-          <p className="text-2xl font-black tabular-nums text-gray-900 md:text-3xl">
+          <p className="mb-1 text-sm font-semibold text-white/45">{t("executive.expenseMeta")}</p>
+          <p className="text-2xl font-black tabular-nums text-white md:text-3xl">
             {fmt(totals.totalExpenses)}
           </p>
-          <p className="mt-4 text-xs leading-relaxed text-gray-400">{t("executive.expenseHint")}</p>
+          <p className="mt-4 text-xs leading-relaxed text-white/35">{t("executive.expenseHint")}</p>
         </article>
 
         <article className="card-avenue bg-gradient-to-br from-white via-emerald-50/35 to-white p-8 shadow-sm ring-1 ring-gray-50">
@@ -110,20 +110,20 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/25">
               <Building2 size={22} strokeWidth={2} />
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700/90">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400/90">
               {t("executive.netBadge")}
             </span>
           </div>
-          <p className="mb-1 text-sm font-semibold text-gray-500">{t("executive.netLabel")}</p>
+          <p className="mb-1 text-sm font-semibold text-white/45">{t("executive.netLabel")}</p>
           <p
             className={`text-2xl font-black tabular-nums md:text-3xl ${
-              net >= 0 ? "text-emerald-700" : "text-indigo-700"
+              net >= 0 ? "text-emerald-400" : "text-indigo-300"
             }`}
           >
             {fmt(net)}
           </p>
-          <p className="mt-4 flex items-center gap-2 text-sm text-gray-500">
-            <Users size={16} className="text-gray-400" />
+          <p className="mt-4 flex items-center gap-2 text-sm text-white/45">
+            <Users size={16} className="text-white/35" />
             <span>
               {t("executive.orgsActive", {
                 count: totals.orgCount.toLocaleString(intlTag),
@@ -136,32 +136,32 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
       <ExecutiveReportCharts data={flowSeries} year={year} />
 
       <section className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
-          <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
+        <div className="card-avenue bg-[#0a0b14] p-8 shadow-sm md:p-10">
+          <h3 className="mb-2 text-xl font-black italic tracking-tight text-white md:text-2xl">
             {t("executive.userActivity")}
           </h3>
-          <p className="mb-8 text-sm font-medium text-gray-500">{t("executive.userActivitySub")}</p>
+          <p className="mb-8 text-sm font-medium text-white/45">{t("executive.userActivitySub")}</p>
           {recentUsers.length === 0 ? (
-            <p className="py-8 text-center text-sm font-medium text-gray-400">{t("executive.noLogins")}</p>
+            <p className="py-8 text-center text-sm font-medium text-white/35">{t("executive.noLogins")}</p>
           ) : (
             <ul className="max-h-[420px] space-y-3 overflow-y-auto pe-1">
               {recentUsers.map((u) => (
                 <li
                   key={u.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-gray-50/60 px-5 py-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03]/60 px-5 py-4"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-bold text-gray-900">
+                    <p className="truncate font-bold text-white">
                       {u.name || u.email || t("executive.userFallback")}
                     </p>
-                    <p className="truncate text-xs text-gray-500">{u.email}</p>
+                    <p className="truncate text-xs text-white/45">{u.email}</p>
                     {u.organization?.name ? (
-                      <p className="mt-0.5 text-xs text-gray-400">{u.organization.name}</p>
+                      <p className="mt-0.5 text-xs text-white/35">{u.organization.name}</p>
                     ) : null}
                   </div>
                   <div className="shrink-0 text-end">
-                    <p className="text-xs font-bold uppercase text-gray-400">{t("executive.lastLoginLabel")}</p>
-                    <p className="text-sm font-black tabular-nums text-gray-700">
+                    <p className="text-xs font-bold uppercase text-white/35">{t("executive.lastLoginLabel")}</p>
+                    <p className="text-sm font-black tabular-nums text-white/65">
                       {u.lastLoginAt
                         ? new Intl.DateTimeFormat(intlTag, {
                             dateStyle: "short",
@@ -176,33 +176,33 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           )}
         </div>
 
-        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
-          <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
+        <div className="card-avenue bg-[#0a0b14] p-8 shadow-sm md:p-10">
+          <h3 className="mb-2 text-xl font-black italic tracking-tight text-white md:text-2xl">
             {t("executive.priceAlerts")}
           </h3>
-          <p className="mb-8 text-sm font-medium text-gray-500">{t("executive.priceAlertsSub")}</p>
+          <p className="mb-8 text-sm font-medium text-white/45">{t("executive.priceAlertsSub")}</p>
           {priceSpikes.length === 0 ? (
-            <p className="py-8 text-center text-sm font-medium text-gray-400">{t("executive.noSpikes")}</p>
+            <p className="py-8 text-center text-sm font-medium text-white/35">{t("executive.noSpikes")}</p>
           ) : (
             <ol className="space-y-4">
               {priceSpikes.map((s, i) => (
                 <li
                   key={`${s.normalizedKey}-${s.organizationName}-${i}`}
-                  className="rounded-2xl border border-indigo-100 bg-gradient-to-l from-indigo-50/80 to-white p-5 ring-1 ring-indigo-50"
+                  className="rounded-2xl border border-indigo-500/20 bg-gradient-to-l from-indigo-50/80 to-white p-5 ring-1 ring-indigo-50"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500 text-sm font-black text-white">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-sm font-black text-white">
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold leading-snug text-gray-900">{s.description}</p>
-                      <p className="mt-1 text-xs font-medium text-gray-500">{s.organizationName}</p>
+                      <p className="font-bold leading-snug text-white">{s.description}</p>
+                      <p className="mt-1 text-xs font-medium text-white/45">{s.organizationName}</p>
                     </div>
-                    <span className="shrink-0 text-lg font-black tabular-nums text-indigo-700">
+                    <span className="shrink-0 text-lg font-black tabular-nums text-indigo-300">
                       +{s.changePercent.toFixed(1)}%
                     </span>
                   </div>
-                  <p className="mt-3 text-xs font-medium tabular-nums text-gray-500">
+                  <p className="mt-3 text-xs font-medium tabular-nums text-white/45">
                     {fmt(s.previousPrice)} → {fmt(s.latestPrice)}
                   </p>
                 </li>

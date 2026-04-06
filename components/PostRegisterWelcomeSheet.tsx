@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -45,14 +45,14 @@ export default function PostRegisterWelcomeSheet() {
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/60" dir="rtl">
-        <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-gray-900">
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-xl shadow-gray-200/60" dir="rtl">
+        <h2 id="bsd-welcome-title" className="text-center text-xl font-black text-white">
           ברוך הבא ל־BSD-YBM
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-500">החשבון שלך מחובר ומוכן לעבודה</p>
+        <p className="mt-2 text-center text-sm text-white/45">החשבון שלך מחובר ומוכן לעבודה</p>
 
         <div className="mt-8 flex flex-col items-center gap-4">
-          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-100 bg-gray-100 shadow-inner">
+          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-500/20 bg-white/[0.05] shadow-inner">
             {img ? (
               <Image src={img} alt="" fill className="object-cover" sizes="96px" unoptimized />
             ) : (
@@ -62,12 +62,12 @@ export default function PostRegisterWelcomeSheet() {
             )}
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-gray-900">{name}</p>
-            <p className="text-sm text-gray-500">{email}</p>
+            <p className="text-lg font-bold text-white">{name}</p>
+            <p className="text-sm text-white/45">{email}</p>
           </div>
           <div
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold ${
-              connected ? "bg-emerald-50 text-emerald-800" : "bg-indigo-50 text-indigo-900"
+              connected ? "bg-emerald-500/15 text-emerald-800" : "bg-indigo-500/15 text-white"
             }`}
           >
             {connected ? <Wifi size={16} aria-hidden /> : <WifiOff size={16} aria-hidden />}
@@ -79,7 +79,7 @@ export default function PostRegisterWelcomeSheet() {
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-red-100 bg-red-50 py-3.5 text-sm font-black text-red-700 transition hover:bg-red-100"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-red-100 bg-rose-500/[0.08] py-3.5 text-sm font-black text-rose-300 transition hover:bg-red-100"
           >
             <LogOut size={18} aria-hidden />
             התנתק
@@ -87,7 +87,7 @@ export default function PostRegisterWelcomeSheet() {
           <button
             type="button"
             onClick={close}
-            className="w-full rounded-2xl bg-indigo-600 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-500"
+            className="w-full rounded-2xl bg-indigo-600 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-500/15"
           >
             המשך לדשבורד
           </button>

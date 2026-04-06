@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -12,7 +12,7 @@ export default function SimulationMode() {
       className={`rounded-2xl border p-8 transition-all duration-500 ${
         isSimulating
           ? "bg-indigo-600 border-indigo-400 text-white"
-          : "bg-white border-gray-200 text-gray-900"
+          : "bg-[#0a0b14] border-white/[0.08] text-white"
       }`}
       dir="rtl"
     >
@@ -30,7 +30,7 @@ export default function SimulationMode() {
           onClick={() => setIsSimulating(!isSimulating)}
           className={`rounded-xl px-6 py-2 text-sm font-bold transition-all ${
             isSimulating
-              ? "bg-white text-indigo-600 shadow-sm"
+              ? "bg-[#0a0b14] text-indigo-400 shadow-sm"
               : "bg-indigo-600 text-white shadow-sm"
           }`}
         >
@@ -40,7 +40,7 @@ export default function SimulationMode() {
 
       <div className="space-y-4">
         <p
-          className={`text-sm ${isSimulating ? "text-indigo-100" : "text-gray-500"}`}
+          className={`text-sm ${isSimulating ? "text-indigo-100" : "text-white/45"}`}
         >
           הוסף הוצאה או הכנסה דמיונית כדי לראות איך היא תשפיע על תזרים המזומנים של
           BSD-YBM בחצי השנה הקרובה.
@@ -55,12 +55,12 @@ export default function SimulationMode() {
             <input
               type="number"
               placeholder="סכום (₪)"
-              className="p-3 rounded-xl bg-white/95 border border-white/50 text-gray-900 placeholder:text-gray-400 shadow-sm"
+              className="p-3 rounded-xl bg-white/95 border border-white/50 text-white placeholder:text-white/35 shadow-sm"
             />
-            <select className="p-3 rounded-xl bg-white/95 border border-white/50 text-gray-900 shadow-sm">
-              <option className="text-gray-900">הוצאה חד פעמית</option>
-              <option className="text-gray-900">הוצאה חודשית קבועה</option>
-              <option className="text-gray-900">הכנסה חזויה</option>
+            <select className="p-3 rounded-xl bg-white/95 border border-white/50 text-white shadow-sm">
+              <option className="text-white">הוצאה חד פעמית</option>
+              <option className="text-white">הוצאה חודשית קבועה</option>
+              <option className="text-white">הכנסה חזויה</option>
             </select>
           </motion.div>
         ) : null}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { FileText, Users, LayoutDashboard, Play } from "lucide-react";
@@ -47,24 +47,24 @@ function AnimatedClip({ id }: { id: string }) {
     return (
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-indigo-50 p-4">
         <div className="grid grid-cols-[120px_1fr] gap-3 h-full">
-          <div className="rounded-xl bg-white border border-gray-200 p-2 space-y-1">
+          <div className="rounded-xl bg-[#0a0b14] border border-white/[0.08] p-2 space-y-1">
             {["דשבורד", "CRM", "ERP", "הגדרות"].map((l, i) => (
               <motion.div
                 key={l}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.15 }}
-                className={`text-[10px] rounded-lg px-2 py-1 ${i === 0 ? "bg-indigo-50 text-indigo-700 font-bold" : "text-gray-600"}`}
+                className={`text-[10px] rounded-lg px-2 py-1 ${i === 0 ? "bg-indigo-500/15 text-indigo-300 font-bold" : "text-white/55"}`}
               >
                 {l}
               </motion.div>
             ))}
           </div>
-          <div className="rounded-xl bg-white border border-gray-200 p-3 text-[10px] text-gray-500">
+          <div className="rounded-xl bg-[#0a0b14] border border-white/[0.08] p-3 text-[10px] text-white/45">
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="h-2 bg-gray-200 rounded-full mb-2"
+              className="h-2 bg-white/[0.08] rounded-full mb-2"
             />
             ווידג׳טים חיים, חיפוש גלובלי, והפניות מהירות לפעולות מרכזיות.
           </div>
@@ -75,7 +75,7 @@ function AnimatedClip({ id }: { id: string }) {
   if (id === "erp") {
     return (
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-indigo-50 p-4">
-        <div className="rounded-2xl border-2 border-dashed border-indigo-300 bg-white h-full flex flex-col items-center justify-center gap-3">
+        <div className="rounded-2xl border-2 border-dashed border-indigo-500/40 bg-[#0a0b14] h-full flex flex-col items-center justify-center gap-3">
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8 }}
@@ -83,28 +83,28 @@ function AnimatedClip({ id }: { id: string }) {
           >
             העלאת חשבונית
           </motion.div>
-          <div className="w-40 h-2 rounded-full bg-gray-200 overflow-hidden">
+          <div className="w-40 h-2 rounded-full bg-white/[0.08] overflow-hidden">
             <motion.div
-              className="h-full bg-indigo-500"
+              className="h-full bg-indigo-500/15"
               animate={{ width: ["0%", "100%"] }}
               transition={{ repeat: Infinity, duration: 2.4 }}
             />
           </div>
-          <div className="text-[10px] text-gray-500">פענוח → שמירה למסמכים</div>
+          <div className="text-[10px] text-white/45">פענוח → שמירה למסמכים</div>
         </div>
       </div>
     );
   }
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-emerald-50 p-4">
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="rounded-xl border border-white/[0.08] bg-[#0a0b14] overflow-hidden">
         {["לקוח חדש", "שיוך לפרויקט", "הצעת מחיר"].map((row, i) => (
           <motion.div
             key={row}
             initial={{ opacity: 0, x: 14 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.18 }}
-            className="text-[10px] px-3 py-2 border-b border-gray-100 text-gray-700"
+            className="text-[10px] px-3 py-2 border-b border-white/[0.07] text-white/65"
           >
             {row}
           </motion.div>
@@ -124,9 +124,9 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+      className="flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-sm"
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
+      <div className="relative aspect-video w-full overflow-hidden bg-white/[0.05]">
         {hasEmbed ? (
           <iframe
             title={item.title}
@@ -139,7 +139,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
         ) : (
           <div className="absolute inset-0">
             <AnimatedClip id={item.id} />
-            <div className="absolute bottom-2 left-2 rounded-full border border-gray-200/90 bg-white/95 text-[10px] px-2 py-1 text-gray-600 shadow-sm">
+            <div className="absolute bottom-2 left-2 rounded-full border border-white/[0.08]/90 bg-white/95 text-[10px] px-2 py-1 text-white/55 shadow-sm">
               אנימציה מובנית
             </div>
           </div>
@@ -147,12 +147,12 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
       </div>
       <div className="flex flex-1 flex-col gap-2 p-6">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-[var(--primary-color,#3b82f6)]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/15 text-[var(--primary-color,#3b82f6)]">
             <Icon size={22} aria-hidden />
           </div>
           <div>
-            <h3 className="text-lg font-black text-gray-900">{item.title}</h3>
-            <p className="mt-1 text-sm leading-relaxed text-gray-600">{item.description}</p>
+            <h3 className="text-lg font-black text-white">{item.title}</h3>
+            <p className="mt-1 text-sm leading-relaxed text-white/55">{item.description}</p>
           </div>
         </div>
       </div>
@@ -172,18 +172,18 @@ export default function LandingVideoTutorials() {
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-indigo-800"
+          className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-indigo-800"
         >
           <Play size={14} className="shrink-0" aria-hidden />
           שלוש הדרכות וידאו
         </motion.p>
         <h2
           id="video-tutorials-heading"
-          className="text-3xl font-black italic text-gray-900 md:text-4xl"
+          className="text-3xl font-black italic text-white md:text-4xl"
         >
           הכירו את המערכת — שלב אחר שלב
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+        <p className="mx-auto mt-3 max-w-2xl text-white/45">
           שלוש אנימציות תפעול: דשבורד, ERP ו־CRM. ניתן להחליף לסרטוני וידאו אמיתיים דרך משתני סביבה.
         </p>
       </div>

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const PayPalBundleCheckout = dynamic(() => import("@/components/billing/PayPalBundleCheckout"), {
   ssr: false,
   loading: () => (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-500 shadow-sm" dir="rtl">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 text-center text-sm text-white/45 shadow-sm" dir="rtl">
       טוען תשלום חבילות…
     </div>
   ),

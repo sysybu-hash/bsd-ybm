@@ -76,16 +76,16 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
   return (
     <section
       id="paypal-bundles"
-      className="scroll-mt-24 rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm md:p-8"
+      className="scroll-mt-24 rounded-2xl border border-indigo-500/20 bg-[#0a0b14] p-6 shadow-sm md:p-8"
       dir="rtl"
     >
-      <h2 className="mb-2 text-xl font-black text-gray-900">רכישת בנדל סריקות</h2>
-      <p className="mb-4 text-sm text-gray-600">
+      <h2 className="mb-2 text-xl font-black text-white">רכישת בנדל סריקות</h2>
+      <p className="mb-4 text-sm text-white/55">
         כשמכסת המנוי נגמרה — ניתן לרכוש חבילת סריקות חד־פעמית (נוסף על היתרה הקיימת).
       </p>
 
       {successMsg ? (
-        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+        <div className="mb-4 rounded-xl border border-emerald-500/25 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-900">
           {successMsg}
         </div>
       ) : null}
@@ -104,7 +104,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
             className={`rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
               bundleId === b.id
                 ? "border-indigo-600 bg-indigo-600 text-white"
-                : "border-gray-200 bg-white text-gray-700 hover:border-indigo-200"
+                : "border-white/[0.08] bg-[#0a0b14] text-white/65 hover:border-indigo-500/30"
             }`}
           >
             {b.name} — ₪{b.priceIls.toFixed(2)}
@@ -113,7 +113,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
       </div>
 
       {selected ? (
-        <p className="mb-4 text-sm text-gray-600">
+        <p className="mb-4 text-sm text-white/55">
           נוסף ליתרה: <strong>{selected.cheapAdds}</strong> סריקות זולות, <strong>{selected.premiumAdds}</strong>{" "}
           פרימיום · <strong>₪{selected.priceIls.toFixed(2)}</strong>
         </p>

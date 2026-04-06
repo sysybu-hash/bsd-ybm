@@ -9,7 +9,7 @@ const PayPalSubscriptionCheckout = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500 shadow-sm"
+        className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 text-center text-sm text-white/45 shadow-sm"
         dir="rtl"
       >
         טוען אפשרויות תשלום PayPal…

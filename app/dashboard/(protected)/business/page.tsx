@@ -1,4 +1,4 @@
-﻿import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -64,19 +64,19 @@ export default async function BusinessPage() {
       label: t("erpPage.statMonthExpenses"),
       value: `\u20aa${expenseThisMonth.toLocaleString(intlTag)}`,
       trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t),
-      valueClass: "text-indigo-600",
+      valueClass: "text-indigo-400",
     },
     {
       label: t("erpPage.statDocsInView"),
       value: String(rawDocs.length),
       trend: t("erpPage.trendAllDocs"),
-      valueClass: "text-gray-900",
+      valueClass: "text-white",
     },
     {
       label: t("erpPage.statAvgInvoice"),
       value: rawDocs.length ? `\u20aa${avgPerDoc.toLocaleString(intlTag)}` : "\u2014",
       trend: t("erpPage.statAvgTrend"),
-      valueClass: "text-emerald-600",
+      valueClass: "text-emerald-400",
     },
   ];
 

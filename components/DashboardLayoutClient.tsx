@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -51,12 +51,12 @@ type NavLinkProps = {
 };
 
 const ACCENT: Record<string, { activeBg: string; activeText: string; activeBorder: string; iconBg: string; iconText: string; activeIconBg: string; activeIconText: string }> = {
-  indigo:  { activeBg: "bg-indigo-500/20", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
-  emerald: { activeBg: "bg-emerald-500/20",activeText: "text-emerald-300", activeBorder: "border-emerald-500/30", iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-emerald-500",  activeIconText: "text-white" },
+  indigo:  { activeBg: "bg-indigo-500/[0.12]", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500/15",   activeIconText: "text-white" },
+  emerald: { activeBg: "bg-emerald-500/[0.12]",activeText: "text-emerald-300", activeBorder: "border-emerald-500/30", iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-emerald-500/15",  activeIconText: "text-white" },
   sky:     { activeBg: "bg-sky-500/20",    activeText: "text-sky-300",     activeBorder: "border-sky-500/30",     iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-sky-500",      activeIconText: "text-white" },
   rose:    { activeBg: "bg-rose-500/20",   activeText: "text-rose-300",    activeBorder: "border-rose-500/30",    iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-rose-500",     activeIconText: "text-white" },
-  amber:   { activeBg: "bg-amber-500/20",  activeText: "text-amber-300",   activeBorder: "border-amber-500/30",   iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-amber-400",    activeIconText: "text-white" },
-  blue:    { activeBg: "bg-indigo-500/20", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
+  amber:   { activeBg: "bg-amber-500/[0.12]",  activeText: "text-amber-300",   activeBorder: "border-amber-500/30",   iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-amber-400",    activeIconText: "text-white" },
+  blue:    { activeBg: "bg-indigo-500/[0.12]", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500/15",   activeIconText: "text-white" },
 };
 
 function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: NavLinkProps) {
@@ -199,7 +199,7 @@ export default function DashboardLayoutClient({
           {serverUser.image ? (
             <Image src={serverUser.image} alt="" width={36} height={36} className="h-9 w-9 rounded-xl object-cover" />
           ) : userInitials}
-          <span className="absolute -bottom-0.5 -end-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-white bg-emerald-500" />
+          <span className="absolute -bottom-0.5 -end-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-white bg-emerald-500/15" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[12px] font-black leading-tight text-white/90">{userName}</p>
@@ -215,7 +215,7 @@ export default function DashboardLayoutClient({
         </button>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5 px-1">
-        <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300">{userRole.replaceAll("_", " ")}</span>
+        <span className="rounded-full border border-indigo-500/30 bg-indigo-500/15 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300">{userRole.replaceAll("_", " ")}</span>
         <span className="rounded-full border border-white/[0.10] bg-white/[0.05] px-2.5 py-0.5 text-[10px] font-semibold text-white/30" dir="ltr">ORG·{orgId.slice(-6).toUpperCase()}</span>
       </div>
     </div>
@@ -300,15 +300,15 @@ export default function DashboardLayoutClient({
       <main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden md:ms-64" style={{ WebkitOverflowScrolling: "touch" }}>
 
         {/* Mobile topbar */}
-        <div className="sticky top-0 z-[120] flex items-center justify-between gap-3 border-b border-gray-200/80 bg-white/95 px-4 py-3 shadow-sm md:hidden" style={{ backdropFilter: "blur(8px)" }}>
+        <div className="sticky top-0 z-[120] flex items-center justify-between gap-3 border-b border-white/[0.08]/80 bg-[#0a0b14]/95 px-4 py-3 shadow-sm md:hidden" style={{ backdropFilter: "blur(8px)" }}>
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white p-2 text-gray-700 shadow-sm"
+            className="inline-flex items-center justify-center rounded-xl border border-white/[0.08] bg-[#0a0b14] p-2 text-white/65 shadow-sm"
             onClick={() => setMobileOpen(true)}
           >
-            <Menu size={16} className="text-indigo-600" />
+            <Menu size={16} className="text-indigo-400" />
           </button>
-          <p className="text-sm font-black text-gray-900">BSD<span className="text-indigo-600">-YBM</span></p>
+          <p className="text-sm font-black text-white">BSD<span className="text-indigo-400">-YBM</span></p>
           <div className="flex items-center gap-1">
             <DashboardNotificationBell />
             <LanguageSwitcher />
@@ -316,14 +316,14 @@ export default function DashboardLayoutClient({
         </div>
 
         {/* Desktop header */}
-        <header className="sticky top-0 z-[110] hidden border-b border-gray-100 bg-white/95 px-8 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] md:block" style={{ backdropFilter: "blur(12px)" }}>
+        <header className="sticky top-0 z-[110] hidden border-b border-white/[0.07] bg-[#0a0b14]/95 px-8 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] md:block" style={{ backdropFilter: "blur(12px)" }}>
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
             <div className="flex items-center gap-2.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">BSD-YBM</span>
-              <span className="text-gray-300">/</span>
-              <h1 className="text-[15px] font-black text-gray-900">{pageTitle}</h1>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/35">BSD-YBM</span>
+              <span className="text-white/25">/</span>
+              <h1 className="text-[15px] font-black text-white">{pageTitle}</h1>
               {showAdmin && (
-                <span className="flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-600 border border-amber-200">
+                <span className="flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-[11px] font-bold text-amber-600 border border-amber-200">
                   <Shield size={10} />Admin
                 </span>
               )}
@@ -340,7 +340,7 @@ export default function DashboardLayoutClient({
 
           {/* Trial banner */}
           {trialBannerDaysLeft !== null && (
-            <div className="flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-4 shadow-md shadow-indigo-600/20">
+            <div className="flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-4 shadow-md shadow-indigo-600/20">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
                   <Zap size={16} />
@@ -356,7 +356,7 @@ export default function DashboardLayoutClient({
               </div>
               <Link
                 href="/dashboard/billing"
-                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-indigo-700 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md"
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#0a0b14] px-4 py-2 text-xs font-black text-indigo-300 shadow-sm transition-all hover:bg-indigo-500/15 hover:shadow-md"
               >
                 {t("layout.trialUpgrade")}
                 <ChevronRight size={12} />

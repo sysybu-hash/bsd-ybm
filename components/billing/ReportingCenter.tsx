@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { Download, FileSpreadsheet, CheckCircle2 } from "lucide-react";
@@ -44,25 +44,25 @@ export default function ReportingCenter() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 shadow-sm transition-all group hover:border-indigo-200 md:flex-row">
-        <div className="bg-indigo-50 p-5 rounded-2xl text-indigo-600 border border-indigo-100 group-hover:scale-110 transition-transform shrink-0">
+      <div className="flex flex-col items-center gap-6 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 text-white shadow-sm transition-all group hover:border-indigo-500/30 md:flex-row">
+        <div className="bg-indigo-500/15 p-5 rounded-2xl text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>
         <div className="flex-1 text-center md:text-right min-w-0">
           <h3 className="text-xl font-black italic tracking-tighter">מרכז דיווחים BSD-YBM</h3>
-          <p className="text-gray-600 text-sm font-bold mt-1">
+          <p className="text-white/55 text-sm font-bold mt-1">
             ייצוא נתוני מס לרואה חשבון בפורמט CSV
           </p>
         </div>
-        <div className="flex gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-200">
+        <div className="flex gap-2 bg-white/[0.03] p-2 rounded-2xl border border-white/[0.08]">
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-white font-black text-indigo-700 outline-none px-3 py-2 rounded-xl border border-gray-200"
+            className="bg-[#0a0b14] font-black text-indigo-300 outline-none px-3 py-2 rounded-xl border border-white/[0.08]"
             aria-label="חודש"
           >
             {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1} className="bg-white text-gray-900">
+              <option key={i + 1} value={i + 1} className="bg-[#0a0b14] text-white">
                 {i + 1}
               </option>
             ))}
@@ -70,11 +70,11 @@ export default function ReportingCenter() {
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="bg-white font-black text-indigo-700 outline-none px-3 py-2 rounded-xl border border-gray-200"
+            className="bg-[#0a0b14] font-black text-indigo-300 outline-none px-3 py-2 rounded-xl border border-white/[0.08]"
             aria-label="שנה"
           >
             {yearOptions.map((y) => (
-              <option key={y} value={y} className="bg-white text-gray-900">
+              <option key={y} value={y} className="bg-[#0a0b14] text-white">
                 {y}
               </option>
             ))}

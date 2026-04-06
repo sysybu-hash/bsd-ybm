@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   LineChart,
@@ -35,17 +35,17 @@ export default function PriceComparisonChart({
       : 0;
 
   return (
-    <div className="space-y-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" dir={dir}>
+    <div className="space-y-6 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm" dir={dir}>
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
-          <h3 className="text-2xl font-black text-gray-900 tracking-tighter italic">
+          <h3 className="text-2xl font-black text-white tracking-tighter italic">
             {t("priceCompare.title", { name: productName })}
           </h3>
-          <p className="text-gray-500 font-medium">{t("priceCompare.subtitle")}</p>
+          <p className="text-white/45 font-medium">{t("priceCompare.subtitle")}</p>
         </div>
         <div
           className={`p-4 rounded-2xl flex items-center gap-2 font-black ${
-            diff > 0 ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
+            diff > 0 ? "bg-rose-500/[0.08] text-rose-400" : "bg-green-50 text-green-600"
           }`}
         >
           {diff > 0 ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
@@ -58,7 +58,7 @@ export default function PriceComparisonChart({
       </div>
 
       {ordered.length === 0 ? (
-        <p className="text-center text-gray-400 py-16">{t("priceCompare.noData")}</p>
+        <p className="text-center text-white/35 py-16">{t("priceCompare.noData")}</p>
       ) : (
         <RechartsBounded height={250}>
           <ResponsiveContainer width="100%" height="100%">
@@ -101,12 +101,12 @@ export default function PriceComparisonChart({
       )}
 
       {latest && previous ? (
-        <div className="flex items-start gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
+        <div className="flex items-start gap-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/15 p-6">
           <div className="bg-indigo-600 text-white p-2 rounded-xl shrink-0">
             <Lightbulb size={20} />
           </div>
           <div>
-            <p className="text-indigo-900 font-black text-sm uppercase tracking-widest">
+            <p className="text-white font-black text-sm uppercase tracking-widest">
               {t("priceCompare.insightKicker")}
             </p>
             <p className="text-indigo-800 text-sm mt-1 leading-relaxed">

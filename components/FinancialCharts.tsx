@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   PieChart,
@@ -43,10 +43,10 @@ export default function FinancialCharts({
   }, []);
 
   const cardClass =
-    "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm";
+    "rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-6 shadow-sm";
 
-  const titlePieClass = "text-lg font-bold mb-4 text-gray-900";
-  const titleBarClass = "text-lg font-bold mb-4 text-gray-900";
+  const titlePieClass = "text-lg font-bold mb-4 text-white";
+  const titleBarClass = "text-lg font-bold mb-4 text-white";
 
   const tooltipStyle = {
     backgroundColor: "#fff",

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { BadgeCheck, Shield } from "lucide-react";
@@ -7,24 +7,24 @@ import { openCookieSettingsFromUi } from "@/lib/cookie-consent";
 export default function EuComplianceStrip() {
   return (
     <section
-      className="relative z-10 border-y border-indigo-100 bg-gradient-to-l from-indigo-50/90 via-white to-indigo-50/80"
+      className="relative z-10 border-y border-indigo-500/20 bg-gradient-to-l from-indigo-50/90 via-white to-indigo-50/80"
       aria-labelledby="eu-strip-heading"
     >
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-md shadow-indigo-500/10 ring-1 ring-indigo-100">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#0a0b14] shadow-md shadow-indigo-500/10 ring-1 ring-indigo-100">
               <Shield className="text-[var(--primary-color)]" size={28} aria-hidden />
             </div>
             <div>
-              <p className="mb-1 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-wide text-indigo-700 ring-1 ring-indigo-100">
+              <p className="mb-1 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-wide text-indigo-300 ring-1 ring-indigo-100">
                 <BadgeCheck size={14} aria-hidden />
                 מוכנות תקינה אירופית
               </p>
-              <h2 id="eu-strip-heading" className="text-xl font-black text-gray-900 md:text-2xl">
+              <h2 id="eu-strip-heading" className="text-xl font-black text-white md:text-2xl">
                 פרטיות, שקיפות והתאמה למסגרת GDPR
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
                 BSD-YBM מיועדת לעמוד בעקרונות הגנת המידע האירופיים (GDPR) ובדרישות ePrivacy לגבי
                 עוגיות. מוצגים כאן מסמכים משפטיים, ניהול הסכמה לעוגיות וזכויות נושאי מידע — יש להשלים
                 ניסוח סופי מול יועץ משפטי לפני הסתמכות עסקית.
@@ -40,14 +40,14 @@ export default function EuComplianceStrip() {
             </Link>
             <Link
               href="/privacy"
-              className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-center text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+              className="inline-flex items-center justify-center rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-5 py-3 text-center text-sm font-bold text-white/75 transition hover:bg-white/[0.03]"
             >
               מדיניות פרטיות
             </Link>
             <button
               type="button"
               onClick={() => openCookieSettingsFromUi()}
-              className="inline-flex items-center justify-center rounded-2xl border border-indigo-200 bg-indigo-50/80 px-5 py-3 text-center text-sm font-bold text-indigo-900 transition hover:bg-indigo-100"
+              className="inline-flex items-center justify-center rounded-2xl border border-indigo-500/30 bg-indigo-500/15 px-5 py-3 text-center text-sm font-bold text-white transition hover:bg-indigo-500/25"
             >
               הגדרות עוגיות
             </button>

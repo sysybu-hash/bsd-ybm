@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Mic, MicOff, BrainCircuit, Loader2 } from "lucide-react";
@@ -25,18 +25,18 @@ export default function VoiceInsights() {
 
   return (
     <div
-      className="rounded-2xl border border-gray-200 bg-white p-8 font-sans text-gray-900 shadow-sm"
+      className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 font-sans text-white shadow-sm"
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
-        <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-100">
-          <BrainCircuit className="text-indigo-600" size={24} aria-hidden />
+        <div className="p-3 bg-indigo-500/15 rounded-2xl border border-indigo-500/20">
+          <BrainCircuit className="text-indigo-400" size={24} aria-hidden />
         </div>
         <div>
-          <h4 className="font-black text-xl italic text-gray-900 tracking-tighter">
+          <h4 className="font-black text-xl italic text-white tracking-tighter">
             Voice Insights Live
           </h4>
-          <p className="text-gray-500 text-xs">
+          <p className="text-white/45 text-xs">
             שאל את BSD Intelligence על הפיננסיים והלקוחות שלך
           </p>
         </div>
@@ -45,8 +45,8 @@ export default function VoiceInsights() {
       <div className="space-y-6">
         <div className="flex justify-center mb-8">
           {isProcessing ? (
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center animate-pulse border border-gray-200">
-              <Loader2 className="animate-spin text-indigo-600" size={32} />
+            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center animate-pulse border border-white/[0.08]">
+              <Loader2 className="animate-spin text-indigo-400" size={32} />
             </div>
           ) : (
             <button
@@ -66,7 +66,7 @@ export default function VoiceInsights() {
         </div>
 
         {response ? (
-          <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 text-sm text-gray-700 leading-relaxed animate-in fade-in">
+          <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/[0.08] text-sm text-white/65 leading-relaxed animate-in fade-in">
             {response}
           </div>
         ) : null}

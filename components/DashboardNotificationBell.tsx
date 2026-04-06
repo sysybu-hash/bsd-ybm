@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
@@ -72,27 +72,27 @@ export default function DashboardNotificationBell() {
           setOpen((v) => !v);
           if (!open) void load();
         }}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-[#0a0b14] text-white/55 shadow-sm hover:bg-white/[0.03]"
         aria-label="התראות"
         aria-expanded={open}
       >
         <Bell size={20} />
         {unread > 0 ? (
-          <span className="absolute -top-1 -end-1 min-w-[1.125rem] rounded-full bg-red-500 px-1 text-center text-[10px] font-black leading-tight text-white">
+          <span className="absolute -top-1 -end-1 min-w-[1.125rem] rounded-full bg-rose-500/[0.08] px-1 text-center text-[10px] font-black leading-tight text-white">
             {unread > 9 ? "9+" : unread}
           </span>
         ) : null}
       </button>
 
       {open ? (
-        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60">
-          <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
-            <span className="text-xs font-black text-gray-800">הודעות</span>
+        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-lg shadow-gray-200/60">
+          <div className="flex items-center justify-between border-b border-white/[0.07] px-3 py-2">
+            <span className="text-xs font-black text-white/75">הודעות</span>
             {unread > 0 ? (
               <button
                 type="button"
                 onClick={() => void markAll()}
-                className="text-[11px] font-bold text-indigo-600 hover:underline"
+                className="text-[11px] font-bold text-indigo-400 hover:underline"
               >
                 סמן הכל כנקרא
               </button>
@@ -100,9 +100,9 @@ export default function DashboardNotificationBell() {
           </div>
           <div className="max-h-72 overflow-y-auto">
             {loading && items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-gray-500">טוען…</p>
+              <p className="p-4 text-center text-xs text-white/45">טוען…</p>
             ) : items.length === 0 ? (
-              <p className="p-4 text-center text-xs text-gray-500">אין הודעות</p>
+              <p className="p-4 text-center text-xs text-white/45">אין הודעות</p>
             ) : (
               items.map((n) => (
                 <button
@@ -111,13 +111,13 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full text-right border-b border-gray-50 px-3 py-2.5 hover:bg-gray-50 ${
-                    n.read ? "opacity-70" : "bg-indigo-50/40"
+                  className={`w-full text-right border-b border-white/[0.05] px-3 py-2.5 hover:bg-white/[0.03] ${
+                    n.read ? "opacity-70" : "bg-indigo-500/15"
                   }`}
                 >
-                  <p className="text-xs font-black text-gray-900">{n.title}</p>
-                  <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">{n.body}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">
+                  <p className="text-xs font-black text-white">{n.title}</p>
+                  <p className="text-[11px] text-white/55 mt-0.5 leading-snug">{n.body}</p>
+                  <p className="text-[10px] text-white/35 mt-1">
                     {new Date(n.createdAt).toLocaleString("he-IL")}
                   </p>
                 </button>

@@ -12,8 +12,8 @@ export default function PlatformPayPalOwnerCard() {
     <section
       className={`mb-10 rounded-2xl border p-6 md:p-8 shadow-sm ${
         configured
-          ? "border-indigo-200 bg-indigo-50/40"
-          : "border-indigo-200 bg-indigo-50/40"
+          ? "border-indigo-500/30 bg-indigo-500/15"
+          : "border-indigo-500/30 bg-indigo-500/15"
       }`}
       dir="rtl"
       aria-labelledby="platform-paypal-title"
@@ -24,10 +24,10 @@ export default function PlatformPayPalOwnerCard() {
             <Wallet size={24} aria-hidden />
           </div>
           <div className="min-w-0">
-            <h2 id="platform-paypal-title" className="text-lg font-black text-gray-900">
+            <h2 id="platform-paypal-title" className="text-lg font-black text-white">
               PayPal של מפעיל הפלטפורמה (רק אצלך)
             </h2>
-            <p className="mt-1 text-sm leading-relaxed text-gray-600">
+            <p className="mt-1 text-sm leading-relaxed text-white/55">
               הפרטים כאן מגיעים מ־<code className="text-xs bg-white/80 px-1 rounded">.env</code> — לקבלת
               תשלומים <strong>אליך</strong> (מנויים, שירות וכו׳). זה <strong>לא</strong> מוצג ללקוחות
               הארגונים בדף המנויים שלהם; שם נשאר רק ה־PayPal שכל ארגון מגדיר בהגדרות.
@@ -37,10 +37,10 @@ export default function PlatformPayPalOwnerCard() {
       </div>
 
       {configured ? (
-        <div className="mt-5 flex flex-col gap-3 border-t border-indigo-200 pt-5 text-sm">
+        <div className="mt-5 flex flex-col gap-3 border-t border-indigo-500/30 pt-5 text-sm">
           {merchantEmail ? (
-            <p className="text-gray-700">
-              <span className="font-bold text-gray-900">מייל: </span>
+            <p className="text-white/65">
+              <span className="font-bold text-white">מייל: </span>
               <span className="font-mono" dir="ltr">
                 {merchantEmail}
               </span>
@@ -61,7 +61,7 @@ export default function PlatformPayPalOwnerCard() {
         </div>
       ) : (
         <p className="mt-4 text-sm font-medium text-indigo-800">
-          לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-white px-1 rounded">.env.local</code>:{" "}
+          לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-[#0a0b14] px-1 rounded">.env.local</code>:{" "}
           <code className="text-xs">PLATFORM_PAYPAL_MERCHANT_EMAIL</code> ו/או{" "}
           <code className="text-xs">PLATFORM_PAYPAL_ME_SLUG</code>.
         </p>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -121,7 +121,7 @@ export default function AiBubble() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-[4.75rem] end-0 flex h-[min(520px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60"
+            className="absolute bottom-[4.75rem] end-0 flex h-[min(520px,calc(100dvh-8rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] shadow-lg shadow-gray-200/60"
             dir={dir}
           >
             <div
@@ -137,7 +137,7 @@ export default function AiBubble() {
               <ShieldCheck size={18} className="opacity-80 shrink-0" aria-hidden />
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-gray-50/80">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-white/[0.03]/80">
               {messages.map((m, i) => (
                 <div
                   key={`${i}-${m.content.slice(0, 12)}`}
@@ -147,7 +147,7 @@ export default function AiBubble() {
                     className={`max-w-[85%] p-3.5 rounded-2xl text-sm font-medium leading-relaxed ${
                       m.role === "user"
                         ? "bg-indigo-600 text-white rounded-br-md shadow-sm"
-                        : "bg-white text-gray-800 rounded-bl-md border border-gray-200 shadow-sm"
+                        : "bg-[#0a0b14] text-white/75 rounded-bl-md border border-white/[0.08] shadow-sm"
                     }`}
                   >
                     {m.content}
@@ -156,7 +156,7 @@ export default function AiBubble() {
               ))}
               {sending ? (
                 <div className="flex justify-end">
-                  <div className="flex items-center gap-2 text-gray-500 text-xs font-bold px-3 py-2">
+                  <div className="flex items-center gap-2 text-white/45 text-xs font-bold px-3 py-2">
                     <Loader2 className="animate-spin" size={16} aria-hidden />
                     {t("aiBubble.writing")}
                   </div>
@@ -165,32 +165,32 @@ export default function AiBubble() {
             </div>
 
             {loggedIn ? (
-              <div className="px-4 pb-2 shrink-0 bg-white border-t border-gray-100">
+              <div className="px-4 pb-2 shrink-0 bg-[#0a0b14] border-t border-white/[0.07]">
                 <Link
                   href="/dashboard/ai"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors py-1"
+                  className="block text-center text-xs font-bold text-indigo-400 hover:text-indigo-800 transition-colors py-1"
                 >
                   {t("aiBubble.centerLink")}
                 </Link>
               </div>
             ) : null}
 
-            <div className="p-3 flex gap-2 overflow-x-auto border-t border-gray-200 shrink-0 bg-white">
+            <div className="p-3 flex gap-2 overflow-x-auto border-t border-white/[0.08] shrink-0 bg-[#0a0b14]">
               {quickActions.map((action, i) => (
                 <button
                   key={i}
                   type="button"
                   disabled={sending}
                   onClick={() => sendMessage(action.label)}
-                  className="whitespace-nowrap bg-gray-50 hover:bg-gray-100 disabled:opacity-50 text-gray-700 text-xs px-3 py-2 rounded-full border border-gray-200 flex items-center gap-2 transition-all shrink-0"
+                  className="whitespace-nowrap bg-white/[0.03] hover:bg-white/[0.05] disabled:opacity-50 text-white/65 text-xs px-3 py-2 rounded-full border border-white/[0.08] flex items-center gap-2 transition-all shrink-0"
                 >
                   {action.icon} {action.label}
                 </button>
               ))}
             </div>
 
-            <div className="p-3 bg-white border-t border-gray-200 flex gap-2 shrink-0">
+            <div className="p-3 bg-[#0a0b14] border-t border-white/[0.08] flex gap-2 shrink-0">
               <input
                 type="text"
                 value={input}
@@ -203,7 +203,7 @@ export default function AiBubble() {
                 }}
                 disabled={sending}
                 placeholder={t("aiBubble.placeholder")}
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 outline-none text-sm px-3 py-2 disabled:opacity-60"
+                className="flex-1 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white placeholder:text-white/35 outline-none text-sm px-3 py-2 disabled:opacity-60"
                 aria-label={t("aiBubble.ariaMessage")}
               />
               <button
@@ -219,11 +219,11 @@ export default function AiBubble() {
             </div>
 
             {!loggedIn ? (
-              <div className="flex gap-2 px-3 pb-3 pt-0 shrink-0 bg-white">
+              <div className="flex gap-2 px-3 pb-3 pt-0 shrink-0 bg-[#0a0b14]">
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 hover:bg-gray-100"
+                  className="flex-1 text-center text-xs font-black py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/75 hover:bg-white/[0.05]"
                 >
                   {t("nav.login")}
                 </Link>

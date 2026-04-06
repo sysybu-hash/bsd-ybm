@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { Accessibility, Palette, Type, Contrast, Check } from "lucide-react";
@@ -70,9 +70,9 @@ export default function AccessibilityMenu({ dock = false }: Props) {
   };
 
   const activeToggle =
-    "bg-gray-100 text-gray-900 border border-gray-200 ring-1 ring-[var(--primary-color,#2563eb)]/20";
+    "bg-white/[0.05] text-white border border-white/[0.08] ring-1 ring-[var(--primary-color,#2563eb)]/20";
   const idleToggle =
-    "bg-white hover:bg-gray-50 text-gray-700 border border-gray-200";
+    "bg-[#0a0b14] hover:bg-white/[0.03] text-white/65 border border-white/[0.08]";
 
   const rootClass = dock
     ? "relative z-[2]"
@@ -87,7 +87,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
         aria-label={isOpen ? "סגור תפריט נגישות" : "פתח נגישות וצבעים"}
-        className="border border-gray-200 bg-white p-3.5 rounded-full shadow-lg hover:bg-gray-50 transition-colors text-gray-600"
+        className="border border-white/[0.08] bg-[#0a0b14] p-3.5 rounded-full shadow-lg hover:bg-white/[0.03] transition-colors text-white/55"
       >
         <Accessibility size={22} style={{ color: "var(--primary-color, #4f46e5)" }} />
       </motion.button>
@@ -99,14 +99,14 @@ export default function AccessibilityMenu({ dock = false }: Props) {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -12, scale: 0.97 }}
             transition={{ duration: 0.18 }}
-            className={`absolute w-60 rounded-2xl border border-gray-200 bg-white p-5 shadow-lg shadow-gray-200/60 text-gray-900 ${
+            className={`absolute w-60 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5 shadow-lg shadow-gray-200/60 text-white ${
               dock
                 ? "bottom-[calc(100%+0.75rem)] start-1/2 -translate-x-1/2"
                 : "bottom-[4.5rem] start-0"
             }`}
           >
             {/* כותרת */}
-            <h4 className="mb-4 flex items-center gap-2 text-sm font-black text-gray-800">
+            <h4 className="mb-4 flex items-center gap-2 text-sm font-black text-white/75">
               <Palette size={16} style={{ color: "var(--primary-color, #4f46e5)" }} aria-hidden />
               נראות וצבעים
             </h4>
@@ -137,7 +137,7 @@ export default function AccessibilityMenu({ dock = false }: Props) {
               ))}
             </div>
 
-            <div className="h-px bg-gray-100 mb-4" />
+            <div className="h-px bg-white/[0.05] mb-4" />
 
             {/* מתגים */}
             <div className="space-y-2">

@@ -184,35 +184,35 @@ export default async function ControlCenterPage() {
     <div className="space-y-6" dir="rtl">
 
       {/* HEADER */}
-      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-white px-6 py-7 shadow-sm md:px-8">
-        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14] px-6 py-7 md:px-8">
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-500" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-3 py-1 text-[11px] font-bold text-teal-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/15 px-3 py-1 text-[11px] font-bold text-teal-400">
               <CircleCheckBig size={11} /> מצב תפעול פשוט
             </span>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">מרכז שליטה ותפעול</h1>
-            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-500">
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-white">מרכז שליטה ותפעול</h1>
+            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-white/45">
               כל הפעולות החשובות מרוכזות כאן. ניהול מנוי, צוות, ניתוח שימוש והמלצות.
             </p>
           </div>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 opacity-70">ארגון</p>
-            <p className="mt-1.5 text-lg font-black text-indigo-700">{org?.name ?? "לא נמצא"}</p>
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400/70">ארגון</p>
+            <p className="mt-1.5 text-lg font-black text-white">{org?.name ?? "לא נמצא"}</p>
           </div>
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 opacity-70">מנוי</p>
-            <p className="mt-1.5 text-lg font-black text-indigo-700">{org?.subscriptionTier ?? "-"}</p>
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400/70">מנוי</p>
+            <p className="mt-1.5 text-lg font-black text-white">{org?.subscriptionTier ?? "-"}</p>
           </div>
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 opacity-70">משתמשים פעילים</p>
-            <p className="mt-1.5 text-lg font-black text-emerald-700">{activeUsers}</p>
+          <div className="rounded-2xl border border-white/[0.07] bg-emerald-500/[0.08] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/70">משתמשים פעילים</p>
+            <p className="mt-1.5 text-lg font-black text-white">{activeUsers}</p>
           </div>
-          <div className={`rounded-2xl border p-4 ${pendingUsers > 0 ? "border-amber-200 bg-amber-50" : "border-gray-100 bg-gray-50"}`}>
-            <p className={`text-[10px] font-bold uppercase tracking-widest opacity-70 ${pendingUsers > 0 ? "text-amber-600" : "text-gray-400"}`}>ממתינים לאישור</p>
-            <p className={`mt-1.5 text-lg font-black ${pendingUsers > 0 ? "text-amber-700" : "text-gray-500"}`}>{pendingUsers}</p>
+          <div className={`rounded-2xl border p-4 ${pendingUsers > 0 ? "border-amber-500/25 bg-amber-500/[0.08]" : "border-white/[0.07] bg-white/[0.03]"}`}>
+            <p className={`text-[10px] font-bold uppercase tracking-widest ${pendingUsers > 0 ? "text-amber-400/70" : "text-white/35"}`}>ממתינים לאישור</p>
+            <p className={`mt-1.5 text-lg font-black ${pendingUsers > 0 ? "text-amber-400" : "text-white/45"}`}>{pendingUsers}</p>
           </div>
         </div>
       </section>
@@ -225,25 +225,25 @@ export default async function ControlCenterPage() {
         </div>
 
         {/* Next best action */}
-        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
-            <Zap size={16} className="text-indigo-600" />
+        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5">
+          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-white">
+            <Zap size={16} className="text-indigo-400" />
             מה לעשות עכשיו
           </h2>
-          <p className="mb-4 text-xs text-gray-400">המלצה אחת ברורה לפי הנתונים הנוכחיים</p>
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-            <p className="text-sm font-black text-indigo-900">{recommendedAction.title}</p>
-            <p className="mt-2 text-sm leading-6 text-indigo-800/80">{recommendedAction.description}</p>
+          <p className="mb-4 text-xs text-white/35">המלצה אחת ברורה לפי הנתונים הנוכחיים</p>
+          <div className="rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.08] p-4">
+            <p className="text-sm font-black text-white">{recommendedAction.title}</p>
+            <p className="mt-2 text-sm leading-6 text-white/55">{recommendedAction.description}</p>
             <Link
               href={recommendedAction.href}
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-600/25 hover:bg-indigo-700 transition-colors"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-500/25 hover:bg-indigo-400 transition-colors"
             >
               {recommendedAction.cta} <ArrowLeft size={13} />
             </Link>
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <QuickPanel
-              icon={<CreditCard size={15} className="text-rose-600" />}
+              icon={<CreditCard size={15} className="text-rose-400" />}
               title="מנוי ותשלום"
               description="בדיקת חבילה ומסלול תשלום."
               href="/dashboard/billing"
@@ -251,7 +251,7 @@ export default async function ControlCenterPage() {
               accent="rose"
             />
             <QuickPanel
-              icon={<Users size={15} className="text-indigo-600" />}
+              icon={<Users size={15} className="text-indigo-400" />}
               title="צוות והרשאות"
               description="אישור משתמשים וניהול תפקידים."
               href="/dashboard/settings?tab=account"
@@ -262,26 +262,26 @@ export default async function ControlCenterPage() {
         </article>
 
         {/* Funnel metrics */}
-        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
-            <BarChart3 size={16} className="text-indigo-600" />
+        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5">
+          <h2 className="mb-1 flex items-center gap-2 text-base font-black text-white">
+            <BarChart3 size={16} className="text-indigo-400" />
             דוח שימוש — מסלולים
           </h2>
-          <p className="mb-4 text-xs text-gray-400">
+          <p className="mb-4 text-xs text-white/35">
             {latestWizardEventAt
               ? `עדכון: ${new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short" }).format(latestWizardEventAt)}`
               : "אין עדיין נתוני Wizard."}
           </p>
           <div className="space-y-3">
             {funnel.map((row) => (
-              <div key={row.route} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <div key={row.route} className="rounded-xl border border-white/[0.07] bg-white/[0.03] p-3">
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <p className="text-[13px] font-bold text-gray-800">{row.route}</p>
-                  <span className="rounded-full bg-white border border-gray-200 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+                  <p className="text-[13px] font-bold text-white">{row.route}</p>
+                  <span className="rounded-full bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[10px] font-bold text-white/55">
                     {pct(row.completion, row.views)} השלמה
                   </span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+                <div className="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
                   <div
                     className="h-full rounded-full bg-indigo-500 transition-all"
                     style={{ width: row.views > 0 ? `${Math.round((row.completion / row.views) * 100)}%` : "0%" }}
@@ -298,9 +298,9 @@ export default async function ControlCenterPage() {
         </article>
 
         {/* Quick shortcuts */}
-        <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm lg:col-span-2">
-          <h2 className="mb-4 flex items-center gap-2 text-base font-black text-gray-900">
-            <Shield size={16} className="text-emerald-600" />
+        <article className="rounded-2xl border border-white/[0.07] bg-[#0a0b14] p-5 lg:col-span-2">
+          <h2 className="mb-4 flex items-center gap-2 text-base font-black text-white">
+            <Shield size={16} className="text-emerald-400" />
             קיצורי דרך חשובים
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
@@ -318,15 +318,15 @@ export default async function ControlCenterPage() {
       </div>
 
       {/* WORKFLOW TIP */}
-      <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-        <p className="text-sm font-black text-amber-900">רצף עבודה מומלץ:</p>
-        <ol className="mt-2 list-decimal space-y-1 pe-5 text-sm text-amber-800">
+      <section className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.07] p-5">
+        <p className="text-sm font-black text-amber-300">רצף עבודה מומלץ:</p>
+        <ol className="mt-2 list-decimal space-y-1 pe-5 text-sm text-amber-200/75">
           <li>בדוק מנוי פעיל ומסלול תשלום.</li>
           <li>הגדר פרטי ארגון ותשלום במסך ההגדרות.</li>
-          <li>הזמן משתמשים לצוות והקצה תפקידים.</li>
+          <li>הזמן משתמשים לצוות והקצא תפקידים.</li>
           <li>עבור למסכי CRM/ERP להפעלה שוטפת.</li>
         </ol>
-        <p className="mt-2 text-xs text-amber-700">תאריך ניסיון חינם: {fmtDate(org?.trialEndsAt ?? null)}</p>
+        <p className="mt-2 text-xs text-amber-300/60">תאריך ניסיון חינם: {fmtDate(org?.trialEndsAt ?? null)}</p>
       </section>
     </div>
   );
@@ -347,12 +347,12 @@ function QuickPanel({
   cta: string;
   accent?: "rose" | "indigo" | "slate";
 }) {
-  const borderClass = accent === "rose" ? "border-rose-100 bg-rose-50/50" : accent === "indigo" ? "border-indigo-100 bg-indigo-50/50" : "border-gray-100 bg-gray-50";
+  const borderClass = accent === "rose" ? "border-rose-500/25 bg-rose-500/[0.08]" : accent === "indigo" ? "border-indigo-500/25 bg-indigo-500/[0.08]" : "border-white/[0.07] bg-white/[0.03]";
   return (
     <div className={`rounded-xl border p-3 ${borderClass}`}>
-      <p className="inline-flex items-center gap-2 text-sm font-black text-gray-900">{icon}{title}</p>
-      <p className="mt-1 text-xs text-gray-500">{description}</p>
-      <Link href={href} className="mt-2 inline-flex rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">{cta}</Link>
+      <p className="inline-flex items-center gap-2 text-sm font-black text-white">{icon}{title}</p>
+      <p className="mt-1 text-xs text-white/45">{description}</p>
+      <Link href={href} className="mt-2 inline-flex rounded-lg border border-white/[0.10] bg-white/[0.05] px-3 py-1.5 text-xs font-bold text-white/70 hover:bg-white/[0.08] transition-colors">{cta}</Link>
     </div>
   );
 }
@@ -366,28 +366,28 @@ function MetricChip({
   value: string;
   tone?: "slate" | "blue" | "green";
 }) {
-  const toneClass = tone === "blue" ? "text-indigo-700" : tone === "green" ? "text-emerald-700" : "text-gray-800";
+  const toneClass = tone === "blue" ? "text-indigo-300" : tone === "green" ? "text-emerald-300" : "text-white";
   return (
-    <div className="rounded-lg bg-white border border-gray-100 p-1.5">
-      <p className="text-[9px] text-gray-400">{label}</p>
+    <div className="rounded-lg bg-white/[0.05] border border-white/[0.07] p-1.5">
+      <p className="text-[9px] text-white/35">{label}</p>
       <p className={`text-sm font-black ${toneClass}`}>{value}</p>
     </div>
   );
 }
 
 const QUICK_LINK_COLORS: Record<string, string> = {
-  indigo: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
-  blue: "border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/40",
-  amber: "border-amber-100 hover:border-amber-300 hover:bg-amber-50/40",
-  emerald: "border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/40",
-  slate: "border-gray-100 hover:border-gray-300 hover:bg-gray-50",
+  indigo: "border-indigo-500/25 hover:border-indigo-500/40 hover:bg-indigo-500/[0.08]",
+  blue: "border-indigo-500/25 hover:border-indigo-500/40 hover:bg-indigo-500/[0.08]",
+  amber: "border-amber-500/25 hover:border-amber-500/40 hover:bg-amber-500/[0.08]",
+  emerald: "border-emerald-500/25 hover:border-emerald-500/40 hover:bg-emerald-500/[0.08]",
+  slate: "border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.05]",
 };
 
 function QuickLink({ href, title, subtitle, color = "slate" }: { href: string; title: string; subtitle: string; color?: string }) {
   return (
-    <Link href={href} className={`rounded-2xl border bg-white p-4 transition-all ${QUICK_LINK_COLORS[color] ?? QUICK_LINK_COLORS.slate}`}>
-      <p className="text-sm font-black text-gray-900">{title}</p>
-      <p className="mt-1 text-xs text-gray-500">{subtitle}</p>
+    <Link href={href} className={`rounded-2xl border bg-white/[0.03] p-4 transition-all ${QUICK_LINK_COLORS[color] ?? QUICK_LINK_COLORS.slate}`}>
+      <p className="text-sm font-black text-white">{title}</p>
+      <p className="mt-1 text-xs text-white/45">{subtitle}</p>
     </Link>
   );
 }

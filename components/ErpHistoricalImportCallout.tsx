@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Archive, HardDrive, Cloud } from "lucide-react";
 
 /**
@@ -7,7 +7,7 @@ import { Archive, HardDrive, Cloud } from "lucide-react";
 export default function ErpHistoricalImportCallout() {
   return (
     <section
-      className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-white to-sky-50/40 p-6 shadow-sm md:p-8"
+      className="rounded-2xl border border-emerald-500/25/80 bg-gradient-to-br from-emerald-50/90 via-white to-sky-50/40 p-6 shadow-sm md:p-8"
       dir="rtl"
       aria-labelledby="erp-archive-title"
     >
@@ -16,18 +16,18 @@ export default function ErpHistoricalImportCallout() {
           <Archive size={28} strokeWidth={2} aria-hidden />
         </div>
         <div className="min-w-0 space-y-3">
-          <h2 id="erp-archive-title" className="text-xl font-black text-gray-900 tracking-tight">
+          <h2 id="erp-archive-title" className="text-xl font-black text-white tracking-tight">
             מסמכים ישנים מהמחשב — &quot;להתחיל מחדש&quot; עם הארכיון
           </h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-white/65 leading-relaxed">
             אם יש לכם תיקיות עם חשבוניות / קבלות סרוקות מהעבודה השוטפת, אפשר{" "}
             <strong>לגרור כמה קבצים בבת אחת</strong> לאזור הסריקה למטה. המערכת מפענחת כל קובץ,
             שומרת אותו ברשימת המסמכים ב־ERP, ומצטרף לגרפים ולסיכומים — בלי לאבד את ההיסטוריה
             כשעוברים לעבודה במערכת.
           </p>
-          <div className="text-sm text-gray-600 space-y-3">
+          <div className="text-sm text-white/55 space-y-3">
             <p className="flex flex-wrap items-start gap-2">
-              <HardDrive size={18} className="text-emerald-600 shrink-0 mt-0.5" aria-hidden />
+              <HardDrive size={18} className="text-emerald-400 shrink-0 mt-0.5" aria-hidden />
               <span>
                 <strong>מהמחשב:</strong> בסורק ה־AI למטה — בוחרים מספר קבצים או גוררים תיקייה של
                 סריקות; כל קובץ נשמר ב־ERP אחרי פענוח.
@@ -39,7 +39,7 @@ export default function ErpHistoricalImportCallout() {
                 <strong>ענן (Drive, OneDrive…):</strong> לחיבור וגיבוי שוטף —{" "}
                 <Link
                   href="/dashboard/settings?tab=cloud"
-                  className="font-bold text-indigo-700 underline underline-offset-2"
+                  className="font-bold text-indigo-300 underline underline-offset-2"
                 >
                   הגדרות › גיבוי ענן
                 </Link>

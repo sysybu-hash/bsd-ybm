@@ -1,4 +1,4 @@
-﻿const NAV = ["בית", "מרכז עסקי", "חשבוניות", "לקוחות", "AI", "הגדרות"];
+const NAV = ["בית", "מרכז עסקי", "חשבוניות", "לקוחות", "AI", "הגדרות"];
 const STATS = ["לקוחות", "חשבוניות", "מסמכים", "הכנסות"];
 const ACTIONS = ["הנפק חשבונית", "מרכז עסקי", "הגדרות"];
 
@@ -114,19 +114,19 @@ export default function DesignPreviewPage() {
         </div>
 
         {/* C - CLEAN MINIMAL */}
-        <div className="cursor-pointer overflow-hidden rounded-2xl bg-white ring-1 ring-white/10 shadow-xl shadow-black/15 transition-all duration-300 hover:scale-[1.02] hover:ring-gray-400/40">
+        <div className="cursor-pointer overflow-hidden rounded-2xl bg-[#0a0b14] ring-1 ring-white/10 shadow-xl shadow-black/15 transition-all duration-300 hover:scale-[1.02] hover:ring-gray-400/40">
           <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white text-center py-2.5 text-sm font-bold tracking-wide">
             C — מינימלי לבן (Notion / Linear)
           </div>
           <div className="flex h-[400px]">
-            <div className="w-[155px] bg-white border-l border-gray-100 flex flex-col py-5 px-3 shrink-0">
+            <div className="w-[155px] bg-[#0a0b14] border-l border-white/[0.07] flex flex-col py-5 px-3 shrink-0">
               <div className="flex items-center gap-2 mb-7 px-1">
                 <div className="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center text-white text-xs font-black">B</div>
-                <span className="text-xs font-black text-gray-900">BSD-YBM</span>
+                <span className="text-xs font-black text-white">BSD-YBM</span>
               </div>
               {NAV.map((item, i) => (
                 <div key={item} className={`flex items-center gap-2 px-2 py-2 rounded-lg text-[11px] mb-0.5 font-medium ${
-                  i === 0 ? "bg-gray-100 text-gray-900" : "text-gray-400 hover:bg-gray-50"
+                  i === 0 ? "bg-white/[0.05] text-white" : "text-white/35 hover:bg-white/[0.03]"
                 }`}>
                   <div className={`w-1 h-3.5 rounded-full shrink-0 ${i === 0 ? "bg-gray-900" : "bg-transparent"}`} />
                   {item}
@@ -134,48 +134,48 @@ export default function DesignPreviewPage() {
               ))}
             </div>
             <div className="flex-1 bg-[#fafafa] p-5 overflow-hidden">
-              <p className="text-[10px] text-gray-300 mb-1">אפריל 2026</p>
-              <h2 className="text-base font-black text-gray-900 mb-5 tracking-tight">לוח הבקרה</h2>
+              <p className="text-[10px] text-white/25 mb-1">אפריל 2026</p>
+              <h2 className="text-base font-black text-white mb-5 tracking-tight">לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {STATS.map((s) => (
-                  <div key={s} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
-                    <div className="text-[9px] text-gray-400 mb-1 uppercase tracking-wider">{s}</div>
-                    <div className="text-base font-black text-gray-800">—</div>
+                  <div key={s} className="bg-[#0a0b14] rounded-xl p-3 border border-white/[0.07] shadow-sm">
+                    <div className="text-[9px] text-white/35 mb-1 uppercase tracking-wider">{s}</div>
+                    <div className="text-base font-black text-white/75">—</div>
                   </div>
                 ))}
               </div>
-              <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
-                <div className="px-3 py-2 border-b border-gray-50">
-                  <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">פעולות</span>
+              <div className="bg-[#0a0b14] rounded-xl border border-white/[0.07] overflow-hidden shadow-sm">
+                <div className="px-3 py-2 border-b border-white/[0.05]">
+                  <span className="text-[10px] font-semibold text-white/45 uppercase tracking-wider">פעולות</span>
                 </div>
                 {ACTIONS.map((a) => (
-                  <div key={a} className="flex items-center justify-between px-3 py-2.5 border-b border-gray-50 last:border-0">
-                    <span className="text-[11px] font-medium text-gray-700">{a}</span>
+                  <div key={a} className="flex items-center justify-between px-3 py-2.5 border-b border-white/[0.05] last:border-0">
+                    <span className="text-[11px] font-medium text-white/65">{a}</span>
                     <span className="text-gray-200 text-xs">→</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 border-t border-gray-100 px-4 py-2.5 text-center text-[10px] text-gray-300">
+          <div className="bg-white/[0.03] border-t border-white/[0.07] px-4 py-2.5 text-center text-[10px] text-white/25">
             White · Clean · No gradients · Notion-style
           </div>
         </div>
 
         {/* D - OBSIDIAN PRO */}
         <div className="cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:ring-white/30">
-          <div className="bg-white text-black text-center py-2.5 text-sm font-bold tracking-wide">
+          <div className="bg-[#0a0b14] text-black text-center py-2.5 text-sm font-bold tracking-wide">
             D — Obsidian Pro (Vercel / Raycast)
           </div>
           <div className="flex h-[400px]">
             <div className="w-[155px] bg-black border-l border-white/6 flex flex-col py-5 px-3 shrink-0">
               <div className="flex items-center gap-2 mb-7 px-1">
-                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-black text-xs font-black">B</div>
+                <div className="w-8 h-8 rounded-xl bg-[#0a0b14] flex items-center justify-center text-black text-xs font-black">B</div>
                 <span className="text-xs font-black text-white">BSD-YBM</span>
               </div>
               {NAV.map((item, i) => (
                 <div key={item} className={`flex items-center gap-2.5 px-2 py-2 rounded-lg text-[11px] mb-0.5 font-medium ${
-                  i === 0 ? "bg-white text-black" : "text-white/30 hover:bg-white/6"
+                  i === 0 ? "bg-[#0a0b14] text-black" : "text-white/30 hover:bg-white/6"
                 }`}>
                   {item}
                 </div>
@@ -187,7 +187,7 @@ export default function DesignPreviewPage() {
             <div className="flex-1 bg-[#0a0a0a] p-4 overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-black text-white">לוח הבקרה</h2>
-                <div className="bg-white text-black text-[9px] font-bold px-2 py-0.5 rounded-full">Pro</div>
+                <div className="bg-[#0a0b14] text-black text-[9px] font-bold px-2 py-0.5 rounded-full">Pro</div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {STATS.map((s) => (
@@ -233,26 +233,26 @@ export default function DesignPreviewPage() {
                 </div>
               ))}
             </div>
-            <div className="flex-1 bg-white p-4 overflow-hidden">
+            <div className="flex-1 bg-[#0a0b14] p-4 overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <div className="text-[10px] text-gray-400 mb-0.5">בוקר טוב, ישראל</div>
-                  <h2 className="text-sm font-black text-gray-900">לוח הבקרה</h2>
+                  <div className="text-[10px] text-white/35 mb-0.5">בוקר טוב, ישראל</div>
+                  <h2 className="text-sm font-black text-white">לוח הבקרה</h2>
                 </div>
                 <div className="bg-indigo-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Pro ✦</div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {[{l:"לקוחות",bg:"bg-indigo-50 border-indigo-100 text-indigo-700"},{l:"חשבוניות",bg:"bg-sky-50 border-sky-100 text-sky-700"},{l:"מסמכים",bg:"bg-emerald-50 border-emerald-100 text-emerald-700"},{l:"הכנסות",bg:"bg-amber-50 border-amber-100 text-amber-700"}].map((s) => (
+                {[{l:"לקוחות",bg:"bg-indigo-500/15 border-indigo-500/20 text-indigo-300"},{l:"חשבוניות",bg:"bg-sky-50 border-sky-100 text-sky-700"},{l:"מסמכים",bg:"bg-emerald-500/15 border-emerald-100 text-emerald-400"},{l:"הכנסות",bg:"bg-amber-500/15 border-amber-100 text-amber-400"}].map((s) => (
                   <div key={s.l} className={`${s.bg} border rounded-xl p-2.5`}>
                     <div className="text-[9px] font-semibold mb-1 opacity-70 uppercase tracking-wider">{s.l}</div>
                     <div className="text-sm font-black">—</div>
                   </div>
                 ))}
               </div>
-              <div className="bg-gray-50 rounded-xl border border-gray-100">
+              <div className="bg-white/[0.03] rounded-xl border border-white/[0.07]">
                 {ACTIONS.map((a, i) => (
-                  <div key={a} className="flex items-center justify-between px-3 py-2 border-b border-gray-100 last:border-0">
-                    <span className={`text-[11px] font-semibold ${["text-indigo-600","text-sky-600","text-gray-600"][i]}`}>{a}</span>
+                  <div key={a} className="flex items-center justify-between px-3 py-2 border-b border-white/[0.07] last:border-0">
+                    <span className={`text-[11px] font-semibold ${["text-indigo-400","text-sky-600","text-white/55"][i]}`}>{a}</span>
                     <span className="text-gray-200">←</span>
                   </div>
                 ))}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,7 @@ export default function BillingQuickPayments({ presets }: Props) {
 
   return (
     <section
-      className="rounded-2xl border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 to-white p-6 shadow-sm md:p-8"
+      className="rounded-2xl border border-indigo-500/30/80 bg-gradient-to-br from-indigo-50/90 to-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <div className="flex items-start gap-3 mb-4">
@@ -51,11 +51,11 @@ export default function BillingQuickPayments({ presets }: Props) {
           <Zap size={22} aria-hidden />
         </div>
         <div>
-          <h2 className="text-xl font-black text-gray-900">אפשרויות תשלום וגבייה</h2>
-          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+          <h2 className="text-xl font-black text-white">אפשרויות תשלום וגבייה</h2>
+          <p className="text-sm text-white/55 mt-1 leading-relaxed">
             <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
             <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
-            <Link href="/dashboard/settings?tab=billing" className="font-bold text-indigo-700 underline">
+            <Link href="/dashboard/settings?tab=billing" className="font-bold text-indigo-300 underline">
               הגדרות › מנויים
             </Link>
             .
@@ -76,7 +76,7 @@ export default function BillingQuickPayments({ presets }: Props) {
                   `בקשת תשלום — ${p.label} (₪${p.amountNis.toLocaleString("he-IL")})`,
               )
             }
-            className={`${btn} border-indigo-200 bg-white text-indigo-900 hover:bg-indigo-50`}
+            className={`${btn} border-indigo-500/30 bg-[#0a0b14] text-white hover:bg-indigo-500/15`}
           >
             {p.label}
           </button>
@@ -94,7 +94,7 @@ export default function BillingQuickPayments({ presets }: Props) {
 
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end max-w-xl">
         <div className="flex-1">
-          <label className="block text-xs font-bold text-gray-500 mb-1">סכום מותאם (בקשת גבייה)</label>
+          <label className="block text-xs font-bold text-white/45 mb-1">סכום מותאם (בקשת גבייה)</label>
           <input
             type="text"
             inputMode="decimal"
@@ -102,7 +102,7 @@ export default function BillingQuickPayments({ presets }: Props) {
             onChange={(e) => setCustom(e.target.value)}
             placeholder="למשל: 150"
             dir="ltr"
-            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 font-mono text-sm"
+            className="w-full rounded-xl border border-white/[0.08] px-4 py-2.5 text-white font-mono text-sm"
           />
         </div>
         <button

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Megaphone, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
@@ -38,18 +38,18 @@ export default function AdminBroadcastNotifications() {
   }
 
   return (
-    <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-      <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-gray-900">
+    <div className="mt-10 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-8 shadow-sm">
+      <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-white">
         <Megaphone className="text-indigo-500" size={28} aria-hidden />
         שידור לכולם
       </h3>
-      <p className="mb-6 text-sm font-medium text-gray-500">
-        יוצר התראה פנימית לכל משתמש במצב <strong className="text-gray-700">ACTIVE</strong>. ההודעה תופיע בפעמון בראש הדשבורד (לא מייל).
+      <p className="mb-6 text-sm font-medium text-white/45">
+        יוצר התראה פנימית לכל משתמש במצב <strong className="text-white/65">ACTIVE</strong>. ההודעה תופיע בפעמון בראש הדשבורד (לא מייל).
       </p>
 
       <form onSubmit={onSubmit} className="max-w-2xl space-y-4">
         <div>
-          <label htmlFor="bc-title" className="mb-1 block text-xs font-bold text-gray-600">
+          <label htmlFor="bc-title" className="mb-1 block text-xs font-bold text-white/55">
             כותרת
           </label>
           <input
@@ -59,13 +59,13 @@ export default function AdminBroadcastNotifications() {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={160}
             required
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full rounded-xl border border-white/[0.08] px-4 py-3 text-sm font-medium text-white outline-none ring-indigo-500/20 focus:ring-2"
             placeholder="למשל: עדכון מהפלטפורמה"
             disabled={loading}
           />
         </div>
         <div>
-          <label htmlFor="bc-body" className="mb-1 block text-xs font-bold text-gray-600">
+          <label htmlFor="bc-body" className="mb-1 block text-xs font-bold text-white/55">
             תוכן
           </label>
           <textarea
@@ -75,7 +75,7 @@ export default function AdminBroadcastNotifications() {
             maxLength={4000}
             required
             rows={5}
-            className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full resize-y rounded-xl border border-white/[0.08] px-4 py-3 text-sm font-medium text-white outline-none ring-indigo-500/20 focus:ring-2"
             placeholder="הטקסט שיוצג בהתראה..."
             disabled={loading}
           />
@@ -85,8 +85,8 @@ export default function AdminBroadcastNotifications() {
           <div
             className={`flex items-start gap-2 rounded-xl px-4 py-3 text-sm font-bold ${
               msg.type === "ok"
-                ? "bg-emerald-50 text-emerald-800"
-                : "bg-red-50 text-red-800"
+                ? "bg-emerald-500/15 text-emerald-800"
+                : "bg-rose-500/[0.08] text-red-800"
             }`}
             role="status"
           >

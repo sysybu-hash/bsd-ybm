@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -101,18 +101,18 @@ export default function CreateIssuedDocumentModal({
       aria-modal="true"
       aria-labelledby="issued-doc-modal-title"
     >
-      <div className="my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-200/60">
-        <div className="relative flex items-center justify-between gap-4 border-b border-gray-200 bg-gray-50 p-8">
+      <div className="my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0e1c] shadow-xl shadow-black/30">
+        <div className="relative flex items-center justify-between gap-4 border-b border-white/[0.08] bg-white/[0.03] p-8">
           <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
           <div className="flex items-center gap-4 min-w-0">
-            <div className="shrink-0 rounded-2xl bg-indigo-100 p-3 text-indigo-600 shadow-sm">
+            <div className="shrink-0 rounded-2xl bg-indigo-500/15 p-3 text-indigo-400 shadow-sm">
               <FileText />
             </div>
             <div className="min-w-0">
-              <h2 id="issued-doc-modal-title" className="text-2xl font-black italic tracking-tighter text-gray-900">
+              <h2 id="issued-doc-modal-title" className="text-2xl font-black italic tracking-tighter text-white">
                 הפקת מסמך חדש
               </h2>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-indigo-600">
+              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
                 {!isReportable
                   ? "מזכר פנימי — ללא דיווח מס"
                   : companyType === CompanyType.EXEMPT_DEALER
@@ -124,7 +124,7 @@ export default function CreateIssuedDocumentModal({
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-full border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+            className="shrink-0 rounded-full border border-white/[0.08] bg-[#0d0e1c] p-2 text-white/45 transition-colors hover:bg-white/[0.08] hover:text-white"
             aria-label="סגור"
           >
             <X size={22} />
@@ -134,30 +134,30 @@ export default function CreateIssuedDocumentModal({
         <div className="p-10 space-y-8 max-h-[75vh] overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label className="text-sm font-black text-gray-500 flex items-center gap-2">
+              <label className="text-sm font-black text-white/45 flex items-center gap-2">
                 <Receipt size={16} /> סוג המסמך
               </label>
               <select
                 value={docType}
                 onChange={(e) => setDocType(e.target.value as DocType)}
-                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
+                className="w-full bg-white/[0.03] p-4 rounded-2xl border-none ring-1 ring-white/[0.10] focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
               >
                 <option value={DocType.INVOICE_RECEIPT}>חשבונית מס קבלה</option>
                 <option value={DocType.INVOICE}>חשבונית מס</option>
                 <option value={DocType.RECEIPT}>קבלה</option>
                 <option value={DocType.CREDIT_NOTE}>חשבונית זיכוי</option>
               </select>
-              <p className="text-xs text-gray-500 leading-relaxed mt-2">
+              <p className="text-xs text-white/45 leading-relaxed mt-2">
                 כל סוגי המסמכים הללו זמינים לכל ארגון לפי{" "}
                 <strong>סיווג המס והדיווח</strong> שהגדיר מנהל הארגון בהגדרות. מע״מ וניסוח המסמך
                 מחושבים אוטומטית לפי הסיווג. גבייה מהלקוח — בדף{" "}
-                <span className="font-semibold text-gray-700">מנוי ותשלומים</span> (PayPal), לפי
+                <span className="font-semibold text-white/65">מנוי ותשלומים</span> (PayPal), לפי
                 תוכנית ומגבלות המנוי.
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-black text-gray-500 flex items-center gap-2">
+              <label className="text-sm font-black text-white/45 flex items-center gap-2">
                 <User size={16} /> שם הלקוח (CRM)
               </label>
               <input
@@ -165,7 +165,7 @@ export default function CreateIssuedDocumentModal({
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="חפש לקוח קיים או הקלד שם חדש..."
-                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
+                className="w-full bg-white/[0.03] p-4 rounded-2xl border-none ring-1 ring-white/[0.10] focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
               />
               <datalist id="crm-contacts-billing">
                 {contacts.map((c) => (
@@ -176,14 +176,14 @@ export default function CreateIssuedDocumentModal({
           </div>
 
           <div className="space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-              <h3 className="font-black text-gray-800 text-lg flex items-center gap-2">
+            <div className="flex justify-between items-center border-b border-white/[0.07] pb-2">
+              <h3 className="font-black text-white/75 text-lg flex items-center gap-2">
                 <Calculator size={18} /> פירוט השירותים
               </h3>
               <button
                 type="button"
                 onClick={addItem}
-                className="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:bg-indigo-50 px-3 py-1 rounded-lg transition-colors"
+                className="text-indigo-400 font-bold text-sm flex items-center gap-1 hover:bg-indigo-500/15 px-3 py-1 rounded-lg transition-colors"
               >
                 <Plus size={16} /> הוסף שורה
               </button>
@@ -196,7 +196,7 @@ export default function CreateIssuedDocumentModal({
                     placeholder="תיאור השירות/מוצר..."
                     value={item.desc}
                     onChange={(e) => updateItem(index, "desc", e.target.value)}
-                    className="w-full bg-white p-3 rounded-xl border border-gray-200 focus:border-indigo-500 outline-none font-medium"
+                    className="w-full bg-white/[0.05] p-3 rounded-xl border border-white/[0.08] focus:border-indigo-500 outline-none font-medium"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -207,7 +207,7 @@ export default function CreateIssuedDocumentModal({
                     placeholder="כמות"
                     value={item.qty}
                     onChange={(e) => updateItem(index, "qty", Number(e.target.value))}
-                    className="w-full bg-white p-3 rounded-xl border border-gray-200 text-center font-bold"
+                    className="w-full bg-white/[0.05] p-3 rounded-xl border border-white/[0.08] text-center font-bold"
                   />
                 </div>
                 <div className="md:col-span-3">
@@ -218,7 +218,7 @@ export default function CreateIssuedDocumentModal({
                     placeholder="מחיר יח׳"
                     value={item.price}
                     onChange={(e) => updateItem(index, "price", Number(e.target.value))}
-                    className="w-full bg-white p-3 rounded-xl border border-gray-200 text-left font-black"
+                    className="w-full bg-white/[0.05] p-3 rounded-xl border border-white/[0.08] text-left font-black"
                   />
                 </div>
                 <div className="md:col-span-1 flex justify-center">
@@ -226,7 +226,7 @@ export default function CreateIssuedDocumentModal({
                     type="button"
                     onClick={() => removeItem(index)}
                     disabled={items.length <= 1}
-                    className="text-gray-300 hover:text-red-500 transition-colors disabled:opacity-30"
+                    className="text-white/25 hover:text-rose-400 transition-colors disabled:opacity-30"
                     aria-label="מחק שורה"
                   >
                     <Trash2 size={18} />
@@ -236,18 +236,18 @@ export default function CreateIssuedDocumentModal({
             ))}
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-8">
-            <div className="flex justify-between text-gray-500 font-bold">
+          <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-8">
+            <div className="flex justify-between text-white/45 font-bold">
               <span>סה״כ לפני מע״מ:</span>
               <span>₪{totals.net.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </div>
             {isReportable ? (
-              <div className="flex justify-between text-gray-400 font-medium">
+              <div className="flex justify-between text-white/35 font-medium">
                 <span>מע״מ ({vatPercentLabel}):</span>
                 <span>₪{totals.vat.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
               </div>
             ) : null}
-            <div className="flex justify-between text-2xl font-black text-gray-900 pt-3 border-t border-gray-200">
+            <div className="flex justify-between text-2xl font-black text-white pt-3 border-t border-white/[0.08]">
               <span>סה״כ לתשלום:</span>
               <span className="italic">
                 ₪{totals.total.toLocaleString("he-IL", { maximumFractionDigits: 2 })}
@@ -256,11 +256,11 @@ export default function CreateIssuedDocumentModal({
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-4 border-t border-gray-200 bg-white p-8">
+        <div className="flex flex-wrap justify-end gap-4 border-t border-white/[0.08] bg-[#0d0e1c] p-8">
           <button
             type="button"
             onClick={onClose}
-            className="px-8 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 transition-colors"
+            className="px-8 py-4 rounded-2xl font-bold text-white/45 hover:bg-white/[0.08] transition-colors"
           >
             ביטול
           </button>
