@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import dynamic from "next/dynamic";
@@ -152,7 +152,7 @@ function tsToTime(ts: number): string {
 
 function StatusBadge({ active }: { active: boolean }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${active ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.08] text-white/45"}`}>
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${active ? "bg-emerald-500/20 text-emerald-400" : "bg-gray-100 text-gray-400"}`}>
       {active ? "פעיל" : "לא פעיל"}
     </span>
   );
@@ -160,7 +160,7 @@ function StatusBadge({ active }: { active: boolean }) {
 
 function CheckStateBadge({ state }: { state: number }) {
   const map: Record<number, { label: string; cls: string }> = {
-    0: { label: "לא נרשם", cls: "bg-white/[0.08] text-white/45" },
+    0: { label: "לא נרשם", cls: "bg-gray-100 text-gray-400" },
     1: { label: "כניסה", cls: "bg-indigo-500/15 text-indigo-300" },
     2: { label: "יציאה", cls: "bg-orange-500/20 text-orange-400" },
   };
@@ -170,7 +170,7 @@ function CheckStateBadge({ state }: { state: number }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-white/35">
+    <div className="flex flex-col items-center justify-center py-16 text-gray-400">
       <AlertCircle size={36} className="mb-3 opacity-40" />
       <p className="text-sm">{message}</p>
     </div>
@@ -593,7 +593,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     URL.revokeObjectURL(url);
   };
 
-  const inputCls = "rounded-xl border border-white/[0.10] bg-white/[0.05] px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20";
+  const inputCls = "rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20";
   // Only show active employees (activeState === 1)
   const activeEmployees = employees.filter(e => e.activeState === 1);
   const filtered = activeEmployees.filter(e => {
@@ -606,14 +606,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   if (!connected) {
     return (
       <div className="mx-auto max-w-lg py-12" dir="rtl">
-        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14]">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
           <div className="h-1 bg-indigo-600" />
           <div className="p-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/15">
               <Key size={28} className="text-indigo-400" />
             </div>
-            <h1 className="mb-2 text-xl font-black text-white">חיבור מקאנו</h1>
-            <p className="mb-6 text-sm leading-relaxed text-white/55">
+            <h1 className="mb-2 text-xl font-black text-gray-900">חיבור מקאנו</h1>
+            <p className="mb-6 text-sm leading-relaxed text-gray-500">
               הזינו את מפתח ה-API מלוח הניהול של מקאנו כדי לסנכרן עובדים, נוכחות ומשימות.
             </p>
             <form
@@ -650,7 +650,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             {keyMsg && (
               <p className={`mt-3 text-sm ${keyMsg.ok ? "text-emerald-400" : "text-rose-400"}`}>{keyMsg.msg}</p>
             )}
-            <p className="mt-4 text-xs text-white/35">
+            <p className="mt-4 text-xs text-gray-400">
               ניתן גם{" "}
               <Link href="/dashboard/settings?tab=integrations" className="text-indigo-400 hover:underline">
                 להגדיר בדף ההגדרות
@@ -663,16 +663,16 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   }
 
   return (
-    <div className="space-y-5 text-white" dir="rtl">
+    <div className="space-y-5 text-gray-900" dir="rtl">
       {/* Premium Header */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14] px-6 py-6 md:px-8">
+      <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white px-6 py-6 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/15 px-3 py-1 text-[11px] font-bold text-indigo-300">
               <Clock size={11} /> מקאנו — ניהול נוכחות ומשימות
             </span>
-            <h1 className="mt-2.5 flex items-center gap-2.5 text-2xl font-black tracking-tight text-white">
+            <h1 className="mt-2.5 flex items-center gap-2.5 text-2xl font-black tracking-tight text-gray-900">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-sm shadow-indigo-600/30">M</span>
               מקאנו
             </h1>
@@ -685,8 +685,8 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
       </section>
 
       {/* Tabs panel */}
-      <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14]">
-        <nav className="flex gap-0 overflow-x-auto border-b border-white/[0.08] px-2">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <nav className="flex gap-0 overflow-x-auto border-b border-gray-200 px-2">
           {TABS.map(({ id, label, Icon }) => (
             <button
               key={id}
@@ -695,7 +695,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               className={`flex items-center gap-2 whitespace-nowrap px-4 py-3.5 text-sm font-bold border-b-2 transition-colors ${
                 activeTab === id
                   ? "border-indigo-600 text-indigo-400"
-                  : "border-transparent text-white/45 hover:border-white/35 hover:text-white/70"
+                  : "border-transparent text-gray-400 hover:border-white/35 hover:text-gray-700"
               }`}
             >
               <Icon size={15} />
@@ -711,7 +711,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 <div className="relative flex-1 min-w-[200px]">
-                  <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/35" />
+                  <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     value={empSearch}
                     onChange={e => setEmpSearch(e.target.value)}
@@ -720,7 +720,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={loadEmployees} disabled={empLoading} className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08] disabled:opacity-50">
+                  <button onClick={loadEmployees} disabled={empLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
                     <RefreshCw size={14} className={empLoading ? "animate-spin" : ""} /> רענון
                   </button>
                   <button onClick={syncToCrm} disabled={syncPending || !employees.length} className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50">
@@ -741,7 +741,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : filtered.length === 0 ? (
                 <EmptyState message="לא נמצאו עובדים" />
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-white/[0.08] divide-y divide-white/[0.05]">
+                <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {filtered.map(emp => {
                     const name = [emp.firstName, emp.lastName].filter(Boolean).join(" ") || emp.workerTag || `#${emp.id}`;
                     const isOpen = empExpanded === emp.id;
@@ -750,18 +750,18 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         <button
                           type="button"
                           onClick={() => setEmpExpanded(isOpen ? null : emp.id)}
-                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-white/[0.03]"
+                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-gray-50"
                         >
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-sm font-black text-indigo-300">
                             {name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-white">{name}</p>
-                            <p className="truncate text-xs text-white/45">{emp.email ?? "—"}</p>
+                            <p className="text-sm font-bold text-gray-900">{name}</p>
+                            <p className="truncate text-xs text-gray-400">{emp.email ?? "—"}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             {emp.department && (
-                              <span className="hidden rounded-lg bg-white/[0.08] px-2 py-1 text-xs text-white/45 sm:inline">
+                              <span className="hidden rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-400 sm:inline">
                                 {emp.department.name}
                               </span>
                             )}
@@ -772,64 +772,64 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                               const isOut = emp.lastCheckState === 2;
                               return (
                                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
-                                  isIn ? "bg-emerald-500/20 text-emerald-400" : isOut ? "bg-orange-500/20 text-orange-400" : "bg-white/[0.08] text-white/35"
+                                  isIn ? "bg-emerald-500/20 text-emerald-400" : isOut ? "bg-orange-500/20 text-orange-400" : "bg-gray-100 text-gray-400"
                                 }`}>
-                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isIn ? "bg-emerald-500/15 animate-pulse" : isOut ? "bg-orange-400" : "bg-white/25"}`} />
+                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isIn ? "bg-emerald-500/15 animate-pulse" : isOut ? "bg-orange-400" : "bg-gray-200"}`} />
                                   {isIn ? "בעבודה" : isOut ? "יצא" : "לא פעיל"}
                                 </span>
                               );
                             })()}
-                            {isOpen ? <ChevronUp size={14} className="text-white/35" /> : <ChevronDown size={14} className="text-white/35" />}
+                            {isOpen ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
                           </div>
                         </button>
                         {isOpen && (
-                          <div className="border-t border-white/[0.07] bg-white/[0.03] px-5 py-4">
+                          <div className="border-t border-white/[0.07] bg-gray-50 px-5 py-4">
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-sm">
                               {emp.email && (
-                                <div className="flex items-center gap-2 text-white/55">
+                                <div className="flex items-center gap-2 text-gray-500">
                                   <Mail size={13} className="text-indigo-400 shrink-0" />
                                   <span className="truncate" dir="ltr">{emp.email}</span>
                                 </div>
                               )}
                               {emp.phone && (
-                                <div className="flex items-center gap-2 text-white/55">
+                                <div className="flex items-center gap-2 text-gray-500">
                                   <Phone size={13} className="text-emerald-400 shrink-0" />
                                   {emp.phone}
                                 </div>
                               )}
                               {emp.idNum && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <Hash size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <Hash size={13} className="text-gray-400 shrink-0" />
                                   ת.ז: {emp.idNum}
                                 </div>
                               )}
                               {emp.city && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <ArrowRight size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <ArrowRight size={13} className="text-gray-400 shrink-0" />
                                   עיר: {emp.city}
                                 </div>
                               )}
                               {emp.role && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <Users size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <Users size={13} className="text-gray-400 shrink-0" />
                                   תפקיד: {emp.role}
                                 </div>
                               )}
                               {emp.employedFrom_dt && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <CalendarDays size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <CalendarDays size={13} className="text-gray-400 shrink-0" />
                                   תחילת עבודה: {emp.employedFrom_dt}
                                 </div>
                               )}
                               {emp.hasCar && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <Car size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <Car size={13} className="text-gray-400 shrink-0" />
                                   יש רכב
                                 </div>
                               )}
                               {emp.lastCheckTime && (
-                                <div className="flex items-center gap-2 text-white/55">
-                                  <Clock size={13} className="text-white/35 shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-500">
+                                  <Clock size={13} className="text-gray-400 shrink-0" />
                                   נוכחות אחרונה: {tsToDate(emp.lastCheckTime)} {tsToTime(emp.lastCheckTime)}
                                 </div>
                               )}
@@ -841,7 +841,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   })}
                 </div>
               )}
-              <p className="text-left text-xs text-white/35">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
+              <p className="text-left text-xs text-gray-400">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
             </div>
           )}
 
@@ -849,7 +849,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
           {activeTab === "departments" && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button onClick={loadDepartments} disabled={deptLoading} className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08] disabled:opacity-50">
+                <button onClick={loadDepartments} disabled={deptLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
                   <RefreshCw size={14} className={deptLoading ? "animate-spin" : ""} /> רענון
                 </button>
               </div>
@@ -860,16 +860,16 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {departments.map(dept => (
-                    <div key={dept.id} className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+                    <div key={dept.id} className="rounded-2xl border border-white/[0.07] bg-gray-50 p-5">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-sm font-black text-indigo-300">
                           {dept.number ?? "—"}
                         </div>
-                        <p className="text-sm font-bold text-white">{dept.name}</p>
+                        <p className="text-sm font-bold text-gray-900">{dept.name}</p>
                       </div>
-                      <p className="text-xs text-white/45">ID: {dept.id}</p>
+                      <p className="text-xs text-gray-400">ID: {dept.id}</p>
                       {dept.usersCount !== undefined && (
-                        <p className="mt-1 text-xs text-white/45">{dept.usersCount} עובדים</p>
+                        <p className="mt-1 text-xs text-gray-400">{dept.usersCount} עובדים</p>
                       )}
                     </div>
                   ))}
@@ -883,15 +883,15 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3 items-end">
                 <div>
-                  <label className="mb-1 block text-xs font-bold text-white/55">מתאריך</label>
+                  <label className="mb-1 block text-xs font-bold text-gray-500">מתאריך</label>
                   <input type="date" value={attFrom} onChange={e => setAttFrom(e.target.value)} className={inputCls} />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-bold text-white/55">עד תאריך</label>
+                  <label className="mb-1 block text-xs font-bold text-gray-500">עד תאריך</label>
                   <input type="date" value={attTo} onChange={e => setAttTo(e.target.value)} className={inputCls} />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-bold text-white/55">סינון עובד</label>
+                  <label className="mb-1 block text-xs font-bold text-gray-500">סינון עובד</label>
                   <select
                     value={attUserId}
                     onChange={e => setAttUserId(e.target.value)}
@@ -915,22 +915,22 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : attendance.length === 0 ? (
                 <EmptyState message="אין רשומות נוכחות בטווח שנבחר" />
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
-                    <thead className="border-b border-white/[0.07] bg-white/[0.04]">
+                    <thead className="border-b border-white/[0.07] bg-gray-50">
                       <tr>
                         {["עובד", "מספר", "תאריך", "שעה", "כניסה/יציאה"].map(h => (
-                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>
+                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.07]">
                       {(attUserId ? attendance.filter(r => String(r.userId) === attUserId) : attendance).map(row => (
-                        <tr key={row.id} className="transition hover:bg-white/[0.03]">
-                          <td className="px-4 py-3 font-medium text-white">{row.userName ?? `#${row.userId}`}</td>
-                          <td className="px-4 py-3 font-mono text-xs text-white/45">{row.workerTag ?? "—"}</td>
-                          <td className="px-4 py-3 text-white/55">{row.dateStr ?? tsToDate(row.ts)}</td>
-                          <td className="px-4 py-3 text-white/55" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
+                        <tr key={row.id} className="transition hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium text-gray-900">{row.userName ?? `#${row.userId}`}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-gray-400">{row.workerTag ?? "—"}</td>
+                          <td className="px-4 py-3 text-gray-500">{row.dateStr ?? tsToDate(row.ts)}</td>
+                          <td className="px-4 py-3 text-gray-500" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${
                               row.isOut ? "bg-orange-500/20 text-orange-400" : "bg-emerald-500/20 text-emerald-400"
@@ -944,7 +944,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </table>
                 </div>
               )}
-              <p className="text-left text-xs text-white/35">
+              <p className="text-left text-xs text-gray-400">
                 {attUserId ? attendance.filter(r => String(r.userId) === attUserId).length : attendance.length} רשומות
               </p>
             </div>
@@ -955,13 +955,13 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4" dir="rtl">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-black text-white">פרויקטים ואזורי דיווח</h3>
-                  <p className="mt-0.5 text-xs text-white/45">
+                  <h3 className="text-base font-black text-gray-900">פרויקטים ואזורי דיווח</h3>
+                  <p className="mt-0.5 text-xs text-gray-400">
                     הגדר פרטי פרויקט, שייך עובדים, וסנכרן ל-CRM ו-ERP
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={loadZones} disabled={zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08] disabled:opacity-50">
+                  <button onClick={loadZones} disabled={zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
                     <RefreshCw size={14} className={zonesLoading ? "animate-spin" : ""} /> רענון
                   </button>
                   <button onClick={syncZonesToCrm} disabled={zoneSyncPending || zones.length === 0} className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50">
@@ -982,23 +982,23 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
               {/* Add Zone Form */}
               {showAddZone && (
-                <div className="space-y-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.08] p-5">
-                  <h4 className="text-sm font-black text-white">הוספת פרויקט / אזור דיווח</h4>
+                <div className="space-y-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+                  <h4 className="text-sm font-black text-gray-900">הוספת פרויקט / אזור דיווח</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-white/55">שם הפרויקט *</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">שם הפרויקט *</label>
                       <input value={newZone.name} onChange={e => setNewZone(z => ({ ...z, name: e.target.value }))} placeholder='שנלר, תנובה, ממילא...' className={inputCls + " w-full"} />
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-white/55">כתובת מלאה *</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">כתובת מלאה *</label>
                       <input value={newZone.address} onChange={e => setNewZone(z => ({ ...z, address: e.target.value }))} placeholder="שנלר, ירושלים" className={inputCls + " w-full"} />
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-white/55">תיאור</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">תיאור</label>
                       <input value={newZone.description} onChange={e => setNewZone(z => ({ ...z, description: e.target.value }))} placeholder="תיאור קצר" className={inputCls + " w-full"} />
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-white/55">רדיוס (מטרים)</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">רדיוס (מטרים)</label>
                       <input type="number" value={newZone.radius} onChange={e => setNewZone(z => ({ ...z, radius: e.target.value }))} min={10} max={1000} className={inputCls + " w-full"} />
                     </div>
                   </div>
@@ -1006,7 +1006,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <button onClick={addZone} disabled={addingZone || !newZone.name || !newZone.address} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50">
                       {addingZone ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />} שמור
                     </button>
-                    <button onClick={() => setShowAddZone(false)} className="rounded-xl border border-white/[0.10] bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08]">ביטול</button>
+                    <button onClick={() => setShowAddZone(false)} className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100">ביטול</button>
                   </div>
                 </div>
               )}
@@ -1022,7 +1022,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : zones.length === 0 ? (
                 <EmptyState message="אין פרויקטים — הוסף את אתרי העבודה שלך" />
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-white/[0.08] divide-y divide-white/[0.05]">
+                <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {zones.map(zone => {
                     const isExpanded = expandedZoneId === zone.id;
                     const edit = editZone[zone.id];
@@ -1033,14 +1033,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         <button
                           type="button"
                           onClick={() => isExpanded ? setExpandedZoneId(null) : initEditZone(zone)}
-                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-white/[0.03]"
+                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-gray-50"
                         >
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15">
                             <Globe size={18} className="text-indigo-400" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <p className="text-sm font-black text-white">{zone.name}</p>
+                              <p className="text-sm font-black text-gray-900">{zone.name}</p>
                               {zone.syncedToCrm && (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 text-indigo-300 px-2 py-0.5 text-xs font-bold">
                                   <CheckCircle2 size={10} /> CRM
@@ -1052,13 +1052,13 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 </span>
                               )}
                               {zone.managerName && (
-                                <span className="text-xs text-white/45">{zone.managerName}</span>
+                                <span className="text-xs text-gray-400">{zone.managerName}</span>
                               )}
-                              {!zone.isActive && <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-xs font-bold text-white/45">לא פעיל</span>}
+                              {!zone.isActive && <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-400">לא פעיל</span>}
                             </div>
-                            <p className="mt-0.5 text-xs text-white/45">{zone.address}</p>
+                            <p className="mt-0.5 text-xs text-gray-400">{zone.address}</p>
                             {(zone.startDate || zone.endDate) && (
-                              <p className="text-xs text-white/35">
+                              <p className="text-xs text-gray-400">
                                 {zone.startDate ? new Date(zone.startDate).toLocaleDateString("he-IL") : ""}
                                 {zone.endDate ? ` ← ${new Date(zone.endDate).toLocaleDateString("he-IL")}` : ""}
                               </p>
@@ -1068,28 +1068,28 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                             {zone.budgetHours && (
                               <div className="text-right">
                                 <p className="text-sm font-black text-indigo-400">{zone.budgetHours}ש׳</p>
-                                <p className="text-xs text-white/35">תקציב</p>
+                                <p className="text-xs text-gray-400">תקציב</p>
                               </div>
                             )}
                             <div className="text-right">
-                              <p className="text-sm font-bold text-white/65">{zone.radius}מ׳</p>
-                              <p className="text-xs text-white/35">רדיוס</p>
+                              <p className="text-sm font-bold text-gray-600">{zone.radius}מ׳</p>
+                              <p className="text-xs text-gray-400">רדיוס</p>
                             </div>
-                            {isExpanded ? <ChevronUp size={15} className="text-white/35" /> : <ChevronDown size={15} className="text-white/35" />}
+                            {isExpanded ? <ChevronUp size={15} className="text-gray-400" /> : <ChevronDown size={15} className="text-gray-400" />}
                           </div>
                         </button>
 
                         {/* Expanded: project detail form */}
                         {isExpanded && edit && (
-                          <div className="space-y-5 border-t border-white/[0.07] bg-white/[0.03] p-5">
-                            <h4 className="flex items-center gap-2 text-sm font-black text-white">
+                          <div className="space-y-5 border-t border-white/[0.07] bg-gray-50 p-5">
+                            <h4 className="flex items-center gap-2 text-sm font-black text-gray-900">
                               <Briefcase size={14} className="text-indigo-400" /> פרטי פרויקט: {zone.name}
                             </h4>
 
                             {/* Basic fields */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">שם הפרויקט *</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">שם הפרויקט *</label>
                                 <input
                                   value={edit.name ?? ""}
                                   onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], name: e.target.value } }))}
@@ -1097,7 +1097,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">כתובת</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">כתובת</label>
                                 <input
                                   value={edit.address ?? ""}
                                   onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], address: e.target.value } }))}
@@ -1105,7 +1105,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">מנהל פרויקט</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">מנהל פרויקט</label>
                                 <input
                                   value={edit.managerName ?? ""}
                                   placeholder="שם המנהל"
@@ -1114,7 +1114,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">רדיוס (מטרים)</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">רדיוס (מטרים)</label>
                                 <input
                                   type="number"
                                   value={edit.radius ?? 150}
@@ -1123,7 +1123,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">תאריך התחלה</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">תאריך התחלה</label>
                                 <input
                                   type="date"
                                   value={typeof edit.startDate === "string" ? edit.startDate.slice(0, 10) : ""}
@@ -1132,7 +1132,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">תאריך סיום מתוכנן</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">תאריך סיום מתוכנן</label>
                                 <input
                                   type="date"
                                   value={typeof edit.endDate === "string" ? edit.endDate.slice(0, 10) : ""}
@@ -1141,7 +1141,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">תקציב שעות</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">תקציב שעות</label>
                                 <input
                                   type="number"
                                   value={edit.budgetHours ?? ""}
@@ -1151,7 +1151,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">תעריף שעתי (₪)</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">תעריף שעתי (₪)</label>
                                 <input
                                   type="number"
                                   value={edit.hourlyRate ?? ""}
@@ -1162,7 +1162,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-bold text-white/55">תיאור</label>
+                                <label className="mb-1 block text-xs font-bold text-gray-500">תיאור</label>
                                 <input
                                   value={edit.description ?? ""}
                                   onChange={e => setEditZone(p => ({ ...p, [zone.id]: { ...p[zone.id], description: e.target.value } }))}
@@ -1173,7 +1173,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                             {/* Notes */}
                             <div>
-                              <label className="mb-1 block text-xs font-bold text-white/55">הערות פרויקט</label>
+                              <label className="mb-1 block text-xs font-bold text-gray-500">הערות פרויקט</label>
                               <textarea
                                 rows={3}
                                 value={edit.projectNotes ?? ""}
@@ -1185,11 +1185,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                             {/* Employee assignment */}
                             <div>
-                              <label className="mb-2 block text-xs font-bold text-white/55">שיוך עובדים לפרויקט</label>
+                              <label className="mb-2 block text-xs font-bold text-gray-500">שיוך עובדים לפרויקט</label>
                               {activeEmployees.length === 0 ? (
-                                <p className="text-xs text-white/35">טוען עובדים...</p>
+                                <p className="text-xs text-gray-400">טוען עובדים...</p>
                               ) : (
-                                <div className="grid max-h-56 grid-cols-2 gap-2 overflow-y-auto rounded-xl border border-white/[0.10] bg-white/[0.04] p-3 sm:grid-cols-3 lg:grid-cols-4">
+                                <div className="grid max-h-56 grid-cols-2 gap-2 overflow-y-auto rounded-xl border border-gray-200 bg-gray-50 p-3 sm:grid-cols-3 lg:grid-cols-4">
                                   {activeEmployees.map(emp => {
                                     const empName = [emp.firstName, emp.lastName].filter(Boolean).join(" ") || emp.workerTag || `#${emp.id}`;
                                     const isAssigned = (edit.assignedEmployeeIds ?? []).includes(emp.id);
@@ -1201,11 +1201,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                         className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition ${
                                           isAssigned
                                             ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300"
-                                            : "border-white/[0.10] text-white/55 hover:bg-white/[0.05]"
+                                            : "border-gray-200 text-gray-500 hover:bg-gray-50"
                                         }`}
                                       >
                                         <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-black ${
-                                          isAssigned ? "bg-indigo-500/15 text-white" : "bg-white/[0.08] text-white/45"
+                                          isAssigned ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-400"
                                         }`}>{empName.charAt(0)}</span>
                                         <span className="truncate">{empName}</span>
                                       </button>
@@ -1213,14 +1213,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                   })}
                                 </div>
                               )}
-                              <p className="mt-1 text-xs text-white/35">{(edit.assignedEmployeeIds ?? []).length} עובדים משויכים</p>
+                              <p className="mt-1 text-xs text-gray-400">{(edit.assignedEmployeeIds ?? []).length} עובדים משויכים</p>
                             </div>
 
                             {/* Actions */}
                             <div className="flex gap-2 flex-wrap">
                               <button
                                 onClick={() => saveZoneDetails(zone.id)} disabled={savingZoneId === zone.id}
-                                className="flex items-center gap-2 rounded-xl bg-indigo-500/15 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-400 disabled:opacity-50"
+                                className="flex items-center gap-2 rounded-xl bg-indigo-100 px-5 py-2.5 text-sm font-bold text-indigo-700 transition hover:bg-indigo-200 disabled:opacity-50"
                               >
                                 {savingZoneId === zone.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />} שמור פרטים
                               </button>
@@ -1253,7 +1253,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   })}
                 </div>
               )}
-              <p className="text-left text-xs text-white/35">{zones.filter(z => z.isActive).length} פרויקטים פעילים</p>
+              <p className="text-left text-xs text-gray-400">{zones.filter(z => z.isActive).length} פרויקטים פעילים</p>
             </div>
           )}
 
@@ -1262,20 +1262,20 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4" dir="rtl">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="flex items-center gap-2 text-base font-black text-white">
+                  <h3 className="flex items-center gap-2 text-base font-black text-gray-900">
                     <Activity size={16} className="text-emerald-400" /> מפה חיה
                   </h3>
-                  <p className="mt-0.5 text-xs text-white/45">
+                  <p className="mt-0.5 text-xs text-gray-400">
                     אזורי דיווח על המפה + סטטוס נוכחות עובדים בזמן אמת
                   </p>
                 </div>
-                <button onClick={() => { loadEmployees(); loadZones(); }} disabled={empLoading || zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08] disabled:opacity-50">
+                <button onClick={() => { loadEmployees(); loadZones(); }} disabled={empLoading || zonesLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
                   <RefreshCw size={14} className={empLoading || zonesLoading ? "animate-spin" : ""} /> רענן
                 </button>
               </div>
 
               {/* Legend */}
-              <div className="flex flex-wrap gap-4 text-xs text-white/55">
+              <div className="flex flex-wrap gap-4 text-xs text-gray-500">
                 <span className="flex items-center gap-1.5">
                   <span className="inline-block h-3 w-3 rounded-full bg-emerald-500/15" />
                   בעבודה ({activeEmployees.filter(e => e.lastCheckState === 1).length})
@@ -1296,7 +1296,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {empLoading || zonesLoading ? (
                 <LoadingSpinner />
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-white/[0.08]">
+                <div className="overflow-hidden rounded-2xl border border-gray-200">
                   <MeckanoMap
                     zones={zones}
                     activeEmployees={activeEmployees.map(e => ({
@@ -1317,13 +1317,13 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   const now = Date.now() / 1000;
                   const isIn = emp.lastCheckState === 1 && emp.lastCheckTime && now - emp.lastCheckTime < 86400;
                   return (
-                    <div key={emp.id} className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${isIn ? "border-emerald-500/25 bg-emerald-500/[0.08]" : "border-white/[0.08] bg-white/[0.03]"}`}>
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-black text-sm text-white ${isIn ? "bg-emerald-500/15" : "bg-white/25"}`}>
+                    <div key={emp.id} className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${isIn ? "border-emerald-500/25 bg-emerald-500/[0.08]" : "border-gray-200 bg-gray-50"}`}>
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-black text-sm text-gray-900 ${isIn ? "bg-emerald-100" : "bg-gray-200"}`}>
                         {name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-bold text-white">{name}</p>
-                        <p className="text-xs text-white/45">
+                        <p className="truncate text-sm font-bold text-gray-900">{name}</p>
+                        <p className="text-xs text-gray-400">
                           {isIn
                             ? `בעבודה מ-${emp.lastCheckTime ? tsToTime(emp.lastCheckTime) : "—"}`
                             : emp.lastCheckState === 2
@@ -1331,7 +1331,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                             : "לא מחותם"}
                         </p>
                       </div>
-                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${isIn ? "bg-emerald-500/15 animate-pulse" : "bg-white/25"}`} />
+                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${isIn ? "bg-emerald-500/15 animate-pulse" : "bg-gray-200"}`} />
                     </div>
                   );
                 })}
@@ -1343,7 +1343,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
           {activeTab === "tasks" && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button onClick={loadTasks} disabled={tasksLoading} className="flex items-center gap-1.5 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/65 transition hover:bg-white/[0.08] disabled:opacity-50">
+                <button onClick={loadTasks} disabled={tasksLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
                   <RefreshCw size={14} className={tasksLoading ? "animate-spin" : ""} /> רענון
                 </button>
               </div>
@@ -1352,15 +1352,15 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : tasks.length === 0 ? (
                 <EmptyState message="לא נמצאו משימות" />
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-white/[0.08] divide-y divide-white/[0.05]">
+                <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {tasks.map(task => (
-                    <div key={task.id} className="flex items-center gap-4 px-5 py-4 transition hover:bg-white/[0.03]">
+                    <div key={task.id} className="flex items-center gap-4 px-5 py-4 transition hover:bg-gray-50">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-400 font-black text-xs">
                         {task.id}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white">{task.name}</p>
-                        {task.code && <p className="text-xs text-white/45">קוד: {task.code}</p>}
+                        <p className="text-sm font-bold text-gray-900">{task.name}</p>
+                        {task.code && <p className="text-xs text-gray-400">קוד: {task.code}</p>}
                       </div>
                       <StatusBadge active={task.isActive === 1} />
                     </div>
@@ -1375,11 +1375,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4">
               <div className="flex flex-wrap gap-3 items-end">
                 <div>
-                  <label className="mb-1 block text-xs font-bold text-white/55">מתאריך</label>
+                  <label className="mb-1 block text-xs font-bold text-gray-500">מתאריך</label>
                   <input type="date" value={teFrom} onChange={e => setTeFrom(e.target.value)} className={inputCls} />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-bold text-white/55">עד תאריך</label>
+                  <label className="mb-1 block text-xs font-bold text-gray-500">עד תאריך</label>
                   <input type="date" value={teTo} onChange={e => setTeTo(e.target.value)} className={inputCls} />
                 </div>
                 <button onClick={loadTaskEntries} disabled={teLoading} className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50">
@@ -1391,30 +1391,30 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               ) : taskEntries.length === 0 ? (
                 <EmptyState message="אין דיווחי משימות בטווח שנבחר" />
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
-                    <thead className="border-b border-white/[0.07] bg-white/[0.04]">
+                    <thead className="border-b border-white/[0.07] bg-gray-50">
                       <tr>
                         {["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => (
-                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>
+                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.07]">
                       {taskEntries.map(entry => (
-                        <tr key={entry.id} className="transition hover:bg-white/[0.03]">
-                          <td className="px-4 py-3 font-medium text-white">{entry.userName ?? `#${entry.userId}`}</td>
-                          <td className="px-4 py-3 text-white/65">{entry.taskName ?? `#${entry.taskId}`}</td>
-                          <td className="px-4 py-3 text-white/55">{entry.dateStr ?? tsToDate(entry.ts)}</td>
-                          <td className="px-4 py-3 font-mono text-white/55">{entry.duration ?? "—"}</td>
-                          <td className="max-w-[180px] truncate px-4 py-3 text-white/45">{entry.note ?? "—"}</td>
+                        <tr key={entry.id} className="transition hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium text-gray-900">{entry.userName ?? `#${entry.userId}`}</td>
+                          <td className="px-4 py-3 text-gray-600">{entry.taskName ?? `#${entry.taskId}`}</td>
+                          <td className="px-4 py-3 text-gray-500">{entry.dateStr ?? tsToDate(entry.ts)}</td>
+                          <td className="px-4 py-3 font-mono text-gray-500">{entry.duration ?? "—"}</td>
+                          <td className="max-w-[180px] truncate px-4 py-3 text-gray-400">{entry.note ?? "—"}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               )}
-              <p className="text-left text-xs text-white/35">{taskEntries.length} רשומות</p>
+              <p className="text-left text-xs text-gray-400">{taskEntries.length} רשומות</p>
             </div>
           )}
 
@@ -1422,15 +1422,15 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
           {activeTab === "reports" && (
             <div className="space-y-5" dir="rtl">
               <div>
-                <h3 className="text-base font-black text-white">מחולל דוחות</h3>
-                <p className="mt-0.5 text-xs text-white/45">הפק דוחות נוכחות, שעות ומשימות לפי עובד, מחלקה ואתר</p>
+                <h3 className="text-base font-black text-gray-900">מחולל דוחות</h3>
+                <p className="mt-0.5 text-xs text-gray-400">הפק דוחות נוכחות, שעות ומשימות לפי עובד, מחלקה ואתר</p>
               </div>
 
               {/* Filter card */}
-              <div className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5">
+              <div className="space-y-5 rounded-2xl border border-gray-200 bg-white p-5">
                 {/* Report type selection */}
                 <div>
-                  <p className="mb-2 text-xs font-black text-white/55">סוג דוח</p>
+                  <p className="mb-2 text-xs font-black text-gray-500">סוג דוח</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {([
                       { id: "attendance" as ReportType, label: "נוכחות", desc: "כניסות ויציאות לפי יום" },
@@ -1444,11 +1444,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         type="button"
                         onClick={() => { setReportType(id); setReportGenerated(false); }}
                         className={`flex flex-col items-start gap-0.5 rounded-xl border px-4 py-3 text-right transition ${
-                          reportType === id ? "border-indigo-500/60 bg-indigo-500/15" : "border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.08]"
+                          reportType === id ? "border-indigo-500/60 bg-indigo-500/15" : "border-gray-200 bg-gray-50 hover:bg-gray-100"
                         }`}
                       >
-                        <span className={`text-sm font-black ${reportType === id ? "text-indigo-300" : "text-white"}`}>{label}</span>
-                        <span className={`text-xs ${reportType === id ? "text-indigo-500" : "text-white/35"}`}>{desc}</span>
+                        <span className={`text-sm font-black ${reportType === id ? "text-indigo-600" : "text-gray-700"}`}>{label}</span>
+                        <span className={`text-xs ${reportType === id ? "text-indigo-500" : "text-gray-400"}`}>{desc}</span>
                       </button>
                     ))}
                   </div>
@@ -1457,15 +1457,15 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 {/* Daily/Monthly toggle for locations report */}
                 {reportType === "locations" && (
                   <div>
-                    <p className="mb-2 text-xs font-black text-white/55">תצוגה</p>
-                    <div className="inline-flex overflow-hidden rounded-xl border border-white/[0.10] bg-[#0d0e1c]">
+                    <p className="mb-2 text-xs font-black text-gray-500">תצוגה</p>
+                    <div className="inline-flex overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
                       {(["daily", "monthly"] as const).map(mode => (
                         <button
                           key={mode}
                           type="button"
                           onClick={() => { setReportLocationsMode(mode); setReportGenerated(false); }}
                           className={`px-5 py-2 text-xs font-black transition ${
-                            reportLocationsMode === mode ? "bg-indigo-500/15 text-white" : "text-white/45 hover:bg-white/[0.08]"
+                            reportLocationsMode === mode ? "bg-indigo-100 text-indigo-700" : "text-gray-400 hover:bg-gray-100"
                           }`}
                         >
                           {mode === "daily" ? "יומי" : "חודשי"}
@@ -1479,22 +1479,22 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 {reportType === "locations" && reportLocationsMode === "daily" ? (
                   <div className="flex flex-wrap items-end gap-3">
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-white/55">תאריך</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">תאריך</label>
                       <input type="date" value={reportDate} onChange={e => setReportDate(e.target.value)} className={inputCls} />
                     </div>
                     <div className="flex flex-wrap gap-2 items-end pb-0.5">
-                      <button type="button" onClick={() => { const d = new Date(); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-white/[0.10] bg-[#1e2035] px-3 py-2 text-xs font-bold text-white/65 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300">היום</button>
-                      <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-white/[0.10] bg-[#1e2035] px-3 py-2 text-xs font-bold text-white/65 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300">אתמול</button>
+                      <button type="button" onClick={() => { const d = new Date(); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-gray-200 bg-[#1e2035] px-3 py-2 text-xs font-bold text-gray-600 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300">היום</button>
+                      <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setReportDate(d.toISOString().slice(0, 10)); setReportGenerated(false); }} className="rounded-xl border border-gray-200 bg-[#1e2035] px-3 py-2 text-xs font-bold text-gray-600 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300">אתמול</button>
                     </div>
                   </div>
                 ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
-                    <label className="mb-1 block text-xs font-bold text-white/55">מתאריך</label>
+                    <label className="mb-1 block text-xs font-bold text-gray-500">מתאריך</label>
                     <input type="date" value={reportFrom} onChange={e => setReportFrom(e.target.value)} className={inputCls + " w-full"} />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-bold text-white/55">עד תאריך</label>
+                    <label className="mb-1 block text-xs font-bold text-gray-500">עד תאריך</label>
                     <input type="date" value={reportTo} onChange={e => setReportTo(e.target.value)} className={inputCls + " w-full"} />
                   </div>
                   <div className="sm:col-span-2 flex flex-wrap gap-2 items-end pb-0.5">
@@ -1507,7 +1507,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                           setReportTo(to.toISOString().slice(0, 10));
                           setReportFrom(from.toISOString().slice(0, 10));
                         }}
-                        className="rounded-xl border border-white/[0.10] bg-[#1e2035] px-3 py-2 text-xs font-bold text-white/65 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300"
+                        className="rounded-xl border border-gray-200 bg-[#1e2035] px-3 py-2 text-xs font-bold text-gray-600 transition hover:border-indigo-500/50 hover:bg-indigo-500/15 hover:text-indigo-300"
                       >{label}</button>
                     ))}
                   </div>
@@ -1517,7 +1517,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 {/* Filters */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="mb-1 block text-xs font-bold text-white/55">עובד</label>
+                    <label className="mb-1 block text-xs font-bold text-gray-500">עובד</label>
                     <select value={reportEmployeeId} onChange={e => setReportEmployeeId(e.target.value)} className={inputCls + " w-full"}>
                       <option value="">כל העובדים הפעילים ({activeEmployees.length})</option>
                       {activeEmployees.map(e => (
@@ -1528,14 +1528,14 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-bold text-white/55">מחלקה</label>
+                    <label className="mb-1 block text-xs font-bold text-gray-500">מחלקה</label>
                     <select value={reportDeptId} onChange={e => setReportDeptId(e.target.value)} className={inputCls + " w-full"}>
                       <option value="">כל המחלקות</option>
                       {departments.map(d => <option key={d.id} value={String(d.id)}>{d.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-bold text-white/55">אזור / פרויקט</label>
+                    <label className="mb-1 block text-xs font-bold text-gray-500">אזור / פרויקט</label>
                     <select value={reportZoneId} onChange={e => setReportZoneId(e.target.value)} className={inputCls + " w-full"}>
                       <option value="">כל האזורים</option>
                       {zones.map(z => (
@@ -1580,7 +1580,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <div className="space-y-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/[0.08] p-4">
                     <div className="flex items-center gap-2">
                       <Globe size={14} className="shrink-0 text-indigo-400" />
-                      <span className="text-sm font-black text-white">{selectedZone.name}</span>
+                      <span className="text-sm font-black text-gray-900">{selectedZone.name}</span>
                       {selectedZone.syncedToCrm && <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-300">CRM</span>}
                     </div>
                     <p className="text-xs text-indigo-400">{selectedZone.address}</p>
@@ -1620,19 +1620,19 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 <EmptyState message="אין נתוני נוכחות לסיכום" />
               ) : reportGenerated && reportType === "attendance" && reportAttendance.length > 0 ? (
                 <div className="space-y-2">
-                  <p className="text-xs text-white/45">{reportAttendance.length} רשומות נוכחות</p>
-                  <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                  <p className="text-xs text-gray-400">{reportAttendance.length} רשומות נוכחות</p>
+                  <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
-                      <thead className="border-b border-white/[0.07] bg-white/[0.04]">
-                        <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>)}</tr>
+                      <thead className="border-b border-white/[0.07] bg-gray-50">
+                        <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.07]">
                         {reportAttendance.map(row => (
-                          <tr key={row.id} className="transition hover:bg-white/[0.03]">
-                            <td className="px-4 py-3 font-medium text-white">{row.userName ?? `#${row.userId}`}</td>
-                            <td className="px-4 py-3 font-mono text-xs text-white/45">{row.workerTag ?? "—"}</td>
-                            <td className="px-4 py-3 text-white/55">{row.dateStr ?? tsToDate(row.ts)}</td>
-                            <td className="px-4 py-3 text-white/55" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
+                          <tr key={row.id} className="transition hover:bg-gray-50">
+                            <td className="px-4 py-3 font-medium text-gray-900">{row.userName ?? `#${row.userId}`}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-gray-400">{row.workerTag ?? "—"}</td>
+                            <td className="px-4 py-3 text-gray-500">{row.dateStr ?? tsToDate(row.ts)}</td>
+                            <td className="px-4 py-3 text-gray-500" dir="ltr">{row.timeStr ?? tsToTime(row.ts)}</td>
                             <td className="px-4 py-3">
                               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${
                                 row.isOut ? "bg-orange-500/20 text-orange-400" : "bg-emerald-500/20 text-emerald-400"
@@ -1646,20 +1646,20 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 </div>
               ) : reportGenerated && reportType === "task-entries" && reportTaskEntries.length > 0 ? (
                 <div className="space-y-2">
-                  <p className="text-xs text-white/45">{reportTaskEntries.length} רשומות</p>
-                  <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                  <p className="text-xs text-gray-400">{reportTaskEntries.length} רשומות</p>
+                  <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
-                      <thead className="border-b border-white/[0.07] bg-white/[0.04]">
-                        <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>)}</tr>
+                      <thead className="border-b border-white/[0.07] bg-gray-50">
+                        <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.07]">
                         {reportTaskEntries.map(entry => (
-                          <tr key={entry.id} className="transition hover:bg-white/[0.03]">
-                            <td className="px-4 py-3 font-medium text-white">{entry.userName ?? `#${entry.userId}`}</td>
-                            <td className="px-4 py-3 text-white/65">{entry.taskName ?? `#${entry.taskId}`}</td>
-                            <td className="px-4 py-3 text-white/55">{entry.dateStr ?? tsToDate(entry.ts)}</td>
-                            <td className="px-4 py-3 font-mono text-white/55">{entry.duration ?? "—"}</td>
-                            <td className="max-w-[180px] truncate px-4 py-3 text-white/45">{entry.note ?? "—"}</td>
+                          <tr key={entry.id} className="transition hover:bg-gray-50">
+                            <td className="px-4 py-3 font-medium text-gray-900">{entry.userName ?? `#${entry.userId}`}</td>
+                            <td className="px-4 py-3 text-gray-600">{entry.taskName ?? `#${entry.taskId}`}</td>
+                            <td className="px-4 py-3 text-gray-500">{entry.dateStr ?? tsToDate(entry.ts)}</td>
+                            <td className="px-4 py-3 font-mono text-gray-500">{entry.duration ?? "—"}</td>
+                            <td className="max-w-[180px] truncate px-4 py-3 text-gray-400">{entry.note ?? "—"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1684,20 +1684,20 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   }).sort((a, b) => parseFloat(b.hours) - parseFloat(a.hours));
                   return (
                     <div className="space-y-2">
-                      <p className="text-xs text-white/45">סיכום {summaryRows.length} עובדים · {reportFrom} עד {reportTo}</p>
-                      <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                      <p className="text-xs text-gray-400">סיכום {summaryRows.length} עובדים · {reportFrom} עד {reportTo}</p>
+                      <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
-                          <thead className="border-b border-white/[0.07] bg-white/[0.04]">
-                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>)}</tr>
+                          <thead className="border-b border-white/[0.07] bg-gray-50">
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
                           <tbody className="divide-y divide-white/[0.07]">
                             {summaryRows.map(row => (
-                              <tr key={row.userId} className="transition hover:bg-white/[0.03]">
-                                <td className="px-4 py-3 font-bold text-white">{row.name}</td>
-                                <td className="px-4 py-3 font-mono text-xs text-white/45">{row.tag}</td>
-                                <td className="px-4 py-3 text-white/65">{row.days}</td>
+                              <tr key={row.userId} className="transition hover:bg-gray-50">
+                                <td className="px-4 py-3 font-bold text-gray-900">{row.name}</td>
+                                <td className="px-4 py-3 font-mono text-xs text-gray-400">{row.tag}</td>
+                                <td className="px-4 py-3 text-gray-600">{row.days}</td>
                                 <td className="px-4 py-3 text-lg font-black text-indigo-400">{row.hours}</td>
-                                <td className="px-4 py-3 text-white/45">{row.entries}</td>
+                                <td className="px-4 py-3 text-gray-400">{row.entries}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1734,17 +1734,17 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <div className="space-y-4">
                       {/* Summary cards */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-4 text-center">
-                          <p className="text-2xl font-black text-white">{costRows.length}</p>
-                          <p className="mt-0.5 text-xs text-white/45">עובדים</p>
+                        <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                          <p className="text-2xl font-black text-gray-900">{costRows.length}</p>
+                          <p className="mt-0.5 text-xs text-gray-400">עובדים</p>
                         </div>
-                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-4 text-center">
+                        <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
                           <p className="text-2xl font-black text-indigo-400">{totalHours.toFixed(1)}</p>
-                          <p className="mt-0.5 text-xs text-white/45">שעות כולל</p>
+                          <p className="mt-0.5 text-xs text-gray-400">שעות כולל</p>
                         </div>
-                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-4 text-center">
-                          <p className="text-2xl font-black text-white/65">{rate > 0 ? `₪${rate.toFixed(0)}` : "—"}</p>
-                          <p className="mt-0.5 text-xs text-white/45">תעריף לשעה</p>
+                        <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                          <p className="text-2xl font-black text-gray-600">{rate > 0 ? `₪${rate.toFixed(0)}` : "—"}</p>
+                          <p className="mt-0.5 text-xs text-gray-400">תעריף לשעה</p>
                         </div>
                         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/15 p-4 text-center">
                           <p className="text-2xl font-black text-emerald-400">{rate > 0 ? `₪${totalCost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</p>
@@ -1757,28 +1757,28 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         </div>
                       )}
                       {/* Per-employee table */}
-                      <div className="overflow-x-auto rounded-2xl border border-white/[0.08]">
+                      <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
-                          <thead className="border-b border-white/[0.07] bg-white/[0.04]">
-                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-white/45">{h}</th>)}</tr>
+                          <thead className="border-b border-white/[0.07] bg-gray-50">
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
                           <tbody className="divide-y divide-white/[0.07]">
                             {costRows.map(row => (
-                              <tr key={row.userId} className="transition hover:bg-white/[0.03]">
-                                <td className="px-4 py-3 font-bold text-white">{row.name}</td>
-                                <td className="px-4 py-3 font-mono text-xs text-white/45">{row.tag}</td>
-                                <td className="px-4 py-3 text-white/65">{row.days}</td>
+                              <tr key={row.userId} className="transition hover:bg-gray-50">
+                                <td className="px-4 py-3 font-bold text-gray-900">{row.name}</td>
+                                <td className="px-4 py-3 font-mono text-xs text-gray-400">{row.tag}</td>
+                                <td className="px-4 py-3 text-gray-600">{row.days}</td>
                                 <td className="px-4 py-3 font-black text-indigo-400">{row.hours.toFixed(1)}</td>
-                                <td className="px-4 py-3 text-white/55">{rate > 0 ? `₪${rate.toFixed(2)}` : "—"}</td>
+                                <td className="px-4 py-3 text-gray-500">{rate > 0 ? `₪${rate.toFixed(2)}` : "—"}</td>
                                 <td className="px-4 py-3 font-black text-emerald-400">{rate > 0 ? `₪${row.cost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</td>
                               </tr>
                             ))}
                             {/* Totals row */}
-                            <tr className="bg-white/[0.05] font-black">
-                              <td className="px-4 py-3 text-white" colSpan={2}>סה״כ</td>
-                              <td className="px-4 py-3 text-white/65">—</td>
+                            <tr className="bg-gray-50 font-black">
+                              <td className="px-4 py-3 text-gray-900" colSpan={2}>סה״כ</td>
+                              <td className="px-4 py-3 text-gray-600">—</td>
                               <td className="px-4 py-3 text-indigo-300">{totalHours.toFixed(1)}</td>
-                              <td className="px-4 py-3 text-white/55">—</td>
+                              <td className="px-4 py-3 text-gray-500">—</td>
                               <td className="px-4 py-3 text-emerald-400">{rate > 0 ? `₪${totalCost.toLocaleString("he-IL", { maximumFractionDigits: 0 })}` : "—"}</td>
                             </tr>
                           </tbody>
@@ -1840,7 +1840,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <div className="space-y-4">
                       {/* Header bar */}
                       <div className="flex items-center justify-between flex-wrap gap-2">
-                        <p className="text-sm text-white/45">
+                        <p className="text-sm text-gray-400">
                           {reportLocationsMode === "daily" ? `דוח יומי · ${new Date(reportDate).toLocaleDateString("he-IL", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}` : `דוח חודשי · ${periodLabel}`}
                           {" · "}{zoneSections.length} אזורים · {zoneSections.reduce((s, z) => s + z.employees.length, 0)} עובדים
                         </p>
@@ -1852,15 +1852,15 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                       {/* Zone sections */}
                       {zoneSections.map(zs => (
-                        <div key={zs.zoneId} className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0b14]">
+                        <div key={zs.zoneId} className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
                           {/* Zone header */}
-                          <div className="flex items-center justify-between gap-3 bg-white/[0.05] px-5 py-3">
+                          <div className="flex items-center justify-between gap-3 bg-gray-50 px-5 py-3">
                             <div className="flex items-center gap-2">
                               <Globe size={14} className="shrink-0 text-indigo-500" />
-                              <span className="text-sm font-black text-white">{zs.zoneName}</span>
-                              {zs.managerName && <span className="text-xs text-white/45">· מנהל: {zs.managerName}</span>}
+                              <span className="text-sm font-black text-gray-900">{zs.zoneName}</span>
+                              {zs.managerName && <span className="text-xs text-gray-400">· מנהל: {zs.managerName}</span>}
                             </div>
-                            <div className="flex items-center gap-3 text-xs text-white/45">
+                            <div className="flex items-center gap-3 text-xs text-gray-400">
                               <span>{zs.employees.length} עובדים</span>
                               <span className="font-black text-indigo-300">{zs.totalHours.toFixed(1)} ש׳</span>
                             </div>
@@ -1870,21 +1870,21 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                           {zs.employees.map((emp, ei) => (
                             <div key={emp.userId} className={ei > 0 ? "border-t border-white/[0.07]" : ""}>
                               {/* Employee sub-header */}
-                              <div className="flex items-center gap-3 border-b border-white/[0.07] bg-white/[0.03] px-5 py-2">
+                              <div className="flex items-center gap-3 border-b border-white/[0.07] bg-gray-50 px-5 py-2">
                                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-black text-white">
                                   {(emp.name[0] ?? "?").toUpperCase()}
                                 </div>
-                                <span className="text-sm font-bold text-white">{emp.name}</span>
-                                {emp.tag && <span className="font-mono text-xs text-white/35">{emp.tag}</span>}
-                                <span className="mr-auto text-xs text-white/45">{emp.days.length} ימים · <strong className="text-indigo-400">{emp.totalHours.toFixed(1)} ש׳</strong></span>
+                                <span className="text-sm font-bold text-gray-900">{emp.name}</span>
+                                {emp.tag && <span className="font-mono text-xs text-gray-400">{emp.tag}</span>}
+                                <span className="mr-auto text-xs text-gray-400">{emp.days.length} ימים · <strong className="text-indigo-400">{emp.totalHours.toFixed(1)} ש׳</strong></span>
                               </div>
 
                               {/* Day rows */}
                               <table className="w-full text-sm">
-                                <thead className="border-b border-white/[0.05] bg-[#0d0e1c]">
+                                <thead className="border-b border-gray-100 bg-gray-50">
                                   <tr>
                                     {(reportLocationsMode === "monthly" ? ["תאריך", "שעת כניסה", "שעת יציאה", "שעות"] : ["שעת כניסה", "שעת יציאה", "שעות"]).map(h => (
-                                      <th key={h} className="px-5 py-2 text-right text-xs font-bold text-white/35">{h}</th>
+                                      <th key={h} className="px-5 py-2 text-right text-xs font-bold text-gray-400">{h}</th>
                                     ))}
                                   </tr>
                                 </thead>
@@ -1892,7 +1892,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                   {emp.days.map(day => (
                                     <tr key={day.date} className="transition hover:bg-indigo-500/[0.08]">
                                       {reportLocationsMode === "monthly" && (
-                                        <td className="px-5 py-2.5 font-mono text-xs text-white/55">{day.date}</td>
+                                        <td className="px-5 py-2.5 font-mono text-xs text-gray-500">{day.date}</td>
                                       )}
                                       <td className="px-5 py-2.5">
                                         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
@@ -1906,17 +1906,17 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                             <span className="h-1.5 w-1.5 rounded-full bg-orange-500/15 shrink-0" />
                                             {day.outTime}
                                           </span>
-                                        ) : <span className="text-xs text-white/35">—</span>}
+                                        ) : <span className="text-xs text-gray-400">—</span>}
                                       </td>
                                       <td className="px-5 py-2.5 text-sm font-black text-indigo-400">
-                                        {day.hours > 0 ? day.hours.toFixed(2) : <span className="text-xs font-normal text-white/35">—</span>}
+                                        {day.hours > 0 ? day.hours.toFixed(2) : <span className="text-xs font-normal text-gray-400">—</span>}
                                       </td>
                                     </tr>
                                   ))}
                                   {/* Employee total row (monthly only) */}
                                   {reportLocationsMode === "monthly" && emp.days.length > 1 && (
-                                    <tr className="bg-white/[0.05]">
-                                      <td className="px-5 py-2 text-xs font-black text-white/55" colSpan={3}>סה״כ עובד</td>
+                                    <tr className="bg-gray-50">
+                                      <td className="px-5 py-2 text-xs font-black text-gray-500" colSpan={3}>סה״כ עובד</td>
                                       <td className="px-5 py-2 font-black text-indigo-300">{emp.totalHours.toFixed(2)}</td>
                                     </tr>
                                   )}
@@ -1926,8 +1926,8 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                           ))}
 
                           {/* Zone total footer */}
-                          <div className="flex items-center justify-between border-t border-white/[0.08] bg-white/[0.05] px-5 py-2.5">
-                            <span className="text-xs font-black text-white/55">סה״כ אזור</span>
+                          <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-5 py-2.5">
+                            <span className="text-xs font-black text-gray-500">סה״כ אזור</span>
                             <span className="font-black text-indigo-300">{zs.totalHours.toFixed(2)} שעות</span>
                           </div>
                         </div>
@@ -1935,8 +1935,8 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                       {/* Grand total */}
                       <div className="flex items-center justify-between rounded-2xl border border-indigo-500/40 bg-indigo-600 px-6 py-4">
-                        <span className="font-black text-white">סה״כ כללי — כל האזורים</span>
-                        <span className="text-2xl font-black text-white">{grandTotal.toFixed(2)} שעות</span>
+                        <span className="font-black text-gray-900">סה״כ כללי — כל האזורים</span>
+                        <span className="text-2xl font-black text-gray-900">{grandTotal.toFixed(2)} שעות</span>
                       </div>
                     </div>
                   );
@@ -1974,7 +1974,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                 {/* Company Overview */}
                 <div>
-                  <h3 className="mb-3 flex items-center gap-2 text-base font-black text-white">
+                  <h3 className="mb-3 flex items-center gap-2 text-base font-black text-gray-900">
                     <Info size={16} className="text-indigo-400" /> סקירת חברה
                   </h3>
                   {overviewLoading || empLoading ? (
@@ -1982,43 +1982,43 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {/* Company name + ID */}
-                      <div className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5">
+                      <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-5">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15">
                           <Briefcase size={18} className="text-indigo-400" />
                         </div>
                         <div className="min-w-0">
-                          <p className="mb-0.5 text-xs text-white/45">שם חברה</p>
-                          <p className="text-sm font-black leading-snug text-white">{companyName}</p>
-                          <p className="mt-1 font-mono text-xs text-white/35">ID: {companyId}</p>
+                          <p className="mb-0.5 text-xs text-gray-400">שם חברה</p>
+                          <p className="text-sm font-black leading-snug text-gray-900">{companyName}</p>
+                          <p className="mt-1 font-mono text-xs text-gray-400">ID: {companyId}</p>
                         </div>
                       </div>
                       {/* Employees */}
-                      <div className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5">
+                      <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-5">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15">
                           <Users size={18} className="text-indigo-400" />
                         </div>
                         <div>
-                          <p className="mb-0.5 text-xs text-white/45">סה״כ עובדים</p>
-                          <p className="text-2xl font-black leading-none text-white">{totalEmp}</p>
+                          <p className="mb-0.5 text-xs text-gray-400">סה״כ עובדים</p>
+                          <p className="text-2xl font-black leading-none text-gray-900">{totalEmp}</p>
                           <div className="flex items-center gap-3 mt-2">
                             <span className="flex items-center gap-1 text-xs text-emerald-400 font-bold">
                               <UserCheck size={11} /> {active} פעילים
                             </span>
-                            <span className="flex items-center gap-1 text-xs font-bold text-white/45">
+                            <span className="flex items-center gap-1 text-xs font-bold text-gray-400">
                               <UserX size={11} /> {inactive} לא פעילים
                             </span>
                           </div>
                         </div>
                       </div>
                       {/* Timezone & Calendar */}
-                      <div className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5">
+                      <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-5">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15">
                           <Globe size={18} className="text-emerald-400" />
                         </div>
                         <div>
-                          <p className="mb-0.5 text-xs text-white/45">אזור זמן</p>
-                          <p className="text-sm font-bold text-white" dir="ltr">{timezone}</p>
-                          <p className="mt-1 text-xs text-white/45">{calendarLabel}</p>
+                          <p className="mb-0.5 text-xs text-gray-400">אזור זמן</p>
+                          <p className="text-sm font-bold text-gray-900" dir="ltr">{timezone}</p>
+                          <p className="mt-1 text-xs text-gray-400">{calendarLabel}</p>
                         </div>
                       </div>
                     </div>
@@ -2028,17 +2028,17 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 {/* Contract Distribution */}
                 {contracts.length > 0 && (
                   <div>
-                    <h3 className="mb-3 flex items-center gap-2 text-base font-black text-white">
+                    <h3 className="mb-3 flex items-center gap-2 text-base font-black text-gray-900">
                       <FileText size={16} className="text-indigo-400" /> חוזי עבודה
                     </h3>
-                    <div className="overflow-hidden rounded-2xl border border-white/[0.08]">
+                    <div className="overflow-hidden rounded-2xl border border-gray-200">
                       {contracts.map(([name, count]) => {
                         const pct = totalEmp > 0 ? Math.round((count / totalEmp) * 100) : 0;
                         return (
-                          <div key={name} className="flex items-center gap-4 border-b border-white/[0.07] px-5 py-4 transition last:border-0 hover:bg-white/[0.03]">
+                          <div key={name} className="flex items-center gap-4 border-b border-white/[0.07] px-5 py-4 transition last:border-0 hover:bg-gray-50">
                             <div className="flex-1 min-w-0">
-                              <p className="truncate text-sm font-bold text-white">{name}</p>
-                              <div className="mt-1.5 h-1.5 w-full rounded-full bg-white/[0.10]">
+                              <p className="truncate text-sm font-bold text-gray-900">{name}</p>
+                              <div className="mt-1.5 h-1.5 w-full rounded-full bg-gray-100">
                                 <div
                                   className="h-1.5 rounded-full bg-indigo-400 transition-all"
                                   style={{ width: `${pct}%` }}
@@ -2046,9 +2046,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                               </div>
                             </div>
                             <div className="text-right shrink-0">
-                              <span className="text-lg font-black text-white">{count}</span>
-                              <span className="mr-1 text-xs text-white/35">עובדים</span>
-                              <p className="text-xs text-white/35">{pct}%</p>
+                              <span className="text-lg font-black text-gray-900">{count}</span>
+                              <span className="mr-1 text-xs text-gray-400">עובדים</span>
+                              <p className="text-xs text-gray-400">{pct}%</p>
                             </div>
                           </div>
                         );
@@ -2059,10 +2059,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                 {/* Activity indicator */}
                 <div>
-                  <h3 className="mb-3 flex items-center gap-2 text-base font-black text-white">
+                  <h3 className="mb-3 flex items-center gap-2 text-base font-black text-gray-900">
                     <Activity size={16} className="text-emerald-400" /> סטטוס אינטגרציה
                   </h3>
-                  <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-[#0a0b14] p-5">
+                  <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5">
                     {[
                       { label: "עובדים ↔ CRM אנשי קשר", desc: "סנכרון ידני מלשונית עובדים", ok: true },
                       { label: "נוכחות — time-entry", desc: "צפייה לפי טווח תאריכים (Unix timestamps)", ok: true },
@@ -2070,10 +2070,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       { label: "משימות ודיווח שעות", desc: "צפייה מלאה + פילוח לפי עובד", ok: true },
                     ].map(({ label, desc, ok }) => (
                       <div key={label} className="flex items-start gap-3">
-                        <CheckCircle2 size={15} className={`mt-0.5 shrink-0 ${ok ? "text-emerald-500" : "text-white/25"}`} />
+                        <CheckCircle2 size={15} className={`mt-0.5 shrink-0 ${ok ? "text-emerald-500" : "text-gray-300"}`} />
                         <div>
-                          <p className="text-sm font-bold text-white">{label}</p>
-                          <p className="text-xs text-white/45">{desc}</p>
+                          <p className="text-sm font-bold text-gray-900">{label}</p>
+                          <p className="text-xs text-gray-400">{desc}</p>
                         </div>
                       </div>
                     ))}
@@ -2082,10 +2082,10 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
                 {/* API Key */}
                 <div>
-                  <h3 className="mb-1 flex items-center gap-2 text-base font-black text-white">
+                  <h3 className="mb-1 flex items-center gap-2 text-base font-black text-gray-900">
                     <Key size={16} className="text-indigo-400" /> מפתח API
                   </h3>
-                  <p className="mb-4 text-sm text-white/45">
+                  <p className="mb-4 text-sm text-gray-400">
                     המפתח נשמר מוצפן בשרת ולעולם לא נחשף לצד-לקוח.
                   </p>
                   <form
@@ -2109,7 +2109,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <button
                       type="submit"
                       disabled={pendingKey}
-                      className="flex shrink-0 items-center gap-2 rounded-xl bg-indigo-500/15 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-400 disabled:opacity-50"
+                      className="flex shrink-0 items-center gap-2 rounded-xl bg-indigo-100 px-5 py-2.5 text-sm font-bold text-indigo-700 transition hover:bg-indigo-200 disabled:opacity-50"
                     >
                       {pendingKey ? <Loader2 size={14} className="animate-spin" /> : <Key size={14} />}
                       עדכן
@@ -2123,7 +2123,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                 {/* Docs link */}
                 <div className="flex items-center justify-between gap-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.08] p-5">
                   <div>
-                    <p className="text-sm font-bold text-white">תיעוד API מקאנו</p>
+                    <p className="text-sm font-bold text-gray-900">תיעוד API מקאנו</p>
                     <p className="mt-0.5 text-xs text-indigo-300">כלים למתכנתים — REST API</p>
                   </div>
                   <a
