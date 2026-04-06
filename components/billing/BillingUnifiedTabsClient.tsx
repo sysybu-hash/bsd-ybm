@@ -87,17 +87,17 @@ export default function BillingUnifiedTabsClient({
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-transparent font-sans text-gray-900" dir={dir}>
+    <div className="min-h-screen bg-[#050508] font-sans text-white" dir={dir}>
       <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
-        <h1 className="mb-1 text-2xl font-black italic tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="mb-1 text-2xl font-black tracking-tight text-white sm:text-3xl">
           מנויים ותשלומים
         </h1>
-        <p className="mb-6 text-sm font-medium text-gray-600">
-          סקירה עם גרפים — או מרכז שליטה אחד לניהול כל המנויים (למפעילי פלטפורמה בלבד).
+        <p className="mb-6 text-sm font-medium text-white/40">
+          סקירה עם גרפים — או מרכז שליטה לניהול כל המנויים (למפעילי פלטפורמה בלבד).
         </p>
 
         <div
-          className="mb-8 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm ring-1 ring-gray-100/90"
+          className="mb-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2"
           role="tablist"
           aria-label="מקטעי מנויים"
         >
@@ -113,22 +113,22 @@ export default function BillingUnifiedTabsClient({
                   onClick={() => setTabAndUrl(id)}
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
-                      ? "bg-gradient-to-br from-indigo-50 via-white to-gray-50 text-gray-900 shadow-md shadow-indigo-200/40 ring-1 ring-indigo-300/80"
-                      : "border border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-white/[0.10] text-white shadow-sm ring-1 ring-white/15"
+                      : "text-white/35 hover:bg-white/[0.06] hover:text-white/65"
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-xs font-black text-indigo-700/80">
+                  <span className="flex items-center gap-2 text-xs font-black">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700"
+                        active ? "bg-indigo-500 text-white" : "bg-white/[0.08] text-white/45"
                       }`}
                     >
                       {step}
                     </span>
-                    <Icon size={16} className={active ? "text-indigo-600" : "text-gray-400"} strokeWidth={2} />
-                    <span className="font-black text-gray-900">{label}</span>
+                    <Icon size={16} className={active ? "text-indigo-400" : "text-white/30"} strokeWidth={2} />
+                    <span className={`font-black ${active ? "text-white" : "text-white/50"}`}>{label}</span>
                   </span>
-                  <span className="pe-8 text-[11px] font-medium text-gray-500">{hint}</span>
+                  <span className="pe-8 text-[11px] font-medium text-white/30">{hint}</span>
                 </button>
               );
             })}

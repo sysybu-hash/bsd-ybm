@@ -19,12 +19,13 @@ import {
   IdCard,
   Stethoscope,
   Wrench,
-  ChevronDown,
   Info,
   CreditCard,
   BarChart3,
   Settings,
   Users,
+  ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
 import { useI18n } from "@/components/I18nProvider";
@@ -41,27 +42,27 @@ type ProviderRow = {
 };
 
 const TABS: { id: HubTab; label: string; short: string; Icon: typeof ScanLine }[] = [
-  { id: "scan",  label: "סריקת מסמכים",   short: "סריקה",    Icon: ScanLine },
-  { id: "chat",  label: "שיחה עם הנתונים", short: "צ׳אט AI",  Icon: MessagesSquare },
-  { id: "forms", label: "עוזר טפסים",      short: "טפסים",    Icon: FilePenLine },
-  { id: "links", label: "קישורים מהירים",  short: "קישורים",  Icon: LayoutGrid },
+  { id: "scan",  label: "סריקת מסמכים",    short: "סריקה",   Icon: ScanLine },
+  { id: "chat",  label: "שיחה עם הנתונים", short: "צ׳אט AI", Icon: MessagesSquare },
+  { id: "forms", label: "עוזר טפסים",       short: "טפסים",   Icon: FilePenLine },
+  { id: "links", label: "קישורים מהירים",   short: "קישורים", Icon: LayoutGrid },
 ];
 
 const DOC_TYPES = [
-  { id: "invoice",  label: "חשבונית",       Icon: Receipt,        color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
-  { id: "receipt",  label: "קבלה",          Icon: FileText,       color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  { id: "contract", label: "חוזה",          Icon: FileSignature,  color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
-  { id: "id",       label: "תעודת זהות",    Icon: IdCard,         color: "text-amber-600 bg-amber-50 border-amber-200" },
-  { id: "medical",  label: "מסמך רפואי",    Icon: Stethoscope,    color: "text-rose-600 bg-rose-50 border-rose-200" },
-  { id: "custom",   label: "מותאם אישית",   Icon: Wrench,         color: "text-gray-600 bg-gray-50 border-gray-200" },
+  { id: "invoice",  label: "חשבונית",      Icon: Receipt,       color: "ring-indigo-500/50 bg-indigo-500/10 text-indigo-300" },
+  { id: "receipt",  label: "קבלה",         Icon: FileText,      color: "ring-emerald-500/50 bg-emerald-500/10 text-emerald-300" },
+  { id: "contract", label: "חוזה",         Icon: FileSignature, color: "ring-violet-500/50 bg-violet-500/10 text-violet-300" },
+  { id: "id",       label: "תעודת זהות",   Icon: IdCard,        color: "ring-amber-500/50 bg-amber-500/10 text-amber-300" },
+  { id: "medical",  label: "מסמך רפואי",   Icon: Stethoscope,   color: "ring-rose-500/50 bg-rose-500/10 text-rose-300" },
+  { id: "custom",   label: "מותאם אישית",  Icon: Wrench,        color: "ring-white/20 bg-white/[0.04] text-white/50" },
 ];
 
 const QUICK_LINKS = [
-  { href: "/dashboard/erp",          title: "ERP — תפעול",       desc: "מסמכים, לוחות ודוחות",   icon: <BarChart3 size={18} />,      color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
-  { href: "/dashboard/business",     title: "CRM — לקוחות",      desc: "אנשי קשר ופרויקטים",      icon: <Users size={18} />,          color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
-  { href: "/dashboard",              title: "דשבורד ראשי",        desc: "סיכום ותובנות",            icon: <Sparkles size={18} />,       color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
-  { href: "/dashboard/billing",      title: "מנוי ותשלומים",      desc: "חבילות ומכסות סריקה",      icon: <CreditCard size={18} />,     color: "bg-rose-50 text-rose-600 border-rose-200" },
-  { href: "/dashboard/settings",     title: "הגדרות",             desc: "ארגון, API ומשתמשים",      icon: <Settings size={18} />,       color: "bg-gray-50 text-gray-600 border-gray-200" },
+  { href: "/dashboard/erp",      title: "ERP — תפעול",    desc: "מסמכים, לוחות ודוחות",  icon: <BarChart3 size={18} />, gradient: "from-indigo-500/20 to-blue-500/10",    ring: "ring-indigo-500/25" },
+  { href: "/dashboard/business", title: "CRM — לקוחות",  desc: "אנשי קשר ופרויקטים",    icon: <Users size={18} />,     gradient: "from-emerald-500/20 to-teal-500/10",  ring: "ring-emerald-500/25" },
+  { href: "/dashboard",          title: "דשבורד ראשי",   desc: "סיכום ותובנות",          icon: <Sparkles size={18} />,  gradient: "from-violet-500/20 to-purple-500/10", ring: "ring-violet-500/25" },
+  { href: "/dashboard/billing",  title: "מנוי ותשלומים", desc: "חבילות ומכסות סריקה",    icon: <CreditCard size={18} />, gradient: "from-rose-500/20 to-pink-500/10",    ring: "ring-rose-500/25" },
+  { href: "/dashboard/settings", title: "הגדרות",         desc: "ארגון, API ומשתמשים",    icon: <Settings size={18} />,  gradient: "from-slate-500/20 to-gray-500/10",    ring: "ring-white/15" },
 ] as const;
 
 const MSG_PRESETS = [
@@ -92,7 +93,6 @@ export default function DashboardAiHub({ orgId }: { orgId: string }) {
   const [formLoading, setFormLoading] = useState(false);
 
   const [docType, setDocType] = useState("invoice");
-  const [showDocTypes, setShowDocTypes] = useState(false);
 
   const loadProviders = useCallback(async () => {
     setProvidersLoading(true);
@@ -103,12 +103,19 @@ export default function DashboardAiHub({ orgId }: { orgId: string }) {
       if (data.subscriptionTier || data.plan) setOrgPlan(data.subscriptionTier ?? data.plan);
       if (typeof data.cheapScansRemaining === "number") setCheapScans(data.cheapScansRemaining);
       if (typeof data.premiumScansRemaining === "number") setPremiumScans(data.premiumScansRemaining);
-      const firstScan = data.providers?.find((p: ProviderRow) => p.configured && p.supportsDocumentScan && p.allowedByPlan !== false);
-      const firstAny = data.providers?.find((p: ProviderRow) => p.configured && p.allowedByPlan !== false);
+      const firstScan = data.providers?.find(
+        (p: ProviderRow) => p.configured && p.supportsDocumentScan && p.allowedByPlan !== false
+      );
+      const firstAny = data.providers?.find(
+        (p: ProviderRow) => p.configured && p.allowedByPlan !== false
+      );
       if (firstScan) setProviderScan(firstScan.id);
       if (firstAny) setProviderChat(firstAny.id);
-    } catch { setProviders([]); }
-    finally { setProvidersLoading(false); }
+    } catch {
+      setProviders([]);
+    } finally {
+      setProvidersLoading(false);
+    }
   }, []);
 
   useEffect(() => { loadProviders(); }, [loadProviders]);
@@ -143,7 +150,9 @@ export default function DashboardAiHub({ orgId }: { orgId: string }) {
       setChatMessages((prev) => [...prev, { role: "ai", text: data.answer ?? data.error ?? "אין תשובה" }]);
     } catch {
       setChatMessages((prev) => [...prev, { role: "ai", text: "שגיאת רשת" }]);
-    } finally { setChatLoading(false); }
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   const runFormAssist = async () => {
@@ -172,67 +181,77 @@ ${formContext}
       setFormOut(data.answer ?? data.error ?? "אין תשובה");
     } catch {
       setFormOut("שגיאת רשת");
-    } finally { setFormLoading(false); }
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-col gap-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" dir={dir}>
-
+    <div
+      className="flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0a0b14] shadow-2xl shadow-black/40"
+      dir={dir}
+    >
       {/* ══ HEADER ══ */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-600 to-indigo-700 px-6 py-7 shadow-md">
-        {/* Decorative circles */}
-        <div className="absolute -start-8 -top-8 h-32 w-32 rounded-full bg-white/5" aria-hidden />
-        <div className="absolute -end-4 -bottom-4 h-24 w-24 rounded-full bg-white/5" aria-hidden />
+      <div className="relative overflow-hidden border-b border-white/[0.06] bg-gradient-to-br from-indigo-600/15 via-[#0d0e1a] to-violet-600/[0.08] px-6 py-7">
+        {/* Ambient glows */}
+        <div className="pointer-events-none absolute -start-16 -top-16 h-64 w-64 rounded-full bg-indigo-600/[0.12] blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-12 -end-12 h-48 w-48 rounded-full bg-violet-600/[0.08] blur-3xl" />
+
         <div className="relative flex flex-col gap-5">
+          {/* Title row */}
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 shadow-inner">
-                <Bot size={24} className="text-white" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/15 ring-1 ring-indigo-500/35">
+                <Bot size={24} className="text-indigo-300" />
               </div>
               <div>
                 <h1 className="text-xl font-black tracking-tight text-white">מרכז AI וסריקה</h1>
-                <p className="mt-1 text-sm text-indigo-200">סריקת מסמכים, עבודה מול הנתונים ועזרה חכמה לטפסים במקום אחד.</p>
+                <p className="mt-1 text-sm text-white/45">
+                  סריקת מסמכים, עבודה מול הנתונים ועזרה חכמה לטפסים במקום אחד.
+                </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {orgPlan ? (
-                    <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white border border-white/20">
-                      <Zap size={10} className="text-yellow-300" />
+                  {orgPlan && (
+                    <span className="flex items-center gap-1.5 rounded-full bg-indigo-500/[0.12] px-3 py-1 text-[11px] font-bold text-indigo-300 ring-1 ring-indigo-500/25">
+                      <Zap size={10} />
                       {planLabel}
                     </span>
-                  ) : null}
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-indigo-100 border border-white/15">
-                    <Sparkles size={10} className="text-indigo-200" />
+                  )}
+                  <span className="flex items-center gap-1.5 rounded-full bg-white/[0.05] px-3 py-1 text-[11px] font-bold text-white/50 ring-1 ring-white/[0.08]">
+                    <Sparkles size={10} />
                     {configuredChatProviders.length} מנועי AI פעילים
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-indigo-100 border border-white/15">
-                    <ScanLine size={10} className="text-indigo-200" />
+                  <span className="flex items-center gap-1.5 rounded-full bg-white/[0.05] px-3 py-1 text-[11px] font-bold text-white/50 ring-1 ring-white/[0.08]">
+                    <ScanLine size={10} />
                     {configuredScanProviders.length} מנועי סריקה · {scansLeft} סריקות
                   </span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Link href="/dashboard/billing" className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-bold text-indigo-700 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md">
-                מנוי וסריקות
-              </Link>
-            </div>
+            <Link
+              href="/dashboard/billing"
+              className="inline-flex items-center gap-1.5 self-start rounded-xl bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/70 ring-1 ring-white/[0.09] transition hover:bg-white/[0.10] hover:text-white"
+            >
+              מנוי וסריקות
+              <ArrowRight size={13} />
+            </Link>
           </div>
 
-          {/* Tab bar — inside the header */}
-          <div className="flex flex-wrap gap-1.5 rounded-2xl bg-black/20 p-1.5">
-            {TABS.map(({ id, label, Icon }) => (
+          {/* Tab bar */}
+          <div className="flex flex-wrap gap-1 rounded-2xl bg-black/30 p-1.5 ring-1 ring-white/[0.05]">
+            {TABS.map(({ id, label, short, Icon }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setTab(id)}
                 className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[12px] font-bold transition-all ${
                   tab === id
-                    ? "bg-white text-indigo-700 shadow-sm"
-                    : "text-indigo-200 hover:bg-white/10 hover:text-white"
+                    ? "bg-white/[0.10] text-white shadow-sm ring-1 ring-white/15"
+                    : "text-white/35 hover:bg-white/[0.06] hover:text-white/65"
                 }`}
               >
                 <Icon size={13} />
                 <span className="hidden sm:inline">{label}</span>
-                <span className="sm:hidden">{label.slice(0, 5)}</span>
+                <span className="sm:hidden">{short}</span>
               </button>
             ))}
           </div>
@@ -240,7 +259,7 @@ ${formContext}
       </div>
 
       {/* ══ CONTENT ══ */}
-      <div className="flex-1 p-5 md:p-6">
+      <div className="flex-1 bg-[#050508] p-5 md:p-6">
         <AnimatePresence mode="wait">
 
           {/* ── SCAN TAB ── */}
@@ -253,19 +272,21 @@ ${formContext}
               transition={{ duration: 0.15 }}
               className="space-y-4"
             >
-              {/* Document type selector */}
+              {/* Doc type chips */}
               <div>
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">סוג מסמך לסריקה</p>
+                <p className="mb-2.5 text-[10px] font-black uppercase tracking-widest text-white/25">
+                  סוג מסמך לסריקה
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {DOC_TYPES.map(({ id, label, Icon, color }) => (
                     <button
                       key={id}
                       type="button"
                       onClick={() => setDocType(id)}
-                      className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[12px] font-bold transition-all ${
+                      className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[12px] font-bold ring-1 transition-all ${
                         docType === id
                           ? color
-                          : "border-gray-100 bg-gray-50 text-gray-500 hover:border-gray-200"
+                          : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.07] hover:text-white/65"
                       }`}
                     >
                       <Icon size={13} />
@@ -275,40 +296,47 @@ ${formContext}
                 </div>
               </div>
 
-              {/* Scanner info */}
+              {/* Provider status */}
               {providersLoading ? (
-                <div className="flex items-center gap-2 rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                  <Loader2 size={16} className="animate-spin text-indigo-600" />
-                  <span className="text-sm text-gray-500">טוען מנועי AI...</span>
+                <div className="flex items-center gap-2 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+                  <Loader2 size={16} className="animate-spin text-indigo-400" />
+                  <span className="text-sm text-white/45">טוען מנועי AI...</span>
                 </div>
-              ) : providers.filter(p => p.configured && p.supportsDocumentScan).length === 0 ? (
-                <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                  <Info size={16} className="mt-0.5 shrink-0 text-amber-600" />
+              ) : providers.filter((p) => p.configured && p.supportsDocumentScan).length === 0 ? (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/[0.07] p-4">
+                  <Info size={16} className="mt-0.5 shrink-0 text-amber-400" />
                   <div>
-                    <p className="text-sm font-bold text-amber-800">אין מנועי AI פעילים</p>
-                    <p className="mt-0.5 text-xs text-amber-700">יש להגדיר מפתחות API בהגדרות כדי להפעיל סריקה.</p>
-                    <Link href="/dashboard/settings?tab=ai" className="mt-2 inline-flex text-xs font-bold text-amber-800 underline">
+                    <p className="text-sm font-bold text-amber-300">אין מנועי AI פעילים</p>
+                    <p className="mt-0.5 text-xs text-amber-400/70">
+                      יש להגדיר מפתחות API בהגדרות כדי להפעיל סריקה.
+                    </p>
+                    <Link
+                      href="/dashboard/settings?tab=ai"
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-300 underline hover:text-amber-200"
+                    >
                       פתח הגדרות AI ←
                     </Link>
                   </div>
                 </div>
               ) : null}
 
-              {/* MultiEngineScanner — הלוגיקה ממוקמת כאן, לא משנים */}
+              {/* The scanner — logic untouched */}
               <MultiEngineScanner
-                variant="light"
+                variant="dark"
                 provider={providerScan}
                 fillHeight
                 compactHeader
               />
 
-              {/* Quick tips */}
-              <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
-                <p className="mb-2 text-[11px] font-black uppercase tracking-widest text-indigo-600">טיפים לסריקה מושלמת</p>
-                <ul className="space-y-1 text-[12px] text-indigo-800/70">
+              {/* Tips */}
+              <div className="rounded-2xl border border-indigo-500/15 bg-indigo-500/[0.05] p-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
+                  טיפים לסריקה
+                </p>
+                <ul className="space-y-1 text-[12px] text-white/35">
                   <li>• העלה קובץ PDF ברזולוציה גבוהה לתוצאות מדויקות יותר</li>
                   <li>• בחר מספר מנועים לקבלת השוואה ובחירת הטוב ביותר</li>
-                  <li>• לחשבוניות — המנוע Gemini Pro נותן את הדיוק הגבוה ביותר</li>
+                  <li>• לחשבוניות — Gemini Pro מספק את הדיוק הגבוה ביותר</li>
                   <li>• לאחר הסריקה ניתן לשמור ישירות ל-ERP או ל-CRM</li>
                 </ul>
               </div>
@@ -327,7 +355,7 @@ ${formContext}
             >
               {/* Provider selector */}
               <div className="flex items-center gap-3">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400">מנוע:</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/25">מנוע:</p>
                 <div className="flex gap-1.5">
                   {configuredChatProviders.length > 0 ? (
                     configuredChatProviders.map((p) => (
@@ -335,58 +363,61 @@ ${formContext}
                         key={p.id}
                         type="button"
                         onClick={() => setProviderChat(p.id)}
-                        className={`rounded-xl border px-3 py-1 text-[12px] font-bold transition-all ${
+                        className={`rounded-xl px-3 py-1.5 text-[12px] font-bold ring-1 transition-all ${
                           providerChat === p.id
-                            ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                            : "border-gray-200 text-gray-600 hover:border-indigo-300"
+                            ? "bg-indigo-500/[0.18] text-indigo-300 ring-indigo-500/35"
+                            : "bg-white/[0.04] text-white/35 ring-white/[0.07] hover:bg-white/[0.08] hover:text-white/65"
                         }`}
                       >
                         {p.label}
                       </button>
                     ))
                   ) : (
-                    <span className="text-xs text-gray-400">אין מנועים מוגדרים</span>
+                    <span className="text-xs text-white/25">אין מנועים מוגדרים</span>
                   )}
                 </div>
               </div>
 
-              {/* Preset questions */}
+              {/* Quick presets */}
               <div className="flex flex-wrap gap-2">
                 {MSG_PRESETS.map((p) => (
                   <button
                     key={p}
                     type="button"
                     onClick={() => setChatQ(p)}
-                    className="rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-[12px] font-medium text-gray-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all"
+                    className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[11px] font-medium text-white/45 transition hover:border-indigo-500/25 hover:bg-indigo-500/[0.07] hover:text-indigo-300"
                   >
                     {p}
                   </button>
                 ))}
               </div>
 
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto space-y-3 max-h-[350px] min-h-[120px]">
+              {/* Message list */}
+              <div className="max-h-[350px] min-h-[120px] flex-1 space-y-3 overflow-y-auto">
                 {chatMessages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-gray-300">
+                  <div className="flex flex-col items-center justify-center py-10 text-white/[0.18]">
                     <MessagesSquare size={36} strokeWidth={1.5} />
-                    <p className="mt-3 text-sm text-gray-400">שאל שאלה על הנתונים העסקיים שלך</p>
+                    <p className="mt-3 text-sm text-white/30">שאל שאלה על הנתונים העסקיים שלך</p>
                   </div>
                 ) : (
                   chatMessages.map((m, i) => (
-                    <div
-                      key={i}
-                      className={`flex gap-2.5 ${m.role === "user" ? "flex-row-reverse" : ""}`}
-                    >
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${
-                        m.role === "user" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600"
-                      }`}>
+                    <div key={i} className={`flex gap-2.5 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+                      <div
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                          m.role === "user"
+                            ? "bg-indigo-500 text-white"
+                            : "bg-white/[0.07] text-white/55"
+                        }`}
+                      >
                         {m.role === "user" ? "א" : <Bot size={14} />}
                       </div>
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                        m.role === "user"
-                          ? "bg-indigo-600 text-white rounded-tr-sm"
-                          : "bg-gray-50 border border-gray-100 text-gray-800 rounded-tl-sm"
-                      }`}>
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                          m.role === "user"
+                            ? "rounded-tr-sm bg-indigo-500/[0.18] text-white ring-1 ring-indigo-500/25"
+                            : "rounded-tl-sm bg-white/[0.05] text-white/75 ring-1 ring-white/[0.07]"
+                        }`}
+                      >
                         {m.text}
                       </div>
                     </div>
@@ -394,13 +425,17 @@ ${formContext}
                 )}
                 {chatLoading && (
                   <div className="flex gap-2.5">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100">
-                      <Loader2 size={14} className="animate-spin text-indigo-600" />
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.07]">
+                      <Loader2 size={14} className="animate-spin text-indigo-400" />
                     </div>
-                    <div className="rounded-2xl rounded-tl-sm bg-gray-50 border border-gray-100 px-4 py-3">
+                    <div className="rounded-2xl rounded-tl-sm bg-white/[0.05] px-4 py-3 ring-1 ring-white/[0.07]">
                       <div className="flex gap-1">
-                        {[0,1,2].map(i => (
-                          <span key={i} className="block h-2 w-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
+                            className="block h-2 w-2 animate-bounce rounded-full bg-indigo-400/65"
+                            style={{ animationDelay: `${i * 0.15}s` }}
+                          />
                         ))}
                       </div>
                     </div>
@@ -408,7 +443,7 @@ ${formContext}
                 )}
               </div>
 
-              {/* Input */}
+              {/* Input bar */}
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -416,15 +451,19 @@ ${formContext}
                   onChange={(e) => setChatQ(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendChat()}
                   placeholder="שאל שאלה על הנתונים שלך..."
-                  className="flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
+                  className="flex-1 rounded-2xl border border-white/[0.09] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-indigo-500/45 focus:ring-2 focus:ring-indigo-500/15"
                 />
                 <button
                   type="button"
                   onClick={sendChat}
                   disabled={!chatQ.trim() || chatLoading}
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm transition-all hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  {chatLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  {chatLoading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -441,18 +480,22 @@ ${formContext}
               className="space-y-4"
             >
               <div>
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">סוג המסמך</p>
+                <p className="mb-2.5 text-[10px] font-black uppercase tracking-widest text-white/25">
+                  סוג המסמך
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {DOC_TYPES.slice(0, 4).map(({ id, label, Icon, color }) => (
                     <button
                       key={id}
                       type="button"
                       onClick={() => setDocType(id)}
-                      className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[12px] font-bold transition-all ${
-                        docType === id ? color : "border-gray-100 bg-gray-50 text-gray-500 hover:border-gray-200"
+                      className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[12px] font-bold ring-1 transition-all ${
+                        docType === id
+                          ? color
+                          : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.07] hover:text-white/65"
                       }`}
                     >
-                      <Icon size={12} />
+                      <Icon size={13} />
                       {label}
                     </button>
                   ))}
@@ -460,24 +503,24 @@ ${formContext}
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-bold text-gray-700">מה תרצה שה-AI יעשה?</label>
+                <label className="mb-1.5 block text-sm font-bold text-white/65">מה תרצה שה-AI יעשה?</label>
                 <input
                   type="text"
                   value={formGoal}
                   onChange={(e) => setFormGoal(e.target.value)}
                   placeholder={`לדוגמה: מלא ${activeDocType.label} עם הפרטים הבאים`}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
+                  className="w-full rounded-2xl border border-white/[0.09] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-indigo-500/45 focus:ring-2 focus:ring-indigo-500/15"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-bold text-gray-700">הקשר / פרטים לעיבוד</label>
+                <label className="mb-1.5 block text-sm font-bold text-white/65">הקשר / פרטים לעיבוד</label>
                 <textarea
                   value={formContext}
                   onChange={(e) => setFormContext(e.target.value)}
                   placeholder="הדבק כאן טקסט, שדות, מידע גולמי — ה-AI ימלא ויסדר הכל"
                   rows={5}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm leading-relaxed outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15 resize-none"
+                  className="w-full resize-none rounded-2xl border border-white/[0.09] bg-white/[0.04] px-4 py-3 text-sm leading-relaxed text-white placeholder:text-white/25 outline-none transition focus:border-indigo-500/45 focus:ring-2 focus:ring-indigo-500/15"
                 />
               </div>
 
@@ -485,20 +528,28 @@ ${formContext}
                 type="button"
                 onClick={runFormAssist}
                 disabled={!formContext.trim() || formLoading}
-                className="flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-sm shadow-indigo-600/25 transition-all hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {formLoading ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+                {formLoading ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Sparkles size={15} />
+                )}
                 {formLoading ? "מעבד..." : "עבד עם AI"}
               </button>
 
               {formOut && (
-                <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5">
-                  <p className="mb-2 text-[11px] font-black uppercase tracking-widest text-indigo-600">תוצאת ה-AI</p>
-                  <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800 font-sans">{formOut}</pre>
+                <div className="rounded-2xl border border-indigo-500/[0.18] bg-indigo-500/[0.06] p-5">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
+                    תוצאת ה-AI
+                  </p>
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-white/75">
+                    {formOut}
+                  </pre>
                   <button
                     type="button"
                     onClick={() => navigator.clipboard.writeText(formOut)}
-                    className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 underline"
+                    className="mt-3 text-xs font-bold text-indigo-400 underline hover:text-indigo-300"
                   >
                     העתק תוצאה
                   </button>
@@ -517,19 +568,23 @@ ${formContext}
               transition={{ duration: 0.15 }}
               className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {QUICK_LINKS.map(({ href, title, desc, icon, color }) => (
+              {QUICK_LINKS.map(({ href, title, desc, icon, gradient, ring }) => (
                 <Link
                   key={href}
                   href={href}
-                  className={`group flex items-start gap-3 rounded-2xl border bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${color.split(" ")[2]}`}
+                  className={`group relative flex items-start gap-3 overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-4 ring-1 ${ring} transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30`}
                 >
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color.split(" ")[0]} ${color.split(" ")[1]}`}>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-white/65 ring-1 ring-white/[0.08]">
                     {icon}
                   </div>
                   <div>
-                    <p className="text-sm font-black text-gray-900">{title}</p>
-                    <p className="mt-0.5 text-[11px] text-gray-500">{desc}</p>
+                    <p className="text-sm font-black text-white">{title}</p>
+                    <p className="mt-0.5 text-[11px] text-white/45">{desc}</p>
                   </div>
+                  <ExternalLink
+                    size={13}
+                    className="absolute end-3 top-3 text-white/[0.18] opacity-0 transition-opacity group-hover:opacity-100"
+                  />
                 </Link>
               ))}
             </motion.div>
