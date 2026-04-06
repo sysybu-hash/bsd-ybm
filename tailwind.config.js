@@ -17,8 +17,53 @@ module.exports = {
           "sans-serif",
         ],
       },
+      /* ─── Design Tokens ──────────────────────────────────────────────── */
+      colors: {
+        /* Brand — single source of truth for indigo */
+        brand: {
+          50:  "#eef2ff",
+          100: "#e0e7ff",
+          200: "#c7d2fe",
+          300: "#a5b4fc",
+          400: "#818cf8",
+          500: "#6366f1",
+          600: "#4f46e5",
+          700: "#4338ca",
+          800: "#3730a3",
+          900: "#312e81",
+        },
+        /* Dark surfaces (landing page / auth pages) */
+        dark: {
+          900: "#050508",
+          800: "#0a0a0f",
+          700: "#0f0f16",
+          600: "#16161f",
+          500: "#1e1e2a",
+          border: "rgba(255,255,255,0.07)",
+        },
+        /* Dashboard surfaces (light work environment) */
+        surface: {
+          bg:     "#f8f9fb",
+          card:   "#ffffff",
+          border: "#e8eaf0",
+          muted:  "#f1f3f7",
+        },
+      },
+      /* ─── Shadows ────────────────────────────────────────────────────── */
+      boxShadow: {
+        "brand-sm": "0 1px 3px 0 rgba(79,70,229,0.15)",
+        "brand-md": "0 4px 16px 0 rgba(79,70,229,0.20)",
+        "brand-lg": "0 8px 32px 0 rgba(79,70,229,0.25)",
+        "card":     "0 1px 4px 0 rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)",
+        "card-hover": "0 4px 16px 0 rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06)",
+      },
+      /* ─── Border radius ──────────────────────────────────────────────── */
+      borderRadius: {
+        "2xl": "1rem",
+        "3xl": "1.5rem",
+        "4xl": "2rem",
+      },
       minHeight: {
-        /** תאימות מובייל: dvh כשזמין, גיבוי ל-vh */
         screen: "100vh",
         "screen-dvh": "100dvh",
       },

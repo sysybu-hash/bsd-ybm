@@ -51,12 +51,12 @@ type NavLinkProps = {
 };
 
 const ACCENT: Record<string, { activeBg: string; activeText: string; activeBorder: string; iconBg: string; iconText: string; activeIconBg: string; activeIconText: string }> = {
-  indigo:  { activeBg: "bg-indigo-600",  activeText: "text-white",  activeBorder: "border-indigo-700",  iconBg: "bg-indigo-50",   iconText: "text-indigo-500",  activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
-  emerald: { activeBg: "bg-emerald-600", activeText: "text-white",  activeBorder: "border-emerald-700", iconBg: "bg-emerald-50",  iconText: "text-emerald-500", activeIconBg: "bg-emerald-500",  activeIconText: "text-white" },
-  sky:     { activeBg: "bg-sky-600",     activeText: "text-white",  activeBorder: "border-sky-700",     iconBg: "bg-sky-50",      iconText: "text-sky-500",     activeIconBg: "bg-sky-500",      activeIconText: "text-white" },
-  rose:    { activeBg: "bg-rose-600",    activeText: "text-white",  activeBorder: "border-rose-700",    iconBg: "bg-rose-50",     iconText: "text-rose-500",    activeIconBg: "bg-rose-500",     activeIconText: "text-white" },
-  amber:   { activeBg: "bg-amber-500",   activeText: "text-white",  activeBorder: "border-amber-600",   iconBg: "bg-amber-50",    iconText: "text-amber-500",   activeIconBg: "bg-amber-400",    activeIconText: "text-white" },
-  blue:    { activeBg: "bg-indigo-600",  activeText: "text-white",  activeBorder: "border-indigo-700",  iconBg: "bg-slate-50",    iconText: "text-slate-500",   activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
+  indigo:  { activeBg: "bg-indigo-500/20", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
+  emerald: { activeBg: "bg-emerald-500/20",activeText: "text-emerald-300", activeBorder: "border-emerald-500/30", iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-emerald-500",  activeIconText: "text-white" },
+  sky:     { activeBg: "bg-sky-500/20",    activeText: "text-sky-300",     activeBorder: "border-sky-500/30",     iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-sky-500",      activeIconText: "text-white" },
+  rose:    { activeBg: "bg-rose-500/20",   activeText: "text-rose-300",    activeBorder: "border-rose-500/30",    iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-rose-500",     activeIconText: "text-white" },
+  amber:   { activeBg: "bg-amber-500/20",  activeText: "text-amber-300",   activeBorder: "border-amber-500/30",   iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-amber-400",    activeIconText: "text-white" },
+  blue:    { activeBg: "bg-indigo-500/20", activeText: "text-indigo-300",  activeBorder: "border-indigo-500/30",  iconBg: "bg-white/[0.06]",  iconText: "text-white/50",  activeIconBg: "bg-indigo-500",   activeIconText: "text-white" },
 };
 
 function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: NavLinkProps) {
@@ -67,19 +67,18 @@ function SidebarLink({ href, icon, label, badge, onClick, isActive, accent }: Na
       onClick={onClick}
       className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-150 ${
         isActive
-          ? `${a.activeBg} ${a.activeText} shadow-md`
-          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          ? `${a.activeBg} ${a.activeText} ring-1 ${a.activeBorder}`
+          : "text-white/45 hover:bg-white/[0.07] hover:text-white/90"
       }`}
     >
-      {/* Icon square */}
       <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[14px] transition-all ${
-        isActive ? `${a.activeIconBg} ${a.activeIconText}` : `${a.iconBg} ${a.iconText} group-hover:bg-gray-200 group-hover:text-gray-700`
+        isActive ? `${a.activeIconBg} ${a.activeIconText} shadow-sm` : `${a.iconBg} ${a.iconText} group-hover:bg-white/[0.10] group-hover:text-white/70`
       }`}>
         {icon}
       </span>
       <span className="flex-1 truncate leading-none">{label}</span>
       {badge && (
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? "bg-white/20 text-white" : "border border-gray-200 bg-white text-gray-500"}`}>
+        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isActive ? "bg-white/20 text-white" : "border border-white/[0.12] bg-white/[0.06] text-white/40"}`}>
           {badge}
         </span>
       )}
@@ -160,9 +159,9 @@ export default function DashboardLayoutClient({
 
   const SectionLabel = ({ label }: { label: string }) => (
     <div className="mb-1 mt-5 flex items-center gap-2 px-3 first:mt-2">
-      <div className="h-px flex-1 bg-gray-100" />
-      <p className="text-[9px] font-black uppercase tracking-[0.15em] text-gray-400">{label}</p>
-      <div className="h-px flex-1 bg-gray-100" />
+      <div className="h-px flex-1 bg-white/[0.07]" />
+      <p className="text-[9px] font-black uppercase tracking-[0.15em] text-white/25">{label}</p>
+      <div className="h-px flex-1 bg-white/[0.07]" />
     </div>
   );
 
@@ -194,8 +193,8 @@ export default function DashboardLayoutClient({
   );
 
   const UserCard = () => (
-    <div className="border-t border-gray-100 bg-gray-50/60 p-3">
-      <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+    <div className="border-t border-white/[0.07] bg-white/[0.03] p-3">
+      <div className="flex items-center gap-3 rounded-2xl border border-white/[0.10] bg-white/[0.06] px-3 py-2.5">
         <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-xs font-black text-white shadow-md shadow-indigo-600/30">
           {serverUser.image ? (
             <Image src={serverUser.image} alt="" width={36} height={36} className="h-9 w-9 rounded-xl object-cover" />
@@ -203,21 +202,21 @@ export default function DashboardLayoutClient({
           <span className="absolute -bottom-0.5 -end-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-white bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[12px] font-black leading-tight text-gray-900">{userName}</p>
-          <p className="truncate text-[10px] leading-tight text-gray-400 mt-0.5">{serverEmail}</p>
+          <p className="truncate text-[12px] font-black leading-tight text-white/90">{userName}</p>
+          <p className="truncate text-[10px] leading-tight text-white/35 mt-0.5">{serverEmail}</p>
         </div>
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="shrink-0 rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
+          className="shrink-0 rounded-lg p-1.5 text-white/25 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
           title="התנתקות"
         >
           <LogOut size={13} />
         </button>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5 px-1">
-        <span className="rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700">{userRole.replaceAll("_", " ")}</span>
-        <span className="rounded-full border border-gray-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-gray-500" dir="ltr">ORG·{orgId.slice(-6).toUpperCase()}</span>
+        <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300">{userRole.replaceAll("_", " ")}</span>
+        <span className="rounded-full border border-white/[0.10] bg-white/[0.05] px-2.5 py-0.5 text-[10px] font-semibold text-white/30" dir="ltr">ORG·{orgId.slice(-6).toUpperCase()}</span>
       </div>
     </div>
   );
@@ -225,13 +224,14 @@ export default function DashboardLayoutClient({
   const SidebarShell = ({ onNav }: { onNav?: () => void }) => (
     <>
       {/* Logo */}
-      <Link href="/" className="group flex items-center gap-3 px-5 py-5 transition-opacity hover:opacity-90" onClick={onNav}>
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-sm font-black text-white shadow-lg shadow-indigo-600/30 transition-transform group-hover:scale-105">
+      <Link href="/" className="group flex items-center gap-3 border-b border-white/[0.07] px-5 py-5 transition-opacity hover:opacity-90" onClick={onNav}>
+        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-black text-white shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-105">
           B
+          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#0f101a]" />
         </div>
         <div>
-          <p className="text-[15px] font-black leading-tight tracking-wide text-gray-900">BSD<span className="text-indigo-600">-YBM</span></p>
-          <p className="mt-0.5 text-[10px] leading-none text-gray-400 font-medium">Business Platform</p>
+          <p className="text-[15px] font-black leading-tight tracking-wide text-white">BSD<span className="text-indigo-400">-YBM</span></p>
+          <p className="mt-0.5 text-[10px] leading-none text-white/30 font-medium">Business Platform</p>
         </div>
       </Link>
 
@@ -244,7 +244,7 @@ export default function DashboardLayoutClient({
       <div className="px-3 pb-2">
         <LanguageSwitcher
           showLabel
-          className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-[12px] font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
+          className="flex w-full items-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.05] px-3 py-2 text-[12px] font-semibold text-white/50 transition-colors hover:bg-white/[0.09] hover:text-white/80"
         />
       </div>
 
@@ -253,10 +253,10 @@ export default function DashboardLayoutClient({
   );
 
   return (
-    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-gray-50" dir={dir}>
+    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-[#f8f9fb]" dir={dir}>
 
       {/* ══ SIDEBAR — Desktop ══ */}
-      <aside className="hidden w-64 shrink-0 flex-col border-e border-gray-200 bg-white shadow-sm md:fixed md:inset-y-0 md:start-0 md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-e border-white/[0.07] bg-[#0f101a] shadow-xl md:fixed md:inset-y-0 md:start-0 md:flex">
         <SidebarShell />
       </aside>
 
@@ -272,16 +272,16 @@ export default function DashboardLayoutClient({
 
       {/* ══ MOBILE DRAWER ══ */}
       <aside
-        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col border-e border-gray-200 bg-white shadow-xl shadow-gray-900/12 transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col border-e border-white/[0.07] bg-[#0f101a] shadow-xl shadow-black/40 transition-transform duration-300 ease-out md:hidden ${
           mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none")
         }`}
         aria-hidden={!mobileOpen}
       >
-        <div className="flex items-center justify-between px-4 py-4">
-          <span className="text-sm font-black text-gray-900">BSD<span className="text-indigo-600">-YBM</span></span>
+        <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-4">
+          <span className="text-sm font-black text-white">BSD<span className="text-indigo-400">-YBM</span></span>
           <button
             type="button"
-            className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
+            className="rounded-xl p-2 text-white/30 transition-colors hover:bg-white/[0.08] hover:text-white"
             onClick={() => setMobileOpen(false)}
           >
             <X size={16} />
@@ -291,7 +291,7 @@ export default function DashboardLayoutClient({
           <NavContent onNav={() => setMobileOpen(false)} />
         </nav>
         <div className="px-3 pb-2">
-          <LanguageSwitcher showLabel className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-[12px] font-semibold text-gray-600 shadow-sm" />
+          <LanguageSwitcher showLabel className="flex w-full items-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.05] px-3 py-2 text-[12px] font-semibold text-white/50" />
         </div>
         <UserCard />
       </aside>
@@ -316,14 +316,14 @@ export default function DashboardLayoutClient({
         </div>
 
         {/* Desktop header */}
-        <header className="sticky top-0 z-[110] hidden border-b border-gray-100 bg-white/95 px-8 py-4 shadow-sm md:block" style={{ backdropFilter: "blur(8px)" }}>
+        <header className="sticky top-0 z-[110] hidden border-b border-gray-100 bg-white/95 px-8 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] md:block" style={{ backdropFilter: "blur(12px)" }}>
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold text-gray-400">BSD-YBM</span>
-              <span className="text-gray-200">/</span>
+            <div className="flex items-center gap-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">BSD-YBM</span>
+              <span className="text-gray-300">/</span>
               <h1 className="text-[15px] font-black text-gray-900">{pageTitle}</h1>
               {showAdmin && (
-                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-3 py-1 text-[11px] font-bold text-amber-700 border border-amber-200">
+                <span className="flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-600 border border-amber-200">
                   <Shield size={10} />Admin
                 </span>
               )}
