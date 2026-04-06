@@ -45,8 +45,8 @@ export default function FinancialCharts({
   const cardClass =
     "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm";
 
-  const titlePieClass = "text-lg font-bold mb-4 text-white";
-  const titleBarClass = "text-lg font-bold mb-4 text-white";
+  const titlePieClass = "text-lg font-bold mb-4 text-gray-900";
+  const titleBarClass = "text-lg font-bold mb-4 text-gray-900";
 
   const tooltipStyle = {
     backgroundColor: "#fff",

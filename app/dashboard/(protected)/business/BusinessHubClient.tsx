@@ -310,7 +310,7 @@ function HubContent(props: Props) {
                 priceSpikes={priceSpikes}
               />
               <ErpHistoricalImportCallout />
-              <MultiEngineScanner variant="dark" />
+              <MultiEngineScanner variant="light" />
               <SupplierPriceBoard />
               {priceComparison && (
                 <PriceComparisonChart
@@ -318,7 +318,7 @@ function HubContent(props: Props) {
                   productName={priceComparison.productName}
                 />
               )}
-              <FinancialCharts data={docs as unknown as any[]} variant="dark" />
+              <FinancialCharts data={docs as unknown as any[]} variant="light" />
               <ErpDocumentsManager initialDocs={docs} />
             </div>
           )}
