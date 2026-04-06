@@ -210,9 +210,9 @@ function AnimRegistration({ step }: { step: number }) {
           <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-gray-500">תוכנית BASIC</span>
-              <span className="text-[13px] font-black text-white">₪99 / חודש</span>
+              <span className="text-[13px] font-black text-gray-900">₪99 / חודש</span>
             </div>
-            <div className="h-px bg-white/[0.05]" />
+            <div className="h-px bg-gray-100" />
             <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/15 px-3 py-3 flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-[#003087] flex items-center justify-center">
                 <span className="text-[8px] font-black text-white">Pay</span>
@@ -449,14 +449,14 @@ export default function LandingTutorialSection() {
   const t3 = useStepCycle(4, 3750);
 
   return (
-    <section id="tutorial-videos" className="bg-white/[0.03] py-20">
+    <section id="tutorial-videos" className="bg-gray-50 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6" dir="rtl">
         {/* Section header */}
         <div className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-indigo-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-indigo-600">
             ▶ הדגמות חיות
           </span>
-          <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-black text-gray-900 sm:text-4xl">
             ראה איך המערכת עובדת — בפועל
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
