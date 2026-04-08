@@ -1,11 +1,10 @@
+import ExecutiveSuite from "@/components/intelligence/ExecutiveSuite";
 import type { Metadata } from "next";
-import OperatorAssistantPanel from "@/components/operations/OperatorAssistantPanel";
 
 export const metadata: Metadata = {
-  title: "עוזר תפעולי | BSD-YBM",
-  description: "סוכן תפעולי פנימי לניהול מהיר מתוך האתר.",
+  title: "חדר מצב AI | מנהל על",
 };
 
-export default function OperatorPage() {
-  return <OperatorAssistantPanel />;
+export default function OperatorDashboardPage() {
+  return <ExecutiveSuite />;
 }

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
@@ -20,6 +20,7 @@ import {
 import { DROPZONE_ACCEPT, SCAN_ACCEPT_SUMMARY } from "@/lib/scan-mime";
 import { pickBestEngineIndex, scoreExtractedDocument } from "@/lib/score-scan-result";
 import { useI18n } from "@/components/I18nProvider";
+import WizardContainer, { WizardStepConfig } from "./wizard/WizardContainer";
 
 type ProviderRow = {
   id: string;
@@ -55,15 +56,10 @@ export type FileCompareResult = {
 
 type Variant = "dark" | "light";
 
-void 0; // primary color is now indigo-600 via Tailwind classes
-
 type ScannerProps = {
   variant?: Variant;
-  /** ברירת מחדל ממרכז AI — מגדיר סט התחלתי של מנועים (לרוב מנוע יחיד) */
   provider?: string;
-  /** פריסה גבוהה יותר (מסך מלא מבועת הסריקה) */
   fillHeight?: boolean;
-  /** כותרת חיצונית קומהקטית */
   compactHeader?: boolean;
 };
 
@@ -90,11 +86,10 @@ export default function MultiEngineScanner({
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [compareResults, setCompareResults] = useState<FileCompareResult[]>([]);
+  
+  // WIZARD STATE
+  const [wizardStep, setWizardStep] = useState(0);
 
-  /** תאימות לאחור: כל הערכים מוצגים במצב בהיר */
-  void variant;
-
-  /** כל המנועים שמתאימים לסריקת מסמך — גם לפני הגדרת מפתח בשרת */
   const scanEngineRows = useMemo(
     () => providers.filter((p) => p.supportsDocumentScan),
     [providers],
@@ -130,7 +125,6 @@ export default function MultiEngineScanner({
   useEffect(() => {
     if (!scanEngineRows.length) return;
     const eligible = scanEngineRows.filter(canRunEngine);
-
     let stored: string[] = [];
     try {
       const raw = window.localStorage.getItem(SCANNER_PREFS_KEY);
@@ -151,11 +145,8 @@ export default function MultiEngineScanner({
         const row = scanEngineRows.find((p) => p.id === id);
         return row != null && canRunEngine(row);
       });
-      if (restored.length > 0) {
-        setSelectedIds(restored);
-      } else {
-        setSelectedIds(eligible.map((p) => p.id));
-      }
+      if (restored.length > 0) setSelectedIds(restored);
+      else setSelectedIds(eligible.map((p) => p.id));
     } else {
       setSelectedIds(eligible.map((p) => p.id));
     }
@@ -165,9 +156,7 @@ export default function MultiEngineScanner({
     if (!selectedIds.length) return;
     try {
       window.localStorage.setItem(SCANNER_PREFS_KEY, JSON.stringify(selectedIds));
-    } catch {
-      // Ignore storage write issues.
-    }
+    } catch {}
   }, [selectedIds]);
 
   useEffect(() => {
@@ -180,9 +169,7 @@ export default function MultiEngineScanner({
     });
     setPreviewUrls(urls);
     return () => {
-      urls.forEach((u) => {
-        if (u) URL.revokeObjectURL(u);
-      });
+      urls.forEach((u) => { if (u) URL.revokeObjectURL(u); });
     };
   }, [files]);
 
@@ -195,33 +182,8 @@ export default function MultiEngineScanner({
     });
   };
 
-  const selectAllEngines = () =>
-    setSelectedIds(scanEngineRows.filter(canRunEngine).map((p) => p.id));
+  const selectAllEngines = () => setSelectedIds(scanEngineRows.filter(canRunEngine).map((p) => p.id));
   const clearEngines = () => setSelectedIds([]);
-
-  /** זרימה לינארית: מנועים → קבצים → פענוח → השוואה → סיום */
-  const activeStep = useMemo(() => {
-    if (compareResults.length > 0) return 5;
-    if (processing) return 3;
-    if (files.length > 0) return 2;
-    return 1;
-  }, [compareResults.length, processing, files.length]);
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles((prev) => [...prev, ...acceptedFiles]);
-    setCompareResults([]);
-  }, []);
-
-  const clearFiles = () => {
-    setFiles([]);
-    setCompareResults([]);
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: true,
-    accept: DROPZONE_ACCEPT,
-  });
 
   const executeMultiScan = useCallback(async (): Promise<FileCompareResult[] | null> => {
     if (files.length === 0 || status !== "authenticated") return null;
@@ -252,45 +214,22 @@ export default function MultiEngineScanner({
           const res = await fetch("/api/ai", { method: "POST", body: formData });
           const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
           if (!res.ok) {
-            const baseErr =
-              typeof data.error === "string" ? data.error : "שגיאת שרת";
-            const extra =
-              data.code === "QUOTA_EXCEEDED" && typeof data.billingUrl === "string"
-                ? ` — לרכישת בנדל או שדרוג: ${data.billingUrl}`
-                : "";
-            engines.push({
-              providerId: pid,
-              label: idToLabel.get(pid) ?? pid,
-              ok: false,
-              error: `${baseErr}${extra}`,
-              score: 0,
-            });
+            const baseErr = typeof data.error === "string" ? data.error : "שגיאת שרת";
+            const extra = data.code === "QUOTA_EXCEEDED" && typeof data.billingUrl === "string"
+              ? ` — לרכישת בנדל או שדרוג: ${data.billingUrl}` : "";
+            engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: `${baseErr}${extra}`, score: 0 });
           } else {
             const ai = extractAiPayload(data);
             const notices: string[] = [];
-            if (data._fromCache === true) {
-              notices.push("תוצאה מהמטמון (לא נשלחה בקשה חדשה לספק)");
-            }
-            if (data._providerAdjusted === true && typeof data._provider === "string") {
-              notices.push(`הספק בפועל: ${data._provider}`);
-            }
+            if (data._fromCache === true) notices.push("תוצאה מהמטמון");
+            if (data._providerAdjusted === true && typeof data._provider === "string") notices.push(`ספק בפועל: ${data._provider}`);
             engines.push({
-              providerId: pid,
-              label: idToLabel.get(pid) ?? pid,
-              ok: true,
-              aiData: ai,
-              notice: notices.length ? notices.join(" · ") : undefined,
-              score: scoreExtractedDocument(ai),
+              providerId: pid, label: idToLabel.get(pid) ?? pid, ok: true, aiData: ai,
+              notice: notices.length ? notices.join(" · ") : undefined, score: scoreExtractedDocument(ai),
             });
           }
         } catch {
-          engines.push({
-            providerId: pid,
-            label: idToLabel.get(pid) ?? pid,
-            ok: false,
-            error: "שגיאת רשת",
-            score: 0,
-          });
+          engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: "שגיאת רשת", score: 0 });
         }
         doneOps += 1;
         setProgress(Math.round((doneOps / totalOps) * 100));
@@ -299,12 +238,9 @@ export default function MultiEngineScanner({
       const t = file.type || "";
       const recommendedIndex = pickBestEngineIndex(engines);
       out.push({
-        fileName: file.name,
-        previewUrl: previewUrls[fi] ?? null,
+        fileName: file.name, previewUrl: previewUrls[fi] ?? null,
         isPdf: t === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"),
-        isImage: t.startsWith("image/"),
-        engines,
-        recommendedIndex,
+        isImage: t.startsWith("image/"), engines, recommendedIndex,
       });
     }
 
@@ -313,461 +249,256 @@ export default function MultiEngineScanner({
     return out;
   }, [files, previewUrls, scanEngineRows, selectedIds, status]);
 
-  const scanActionsDisabled =
-    processing || files.length === 0 || status !== "authenticated" || selectedIds.length === 0;
-
-  const crystalActionClass =
-    "border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-indigo-500/40 hover:bg-indigo-500/15 transition-colors";
-
-  const onSaveToDocumentInbox = async () => {
-    const out = await executeMultiScan();
-    if (out && out.length > 0) {
-      router.push("/dashboard/erp");
-    }
-  };
-
-  const onAssignToProject = async () => {
-    const out = await executeMultiScan();
-    if (out && out.length > 0) {
-      router.push("/dashboard/crm");
-    }
-  };
-
-  const onSaveAndNextDocument = async () => {
-    const out = await executeMultiScan();
-    if (!out || out.length === 0) return;
-    setFiles((prev) => prev.slice(1));
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFiles((prev) => [...prev, ...acceptedFiles]);
     setCompareResults([]);
-    setProgress(0);
+  }, []);
+
+  const clearFiles = () => {
+    setFiles([]);
+    setCompareResults([]);
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop, multiple: true, accept: DROPZONE_ACCEPT,
+  });
 
   const onCancelScanFlow = () => {
     if (processing) return;
     clearFiles();
+    setWizardStep(0);
   };
 
-  const shellClass = `flex flex-col scroll-mt-24 bg-white relative overflow-hidden ${
-    fillHeight
-      ? "min-h-[min(92vh,860px)] flex-1 rounded-2xl border border-gray-200/80 p-6 shadow-sm md:p-8"
-      : "min-h-[320px] rounded-2xl border border-gray-200/80 p-8 shadow-sm lg:p-10"
-  }`;
+  const handleWizardStepChange = async (newIdx: number) => {
+    if (newIdx === 2 && wizardStep === 1) { 
+      // User moving from Files to Processing/Results
+      setWizardStep(2);
+      const out = await executeMultiScan();
+      if (out && out.length > 0) {
+        setWizardStep(3); // Results Step
+      } else {
+        setWizardStep(1); // Failed, return to files
+      }
+      return;
+    }
+    setWizardStep(newIdx);
+  };
 
-  const dropIdle =
-    "border-gray-200 bg-gray-50/50 hover:bg-indigo-500/15 hover:border-indigo-500/40 transition-colors";
+  const scanActionsDisabled = processing || files.length === 0 || status !== "authenticated" || selectedIds.length === 0;
 
-  const dropActive = "border-indigo-500 bg-indigo-500/15 scale-[0.995]";
+  // -- UI BITS --
 
-  const steps = [
-    { n: 1, t: "מנועים" },
-    { n: 2, t: "קבצים" },
-    { n: 3, t: "פענוח" },
-    { n: 4, t: "השוואה" },
-    { n: 5, t: "סיום" },
-  ];
-
-  return (
-    <section id="erp-multi-scanner" className={shellClass} dir={dir}>
-      {!compactHeader ? (
-        <div className="mb-8 flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/15">
-            <Brain className="text-indigo-400" size={24} />
-          </div>
-          <div>
-            <h2 className="text-xl font-extrabold text-gray-700">
-              סורק ה-AI הרב-מנועי
-            </h2>
-            <p className="mt-1 text-sm leading-relaxed text-gray-400">
-              {SCAN_ACCEPT_SUMMARY}. ניתן להעלות מספר קבצים יחד.
-              בחר מנוע אחד או כולם — לאחר הפענוח תוצג השוואה והמלצה.
-            </p>
-          </div>
-        </div>
-      ) : null}
-
-      {/* שלבים — שורה אחת */}
-      <div className="mb-7 flex flex-nowrap items-center gap-0 overflow-x-auto pb-1">
-        {steps.map((s, i) => {
-          const done = s.n < activeStep;
-          const current = s.n === activeStep;
+  const enginesUI = (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="shrink-0 text-sm font-black text-slate-700">בחר מנועי פענוח:</span>
+        <button type="button" onClick={selectAllEngines} className="btn-primary py-1.5 px-3 text-xs">בחר הכל</button>
+        <button type="button" onClick={clearEngines} className="btn-secondary py-1.5 px-3 text-xs">אפס</button>
+        {scanEngineRows.length === 0 && providers.length === 0 && (
+          <span className="flex items-center gap-1.5 text-xs text-blue-500 font-medium"><Loader2 size={12} className="animate-spin" /> טוען מנועים…</span>
+        )}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {scanEngineRows.map((p) => {
+          const on = selectedIds.includes(p.id);
+          const ok = canRunEngine(p);
+          const reason = !p.configured ? "חסר מפתח API" : p.allowedByPlan === false ? "דורש שדרוג מנוי" : "";
           return (
-            <div key={s.n} className="flex shrink-0 items-center">
-              <div
-                className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all ${
-                  current
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
-                    : done
-                      ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
-                      : "bg-gray-50 text-gray-400 border border-gray-100"
-                }`}
-              >
-                <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
-                  current ? "bg-white/20 text-white" : done ? "bg-emerald-100 text-emerald-400" : "bg-gray-100 text-gray-400"
-                }`}>
-                  {done ? <CheckCircle2 size={12} /> : s.n}
-                </span>
-                <span>{s.t}</span>
+            <button
+              key={p.id}
+              type="button"
+              title={ok ? p.description : reason}
+              disabled={!ok && !on}
+              onClick={() => toggleProvider(p.id)}
+              className={`flex items-start text-start gap-3 rounded-2xl border p-4 transition-all duration-150 ${
+                !ok ? "cursor-not-allowed border-dashed border-slate-200 bg-slate-50 opacity-50"
+                  : on ? "border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-500/20"
+                  : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
+              }`}
+            >
+              <div className={`mt-0.5 flex shrink-0 h-5 w-5 items-center justify-center rounded-full ${on && ok ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                {on && ok ? <CheckCircle2 size={12} strokeWidth={3} /> : <Sparkles size={12} />}
               </div>
-              {i < steps.length - 1 && (
-                <div className={`mx-1 h-px w-5 ${done ? "bg-emerald-300" : "bg-gray-100"}`} />
-              )}
-            </div>
+              <div>
+                <div className="font-bold text-slate-900">{p.label}</div>
+                <div className="text-xs text-slate-500 mt-1 line-clamp-2">{ok ? p.description : reason}</div>
+              </div>
+            </button>
           );
         })}
       </div>
-
-      {/* בחירת מנועים */}
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="shrink-0 text-xs font-black text-gray-600">מנועי פענוח:</span>
-          <button
-            type="button"
-            onClick={selectAllEngines}
-            className="rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm shadow-indigo-600/20 transition-all hover:bg-indigo-700 hover:shadow-md"
-          >
-            בחל הכל
-          </button>
-          <button
-            type="button"
-            onClick={clearEngines}
-            className="rounded-xl border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-gray-50 hover:border-gray-300"
-          >
-            אפס
-          </button>
-          {scanEngineRows.length === 0 && providers.length === 0 && (
-            <span className="flex items-center gap-1.5 text-xs text-indigo-500 font-medium">
-              <Loader2 size={12} className="animate-spin" />
-              טוען מנועים…
-            </span>
-          )}
-          {scanEngineRows.length > 0 && (
-            <span className="text-[11px] font-medium text-gray-400">הבחירה נשמרת אוטומטית</span>
-          )}
+      {selectedIds.length === 0 ? (
+        <div className="flex items-center gap-2 p-3 text-sm text-amber-700 bg-amber-50 rounded-xl border border-amber-200 font-medium">
+          <AlertCircle size={16} /> נדרש לבחור לפחות מנוע אחד לפני התקדמות.
         </div>
-        <div className="flex flex-wrap gap-2">
-          {scanEngineRows.map((p) => {
-            const on = selectedIds.includes(p.id);
-            const ok = canRunEngine(p);
-            const reason = !p.configured
-              ? "חסר מפתח API"
-              : p.allowedByPlan === false
-                ? "דורש שדרוג מנוי"
-                : "";
-            return (
-              <button
-                key={p.id}
-                type="button"
-                title={ok ? p.description : reason}
-                disabled={!ok && !on}
-                onClick={() => toggleProvider(p.id)}
-                className={`inline-flex shrink-0 items-center gap-2.5 rounded-2xl border px-4 py-2.5 text-xs font-bold transition-all duration-150 ${
-                  !ok
-                    ? "cursor-not-allowed border-dashed border-gray-200 bg-gray-50 text-gray-400 opacity-50"
-                    : on
-                      ? "border-indigo-500 bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-[1.01]"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-indigo-500/40 hover:bg-indigo-500/15 hover:text-indigo-300 hover:shadow-sm"
-                }`}
-              >
-                <span className={`flex h-4.5 w-4.5 items-center justify-center`}>
-                  <Sparkles size={13} className={on && ok ? "text-white" : "text-gray-400"} />
-                </span>
-                {p.label}
-                {!ok ? <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[9px] font-semibold text-gray-400">{!p.configured ? "לא מוגדר" : "מנוי"}</span> : null}
-                {on && ok ? <span className="h-1.5 w-1.5 rounded-full bg-white/60" /> : null}
-              </button>
-            );
-          })}
+      ) : (
+        <div className="flex items-center gap-2 p-3 text-sm text-blue-700 bg-blue-50 rounded-xl border border-blue-200 font-medium">
+          <CheckCircle2 size={16} /> נבחרו {eligibleSelectedCount} מנועים לסריקה יחד.
         </div>
-        {selectedIds.length === 0 && (
-          <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-            <AlertCircle size={12} />
-            נדרש לבחור לפחות מנוע אחד לפני סריקה.
-          </p>
-        )}
-      </div>
+      )}
+    </div>
+  );
 
-      <div
-        {...getRootProps()}
-        className={`relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-all duration-300 md:p-12 ${
-          isDragActive ? dropActive : dropIdle
-        }`}
-      >
+  const filesUI = (
+    <div className="space-y-6">
+      <div {...getRootProps()} className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-all duration-300 md:p-12 min-h-[240px] cursor-pointer ${
+        isDragActive ? "border-blue-500 bg-blue-50 scale-[0.99]" : "border-slate-300 bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300"
+      }`}>
         <input {...getInputProps()} />
-
-        <AnimatePresence mode="wait">
-          {!processing ? (
-            <motion.div
-              key="idle"
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              className="text-center"
-            >
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/15 shadow-sm">
-                <UploadCloud size={28} className="text-indigo-500" />
-              </div>
-              <p className="text-base font-black text-gray-600">
-                {isDragActive ? "שחרר כאן לסריקה עכשיו" : "גרור קבצים לכאן, או לחץ לבחירה"}
-              </p>
-              <p className="mt-2 text-xs text-gray-400 font-medium">{SCAN_ACCEPT_SUMMARY}</p>
-              {files.length > 0 && (
-                <div className="mt-5 flex flex-wrap justify-center gap-2">
-                  {files.map((f, i) => (
-                    <span
-                      key={`${f.name}-${i}`}
-                      className="flex items-center gap-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/15 px-3 py-1.5 text-[11px] font-bold text-indigo-300"
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-indigo-500/15" />
-                      {f.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="busy"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center gap-4"
-            >
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/15">
-                <Loader2 className="animate-spin text-indigo-400" size={28} />
-              </div>
-              <p className="text-sm font-bold text-gray-500">
-                מריץ פענוח מול {eligibleSelectedCount} מנועים לכל קובץ…
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100">
+          <UploadCloud size={28} className="text-blue-500" />
+        </div>
+        <p className="text-lg font-black text-slate-700">{isDragActive ? "שחרר את הקבצים כאן..." : "גרור קבצים לכאן, או לחץ לבחירה"}</p>
+        <p className="mt-2 text-sm text-slate-500">{SCAN_ACCEPT_SUMMARY}</p>
       </div>
 
-      {/* ══ PRIMARY SCAN BUTTON ══ */}
-      {files.length > 0 && !processing && compareResults.length === 0 && (
-        <div className="mt-7 flex flex-col items-center gap-3">
-          <motion.button
-            type="button"
-            disabled={scanActionsDisabled}
-            onClick={() => void executeMultiScan()}
-            whileHover={scanActionsDisabled ? undefined : { scale: 1.02 }}
-            whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
-            className="w-full max-w-md rounded-2xl bg-gradient-to-b from-indigo-500 to-indigo-700 px-8 py-4 text-base font-black text-white shadow-lg shadow-indigo-600/30 transition-all hover:shadow-xl hover:shadow-indigo-600/40 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-          >
-            <Sparkles size={20} />
-            התחל סריקה — {files.length} {files.length === 1 ? "קובץ" : "קבצים"} × {eligibleSelectedCount} מנועים
-          </motion.button>
-          <button
-            type="button"
-            onClick={clearFiles}
-            className="text-xs font-bold text-gray-400 hover:text-rose-500 transition-colors"
-          >
-            נקה רשימת קבצים
-          </button>
-        </div>
-      )}
-
-      {files.length > 0 && !processing && compareResults.length === 0 && (
-        <p className="mt-2 text-center text-xs text-gray-400">
-          או בחרו פעולה ספציפית למטה (שמירה בתיבת מסמכים, שיוך לפרויקט...)
-        </p>
-      )}
-
-      {status !== "authenticated" && (
-        <p className="text-sm mt-3 text-indigo-400 font-semibold">
-          נדרשת התחברות כדי להריץ סריקה.
-        </p>
-      )}
-
-      {processing && (
-        <div className="mt-7 space-y-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/15 p-5">
-          <div className="flex justify-between text-xs font-bold mb-2">
-            <span className="flex items-center gap-1.5 text-indigo-300">
-              <Loader2 size={12} className="animate-spin" />
-              התקדמות פענוח
-            </span>
-            <span className="text-indigo-400 font-black">{progress}%</span>
+      {files.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 font-bold text-sm text-slate-700 flex justify-between items-center">
+            <span>{files.length} קבצים ממתינים לסריקה</span>
+            <button onClick={clearFiles} className="text-xs text-rose-500 hover:underline font-normal">נקה הכל</button>
           </div>
-          <div className="w-full rounded-full h-2.5 overflow-hidden bg-indigo-100">
-            <div className="h-full transition-all duration-300 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* השוואה ותצוגה מקדימה */}
-      {compareResults.length > 0 && (
-        <div className="mt-8 space-y-6 text-gray-700">
-          {compareResults.map((row, idx) => (
-            <div
-              key={`${row.fileName}-${idx}`}
-              className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md"
-            >
-              {/* File header */}
-              <div className="flex items-center gap-3 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-5 py-3.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100">
-                  <Brain size={15} className="text-indigo-400" />
+          <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+            {files.map((f, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-2 text-sm">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded bg-blue-50 flex items-center justify-center text-blue-600"><Archive size={14} /></div>
+                  <span className="font-semibold text-slate-700 truncate max-w-xs">{f.name}</span>
                 </div>
-                <p className="font-black text-gray-900 truncate text-sm">{row.fileName}</p>
+                <span className="text-xs text-slate-400">{(f.size / 1024).toFixed(1)} KB</span>
               </div>
-              <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
-                <div className="border-b border-gray-100 bg-gray-50/40 p-5 lg:border-b-0 lg:border-e">
-                  <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-gray-400">תצוגה מקדימה</p>
-                  {row.previewUrl && row.isImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={row.previewUrl}
-                      alt=""
-                      className="max-h-64 w-full object-contain rounded-2xl border border-gray-100 shadow-sm"
-                    />
-                  ) : row.previewUrl && row.isPdf ? (
-                    <iframe
-                      title={row.fileName}
-                      src={row.previewUrl}
-                      className="w-full h-64 rounded-2xl border border-gray-100 bg-white shadow-sm"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-100 bg-white py-8">
-                      <Brain size={20} className="text-gray-400" />
-                      <p className="text-xs text-gray-400">אין תצוגה מקדימה לסוג קובץ זה</p>
-                    </div>
-                  )}
-                </div>
-                <div className="p-5 space-y-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">פענוח לפי מנוע</p>
-                  {row.recommendedIndex >= 0 && row.engines[row.recommendedIndex]?.ok ? (
-                    <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3 text-xs font-black flex items-center gap-2 text-emerald-800 shadow-sm">
-                      <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                      מומלץ: {row.engines[row.recommendedIndex].label} — ציון {row.engines[row.recommendedIndex].score}
-                    </div>
-                  ) : (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-500/15 px-4 py-3 text-xs font-bold flex items-center gap-2 text-amber-800">
-                      <AlertCircle size={16} className="text-amber-500 shrink-0" />
-                      לא נמצאה תוצאה מוצלחת — בדוק מנוע או קובץ.
-                    </div>
-                  )}
-                  <div className="space-y-2.5 max-h-80 overflow-y-auto">
-                    {row.engines.map((e, ei) => {
-                      const ai = e.aiData;
-                      const vendor = ai && typeof ai.vendor === "string" ? ai.vendor : "—";
-                      const docType = ai && typeof ai.docType === "string" ? ai.docType : "—";
-                      const summary =
-                        ai && typeof ai.summary === "string" ? ai.summary.slice(0, 280) : "—";
-                      const total = ai?.total;
-                      const totalStr =
-                        typeof total === "number"
-                          ? `₪${total.toLocaleString()}`
-                          : typeof total === "string"
-                            ? total
-                            : "—";
-                      const lines =
-                        ai && Array.isArray(ai.lineItems) ? ai.lineItems.length : 0;
-                      const rec = ei === row.recommendedIndex && e.ok;
-                      return (
-                        <div
-                          key={`${e.providerId}-${ei}`}
-                          className={`rounded-2xl border p-4 text-xs space-y-1.5 transition-all ${
-                            rec ? "border-emerald-300 bg-emerald-500/15 shadow-sm" : "border-gray-100 bg-gray-50/50"
-                          }`}
-                        >
-                          <div className="flex justify-between gap-2 font-black">
-                            <span className={rec ? "text-emerald-800" : "text-gray-600"}>{e.label}</span>
-                            {e.ok ? (
-                              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-400">ציון {e.score}</span>
-                            ) : (
-                              <span className="rounded-full bg-rose-100 px-2 py-0.5 text-rose-600">נכשל</span>
-                            )}
-                          </div>
-                          {!e.ok ? (
-                            <p className="text-rose-600 font-medium">{e.error}</p>
-                          ) : (
-                            <>
-                              <div className="grid grid-cols-2 gap-1.5 mt-2">
-                                <div className="rounded-xl bg-white border border-gray-100 px-2.5 py-1.5">
-                                  <p className="text-[9px] font-bold text-gray-400 mb-0.5">ספק</p>
-                                  <p className="font-bold text-gray-700">{vendor}</p>
-                                </div>
-                                <div className="rounded-xl bg-white border border-gray-100 px-2.5 py-1.5">
-                                  <p className="text-[9px] font-bold text-gray-400 mb-0.5">סוג מסמך</p>
-                                  <p className="font-bold text-gray-700">{docType}</p>
-                                </div>
-                                <div className="rounded-xl bg-white border border-gray-100 px-2.5 py-1.5">
-                                  <p className="text-[9px] font-bold text-gray-400 mb-0.5">סה״כ</p>
-                                  <p className="font-black text-indigo-300">{totalStr}</p>
-                                </div>
-                                <div className="rounded-xl bg-white border border-gray-100 px-2.5 py-1.5">
-                                  <p className="text-[9px] font-bold text-gray-400 mb-0.5">שורות</p>
-                                  <p className="font-bold text-gray-700">{lines}</p>
-                                </div>
-                              </div>
-                              <p className="italic text-gray-400 mt-1.5 leading-relaxed">{summary}</p>
-                              {e.notice ? (
-                                <p className="text-[10px] text-indigo-400 font-bold mt-1">{e.notice}</p>
-                              ) : null}
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const processingUI = (
+    <div className="flex flex-col items-center justify-center min-h-[300px] text-center space-y-6">
+      <div className="relative">
+        <div className="absolute inset-0 rounded-full blur bg-blue-300 animate-pulse" />
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-xl border border-blue-100">
+          <Brain className="text-blue-600 animate-bounce" size={40} />
+        </div>
+      </div>
+      <div>
+        <h3 className="text-xl font-black text-slate-800">הבינה המלאכותית קוראת את המסמכים שלך</h3>
+        <p className="text-slate-500 mt-2 font-medium max-w-md mx-auto">
+          מריץ פענוח מול {eligibleSelectedCount} מנועים שונים לכל קובץ כדי להבטיח את התוצאה המדויקת ביותר. הדבר עשוי לקחת מספר שניות בהתאם לעומס.
+        </p>
+      </div>
+      
+      <div className="w-full max-w-md bg-slate-100 rounded-full h-3 overflow-hidden shadow-inner mt-4">
+        <div className="bg-blue-600 h-full rounded-full transition-all duration-300" style={{ width: `${Math.max(5, progress)}%` }} />
+      </div>
+      <p className="text-blue-600 font-bold text-sm">{progress}%</p>
+    </div>
+  );
+
+  const resultsUI = (
+    <div className="space-y-8">
+      {compareResults.map((row, idx) => (
+        <div key={`${row.fileName}-${idx}`} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100">
+          <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Brain size={18} /></div>
+            <p className="font-black text-slate-900 truncate">{row.fileName}</p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+             <div className="border-b lg:border-b-0 lg:border-e border-slate-200 bg-slate-50/50 p-5">
+                <p className="mb-4 text-xs font-black uppercase tracking-widest text-slate-500">תצוגה מקדימה</p>
+                {row.previewUrl && row.isImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={row.previewUrl} alt="" className="max-h-80 w-full object-contain rounded-xl border border-slate-200 shadow-sm bg-white" />
+                ) : row.previewUrl && row.isPdf ? (
+                  <iframe title={row.fileName} src={row.previewUrl} className="w-full h-80 rounded-xl border border-slate-200 bg-white shadow-sm" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-16"><Brain size={24} className="text-slate-300" /><p className="text-sm text-slate-400">אין תצוגה מקדימה</p></div>
+                )}
+             </div>
+             <div className="p-5 space-y-4">
+                <p className="mb-2 text-xs font-black uppercase tracking-widest text-slate-500">תוצאות פענוח</p>
+                {row.recommendedIndex >= 0 && row.engines[row.recommendedIndex]?.ok ? (
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold flex items-center gap-2 text-emerald-800 shadow-sm">
+                    <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
+                    מומלץ ביותר: {row.engines[row.recommendedIndex].label} (ציון {row.engines[row.recommendedIndex].score})
                   </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+                ) : (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold flex items-center gap-2 text-amber-800">
+                    <AlertCircle size={18} className="text-amber-500 shrink-0" />
+                    לא נמצאה תוצאה מוצלחת באף מנוע.
+                  </div>
+                )}
 
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <motion.button
-          type="button"
-          disabled={scanActionsDisabled}
-          onClick={onSaveToDocumentInbox}
-          whileHover={scanActionsDisabled ? undefined : { scale: 1.02 }}
-          whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
-          className="flex items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm font-bold text-gray-600 shadow-sm hover:border-indigo-500/40 hover:bg-indigo-500/15 hover:text-indigo-300 hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-        >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Archive className="size-5 shrink-0 text-indigo-500" strokeWidth={1.75} />}
-          שמירה בתיבת המסמכים
-        </motion.button>
-        <motion.button
-          type="button"
-          disabled={scanActionsDisabled}
-          onClick={onAssignToProject}
-          whileHover={scanActionsDisabled ? undefined : { scale: 1.02 }}
-          whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
-          className="flex items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm font-bold text-gray-600 shadow-sm hover:border-emerald-300 hover:bg-emerald-500/15 hover:text-emerald-400 hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-        >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <FolderKanban className="size-5 shrink-0 text-emerald-500" strokeWidth={1.75} />}
-          שיוך לפרויקט
-        </motion.button>
-        <motion.button
-          type="button"
-          disabled={scanActionsDisabled}
-          onClick={onSaveAndNextDocument}
-          whileHover={scanActionsDisabled ? undefined : { scale: 1.02 }}
-          whileTap={scanActionsDisabled ? undefined : { scale: 0.98 }}
-          className="flex items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm font-bold text-gray-600 shadow-sm hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-        >
-          {processing ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <StepForward className="size-5 shrink-0 text-sky-500" strokeWidth={1.75} />}
-          שמור והמשך למסמך הבא
-        </motion.button>
-        <motion.button
-          type="button"
-          disabled={processing}
-          onClick={onCancelScanFlow}
-          whileHover={processing ? undefined : { scale: 1.02 }}
-          whileTap={processing ? undefined : { scale: 0.98 }}
-          className="flex items-center justify-center gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3.5 text-sm font-bold text-rose-700 transition-all hover:border-rose-300 hover:bg-rose-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <XCircle className="size-5 shrink-0 text-rose-500" strokeWidth={1.75} />
-          ביטול
-        </motion.button>
+                <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                  {row.engines.map((e, ei) => {
+                     const ai = e.aiData;
+                     const vendor = ai && typeof ai.vendor === "string" ? ai.vendor : "—";
+                     const docType = ai && typeof ai.docType === "string" ? ai.docType : "—";
+                     const total = ai && typeof ai.total === "number" ? `₪${ai.total.toLocaleString()}` : typeof ai?.total === "string" ? ai.total : "—";
+                     const rec = ei === row.recommendedIndex && e.ok;
+                     
+                     return (
+                        <div key={ei} className={`rounded-xl border p-4 text-sm transition-all ${rec ? "border-emerald-300 bg-white shadow-sm ring-1 ring-emerald-100" : "border-slate-200 bg-slate-50"}`}>
+                           <div className="flex justify-between font-black mb-2">
+                             <span className={rec ? "text-emerald-700" : "text-slate-700"}>{e.label}</span>
+                             {e.ok ? <span className="rounded-md bg-slate-100 font-bold px-2 py-0.5 text-xs text-slate-600">ציון {e.score}</span> : <span className="rounded-md bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">שגיאה</span>}
+                           </div>
+                           {!e.ok ? <p className="text-rose-600 font-medium text-xs">{e.error}</p> : (
+                              <div className="grid grid-cols-3 gap-2 mt-3">
+                                 <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">ספק</div>
+                                    <div className="font-bold text-slate-800 truncate">{vendor}</div>
+                                 </div>
+                                 <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">מסמך</div>
+                                    <div className="font-bold text-slate-800 truncate">{docType}</div>
+                                 </div>
+                                 <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">סה"כ</div>
+                                    <div className="font-bold text-blue-600">{total}</div>
+                                 </div>
+                              </div>
+                           )}
+                        </div>
+                     )
+                  })}
+                </div>
+             </div>
+          </div>
+        </div>
+      ))}
+
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-3xl mx-auto">
+        <button onClick={async () => { await executeMultiScan(); router.push("/dashboard/erp"); }} className="btn-primary py-4 text-base shadow-lg shadow-blue-600/20">
+          <Archive size={20} className="mr-2 inline" /> שמירה לארכיון המערכת (ERP)
+        </button>
+        <button onClick={async () => { await executeMultiScan(); router.push("/dashboard/crm"); }} className="btn-secondary py-4 text-base bg-white">
+          <FolderKanban size={20} className="mr-2 inline" /> שיוך ללקוח חדש ב-CRM
+        </button>
       </div>
-      {processing ? (
-        <p className="mt-2 text-center text-xs font-medium text-gray-400">
-          מריצים פענוח מול המנועים הנבחרים — כל כפתורי הפעולה משתמשים באותו פענוח, ואז ממשיכים לפי הבחירה שלך.
-        </p>
-      ) : null}
-    </section>
+    </div>
+  );
+
+  const steps: WizardStepConfig[] = [
+    { id: "engines", title: "בחירת מנועים", subtitle: "ספקי AI שיבצעו את הסריקה", content: enginesUI, canAdvance: selectedIds.length > 0 },
+    { id: "files", title: "העלאת קבצים", subtitle: "גרירת מסמכים סרוקים", content: filesUI, canAdvance: files.length > 0 && status === "authenticated" },
+    { id: "processing", title: "עיבוד נתונים", subtitle: "פענוח באמצעות AI", content: processingUI, canAdvance: false },
+    { id: "results", title: "תוצאות ופעולות", subtitle: "השוואת מנועים ושמירה למערכת", content: resultsUI, canAdvance: true }
+  ];
+
+  return (
+    <div className={fillHeight ? "min-h-[min(92vh,860px)]" : ""}>
+      <WizardContainer 
+        title="אשף סריקה ובקרה (Vision AI)" 
+        subtitle="תהליך חכם לסריקת חשבוניות, פירוק נתונים אוטומטי ושיוך למערך התשלומים וה-CRM שלך מתבסס על AI"
+        icon={<Brain />}
+        steps={steps}
+        currentStepIndex={wizardStep}
+        onStepChange={handleWizardStepChange}
+        finishLabel="סרוק מסמכים נוספים"
+        onFinish={onCancelScanFlow}
+      />
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -14,6 +14,7 @@ import {
 import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
 import DashboardNotificationBell from "@/components/DashboardNotificationBell";
+import OmniVoiceCommand from "@/components/voice/OmniVoiceCommand";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -352,6 +353,7 @@ export default function DashboardLayoutClient({
 
         <DashboardBottomDock orgId={orgId} />
         <PostRegisterWelcomeSheet />
+        <OmniVoiceCommand />
       </main>
     </div>
   );

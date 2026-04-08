@@ -1,5 +1,5 @@
-import WizardHome from "@/components/landing/WizardHome";
+import MarketingHome from "@/components/landing/MarketingHome";
 
 export default function HomePage() {
-  return <WizardHome />;
+  return <MarketingHome />;
 }

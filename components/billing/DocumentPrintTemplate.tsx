@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { CompanyType, DocType, DocStatus } from "@prisma/client";
-import { Receipt, Building2, User2, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { Receipt, Building2, CheckCircle, AlertTriangle, XCircle, Signature, Link as LinkIcon, Handshake } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import { getDocumentHeader } from "@/lib/document-header";
@@ -29,15 +29,15 @@ export type OrganizationPrintModel = {
 };
 
 const DOC_TYPE_TITLE: Record<DocType, string> = {
-  INVOICE: "חשבונית מס",
-  RECEIPT: "קבלה",
-  INVOICE_RECEIPT: "חשבונית מס קבלה",
-  CREDIT_NOTE: "חשבונית זיכוי",
+  INVOICE: "חשבונית מס קבלה (מקור)",
+  RECEIPT: "קבלה (מקור)",
+  INVOICE_RECEIPT: "חשבונית מס קבלה (מקור)",
+  CREDIT_NOTE: "חשבונית זיכוי (מקור)",
 };
 
 const DOC_STATUS_LABEL: Record<DocStatus, string> = {
   PAID: "שולם במלואו",
-  PENDING: "בהמתנה לתשלום",
+  PENDING: "ממתין לתשלום",
   CANCELLED: "מבוטל",
 };
 
@@ -59,14 +59,14 @@ function lineItemsFromJson(items: unknown): { desc: string; qty: number; price: 
     .filter((x): x is { desc: string; qty: number; price: number } => x !== null);
 }
 
-function statusBadge(status: DocStatus): { className: string; icon: typeof CheckCircle } {
+function statusBadge(status: DocStatus): { className: string; icon: typeof CheckCircle; textCls: string } {
   if (status === DocStatus.PAID) {
-    return { className: "bg-emerald-100 text-emerald-800", icon: CheckCircle };
+    return { className: "border-emerald-500 text-emerald-600 bg-emerald-50/50", icon: CheckCircle, textCls: "text-emerald-700" };
   }
   if (status === DocStatus.CANCELLED) {
-    return { className: "bg-gray-200 text-gray-800", icon: XCircle };
+    return { className: "border-slate-300 text-slate-500 bg-slate-50/50", icon: XCircle, textCls: "text-slate-600" };
   }
-  return { className: "bg-amber-100 text-amber-800", icon: AlertTriangle };
+  return { className: "border-amber-500 text-amber-600 bg-amber-50/50", icon: AlertTriangle, textCls: "text-amber-700" };
 }
 
 const money = (n: number) =>
@@ -103,133 +103,140 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
 
   return (
     <div
-      className="card-avenue relative mx-auto max-w-[850px] overflow-hidden bg-white p-12 text-start font-sans shadow-sm print:border-none print:rounded-none print:shadow-none"
+      className="card-avenue relative mx-auto max-w-[900px] overflow-hidden bg-white text-start font-sans shadow-xl print:border-none print:shadow-none print:max-w-none print:m-0 print:w-full min-h-[1100px] flex flex-col"
       dir={dir}
       id={`print-doc-${doc.number}`}
     >
-      <div className="pointer-events-none absolute end-0 top-0 z-0 h-64 w-64 -mt-32 -me-32 rounded-full bg-gray-50/50" />
-
-      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b-2 border-gray-900 pb-10 mb-10">
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="p-4 bg-gray-100 rounded-2xl text-gray-600 shadow-sm shrink-0">
-            <Building2 size={32} />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-4xl font-black text-gray-950 tracking-tighter break-words">
-              {org.name}
-            </h1>
-            <p className="text-base font-bold text-gray-700 mt-1">
-              {org.address?.trim() || "כתובת העסק"}
-            </p>
-            <p className="text-sm text-gray-500 font-medium">
-              ח.פ / ע.מ: {org.taxId?.trim() || "—"}
-            </p>
-          </div>
-        </div>
-        <div className="w-full min-w-[12rem] shrink-0 rounded-2xl border border-gray-200 bg-gray-50 p-6 text-start md:w-auto">
-          <h2 className="text-3xl font-black text-indigo-600 tracking-tight">
-            {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
-          </h2>
-          {internalMemo ? (
-            <p className="text-sm font-bold text-indigo-700 mt-2">{headerMeta.subTitle}</p>
-          ) : null}
-          <p className="text-xl font-bold text-gray-800 mt-1">מספר: {doc.number}</p>
-          <p className="text-sm text-gray-500 italic mt-1 font-medium">תאריך: {dateLabel}</p>
-        </div>
-      </div>
-
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-8">
-          <div className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 mt-1 shrink-0">
-            <User2 size={20} />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">לכבוד:</p>
-            <h3 className="text-2xl font-black text-gray-900 tracking-tight break-words">
-              {doc.clientName}
-            </h3>
-            <p className="text-sm text-gray-500 font-medium mt-1">אימייל / טלפון הלקוח</p>
-          </div>
-        </div>
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 p-8 text-center">
-          <div
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-black shadow-sm ${badge.className}`}
-          >
-            <StatusIcon size={14} />
-            {DOC_STATUS_LABEL[doc.status]}
-          </div>
-          <p className="text-sm text-gray-500 mt-2 font-medium">
-            {internalMemo ? "מסמך פנימי — ללא ערך לדיווח מס" : "אנא שמרו מסמך זה לצרכי מס"}
-          </p>
-        </div>
-      </div>
-
-      <div className="relative z-10 mb-12 overflow-x-auto rounded-2xl border border-gray-200 bg-gray-50/50 p-6">
-        <table className="w-full min-w-[520px] border-collapse text-start">
-          <thead className="text-gray-500 text-[11px] font-black uppercase tracking-widest border-b-2 border-gray-200">
-            <tr>
-              <th className="p-5 text-start align-middle">
-                <span className="inline-flex items-center gap-2">
-                  <Receipt size={14} className="shrink-0" />
-                  תיאור השירות / מוצר
-                </span>
-              </th>
-              <th className="p-5 text-center align-middle">כמות</th>
-              <th className="p-5 text-center align-middle">מחיר יח׳</th>
-              <th className="p-5 text-end align-middle font-black">סה״כ (₪)</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 text-gray-800 font-medium">
-            {lines.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="p-8 text-center text-gray-400 text-sm">
-                  אין פירוט שורות
-                </td>
-              </tr>
-            ) : (
-              lines.map((item, i) => (
-                <tr key={i} className="hover:bg-white transition-colors">
-                  <td className="p-5 font-bold">{item.desc || "—"}</td>
-                  <td className="p-5 text-center font-bold text-gray-600">{item.qty}</td>
-                  <td className="p-5 text-center font-bold text-gray-600">₪{money(item.price)}</td>
-                  <td className="p-5 text-end font-black text-lg tracking-tight">
-                    ₪{money(item.qty * item.price)}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="relative z-10 flex justify-end">
-        <div className="w-full space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-8 text-gray-800 shadow-sm md:w-80">
-          <div className="flex justify-between text-gray-600 font-medium">
-            <span>סה״כ לפני מע״מ:</span>
-            <span>₪{money(doc.amount)}</span>
-          </div>
-          {!internalMemo && !isExempt ? (
-            <div className="flex justify-between text-gray-500 font-medium">
-              <span>מע״מ ({vatPercentLabel}):</span>
-              <span>₪{money(doc.vat)}</span>
+      {/* Top Graphic Border Line */}
+      <div className="h-4 w-full bg-gradient-to-l from-blue-600 to-sky-400 print:bg-blue-700" />
+      
+      <div className="p-10 md:p-14 flex-1 flex flex-col">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 border-b-2 border-slate-900 pb-10 mb-10">
+            <div className="flex items-start gap-5 min-w-0">
+              <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-blue-600 shadow-sm shrink-0">
+                <Building2 size={40} strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0 pt-1">
+                <h1 className="text-4xl font-black text-slate-900 tracking-tight break-words">
+                  {org.name}
+                </h1>
+                <p className="text-base font-bold text-slate-500 mt-2">
+                  {org.address?.trim() || "כתובת העסק לא הוזנה במערכת"}
+                </p>
+                <div className="mt-2 inline-flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
+                   <span className="text-xs font-black uppercase text-slate-400">מספר תאגיד / ע.ורשה</span>
+                   <span className="text-sm text-slate-700 font-bold">{org.taxId?.trim() || "—"}</span>
+                </div>
+              </div>
             </div>
-          ) : null}
-          <div className="flex justify-between text-2xl font-black text-gray-900 pt-3 border-t border-gray-200 leading-none tracking-tight">
-            <span>סה״כ לתשלום:</span>
-            <span className="italic text-indigo-700">₪{money(doc.total)}</span>
+            <div className="text-start md:text-end">
+              <h2 className="text-4xl font-black text-blue-600 tracking-tight mb-2">
+                {internalMemo ? headerMeta.title : DOC_TYPE_TITLE[doc.type]}
+              </h2>
+              {internalMemo ? (
+                <p className="text-sm font-bold text-slate-400 mb-4">{headerMeta.subTitle}</p>
+              ) : null}
+              
+              <div className="flex flex-col gap-1 text-base border-r-4 border-blue-500 pr-4 mt-4">
+                 <p className="font-medium text-slate-500">מספר מסמך הסימוכין: <span className="font-black text-slate-900">#{doc.number}</span></p>
+                 <p className="font-medium text-slate-500">תאריך הפקה: <span className="font-black text-slate-900">{dateLabel}</span></p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="relative z-10 mt-20 text-center border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 px-6">
-        <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest italic flex items-center gap-2">
-          BSD-YBM Intelligence System | השדרה שמחברת בין כולם
-        </p>
-        <p className="text-[11px] text-gray-500 font-bold bg-gray-50 px-4 py-1.5 rounded-full border border-gray-100">
-          {internalMemo
-            ? "מזכר פנימי — לשימוש ארגוני בלבד"
-            : "מסמך ממוחשב — שמירה לצרכי תיעוד ומס באחריות המוציא"}
-        </p>
+          {/* Details Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-sm">
+              <p className="text-[11px] font-black text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-2"><Handshake size={14}/> מסמך מונפק עבור:</p>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight break-words">
+                {doc.clientName}
+              </h3>
+            </div>
+            <div className={`rounded-3xl border-2 flex flex-col justify-center items-center text-center p-8 shadow-sm ${badge.className}`}>
+               <StatusIcon size={28} className="mb-2" />
+               <h4 className={`text-2xl font-black tracking-tight ${badge.textCls}`}>{DOC_STATUS_LABEL[doc.status]}</h4>
+               {!internalMemo && doc.status === DocStatus.PAID && (
+                  <p className="text-sm font-bold opacity-75 mt-1">המסמך הופק כדין ומאשר תשלום של ₪{money(doc.total)}</p>
+               )}
+            </div>
+          </div>
+
+          {/* Table Section */}
+          <div className="mb-12 overflow-hidden rounded-3xl border border-slate-200">
+            <table className="w-full min-w-[500px] border-collapse text-start">
+              <thead className="bg-slate-50 text-slate-500 text-[11px] font-black uppercase tracking-widest border-b border-slate-200">
+                <tr>
+                  <th className="p-4 text-start w-16 text-center">#</th>
+                  <th className="p-4 text-start">תיאור השירות / המוצר / שורת החיוב</th>
+                  <th className="p-4 text-center">כמות</th>
+                  <th className="p-4 text-center">מחיר יח׳ בעסקה</th>
+                  <th className="p-4 text-end">סה״כ שורה (₪)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+                {lines.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-12 text-center text-slate-400 text-sm">
+                      <Receipt size={32} className="mx-auto mb-2 text-slate-200"/>
+                      אין נתוני חיוב במערכת על מסמך זה.
+                    </td>
+                  </tr>
+                ) : (
+                  lines.map((item, i) => (
+                    <tr key={i} className="hover:bg-blue-50/20 transition-colors">
+                      <td className="p-4 text-center text-sm font-bold text-slate-400">{i + 1}</td>
+                      <td className="p-4 font-bold text-slate-900">{item.desc || "סעיף כללי"}</td>
+                      <td className="p-4 text-center text-sm font-bold text-slate-600">{item.qty}</td>
+                      <td className="p-4 text-center text-sm font-bold text-slate-600">₪{money(item.price)}</td>
+                      <td className="p-4 text-end font-black text-lg tracking-tight tabular-nums">
+                        ₪{money(item.qty * item.price)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Footer Totals Section */}
+          <div className="flex justify-end mb-16">
+            <div className="w-full md:w-96 rounded-3xl border-2 border-slate-100 bg-slate-50 p-8 shadow-sm">
+              <div className="flex justify-between items-center text-slate-600 font-medium mb-4">
+                <span>סה״כ עסקת בסיס לפני מע״מ:</span>
+                <span className="font-bold tabular-nums">₪{money(doc.amount)}</span>
+              </div>
+              {!internalMemo && !isExempt ? (
+                <div className="flex justify-between items-center text-slate-600 font-medium mb-4">
+                  <span>תוספת מע״מ כדין כפי שנקבע ({vatPercentLabel}):</span>
+                  <span className="font-bold tabular-nums">₪{money(doc.vat)}</span>
+                </div>
+              ) : null}
+              <div className="border-t-2 border-slate-200 mt-4 pt-6">
+                 <div className="flex justify-between items-end">
+                   <span className="text-xl font-black text-slate-900 tracking-tight leading-none">סה״כ לתשלום:</span>
+                   <span className="text-4xl font-black italic text-blue-600 tabular-nums leading-none">₪{money(doc.total)}</span>
+                 </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-auto">
+             <div className="flex justify-between items-end border-t border-slate-200 pt-8 pb-4">
+                <div>
+                   <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase mb-1">הופק ונחתם אלקטרונית באמצעות</p>
+                   <p className="text-sm font-black text-slate-800 flex items-center gap-2 italic">
+                     <LinkIcon size={14} className="text-blue-500" /> BSD-YBM Enterprise Cloud OS
+                   </p>
+                </div>
+                <div className="text-center">
+                   <Signature size={48} strokeWidth={1} className="text-blue-900/30 mx-auto mb-2" />
+                   <div className="text-[10px] bg-slate-100 text-slate-500 px-3 py-1 font-bold rounded">
+                     {internalMemo ? "מזכר פנימי לא לצרכי מס" : "מסמך ממוחשב - נא לשמור לצרכי מס"}
+                   </div>
+                </div>
+             </div>
+          </div>
       </div>
     </div>
   );
