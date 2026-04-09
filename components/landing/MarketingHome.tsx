@@ -159,7 +159,7 @@ export default function DynamicEnterpriseHome() {
            <nav className="hidden md:flex gap-8 text-white/90 text-sm font-bold">
              <Link href="#features" className="hover:text-yellow-400 transition-colors">הפיצ׳רים</Link>
              <Link href="#security" className="hover:text-yellow-400 transition-colors">אבטחה ומודולריות</Link>
-             <Link href="#pricing" className="hover:text-yellow-400 transition-colors">מחירון</line>
+             <Link href="#pricing" className="hover:text-yellow-400 transition-colors">מחירון</Link>
              <Link href="#contact" className="hover:text-yellow-400 transition-colors">יצירת קשר</Link>
            </nav>
 
