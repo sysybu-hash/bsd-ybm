@@ -5,6 +5,7 @@ import type { ProcessDocumentResult } from "@/app/actions/process-document";
 import { processDocumentAction } from "@/app/actions/process-document";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const UPLOADS_PER_MINUTE = 5;
 const UPLOADS_PER_MINUTE_PLATFORM = 60;
@@ -20,17 +21,14 @@ export async function POST(req: NextRequest) {
     const orgId = session.user.organizationId ?? "";
     const dev = isAdmin(session.user.email);
     const limit = dev ? UPLOADS_PER_MINUTE_PLATFORM : UPLOADS_PER_MINUTE;
-    const oneMinuteAgo = new Date(Date.now() - 60_000);
-    const rateWhere = orgId
-      ? { organizationId: orgId, createdAt: { gte: oneMinuteAgo } }
-      : { userId: session.user.id, createdAt: { gte: oneMinuteAgo } };
+    const rateKey = orgId ? `ai:org:${orgId}` : `ai:user:${session.user.id}`;
+    const rl = await checkRateLimit(rateKey, limit, 60 * 60 * 1000); // limit per hour
 
-    const recentScans = await prisma.document.count({ where: rateWhere });
-    if (recentScans >= limit) {
+    if (!rl.success) {
       return NextResponse.json(
         {
-          error:
-            "העלית יותר מדי קבצים בדקה האחרונה. נא להמתין רגע כדי למנוע עומס על המערכת.",
+          error: `חרגת ממכסת השימוש המותרת לשעה זו. נסה שוב לאחר ${rl.resetAt.toLocaleTimeString()}.`,
+          resetAt: rl.resetAt,
         },
         { status: 429 },
       );

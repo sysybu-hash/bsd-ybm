@@ -1,4 +1,4 @@
-﻿import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import {
@@ -6,6 +6,7 @@ import {
   Clock, TrendingUp, FileStack, Zap, BarChart3, Compass,
   ArrowRight, Plus, ChevronRight,
 } from "lucide-react";
+import CashFlowForecast from "@/components/dashboard/CashFlowForecast";
 
 export default async function DashboardHomePage() {
   const session = await getServerSession(authOptions);
@@ -102,6 +103,11 @@ export default async function DashboardHomePage() {
             <ArrowRight size={14} />
           </Link>
         </div>
+      </section>
+
+      {/* ── FORECAST ── */}
+      <section>
+        <CashFlowForecast />
       </section>
 
       {/* ── STATS ── */}
