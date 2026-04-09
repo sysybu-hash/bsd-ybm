@@ -44,11 +44,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "לא נמצא קובץ" }, { status: 400 });
     }
 
+    const persist = formData.get("persist") !== "false";
+
     // 3. הפעלת מנוע ה-AI של BSD-YBM
     const result = await processDocumentAction(
       formData,
       session.user.id,
       session.user.organizationId ?? "",
+      persist,
     );
 
     if (!result.success) {

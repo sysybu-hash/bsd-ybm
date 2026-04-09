@@ -134,6 +134,7 @@ export async function processDocumentAction(
   formData: FormData,
   userId: string,
   orgId: string,
+  persist: boolean = true,
 ): Promise<ProcessDocumentResult> {
   try {
     const file = formData.get("file") as File | null;
@@ -268,6 +269,20 @@ export async function processDocumentAction(
     }
 
     const providerAdjusted = requested !== effectiveProvider;
+
+    if (!persist) {
+      return {
+        success: true,
+        data: {
+          aiData,
+          _provider: effectiveProvider,
+          _requestedProvider: requested,
+          _fromCache: fromCache,
+          _providerAdjusted: providerAdjusted,
+          _usageWarnings: usageWarnings,
+        },
+      };
+    }
 
     const doc = await prisma.document.create({
       data: {

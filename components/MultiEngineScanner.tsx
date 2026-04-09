@@ -21,6 +21,7 @@ import { DROPZONE_ACCEPT, SCAN_ACCEPT_SUMMARY } from "@/lib/scan-mime";
 import { pickBestEngineIndex, scoreExtractedDocument } from "@/lib/score-scan-result";
 import { useI18n } from "@/components/I18nProvider";
 import WizardContainer, { WizardStepConfig } from "./wizard/WizardContainer";
+import { saveScannedDocumentAction } from "@/app/actions/save-scanned-document";
 
 type ProviderRow = {
   id: string;
@@ -210,6 +211,7 @@ export default function MultiEngineScanner({
         const formData = new FormData();
         formData.append("file", file);
         formData.append("provider", pid);
+        formData.append("persist", "false");
         try {
           const res = await fetch("/api/ai", { method: "POST", body: formData });
           const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
@@ -470,11 +472,41 @@ export default function MultiEngineScanner({
       ))}
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-3xl mx-auto">
-        <button onClick={async () => { await executeMultiScan(); router.push("/dashboard/erp"); }} className="btn-primary py-4 text-base shadow-lg shadow-blue-600/20">
-          <Archive size={20} className="mr-2 inline" /> שמירה לארכיון המערכת (ERP)
+        <button
+          onClick={async () => {
+            setProcessing(true);
+            for (const row of compareResults) {
+              const best = row.engines[row.recommendedIndex];
+              if (best?.ok && best.aiData) {
+                await saveScannedDocumentAction(row.fileName, best.aiData, "ERP");
+              }
+            }
+            setProcessing(false);
+            router.push("/dashboard/erp");
+          }}
+          disabled={processing || compareResults.length === 0}
+          className="btn-primary py-4 text-base shadow-lg shadow-blue-600/20"
+        >
+          {processing ? <Loader2 className="animate-spin inline mr-2" size={20} /> : <Archive size={20} className="mr-2 inline" />}
+          שמירה לארכיון המערכת (ERP)
         </button>
-        <button onClick={async () => { await executeMultiScan(); router.push("/dashboard/crm"); }} className="btn-secondary py-4 text-base bg-white">
-          <FolderKanban size={20} className="mr-2 inline" /> שיוך ללקוח חדש ב-CRM
+        <button
+          onClick={async () => {
+            setProcessing(true);
+            for (const row of compareResults) {
+              const best = row.engines[row.recommendedIndex];
+              if (best?.ok && best.aiData) {
+                await saveScannedDocumentAction(row.fileName, best.aiData, "CRM");
+              }
+            }
+            setProcessing(false);
+            router.push("/dashboard/crm");
+          }}
+          disabled={processing || compareResults.length === 0}
+          className="btn-secondary py-4 text-base bg-white"
+        >
+          {processing ? <Loader2 className="animate-spin inline mr-2" size={20} /> : <FolderKanban size={20} className="mr-2 inline" />}
+          שיוך ללקוח חדש ב-CRM
         </button>
       </div>
     </div>
