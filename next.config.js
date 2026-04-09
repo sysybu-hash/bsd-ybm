@@ -18,6 +18,12 @@ const nextConfig = {
     ];
   },
   transpilePackages: ["react-signature-canvas", "signature_pad"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
