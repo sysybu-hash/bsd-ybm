@@ -52,13 +52,36 @@ async function extractWithGemini(
     throw new Error("חסר מפתח Gemini");
   }
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
-  const result = await model.generateContent([
-    `${documentInstruction}`,
-    { inlineData: { data: base64Data, mimeType } },
-  ]);
-  const text = result.response.text();
-  return parseModelJsonText(text);
+
+  const fallbackModels = [
+    getGeminiModelId(),
+    "gemini-1.5-flash-8b",
+    "gemini-1.5-pro-002",
+    "gemini-1.5-flash-002",
+    "gemini-1.5-pro",
+    "gemini-2.0-flash-exp",
+  ];
+
+  let lastError: any = null;
+  for (const modelId of fallbackModels) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelId });
+      const result = await model.generateContent([
+        `${documentInstruction}`,
+        { inlineData: { data: base64Data, mimeType } },
+      ]);
+      const text = result.response.text();
+      return parseModelJsonText(text);
+    } catch (err: any) {
+      lastError = err;
+      const msg = String(err?.message || err);
+      if (msg.includes("404") || msg.includes("not found") || msg.includes("503")) {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
 }
 
 async function extractWithGeminiText(

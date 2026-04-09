@@ -136,5 +136,5 @@ export function getAnthropicModel(): string {
 }
 
 export function getGroqModel(): string {
-  return process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile";
+  return process.env.GROQ_MODEL?.trim() || "llama-4-scout-17b-16e-instruct";
 }
