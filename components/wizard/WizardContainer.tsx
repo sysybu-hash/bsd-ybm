@@ -9,6 +9,7 @@ export type WizardStepConfig = {
   id: string;
   title: string;
   subtitle?: string;
+  description?: string;
   isCompleted?: boolean;
   canAdvance?: boolean;
   content: ReactNode;
