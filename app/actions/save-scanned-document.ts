@@ -38,12 +38,51 @@ export async function saveScannedDocumentAction(
         aiData: aiData as Prisma.InputJsonValue,
         userId,
         organizationId: orgId,
-        // אם זה CRM, משייכים לאיש קשר אם סופק
         ...(targetModule === "CRM" && contactId ? {
           contact: { connect: { id: contactId } }
         } : {})
       }
     });
+
+    // Anomaly Detection: Compare with historical prices
+    const lineItems = (aiData.lineItems || []) as any[];
+    const supplier = String(aiData.vendor || "ספק כללי");
+    
+    for (const item of lineItems) {
+      if (item.desc && item.price) {
+        const hist = await prisma.productPriceObservation.findFirst({
+          where: { 
+            organizationId: orgId,
+            supplierName: supplier,
+            description: item.desc
+          },
+          orderBy: { observedAt: "desc" }
+        });
+
+        if (hist && item.price > hist.unitPrice * 1.2) {
+          // חריגה של מעל 20% - צור התראה
+          await prisma.inAppNotification.create({
+            data: {
+              userId,
+              title: "חריגת מחיר זוהתה!",
+              body: `המוצר "${item.desc}" של "${supplier}" התייקר ב-${Math.round((item.price/hist.unitPrice - 1)*100)}% לעומת קנייה קודמת.`
+            }
+          });
+        }
+
+        // שמירת מחיר היסטורי חדש
+        await prisma.productPriceObservation.create({
+          data: {
+            organizationId: orgId,
+            documentId: doc.id,
+            description: item.desc,
+            supplierName: supplier,
+            unitPrice: item.price,
+            normalizedKey: item.desc.toLowerCase().slice(0, 50)
+          }
+        });
+      }
+    }
 
     revalidatePath("/dashboard/erp");
     revalidatePath("/dashboard/crm");

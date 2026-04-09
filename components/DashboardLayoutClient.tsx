@@ -15,6 +15,7 @@ import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
 import DashboardNotificationBell from "@/components/DashboardNotificationBell";
 import OmniVoiceCommand from "@/components/voice/OmniVoiceCommand";
+import ContextualAssistant from "@/components/ai/ContextualAssistant";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -354,6 +355,7 @@ export default function DashboardLayoutClient({
         <DashboardBottomDock orgId={orgId} />
         <PostRegisterWelcomeSheet />
         <OmniVoiceCommand />
+        <ContextualAssistant />
       </main>
     </div>
   );

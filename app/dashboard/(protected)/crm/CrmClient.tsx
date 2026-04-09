@@ -40,6 +40,7 @@ import {
   Settings,
   GripHorizontal
 } from "lucide-react";
+import SemanticSearchBar from "@/components/ai/SemanticSearchBar";
 import CrmOrganizationsAdminTable, {
   type CrmAdminOrganizationRow,
 } from "./CrmOrganizationsAdminTable";
@@ -599,6 +600,7 @@ export default function CrmClient({
 
   // Filters
   const [search, setSearch] = useState("");
+  const [matchedIds, setMatchedIds] = useState<string[] | null>(null);
   const [filterStatus, setFilterStatus] = useState("");
   const [filterProject, setFilterProject] = useState("");
 
@@ -626,6 +628,9 @@ export default function CrmClient({
   /* ── Filtered contacts ── */
   const filteredContacts = useMemo(() => {
     let list = contacts;
+    if (matchedIds !== null) {
+      list = list.filter(c => matchedIds.includes(c.id));
+    }
     if (filterStatus) list = list.filter(c => c.status === filterStatus);
     if (filterProject) list = list.filter(c => c.project?.id === filterProject);
     if (search.trim()) {
@@ -638,7 +643,7 @@ export default function CrmClient({
       );
     }
     return list;
-  }, [contacts, filterStatus, filterProject, search]);
+  }, [contacts, filterStatus, filterProject, search, matchedIds]);
 
   const handleStatusChange = (id: string, status: StatusKey) => {
     setContacts(prev => prev.map(c => c.id === id ? { ...c, status } : c));
@@ -866,13 +871,12 @@ export default function CrmClient({
           {view === "list" && (
             <div className="card-avenue rounded-3xl overflow-hidden">
               <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 px-6 py-4 bg-slate-50/50">
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search size={16} className="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="חיפוש חופשי (שם, טלפון, פרויקט)..."
-                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 ps-10 pe-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 shadow-sm transition"
+                <div className="relative flex-1 min-w-[300px]">
+                  <SemanticSearchBar 
+                    onResults={(ids) => {
+                       setMatchedIds(ids);
+                    }} 
+                    placeholder="חיפוש חכם (למשל: לקוחות שחייבים כסף)..."
                   />
                 </div>
                 <div className="relative">
