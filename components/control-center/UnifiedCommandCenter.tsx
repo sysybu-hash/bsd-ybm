@@ -26,7 +26,11 @@ export default function UnifiedCommandCenter({
     contacts: any[];
     projects: any[];
     orgId: string;
-    metrics?: any;
+    erpData: {
+      stats: any[];
+      chartData: any[];
+      quota: string;
+    };
   } 
 }) {
   const { dir, t } = useI18n();
@@ -56,7 +60,15 @@ export default function UnifiedCommandCenter({
       case "business":
         return <MissionControl />;
       case "erp":
-        return <ERPDashboard />;
+        return (
+          <ERPDashboard 
+            stats={initialData.erpData.stats}
+            chartData={initialData.erpData.chartData}
+            scanQuotaSummary={initialData.erpData.quota}
+            flowSummary={null}
+            priceSpikes={[]}
+          />
+        );
       default:
         return <ExecutiveSuite />;
     }
