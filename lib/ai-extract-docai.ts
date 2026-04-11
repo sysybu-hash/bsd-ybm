@@ -6,7 +6,7 @@ import { getGeminiModelId } from "@/lib/gemini-model";
 const { DocumentProcessorServiceClient } = v1;
 
 /**
- * 🚀 BSD-YBM 2026: PREMIUM GOOGLE DOCUMENT AI EXTRACTOR
+ * 🚀 BSD-YBM Active: PREMIUM GOOGLE DOCUMENT AI EXTRACTOR
  * Uses the dedicated Document AI service for ultra-high precision.
  */
 export async function extractDocumentWithDocAI(

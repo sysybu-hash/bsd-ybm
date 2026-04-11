@@ -53,12 +53,16 @@ export default async function ControlCenterPage() {
     { name: "אפריל", value: 61000 }
   ];
 
+  // Safe data extraction to prevent crashes
+  const safeContacts = Array.isArray(contacts) ? contacts : [];
+  const safeProjects = Array.isArray(projects) ? projects : [];
+
   return (
     <div className="p-4 md:p-8">
       <UnifiedCommandCenter 
         initialData={{
-          contacts,
-          projects,
+          contacts: safeContacts,
+          projects: safeProjects,
           orgId,
           erpData: {
             stats: erpStats,

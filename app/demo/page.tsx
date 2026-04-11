@@ -1,4 +1,4 @@
-﻿const NAV = ["בית", "מרכז עסקי", "חשבוניות", "לקוחות", "AI", "הגדרות"];
+const NAV = ["בית", "מרכז עסקי", "חשבוניות", "לקוחות", "AI", "הגדרות"];
 const STATS = ["לקוחות", "חשבוניות", "מסמכים", "הכנסות"];
 const ACTIONS = ["הנפק חשבונית", "מרכז עסקי", "הגדרות"];
 
@@ -134,7 +134,7 @@ export default function DesignPreviewPage() {
               ))}
             </div>
             <div className="flex-1 bg-[#fafafa] p-5 overflow-hidden">
-              <p className="text-[10px] text-gray-400 mb-1">אפריל 2026</p>
+              <p className="text-[10px] text-gray-400 mb-1">BSD-YBM Active</p>
               <h2 className="text-base font-black text-gray-900 mb-5 tracking-tight">לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {STATS.map((s) => (
