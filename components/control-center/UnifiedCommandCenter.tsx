@@ -9,7 +9,8 @@ import {
   ShieldCheck,
   Activity,
   Zap,
-  Bot
+  Bot,
+  Sparkles
 } from "lucide-react";
 import CrmClient from "@/app/dashboard/(protected)/crm/CrmClient";
 import MissionControl from "@/components/MissionControl";

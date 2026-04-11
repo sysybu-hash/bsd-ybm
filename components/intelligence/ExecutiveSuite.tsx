@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, TrendingDown, DollarSign, BrainCircuit, Activity, PieChart, Users, AlertCircle } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, BrainCircuit, Activity, PieChart, Users, AlertCircle, Sparkles } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 
 export default function ExecutiveSuite() {
