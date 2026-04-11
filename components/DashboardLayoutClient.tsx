@@ -8,7 +8,7 @@ import { signOut } from "next-auth/react";
 import {
   BookOpen, Compass, CreditCard, LayoutDashboard, Layers,
   LogOut, Menu, ReceiptText, Settings, Shield, X, Zap, Clock,
-  ChevronRight, Bot, Users as UsersIcon,
+  ChevronRight, Bot, Users as UsersIcon, ShieldCheck
 } from "lucide-react";
 import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
@@ -33,6 +33,7 @@ const COLOR_MAP: Record<string, { active: string; dot: string }> = {
   sky:     { active: "bg-sky-50 text-sky-700 border-sky-200",             dot: "bg-sky-500" },
   amber:   { active: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-500" },
   violet:  { active: "bg-violet-50 text-violet-700 border-violet-200",    dot: "bg-violet-500" },
+  slate:   { active: "bg-slate-50 text-slate-700 border-slate-200",       dot: "bg-slate-500" },
 };
 
 function SidebarLink({
@@ -96,29 +97,20 @@ export default function DashboardLayoutClient({
 
   const navItems = [
     { href: "/dashboard",             icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     color: "indigo"  },
-    { href: "/dashboard/crm",          icon: <UsersIcon size={15} />,      label: "ניהול מנויים ו-CRM",   color: "emerald" },
-    { href: "/dashboard/business",   icon: <Layers size={15} />,         label: t("dashboard.business"), color: "emerald" },
-    { href: "/dashboard/erp/invoice",icon: <ReceiptText size={15} />,    label: t("dashboard.erp"),      color: "rose"    },
+    { href: "/dashboard/control-center", icon: <ShieldCheck size={15} />, label: "מרכז בקרה אחוד (Master)", color: "emerald" },
     { href: "/dashboard/ai",          icon: <Zap size={15} />,            label: t("dashboard.aiHub"),    color: "violet"  },
   ];
- 
+
   const toolItems = [
-    { href: "/dashboard/operator",       icon: <Bot size={15} />,      label: t("dashboard.executive"), color: "indigo"  },
+    { href: "/dashboard/settings",    icon: <Settings size={15} />,       label: "הגדרות פלטפורמה",      color: "slate"   },
     { href: "/dashboard/meckano",    icon: <Clock size={15} />,          label: t("dashboard.meckano"),  color: "sky"     },
-    { href: "/dashboard/settings",   icon: <Settings size={15} />,       label: t("dashboard.settings"), color: "gray"    },
     { href: "/dashboard/help",           icon: <BookOpen size={15} />, label: t("dashboard.nav.tutorial"), color: "amber"   },
   ];
 
   const pageTitle = (() => {
-    if (routeActive(pathname, "/dashboard/control-center")) return t("dashboard.mission");
-    if (routeActive(pathname, "/dashboard/operator"))       return t("dashboard.executive");
+    if (routeActive(pathname, "/dashboard/control-center")) return "מרכז בקרה אחוד";
     if (routeActive(pathname, "/dashboard/ai"))             return t("dashboard.aiHub");
-    if (routeActive(pathname, "/dashboard/business"))       return industry.vocabulary.project;
-    if (routeActive(pathname, "/dashboard/crm"))            return industry.vocabulary.client;
-    if (routeActive(pathname, "/dashboard/erp/invoice"))    return t("dashboard.erp");
-    if (routeActive(pathname, "/dashboard/erp"))            return t("dashboard.erp");
-    if (routeActive(pathname, "/dashboard/billing"))        return t("dashboard.billing");
-    if (routeActive(pathname, "/dashboard/settings"))       return t("dashboard.settings");
+    if (routeActive(pathname, "/dashboard/settings"))       return "הגדרות פלטפורמה";
     if (routeActive(pathname, "/dashboard/meckano"))        return t("dashboard.meckano");
     if (routeActive(pathname, "/dashboard/help"))           return t("dashboard.nav.tutorial");
     if (routeActive(pathname, "/dashboard/admin"))          return t("dashboard.nav.admin");
@@ -290,18 +282,18 @@ export default function DashboardLayoutClient({
              <LayoutDashboard size={20} />
              <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.nav.home")}</span>
            </Link>
-           <Link href="/dashboard/business?tab=crm" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/crm") ? "text-indigo-600" : "text-gray-400"}`}>
-             <UsersIcon size={20} />
-             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.quickActions.crm")}</span>
+           <Link href="/dashboard/control-center" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/control-center") ? "text-indigo-600" : "text-gray-400"}`}>
+             <ShieldCheck size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">Master</span>
            </Link>
            <div className="relative -top-5">
              <Link href="/dashboard/ai" className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-xl shadow-indigo-500/40 ring-4 ring-white active:scale-95 transition-transform">
                <Zap size={24} />
              </Link>
            </div>
-           <Link href="/dashboard/business?tab=erp" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/erp") ? "text-indigo-600" : "text-gray-400"}`}>
-             <ReceiptText size={20} />
-             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.quickActions.erp")}</span>
+           <Link href="/dashboard/settings" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/settings") ? "text-indigo-600" : "text-gray-400"}`}>
+             <Settings size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">Settings</span>
            </Link>
            <button onClick={() => setMobileOpen(true)} className="flex flex-col items-center gap-1 text-gray-400">
              <Menu size={20} />

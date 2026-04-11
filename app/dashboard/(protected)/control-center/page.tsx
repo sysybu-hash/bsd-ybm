@@ -1,10 +1,47 @@
-import AutomationBuilder from "@/components/automations/AutomationBuilder";
-import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import UnifiedCommandCenter from "@/components/control-center/UnifiedCommandCenter";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "מרכז בקרת אוטומציות | Control Center",
-};
+export default async function ControlCenterPage() {
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
 
-export default function ControlCenterPage() {
-  return <AutomationBuilder />;
+  const orgId = session.user.organizationId;
+  if (!orgId) {
+    redirect("/dashboard");
+  }
+
+  // Fetch all necessary data for the unified dashboard in one go
+  const [contacts, projects] = await Promise.all([
+    prisma.contact.findMany({
+      where: { organizationId: orgId },
+      include: {
+        issuedDocuments: {
+          select: { total: true, status: true }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    }),
+    prisma.project.findMany({
+      where: { organizationId: orgId },
+      orderBy: { createdAt: "desc" }
+    })
+  ]);
+
+  return (
+    <div className="p-4 md:p-8">
+      <UnifiedCommandCenter 
+        initialData={{
+          contacts,
+          projects,
+          orgId
+        }} 
+      />
+    </div>
+  );
 }
