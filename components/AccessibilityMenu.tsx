@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Accessibility, X, Type, Contrast, MousePointer2, ZoomIn, Eye, Sparkles } from "lucide-react";
+import { Accessibility, X, Type, Contrast, MousePointer2, ZoomIn, Eye, Sparkles, Palette } from "lucide-react";
 
 export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +9,23 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
   const [highContrast, setHighContrast] = useState(false);
   const [bigCursor, setBigCursor] = useState(false);
   const [grayscale, setGrayscale] = useState(false);
+  const [themeColor, setThemeColor] = useState("indigo");
+
+  const THEME_OPTIONS = [
+    { id: "indigo", color: "#4f46e5", label: "אינדיגו (ברירת מחדל)" },
+    { id: "emerald", color: "#10b981", label: "ירוק אמרלד" },
+    { id: "rose", color: "#f43f5e", label: "ורוד רוז" },
+    { id: "amber", color: "#f59e0b", label: "ענבר מוזהב" },
+    { id: "blue", color: "#2563eb", label: "כחול עסקי" },
+    { id: "violet", color: "#8b5cf6", label: "סגול יוקרתי" },
+  ];
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("bsd-theme-color");
+      if (stored) setThemeColor(stored);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -17,8 +34,15 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
       root.classList.toggle("high-contrast", highContrast);
       root.classList.toggle("big-cursor", bigCursor);
       root.classList.toggle("grayscale", grayscale);
+      
+      // Update primary brand color variable
+      const theme = THEME_OPTIONS.find(t => t.id === themeColor);
+      if (theme) {
+        root.style.setProperty("--primary-brand", theme.color);
+        localStorage.setItem("bsd-theme-color", themeColor);
+      }
     }
-  }, [fontLarge, highContrast, bigCursor, grayscale]);
+  }, [fontLarge, highContrast, bigCursor, grayscale, themeColor]);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -30,7 +54,7 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
   ];
 
   const MenuContent = (
-    <div className={`${dock ? "absolute bottom-16 start-0 w-[280px]" : "w-full max-w-sm"} rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl ring-1 ring-black/5 animate-in fade-in slide-in-from-bottom-4 duration-300 z-[350]`}>
+    <div className={`${dock ? "absolute top-0 right-14 w-[320px]" : "w-full max-w-sm"} rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl ring-1 ring-black/5 animate-in fade-in slide-in-from-right-4 duration-300 z-[350]`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
@@ -56,26 +80,44 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
             onClick={() => opt.setter(!opt.active)}
             className={`w-full group flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-200 ${
               opt.active 
-                ? "border-indigo-600 bg-indigo-50/50 text-indigo-900" 
+                ? "border-[var(--primary-brand,#4f46e5)] bg-slate-50 text-slate-900" 
                 : "border-slate-50 bg-slate-50/30 text-slate-600 hover:border-slate-200 hover:bg-slate-50/80"
             }`}
           >
             <div className="flex items-center gap-4">
               <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
-                opt.active ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20" : "bg-white text-slate-400 shadow-sm"
+                opt.active ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-md shadow-black/10" : "bg-white text-slate-400 shadow-sm"
               }`}>
                 <opt.icon size={20} />
               </div>
               <span className="text-sm font-black italic">{opt.label}</span>
             </div>
-            {/* 💡 "נורת ביקורת" לחיצה (חלק מהכפתור) */}
             <div className={`h-4 w-4 rounded-full border-4 transition-all ${
               opt.active 
-                ? "bg-indigo-600 border-indigo-100 shadow-[0_0_12px_rgba(79,70,229,0.5)] scale-110" 
+                ? "bg-[var(--primary-brand,#4f46e5)] border-white shadow-[0_0_12px_rgba(0,0,0,0.1)] scale-110" 
                 : "bg-slate-200 border-white shadow-inner"
             }`} />
           </button>
         ))}
+      </div>
+
+      <div className="mt-8 border-t border-slate-100 pt-6">
+        <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
+          <Palette size={14} /> סקאלת צבעי האתר
+        </h4>
+        <div className="grid grid-cols-6 gap-2">
+          {THEME_OPTIONS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setThemeColor(t.id)}
+              title={t.label}
+              className={`h-8 w-8 rounded-full border-2 transition-all hover:scale-110 ${
+                themeColor === t.id ? "border-slate-900 scale-125 shadow-lg" : "border-white"
+              }`}
+              style={{ backgroundColor: t.color }}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="mt-6 flex gap-3">
@@ -106,7 +148,7 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
         <button
           onClick={toggleOpen}
           className={`group flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
-            isOpen ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+            isOpen ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-lg shadow-black/10" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
           }`}
           title="תפריט נגישות"
         >

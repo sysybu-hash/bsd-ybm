@@ -8,20 +8,20 @@ import { Zap, Brain } from "lucide-react";
 export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) {
   return (
     <div
-      className="pointer-events-none fixed left-1/2 z-[300] flex -translate-x-1/2 flex-row items-end justify-center bottom-[max(2rem,env(safe-area-inset-bottom,0px))]"
+      className="fixed right-0 top-1/2 z-[300] -translate-y-1/2 flex flex-col items-center justify-center pr-2"
       aria-label="מרכז כלי עבודה BSD-YBM פתרונות AI"
     >
-      <div className="pointer-events-auto flex flex-row items-center gap-2 rounded-2xl border border-gray-200 bg-white/90 p-2 shadow-2xl backdrop-blur-xl ring-1 ring-black/5 sm:gap-4 sm:px-4">
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-gray-200 bg-white/90 p-2 shadow-2xl backdrop-blur-xl ring-1 ring-black/5">
         
         {/* ACCESSIBILITY */}
         <AccessibilityMenu dock />
         
-        <div className="h-6 w-px bg-gray-200 mx-1" />
+        <div className="h-px w-6 bg-gray-200" />
 
         {/* QUICK AI SCANNER */}
         <Link 
           href="/dashboard/ai"
-          className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-600 text-white shadow-lg shadow-violet-600/20 hover:scale-105 active:scale-95 transition-all"
+          className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-brand,#8b5cf6)] text-white shadow-lg shadow-black/10 hover:translate-x-[-4px] active:scale-95 transition-all"
           title="אשף סריקה"
         >
           <Zap size={20} />

@@ -179,13 +179,15 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-2 ring-white"
+        className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
+           open ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-lg" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+        }`}
       >
-        {open ? <X size={26} /> : <Brain size={26} />}
+        {open ? <X size={20} /> : <Brain size={20} />}
       </button>
 
       {open && (
-        <div className="absolute bottom-16 start-1/2 z-[220] w-80 -translate-x-1/2">
+        <div className="absolute top-0 right-14 w-80 z-[220]">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
             <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
               <div className="flex items-center gap-2 text-xs font-black text-gray-900">
@@ -196,7 +198,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 <button
                   onClick={() => setTab("chat")}
                   className={`rounded-lg px-2 py-1 text-[10px] font-black ${
-                    tab === "chat" ? "bg-indigo-600 text-white" : "text-gray-400"
+                    tab === "chat" ? "bg-[var(--primary-brand,#4f46e5)] text-white" : "text-gray-400"
                   }`}
                 >
                   CHAT
@@ -204,7 +206,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                 <button
                   onClick={() => setTab("finance")}
                   className={`rounded-lg px-2 py-1 text-[10px] font-black ${
-                    tab === "finance" ? "bg-indigo-600 text-white" : "text-gray-400"
+                    tab === "finance" ? "bg-[var(--primary-brand,#4f46e5)] text-white" : "text-gray-400"
                   }`}
                 >
                   FINANCE
@@ -261,7 +263,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                   <button
                     onClick={() => sendChat()}
                     disabled={sending || !input.trim()}
-                    className="p-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50"
+                    className="p-2 rounded-xl bg-[var(--primary-brand,#4f46e5)] text-white disabled:opacity-50"
                   >
                     {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                   </button>
@@ -282,7 +284,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
                   />
                   <button
                     onClick={askFinance}
-                    className="bg-indigo-600 text-white px-3 py-2 rounded-xl text-[11px]"
+                    className="bg-[var(--primary-brand,#4f46e5)] text-white px-3 py-2 rounded-xl text-[11px]"
                   >
                     שלח
                   </button>

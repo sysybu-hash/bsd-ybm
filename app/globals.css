@@ -16,8 +16,8 @@
 /* ─────────────────────────────────────────
    DESIGN TOKENS v2 — BSD-YBM BSD-YBM
 ───────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--heading-color, inherit);
+h1, h2, h3, h4 {
+  color: var(--primary-brand);
   transition: color 0.3s ease;
 }
 
@@ -27,6 +27,7 @@ h1, h2, h3, h4, h5, h6 {
   --background-end-rgb: 241, 245, 249;
 
   /* Brand — Indigo 600 */
+  --primary-brand: #4f46e5;
   --primary-color: #4f46e5;
   --primary-hover: #4338ca;
   --primary-light: #eef2ff;
