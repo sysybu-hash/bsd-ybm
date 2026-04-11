@@ -11,13 +11,15 @@ export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) 
 
   return (
     <div
-      className={`fixed left-0 top-1/2 z-[300] -translate-y-1/2 flex items-center transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] ${
-        isExpanded ? "pl-4" : "translate-x-[-85%]"
-      }`}
+      className="fixed left-0 top-1/2 z-[300] -translate-y-1/2 flex items-center h-auto"
+      aria-label="מרכז כלי עבודה BSD-YBM פתרונות AI"
     >
       {/* THE TOOLKIT DRAWER */}
-      <div className="flex flex-col items-center gap-6 rounded-[3rem] border border-white/30 bg-white/70 p-3.5 shadow-[0_25px_60px_rgba(0,0,0,0.2)] backdrop-blur-3xl ring-1 ring-white/50 group/dock relative">
-        
+      <div 
+        className={`flex flex-col items-center gap-6 rounded-r-[3rem] border border-white/30 bg-white/70 p-3.5 shadow-[0_25px_60px_rgba(0,0,0,0.2)] backdrop-blur-3xl ring-1 ring-white/50 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          isExpanded ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+        }`}
+      >
         {/* ACCESSIBILITY */}
         <AccessibilityMenu dock />
         
@@ -35,31 +37,24 @@ export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) 
 
         {/* UNIFIED AI ASSISTANT LAYER */}
         <DashboardUnifiedAi orgId={orgId} />
-
       </div>
 
-      {/* THE HANDLE (TRIGGER) */}
+      {/* THE HANDLE (TRIGGER) - STAY AT THE EDGE */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`flex h-16 w-8 items-center justify-center rounded-r-2xl bg-white shadow-xl border border-l-0 border-gray-200 transition-all hover:w-10 group ${
-          isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
+        className={`absolute left-0 top-1/2 -translate-y-1/2 flex h-24 w-10 items-center justify-center rounded-r-3xl bg-white shadow-2xl border border-l-0 border-gray-200 transition-all hover:w-12 group ${
+          isExpanded ? "translate-x-[72px]" : "translate-x-0"
         }`}
+        style={{ transitionDuration: '600ms' }}
       >
         <ChevronRight 
-          size={18} 
-          className={`text-slate-400 group-hover:text-[var(--primary-brand)] transition-transform duration-500 ${isExpanded ? "rotate-180" : ""}`} 
+          size={20} 
+          className={`text-slate-400 group-hover:text-[var(--primary-brand)] transition-transform duration-500 ${
+            isExpanded ? "rotate-180" : ""
+          }`} 
         />
+        <div className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-slate-100 group-hover:bg-[var(--primary-brand)]/20 transition-colors" />
       </button>
-
-      {/* CLOSE TAB (WHEN EXPANDED) */}
-      {isExpanded && (
-        <button 
-          onClick={() => setIsExpanded(false)}
-          className="absolute -right-4 top-1/2 -translate-y-1/2 h-12 w-8 bg-white/50 backdrop-blur-md rounded-l-xl flex items-center justify-center border border-r-0 border-slate-200/50 hover:bg-white transition-colors"
-        >
-          <ChevronRight size={16} className="rotate-180 text-slate-400" />
-        </button>
-      )}
     </div>
   );
 }
