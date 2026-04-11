@@ -43,7 +43,7 @@ export function isMindStudioConfigured(): boolean {
 }
 
 export function isDocAiConfigured(): boolean {
-  return has(process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID);
+  return has(process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID) && has(process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS);
 }
 
 export function getAiProvidersPublic(): AiProviderPublic[] {
@@ -85,8 +85,8 @@ export function getAiProvidersPublic(): AiProviderPublic[] {
     },
     {
       id: "docai",
-      label: "Google Document AI",
-      description: "סורק חשבוניות מוסדיות מתקדם",
+      label: "Google Document AI (Premium)",
+      description: "מנוע סריקה מוסדי ברמת דיוק מקסימלית — מומלץ לחשבוניות מורכבות",
       configured: isDocAiConfigured(),
       supportsDocumentScan: true,
     },
@@ -121,7 +121,7 @@ export function assertProviderConfigured(id: AiProviderId): string | null {
     case "mindstudio":
       return isMindStudioConfigured() ? null : "חסר MIND_STUDIO_API_KEY";
     case "docai":
-      return isDocAiConfigured() ? null : "חסר GOOGLE_DOCUMENT_AI_PROCESSOR_ID";
+      return isDocAiConfigured() ? null : "חסר GOOGLE_DOCUMENT_AI_PROCESSOR_ID או GOOGLE_DOCUMENT_AI_CREDENTIALS";
     default:
       return "ספק לא ידוע";
   }

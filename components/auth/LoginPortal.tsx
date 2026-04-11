@@ -16,6 +16,7 @@ import type { Session } from "next-auth";
 import { loginErrorMessages, loginReasonMessages } from "@/lib/auth/login-messages";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import AuthProfessionalCard from "@/components/auth/AuthProfessionalCard";
+import { useI18n } from "@/components/I18nProvider";
 
 function GoogleMark({ className }: { className?: string }) {
   return (
@@ -39,6 +40,7 @@ function safeInternalPath(raw: string | null | undefined, fallback: string): str
 }
 
 export default function LoginPortal() {
+  const { t, dir } = useI18n();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
   const callbackUrl =
@@ -69,11 +71,6 @@ export default function LoginPortal() {
     void refreshLocalSession();
   }, [refreshLocalSession]);
 
-  /**
-   * signOut({ redirect: false }) שולח POST ל-/api/auth/signout עם CSRF token —
-   * זה מה שמנקה את ה-httpOnly JWT cookie בשרת.
-   * גישה ישנה (GET ל-/api/auth/signout) הציגה דף HTML ולא ניקתה כלום.
-   */
   const handleGoogle = useCallback(async () => {
     setLoadingGoogle(true);
     try {
@@ -98,15 +95,15 @@ export default function LoginPortal() {
   const showActiveBanner = sessionProbe === "done" && activeSession != null && sessionEmail.length > 0;
 
   return (
-    <AuthPageShell secondaryNav={{ href: "/register", label: "הרשמה" }}>
+    <AuthPageShell secondaryNav={{ href: "/register", label: t("auth.login.registerLink") }}>
       <AuthProfessionalCard
         icon={
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
             <ShieldCheck className="h-6 w-6 text-indigo-600" aria-hidden />
           </div>
         }
-        title="כניסה למערכת"
-        subtitle="בחרו Google או הזינו אימייל וסיסמה"
+        title={t("auth.login.title")}
+        subtitle={t("auth.login.subtitle")}
       >
         {/* Session probe */}
         {sessionProbe === "loading" && (
@@ -117,11 +114,11 @@ export default function LoginPortal() {
 
         {/* Already connected banner */}
         {showActiveBanner ? (
-          <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+          <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-start">
             <div className="flex items-center gap-3">
               <UserCircle className="h-5 w-5 shrink-0 text-indigo-600" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-gray-800">מחוברים כ־{sessionName || sessionEmail}</p>
+                <p className="text-sm font-bold text-gray-800">{t("auth.login.connectedAs")}{sessionName || sessionEmail}</p>
                 {sessionName ? <p className="text-xs text-gray-400 break-all">{sessionEmail}</p> : null}
               </div>
             </div>
@@ -131,7 +128,7 @@ export default function LoginPortal() {
                 onClick={() => navigateHard(callbackUrl)}
                 className="flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-700 transition"
               >
-                המשך לדשבורד
+                {t("auth.login.continueToDashboard")}
               </button>
               <button
                 type="button"
@@ -139,7 +136,7 @@ export default function LoginPortal() {
                 className="flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition"
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden />
-                החלף חשבון
+                {t("auth.login.switchAccount")}
               </button>
             </div>
           </div>
@@ -164,7 +161,7 @@ export default function LoginPortal() {
           ) : (
             <>
               <GoogleMark className="h-5 w-5 shrink-0" />
-              המשך עם Google
+              {t("auth.login.google")}
             </>
           )}
         </button>
@@ -172,7 +169,7 @@ export default function LoginPortal() {
         {/* Divider */}
         <div className="my-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-gray-200" />
-          <span className="text-xs font-medium text-gray-400">או</span>
+          <span className="text-xs font-medium text-gray-400">{t("auth.login.or")}</span>
           <div className="h-px flex-1 bg-gray-200" />
         </div>
 
@@ -186,7 +183,7 @@ export default function LoginPortal() {
             const email = String(fd.get("email") ?? "").trim();
             const password = String(fd.get("password") ?? "");
             if (!email || !password) {
-              setCredError("מלאו אימייל וסיסמה");
+              setCredError(t("auth.login.errorEmpty"));
               return;
             }
             setLoadingCreds(true);
@@ -198,7 +195,7 @@ export default function LoginPortal() {
             });
             setLoadingCreds(false);
             if (res?.error) {
-              setCredError("אימייל או סיסמה שגויים — או שאין סיסמה עדיין.");
+              setCredError(t("auth.login.errorInvalid"));
               return;
             }
             const fromApi = res?.url?.trim() ?? "";
@@ -217,25 +214,25 @@ export default function LoginPortal() {
             navigateHard(dest);
           }}
         >
-          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-gray-500">
+          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-gray-500 text-start">
             <KeyRound size={14} className="text-indigo-600" aria-hidden />
-            אימייל וסיסמה (מנהל מערכת)
+            {t("auth.login.credsLabel")}
           </div>
           <input
             name="email"
             type="email"
             required
             autoComplete="email"
-            placeholder="email@example.com"
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            placeholder={t("auth.login.emailPlaceholder")}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-start"
           />
           <input
             name="password"
             type="password"
             required
             autoComplete="current-password"
-            placeholder="סיסמא"
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            placeholder={t("auth.login.passwordPlaceholder")}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-start"
           />
           {credError ? <p className="text-center text-sm text-rose-600">{credError}</p> : null}
           <button
@@ -244,16 +241,16 @@ export default function LoginPortal() {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm"
           >
             {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
-            כניסה
+            {t("auth.login.submit")}
           </button>
         </form>
 
         {/* Footer links */}
         <div className="mt-5 flex flex-col items-center gap-3">
           <p className="text-xs text-gray-500">
-            אין לכם חשבון?{" "}
+            {t("auth.login.noAccount")}{" "}
             <Link href="/register" className="font-bold text-indigo-600 hover:underline">
-              הרשמה
+              {t("auth.login.registerLink")}
             </Link>
           </p>
           <Link
@@ -261,7 +258,7 @@ export default function LoginPortal() {
             className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition"
           >
             <ArrowRight size={13} aria-hidden />
-            חזרה לאתר
+            {t("auth.login.backToSite")}
           </Link>
         </div>
       </AuthProfessionalCard>

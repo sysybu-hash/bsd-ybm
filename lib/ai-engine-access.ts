@@ -2,18 +2,26 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getGeminiModelId } from "@/lib/gemini-model";
 import type { AiProviderId } from "@/lib/ai-providers";
 
-/** ספקים שתומכים בסריקת מסמך (לא כולל Groq) */
-const DOCUMENT_SCAN_PROVIDERS: AiProviderId[] = ["gemini", "openai", "anthropic"];
+/** ספקים שתומכים בסריקת מסמך (כולל Google Document AI כספק פרימיום) */
+const DOCUMENT_SCAN_PROVIDERS: AiProviderId[] = ["gemini", "openai", "anthropic", "docai"];
 
-/** מנועים מותרים לפי רמת מנוי — FREE רק Gemini; מנויים משלמים / מנהלים — כל ספקי הסריקה */
+/** מנועים מותרים לפי רמת מנוי — פרימיום (OpenAI, Anthropic, DocAI) רק למנוי חברה ומעלה */
 export function getAllowedAiProvidersForPlan(
   subscriptionTier: string,
   elevated: boolean,
 ): AiProviderId[] {
+  // אדמין פלטפורמה תמיד מקבל הכל
   if (elevated) return [...DOCUMENT_SCAN_PROVIDERS];
+  
   const normalized = (subscriptionTier || "FREE").trim().toUpperCase();
-  if (normalized === "FREE") return ["gemini"];
-  return [...DOCUMENT_SCAN_PROVIDERS];
+  
+  // מנויי חברה ותאגיד מקבלים הכל
+  if (normalized === "COMPANY" || normalized === "CORPORATE") {
+    return [...DOCUMENT_SCAN_PROVIDERS];
+  }
+
+  // שאר המנויים (FREE, HOUSEHOLD, DEALER) מוגבלים ל־Gemini בלבד
+  return ["gemini"];
 }
 
 /**

@@ -14,14 +14,17 @@ export async function POST(req: Request) {
       name?: string;
       organizationName?: string;
       orgType?: string;
+      industry?: string;
       inviteToken?: string;
       orgInviteToken?: string;
+      plan?: string;
     };
 
     const emailRaw = String(body.email ?? "").trim();
     const name = String(body.name ?? "").trim() || null;
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
+    const industry = String(body.industry ?? "GENERAL").toUpperCase();
     const inviteToken = String(body.inviteToken ?? "").trim();
     const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 
@@ -165,6 +168,7 @@ export async function POST(req: Request) {
           data: {
             name: organizationName,
             type: orgType,
+            industry,
             subscriptionTier: inv.subscriptionTier,
             subscriptionStatus: "ACTIVE",
             cheapScansRemaining: balances.cheapScansRemaining,
@@ -205,40 +209,57 @@ export async function POST(req: Request) {
       });
     }
 
-    const freeB = defaultScanBalancesForTier("FREE");
+    const planRaw = String(body.plan ?? "").toUpperCase();
+    const isDirectPlan = !!body.plan;
+
+    // Mapping plan string to SubscriptionTier enum
+    const tier = ["FREE", "HOUSEHOLD", "DEALER", "COMPANY", "CORPORATE"].includes(planRaw)
+       ? (planRaw as import("@prisma/client").SubscriptionTier)
+       : "FREE";
+
+    // Only general signup (no plan, no invite) goes to PENDING_APPROVAL
+    const shouldApprove = isDirectPlan || !!inviteToken || !!orgInviteToken;
+    const initialStatus = shouldApprove ? AccountStatus.ACTIVE : AccountStatus.PENDING_APPROVAL;
+    const initialSubStatus = shouldApprove ? "ACTIVE" : "PENDING_APPROVAL";
+
+    const balances = defaultScanBalancesForTier(tier);
 
     await prisma.organization.create({
       data: {
         name: organizationName,
         type: orgType,
-        subscriptionTier: "FREE",
-        trialEndsAt: trialEndsAtFromNow(),
-        subscriptionStatus: "PENDING_APPROVAL",
-        cheapScansRemaining: freeB.cheapScansRemaining,
-        premiumScansRemaining: freeB.premiumScansRemaining,
-        maxCompanies: freeB.maxCompanies,
+        industry,
+        subscriptionTier: tier,
+        trialEndsAt: tier === "FREE" ? trialEndsAtFromNow() : null,
+        subscriptionStatus: initialSubStatus,
+        cheapScansRemaining: balances.cheapScansRemaining,
+        premiumScansRemaining: balances.premiumScansRemaining,
+        maxCompanies: balances.maxCompanies,
         users: {
           create: {
             email: normalized,
             name,
             role: "ORG_ADMIN",
-            accountStatus: AccountStatus.PENDING_APPROVAL,
+            accountStatus: initialStatus,
           },
         },
       },
     });
 
     void sendRegistrationWelcomeEmail(normalized, name, {
-      tierLabelHe: tierLabelHe("FREE"),
-      tierKey: "FREE",
-      accountActive: false,
-      extraNote:
-        "Welcome to BSD-YBM! You are currently on the FREE tier pending admin approval — you will receive full access once approved.",
-    }).catch((err) => console.error("sendRegistrationWelcomeEmail (free signup)", err));
+      tierLabelHe: tierLabelHe(tier),
+      tierKey: tier,
+      accountActive: shouldApprove,
+      extraNote: shouldApprove
+        ? `Welcome to BSD-YBM! Your ${tierLabelHe(tier)} account is now ACTIVE.`
+        : "Welcome to BSD-YBM! You are currently on the FREE tier pending admin approval — you will receive full access once approved.",
+    }).catch((err) => console.error("sendRegistrationWelcomeEmail (signup)", err));
 
     return NextResponse.json({
       ok: true,
-      message: "הבקשה נקלטה. מנהל המערכת יאשר את המנוי וישלח לך פרטי כניסה.",
+      message: shouldApprove 
+        ? "ההרשמה הושלמה בהצלחה! ניתן להתחבר כעת."
+        : "הבקשה נקלטה. מנהל המערכת יאשר את המנוי וישלח לך פרטי כניסה.",
     });
   } catch (e) {
     console.error("register", e);

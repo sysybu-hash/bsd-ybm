@@ -35,12 +35,8 @@ export function I18nProvider({
   const t = useMemo(() => createTranslator(messages), [messages]);
   const dir: "rtl" | "ltr" = isRtlLocale(locale) ? "rtl" : "ltr";
 
-  useEffect(() => {
-    document.documentElement.lang = locale;
-    document.documentElement.dir = dir;
-  }, [locale, dir]);
-
   const setLocale = useCallback(async (l: AppLocale) => {
+    localStorage.setItem("bsd_locale_detected", "1");
     await fetch("/api/locale", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,6 +44,30 @@ export function I18nProvider({
     });
     router.refresh();
   }, [router]);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = dir;
+    
+    // 🌍 Automatic Browser Language Detection (2026 BSD-YBM Premium UX)
+    const hasDetected = localStorage.getItem("bsd_locale_detected");
+    if (!hasDetected && typeof navigator !== "undefined") {
+      const browserLang = navigator.language.split("-")[0];
+      const supported: Record<string, AppLocale> = {
+        he: "he", iw: "he",
+        ru: "ru",
+        ar: "ar",
+        en: "en"
+      };
+      const match = supported[browserLang];
+      if (match && match !== locale) {
+        localStorage.setItem("bsd_locale_detected", "1");
+        void setLocale(match);
+      } else {
+        localStorage.setItem("bsd_locale_detected", "1");
+      }
+    }
+  }, [locale, dir, setLocale]);
 
   const value = useMemo(
     () => ({ locale, t, setLocale, dir }),

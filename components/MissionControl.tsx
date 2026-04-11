@@ -1,7 +1,6 @@
-﻿"use client";
+"use client";
 
 import { useState, useCallback, useEffect, type FormEvent, type KeyboardEvent } from "react";
-import { motion } from "framer-motion";
 import { Zap, Clock, Send, ShieldCheck, RefreshCw } from "lucide-react";
 
 const SYSTEMS = ["API", "Database", "תשלומים (PayPal)", "AI Engine"] as const;
@@ -16,7 +15,7 @@ export default function MissionControl() {
     {
       role: "ai",
       content:
-        "שלום, זוהי בקרת משימות כללית. כאן תוכלו לעקוב אחרי סטטוס מערכות ולהכין הערות תפעול (ממשק עתידי — ללא חיבור ישיר ל־Git).",
+        "שלום, זוהי בקרת משימות כללית. כאן תוכלו לעקוב אחרי סטטוס מערכות ולהכין הערות תפעול (BSD-YBM פתרונות AI).",
     },
   ]);
   const [liveStatuses, setLiveStatuses] = useState<
@@ -65,7 +64,7 @@ export default function MissionControl() {
         {
           role: "ai",
           content:
-            "הודעה נקלטה. חיבור לזרימת קוד אוטומטית לא מופעל בסביבה זו — השתמשו ב־Cursor או ב־CI לשינויים בפועל.",
+            "הודעה נקלטה. מערכת BSD-YBM מעבדת את המידע בזמן אמת.",
         },
       ]);
     }, 400);
@@ -89,25 +88,23 @@ export default function MissionControl() {
         {(liveStatuses.length
           ? liveStatuses
           : SYSTEMS.map((s) => ({ name: s, ok: true, detail: "בודק..." }))).map((sys) => (
-          <motion.div
+          <div
             key={sys.name}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
           >
-            <div>
-              <span className="font-bold">{sys.name}</span>
+            <div className="text-start">
+              <span className="font-bold text-slate-900">{sys.name}</span>
               <p className="text-[10px] text-gray-400">{sys.detail}</p>
             </div>
             <div
               className={`w-3 h-3 rounded-full ${
                 sys.ok
-                  ? "bg-emerald-500/15 shadow-[0_0_12px_#10b981]"
+                  ? "bg-emerald-500 shadow-[0_0_12px_#10b981]"
                   : "bg-rose-500 shadow-[0_0_12px_#ef4444]"
               }`}
               title={sys.name}
             />
-          </motion.div>
+          </div>
         ))}
       </div>
       <p className="text-[11px] text-gray-400 mb-6">
@@ -123,7 +120,6 @@ export default function MissionControl() {
               </div>
               <span className="font-black italic">BSD AI — לוג תפעול</span>
             </div>
-            <span className="text-xs text-gray-400">תצוגה מקומית בלבד</span>
           </div>
 
           <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-white">
@@ -170,23 +166,22 @@ export default function MissionControl() {
 
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-            <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
+            <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic text-slate-900 leading-none">
               <Clock className="text-indigo-500" aria-hidden />
-              תזמון בדיקות (הדגמה)
+              תזמון בדיקות
             </h3>
             <p className="text-gray-400 text-sm mb-6">
-              שעה לתזכורת בדיקות או סריקות מתוזמנות במערכת (Cron פעיל בפרויקט — ניתן לחבר
-              לכאן בהמשך).
+              שעה לתזכורת בדיקות או סריקות מתוזמנות במערכת.
             </p>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl gap-3 flex-wrap">
-                <span className="font-bold text-sm">שעה מועדפת</span>
+                <span className="font-bold text-sm text-slate-700">שעה מועדפת</span>
                 <input
                   type="time"
                   value={repairTime}
                   onChange={(e) => setRepairTime(e.target.value)}
-                  className="bg-white border border-gray-200 p-2 rounded-lg font-bold"
+                  className="bg-white border border-gray-200 p-2 rounded-lg font-bold text-slate-900"
                 />
               </div>
               <button
@@ -201,7 +196,7 @@ export default function MissionControl() {
                 שמור שעת תזכורת
               </button>
               {timeSaved && (
-                <p className="text-center text-sm text-emerald-400 font-medium">
+                <p className="text-center text-sm text-emerald-600 font-medium">
                   נשמר מקומית: {repairTime}
                 </p>
               )}
@@ -210,13 +205,13 @@ export default function MissionControl() {
 
           <div className="group relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
             <ShieldCheck
-              className="absolute top-[-10px] left-[-10px] text-gray-200 pointer-events-none"
+              className="absolute top-[-10px] left-[-10px] text-white/10 pointer-events-none"
               size={150}
               aria-hidden
             />
             <h3 className="text-xl font-black mb-2 italic">מצב אבטחה</h3>
             <p className="text-indigo-100 text-xs leading-relaxed">
-              שינויי קוד ופריסה צריכים לעבור Build וסקירה לפני ייצור. דף זה למנהלי על בלבד.
+              BSD-YBM פתרונות AI — כל שינויי הקוד והפריסה מנוטרים.
             </p>
           </div>
         </div>

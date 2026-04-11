@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -26,6 +26,9 @@ import DashboardRevenueChart from "@/components/dashboard/DashboardRevenueChart"
 import type { OrgDashboardHomeData } from "@/lib/dashboard-home-data";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import { useI18n } from "@/components/I18nProvider";
+import { useIndustryConfig } from "@/hooks/use-industry-config";
+import { motion } from "framer-motion";
+import { Loader2, Users as UsersIcon } from "lucide-react";
 
 /* ─── types ─── */
 type ScanResult = {
@@ -70,7 +73,8 @@ function useAnimatedNumber(target: number, duration = 1200) {
 type Props = { homeData: OrgDashboardHomeData };
 
 export default function BsdYbmDashboard({ homeData }: Props) {
-  const { dir } = useI18n();
+  const { dir, t, locale } = useI18n();
+  const industry = useIndustryConfig();
   const { data: session, status } = useSession();
   const [isUploading, setIsUploading] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
@@ -145,225 +149,201 @@ export default function BsdYbmDashboard({ homeData }: Props) {
 
   const showUploadError = uploadError && !uploadErrorDismissed;
 
-  /* Quick-action cards for bento grid */
-  const quickCards = [
-    { href: "/dashboard/crm", icon: <Users size={20} />, label: "לקוחות", desc: "ניהול CRM", iconBg: "bg-indigo-500/15", iconText: "text-indigo-400" },
-    { href: "/dashboard/erp", icon: <FileText size={20} />, label: "מסמכים", desc: "חשבוניות והצעות", iconBg: "bg-emerald-500/15", iconText: "text-emerald-400" },
-    { href: "/dashboard/ai", icon: <Brain size={20} />, label: "AI", desc: "סריקה חכמה", iconBg: "bg-indigo-500/15", iconText: "text-indigo-400" },
-    { href: "/dashboard/settings", icon: <Settings size={20} />, label: "הגדרות", desc: "ניהול חשבון", iconBg: "bg-gray-50", iconText: "text-gray-600" },
-  ];
-
   return (
     <div className="space-y-5 pb-6" dir={dir}>
 
       {/* ═══════════════════════════════════════════
-          HERO — Greeting + Subscription
+          HERO — Dynamic Greeting
       ═══════════════════════════════════════════ */}
       <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm md:p-10">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
-        <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-bold text-indigo-300">{subscriptionTier}</span>
-            </div>
-            <h1 className="mt-4 text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
-              {greeting}, {firstName}
-            </h1>
-            <p className="mt-2 text-sm text-gray-400">
-              {new Date().toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-            </p>
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-bold text-indigo-300">{subscriptionTier}</span>
           </div>
-
-          {/* Mini stats in hero */}
-          <div className="flex gap-3">
-            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">הכנסות</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-gray-900">
-                <span className="text-lg text-indigo-500">&#8362;</span>{fmt(animatedRevenue)}
-              </p>
-            </div>
-            <div className="min-w-[130px] rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">צנרת</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-gray-900">
-                <span className="text-lg text-gray-400">&#8362;</span>{fmt(animatedPipeline)}
-              </p>
-            </div>
-          </div>
+          <h1 className="mt-4 text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
+            {greeting}, {firstName}
+          </h1>
+          <p className="mt-2 text-sm text-gray-400">
+            {new Date().toLocaleDateString(locale === "he" ? "he-IL" : "en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </p>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════
-          BENTO GRID — Quick actions
+          BENTO GRID — Pro Action Cards
       ═══════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {quickCards.map((c) => (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {[
+          { href: "/dashboard/crm", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "indigo" },
+          { href: "/dashboard/erp", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
+          { href: "/dashboard/ai", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "indigo" },
+          { href: "/dashboard/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
+        ].map((c) => (
           <Link
             key={c.href}
             href={c.href}
-            className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-md"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-indigo-200 hover:shadow-md h-full"
           >
-            <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl ${c.iconBg} ${c.iconText}`}>
-              {c.icon}
+            <div>
+              <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-gray-400 group-hover:bg-indigo-500/15 group-hover:text-indigo-400 transition-colors`}>
+                {c.icon}
+              </div>
+              <p className="text-sm font-black text-gray-900">{c.label}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
             </div>
-            <p className="text-sm font-black text-gray-900">{c.label}</p>
-            <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
-            <ArrowUpRight size={14} className="absolute top-4 end-4 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase text-indigo-400 opacity-60 group-hover:opacity-100 transition-opacity">
+              <span>ניתוב</span>
+              <ArrowUpRight size={14} />
+            </div>
           </Link>
         ))}
       </div>
 
       {/* ═══════════════════════════════════════════
-          MAIN GRID — Revenue + Pipeline + Scan
+          INTELLIGENCE GRID — Data & Actions
       ═══════════════════════════════════════════ */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
-        {/* Revenue card — 5 cols */}
+        {/* Revenue insight card — 5 cols */}
         <div className="lg:col-span-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15">
-                <BarChart3 size={15} className="text-indigo-400" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15">
+                <BarChart3 size={15} className="text-emerald-400" />
               </div>
-              <p className="text-sm font-black text-gray-900">הכנסות</p>
+              <p className="text-sm font-black text-gray-900">{t("dashboard.stats.revenue")}</p>
             </div>
-            <Link href="/dashboard/erp" className="text-[11px] font-bold text-indigo-400 hover:underline">
-              ERP
-            </Link>
-          </div>
-          <p className="text-[10px] text-gray-400 mb-4">{monthTitle}</p>
-
-          <div className="mb-5">
-            <p className="text-4xl font-black tabular-nums text-gray-900 tracking-tight">
-              &#8362;{fmt(animatedRevenue)}
-            </p>
-            {monthChangePct !== null ? (
-              <span className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
+            {monthChangePct !== null && (
+              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
                 trendUp ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-50 text-rose-700"
               }`}>
                 {trendUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
                 {Math.abs(monthChangePct).toFixed(1)}%
               </span>
-            ) : (
-              <p className="mt-1 text-[11px] text-gray-400">הנפיקו מסמכים ב-ERP</p>
             )}
           </div>
+          
+          <div className="mb-6">
+            <p className="text-xs text-gray-400 mb-1">{monthTitle}</p>
+            <p className="text-4xl font-black tabular-nums text-gray-900 tracking-tight">
+              &#8362;{fmt(animatedRevenue)}
+            </p>
+          </div>
 
-          {monthlySeries.length > 0 ? (
+          <div className="mb-6">
             <DashboardRevenueChart data={monthlySeries} />
-          ) : (
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
-              <PieChart className="text-gray-400" size={28} strokeWidth={1.25} />
-              <p className="text-xs text-gray-400">עוד אין נתונים</p>
-            </div>
-          )}
+          </div>
+
+          <Link href="/dashboard/erp" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
+            {t("dashboard.quickActions.erp")}
+            <ChevronLeft size={14} />
+          </Link>
         </div>
 
-        {/* Right column — 7 cols: Scan + Contacts stacked */}
+        {/* Action column — 7 cols */}
         <div className="lg:col-span-7 flex flex-col gap-4">
 
-          {/* AI Scan — compact */}
+          {/* AI Scan card */}
           <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-2">
+            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-3">
                   <Sparkles size={16} className="text-indigo-500" />
-                  <span className="text-xs font-black uppercase tracking-widest text-indigo-400">AI Scanner</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Pulse AI</span>
                 </div>
-                <h3 className="text-lg font-black leading-tight text-gray-900">סריקה חכמה</h3>
-                <p className="mt-1 max-w-xs text-xs text-gray-400">
-                  העלו מסמך לפענוח מיידי עם בינה מלאכותית
+                <h3 className="text-lg font-black leading-tight text-gray-900">{t("scanner.title")}</h3>
+                <p className="mt-1 max-w-sm text-xs text-gray-400">
+                  {t("erpDash.scannerDesc")}
                 </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
+                
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-indigo-500/20 active:scale-95">
                     <input type="file" className="hidden" onChange={handleFileUpload} disabled={isUploading} accept="image/*,.pdf" />
-                    <Upload size={15} />
-                    {isUploading ? "מעבד..." : "העלאת מסמך"}
+                    {isUploading ? <Loader2 className="animate-spin" size={17} /> : <Upload size={17} />}
+                    {isUploading ? t("scanner.processing") : t("erpDash.scannerCta")}
                   </label>
-                  <Link href="/dashboard/ai" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
-                    מרכז AI
-                    <ChevronLeft size={14} />
+                  <Link href="/dashboard/ai" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+                    {t("dashboard.aiHub")}
+                    <ChevronLeft size={15} />
                   </Link>
                 </div>
               </div>
 
-              {/* Scan credits mini */}
-              <div className="flex gap-2 sm:flex-col">
-                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
-                  <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">Flash</p>
-                  <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(cheapScansRemaining)}</p>
+              {/* Quota indicators */}
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Standard</p>
+                  <p className="text-2xl font-black text-gray-900">{formatCreditsForDisplay(cheapScansRemaining)}</p>
                 </div>
-                <div className="min-w-[90px] rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
-                  <p className="text-[9px] font-black uppercase tracking-wider text-indigo-400">Pro</p>
-                  <p className="text-xl font-black text-gray-900">{formatCreditsForDisplay(premiumScansRemaining)}</p>
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center ring-1 ring-indigo-500/10">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Premium</p>
+                  <p className="text-2xl font-black text-indigo-600">{formatCreditsForDisplay(premiumScansRemaining)}</p>
                 </div>
               </div>
             </div>
 
-            {/* Scan result */}
+            {/* AI Results placeholder/list */}
             {scanResult && (
-              <div className="mt-4 rounded-xl border border-indigo-500/20 bg-indigo-500/15 p-4">
-                <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-indigo-300">תוצאת פענוח</p>
-                <div className="grid grid-cols-3 gap-3">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 ring-1 ring-white/50">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-xs font-black uppercase tracking-tighter text-indigo-400">תוצאות סריקה אחרונה</p>
+                  <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-500">נשמר בהצלחה</span>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
                   {[
                     { label: "ספק", value: scanResult.vendor ?? "—" },
                     { label: "סכום", value: `₪${scanResult.totalAmount ?? "—"}` },
-                    { label: "סוג", value: scanResult.docType ?? "—" },
+                    { label: "סיווג", value: scanResult.docType ?? "—" },
                   ].map(({ label, value }) => (
                     <div key={label}>
-                      <p className="text-[9px] text-indigo-500">{label}</p>
-                      <p className="text-sm font-bold text-gray-900">{value}</p>
+                      <p className="text-[10px] text-indigo-300 font-bold">{label}</p>
+                      <p className="mt-1 text-sm font-black text-gray-900 truncate">{value}</p>
                     </div>
                   ))}
                 </div>
-                {scanResult.summary && (
-                  <p className="mt-2 border-t border-indigo-500/20 pt-2 text-[11px] text-gray-500">{scanResult.summary}</p>
-                )}
-              </div>
+              </motion.div>
             )}
           </div>
 
-          {/* Recent contacts */}
+          {/* Activity column */}
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 flex-1">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15">
-                  <Users size={15} className="text-indigo-400" />
+                  <UsersIcon size={15} className="text-indigo-400" />
                 </div>
-                <p className="text-sm font-black text-gray-900">לקוחות אחרונים</p>
+                <p className="text-sm font-black text-gray-900">{industry.vocabulary.client} {t("dashboard.stats.clients")}</p>
               </div>
               <Link href="/dashboard/crm" className="text-[11px] font-bold text-indigo-400 hover:underline">
-                הכל
+                {t("executive.linkIntelligence")}
               </Link>
             </div>
 
             {recentContacts.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
-                <Users className="text-gray-400" size={24} strokeWidth={1.25} />
-                <p className="text-xs text-gray-400">אין לקוחות עדיין</p>
-                <Link href="/dashboard/crm" className="text-xs font-bold text-indigo-400 hover:underline">
-                  הוספת לקוח
-                </Link>
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-200 bg-gray-50/50 py-10 text-center">
+                <UsersIcon className="text-gray-300" size={32} strokeWidth={1} />
+                <div>
+                  <p className="text-sm font-bold text-gray-500">{t("dashboard.stats.clients")} — אין נתונים</p>
+                  <Link href="/dashboard/crm" className="mt-2 inline-flex text-xs font-black text-indigo-600 hover:underline">
+                     צפו בניהול {industry.vocabulary.client}
+                  </Link>
+                </div>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {recentContacts.slice(0, 5).map((c) => (
                   <Link
                     key={c.id}
                     href="/dashboard/crm"
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 hover:bg-gray-50 transition-colors group"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-transparent p-2.5 transition-all hover:border-gray-100 hover:bg-gray-50 group"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-[11px] font-black text-white">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-sm shadow-indigo-200">
                         {c.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-gray-700">{c.name}</p>
-                        <p className="truncate text-[10px] text-gray-400" dir="ltr">{c.email ?? "—"}</p>
-                      </div>
-                    </div>
-                    <span className={`shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-bold ${
-                      c.status === "CLOSED_WON" ? "bg-emerald-500/15 text-emerald-400" :
                       c.status === "CLOSED_LOST" ? "bg-gray-50 text-gray-400" :
                       c.status === "PROPOSAL" ? "bg-indigo-500/15 text-indigo-300" :
                       "bg-indigo-500/15 text-indigo-300"

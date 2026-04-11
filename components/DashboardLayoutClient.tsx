@@ -5,19 +5,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Compass, CreditCard, LayoutDashboard, Layers,
   LogOut, Menu, ReceiptText, Settings, Shield, X, Zap, Clock,
-  ChevronRight, Bot,
+  ChevronRight, Bot, Users as UsersIcon,
 } from "lucide-react";
 import DashboardBottomDock from "@/components/DashboardBottomDock";
 import PostRegisterWelcomeSheet from "@/components/PostRegisterWelcomeSheet";
 import DashboardNotificationBell from "@/components/DashboardNotificationBell";
-import OmniVoiceCommand from "@/components/voice/OmniVoiceCommand";
-import ContextualAssistant from "@/components/ai/ContextualAssistant";
 import { useI18n } from "@/components/I18nProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useIndustryConfig } from "@/hooks/use-industry-config";
+import AdminSystemHealth from "@/components/admin/AdminSystemHealth";
 
 function routeActive(pathname: string, href: string): boolean {
   const p = pathname.replace(/\/$/, "") || "/";
@@ -79,7 +78,8 @@ type Props = {
 export default function DashboardLayoutClient({
   children, orgId, userRole, isAdminUser, trialBannerDaysLeft, serverUser,
 }: Props) {
-  const { t, dir } = useI18n();
+  const { t, locale, dir } = useI18n();
+  const industry = useIndustryConfig();
   const pathname = usePathname() ?? "";
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -94,41 +94,34 @@ export default function DashboardLayoutClient({
     return () => { document.body.style.overflow = prev; };
   }, [mobileOpen]);
 
-  useEffect(() => {
-    const fn = () => { if (window.matchMedia("(min-width: 768px)").matches) setMobileOpen(false); };
-    window.addEventListener("resize", fn);
-    return () => window.removeEventListener("resize", fn);
-  }, []);
-
   const navItems = [
     { href: "/dashboard",             icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     color: "indigo"  },
-    { href: "/dashboard/ai",          icon: <Zap size={15} />,            label: "AI וסריקה",             color: "violet"  },
-    { href: "/dashboard/business",   icon: <Layers size={15} />,         label: "מרכז עסקי",             color: "emerald" },
-    { href: "/dashboard/erp/invoice",icon: <ReceiptText size={15} />,    label: t("dashboard.invoices"), color: "rose"    },
-    { href: "/dashboard/meckano",    icon: <Clock size={15} />,          label: t("dashboard.meckano"),  color: "sky"     },
-    { href: "/dashboard/billing",    icon: <CreditCard size={15} />,     label: t("dashboard.billing"),  color: "indigo"  },
-    { href: "/dashboard/settings",   icon: <Settings size={15} />,       label: t("dashboard.settings"), color: "indigo"  },
+    { href: "/dashboard/crm",          icon: <UsersIcon size={15} />,      label: "ניהול מנויים ו-CRM",   color: "emerald" },
+    { href: "/dashboard/business",   icon: <Layers size={15} />,         label: t("dashboard.business"), color: "emerald" },
+    { href: "/dashboard/erp/invoice",icon: <ReceiptText size={15} />,    label: t("dashboard.erp"),      color: "rose"    },
+    { href: "/dashboard/ai",          icon: <Zap size={15} />,            label: t("dashboard.aiHub"),    color: "violet"  },
   ];
-
+ 
   const toolItems = [
-    { href: "/dashboard/control-center", icon: <Compass size={15} />,  label: t("dashboard.mission"),   color: "emerald" },
     { href: "/dashboard/operator",       icon: <Bot size={15} />,      label: t("dashboard.executive"), color: "indigo"  },
-    { href: "/dashboard/help",           icon: <BookOpen size={15} />, label: t("nav.tutorial"),        color: "amber"   },
+    { href: "/dashboard/meckano",    icon: <Clock size={15} />,          label: t("dashboard.meckano"),  color: "sky"     },
+    { href: "/dashboard/settings",   icon: <Settings size={15} />,       label: t("dashboard.settings"), color: "gray"    },
+    { href: "/dashboard/help",           icon: <BookOpen size={15} />, label: t("dashboard.nav.tutorial"), color: "amber"   },
   ];
 
   const pageTitle = (() => {
     if (routeActive(pathname, "/dashboard/control-center")) return t("dashboard.mission");
     if (routeActive(pathname, "/dashboard/operator"))       return t("dashboard.executive");
-    if (routeActive(pathname, "/dashboard/ai"))             return "AI וסריקה";
-    if (routeActive(pathname, "/dashboard/business"))       return "מרכז עסקי";
-    if (routeActive(pathname, "/dashboard/crm"))            return t("dashboard.crm");
+    if (routeActive(pathname, "/dashboard/ai"))             return t("dashboard.aiHub");
+    if (routeActive(pathname, "/dashboard/business"))       return industry.vocabulary.project;
+    if (routeActive(pathname, "/dashboard/crm"))            return industry.vocabulary.client;
     if (routeActive(pathname, "/dashboard/erp/invoice"))    return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/erp"))            return t("dashboard.erp");
     if (routeActive(pathname, "/dashboard/billing"))        return t("dashboard.billing");
     if (routeActive(pathname, "/dashboard/settings"))       return t("dashboard.settings");
     if (routeActive(pathname, "/dashboard/meckano"))        return t("dashboard.meckano");
-    if (routeActive(pathname, "/dashboard/help"))           return t("nav.tutorial");
-    if (routeActive(pathname, "/dashboard/admin"))          return "Admin";
+    if (routeActive(pathname, "/dashboard/help"))           return t("dashboard.nav.tutorial");
+    if (routeActive(pathname, "/dashboard/admin"))          return t("dashboard.nav.admin");
     return t("dashboard.main");
   })();
 
@@ -140,21 +133,21 @@ export default function DashboardLayoutClient({
 
   const NavContent = ({ onNav }: { onNav?: () => void }) => (
     <div className="space-y-0.5">
-      <SectionLabel label="ניווט ראשי" />
+      <SectionLabel label={t("dashboard.nav.main")} />
       {navItems.map((item) => (
         <SidebarLink key={item.href} {...item} onClick={onNav} isActive={routeActive(pathname, item.href)} />
       ))}
-      <SectionLabel label="כלים" />
+      <SectionLabel label={t("dashboard.nav.tools")} />
       {toolItems.map((item) => (
         <SidebarLink key={item.href} {...item} onClick={onNav} isActive={routeActive(pathname, item.href)} />
       ))}
       {isAdminUser && (
         <>
-          <SectionLabel label="מנהל" />
+          <SectionLabel label={t("dashboard.nav.admin")} />
           <SidebarLink
             href="/dashboard/admin"
             icon={<Shield size={15} />}
-            label="Admin"
+            label={t("dashboard.nav.admin")}
             badge="🔑"
             onClick={onNav}
             isActive={routeActive(pathname, "/dashboard/admin")}
@@ -182,14 +175,14 @@ export default function DashboardLayoutClient({
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-rose-50 hover:text-rose-500"
-          title="התנתקות"
+          title={t("dashboard.nav.logout")}
         >
           <LogOut size={13} />
         </button>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5 px-1">
         <span className="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-600">
-          {userRole.replaceAll("_", " ")}
+          {(userRole || "").replaceAll("_", " ")}
         </span>
         <span className="rounded-full border border-gray-100 bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400" dir="ltr">
           ORG·{orgId.slice(-6).toUpperCase()}
@@ -207,7 +200,7 @@ export default function DashboardLayoutClient({
         </div>
         <div>
           <p className="text-[15px] font-black leading-tight tracking-wide text-gray-900">
-            BSD<span className="text-indigo-600">-YBM</span>
+              BSD-YBM פתרונות AI
           </p>
           <p className="mt-0.5 text-[10px] leading-none text-gray-400 font-medium">Business Platform</p>
         </div>
@@ -226,136 +219,98 @@ export default function DashboardLayoutClient({
   );
 
   return (
-    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-gray-50" dir={dir}>
+    <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-white md:bg-gray-50" dir={dir}>
 
       {/* SIDEBAR — Desktop */}
       <aside className="hidden w-64 shrink-0 flex-col border-e border-gray-200 bg-white md:fixed md:inset-y-0 md:start-0 md:flex">
         <SidebarShell />
       </aside>
 
-      {/* MOBILE BACKDROP */}
+      {/* MOBILE DRAWER */}
       {mobileOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-[180] bg-black/20 backdrop-blur-sm md:hidden"
-          onClick={() => setMobileOpen(false)}
-          aria-label="Close"
-        />
+        <>
+          <div
+            className="fixed inset-0 z-[180] bg-black/40 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside
+            className={`fixed inset-y-0 start-0 z-[190] flex w-72 flex-col bg-white shadow-2xl transition-transform duration-300 md:hidden ${
+              mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full" : "-translate-x-full")
+            }`}
+          >
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-6 font-black text-gray-900">
+              <span>BSD-YBM</span>
+              <button onClick={() => setMobileOpen(false)} className="rounded-xl p-2 text-gray-400 hover:bg-gray-100"><X size={20} /></button>
+            </div>
+            <nav className="flex-1 overflow-y-auto px-4 py-2 thin-scrollbar"><NavContent onNav={() => setMobileOpen(false)} /></nav>
+            <UserCard />
+          </aside>
+        </>
       )}
 
-      {/* MOBILE DRAWER */}
-      <aside
-        className={`fixed inset-y-0 start-0 z-[190] flex w-64 flex-col border-e border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-out md:hidden ${
-          mobileOpen ? "translate-x-0" : (dir === "rtl" ? "translate-x-full pointer-events-none" : "-translate-x-full pointer-events-none")
-        }`}
-        aria-hidden={!mobileOpen}
-      >
-        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
-          <span className="text-sm font-black text-gray-900">BSD<span className="text-indigo-600">-YBM</span></span>
-          <button
-            type="button"
-            className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-            onClick={() => setMobileOpen(false)}
-          >
-            <X size={16} />
-          </button>
-        </div>
-        <nav className="flex-1 overflow-y-auto px-3 thin-scrollbar">
-          <NavContent onNav={() => setMobileOpen(false)} />
-        </nav>
-        <div className="px-3 pb-2">
-          <LanguageSwitcher showLabel className="flex w-full items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-[12px] font-semibold text-gray-500" />
-        </div>
-        <UserCard />
-      </aside>
-
       {/* MAIN CONTENT */}
-      <main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden md:ms-64" style={{ WebkitOverflowScrolling: "touch" }}>
-
-        {/* Mobile topbar */}
-        <div className="sticky top-0 z-[120] flex items-center justify-between gap-3 border-b border-gray-200 bg-white/95 px-4 py-3 shadow-sm md:hidden" style={{ backdropFilter: "blur(8px)" }}>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white p-2 text-gray-500 shadow-sm"
-            onClick={() => setMobileOpen(true)}
-          >
-            <Menu size={16} />
-          </button>
-          <p className="text-sm font-black text-gray-900">BSD<span className="text-indigo-600">-YBM</span></p>
-          <div className="flex items-center gap-1">
-            <DashboardNotificationBell />
-            <LanguageSwitcher />
+      <main className="relative flex min-w-0 flex-1 flex-col md:ms-64 pb-20 md:pb-0" style={{ WebkitOverflowScrolling: "touch" }}>
+        
+        {/* Header - Adaptive & Sleek */}
+        <header className="sticky top-0 z-[150] flex h-16 shrink-0 items-center justify-between border-b border-gray-100 bg-white/80 px-4 backdrop-blur-xl md:px-8">
+          <div className="flex items-center gap-3">
+             <div className="md:hidden flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-[10px] font-black text-white shadow-lg shadow-indigo-200">B</div>
+             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+               <h2 
+                 className="text-[13px] md:text-lg font-black text-gray-900 tracking-tight truncate max-w-[150px] md:max-w-none uppercase italic"
+                 style={{ color: 'var(--heading-color, #111827)' }}
+               >
+                 {pageTitle}
+               </h2>
+               {isAdminUser && (
+                 <div className="hidden lg:block">
+                   <AdminSystemHealth />
+                 </div>
+               )}
+             </div>
           </div>
-        </div>
-
-        {/* Desktop header */}
-        <header className="sticky top-0 z-[110] hidden border-b border-gray-200 bg-white/95 px-8 py-3.5 shadow-sm md:block" style={{ backdropFilter: "blur(12px)" }}>
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
-            <div className="flex items-center gap-2.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">BSD-YBM</span>
-              <span className="text-gray-300">/</span>
-              <h1 className="text-[15px] font-black text-gray-900">{pageTitle}</h1>
-              {isAdminUser && (
-                <span className="flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-600 border border-amber-200">
-                  <Shield size={10} />Admin
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <DashboardNotificationBell />
-              <LanguageSwitcher />
-            </div>
+          <div className="flex items-center gap-2">
+            <DashboardNotificationBell />
+            <button onClick={() => setMobileOpen(true)} className="md:hidden rounded-xl p-2 text-gray-400 hover:bg-gray-100">
+               <Menu size={20} />
+            </button>
           </div>
         </header>
 
         {/* Page content */}
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-5 pb-[max(7rem,env(safe-area-inset-bottom,0px))] sm:px-5 md:px-8 md:py-7 md:pb-14">
-
-          {/* Trial banner */}
-          {trialBannerDaysLeft !== null && (
-            <div className="flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-4 shadow-md shadow-indigo-200">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
-                  <Zap size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-black text-gray-900">
-                    {trialBannerDaysLeft === 1
-                      ? t("layout.trialBannerOne")
-                      : t("layout.trialBannerMany", { days: String(trialBannerDaysLeft) })}
-                  </p>
-                  <p className="text-[11px] text-indigo-200">שדרג עכשיו לפני שייגמר הניסיון</p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard/billing"
-                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-indigo-600 shadow-sm transition-all hover:shadow-md"
-              >
-                {t("layout.trialUpgrade")}
-                <ChevronRight size={12} />
-              </Link>
-            </div>
-          )}
-
-          {/* Page */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="min-h-0 min-w-0 max-w-full flex-1"
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+        <div className="mx-auto flex w-full flex-1 flex-col px-4 py-4 md:px-8 md:py-7">
+           <div key={pathname} className="min-h-0 min-w-0 max-w-full flex-1">
+             {children}
+           </div>
         </div>
 
-        <DashboardBottomDock orgId={orgId} />
+        {/* MOBILE NAVIGATION DOCK (Touch Friendly) */}
+        <div className="fixed bottom-0 left-0 right-0 z-[200] flex h-16 items-center justify-around border-t border-gray-100 bg-white/95 pb-safe backdrop-blur-xl md:hidden shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+           <Link href="/dashboard" className={`flex flex-col items-center gap-1 transition-colors ${pathname === "/dashboard" ? "text-indigo-600" : "text-gray-400"}`}>
+             <LayoutDashboard size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.nav.home")}</span>
+           </Link>
+           <Link href="/dashboard/business?tab=crm" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/crm") ? "text-indigo-600" : "text-gray-400"}`}>
+             <UsersIcon size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.quickActions.crm")}</span>
+           </Link>
+           <div className="relative -top-5">
+             <Link href="/dashboard/ai" className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-xl shadow-indigo-500/40 ring-4 ring-white active:scale-95 transition-transform">
+               <Zap size={24} />
+             </Link>
+           </div>
+           <Link href="/dashboard/business?tab=erp" className={`flex flex-col items-center gap-1 transition-colors ${pathname.includes("/erp") ? "text-indigo-600" : "text-gray-400"}`}>
+             <ReceiptText size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.quickActions.erp")}</span>
+           </Link>
+           <button onClick={() => setMobileOpen(true)} className="flex flex-col items-center gap-1 text-gray-400">
+             <Menu size={20} />
+             <span className="text-[8px] font-black uppercase tracking-wider">{t("dashboard.nav.more")}</span>
+           </button>
+        </div>
+
         <PostRegisterWelcomeSheet />
-        <OmniVoiceCommand />
-        <ContextualAssistant />
+        <DashboardBottomDock orgId={orgId} />
       </main>
     </div>
   );

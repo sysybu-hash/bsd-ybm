@@ -1,4 +1,4 @@
-﻿import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Users, Building, CreditCard, ArrowUpRight, Clock, ShieldCheck, Zap } from "lucide-react";
 import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
 import PlatformPayPalOwnerCard from "@/components/admin/PlatformPayPalOwnerCard";
+import AdminSystemHealth from "@/components/admin/AdminSystemHealth";
 
 type AdminPageProps = {
   searchParams?: Promise<{ section?: string }>;
@@ -15,7 +16,7 @@ type AdminPageProps = {
 export default async function AdminDashboard({ searchParams }: AdminPageProps) {
   const session = await getServerSession(authOptions);
 
-  // אבטחה: רק Steel Admin — לא מספיק SUPER_ADMIN ב-DB בלבד
+  // אבטחה: רק Steel Admin
   const allowed = isAdmin(session?.user?.email);
   if (!session || !allowed) {
     redirect("/dashboard");
@@ -25,21 +26,18 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
   const totalOrganizations = await prisma.organization.count();
   const totalUsers = await prisma.user.count();
   
-  // חישוב הכנסות (חשבוניות ששולמו דרך פייפלוס)
   const paidInvoices = await prisma.invoice.aggregate({
     where: { status: 'PAID' },
     _sum: { amount: true }
   });
   const totalRevenue = paidInvoices._sum.amount || 0;
 
-  // חישוב כסף שממתין לגבייה (חשבוניות פתוחות)
   const pendingInvoices = await prisma.invoice.aggregate({
     where: { status: 'PENDING' },
     _sum: { amount: true }
   });
   const pendingRevenue = pendingInvoices._sum.amount || 0;
 
-  // רשימת 5 הלקוחות (הארגונים) האחרונים שהצטרפו
   const recentClients = await prisma.organization.findMany({
     take: 5,
     orderBy: { createdAt: 'desc' },
@@ -63,53 +61,49 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
             <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">חדר מצב <span className="text-indigo-400">BSD-YBM</span></h1>
             <p className="mt-1 text-sm text-gray-400">ניהול לקוחות, מנויים והכנסות במבט על</p>
           </div>
-          <div className="flex flex-wrap gap-1.5 rounded-2xl border border-gray-100 bg-gray-50 p-1.5">
-            <Link
-              href="/dashboard/admin"
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeSection === "overview"
-                  ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-              }`}
-            >
-              סקירה כללית
-            </Link>
-            <Link
-              href="/dashboard/admin?section=subscriptions"
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeSection === "subscriptions"
-                  ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-              }`}
-            >
-              MASTER — מנויים
-            </Link>
-            <Link
-              href="/dashboard/admin?section=broadcast"
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeSection === "broadcast"
-                  ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-              }`}
-            >
-              שידור והתראות
-            </Link>
-            <Link
-              href="/dashboard/control-center"
-              className="rounded-xl px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition"
-            >
-              מרכז תפעול
-            </Link>
+          
+          <div className="flex flex-col items-end gap-4 min-w-[300px]">
+            <AdminSystemHealth />
+            <div className="flex flex-wrap gap-1.5 rounded-2xl border border-gray-100 bg-gray-50 p-1.5 self-stretch lg:self-auto">
+              <Link
+                href="/dashboard/admin"
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  activeSection === "overview"
+                    ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                סקירה כללית
+              </Link>
+              <Link
+                href="/dashboard/admin?section=subscriptions"
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  activeSection === "subscriptions"
+                    ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                ניהול מנויים
+              </Link>
+              <Link
+                href="/dashboard/admin?section=broadcast"
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  activeSection === "broadcast"
+                    ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                שידור והתראות
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {activeSection === "overview" ? <PlatformPayPalOwnerCard /> : null}
 
-      {/* KPI cards */}
       {activeSection === "overview" ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
         <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400"><CreditCard size={18} /></div>
@@ -117,7 +111,6 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           </div>
           <h2 className="text-3xl font-black text-gray-900">₪{totalRevenue.toLocaleString()}</h2>
         </div>
-
         <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400"><Clock size={18} /></div>
@@ -125,7 +118,6 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           </div>
           <h2 className="text-3xl font-black text-gray-900">₪{pendingRevenue.toLocaleString()}</h2>
         </div>
-
         <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400"><Building size={18} /></div>
@@ -133,7 +125,6 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           </div>
           <h2 className="text-3xl font-black text-gray-900">{totalOrganizations}</h2>
         </div>
-
         <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400"><Users size={18} /></div>
@@ -141,11 +132,9 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
           </div>
           <h2 className="text-3xl font-black text-gray-900">{totalUsers}</h2>
         </div>
-
       </div>
       ) : null}
 
-      {/* Clients table */}
       {activeSection === "overview" ? (
       <div className="rounded-2xl border border-gray-100 bg-white p-6">
         <div className="flex items-center justify-between mb-6">
@@ -153,52 +142,36 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
             <Building className="text-indigo-400" size={18} /> לקוחות ומנויים אחרונים
           </h3>
           <Link
-            href="/dashboard/billing?tab=control"
+            href="/dashboard/admin?section=subscriptions"
             className="rounded-xl bg-indigo-500/15 px-4 py-2 text-sm font-bold text-indigo-400 hover:bg-indigo-500/25 transition-colors"
           >
-            הצג את כל הלקוחות
+            ניהול כל המנויים
           </Link>
         </div>
-        <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-          <table className="w-full min-w-[640px] text-right">
+        <div className="overflow-x-auto">
+          <table className="w-full text-right">
             <thead>
               <tr className="border-b border-gray-100 text-gray-400 text-xs">
                 <th className="pb-3 font-bold uppercase tracking-wide">שם הלקוח / חברה</th>
                 <th className="pb-3 font-bold uppercase tracking-wide">אימייל איש קשר</th>
-                <th className="pb-3 font-bold uppercase tracking-wide">תאריך הצטרפות</th>
                 <th className="pb-3 font-bold uppercase tracking-wide">פעולות</th>
               </tr>
             </thead>
             <tbody>
-              {recentClients.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-sm text-gray-400">
-                    אין עדיין לקוחות במערכת.
+              {recentClients.map((client) => (
+                <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-4 font-bold text-gray-900">{client.name || 'ארגון'}</td>
+                  <td className="py-4 text-gray-400 text-sm">{client.users[0]?.email}</td>
+                  <td className="py-4">
+                    <Link
+                      href={`/dashboard/admin?section=subscriptions&orgId=${client.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-bold text-indigo-400"
+                    >
+                      ניהול מנוי <ArrowUpRight size={12} />
+                    </Link>
                   </td>
                 </tr>
-              ) : (
-                recentClients.map((client) => (
-                  <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-4 font-bold text-gray-900">
-                      {client.name || 'ארגון ללא שם'}
-                    </td>
-                    <td className="py-4 text-gray-400 text-sm">
-                      {client.users[0]?.email || 'אין אימייל'}
-                    </td>
-                    <td className="py-4 text-gray-400 text-sm">
-                      {client.createdAt.toLocaleDateString('he-IL')}
-                    </td>
-                    <td className="py-4">
-                      <Link
-                        href={`/dashboard/billing?tab=control&orgId=${encodeURIComponent(client.id)}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-bold text-indigo-400 hover:border-indigo-500/40 hover:bg-indigo-500/15 transition-colors"
-                      >
-                        ניהול מנוי <ArrowUpRight size={12} />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
@@ -206,18 +179,29 @@ export default async function AdminDashboard({ searchParams }: AdminPageProps) {
       ) : null}
 
       {activeSection === "subscriptions" ? (
-      <section id="subscriptions" className="space-y-4">
-        <div className="rounded-2xl border border-gray-100 bg-indigo-500/[0.08] p-6">
-          <p className="text-xs font-black uppercase tracking-wider text-indigo-400 mb-1">MASTER ADMIN</p>
-          <h2 className="text-xl font-black text-gray-900">ניהול מנויים מרוכז</h2>
-          <p className="text-sm text-gray-400 mt-1">כל פעולות עריכה/מחיקה זמינות במסך הבילינג המאוחד.</p>
+      <section className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 mb-6">
+          <CreditCard size={32} />
         </div>
-        <Link
-          href="/dashboard/billing?tab=control"
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-400 transition-colors shadow-lg shadow-indigo-500/25"
-        >
-          מעבר לניהול מנויים מאוחד <ArrowUpRight size={15} />
-        </Link>
+        <h2 className="text-2xl font-black text-gray-900">ניהול מנויים מרוכז</h2>
+        <p className="mt-2 text-gray-500 max-w-md mx-auto">
+          כאן תוכל לנהל את כל הלקוחות והמנויים תחת קורת גג אחת, ללא צורך בניווט לדפים חיצוניים.
+        </p>
+        <div className="mt-8 border-t border-gray-50 pt-8 text-start">
+           <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">רשימת לקוחות לניהול</p>
+           {/* Placeholder for actual table that was in billing */}
+           <div className="grid grid-cols-1 gap-3">
+              {recentClients.map(c => (
+                <div key={c.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-indigo-200 transition-all">
+                  <div>
+                    <p className="font-bold text-gray-900">{c.name}</p>
+                    <p className="text-xs text-gray-400">{c.users[0]?.email}</p>
+                  </div>
+                  <button className="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-bold text-indigo-600">ערוך מנוי</button>
+                </div>
+              ))}
+           </div>
+        </div>
       </section>
       ) : null}
 

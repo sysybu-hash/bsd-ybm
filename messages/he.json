@@ -4,6 +4,9 @@
     "tagline": "CRM · ERP · בינה מלאכותית — בפלטפורמה אחת לעסקים ישראלים"
   },
   "nav": {
+    "main": "השדרה המרכזית",
+    "tools": "כלי עבודה",
+    "admin": "ניהול מערכת",
     "solutions": "פתרונות AI",
     "erp": "ניהול ERP",
     "crm": "ניהול CRM",
@@ -19,60 +22,156 @@
     "userArea": "אזור משתמש BSD-YBM",
     "userAreaDesc": "התחברו לניהול כספים ולקוחות.",
     "login": "כניסה",
-    "register": "התחל בחינם",
-    "dashboard": "הדשבורד שלי"
+    "register": "הצטרפות לשדרה",
+    "dashboard": "השדרה שלי"
   },
   "auth": {
-    "loginTitle": "ברוכים השבים ל-BSD-YBM פתרונות AI",
-    "loginSubtitle": "התחברו עם Google — או באמצעות אימייל וסיסמה שהוגדרו על ידי מנהל המערכת.",
-    "googleContinue": "המשך עם Google",
-    "googleHint": "אנחנו לא רואים את סיסמת Google שלך.",
-    "or": "או",
-    "emailPassword": "אימייל וסיסמה",
-    "email": "אימייל",
-    "password": "סיסמה",
-    "submitLogin": "כניסה",
-    "loginFoot": "Google: רק לאחר אישור מנוי. משתמש חדש?",
-    "home": "עמוד הבית",
-    "errorConfig": "בעיית הגדרת שרת (בדוק משתני סביבה ל-Google).",
-    "errorAccess": "הגישה נדחתה.",
-    "errorVerification": "פג תוקף קישור האימות.",
-    "errorOAuth": "האימייל כבר קיים — נסה שוב עם Google.",
-    "errorCredentials": "התחברות נכשלה — בדקו אימייל וסיסמה.",
-    "errorDefault": "התחברות נכשלה. נסה שוב.",
-    "reasonNoAccount": "אין חשבון פעיל לאימייל זה. נא להירשם או לפנות למנהל.",
-    "reasonPending": "החשבון ממתין לאישור מנהל המערכת.",
-    "credFill": "מלאו אימייל וסיסמה",
-    "credError": "אימייל או סיסמה שגויים — או שאין סיסמה עדיין."
-  },
-  "register": {
-    "title": "צרו חשבון ב-BSD-YBM פתרונות AI",
-    "subtitle": "מלאו את הפרטים — מנהל המערכת יאשר את הגישה וישלח פרטי כניסה תוך 24 שעות.",
-    "email": "אימייל",
-    "name": "שם מלא",
-    "org": "שם ארגון / עסק",
-    "orgType": "סוג",
-    "submit": "שליחת בקשת הרשמה",
-    "hasAccount": "כבר רשומים? כניסה",
-    "errorNetwork": "שגיאת רשת"
+    "home": "בית",
+    "login": {
+      "title": "כניסה למערכת",
+      "subtitle": "בחרו Google או הזינו אימייל וסיסמה",
+      "google": "המשך עם Google",
+      "or": "או",
+      "credsLabel": "אימייל וסיסמה (מנהל מערכת)",
+      "emailPlaceholder": "email@example.com",
+      "passwordPlaceholder": "סיסמא",
+      "submit": "כניסה",
+      "noAccount": "אין לכם חשבון?",
+      "registerLink": "הרשמה",
+      "backToSite": "חזרה לאתר",
+      "connectedAs": "מחוברים כ־",
+      "continueToDashboard": "המשך לדשבורד",
+      "switchAccount": "החלף חשבון",
+      "errorEmpty": "מלאו אימייל וסיסמה",
+      "errorInvalid": "אימייל או סיסמה שגויים — או שאין סיסמה עדיין."
+    },
+    "register": {
+      "title": "פתיחת חשבון",
+      "subtitle": "הצטרפו לשדרת הניהול של 2026",
+      "google": "הרשמה עם Google",
+      "alreadyHave": "כבר רשומים?",
+      "loginLink": "כניסה למערכת",
+      "next": "המשך",
+      "back": "חזרה",
+      "backToLogin": "חזרה לכניסה",
+      "steps": {
+        "type": "סוג עסק",
+        "personal": "פרטים אישיים",
+        "orgName": "שם הארגון",
+        "confirm": "אישור ושליחה",
+        "of": "מתוך",
+        "step": "שלב"
+      },
+      "types": {
+        "home": { "label": "משק בית", "desc": "ניהול אישי ומשפחתי" },
+        "freelancer": { "label": "עצמאי / עוסק", "desc": "פרילנסר, יועץ, בעל מקצוע" },
+        "company": { "label": "חברה", "desc": "חברה בע\"מ, סטארטאפ" },
+        "enterprise": { "label": "ארגון / תאגיד", "desc": "ארגון גדול, עמותה, תאגיד" }
+      },
+      "labels": {
+        "fullName": "שם מלא",
+        "email": "אימייל",
+        "orgNameHome": "שם המשפחה / שם לניהול",
+        "orgNameFreelancer": "שם העסק שלך",
+        "orgNameCompany": "שם החברה / הארגון"
+      },
+      "placeholders": {
+        "fullName": "שם פרטי ומשפחה",
+        "orgNameHome": "למשל: משפחת כהן",
+        "orgNameFreelancer": "למשל: יועץ מס — ישראל ישראלי",
+        "orgNameCompany": "שם החברה"
+      },
+      "help": {
+        "email": "השתמשו באימייל Google — הכניסה למערכת תהיה עם אותה כתובת",
+        "orgName": "השם יופיע בחשבוניות, במסמכים ובממשק המערכת. ניתן לשנות בהגדרות לאחר ההרשמה."
+      },
+      "summary": {
+        "type": "סוג עסק",
+        "orgName": "שם הארגון",
+        "name": "שם",
+        "email": "אימייל",
+        "joining": "הצטרפות ל"
+      },
+      "submit": "שליחת בקשת הרשמה",
+      "submitTeam": "השלמת הצטרפות לצוות",
+      "success": {
+        "title": "הבקשה נשלחה בהצלחה!",
+        "titleTeam": "ברוכים הבאים לצוות!",
+        "desc": "קיבלנו את בקשתכם — מנהל המערכת יאשר תוך 24 שעות. לאחר אישור תוכלו להיכנס.",
+        "descTeam": "הצטרפתם לצוות בהצלחה. כעת ניתן להיכנס למערכת.",
+        "cta": "מעבר לכניסה"
+      }
+    }
   },
   "dashboard": {
-    "main": "דשבורד ראשי",
-    "crm": "ניהול לקוחות (CRM)",
-    "erp": "תפעול וכספים (ERP)",
-    "invoices": "חשבוניות",
-    "meckano": "מקאנו",
-    "aiHub": "מרכז AI",
-    "billing": "מנויים ותשלומים",
+    "main": "שדרת הניהול",
+    "crm": "לקוחות וסנטימנט",
+    "erp": "כספים ותפעול",
+    "aiHub": "מודיעין AI",
+    "billing": "מנוי ותוכנית",
     "settings": "הגדרות",
-    "admin": "Master Admin",
+    "admin": "ניהול על",
     "mission": "בקרת משימות",
-    "intelligence": "Intelligence",
-    "executive": "Executive / גרפים",
-    "executiveSubscriptions": "מנויים והזמנות במייל",
-    "executiveManageSubscriptions": "ניהול מנויים מתקדם",
-    "logout": "התנתק",
-    "smartArchiveHint": "ארכיון חכם (OCR) – חיפוש בכל המסמכים והסיכומים"
+    "intelligence": "Intelligence Hub",
+    "executive": "דוח ביצועים",
+    "meckano": "נוכחות מקאנו",
+    "logout": "התנתקות",
+    "smartArchiveHint": "חיפוש חכם בכל השדרה",
+    "welcome": "{greeting}, {name}",
+    "overview": "סקירה",
+    "actions": "פעולות",
+    "finance": "כספים",
+    "forecast": {
+      "title": "תחזית תזרים מזומנים (AI)",
+      "subtitle": "משולב CRM + ERP",
+      "status": "מעודכן בזמן אמת",
+      "actual": "כסף בקופה",
+      "pending": "חשבוניות פתוחות",
+      "crm": "תחזית מכירות CRM",
+      "total": "סה״כ צפוי (חודש קרוב)",
+      "hint": "התחזית מחושבת לפי הסתברות סגירה מוגדרת בכל שלב במשפך המכירות ב-CRM.",
+      "processing": "מעבד נתונים פיננסיים..."
+    },
+    "stats": {
+      "clients": "לקוחות",
+      "revenue": "הכנסות",
+      "expenses": "הוצאות ERP",
+      "intelligence": "חריגות AI"
+    },
+    "quickActions": {
+      "crm": "ניהול לקוחות",
+      "erp": "פיננסים וסריקה",
+      "negotiate": "סוכן מו״מ",
+      "settings": "הגדרות מערכת"
+    },
+    "greetings": {
+      "night": "לילה טוב",
+      "morning": "בוקר טוב",
+      "afternoon": "צהריים טובים",
+      "evening": "ערב טוב"
+    },
+    "nav": {
+      "main": "ניווט ראשי",
+      "tools": "כלי עבודה",
+      "admin": "מנהל מערכת",
+      "tutorial": "מרכז למידה",
+      "logout": "התנתקות",
+      "more": "עוד",
+      "home": "בית",
+      "solutions": "פתרונות"
+    },
+    "status": {
+      "activeTier": "מסלול פעיל",
+      "security": "מצב אבטחה",
+      "military": "רמה צבאית",
+      "enterprise": "Enterprise Pro 2026",
+      "responseTime": "זמן תגובה",
+      "activeAvenue": "שדרה פעילה",
+      "anomaly": "זוהתה חריגה",
+      "ago": "לפני",
+      "openControl": "פתח מרכז בקרה",
+      "viewReport": "צפייה בדוח"
+    }
   },
   "settings": {
     "title": "הגדרות",
@@ -103,7 +202,37 @@
     "dropDark": "גרור קבצים לכאן, או לחץ לבחירה מהמחשב",
     "filesQueued": "קבצים בתור",
     "run": "הרץ סריקה",
-    "processing": "מעבד…"
+    "processing": "מעבד…",
+    "tips": "טיפים לאופטימיזציית סריקה",
+    "tip1": "רצוי להעלות קבצי PDF נקיים לדיוק מרבי.",
+    "tip2": "ניתן לבחור מספר מנועים להשוואת תוצאות.",
+    "chat": "שיחה עם הנתונים",
+    "chatPlaceholder": "כתוב הודעה חדשה לבינה המלאכותית...",
+    "chatWelcome": "דברו באופן טבעי עם הבינה המלאכותית על נתוני ודוחות החברה.",
+    "noEngines": "לא נמצאו מנועי AI פעילים במערכת",
+    "noEnginesDesc": "יש להגדיר מפתחות API באזור הניהול.",
+    "configAi": "בחירת מנועים",
+    "preview": "תצוגה מקדימה",
+    "noPreview": "אין תצוגה מקדימה",
+    "results": "תוצאות פענוח",
+    "source": "ספק / מקור",
+    "document": "סוג מסמך"
+  },
+  "aiHub": {
+    "title": "מרכז AI וסריקה",
+    "subtitle": "סריקה חכמה, חילוץ מידע, שיחה עם נתונים ועוזר כתיבה.",
+    "scanTab": "סריקת מסמכים",
+    "chatTab": "שיחה AI",
+    "formsTab": "עוזר טפסים",
+    "linksTab": "קישורים",
+    "enginesCount": "{count} מנועים זמינים",
+    "scansRemaining": "{count} סריקות נותרו",
+    "formGoal": "מה על ה-AI לבצע?",
+    "formContext": "גוף המידע - פרטים והקשר",
+    "formPlaceholder": "הדביקו לכאן תוכן לעיבוד...",
+    "formRun": "בצע עיבוד כעת",
+    "formOutput": "תשובת מנוע עיבוד",
+    "copyOutput": "העתק ניסוח"
   },
   "cookie": {
     "title": "עוגיות",
@@ -130,6 +259,44 @@
     "label": "שפה",
     "hint": "מזוהה אוטומטית מהמכשיר — ניתן לשנות בכל עת.",
     "updated": "השפה עודכנה"
+  },
+  "crm": {
+    "pipeline": "צינור מכירות",
+    "list": "רשימת לקוחות",
+    "projects": "תיקי מאסטר",
+    "automations": "אוטומציות",
+    "newLead": "ליד חדש",
+    "active": "בתהליך",
+    "proposal": "הצעת מחיר",
+    "won": "נסגר בהצלחה",
+    "lost": "לא רלוונטי",
+    "addContact": "הוספת לקוח",
+    "editContact": "עריכת לקוח",
+    "clientName": "שם לקוח",
+    "value": "פוטנציאל עסקי",
+    "notes": "הערות",
+    "search": "חיפוש לקוח..."
+  },
+  "erp": {
+    "invoice": "חשבונית מס",
+    "receipt": "קבלה",
+    "invoiceReceipt": "חשבונית מס / קבלה",
+    "creditNote": "הודעת זיכוי",
+    "bill": "חשבונית ספק",
+    "issuance": "הנפקת מסמכים",
+    "history": "היסטוריית מסמכים",
+    "step1": "פרטים",
+    "step2": "פריטים",
+    "step3": "בדיקה",
+    "step4": "סיום",
+    "clientName": "שם הלקוח",
+    "dueDate": "תאריך יעד",
+    "amount": "סכום",
+    "vat": "מע״מ",
+    "total": "סה״כ",
+    "generate": "הנפק מסמך",
+    "saveToCrm": "שמור ל-CRM",
+    "saveToErp": "שמור ל-ERP"
   },
   "common": {
     "loading": "טוען…"
@@ -359,5 +526,97 @@
         "desc": "המערכת מזהה את שפת המשתמש אוטומטית — עברית, אנגלית, ערבית ורוסית."
       }
     }
+  },
+  "marketing3D": {
+    "heroBadge": "מהפכת הניהול האוטונומי 2026",
+    "heroTitle": "השדרה שמחברת",
+    "heroTitleGlow": "בין כולם.",
+    "heroDesc": "BSD-YBM מגדירה מחדש את גבולות היכולת העסקית. פלטפורמה אחידה המשלבת ERP, CRM ובינה מלאכותית אוטונומית לכדי חוויית ניהול עוצמתית, נקייה ומקצועית.",
+    "ctaStart": "הצטרפות לשדרה",
+    "ctaExplore": "איך זה עובד?",
+    "solutionsKicker": "ארכיטקטורת ניהול אחודה",
+    "solutionsTitle": "השדרה. הזרימה. התוצאה.",
+    "fieldOpsTitle": "תפעול שטח ו-ERP",
+    "fieldOpsDesc": "סנכרון מוחלט בין השטח למטה. ניהול קריאות שירות, מלאי וחתימות דיגיטליות בממשק שמרגיש כמו חלק ממך.",
+    "capitalFlowTitle": "בינה פיננסית",
+    "capitalFlowDesc": "שליטה תזרימית מדויקת. סריקת AI רב-מנועית לניהול הוצאות, התראות חריגה ופענוח מסמכים אוטומטי.",
+    "revenueEngineTitle": "CRM וניתוח סנטימנט",
+    "revenueEngineDesc": "מנוע הלקוחות של BSD-YBM מזהה צרכים לפני שהם הופכים לבקשות. הבנה עמוקה של סנטימנט הלקוח למניעת נטישה.",
+    "predictiveCommerceTitle": "סוכן פעולה אוטונומי",
+    "predictiveCommerceDesc": "סוכן חכם המזהה עליות מחיר ספקים ומבצע מו״מ אוטונומי להגנה על שולי הרווח שלך. המערכת שנלחמת עבורך.",
+    "intelKicker": "מרכז בינה אקטיבית",
+    "intelTitle": "המוח שמאחורי",
+    "intelTitleGlow": "השדרה.",
+    "intelDesc": "המערכת שלנו היא לא רק מאגר נתונים — היא מנוע פעולה. בזמן שאתם מתמקדים בצמיחה, ה-AI סורק, משווה ומגן על כל שקל מההוצאות שלכם.",
+    "intelF1": "מנוע סריקה OCR רב-מנועי (Gemini/OpenAI/Claude)",
+    "intelF2": "זיהוי אנומליות ופערי מחיר בין ספקים",
+    "intelF3": "ניהול מו״מ אוטונומי מבוסס נתונים",
+    "intelF4": "ניתוח בריאות לקוח וסנטימנט בזמן אמת",
+    "ctaFinalTitle": "הגיע הזמן",
+    "ctaFinalGlow": "להתחבר.",
+    "ctaFinalDesc": "מערכת BSD-YBM 2026 היא השדרה המחברת בין כל חלקי העסק שלך. הצטרפו לעידן הניהול האוטונומי שעובד עבורכם.",
+    "ctaFinalJoin": "הצטרפו לשדרה עכשיו",
+    "autonomous": "מערכת אוטונומית",
+    "native2026": "דור 2026",
+    "footer": {
+      "copy": "BSD-YBM אקזקוטיב © 2026",
+      "identity": "זהות דיגיטלית",
+      "ethics": "אתיקה של פלטפורמה",
+      "security": "אבטחה גלובלית"
+    }
+  },
+  "pricing": {
+    "headline": "תוכניות המותאמות לשדרה שלך",
+    "subheadline": "בחרו את המנוי המדויק לצרכים העסקיים שלכם",
+    "choose": "בחר תוכנית",
+    "free": {
+      "name": "FREE",
+      "price": "₪0",
+      "desc": "לניהול אישי בסיסי",
+      "f1": "10 סריקות AI בחודש",
+      "f2": "ניהול הוצאות בסיסי",
+      "f3": "גישה לדשבורד השדרה"
+    },
+    "household": {
+      "name": "HOUSEHOLD",
+      "price": "₪29",
+      "desc": "למשקי בית",
+      "f1": "50 סריקות AI בחודש",
+      "f2": "סריקה רב-מנועית",
+      "f3": "תחזית תזרים בסיסית"
+    },
+    "dealer": {
+      "name": "DEALER",
+      "price": "₪89",
+      "desc": "עצמאיים ופרילנסרים",
+      "f1": "200 סריקות AI בחודש",
+      "f2": "סוכן מו״מ אוטונומי",
+      "f3": "ניהול לקוחות CRM"
+    },
+    "company": {
+      "name": "COMPANY",
+      "price": "₪189",
+      "desc": "חברות וצוותים",
+      "f1": "1000 סריקות AI בחודש",
+      "f2": "ניהול מלאי ו-Field Ops",
+      "f3": "חיבור למקאנו וסנכרון מלא"
+    },
+    "corporate": {
+      "name": "CORPORATE",
+      "price": "Custom",
+      "desc": "תאגידי ענק",
+      "f1": "סריקות ללא הגבלה",
+      "f2": "סוכן מו״מ פרימיום",
+      "f3": "תמיכת VIP ואינטגרציות"
+    }
+  },
+  "professions": {
+    "GENERAL": { "label": "ניהול כללי", "client": "לקוח", "project": "פרויקט", "document": "מסמך", "inventory": "מלאי" },
+    "LAWYER": { "label": "משרד עורכי דין", "client": "לקוח / מיוצג", "project": "תיק משפטי", "document": "כתב בית-דין / נספח", "inventory": "ספריה" },
+    "ACCOUNTANT": { "label": "ראיית חשבון / ייעוץ מס", "client": "נישום / לקוח", "project": "ביקורת / דוח", "document": "מסמך חשבונאי", "inventory": "ארכיון" },
+    "CONTRACTOR": { "label": "קבלנות / בנייה / שיפוצים", "client": "יזם / לקוח", "project": "אתר עבודה / פרויקט", "document": "כתב כמויות / חשבונית חומרים", "inventory": "ציוד וכלי עבודה" },
+    "HEALTH": { "label": "רפואה / טיפול / קליניקה", "client": "מטופל / פציינט", "project": "סדרת טיפולים", "document": "תיק רפואי / מרשם", "inventory": "מלאי תרופות/ציוד" },
+    "RETAIL": { "label": "חנות / מסחר / קמעונאות", "client": "לקוח קצה", "project": "ספק / הזמנה", "document": "תעודת משלוח / חשבונית רכש", "inventory": "מדפי חנות / מחסן" },
+    "REAL_ESTATE": { "label": "נדל\"ן / תיווך", "client": "קונה / שוכר", "project": "נכס / דירה", "document": "חוזה / נסח טאבו", "inventory": "מאגר נכסים" }
   }
 }

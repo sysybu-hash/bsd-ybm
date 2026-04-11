@@ -143,7 +143,6 @@ export async function processDocumentAction(
     }
 
     const uiLocale = await getServerLocale();
-    const documentInstruction = getDocumentJsonInstruction(uiLocale);
 
     const requested = normalizeAiProviderId(formData.get("provider") as string | null);
     const rawMime = file.type || "application/octet-stream";
@@ -154,11 +153,18 @@ export async function processDocumentAction(
       select: {
         email: true,
         role: true,
-        organization: { select: { subscriptionTier: true } },
+        organization: { select: { subscriptionTier: true, industry: true } },
       },
     });
     const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
-    /** רק בעל הפלטפורמה (מייל) — לא SUPER_ADMIN שגוי ב־DB */
+    const userIndustry = accessUser?.organization?.industry ?? "GENERAL";
+
+    // Industry adaptation for AI instructions
+    const { getIndustryConfig } = await import("@/lib/professions/config");
+    const industryConfig = getIndustryConfig(userIndustry);
+    
+    // Merge standard instructions with industry-specific tweaks
+    const documentInstruction = `${getDocumentJsonInstruction(uiLocale)}\n\nIMPORTANT PROFESSIONAL CONTEXT (INDUSTRY: ${industryConfig.label}):\n${industryConfig.aiInstructions}`;
     const platformAiBypass = !!accessUser?.email && isAdmin(accessUser.email);
     const allowedProviders = getAllowedAiProvidersForPlan(orgPlan, platformAiBypass);
 
@@ -233,6 +239,15 @@ export async function processDocumentAction(
             break;
           case "anthropic":
             aiData = await extractDocumentWithAnthropic(
+              base64Data,
+              mimeType,
+              file.name,
+              documentInstruction,
+            );
+            break;
+          case "docai":
+            const { extractDocumentWithDocAI } = await import("@/lib/ai-extract-docai");
+            aiData = await extractDocumentWithDocAI(
               base64Data,
               mimeType,
               file.name,

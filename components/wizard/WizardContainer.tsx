@@ -1,7 +1,8 @@
 "use client";
 
 import { ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
+
 import { CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 
@@ -119,18 +120,9 @@ export default function WizardContainer({
 
       {/* Content Area */}
       <div className="relative min-h-[400px] overflow-hidden p-6 md:p-8 bg-surface-white">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={currentStep.id}
-            initial={{ opacity: 0, x: isRtl ? -20 : 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="h-full w-full"
-          >
-            {currentStep.content}
-          </motion.div>
-        </AnimatePresence>
+        <div key={currentStep.id} className="h-full w-full">
+          {currentStep.content}
+        </div>
       </div>
 
       {/* Footer Navigation */}

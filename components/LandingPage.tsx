@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -13,6 +13,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LandingTutorialSection from "@/components/landing/LandingTutorialSection";
 import LandingNavDrawer from "@/components/landing/LandingNavDrawer";
 import PricingSection from "@/components/landing/PricingSection";
+import DashboardBottomDock from "@/components/DashboardBottomDock";
 
 export default function LandingPage() {
   const { t, dir } = useI18n();
@@ -81,7 +82,7 @@ export default function LandingPage() {
               style={{ backgroundColor: "var(--primary-color)" }}
             >B</span>
             <span style={{ color: "var(--primary-color)" }}>BSD-</span>
-            <span className="text-gray-900">YBM</span>
+            <span className="text-gray-900">YBM פתרונות AI</span>
           </Link>
 
           {/* Desktop nav */}
@@ -119,7 +120,7 @@ export default function LandingPage() {
             </Link>
 
             <Link
-              href="/register"
+              href="/register?plan=FREE"
               className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
               style={{ backgroundColor: "var(--primary-color)" }}
             >
@@ -183,7 +184,7 @@ export default function LandingPage() {
           {/* CTA buttons */}
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
-              href="/register"
+              href="/register?plan=FREE"
               className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-black text-white shadow-xl shadow-indigo-900/40 transition-all hover:bg-indigo-500/15 hover:scale-[1.02]"
             >
               {t("landing.ctaStart")} {chevron}
@@ -338,6 +339,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
     </div>
   );
 }

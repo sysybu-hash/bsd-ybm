@@ -1,9 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain,
   Bot,
@@ -11,8 +10,33 @@ import {
   Send,
   Sparkles,
   Loader2,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+
+interface SpeechRecognitionEvent extends Event {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: any) => void;
+  onend: () => void;
+}
 
 type Tab = "chat" | "finance";
 type Role = "user" | "ai";
@@ -29,14 +53,62 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
     { role: "ai", content: t("aiBubble.initialGreeting") },
   ]);
   const [sending, setSending] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState<number | null>(null);
   const [fQuery, setFQuery] = useState("");
   const [fAnswer, setFAnswer] = useState("");
   const [fLoading, setFLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { data: session, status } = useSession();
   const loggedIn = status === "authenticated" && Boolean(session?.user);
 
-  const primary = "var(--primary-color, #4f46e5)";
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        if (recognitionRef.current) {
+          recognitionRef.current.continuous = false;
+          recognitionRef.current.lang = locale === "he" ? "he-IL" : "en-US";
+          recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+            const transcript = event.results[0][0].transcript;
+            if (tab === "chat") setInput(transcript);
+            else setFQuery(transcript);
+            setIsListening(false);
+          };
+          recognitionRef.current.onerror = () => setIsListening(false);
+          recognitionRef.current.onend = () => setIsListening(false);
+        }
+      }
+    }
+  }, [locale, tab]);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+  const speak = (text: string, index: number) => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      if (isSpeaking === index) {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(null);
+      } else {
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(text);
+        ut.lang = locale === "he" ? "he-IL" : "en-US";
+        ut.onend = () => setIsSpeaking(null);
+        window.speechSynthesis.speak(ut);
+        setIsSpeaking(index);
+      }
+    }
+  };
 
   useEffect(() => {
     setMessages([{ role: "ai", content: t("aiBubble.initialGreeting") }]);
@@ -68,7 +140,7 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
 
   const sendChat = async () => {
     const userMsg = input.trim();
-    if (!userMsg || sending) return;
+    if (userMsg === "" || sending) return;
     setInput("");
     const next: ChatMessage[] = [...messages, { role: "user", content: userMsg }];
     setMessages(next);
@@ -88,181 +160,138 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
       const reply =
         typeof data.text === "string" && data.text.length > 0
           ? data.text
-          : data.error ?? t("aiBubble.errorGeneric");
+          : (data.error ?? "שגיאת תקשורת");
       setMessages((p) => [...p, { role: "ai", content: reply }]);
     } catch {
-      setMessages((p) => [...p, { role: "ai", content: t("aiBubble.errorNetwork") }]);
+      setMessages((p) => [...p, { role: "ai", content: "שגיאת רשת" }]);
     } finally {
       setSending(false);
     }
   };
 
   const title = useMemo(
-    () => (tab === "chat" ? t("aiBubble.title") : "עוזר פיננסי"),
+    () => (tab === "chat" ? t("aiBubble.title") : t("dashboard.finance")),
     [tab, t],
   );
 
   return (
-    <div className="relative z-[2]" dir={dir}>
-      <motion.button
+    <div className="relative" dir={dir}>
+      <button
         type="button"
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label={open ? t("aiBubble.ariaClose") : "פתח עוזר AI"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-2 ring-white/90"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-2 ring-white"
       >
-        {open ? <X size={26} aria-hidden /> : <Brain size={26} aria-hidden />}
-      </motion.button>
+        {open ? <X size={26} /> : <Brain size={26} />}
+      </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.96 }}
-            className="absolute bottom-[calc(100%+0.75rem)] start-1/2 z-[220] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2"
-          >
-            <div
-              className={`overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60 ${
-                tab === "chat" ? "" : ""
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
-                <div className="flex min-w-0 items-center gap-2 text-xs font-black text-gray-900">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-400">
-                    <Sparkles size={14} className="shrink-0" aria-hidden />
-                  </div>
-                  <span className="truncate">{title}</span>
+      {open && (
+        <div className="absolute bottom-16 start-1/2 z-[220] w-80 -translate-x-1/2">
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
+            <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
+              <div className="flex items-center gap-2 text-xs font-black text-gray-900">
+                <Sparkles size={14} className="text-indigo-500" />
+                <span>{title}</span>
+              </div>
+              <div className="flex gap-1 rounded-xl border border-gray-200 bg-white p-0.5 shadow-sm">
+                <button
+                  onClick={() => setTab("chat")}
+                  className={`rounded-lg px-2 py-1 text-[10px] font-black ${
+                    tab === "chat" ? "bg-indigo-600 text-white" : "text-gray-400"
+                  }`}
+                >
+                  CHAT
+                </button>
+                <button
+                  onClick={() => setTab("finance")}
+                  className={`rounded-lg px-2 py-1 text-[10px] font-black ${
+                    tab === "finance" ? "bg-indigo-600 text-white" : "text-gray-400"
+                  }`}
+                >
+                  FINANCE
+                </button>
+              </div>
+            </div>
+
+            {tab === "chat" ? (
+              <>
+                <div
+                  ref={scrollRef}
+                  className="h-64 space-y-4 overflow-y-auto bg-gray-50/50 p-4 text-sm"
+                >
+                  {messages.map((m, i) => (
+                    <div
+                      key={`msg-${i}`}
+                      className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-2xl px-3 py-2 text-[13px] relative ${
+                          m.role === "user"
+                            ? "bg-indigo-600 text-white"
+                            : "border border-gray-200 bg-white text-slate-700"
+                        }`}
+                      >
+                        {m.content}
+                        {m.role === "ai" && (
+                          <button 
+                            onClick={() => speak(m.content, i)}
+                            className="ml-2 text-slate-400"
+                          >
+                            {isSpeaking === i ? <VolumeX size={12} /> : <Volume2 size={12} />}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {sending && <div className="text-[10px] text-slate-400 animate-pulse">מהרהר...</div>}
                 </div>
-                <div className="flex shrink-0 gap-1 rounded-xl border border-gray-200 bg-white p-0.5 shadow-sm">
+                <div className="flex gap-2 border-t border-gray-200 bg-white p-2">
                   <button
-                    type="button"
-                    onClick={() => setTab("chat")}
-                    className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "chat" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-gray-50"
-                    }`}
+                    onClick={toggleListening}
+                    className={`p-2 rounded-xl ${isListening ? "bg-rose-100 text-rose-600" : "bg-slate-100 text-slate-500"}`}
                   >
-                    צ׳אט
+                    {isListening ? <MicOff size={16} /> : <Mic size={16} />}
                   </button>
+                  <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendChat()}
+                    placeholder="..."
+                    className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-[11px] outline-none"
+                  />
                   <button
-                    type="button"
-                    onClick={() => setTab("finance")}
-                    className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
-                      tab === "finance" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-gray-50"
-                    }`}
+                    onClick={() => sendChat()}
+                    disabled={sending || !input.trim()}
+                    className="p-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50"
                   >
-                    כספים
+                    {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="p-4 bg-white min-h-[160px]">
+                <div className="text-xs text-gray-600 whitespace-pre-wrap">
+                  {fAnswer || "שאל שאלה פיננסית..."}
+                  {fLoading && <Loader2 className="animate-spin text-indigo-400" size={14} />}
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <input
+                    value={fQuery}
+                    onChange={(e) => setFQuery(e.target.value)}
+                    className="flex-1 border rounded-xl px-3 py-2 text-[11px]"
+                    placeholder="שאל את ה-AI..."
+                  />
+                  <button
+                    onClick={askFinance}
+                    className="bg-indigo-600 text-white px-3 py-2 rounded-xl text-[11px]"
+                  >
+                    שלח
                   </button>
                 </div>
               </div>
-
-              {tab === "chat" ? (
-                <>
-                  <div
-                    ref={scrollRef}
-                    className="h-56 space-y-2 overflow-y-auto bg-gray-50 p-3 text-sm"
-                  >
-                    {messages.map((m, i) => (
-                      <div
-                        key={`${i}-${m.content.slice(0, 8)}`}
-                        className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}
-                      >
-                        <div
-                          className={`max-w-[88%] rounded-2xl px-3 py-2 text-xs font-medium leading-relaxed ${
-                            m.role === "user"
-                              ? "rounded-br-sm bg-indigo-600 text-white"
-                              : "rounded-bl-sm border border-gray-200 bg-white text-gray-700"
-                          }`}
-                        >
-                          {m.content}
-                        </div>
-                      </div>
-                    ))}
-                    {sending ? (
-                      <div className="flex justify-end text-xs text-gray-400">
-                        <Loader2 className="animate-spin" size={14} />
-                      </div>
-                    ) : null}
-                  </div>
-                  {loggedIn ? (
-                    <div className="border-t border-gray-100 px-2 py-1 text-center">
-                      <Link
-                        href="/dashboard/ai"
-                        onClick={() => setOpen(false)}
-                        className="text-[10px] font-bold text-indigo-400 hover:underline"
-                      >
-                        {t("aiBubble.centerLink")}
-                      </Link>
-                    </div>
-                  ) : null}
-                  <div className="flex gap-2 border-t border-gray-200 bg-white p-2">
-                    <input
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          void sendChat();
-                        }
-                      }}
-                      disabled={sending}
-                      placeholder={t("aiBubble.placeholder")}
-                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs text-gray-900 outline-none focus:border-indigo-500"
-                    />
-                    <button
-                      type="button"
-                      disabled={sending}
-                      onClick={() => void sendChat()}
-                      className="rounded-xl bg-indigo-600 p-2 text-white disabled:opacity-50"
-                      aria-label={t("aiBubble.ariaSend")}
-                    >
-                      {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="bg-white">
-                  <div className="flex items-center gap-2 border-b border-gray-100 bg-indigo-500/15 px-3 py-2 text-xs font-bold text-white">
-                    <Bot size={14} aria-hidden />
-                    שאלות על הוצאות, הכנסות ומסמכים
-                  </div>
-                  <div className="h-44 overflow-y-auto p-3 text-xs text-gray-600">
-                    {fAnswer ? (
-                      <p className="whitespace-pre-wrap leading-relaxed">{fAnswer}</p>
-                    ) : (
-                      <p className="italic text-gray-400">
-                        לדוגמה: &quot;כמה הוצאנו החודש על חשמל?&quot;
-                      </p>
-                    )}
-                    {fLoading ? (
-                      <Loader2 className="mt-2 animate-spin text-indigo-400" size={18} />
-                    ) : null}
-                  </div>
-                  <div className="flex gap-2 border-t border-gray-200 p-2">
-                    <input
-                      value={fQuery}
-                      onChange={(e) => setFQuery(e.target.value)}
-                      placeholder="שאל את ה-AI..."
-                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2 text-xs"
-                    />
-                    <button
-                      type="button"
-                      disabled={fLoading}
-                      onClick={() => void askFinance()}
-                      className="rounded-xl bg-indigo-600 px-3 py-2 text-white disabled:opacity-50"
-                    >
-                      <Send size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

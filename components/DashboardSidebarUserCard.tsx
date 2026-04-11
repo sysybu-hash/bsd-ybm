@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { signOut, useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
@@ -31,7 +31,7 @@ export default function DashboardSidebarUserCard({
         <div className="relative shrink-0">
           <span
             className="absolute -top-0.5 z-[1] h-2.5 w-2.5 rounded-full bg-emerald-500/15 shadow-[0_0_10px_rgba(16,185,129,0.85)] ring-2 ring-white"
-            title="מחובר"
+            title={t("dashboard.forecast.status")}
             aria-hidden
           />
           <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-white">

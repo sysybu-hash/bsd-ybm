@@ -4,6 +4,9 @@
     "tagline": "Intelligence Platform"
   },
   "nav": {
+    "main": "The Main Avenue",
+    "tools": "Executive Tools",
+    "admin": "System Admin",
     "solutions": "AI solutions",
     "erp": "ERP",
     "crm": "CRM",
@@ -19,60 +22,156 @@
     "userArea": "BSD-YBM user area",
     "userAreaDesc": "Sign in to manage finances and customers.",
     "login": "Sign in",
-    "register": "Register",
-    "dashboard": "Dashboard"
+    "register": "Join the Avenue",
+    "dashboard": "My Avenue"
   },
   "auth": {
-    "loginTitle": "Sign in",
-    "loginSubtitle": "Google — or email and password if issued by your admin.",
-    "googleContinue": "Continue with Google",
-    "googleHint": "We never see your Google password.",
-    "or": "or",
-    "emailPassword": "Email and password",
-    "email": "Email",
-    "password": "Password",
-    "submitLogin": "Sign in",
-    "loginFoot": "Google: only after subscription approval. New user?",
     "home": "Home",
-    "errorConfig": "Server configuration issue (check Google env vars).",
-    "errorAccess": "Access denied.",
-    "errorVerification": "Verification link expired.",
-    "errorOAuth": "Email already exists — try Google again.",
-    "errorCredentials": "Sign-in failed — check email and password.",
-    "errorDefault": "Sign-in failed. Try again.",
-    "reasonNoAccount": "No active account for this email. Register or contact your admin.",
-    "reasonPending": "Your account is pending admin approval.",
-    "credFill": "Enter email and password",
-    "credError": "Wrong email/password — or no password issued yet."
-  },
-  "register": {
-    "title": "Create an account",
-    "subtitle": "Submit details — an admin will approve the subscription and send access details.",
-    "email": "Email",
-    "name": "Full name",
-    "org": "Organization / business name",
-    "orgType": "Type",
-    "submit": "Submit registration",
-    "hasAccount": "Already registered? Sign in",
-    "errorNetwork": "Network error"
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Choose Google or enter email and password",
+      "google": "Continue with Google",
+      "or": "or",
+      "credsLabel": "Email & Password (Admin)",
+      "emailPlaceholder": "email@example.com",
+      "passwordPlaceholder": "Password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register",
+      "backToSite": "Back to site",
+      "connectedAs": "Connected as ",
+      "continueToDashboard": "Continue to Dashboard",
+      "switchAccount": "Switch Account",
+      "errorEmpty": "Enter email and password",
+      "errorInvalid": "Invalid email or password — or no password set yet."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join the 2026 Management Avenue",
+      "google": "Register with Google",
+      "alreadyHave": "Already registered?",
+      "loginLink": "Sign In",
+      "next": "Next",
+      "back": "Back",
+      "backToLogin": "Back to Login",
+      "steps": {
+        "type": "Business Type",
+        "personal": "Personal Details",
+        "orgName": "Organization Name",
+        "confirm": "Confirm & Submit",
+        "of": "of",
+        "step": "Step"
+      },
+      "types": {
+        "home": { "label": "Household", "desc": "Personal and family management" },
+        "freelancer": { "label": "Freelancer", "desc": "Consultant, sole trader, pro" },
+        "company": { "label": "Company", "desc": "Private company, startup" },
+        "enterprise": { "label": "Enterprise", "desc": "Corporation, large organization" }
+      },
+      "labels": {
+        "fullName": "Full Name",
+        "email": "Email",
+        "orgNameHome": "Family name / Management name",
+        "orgNameFreelancer": "Your business name",
+        "orgNameCompany": "Company / Org name"
+      },
+      "placeholders": {
+        "fullName": "First and last name",
+        "orgNameHome": "e.g., Cohen Family",
+        "orgNameFreelancer": "e.g., Israel Israeli Consulting",
+        "orgNameCompany": "Company Name"
+      },
+      "help": {
+        "email": "Use your Google email — login will use the same address",
+        "orgName": "This will appear on invoices and documents. Can be changed later."
+      },
+      "summary": {
+        "type": "Org Type",
+        "orgName": "Organization",
+        "name": "Name",
+        "email": "Email",
+        "joining": "Joining "
+      },
+      "submit": "Submit Application",
+      "submitTeam": "Complete Team Join",
+      "success": {
+        "title": "Application Submitted!",
+        "titleTeam": "Welcome to the Team!",
+        "desc": "We received your request — admin will approve within 24 hours.",
+        "descTeam": "You joined effectively. You can now sign in.",
+        "cta": "Proceed to Login"
+      }
+    }
   },
   "dashboard": {
-    "main": "Main dashboard",
-    "crm": "CRM",
-    "erp": "ERP & finance",
-    "invoices": "Invoices",
-    "meckano": "Meckano",
-    "aiHub": "AI hub",
-    "billing": "Billing",
+    "main": "Management Avenue",
+    "crm": "CRM & Sentiment",
+    "erp": "ERP & Operations",
+    "aiHub": "AI Hub",
+    "billing": "Subscription",
     "settings": "Settings",
-    "admin": "Master admin",
-    "mission": "Mission control",
-    "intelligence": "Intelligence",
-    "executive": "Executive / charts",
-    "executiveSubscriptions": "Subscriptions & email invites",
-    "executiveManageSubscriptions": "Advanced subscription admin",
+    "admin": "Super Admin",
+    "mission": "Mission Control",
+    "intelligence": "Intelligence Hub",
+    "executive": "Executive Report",
+    "meckano": "Meckano Attendance",
     "logout": "Sign out",
-    "smartArchiveHint": "Smart archive (OCR) — search across all documents and summaries"
+    "smartArchiveHint": "Search across the Avenue",
+    "welcome": "{greeting}, {name}",
+    "overview": "Overview",
+    "actions": "Actions",
+    "finance": "Finance",
+    "forecast": {
+      "title": "Cash Flow Forecast (AI)",
+      "subtitle": "Integrated CRM + ERP",
+      "status": "Live Data Feed",
+      "actual": "Cash on Hand",
+      "pending": "Open Invoices",
+      "crm": "CRM Sales Forecast",
+      "total": "Total Projected (Next Month)",
+      "hint": "Forecast uses weighted probability based on CRM pipeline stages.",
+      "processing": "Analyzing financial data..."
+    },
+    "stats": {
+      "clients": "Clients",
+      "revenue": "Revenue",
+      "expenses": "ERP Expenses",
+      "intelligence": "AI Anomalies"
+    },
+    "quickActions": {
+      "crm": "CRM Management",
+      "erp": "ERP & Scanning",
+      "negotiate": "Negotiation Agent",
+      "settings": "System Settings"
+    },
+    "greetings": {
+      "night": "Good night",
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "nav": {
+      "main": "Main Navigation",
+      "tools": "Business Tools",
+      "admin": "System Admin",
+      "tutorial": "Learning Center",
+      "logout": "Logout",
+      "more": "More",
+      "home": "Home",
+      "solutions": "Solutions"
+    },
+    "status": {
+      "activeTier": "Active Tier",
+      "security": "Security Status",
+      "military": "Military Grade",
+      "enterprise": "Enterprise Pro 2026",
+      "responseTime": "Response Time",
+      "activeAvenue": "Active Avenue",
+      "anomaly": "Anomaly Detected",
+      "ago": "ago",
+      "openControl": "Open Control Center",
+      "viewReport": "View Report"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -97,13 +196,43 @@
     "assignError": "Could not assign user"
   },
   "scanner": {
-    "title": "Multi-engine AI scanner",
-    "subtitle": "PDF, Office, images, CSV, JSON, XML. Choose AI provider in the hub — Gemini recommended for PDF.",
+    "title": "Multi-Engine AI Scanner",
+    "subtitle": "PDF, Office, Images, CSV, JSON, XML. Choose an AI provider in the AI Hub.",
     "drop": "Drag files here or click to select",
     "dropDark": "Drag files here, or click to browse",
-    "filesQueued": "files in queue",
-    "run": "Run scan",
-    "processing": "Processing…"
+    "filesQueued": "Files in queue",
+    "run": "Run Scan",
+    "processing": "Processing...",
+    "tips": "Scanning Optimization Tips",
+    "tip1": "Upload clean PDF files for maximum accuracy.",
+    "tip2": "Choose multiple engines for results comparison.",
+    "chat": "Chat with Data",
+    "chatPlaceholder": "Write a message to the AI...",
+    "chatWelcome": "Talk naturally with AI about your company data and reports.",
+    "noEngines": "No active AI engines found",
+    "noEnginesDesc": "Please configure API keys in the settings area.",
+    "configAi": "Choose Engines",
+    "preview": "Preview",
+    "noPreview": "No Preview",
+    "results": "Scan Results",
+    "source": "Source",
+    "document": "Document Type"
+  },
+  "aiHub": {
+    "title": "AI & Scanning Hub",
+    "subtitle": "Smart scanning, data extraction, and document writing assistant.",
+    "scanTab": "Document Scan",
+    "chatTab": "AI Chat",
+    "formsTab": "Form Assistant",
+    "linksTab": "Quick Links",
+    "enginesCount": "{count} Engines available",
+    "scansRemaining": "{count} Scans remaining",
+    "formGoal": "What should the AI do?",
+    "formContext": "Data & Context",
+    "formPlaceholder": "Paste content to process...",
+    "formRun": "Process Now",
+    "formOutput": "AI Processing Result",
+    "copyOutput": "Copy Content"
   },
   "cookie": {
     "title": "Cookies",
@@ -130,6 +259,44 @@
     "label": "Language",
     "hint": "Auto-detected from your device; you can change anytime.",
     "updated": "Language updated"
+  },
+  "crm": {
+    "pipeline": "Pipeline",
+    "list": "Client List",
+    "projects": "Master Cases",
+    "automations": "Automations",
+    "newLead": "New Lead",
+    "active": "In Progress",
+    "proposal": "Proposal",
+    "won": "Success / Won",
+    "lost": "Not Relevant",
+    "addContact": "Add Client",
+    "editContact": "Edit Client",
+    "clientName": "Client Name",
+    "value": "Business Potential",
+    "notes": "Notes",
+    "search": "Search client..."
+  },
+  "erp": {
+    "invoice": "Tax Invoice",
+    "receipt": "Receipt",
+    "invoiceReceipt": "Invoice / Receipt",
+    "creditNote": "Credit Note",
+    "bill": "Supplier Bill",
+    "issuance": "Document Issuance",
+    "history": "Document History",
+    "step1": "Details",
+    "step2": "Items",
+    "step3": "Review",
+    "step4": "Finish",
+    "clientName": "Client Name",
+    "dueDate": "Due Date",
+    "amount": "Amount",
+    "vat": "VAT",
+    "total": "Total",
+    "generate": "Generate Document",
+    "saveToCrm": "Save to CRM",
+    "saveToErp": "Save to ERP"
   },
   "common": {
     "loading": "Loading…"
@@ -359,5 +526,97 @@
         "desc": "The system detects your language when you sign in and switches everything for you."
       }
     }
+  },
+  "marketing3D": {
+    "heroBadge": "Autonomous Management Revolution 2026",
+    "heroTitle": "The Avenue that",
+    "heroTitleGlow": "Connects Everyone.",
+    "heroDesc": "BSD-YBM redefines the boundaries of business capability. A unified platform integrating ERP, CRM, and autonomous AI for a powerful, clean, and elite management experience.",
+    "ctaStart": "Join the Avenue",
+    "ctaExplore": "How it works?",
+    "solutionsKicker": "Unified Management Architecture",
+    "solutionsTitle": "The Avenue. The Flow. The Result.",
+    "fieldOpsTitle": "Field Operations & ERP",
+    "fieldOpsDesc": "Total synchronization between the site and headquarters. Manage service calls, inventory, and digital signatures in an interface that feels like part of you.",
+    "capitalFlowTitle": "Finance Intelligence",
+    "capitalFlowDesc": "Precise cash flow control. Multi-engine AI scanning for expense management, anomaly alerts, and automated document parsing.",
+    "revenueEngineTitle": "Client Sentiment CRM",
+    "revenueEngineDesc": "BSD-YBM's client engine identifies needs before they become requests. Deep understanding of customer sentiment to prevent churn.",
+    "predictiveCommerceTitle": "Autonomous Action Agent",
+    "predictiveCommerceDesc": "An intelligent agent that identifies vendor price hikes and performs autonomous negotiations to protect your margins. The system that fights for you.",
+    "intelKicker": "Active Intelligence Hub",
+    "intelTitle": "The Brain Behind",
+    "intelTitleGlow": "The Avenue.",
+    "intelDesc": "Our system is not just a database — it's an action engine. While you focus on growth, our AI scans, compares, and protects every cent of your expenses.",
+    "intelF1": "Multi-engine OCR Scanning (Gemini/OpenAI/Claude)",
+    "intelF2": "Anomaly detection & vendor price gaps",
+    "intelF3": "Data-driven autonomous negotiations",
+    "intelF4": "Real-time client health & sentiment analysis",
+    "ctaFinalTitle": "It's Time to",
+    "ctaFinalGlow": "Connect.",
+    "ctaFinalDesc": "The BSD-YBM 2026 system is the avenue connecting every part of your business. Join the era of autonomous management that works for you.",
+    "ctaFinalJoin": "Join the Avenue Now",
+    "autonomous": "Autonomous System",
+    "native2026": "2026 Native",
+    "footer": {
+      "copy": "BSD-YBM EXECUTIVE © 2026",
+      "identity": "Digital Identity",
+      "ethics": "Platform Ethics",
+      "security": "Global Security"
+    }
+  },
+  "pricing": {
+    "headline": "Plans Adapted to Your Avenue",
+    "subheadline": "Choose the precise subscription for your business needs",
+    "choose": "Choose Plan",
+    "free": {
+      "name": "FREE",
+      "price": "$0",
+      "desc": "For basic personal management",
+      "f1": "10 AI scans per month",
+      "f2": "Basic expense tracking",
+      "f3": "Access to the Avenue dashboard"
+    },
+    "household": {
+      "name": "HOUSEHOLD",
+      "price": "$9",
+      "desc": "For households",
+      "f1": "50 AI scans per month",
+      "f2": "Multi-engine scanning",
+      "f3": "Basic flow forecasting"
+    },
+    "dealer": {
+      "name": "DEALER",
+      "price": "$29",
+      "desc": "Freelancers & Solopreneurs",
+      "f1": "200 AI scans per month",
+      "f2": "Autonomous negotiation agent",
+      "f3": "CRM client management"
+    },
+    "company": {
+      "name": "COMPANY",
+      "price": "$59",
+      "desc": "Teams & Small companies",
+      "f1": "1000 AI scans per month",
+      "f2": "Inventory & Field Ops",
+      "f3": "Meckano & full sync"
+    },
+    "corporate": {
+      "name": "CORPORATE",
+      "price": "Custom",
+      "desc": "Enterprises & Groups",
+      "f1": "Unlimited scans",
+      "f2": "Premium negotiation agent",
+      "f3": "VIP support & integrations"
+    }
+  },
+  "professions": {
+    "GENERAL": { "label": "General Management", "client": "Client", "project": "Project", "document": "Document", "inventory": "Inventory" },
+    "LAWYER": { "label": "Law Firm", "client": "Client / Represented", "project": "Legal Case", "document": "Legal Filing", "inventory": "Library" },
+    "ACCOUNTANT": { "label": "Accounting / Tax", "client": "Taxpayer / Client", "project": "Audit / Report", "document": "Accounting Doc", "inventory": "Archive" },
+    "CONTRACTOR": { "label": "Contracting / Construction", "client": "Developer / Client", "project": "Worksite / Project", "document": "Bill of Quantities", "inventory": "Equipment" },
+    "HEALTH": { "label": "Health / Clinic", "client": "Patient", "project": "Treatment Series", "document": "Medical File", "inventory": "Medical Supply" },
+    "RETAIL": { "label": "Retail / Store", "client": "End Customer", "project": "Supplier / Order", "document": "Delivery Note", "inventory": "Stock" },
+    "REAL_ESTATE": { "label": "Real Estate / Brokerage", "client": "Buyer / Tenant", "project": "Property / Asset", "document": "Contract / Deed", "inventory": "Listings" }
   }
 }

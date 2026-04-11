@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Loader2,
   Brain,
@@ -77,7 +77,7 @@ export default function MultiEngineScanner({
   fillHeight = false,
   compactHeader = false,
 }: ScannerProps) {
-  const { dir } = useI18n();
+  const { t, dir } = useI18n();
   const { status } = useSession();
   const router = useRouter();
   const [providers, setProviders] = useState<ProviderRow[]>([]);
@@ -215,24 +215,24 @@ export default function MultiEngineScanner({
         try {
           const res = await fetch("/api/ai", { method: "POST", body: formData });
           const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-          if (!res.ok) {
-            const baseErr = typeof data.error === "string" ? data.error : "שגיאת שרת";
-            const extra = data.code === "QUOTA_EXCEEDED" && typeof data.billingUrl === "string"
-              ? ` — לרכישת בנדל או שדרוג: ${data.billingUrl}` : "";
-            engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: `${baseErr}${extra}`, score: 0 });
-          } else {
-            const ai = extractAiPayload(data);
-            const notices: string[] = [];
-            if (data._fromCache === true) notices.push("תוצאה מהמטמון");
-            if (data._providerAdjusted === true && typeof data._provider === "string") notices.push(`ספק בפועל: ${data._provider}`);
-            engines.push({
-              providerId: pid, label: idToLabel.get(pid) ?? pid, ok: true, aiData: ai,
-              notice: notices.length ? notices.join(" · ") : undefined, score: scoreExtractedDocument(ai),
-            });
+            if (!res.ok) {
+              const baseErr = typeof data.error === "string" ? data.error : t("common.error");
+              const extra = data.code === "QUOTA_EXCEEDED" && typeof data.billingUrl === "string"
+                ? ` — ${t("landing.trialUpgrade")}: ${data.billingUrl}` : "";
+              engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: `${baseErr}${extra}`, score: 0 });
+            } else {
+              const ai = extractAiPayload(data);
+              const notices: string[] = [];
+              if (data._fromCache === true) notices.push(t("dashboard.forecast.status"));
+              if (data._providerAdjusted === true && typeof data._provider === "string") notices.push(`Provider: ${data._provider}`);
+              engines.push({
+                providerId: pid, label: idToLabel.get(pid) ?? pid, ok: true, aiData: ai,
+                notice: notices.length ? notices.join(" · ") : undefined, score: scoreExtractedDocument(ai),
+              });
+            }
+          } catch {
+            engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: t("aiBubble.errorNetwork"), score: 0 });
           }
-        } catch {
-          engines.push({ providerId: pid, label: idToLabel.get(pid) ?? pid, ok: false, error: "שגיאת רשת", score: 0 });
-        }
         doneOps += 1;
         setProgress(Math.round((doneOps / totalOps) * 100));
       }
@@ -293,11 +293,11 @@ export default function MultiEngineScanner({
   const enginesUI = (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="shrink-0 text-sm font-black text-slate-700">בחר מנועי פענוח:</span>
-        <button type="button" onClick={selectAllEngines} className="btn-primary py-1.5 px-3 text-xs">בחר הכל</button>
-        <button type="button" onClick={clearEngines} className="btn-secondary py-1.5 px-3 text-xs">אפס</button>
+        <span className="shrink-0 text-sm font-black text-slate-700">{t("scanner.configAi")}:</span>
+        <button type="button" onClick={selectAllEngines} className="btn-primary py-1.5 px-3 text-xs">{t("cookie.acceptAll")}</button>
+        <button type="button" onClick={clearEngines} className="btn-secondary py-1.5 px-3 text-xs">{t("cookie.ariaReject")}</button>
         {scanEngineRows.length === 0 && providers.length === 0 && (
-          <span className="flex items-center gap-1.5 text-xs text-blue-500 font-medium"><Loader2 size={12} className="animate-spin" /> טוען מנועים…</span>
+          <span className="flex items-center gap-1.5 text-xs text-blue-500 font-medium"><Loader2 size={12} className="animate-spin" /> {t("common.loading")}</span>
         )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -312,18 +312,21 @@ export default function MultiEngineScanner({
               title={ok ? p.description : reason}
               disabled={!ok && !on}
               onClick={() => toggleProvider(p.id)}
-              className={`flex items-start text-start gap-3 rounded-2xl border p-4 transition-all duration-150 ${
+              className={`group flex items-start text-start gap-3 rounded-2xl border p-4 transition-all duration-150 ${
                 !ok ? "cursor-not-allowed border-dashed border-slate-200 bg-slate-50 opacity-50"
-                  : on ? "border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-500/20"
+                  : on ? "border-blue-500 bg-blue-50/50 shadow-sm ring-2 ring-blue-500/20"
                   : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
-              }`}
+              } ${p.id === 'docai' ? 'relative overflow-hidden' : ''}`}
             >
-              <div className={`mt-0.5 flex shrink-0 h-5 w-5 items-center justify-center rounded-full ${on && ok ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
-                {on && ok ? <CheckCircle2 size={12} strokeWidth={3} /> : <Sparkles size={12} />}
+              {p.id === 'docai' && ok && (
+                <div className="absolute top-0 right-0 bg-blue-600 text-[8px] font-black text-white px-2 py-0.5 rounded-bl-lg uppercase tracking-tighter">PREMIUM</div>
+              )}
+              <div className={`mt-0.5 flex shrink-0 h-5 w-5 items-center justify-center rounded-full transition-colors ${on && ok ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-500'}`}>
+                {on && ok ? <CheckCircle2 size={12} strokeWidth={3} /> : p.id === 'docai' ? <Sparkles size={12} className="text-blue-400" /> : <Brain size={12} />}
               </div>
               <div>
-                <div className="font-bold text-slate-900">{p.label}</div>
-                <div className="text-xs text-slate-500 mt-1 line-clamp-2">{ok ? p.description : reason}</div>
+                <div className={`font-bold transition-colors ${on && ok ? "text-blue-900" : "text-slate-900"}`}>{p.label}</div>
+                <div className="text-[10px] text-slate-500 mt-1 line-clamp-2 leading-tight">{ok ? (p.description || t("nav.solutionsDesc")) : (p.allowedByPlan === false ? t("layout.trialUpgrade") : t("scanner.noEngines"))}</div>
               </div>
             </button>
           );
@@ -350,15 +353,15 @@ export default function MultiEngineScanner({
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100">
           <UploadCloud size={28} className="text-blue-500" />
         </div>
-        <p className="text-lg font-black text-slate-700">{isDragActive ? "שחרר את הקבצים כאן..." : "גרור קבצים לכאן, או לחץ לבחירה"}</p>
+        <p className="text-lg font-black text-slate-700">{isDragActive ? t("scanner.drop") : t("scanner.dropDark")}</p>
         <p className="mt-2 text-sm text-slate-500">{SCAN_ACCEPT_SUMMARY}</p>
       </div>
 
       {files.length > 0 && (
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 font-bold text-sm text-slate-700 flex justify-between items-center">
-            <span>{files.length} קבצים ממתינים לסריקה</span>
-            <button onClick={clearFiles} className="text-xs text-rose-500 hover:underline font-normal">נקה הכל</button>
+            <span>{t("scanner.filesQueued")} ({files.length})</span>
+            <button onClick={clearFiles} className="text-xs text-rose-500 hover:underline font-normal">{t("cookie.ariaReject")}</button>
           </div>
           <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
             {files.map((f, i) => (
@@ -385,9 +388,9 @@ export default function MultiEngineScanner({
         </div>
       </div>
       <div>
-        <h3 className="text-xl font-black text-slate-800">הבינה המלאכותית קוראת את המסמכים שלך</h3>
+        <h3 className="text-xl font-black text-slate-800">{t("aiBubble.writing")}</h3>
         <p className="text-slate-500 mt-2 font-medium max-w-md mx-auto">
-          מריץ פענוח מול {eligibleSelectedCount} מנועים שונים לכל קובץ כדי להבטיח את התוצאה המדויקת ביותר. הדבר עשוי לקחת מספר שניות בהתאם לעומס.
+          {t("scanner.processing")}
         </p>
       </div>
       
@@ -408,27 +411,27 @@ export default function MultiEngineScanner({
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2">
              <div className="border-b lg:border-b-0 lg:border-e border-slate-200 bg-slate-50/50 p-5">
-                <p className="mb-4 text-xs font-black uppercase tracking-widest text-slate-500">תצוגה מקדימה</p>
+                <p className="mb-4 text-xs font-black uppercase tracking-widest text-slate-500">{t("scanner.preview")}</p>
                 {row.previewUrl && row.isImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={row.previewUrl} alt="" className="max-h-80 w-full object-contain rounded-xl border border-slate-200 shadow-sm bg-white" />
                 ) : row.previewUrl && row.isPdf ? (
                   <iframe title={row.fileName} src={row.previewUrl} className="w-full h-80 rounded-xl border border-slate-200 bg-white shadow-sm" />
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-16"><Brain size={24} className="text-slate-300" /><p className="text-sm text-slate-400">אין תצוגה מקדימה</p></div>
+                  <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-16"><Brain size={24} className="text-slate-300" /><p className="text-sm text-slate-400">{t("scanner.noPreview")}</p></div>
                 )}
              </div>
              <div className="p-5 space-y-4">
-                <p className="mb-2 text-xs font-black uppercase tracking-widest text-slate-500">תוצאות פענוח</p>
+                <p className="mb-2 text-xs font-black uppercase tracking-widest text-slate-500">{t("scanner.results")}</p>
                 {row.recommendedIndex >= 0 && row.engines[row.recommendedIndex]?.ok ? (
                   <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold flex items-center gap-2 text-emerald-800 shadow-sm">
                     <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
-                    מומלץ ביותר: {row.engines[row.recommendedIndex].label} (ציון {row.engines[row.recommendedIndex].score})
+                    {t("landing.featureFlowTitle")}: {row.engines[row.recommendedIndex].label} (Score {row.engines[row.recommendedIndex].score})
                   </div>
                 ) : (
                   <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold flex items-center gap-2 text-amber-800">
                     <AlertCircle size={18} className="text-amber-500 shrink-0" />
-                    לא נמצאה תוצאה מוצלחת באף מנוע.
+                    {t("aiBubble.errorGeneric")}
                   </div>
                 )}
 
@@ -449,15 +452,15 @@ export default function MultiEngineScanner({
                            {!e.ok ? <p className="text-rose-600 font-medium text-xs">{e.error}</p> : (
                               <div className="grid grid-cols-3 gap-2 mt-3">
                                  <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
-                                    <div className="text-[10px] text-slate-400 font-black mb-1">ספק</div>
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">{t("scanner.source")}</div>
                                     <div className="font-bold text-slate-800 truncate">{vendor}</div>
                                  </div>
                                  <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
-                                    <div className="text-[10px] text-slate-400 font-black mb-1">מסמך</div>
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">{t("scanner.document")}</div>
                                     <div className="font-bold text-slate-800 truncate">{docType}</div>
                                  </div>
                                  <div className="bg-white rounded-lg border border-slate-100 p-2 text-center text-xs">
-                                    <div className="text-[10px] text-slate-400 font-black mb-1">סה"כ</div>
+                                    <div className="text-[10px] text-slate-400 font-black mb-1">{t("erp.total")}</div>
                                     <div className="font-bold text-blue-600">{total}</div>
                                  </div>
                               </div>
@@ -488,7 +491,7 @@ export default function MultiEngineScanner({
           className="btn-primary py-4 text-base shadow-lg shadow-blue-600/20"
         >
           {processing ? <Loader2 className="animate-spin inline mr-2" size={20} /> : <Archive size={20} className="mr-2 inline" />}
-          שמירה לארכיון המערכת (ERP)
+          {t("erp.saveToErp")}
         </button>
         <button
           onClick={async () => {
@@ -506,7 +509,7 @@ export default function MultiEngineScanner({
           className="btn-secondary py-4 text-base bg-white"
         >
           {processing ? <Loader2 className="animate-spin inline mr-2" size={20} /> : <FolderKanban size={20} className="mr-2 inline" />}
-          שיוך ללקוח חדש ב-CRM
+          {t("erp.saveToCrm")}
         </button>
       </div>
     </div>

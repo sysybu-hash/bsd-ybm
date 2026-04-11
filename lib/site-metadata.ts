@@ -36,8 +36,8 @@ export function buildRootMetadata(): Metadata {
 
   return {
     metadataBase: base,
-    applicationName: "BSD-YBM Intelligence",
-    title: "BSD-YBM - AI Solutions & Business Intelligence",
+    applicationName: "BSD-YBM פתרונות AI",
+    title: "BSD-YBM פתרונות AI - ניהול חכם לעסקים",
     description:
       "מערכת ניהול חכמה מבוססת AI לשיפור פריון העבודה, ERP ו-CRM מתקדם. פותח ע״י יוחנן בוקשפן.",
     keywords: [

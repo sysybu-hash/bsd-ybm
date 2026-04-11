@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Check, Zap } from "lucide-react";
@@ -101,7 +101,7 @@ export default function PricingSection() {
 
                 {/* CTA */}
                 <Link
-                  href="/register"
+                  href={`/register?plan=${tierKey}`}
                   className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-black transition hover:opacity-90 ${
                     popular
                       ? "bg-white text-indigo-300 shadow-sm"

@@ -1,170 +1,144 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Accessibility, Palette, Type, Contrast, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Accessibility, X, Type, Contrast, MousePointer2, ZoomIn, Eye, Sparkles } from "lucide-react";
 
-/** בועות צבע — 5 אפשרויות מוגדרות */
-const colors = [
-  { name: "כחול BSD", value: "#2563eb" },
-  { name: "ירוק אזמרגד", value: "#10b981" },
-  { name: "סגול מלכותי", value: "#7c3aed" },
-  { name: "ים תיכוני", value: "#0891b2" },
-  { name: "אדום עוצמה", value: "#dc2626" },
-];
-
-const FONT_KEY = "bsd-font-large";
-const CONTRAST_KEY = "bsd-high-contrast";
-const DEFAULT_COLOR = "#2563eb";
-
-// רק צבעים שקיימים בפלטה המאושרת
-const APPROVED_COLORS = new Set(colors.map((c) => c.value.toLowerCase()));
-
-function normalizeHex(raw: string | null | undefined): string {
-  const hex = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string).toLowerCase() : "";
-  return APPROVED_COLORS.has(hex) ? hex : DEFAULT_COLOR;
-}
-
-type Props = {
-  /** בתוך שורת Dock בתחתית הדשבורד */
-  dock?: boolean;
-};
-
-export default function AccessibilityMenu({ dock = false }: Props) {
+export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeColor, setActiveColor] = useState(DEFAULT_COLOR);
   const [fontLarge, setFontLarge] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
+  const [bigCursor, setBigCursor] = useState(false);
+  const [grayscale, setGrayscale] = useState(false);
 
   useEffect(() => {
-    const saved =
-      localStorage.getItem("bsd-theme-color") ||
-      localStorage.getItem("user-theme-color") ||
-      DEFAULT_COLOR;
-    const color = normalizeHex(saved);
-    setActiveColor(color);
-    document.documentElement.style.setProperty("--primary-color", color);
+    if (typeof document !== "undefined") {
+      const root = document.documentElement;
+      root.classList.toggle("font-large", fontLarge);
+      root.classList.toggle("high-contrast", highContrast);
+      root.classList.toggle("big-cursor", bigCursor);
+      root.classList.toggle("grayscale", grayscale);
+    }
+  }, [fontLarge, highContrast, bigCursor, grayscale]);
 
+  const toggleOpen = () => setIsOpen(!isOpen);
 
-    setFontLarge(localStorage.getItem(FONT_KEY) === "1");
-    setHighContrast(localStorage.getItem(CONTRAST_KEY) === "1");
-  }, []);
+  const OPTIONS = [
+    { id: "font", label: "גופן גדול", icon: Type, active: fontLarge, setter: setFontLarge },
+    { id: "contrast", label: "ניגודיות גבוהה", icon: Contrast, active: highContrast, setter: setHighContrast },
+    { id: "cursor", label: "סמן ענק", icon: MousePointer2, active: bigCursor, setter: setBigCursor },
+    { id: "color", label: "גווני אפור", icon: Eye, active: grayscale, setter: setGrayscale },
+  ];
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("font-large", fontLarge);
-    localStorage.setItem(FONT_KEY, fontLarge ? "1" : "0");
-  }, [fontLarge]);
+  const MenuContent = (
+    <div className={`${dock ? "absolute bottom-16 start-0 w-[280px]" : "w-full max-w-sm"} rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl ring-1 ring-black/5 animate-in fade-in slide-in-from-bottom-4 duration-300 z-[350]`}>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+            <Accessibility size={20} />
+          </div>
+          <div>
+            <h3 className="text-lg font-black text-slate-900 leading-none">תפריט נגישות</h3>
+            <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">BSD-YBM פתרונות AI</p>
+          </div>
+        </div>
+        <button 
+          onClick={() => setIsOpen(false)} 
+          className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+        >
+          <X size={18} />
+        </button>
+      </div>
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("high-contrast", highContrast);
-    localStorage.setItem(CONTRAST_KEY, highContrast ? "1" : "0");
-  }, [highContrast]);
-
-  const updateColor = (color: string) => {
-    setActiveColor(color);
-    document.documentElement.style.setProperty("--primary-color", color);
-
-    localStorage.setItem("bsd-theme-color", color);
-    localStorage.setItem("user-theme-color", color);
-    window.dispatchEvent(new Event("bsd-theme-change"));
-  };
-
-  const activeToggle =
-    "bg-indigo-50 text-indigo-700 border border-indigo-200 ring-1 ring-[var(--primary-color,#2563eb)]/30";
-  const idleToggle =
-    "bg-white hover:bg-gray-50 text-gray-600 border border-gray-200";
-
-  const rootClass = dock
-    ? "relative z-[2]"
-    : "fixed bottom-[max(5.5rem,env(safe-area-inset-bottom,0px))] start-6 z-[120] sm:bottom-24 sm:start-8";
-
-  return (
-    <div className={rootClass} dir="rtl" role="region" aria-label="התאמות נגישות">
-      <motion.button
-        type="button"
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.92 }}
-        onClick={() => setIsOpen((v) => !v)}
-        aria-expanded={isOpen}
-        aria-label={isOpen ? "סגור תפריט נגישות" : "פתח נגישות וצבעים"}
-        className="border border-gray-200 bg-white p-3.5 rounded-full shadow-lg hover:bg-gray-50 transition-colors text-gray-500"
-      >
-        <Accessibility size={22} style={{ color: "var(--primary-color, #4f46e5)" }} />
-      </motion.button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: -12, scale: 0.97 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -12, scale: 0.97 }}
-            transition={{ duration: 0.18 }}
-            className={`absolute w-60 rounded-2xl border border-gray-200 bg-white p-5 shadow-lg shadow-gray-200/60 text-gray-900 ${
-              dock
-                ? "bottom-[calc(100%+0.75rem)] start-1/2 -translate-x-1/2"
-                : "bottom-[4.5rem] start-0"
+      <div className="space-y-3">
+        {OPTIONS.map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => opt.setter(!opt.active)}
+            className={`w-full group flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-200 ${
+              opt.active 
+                ? "border-indigo-600 bg-indigo-50/50 text-indigo-900" 
+                : "border-slate-50 bg-slate-50/30 text-slate-600 hover:border-slate-200 hover:bg-slate-50/80"
             }`}
           >
-            {/* כותרת */}
-            <h4 className="mb-4 flex items-center gap-2 text-sm font-black text-gray-700">
-              <Palette size={16} style={{ color: "var(--primary-color, #4f46e5)" }} aria-hidden />
-              נראות וצבעים
-            </h4>
-
-            {/* בועות צבע */}
-            <div className="mb-4 grid grid-cols-5 gap-2">
-              {colors.map((c) => (
-                <button
-                  key={c.value}
-                  type="button"
-                  title={c.name}
-                  aria-label={`צבע ${c.name}`}
-                  aria-pressed={activeColor === c.value}
-                  onClick={() => updateColor(c.value)}
-                  className="relative h-8 w-8 rounded-full border-2 border-white shadow-md transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1"
-                  style={{
-                    backgroundColor: c.value,
-                    boxShadow:
-                      activeColor === c.value
-                        ? `0 0 0 3px white, 0 0 0 5px ${c.value}`
-                        : undefined,
-                  }}
-                >
-                  {activeColor === c.value ? (
-                    <Check size={11} className="absolute inset-0 m-auto text-white drop-shadow" />
-                  ) : null}
-                </button>
-              ))}
+            <div className="flex items-center gap-4">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                opt.active ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20" : "bg-white text-slate-400 shadow-sm"
+              }`}>
+                <opt.icon size={20} />
+              </div>
+              <span className="text-sm font-black italic">{opt.label}</span>
             </div>
+            {/* 💡 "נורת ביקורת" לחיצה (חלק מהכפתור) */}
+            <div className={`h-4 w-4 rounded-full border-4 transition-all ${
+              opt.active 
+                ? "bg-indigo-600 border-indigo-100 shadow-[0_0_12px_rgba(79,70,229,0.5)] scale-110" 
+                : "bg-slate-200 border-white shadow-inner"
+            }`} />
+          </button>
+        ))}
+      </div>
 
-            <div className="h-px bg-gray-100 mb-4" />
+      <div className="mt-6 flex gap-3">
+        <button
+          onClick={() => {
+            setFontLarge(false);
+            setHighContrast(false);
+            setBigCursor(false);
+            setGrayscale(false);
+          }}
+          className="flex-1 py-3 text-xs font-black text-slate-400 hover:text-slate-900 transition-colors"
+        >
+          איפוס הגדרות
+        </button>
+        <button
+          onClick={() => setIsOpen(false)}
+          className="flex-[2] py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-95"
+        >
+          סגור תפריט
+        </button>
+      </div>
+    </div>
+  );
 
-            {/* מתגים */}
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setHighContrast((v) => !v)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors ${
-                  highContrast ? activeToggle : idleToggle
-                }`}
-              >
-                <span>{highContrast ? "ניגודיות רגילה" : "ניגודיות גבוהה"}</span>
-                <Contrast size={14} aria-hidden />
-              </button>
-              <button
-                type="button"
-                onClick={() => setFontLarge((v) => !v)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors ${
-                  fontLarge ? activeToggle : idleToggle
-                }`}
-              >
-                <span>{fontLarge ? "גודל טקסט רגיל" : "הגדלת טקסט"}</span>
-                <Type size={14} aria-hidden />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+  if (dock) {
+    return (
+      <div className="relative" dir="rtl">
+        <button
+          onClick={toggleOpen}
+          className={`group flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
+            isOpen ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+          }`}
+          title="תפריט נגישות"
+        >
+          <Accessibility size={20} className={isOpen ? "animate-pulse" : "group-hover:scale-110 transition-transform"} />
+        </button>
+
+        {isOpen && MenuContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed bottom-8 left-8 z-[300]" dir="rtl">
+      <button
+        onClick={toggleOpen}
+        className={`group h-14 w-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 active:scale-90 ${
+          isOpen ? "bg-rose-500 rotate-90" : "bg-indigo-600"
+        }`}
+        style={{
+          boxShadow: isOpen ? "0 20px 40px -10px rgba(244, 63, 94, 0.45)" : "0 20px 40px -10px rgba(79, 70, 229, 0.45)"
+        }}
+      >
+        {isOpen ? <X size={28} /> : <Accessibility size={28} />}
+      </button>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-[340] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-300">
+          <div onClick={(e) => e.stopPropagation()}>
+            {MenuContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

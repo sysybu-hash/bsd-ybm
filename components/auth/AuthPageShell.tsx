@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type Props = Readonly<{
@@ -24,7 +24,7 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
               B
             </span>
             <span className="text-[15px] font-black tracking-tight text-gray-900">
-              BSD<span className="text-indigo-600">-YBM</span>
+              BSD<span className="text-indigo-600">-YBM</span> פתרונות AI
             </span>
           </Link>
           <div className="flex items-center gap-2">

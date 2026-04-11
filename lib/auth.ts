@@ -128,6 +128,7 @@ export const authOptions: NextAuthOptions = {
         if (typeof token.picture === "string" && token.picture.length > 0) {
           session.user.image = token.picture;
         }
+        (session.user as any).organizationIndustry = (token.organizationIndustry as string | null) ?? "GENERAL";
         /** הגנה כפולה: SUPER_ADMIN ב-UI/API רק ל־steelPlatformOwnerEmail() — לא דרך באג ב-JWT */
         const em = typeof session.user.email === "string" ? session.user.email : "";
         if (session.user.role === "SUPER_ADMIN" && !isAdmin(em)) {
@@ -246,6 +247,9 @@ export const authOptions: NextAuthOptions = {
           accountStatus: true,
           name: true,
           image: true,
+          organization: {
+            select: { industry: true }
+          }
         },
       });
 
@@ -258,6 +262,7 @@ export const authOptions: NextAuthOptions = {
 
       token.id = dbUser.id;
       token.organizationId = dbUser.organizationId;
+      token.organizationIndustry = dbUser.organization?.industry ?? "GENERAL";
 
       /**
        * הגנה כפולה: אם משתמש שאינו Steel Admin קיבל SUPER_ADMIN ב-DB (באג עבר) —

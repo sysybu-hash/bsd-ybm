@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -31,6 +31,7 @@ export type CrmAdminOrganizationRow = {
   id: string;
   name: string;
   plan: string;
+  industry: string;
   users: { email: string }[];
   /** סכום כל החשבוניות (Invoice) בארגון — מחושב בשרת */
   invoiceTotalAmount: number;
@@ -143,7 +144,8 @@ export default function CrmOrganizationsAdminTable({
         <thead className="bg-indigo-500/[0.12] text-xs font-bold text-indigo-300">
           <tr>
             <th className="px-6 py-4 sm:px-8">שם הלקוח</th>
-            <th className="px-6 py-4 sm:px-8">תוכנית</th>
+            <th className="px-6 py-4 sm:px-8 text-center sm:px-8">תוכנית</th>
+            <th className="px-6 py-4 sm:px-8 text-center sm:px-8">מקצוע / תחום</th>
             <th className="px-6 py-4 sm:px-8">סה״כ חשבוניות</th>
             <th className="px-6 py-4 text-center sm:px-8">Intelligence</th>
             <th className="px-6 py-4 sm:px-8">ניהול</th>
@@ -189,6 +191,11 @@ export default function CrmOrganizationsAdminTable({
                   <option value="COMPANY">COMPANY</option>
                   <option value="CORPORATE">CORPORATE</option>
                 </select>
+              </td>
+              <td className="px-8 py-6 text-center">
+                 <span className="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-600 border border-slate-200 uppercase tracking-widest">
+                   {org.industry || "GENERAL"}
+                 </span>
               </td>
               <td className="px-8 py-6 font-black text-gray-900">
                 ₪{org.invoiceTotalAmount.toLocaleString("he-IL", { maximumFractionDigits: 2 })}

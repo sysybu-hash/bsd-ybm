@@ -11,10 +11,10 @@ const APPROVED_COLORS = new Set([
 export default function Themer() {
   useEffect(() => {
     const applyTheme = (raw: string | null | undefined) => {
-      const hex = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string).toLowerCase() : "";
-      const color = APPROVED_COLORS.has(hex) ? hex : DEFAULT_COLOR;
+      const color = /^#[0-9A-Fa-f]{6}$/.test(raw ?? "") ? (raw as string).toLowerCase() : DEFAULT_COLOR;
       document.documentElement.style.setProperty("--primary-color", color);
-      // --heading-color stays dark slate always (#1e293b) — not affected by user color choice
+      document.documentElement.style.setProperty("--header-color", color);
+      document.documentElement.style.setProperty("--heading-color", color);
     };
 
     const readAndApply = () => {

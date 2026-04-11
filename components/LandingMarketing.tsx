@@ -1,6 +1,5 @@
-﻿"use client";
+"use client";
 
-import { motion } from "framer-motion";
 import { Zap, Shield, Briefcase, Building2, Brain, CheckCircle2, Star } from "lucide-react";
 import Link from "next/link";
 import SiteTutorialShowcase from "@/components/SiteTutorialShowcase";
@@ -46,7 +45,7 @@ const plans = [
 ];
 
 export default function LandingMarketing() {
-  const primaryColor = "var(--primary-color, #3b82f6)";
+  const primaryColor = "#3b82f6";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-hidden font-sans" dir="rtl">
@@ -57,18 +56,13 @@ export default function LandingMarketing() {
         >
           <div className="text-right">
             <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-gray-50 border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest">
-              <Brain size={14} style={{ color: primaryColor }} /> AI-Powered Business Intelligence
+              <Brain size={14} className="text-blue-500" /> AI-Powered Business Intelligence
             </p>
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter leading-[0.85] mb-8"
-            >
-              <span style={{ color: primaryColor }}>BSD-YBM.</span>
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter leading-[0.85] mb-8 text-slate-900">
+              <span className="text-blue-600">BSD-YBM.</span>
               <br />
               <span className="text-indigo-600">Intelligence.</span>
-            </motion.h1>
+            </h1>
             <p className="max-w-xl text-gray-400 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
               פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
               וחברות בדומיין אחד.
@@ -76,18 +70,16 @@ export default function LandingMarketing() {
             <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:gap-5">
               <Link
                 href="/dashboard"
-                className="inline-flex rounded-2xl px-10 py-4 text-lg font-black text-white shadow-xl transition-transform hover:scale-[1.02] active:scale-95"
+                className="inline-flex rounded-2xl px-10 py-4 text-lg font-black text-white shadow-xl bg-blue-600"
                 style={{
-                  backgroundColor: primaryColor,
-                  boxShadow:
-                    "0 20px 40px -10px color-mix(in srgb, var(--primary-color, #3b82f6) 45%, transparent)",
+                  boxShadow: "0 20px 40px -10px rgba(59, 130, 246, 0.45)",
                 }}
               >
                 התחל עכשיו - חינם
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-bold text-gray-500 underline decoration-slate-300 underline-offset-4 hover:text-[var(--primary-color)]"
+                className="text-sm font-bold text-gray-500 underline decoration-slate-300 underline-offset-4 hover:text-blue-600"
               >
                 יש לך חשבון? התחברות עם Google
               </Link>
@@ -101,7 +93,7 @@ export default function LandingMarketing() {
             <div className="text-center mt-4">
               <Link
                 href="/tutorial"
-                className="text-sm font-bold text-[var(--primary-color,#3b82f6)] hover:underline"
+                className="text-sm font-bold text-blue-600 hover:underline"
               >
                 מסך מלא להדרכה
               </Link>
@@ -114,22 +106,19 @@ export default function LandingMarketing() {
             פתרון מותאם לכל סוג ישות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-32">
-            {sectors.map((s, i) => {
+            {sectors.map((s) => {
               const Icon = s.icon;
               return (
-                <motion.div
+                <div
                   key={s.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
                   className={`cursor-pointer rounded-2xl border border-gray-200 p-10 shadow-sm transition-all hover:scale-[1.02] ${s.color}`}
                 >
                   <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm">
-                    <Icon style={{ color: primaryColor }} size={32} />
+                    <Icon className="text-blue-600" size={32} />
                   </div>
                   <h3 className="text-2xl font-black mb-3 italic text-gray-900">{s.title}</h3>
                   <p className="text-gray-400 leading-relaxed text-sm font-medium">{s.desc}</p>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -142,12 +131,9 @@ export default function LandingMarketing() {
             בחר את המסלול המתאים לך
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {plans.map((plan, i) => (
-              <motion.div
+            {plans.map((plan) => (
+              <div
                 key={plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 + 0.4 }}
                 className={`rounded-2xl border bg-white p-10 ${
                   plan.level === "Premium"
                     ? "border-indigo-500/30 shadow-lg shadow-indigo-200/60"
@@ -155,30 +141,29 @@ export default function LandingMarketing() {
                 } relative`}
               >
                 {plan.level === "Premium" && (
-                  <div className="absolute top-6 start-6 text-indigo-500 p-2 bg-indigo-400/15 rounded-full animate-pulse">
+                  <div className="absolute top-6 start-6 text-indigo-500 p-2 bg-indigo-400/15 rounded-full">
                     <Star size={18} fill="currentColor" />
                   </div>
                 )}
                 <h3 className="text-2xl font-black mb-1 italic text-gray-950">{plan.name}</h3>
                 <p className="text-gray-400 text-sm mb-6">{plan.desc}</p>
-                <p
+                <div
                   className="text-5xl font-black mb-8 italic text-gray-900"
-                  style={plan.level === "Premium" ? { color: primaryColor } : undefined}
                 >
                   {plan.price}
                   <span className="text-sm font-medium text-gray-400 not-italic"> / חודש</span>
-                </p>
+                </div>
 
                 <ul className="space-y-3 mb-10 text-sm font-medium text-gray-500">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2">
+                    <li key={f} className="flex items-center gap-2 text-start">
                       <CheckCircle2 size={16} className="text-indigo-500 shrink-0" /> {f}
                     </li>
                   ))}
                 </ul>
 
                 <Link
-                  href="/dashboard/billing"
+                  href="/dashboard/admin?section=subscriptions"
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
                       ? "bg-indigo-600 text-white"
@@ -187,7 +172,7 @@ export default function LandingMarketing() {
                 >
                   בחר מסלול
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
           <p className="text-center text-xs text-gray-400 mt-8">

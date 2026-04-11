@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
@@ -27,7 +27,8 @@ import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout"
 import CrmClient from "../crm/CrmClient";
 import type { CrmAdminOrganizationRow } from "../crm/CrmOrganizationsAdminTable";
 import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "../crm/CrmClient";
-import type { PriceSpikeAlert } from "@/lib/erp-price-spikes";
+import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
+import { useIndustryConfig } from "@/hooks/use-industry-config";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
 type ContactRow = {
@@ -125,6 +126,7 @@ function HubContent(props: Props) {
   } = props;
 
   const [erpOpen, setErpOpen] = useState(false);
+  const industry = useIndustryConfig();
 
   /* ── KPIs ── */
   const income = flowSummary?.totalIssued ?? 0;
@@ -156,7 +158,7 @@ function HubContent(props: Props) {
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 shadow-sm">
               <Layers size={14} className="text-white" />
             </div>
-            <h1 className="font-black text-lg text-gray-900">מרכז עסקי</h1>
+            <h1 className="font-black text-lg text-gray-900">{industry.label}</h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               CRM × ERP
@@ -166,7 +168,7 @@ function HubContent(props: Props) {
             href="/dashboard/erp/invoice"
             className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all"
           >
-            <ReceiptText size={14} /> הנפק חשבונית
+            <ReceiptText size={14} /> הנפק {industry.vocabulary.document}
           </Link>
         </div>
       </div>
@@ -212,7 +214,7 @@ function HubContent(props: Props) {
               <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                 <Layers size={13} />
               </div>
-              <p className="text-xs font-bold text-gray-500">פייפליין CRM</p>
+              <p className="text-xs font-bold text-gray-500">פייפליין {industry.vocabulary.client}</p>
             </div>
             <p className="text-2xl font-black text-indigo-600">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
             <p className="text-[10px] text-gray-400 mt-1">

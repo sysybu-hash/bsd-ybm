@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -12,91 +12,74 @@ import {
   ArrowRight,
   ArrowLeft,
   MailCheck,
+  Gavel,
+  Calculator,
+  HardHat,
+  Stethoscope,
+  ShoppingBag,
 } from "lucide-react";
 import AuthPageShell from "@/components/auth/AuthPageShell";
-
-// ─── constants ────────────────────────────────────────────────────────────────
-
-const ORG_TYPE_OPTIONS = [
-  {
-    value: "HOME",
-    label: "משק בית",
-    desc: "ניהול אישי ומשפחתי",
-    Icon: Home,
-    activeBg: "bg-emerald-500/15",
-    activeBorder: "border-emerald-500/40",
-    activeText: "text-emerald-400",
-    activeRing: "ring-emerald-500/30",
-  },
-  {
-    value: "FREELANCER",
-    label: "עצמאי / עוסק",
-    desc: "פרילנסר, יועץ, בעל מקצוע",
-    Icon: Briefcase,
-    activeBg: "bg-indigo-500/15",
-    activeBorder: "border-indigo-500/40",
-    activeText: "text-indigo-400",
-    activeRing: "ring-indigo-500/30",
-  },
-  {
-    value: "COMPANY",
-    label: "חברה",
-    desc: 'חברה בע"מ, סטארטאפ',
-    Icon: Building2,
-    activeBg: "bg-indigo-500/15",
-    activeBorder: "border-indigo-500/40",
-    activeText: "text-indigo-400",
-    activeRing: "ring-indigo-500/30",
-  },
-  {
-    value: "ENTERPRISE",
-    label: "ארגון / תאגיד",
-    desc: "ארגון גדול, עמותה, תאגיד",
-    Icon: Factory,
-    activeBg: "bg-orange-500/15",
-    activeBorder: "border-orange-500/40",
-    activeText: "text-orange-400",
-    activeRing: "ring-orange-500/30",
-  },
-] as const;
-
-const ROLE_LABELS: Record<string, string> = {
-  EMPLOYEE: "עובד / צוות",
-  ORG_ADMIN: "מנהל ארגון",
-  PROJECT_MGR: "מנהל פרויקטים",
-  CLIENT: "לקוח / צופה",
-};
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { useI18n } from "@/components/I18nProvider";
 
 // ─── types ───────────────────────────────────────────────────────────────────
 
 type Preview = { orgName: string; role: string; emailHint: string };
 type WizardForm = {
   orgType: string;
+  industry: string;
   name: string;
   email: string;
   organizationName: string;
 };
 
-type Props = Readonly<{ inviteToken?: string; orgInviteToken?: string }>;
+type Props = Readonly<{ inviteToken?: string; orgInviteToken?: string; plan?: string }>;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ─── component ───────────────────────────────────────────────────────────────
 
-export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
+export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Props) {
+  const { t, dir } = useI18n();
   const isTeamJoin = !!orgInviteToken;
+  const isDirectPlan = !!plan;
 
-  /**
-   * Regular flow   : 0=סוג עסק  1=פרטים אישיים  2=שם הארגון  3=אישור ושליחה
-   * Team join flow : 0=פרטים אישיים  1=אישור
-   */
+  const ORG_TYPE_OPTIONS = [
+    { value: "HOME", label: t("auth.register.types.home.label"), desc: t("auth.register.types.home.desc"), Icon: Home, activeBg: "bg-emerald-500/15", activeBorder: "border-emerald-500/40", activeText: "text-emerald-400", activeRing: "ring-emerald-500/30" },
+    { value: "FREELANCER", label: t("auth.register.types.freelancer.label"), desc: t("auth.register.types.freelancer.desc"), Icon: Briefcase, activeBg: "bg-indigo-500/15", activeBorder: "border-indigo-500/40", activeText: "text-indigo-400", activeRing: "ring-indigo-500/30" },
+    { value: "COMPANY", label: t("auth.register.types.company.label"), desc: t("auth.register.types.company.desc"), Icon: Building2, activeBg: "bg-indigo-500/15", activeBorder: "border-indigo-500/40", activeText: "text-indigo-400", activeRing: "ring-indigo-500/30" },
+    { value: "ENTERPRISE", label: t("auth.register.types.enterprise.label"), desc: t("auth.register.types.enterprise.desc"), Icon: Factory, activeBg: "bg-orange-500/15", activeBorder: "border-orange-500/40", activeText: "text-orange-400", activeRing: "ring-orange-500/30" },
+  ];
+
+  const INDUSTRY_OPTIONS = [
+    { value: "GENERAL", label: t("professions.GENERAL.label"), icon: "Building2" },
+    { value: "LAWYER", label: t("professions.LAWYER.label"), icon: "Gavel" },
+    { value: "ACCOUNTANT", label: t("professions.ACCOUNTANT.label"), icon: "Calculator" },
+    { value: "CONTRACTOR", label: t("professions.CONTRACTOR.label"), icon: "HardHat" },
+    { value: "HEALTH", label: t("professions.HEALTH.label"), icon: "Stethoscope" },
+    { value: "RETAIL", label: t("professions.RETAIL.label"), icon: "ShoppingBag" },
+    { value: "REAL_ESTATE", label: t("professions.REAL_ESTATE.label"), icon: "Home" },
+  ];
+
+  const ROLE_LABELS: Record<string, string> = {
+    EMPLOYEE: t("dashboard.crm"), 
+    ORG_ADMIN: t("dashboard.admin"),
+    CLIENT: t("dashboard.stats.clients"),
+  };
+
   const steps = isTeamJoin
-    ? ["פרטים אישיים", "אישור ושליחה"]
-    : ["סוג עסק", "פרטים אישיים", "שם הארגון", "אישור ושליחה"];
+    ? [t("auth.register.steps.personal"), t("auth.register.steps.confirm")]
+    : [
+        t("auth.register.steps.type"), 
+        t("nav.solutions"), 
+        t("auth.register.steps.personal"), 
+        t("auth.register.steps.orgName"), 
+        t("auth.register.steps.confirm")
+      ];
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<WizardForm>({
     orgType: "COMPANY",
+    industry: "GENERAL",
     name: "",
     email: "",
     organizationName: "",
@@ -108,19 +91,16 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
   const [previewLoading, setPreviewLoading] = useState(!!orgInviteToken);
   const [previewErr, setPreviewErr] = useState<string | null>(null);
 
-  // Load team-invite preview
   useEffect(() => {
     if (!orgInviteToken) return;
     let cancelled = false;
     void (async () => {
       try {
-        const res = await fetch(
-          `/api/org-invite/preview?token=${encodeURIComponent(orgInviteToken)}`,
-        );
+        const res = await fetch(`/api/org-invite/preview?token=${encodeURIComponent(orgInviteToken)}`);
         const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
         if (cancelled) return;
         if (!res.ok) {
-          setPreviewErr(typeof data.error === "string" ? data.error : "הזמנה לא תקפה");
+          setPreviewErr(typeof data.error === "string" ? data.error : "Invalid invite");
         } else {
           const hint = String(data.emailHint ?? "");
           setPreview({
@@ -131,32 +111,27 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
           if (hint) setForm((f) => ({ ...f, email: hint }));
         }
       } catch {
-        if (!cancelled) setPreviewErr("שגיאת רשת בטעינת ההזמנה");
+        if (!cancelled) setPreviewErr("Network error");
       } finally {
         if (!cancelled) setPreviewLoading(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [orgInviteToken]);
 
-  const set = (key: keyof WizardForm, val: string) =>
-    setForm((f) => ({ ...f, [key]: val }));
-
+  const set = (key: keyof WizardForm, val: string) => setForm((f) => ({ ...f, [key]: val }));
   const totalSteps = steps.length;
   const isLast = step === totalSteps - 1;
 
   const canAdvance = (): boolean => {
     if (isTeamJoin) {
-      if (step === 0)
-        return form.name.trim().length > 0 && EMAIL_RE.test(form.email.trim());
+      if (step === 0) return form.name.trim().length > 0 && EMAIL_RE.test(form.email.trim());
       return true;
     }
     if (step === 0) return !!form.orgType;
-    if (step === 1)
-      return form.name.trim().length > 0 && EMAIL_RE.test(form.email.trim());
-    if (step === 2) return form.organizationName.trim().length >= 1;
+    if (step === 1) return !!form.industry;
+    if (step === 2) return form.name.trim().length > 0 && EMAIL_RE.test(form.email.trim());
+    if (step === 3) return form.organizationName.trim().length >= 1;
     return true;
   };
 
@@ -172,355 +147,231 @@ export default function RegisterPortal({ inviteToken, orgInviteToken }: Props) {
           name: form.name.trim() || null,
           organizationName: isTeamJoin ? "—" : form.organizationName.trim(),
           orgType: isTeamJoin ? "COMPANY" : form.orgType,
+          industry: isTeamJoin ? "GENERAL" : form.industry,
           inviteToken: inviteToken || undefined,
           orgInviteToken: orgInviteToken || undefined,
+          plan: plan || undefined,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
       if (!res.ok) {
-        setErr(typeof data.error === "string" ? data.error : "שגיאה בשרת");
+        setErr(typeof data.error === "string" ? data.error : "Server error");
       } else {
         setDone(true);
       }
     } catch {
-      setErr("שגיאת רשת — בדקו חיבור לאינטרנט");
+      setErr("Network error");
     } finally {
       setLoading(false);
     }
   }, [form, inviteToken, orgInviteToken, isTeamJoin]);
 
-  const inputCls =
-    "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition";
+  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition text-start";
 
-  // ── Loading preview ────────────────────────────────────────────────────────
   if (previewLoading) {
     return (
-      <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
+      <AuthPageShell secondaryNav={{ href: "/login", label: t("auth.register.loginLink") }}>
           <div className="flex items-center gap-3 text-gray-400">
           <Loader2 className="animate-spin" size={20} />
-          טוען פרטי הזמנה…
+          Loading...
         </div>
       </AuthPageShell>
     );
   }
 
-  // ── Invalid invite ────────────────────────────────────────────────────────
   if (previewErr) {
     return (
-      <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
-          <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center">
+      <AuthPageShell secondaryNav={{ href: "/login", label: t("auth.register.loginLink") }}>
+          <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-start">
           <p className="font-medium text-rose-700">{previewErr}</p>
-          <Link
-            href="/login"
-            className="mt-4 inline-block text-sm text-indigo-600 hover:underline"
-          >
-            חזרה לכניסה
-          </Link>
+          <Link href="/login" className="mt-4 inline-block text-sm text-indigo-600 hover:underline">{t("auth.register.backToLogin")}</Link>
         </div>
       </AuthPageShell>
     );
   }
 
-  // ── Success screen ────────────────────────────────────────────────────────
   if (done) {
     return (
-      <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
-        <div className="w-full max-w-md text-center" dir="rtl">
+      <AuthPageShell secondaryNav={{ href: "/login", label: t("auth.register.loginLink") }}>
+        <div className="w-full max-w-md text-center text-start" dir={dir}>
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
             <CheckCircle2 className="h-8 w-8 text-emerald-600" />
           </div>
           <h1 className="text-2xl font-black text-gray-900">
-            {isTeamJoin ? "ברוכים הבאים לצוות!" : "הבקשה נשלחה בהצלחה!"}
+            {isTeamJoin ? t("auth.register.success.titleTeam") : t("auth.register.success.title")}
           </h1>
           <p className="mt-3 leading-relaxed text-sm text-gray-500">
-            {isTeamJoin
-              ? `הצטרפתם ל־${preview?.orgName ?? "הארגון"} בתור ${ROLE_LABELS[preview?.role ?? ""] ?? preview?.role ?? ""}. כעת היכנסו עם Google.`
-              : "קיבלנו את בקשתכם — מנהל המערכת יאשר תוך 24 שעות. לאחר אישור תוכלו להיכנס."}
+            {isTeamJoin ? t("auth.register.success.descTeam") : t("auth.register.success.desc")}
           </p>
-          <Link
-            href="/login?registered=1"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm"
-          >
-            מעבר לכניסה
-            <ArrowLeft size={15} />
+          <Link href="/login?registered=1" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm">
+            {t("auth.register.success.cta")}
+            {dir === "rtl" ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
           </Link>
         </div>
       </AuthPageShell>
     );
   }
 
-  // ── Wizard ───────────────────────────────────────────────────────────────
   const selectedType = ORG_TYPE_OPTIONS.find((o) => o.value === form.orgType);
 
   return (
-    <AuthPageShell secondaryNav={{ href: "/login", label: "כניסה" }}>
-      <div className="w-full max-w-lg" dir="rtl">
-        {/* Card */}
+    <AuthPageShell secondaryNav={{ href: "/login", label: t("auth.register.loginLink") }}>
+      <div className="w-full max-w-lg" dir={dir}>
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-          {/* Progress bar */}
           <div className="h-1 w-full bg-gray-200">
-            <div
-              className="h-full bg-indigo-500 transition-all duration-500"
-              style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
-            />
+            <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
           </div>
 
-          {/* Step indicators */}
           <div className="flex items-center justify-center gap-0 border-b border-gray-100 px-6 py-4">
             {steps.map((label, i) => (
               <div key={i} className="flex items-center">
-                <div
-                  title={label}
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-black transition-all ${
-                    i < step
-                      ? "bg-indigo-500 text-white"
-                      : i === step
-                        ? "bg-indigo-600 text-white ring-4 ring-indigo-200"
-                        : "bg-gray-100 text-gray-400"
-                  }`}
-                >
+                <div title={label} className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-black transition-all ${i < step ? "bg-indigo-500 text-white" : i === step ? "bg-indigo-600 text-white ring-4 ring-indigo-200" : "bg-gray-100 text-gray-400"}`}>
                   {i < step ? "✓" : i + 1}
                 </div>
-                {i < steps.length - 1 && (
-                  <div
-                    className={`mx-1.5 h-0.5 w-8 sm:w-14 transition-colors ${
-                      i < step ? "bg-indigo-400" : "bg-gray-200"
-                    }`}
-                  />
-                )}
+                {i < steps.length - 1 && <div className={`mx-1.5 h-0.5 w-8 sm:w-14 transition-colors ${i < step ? "bg-indigo-400" : "bg-gray-200"}`} />}
               </div>
             ))}
           </div>
 
-          {/* Content */}
-          <div className="px-8 pb-8 pt-6">
+          <div className="px-8 pb-8 pt-6 text-start">
             <p className="mb-1 text-xs font-bold uppercase tracking-wider text-indigo-600">
-              שלב {step + 1} מתוך {totalSteps}
+              {t("auth.register.steps.step")} {step + 1} {t("auth.register.steps.of")} {totalSteps}
             </p>
             <h1 className="mb-6 text-xl font-black text-gray-900">{steps[step]}</h1>
 
-            {/* ── STEP: סוג עסק (regular, step 0) ── */}
             {!isTeamJoin && step === 0 && (
               <div className="grid grid-cols-2 gap-3">
-                {ORG_TYPE_OPTIONS.map(
-                  ({ value, label, desc, Icon, activeBg, activeBorder, activeText, activeRing }) => {
-                    const active = form.orgType === value;
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() => set("orgType", value)}
-                        className={`flex flex-col items-center rounded-2xl border-2 p-5 text-center transition-all ${
-                          active
-                            ? `${activeBg} ${activeBorder} ring-2 ${activeRing}`
-                            : "border-gray-200 bg-white hover:border-indigo-200 hover:bg-indigo-50"
-                        }`}
-                      >
-                        <Icon
-                          size={28}
-                          className={active ? activeText : "text-gray-400"}
-                        />
-                        <span
-                          className={`mt-2 block text-sm font-black ${
-                            active ? activeText : "text-gray-700"
-                          }`}
-                        >
-                          {label}
-                        </span>
-                        <span className="mt-1 block text-xs leading-tight text-gray-400">
-                          {desc}
-                        </span>
-                      </button>
-                    );
-                  },
-                )}
+                {ORG_TYPE_OPTIONS.map(({ value, label, desc, Icon, activeBg, activeBorder, activeText, activeRing }) => {
+                  const active = form.orgType === value;
+                  return (
+                    <button key={value} type="button" onClick={() => set("orgType", value)} className={`flex flex-col items-center rounded-2xl border-2 p-5 text-center transition-all ${active ? `${activeBg} ${activeBorder} ring-2 ${activeRing}` : "border-gray-200 bg-white hover:border-indigo-200 hover:bg-indigo-50"}`}>
+                      <Icon size={28} className={active ? activeText : "text-gray-400"} />
+                      <span className={`mt-2 block text-sm font-black ${active ? activeText : "text-gray-700"}`}>{label}</span>
+                      <span className="mt-1 block text-xs leading-tight text-gray-400">{desc}</span>
+                    </button>
+                  );
+                })}
               </div>
             )}
 
-            {/* ── STEP: פרטים אישיים ── */}
-            {((!isTeamJoin && step === 1) || (isTeamJoin && step === 0)) && (
+            {!isTeamJoin && step === 1 && (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {INDUSTRY_OPTIONS.map(({ value, label, icon: IconName }) => {
+                  const active = form.industry === value;
+                  const DynamicIcon = {
+                    Building2, Gavel, Calculator, HardHat, Stethoscope, ShoppingBag, Home
+                  }[IconName] || Building2;
+
+                  return (
+                    <button key={value} type="button" onClick={() => set("industry", value)} className={`flex flex-col items-center rounded-2xl border p-4 text-center transition-all ${active ? "border-indigo-500 bg-indigo-50/50 ring-2 ring-indigo-500/20 shadow-sm" : "border-gray-100 bg-white hover:border-indigo-200 hover:bg-indigo-50"}`}>
+                      <DynamicIcon size={24} className={active ? "text-indigo-600" : "text-gray-400"} />
+                      <span className={`mt-2 block text-[10px] font-black leading-tight ${active ? "text-indigo-800" : "text-gray-600"}`}>{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {((!isTeamJoin && step === 2) || (isTeamJoin && step === 0)) && (
               <div className="space-y-4">
                 {isTeamJoin && preview && (
                   <div className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm">
-                    <p className="font-black text-teal-800">הצטרפות ל־: {preview.orgName}</p>
-                    <p className="mt-0.5 text-teal-600">
-                      תפקיד: {ROLE_LABELS[preview.role] ?? preview.role}
-                    </p>
+                    <p className="font-black text-teal-800">{t("auth.register.summary.joining")}: {preview.orgName}</p>
+                    <p className="mt-0.5 text-teal-600">{ROLE_LABELS[preview.role] ?? preview.role}</p>
                   </div>
                 )}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-gray-600">
-                    שם מלא
-                  </label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => set("name", e.target.value)}
-                    placeholder="שם פרטי ומשפחה"
-                    className={inputCls}
-                    autoFocus
-                  />
+                  <label className="mb-1.5 block text-xs font-bold text-gray-600">{t("auth.register.labels.fullName")}</label>
+                  <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder={t("auth.register.placeholders.fullName")} className={inputCls} autoFocus />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-gray-600">
-                    אימייל
-                  </label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => set("email", e.target.value)}
-                    placeholder="your@email.com"
-                    dir="ltr"
-                    readOnly={isTeamJoin && !!preview?.emailHint}
-                    className={`${inputCls} ${
-                      isTeamJoin && preview?.emailHint
-                        ? "bg-gray-50 text-gray-400"
-                        : ""
-                    }`}
-                  />
-                  {!isTeamJoin && (
-                    <p className="mt-1.5 text-xs text-gray-400">
-                      השתמשו באימייל Google — הכניסה למערכת תהיה עם אותו כתובת
-                    </p>
-                  )}
+                  <label className="mb-1.5 block text-xs font-bold text-gray-600">{t("auth.register.labels.email")}</label>
+                  <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="email@example.com" dir="ltr" readOnly={isTeamJoin && !!preview?.emailHint} className={`${inputCls} ${isTeamJoin && preview?.emailHint ? "bg-gray-50 text-gray-400" : ""}`} />
+                  {!isTeamJoin && <p className="mt-1.5 text-xs text-gray-400">{t("auth.register.help.email")}</p>}
                 </div>
               </div>
             )}
 
-            {/* ── STEP: שם הארגון (regular, step 2) ── */}
-            {!isTeamJoin && step === 2 && (
+            {!isTeamJoin && step === 3 && (
               <div className="space-y-4">
                 <div>
                   <label className="mb-1.5 block text-xs font-bold text-gray-600">
-                    {form.orgType === "HOME"
-                      ? "שם המשפחה / שם לניהול"
-                      : form.orgType === "FREELANCER"
-                        ? "שם העסק שלך"
-                        : "שם החברה / הארגון"}
+                    {form.orgType === "HOME" ? t("auth.register.labels.orgNameHome") : form.orgType === "FREELANCER" ? t("auth.register.labels.orgNameFreelancer") : t("auth.register.labels.orgNameCompany")}
                   </label>
-                  <input
-                    type="text"
-                    value={form.organizationName}
-                    onChange={(e) => set("organizationName", e.target.value)}
-                    placeholder={
-                      form.orgType === "HOME"
-                        ? "למשל: משפחת כהן"
-                        : form.orgType === "FREELANCER"
-                          ? "למשל: יועץ מס — ישראל ישראלי"
-                          : "שם החברה"
-                    }
-                    className={inputCls}
-                    autoFocus
-                  />
+                  <input type="text" value={form.organizationName} onChange={(e) => set("organizationName", e.target.value)} placeholder={form.orgType === "HOME" ? t("auth.register.placeholders.orgNameHome") : form.orgType === "FREELANCER" ? t("auth.register.placeholders.orgNameFreelancer") : t("auth.register.placeholders.orgNameCompany")} className={inputCls} autoFocus />
                 </div>
-                <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-xs leading-relaxed text-gray-500">
-                  השם יופיע בחשבוניות, במסמכים ובממשק המערכת. ניתן לשנות בהגדרות לאחר
-                  ההרשמה.
-                </p>
+                <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-xs leading-relaxed text-gray-500">{t("auth.register.help.orgName")}</p>
               </div>
             )}
 
-            {/* ── STEP: אישור ושליחה (last) ── */}
             {isLast && (
               <div className="space-y-4">
                 <div className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
                   {!isTeamJoin && selectedType && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-gray-500">סוג עסק</span>
-                      <span className="flex items-center gap-1.5 font-black text-gray-900">
-                        <selectedType.Icon size={14} className={selectedType.activeText} />
-                        {selectedType.label}
-                      </span>
+                      <span className="text-gray-500">{t("auth.register.summary.type")}</span>
+                      <span className="flex items-center gap-1.5 font-black text-gray-900"><selectedType.Icon size={14} className={selectedType.activeText} />{selectedType.label}</span>
                     </div>
                   )}
                   {!isTeamJoin && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-gray-500">שם הארגון</span>
+                      <span className="text-gray-500">{t("nav.solutions")}</span>
+                      <span className="font-black text-gray-900">{INDUSTRY_OPTIONS.find(i => i.value === form.industry)?.label || form.industry}</span>
+                    </div>
+                  )}
+                  {!isTeamJoin && (
+                    <div className="flex items-center justify-between px-4 py-3 text-sm">
+                      <span className="text-gray-500">{t("auth.register.summary.orgName")}</span>
                       <span className="font-black text-gray-900">{form.organizationName}</span>
                     </div>
                   )}
                   {isTeamJoin && preview && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-gray-500">הצטרפות ל</span>
+                      <span className="text-gray-500">{t("auth.register.summary.joining")}</span>
                       <span className="font-black text-gray-900">{preview.orgName}</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-gray-500">שם</span>
+                    <span className="text-gray-500">{t("auth.register.summary.name")}</span>
                     <span className="font-black text-gray-900">{form.name || "—"}</span>
                   </div>
                   <div className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-gray-500">אימייל</span>
-                    <span dir="ltr" className="font-mono text-xs font-bold text-gray-700">
-                      {form.email}
-                    </span>
+                    <span className="text-gray-500">{t("auth.register.summary.email")}</span>
+                    <span dir="ltr" className="font-mono text-xs font-bold text-gray-700">{form.email}</span>
                   </div>
                 </div>
-
-                {err && (
-                  <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm text-rose-700">
-                    {err}
-                  </p>
-                )}
-
-                <button
-                  type="button"
-                  disabled={loading}
-                  onClick={handleSubmit}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 text-sm font-black text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm"
-                >
-                  {loading ? (
-                    <Loader2 className="animate-spin" size={17} />
-                  ) : (
-                    <MailCheck size={17} />
-                  )}
-                  {isTeamJoin ? "השלמת הצטרפות לצוות" : "שליחת בקשת הרשמה"}
+                {err && <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm text-rose-700">{err}</p>}
+                <button type="button" disabled={loading} onClick={handleSubmit} className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 text-sm font-black text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm">
+                  {loading ? <Loader2 className="animate-spin" size={17} /> : <MailCheck size={17} />}
+                  {isTeamJoin ? t("auth.register.submitTeam") : t("auth.register.submit")}
                 </button>
               </div>
             )}
 
-            {/* ── Navigation ── */}
             <div className="mt-6 flex items-center justify-between">
               {step > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => { setErr(null); setStep((s) => s - 1); }}
-                  className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition"
-                >
-                  <ArrowRight size={15} />
-                  חזרה
+                <button type="button" onClick={() => { setErr(null); setStep((s) => s - 1); }} className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition">
+                  {dir === "rtl" ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
+                  {t("auth.register.back")}
                 </button>
               ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition"
-                >
-                  <ArrowRight size={15} />
-                  חזרה לכניסה
+                <Link href="/login" className="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition">
+                  {dir === "rtl" ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
+                  {t("auth.register.backToLogin")}
                 </Link>
               )}
-
               {!isLast && (
-                <button
-                  type="button"
-                  disabled={!canAdvance()}
-                  onClick={() => setStep((s) => s + 1)}
-                  className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-40 shadow-sm"
-                >
-                  המשך
-                  <ArrowLeft size={15} />
+                <button type="button" disabled={!canAdvance()} onClick={() => setStep((s) => s + 1)} className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-40 shadow-sm">
+                  {t("auth.register.next")}
+                  {dir === "rtl" ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
                 </button>
               )}
             </div>
           </div>
         </div>
-
         <p className="mt-4 text-center text-xs text-gray-400">
-          כבר רשומים?{" "}
-          <Link href="/login" className="font-bold text-indigo-600 hover:underline">
-            כניסה למערכת
-          </Link>
+          {t("auth.register.alreadyHave")}{" "}
+          <Link href="/login" className="font-bold text-indigo-600 hover:underline">{t("auth.register.loginLink")}</Link>
         </p>
       </div>
     </AuthPageShell>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ invite?: string; orgInvite?: string }>;
+  searchParams: Promise<{ invite?: string; orgInvite?: string; plan?: string }>;
 };
 
 export default async function RegisterPage({ searchParams }: Props) {
@@ -18,5 +18,6 @@ export default async function RegisterPage({ searchParams }: Props) {
   const sp = await searchParams;
   const inviteToken = sp.invite?.trim() || undefined;
   const orgInviteToken = sp.orgInvite?.trim() || undefined;
-  return <RegisterPortal inviteToken={inviteToken} orgInviteToken={orgInviteToken} />;
+  const plan = sp.plan?.trim() || undefined;
+  return <RegisterPortal inviteToken={inviteToken} orgInviteToken={orgInviteToken} plan={plan} />;
 }

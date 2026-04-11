@@ -128,6 +128,10 @@ model Organization {
   /// API key לאינטגרציית מקאנו (שעון נוכחות / HR) — מוצפן בשרת בלבד
   meckanoApiKey        String?
   meckanoZones         MeckanoZone[]
+  /// סיווג מקצועי (עו"ד, רופא, קבלן וכו') — משפיע על כל ה-UI וה-AI באתר
+  industry             String         @default("GENERAL")
+  /// הגדרות ספציפיות למקצוע (שדות מותאמים, תוויות וכו')
+  industryConfigJson   Json?
 }
 
 /// אזורי דיווח מורשים למקאנו — נקודות עבודה/אתרים לחתימה

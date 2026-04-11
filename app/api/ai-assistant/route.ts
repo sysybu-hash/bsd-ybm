@@ -37,13 +37,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: missing }, { status: 400 });
     }
 
+    const org = await prisma.organization.findUnique({
+      where: { id: orgId },
+      select: { industry: true }
+    });
+
     const data = await prisma.document.findMany({
       where: { organizationId: orgId },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: 20,
     });
 
-    const contextJson = JSON.stringify({ documentCount: data.length, documents: data });
+    const contextJson = JSON.stringify({ 
+      industry: org?.industry || "GENERAL",
+      documentCount: data.length, 
+      documents: data.map(d => d.fileName) 
+    });
     const locale = await getServerLocale();
     const { text } = await runAiChat(providerBody, message, contextJson, locale);
 

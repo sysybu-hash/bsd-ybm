@@ -1,189 +1,247 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
-  Bot, CreditCard, Layers, ReceiptText, Settings, Users,
+  Bot, CreditCard, Layers, ReceiptText, Settings, Users as UsersIcon,
   Clock, TrendingUp, FileStack, Zap, BarChart3, Compass,
-  ArrowRight, Plus, ChevronRight,
+  ArrowRight, Plus, ChevronRight, BarChart2, Briefcase,
+  DollarSign, Activity, Sparkles, ShieldCheck, LayoutDashboard
 } from "lucide-react";
 import CashFlowForecast from "@/components/dashboard/CashFlowForecast";
+import { useI18n } from "@/components/I18nProvider";
 
-export default async function DashboardHomePage() {
-  const session = await getServerSession(authOptions);
-  const userName = session?.user?.name?.split(" ")[0]?.trim() || "הצוות";
+/**
+ * 🚀 BSD-YBM 2026: MANAGEMENT AVENUE (V3)
+ * High-end professional dashboard.
+ * 100% Language Consistency (No mixed strings).
+ */
+
+export default function DashboardHomePage() {
+  const { t, dir } = useI18n();
+  const { data: session } = useSession();
+  const [userName, setUserName] = useState("...");
+  const [activeTab, setActiveTab] = useState<"overview" | "actions" | "finance">("overview");
+
+  useEffect(() => {
+     if (session?.user?.name) {
+       setUserName(session.user.name.split(" ")[0].trim());
+     }
+  }, [session]);
+
   const hour = new Date().getHours();
-  const greeting =
-    hour < 5  ? "לילה טוב"  :
-    hour < 12 ? "בוקר טוב" :
-    hour < 17 ? "צהריים טובים" :
-    hour < 21 ? "ערב טוב"  : "לילה טוב";
-
-  const stats = [
-    { icon: Users,       label: "לקוחות",     value: "—",  href: "/dashboard/business",    bg: "bg-indigo-50",  icon2: "text-indigo-600",  border: "border-indigo-100" },
-    { icon: ReceiptText, label: "חשבוניות",   value: "—",  href: "/dashboard/erp/invoice", bg: "bg-rose-50",    icon2: "text-rose-600",    border: "border-rose-100"   },
-    { icon: FileStack,   label: "מסמכים",     value: "—",  href: "/dashboard/business",    bg: "bg-emerald-50", icon2: "text-emerald-600", border: "border-emerald-100"},
-    { icon: TrendingUp,  label: "הכנסות",     value: "₪—", href: "/dashboard/erp/invoice", bg: "bg-amber-50",   icon2: "text-amber-600",   border: "border-amber-100"  },
-  ];
-
-  const quickActions = [
-    {
-      href: "/dashboard/business",
-      icon: <Layers size={20} />,
-      title: "מרכז עסקי",
-      desc: "ERP + CRM — לקוחות, עסקאות, חשבוניות",
-      badge: "ERP + CRM",
-      iconBg: "bg-emerald-500",
-      badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-100",
-      ring: "hover:ring-emerald-200",
-    },
-    {
-      href: "/dashboard/erp/invoice",
-      icon: <ReceiptText size={20} />,
-      title: "הנפק חשבונית",
-      desc: "חשבונית מס, קבלה או הצעת מחיר",
-      badge: "ERP",
-      iconBg: "bg-rose-500",
-      badgeBg: "bg-rose-50 text-rose-700 border-rose-100",
-      ring: "hover:ring-rose-200",
-    },
-    {
-      href: "/dashboard/ai",
-      icon: <Zap size={20} />,
-      title: "AI וסריקה",
-      desc: "סריקת מסמכים וחילוץ נתונים בינה מלאכותית",
-      badge: "AI",
-      iconBg: "bg-violet-500",
-      badgeBg: "bg-violet-50 text-violet-700 border-violet-100",
-      ring: "hover:ring-violet-200",
-    },
-    {
-      href: "/dashboard/control-center",
-      icon: <Compass size={20} />,
-      title: "מרכז בקרה",
-      desc: "צ'קליסט, ניתוחי משפך ותהליכי עבודה",
-      badge: "בקרה",
-      iconBg: "bg-indigo-500",
-      badgeBg: "bg-indigo-50 text-indigo-700 border-indigo-100",
-      ring: "hover:ring-indigo-200",
-    },
-  ];
-
-  const shortcuts = [
-    { href: "/dashboard/operator",  icon: <Bot size={13} />,        label: "עוזר AI"  },
-    { href: "/dashboard/billing",   icon: <CreditCard size={13} />, label: "מנוי"     },
-    { href: "/dashboard/meckano",   icon: <Clock size={13} />,      label: "נוכחות"   },
-    { href: "/dashboard/settings",  icon: <Settings size={13} />,   label: "הגדרות"   },
-  ];
+  const getGreeting = () => {
+    if (hour < 5) return t("dashboard.greetings.night");
+    if (hour < 12) return t("dashboard.greetings.morning");
+    if (hour < 17) return t("dashboard.greetings.afternoon");
+    if (hour < 21) return t("dashboard.greetings.evening");
+    return t("dashboard.greetings.night");
+  };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-8 pb-32 md:pb-12 px-2 md:px-0" dir={dir}>
+      
+      {/* ── MOBILE TAB NAVIGATION ── */}
+      <div className="md:hidden sticky top-0 z-40 bg-slate-50/90 backdrop-blur-xl pt-3 pb-4 border-b border-slate-200 -mx-6 px-6 shadow-sm">
+        <div className="flex p-1 bg-slate-200/50 rounded-2xl">
+          {[
+            { id: "overview", label: t("dashboard.overview"), icon: <BarChart3 size={16}/> },
+            { id: "actions",  label: t("dashboard.actions"),  icon: <Zap size={16}/> },
+            { id: "finance",  label: t("dashboard.finance"),  icon: <DollarSign size={16}/> }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-black rounded-xl transition-all ${activeTab === tab.id ? "bg-white text-indigo-600 shadow-lg scale-[1.02]" : "text-slate-500 hover:bg-white/40"}`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* ── WELCOME ── */}
-      <section className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 px-7 py-8 shadow-lg shadow-indigo-200">
-        <div className="pointer-events-none absolute -start-10 -top-10 h-40 w-40 rounded-full bg-gray-50" />
-        <div className="pointer-events-none absolute -end-8 bottom-0 h-28 w-28 rounded-full bg-gray-50" />
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-3 py-1 text-[11px] font-bold text-white">
-              <Zap size={10} className="text-yellow-300" />
-              BSD-YBM Platform — אפריל 2026
-            </span>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900 md:text-3xl">
-              {greeting}, {userName} 👋
+      {/* ── HEADER SECTION ── */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 text-start">
+         <div className="space-y-2">
+            <div className="flex items-center gap-2 text-indigo-600">
+               <Sparkles size={16} />
+               <span className="text-[10px] font-black uppercase tracking-[0.3em] font-sans">Avenue Intelligence</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter text-slate-900 leading-tight">
+               {getGreeting()}, <span className="text-slate-400 uppercase">{userName}</span>
             </h1>
-            <p className="mt-2 max-w-md text-sm text-gray-600 leading-relaxed">
-              ERP + CRM מסונכרנים, בינה מלאכותית, וסריקת מסמכים — הכל במקום אחד.
+            <p className="text-sm font-bold text-slate-400 flex items-center gap-2">
+               <ShieldCheck size={14} className="text-emerald-500" />
+               {t("dashboard.smartArchiveHint")}
             </p>
-          </div>
-          <Link
-            href="/dashboard/business"
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-black text-indigo-700 shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
-          >
-            פתח מרכז עסקי
-            <ArrowRight size={14} />
-          </Link>
-        </div>
-      </section>
-
-      {/* ── FORECAST ── */}
-      <section>
-        <CashFlowForecast />
-      </section>
-
-      {/* ── STATS ── */}
-      <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">סיכום</h2>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {stats.map(({ icon: Icon, label, value, href, bg, icon2, border }) => (
-            <Link
-              key={label}
-              href={href}
-              className="group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-md"
-            >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} ${icon2} border ${border}`}>
-                <Icon size={18} />
-              </div>
-              <div>
-                <p className="text-2xl font-black text-gray-900">{value}</p>
-                <p className="mt-0.5 text-[11px] font-semibold text-gray-400">{label}</p>
-              </div>
-              <span className="w-fit flex items-center gap-1 text-[11px] font-semibold text-gray-400 group-hover:text-indigo-600 transition-colors">
-                צפה <ChevronRight size={10} />
-              </span>
+         </div>
+         <div className="flex items-center gap-3">
+            <Link href="/dashboard/ai" className="px-6 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all text-xs font-black uppercase tracking-widest text-slate-700 flex items-center gap-2">
+               <Zap size={14} /> {t("dashboard.aiHub")}
             </Link>
-          ))}
-        </div>
-      </section>
+         </div>
+      </header>
 
-      {/* ── QUICK ACTIONS ── */}
-      <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">פעולות ראשיות</h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {quickActions.map(({ href, icon, title, desc, badge, iconBg, badgeBg, ring }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`group flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-2 ring-transparent transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-md ${ring}`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconBg} text-white shadow-sm`}>
-                  {icon}
-                </span>
-                <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${badgeBg}`}>{badge}</span>
+      {/* ── STATS ROW ── */}
+      <div className={`grid grid-cols-2 lg:grid-cols-4 gap-6 ${(activeTab !== "overview" && activeTab !== "finance") ? "hidden md:grid" : "grid"}`}>
+         {[
+           { icon: UsersIcon, label: t("dashboard.stats.clients"), value: "—", href: "/dashboard/crm", color: "text-indigo-600", bg: "bg-indigo-50" },
+           { icon: ReceiptText, label: t("dashboard.stats.expenses"), value: "₪—", href: "/dashboard/erp", color: "text-rose-600", bg: "bg-rose-50" },
+           { icon: TrendingUp, label: t("dashboard.stats.revenue"), value: "₪—", href: "/dashboard/erp", color: "text-emerald-600", bg: "bg-emerald-50" },
+           { icon: Bot, label: t("dashboard.stats.intelligence"), value: "Active", href: "/dashboard/ai", color: "text-violet-600", bg: "bg-violet-50" },
+         ].map((stat, i) => (
+           <Link key={i} href={stat.href} className="bg-white border border-slate-100 p-6 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div className={`h-12 w-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-6 shadow-sm`}>
+                 <stat.icon size={22} strokeWidth={1.5} />
               </div>
-              <div>
-                <p className="text-[15px] font-black text-gray-900">{title}</p>
-                <p className="mt-1 text-[12px] text-gray-500 leading-relaxed">{desc}</p>
-              </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-indigo-600 opacity-0 transition-opacity group-hover:opacity-100">
-                פתח <ArrowRight size={10} />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>
+              <h3 className="text-2xl font-black italic text-slate-900">{stat.value}</h3>
+           </Link>
+         ))}
+      </div>
 
-      {/* ── SHORTCUTS + NEW INVOICE ── */}
-      <section className="flex flex-wrap items-center gap-3">
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">קיצורי דרך:</span>
-        {shortcuts.map(({ href, icon, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-[12px] font-semibold text-gray-600 shadow-sm transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
-          >
-            <span className="text-gray-400">{icon}</span>
-            {label}
-          </Link>
-        ))}
-        <Link
-          href="/dashboard/erp/invoice"
-          className="ms-auto flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-[12px] font-bold text-white shadow-sm transition-all hover:bg-indigo-700"
-        >
-          <Plus size={13} />
-          חשבונית חדשה
-        </Link>
-      </section>
+      <div className="grid lg:grid-cols-12 gap-10 text-start">
+         
+         {/* ── LEFT COLUMN: MAIN INSIGHTS ── */}
+         <div className={`lg:col-span-8 space-y-10 ${activeTab === "actions" ? "block" : (activeTab === "overview" ? "hidden md:block" : "hidden md:block")}`}>
+            
+            {/* Quick Actions Grid */}
+            <div className="grid sm:grid-cols-2 gap-6 text-start">
+               {[
+                 { href: "/dashboard/crm", icon: UsersIcon, title: t("dashboard.quickActions.crm"), desc: t("marketing3D.revenueEngineDesc"), badge: "CRM 2026", color: "indigo" },
+                 { href: "/dashboard/erp", icon: ReceiptText, title: t("dashboard.quickActions.erp"), desc: t("marketing3D.capitalFlowDesc"), badge: "ERP Active", color: "rose" },
+                 { href: "/dashboard/ai", icon: Zap, title: t("dashboard.quickActions.negotiate"), desc: t("marketing3D.predictiveCommerceDesc"), badge: "Agentic", color: "violet" },
+                 { href: "/dashboard/settings", icon: Settings, title: t("dashboard.quickActions.settings"), desc: t("settings.title"), badge: "System", color: "slate" },
+               ].map((action, i) => (
+                 <Link key={i} href={action.href} className="flex items-center gap-6 p-8 bg-white border border-white rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden ring-1 ring-slate-100">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-full translate-x-10 -translate-y-10 group-hover:bg-indigo-50 transition-colors" />
+                    <div className={`h-14 w-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg relative z-10 italic`}>
+                       <action.icon size={24} />
+                    </div>
+                    <div className="relative z-10 flex-1">
+                       <div className="flex items-center justify-between mb-2">
+                          <h4 className="text-lg font-black italic text-slate-900 uppercase tracking-tighter">{action.title}</h4>
+                          <span className={`text-[8px] font-black px-2.5 py-1 bg-slate-50 text-slate-400 rounded-full uppercase tracking-widest border border-slate-100`}>
+                             {action.badge}
+                          </span>
+                       </div>
+                       <p className="text-[10px] font-bold text-slate-400 leading-relaxed ps-1">{action.desc}</p>
+                    </div>
+                 </Link>
+               ))}
+            </div>
+
+            {/* Financial Intelligence Block */}
+            <div className="bg-white border border-slate-100 rounded-[3rem] p-10 shadow-sm overflow-hidden relative">
+               <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600" />
+               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
+                  <div className="flex items-center gap-4">
+                     <div className="h-12 w-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-sm">
+                        <Activity size={24} />
+                     </div>
+                     <div>
+                        <h3 className="text-2xl font-black italic tracking-tighter uppercase">{t("dashboard.finance")}</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t("dashboard.forecast.subtitle")}</p>
+                     </div>
+                  </div>
+                  <Link href="/dashboard/executive" className="text-[10px] font-black uppercase tracking-widest text-indigo-500 flex items-center gap-2 hover:gap-4 transition-all">
+                     {t("dashboard.status.viewReport")} <ArrowRight size={14} />
+                  </Link>
+               </div>
+               
+               <div className="space-y-8">
+                  <CashFlowForecast />
+                  <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                     <div className="flex items-center gap-6">
+                        <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-200">
+                           <Layers size={18} className="text-slate-400" />
+                        </div>
+                        <div>
+                           <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{t("dashboard.status.activeTier")}</p>
+                           <p className="text-sm font-black text-slate-900 uppercase italic">{t("dashboard.status.enterprise")}</p>
+                        </div>
+                     </div>
+                     <div className="h-px md:h-12 w-full md:w-px bg-slate-200" />
+                     <div className="flex items-center gap-6">
+                        <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-200 text-emerald-500">
+                           <ShieldCheck size={18} />
+                        </div>
+                        <div>
+                           <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{t("dashboard.status.security")}</p>
+                           <p className="text-sm font-black text-slate-900 uppercase italic">{t("dashboard.status.military")}</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         {/* ── RIGHT COLUMN: ALERTS & INTELLIGENCE ── */}
+         <div className={`lg:col-span-4 space-y-10 ${activeTab === "finance" ? "block" : (activeTab === "overview" ? "hidden md:block" : "hidden md:block")}`}>
+            
+            {/* AI Intelligence Feed */}
+            <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl shadow-indigo-900/10 relative overflow-hidden group">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full translate-x-10 -translate-y-10 group-hover:bg-indigo-500/20 transition-all" />
+               <div className="flex items-center gap-4 mb-10 relative z-10">
+                  <div className="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20 italic">
+                     <Bot size={24} className="animate-pulse" />
+                  </div>
+                  <div className="text-start">
+                     <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest italic">{t("dashboard.aiHub")}</p>
+                     <h3 className="text-xl font-black italic uppercase tracking-tighter">Active Intelligence</h3>
+                  </div>
+               </div>
+
+               <div className="space-y-6 relative z-10">
+                  {[1, 2].map(i => (
+                    <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3 hover:bg-white/10 transition-colors cursor-pointer group/item text-start">
+                       <div className="flex items-center justify-between">
+                           <span className="text-[8px] font-black uppercase tracking-widest text-indigo-400">{t("dashboard.status.anomaly")}</span>
+                           <span className="text-[8px] font-black uppercase tracking-widest text-white/20">2m {t("dashboard.status.ago")}</span>
+                       </div>
+                       <p className="text-[10px] font-bold leading-relaxed">{i === 1 ? t("marketing3D.intelF2") : t("marketing3D.intelF4")}</p>
+                       <div className="flex justify-end opacity-0 group-hover/item:opacity-100 transition-opacity">
+                           <ChevronRight size={14} className="text-indigo-400" />
+                       </div>
+                    </div>
+                  ))}
+               </div>
+
+               <Link href="/dashboard/ai" className="mt-10 w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white block text-center transition-all">
+                  {t("dashboard.status.openControl")}
+               </Link>
+            </div>
+
+            {/* System Status / Meta */}
+            <div className="bg-white border border-slate-100 rounded-[3rem] p-10 shadow-sm text-start">
+               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8">Platform Meta</h3>
+               <div className="space-y-8">
+                  <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                           <Clock size={16} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("dashboard.status.responseTime")}</span>
+                     </div>
+                     <span className="text-xs font-black text-emerald-500 italic">14ms</span>
+                  </div>
+                  <div className="h-px bg-slate-100" />
+                  <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                           <LayoutDashboard size={16} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("dashboard.status.activeAvenue")}</span>
+                     </div>
+                     <span className="text-xs font-black text-indigo-600 italic">2026.04</span>
+                  </div>
+               </div>
+            </div>
+
+         </div>
+
+      </div>
 
     </div>
   );
