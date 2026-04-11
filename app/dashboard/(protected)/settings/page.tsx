@@ -1,10 +1,12 @@
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import SettingsHubClient from "./SettingsPageClient";
 import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
+  
   if (!session?.user?.organizationId) {
     redirect("/dashboard");
   }
@@ -25,7 +27,7 @@ export default async function SettingsPage() {
       paypalMerchantEmail: true,
       paypalMeSlug: true,
       liveDataTier: true,
-      // You can expand this to include AI settings from the DB
+      industryConfigJson: true,
     },
   });
 
