@@ -179,15 +179,16 @@ export default function DashboardUnifiedAi({ orgId }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
-           open ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-lg" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+        className={`relative group/aibtn flex h-14 w-14 items-center justify-center rounded-[1.5rem] transition-all duration-500 shadow-xl overflow-hidden ${
+           open ? "bg-[var(--primary-brand,#4f46e5)] text-white scale-110 ring-4 ring-[var(--primary-brand)]/20 shadow-[0_0_30px_var(--primary-brand)]" : "bg-white/50 text-slate-500 hover:bg-white hover:text-[var(--primary-brand)] hover:shadow-2xl hover:scale-105"
         }`}
       >
-        {open ? <X size={20} /> : <Brain size={20} />}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[var(--primary-brand)]/20 to-transparent pointer-events-none opacity-0 group-hover/aibtn:opacity-100 transition-opacity" />
+        {open ? <X size={24} /> : <Brain size={24} className="group-hover/aibtn:rotate-12 transition-transform" />}
       </button>
 
       {open && (
-        <div className="absolute top-0 right-14 w-80 z-[220]">
+        <div className="absolute top-0 left-16 w-80 z-[220] animate-in fade-in slide-in-from-left-6 duration-500">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
             <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5">
               <div className="flex items-center gap-2 text-xs font-black text-gray-900">

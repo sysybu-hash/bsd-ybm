@@ -54,7 +54,7 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
   ];
 
   const MenuContent = (
-    <div className={`${dock ? "absolute top-0 right-14 w-[320px]" : "w-full max-w-sm"} rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl ring-1 ring-black/5 animate-in fade-in slide-in-from-right-4 duration-300 z-[350]`}>
+    <div className={`${dock ? "absolute top-0 left-16 w-[340px]" : "w-full max-w-sm"} rounded-[2.5rem] border border-white/40 bg-white/80 p-7 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] backdrop-blur-3xl ring-1 ring-black/5 animate-in fade-in slide-in-from-left-6 duration-500 z-[350]`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
@@ -147,12 +147,12 @@ export default function AccessibilityMenu({ dock = false }: { dock?: boolean }) 
       <div className="relative" dir="rtl">
         <button
           onClick={toggleOpen}
-          className={`group flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
-            isOpen ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-lg shadow-black/10" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+          className={`group flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+            isOpen ? "bg-[var(--primary-brand,#4f46e5)] text-white shadow-[0_0_20px_var(--primary-brand)] scale-110" : "bg-white/50 text-slate-500 hover:bg-white hover:text-[var(--primary-brand)] hover:shadow-xl"
           }`}
           title="תפריט נגישות"
         >
-          <Accessibility size={20} className={isOpen ? "animate-pulse" : "group-hover:scale-110 transition-transform"} />
+          <Accessibility size={22} className={isOpen ? "animate-spin-[duration:3s]" : "group-hover:scale-110 transition-transform"} />
         </button>
 
         {isOpen && MenuContent}

@@ -16,9 +16,9 @@
 /* ─────────────────────────────────────────
    DESIGN TOKENS v2 — BSD-YBM BSD-YBM
 ───────────────────────────────────────── */
-h1, h2, h3, h4 {
-  color: var(--primary-brand);
-  transition: color 0.3s ease;
+h1, h2, h3, h4, h5, h6, .heading-primary {
+  color: var(--primary-brand) !important;
+  transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
@@ -41,7 +41,7 @@ h1, h2, h3, h4 {
   --surface-dark: #020617;
 
   /* Text */
-  --heading-color: #0f172a;
+  --heading-color: var(--primary-brand);
   --body-color: #334155;
   --muted-color: #64748b;
 
@@ -251,8 +251,9 @@ h1, h2, h3, h4 {
   fieldset { min-width: 0; }
 
   h1, h2, h3, h4, h5, h6 {
-    color: var(--heading-color);
+    color: var(--primary-brand);
     line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 
   ::selection {
