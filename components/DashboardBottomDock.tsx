@@ -3,7 +3,7 @@
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import DashboardUnifiedAi from "@/components/DashboardUnifiedAi";
 import Link from "next/link";
-import { Zap, Brain } from "lucide-react";
+import { Zap } from "lucide-react";
 
 export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) {
   return (
@@ -33,7 +33,5 @@ export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) 
 
       </div>
     </div>
-  );
-}
   );
 }
