@@ -44,7 +44,7 @@
     },
     "register": {
       "title": "إنشاء حساب",
-      "subtitle": "انضم إلى جادة الإدارة لعام 2026",
+      "subtitle": "انضم إلى جادة الإدارة لعام BSD-YBM",
       "google": "التسجيل باستخدام Google",
       "alreadyHave": "مسجل بالفعل؟",
       "loginLink": "تسجيل الدخول",
@@ -161,7 +161,7 @@
       "activeTier": "الخطة النشطة",
       "security": "حالة الأمان",
       "military": "مستوى عسكري",
-      "enterprise": "Enterprise Pro 2026",
+      "enterprise": "Enterprise Pro BSD-YBM",
       "responseTime": "وقت الاستجابة",
       "activeAvenue": "الجادة النشطة",
       "anomaly": "تم اكتشاف شذوذ",
@@ -305,7 +305,7 @@
     "tutorialCta": "شاهد الدروس"
   },
   "marketing3D": {
-    "heroBadge": "ثورة الإدارة اللامركزية 2026",
+    "heroBadge": "ثورة الإدارة اللامركزية BSD-YBM",
     "heroTitle": "الجادة التي",
     "heroTitleGlow": "تربط الجميع.",
     "heroDesc": "BSD-YBM تعيد تعريف حدود القدرة التجارية. منصة موحدة تدمج ERP و CRM والذكاء الاصطناعي لتجربة إدارة قوية ونخبوية.",
@@ -331,12 +331,12 @@
     "intelF4": "تحليل صحة العميل ومشاعره في الوقت الفعلي",
     "ctaFinalTitle": "لقد حان الوقت",
     "ctaFinalGlow": "للاتصال.",
-    "ctaFinalDesc": "نظام BSD-YBM 2026 هو الجادة التي تربط بين كل جزء من أعمالك. انضم إلى عصر الإدارة اللامركزية.",
+    "ctaFinalDesc": "نظام BSD-YBM BSD-YBM هو الجادة التي تربط بين كل جزء من أعمالك. انضم إلى عصر الإدارة اللامركزية.",
     "ctaFinalJoin": "انضم إلى الجادة الآن",
     "autonomous": "نظام لامركزي",
-    "native2026": "أصيل 2026",
+    "nativeBSD-YBM": "أصيل BSD-YBM",
     "footer": {
-      "copy": "BSD-YBM EXECUTIVE © 2026",
+      "copy": "BSD-YBM EXECUTIVE © BSD-YBM",
       "identity": "الهوية الرقمية",
       "ethics": "أخلاقيات المنصة",
       "security": "الأمن العالمي"

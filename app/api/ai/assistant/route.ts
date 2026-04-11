@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
 
     const systemPrompt = `
-      אתה עוזר AI עסקי חכם תחת פלטפורמת ה-SaaS בשם BSD-YBM (שנת 2026).
+      אתה עוזר AI עסקי חכם תחת פלטפורמת ה-SaaS בשם BSD-YBM (שנת BSD-YBM).
       תפקידך לסייע למשתמשים לנהל את העסק שלהם טוב יותר.
       
       הקשר נוכחי:

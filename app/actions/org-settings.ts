@@ -180,3 +180,55 @@ export async function updateMeckanoApiKeyAction(formData: FormData) {
   revalidatePath("/dashboard/meckano");
   return { ok: true as const };
 }
+
+/** ניהול מנועי AI — בחירת מנוע ברירת מחדל, מודלים ומפתחות */
+export async function updateAiConfigAction(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false as const, error: "נדרשת התחברות" };
+  }
+  const orgId = session.user.organizationId ?? null;
+  const role = String(session.user.role ?? "");
+  if (!orgId) {
+    return { ok: false as const, error: "אין ארגון משויך" };
+  }
+  if (role !== UserRole.ORG_ADMIN && role !== UserRole.SUPER_ADMIN) {
+    return { ok: false as const, error: "רק מנהל ארגון רשאי לעדכן הגדרות AI" };
+  }
+
+  // שאיבת הגדרות קיימות כדי לא לדרוס נתוני industry אחרים
+  const org = await prisma.organization.findUnique({
+    where: { id: orgId },
+    select: { industryConfigJson: true }
+  });
+
+  const existingConfig = (org?.industryConfigJson as Record<string, any>) || {};
+
+  const aiPrimary = String(formData.get("ai_primary") || "gemini").trim();
+  const geminiModel = String(formData.get("model_gemini") || "flash").trim();
+  const geminiKey = String(formData.get("gemini_key") || "").trim();
+  const openaiModel = String(formData.get("model_openai") || "4o-mini").trim();
+  const openaiKey = String(formData.get("openai_key") || "").trim();
+  const anthropicModel = String(formData.get("model_anthropic") || "sonnet").trim();
+  const anthropicKey = String(formData.get("anthropic_key") || "").trim();
+
+  const newAiConfig = {
+    ...existingConfig,
+    aiControl: {
+      primary: aiPrimary,
+      gemini: { model: geminiModel, key: geminiKey },
+      openai: { model: openaiModel, key: openaiKey },
+      anthropic: { model: anthropicModel, key: anthropicKey },
+      updatedAt: new Date().toISOString()
+    }
+  };
+
+  await prisma.organization.update({
+    where: { id: orgId },
+    data: { industryConfigJson: newAiConfig },
+  });
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/ai");
+  return { ok: true as const };
+}

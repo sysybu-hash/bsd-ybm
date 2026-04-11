@@ -13,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 🛡️ BSD-YBM 2026: STABILITY FALLBACK
+    // 🛡️ BSD-YBM BSD-YBM: STABILITY FALLBACK
     // We attempt to fetch DB info, but if it fails (e.g. database maintenance),
     // we return a standard set of providers to keep the scanner operational.
     

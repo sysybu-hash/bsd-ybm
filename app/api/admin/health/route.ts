@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // 🛡️ BSD-YBM 2026: TOTAL INFRASTRUCTURE ISOLATION
+  // 🛡️ BSD-YBM BSD-YBM: TOTAL INFRASTRUCTURE ISOLATION
   // Mocking health to prevent 500s from blocking dashboard stability.
   return NextResponse.json({
     status: "ok",

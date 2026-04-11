@@ -811,7 +811,7 @@ export default function CrmClient({
                      "כאשר לקוח עובר לסטטוס בקשת הצעת מחיר, שלח לו מייל אוטומטי, והוסף תזכורת למנהל תיק הלקוח בעוד יומיים."
                   </p>
                   <button className="btn-secondary pointer-events-none opacity-50 border-slate-200 px-6 py-3 text-sm">
-                     סביבת האוטומציות נמצאת בפיתוח עבור גרסת 2026.
+                     סביבת האוטומציות נמצאת בפיתוח עבור גרסת BSD-YBM.
                   </button>
                </div>
             </div>

@@ -559,7 +559,7 @@ export default function WizardHome() {
           </div>
 
           <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-7">
-            <p className="text-[11px] text-gray-400">© 2026 BSD-YBM Platform Ltd. כל הזכויות שמורות.</p>
+            <p className="text-[11px] text-gray-400">© BSD-YBM BSD-YBM Platform Ltd. כל הזכויות שמורות.</p>
             <div className="flex items-center gap-2 text-[11px] text-gray-300">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               <span>כל המערכות פעילות</span>

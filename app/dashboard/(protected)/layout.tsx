@@ -5,7 +5,7 @@ export default async function ProtectedDashboardSectionLayout({
 }: {
   children: ReactNode;
 }) {
-  // 🛡️ BSD-YBM 2026: NESTED INFRASTRUCTURE ISOLATION
+  // 🛡️ BSD-YBM BSD-YBM: NESTED INFRASTRUCTURE ISOLATION
   // Bypassing auth check and database trials in the protected layout segment.
   
   return <>{children}</>;

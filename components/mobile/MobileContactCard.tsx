@@ -32,7 +32,7 @@ type MobileContactCardProps = {
 };
 
 /**
- * 🚀 High-End 2026 Mobile Card View
+ * 🚀 High-End BSD-YBM Mobile Card View
  * Enhanced with "Client Health" (Sentiment/Churn AI)
  */
 export default function MobileContactCard({ 
@@ -43,7 +43,7 @@ export default function MobileContactCard({
 }: MobileContactCardProps) {
   const meta = statusMeta(contact.status);
 
-  // 🧠 Sentiment AI logic (Simulated for 2026 Experience)
+  // 🧠 Sentiment AI logic (Simulated for BSD-YBM Experience)
   const getHealth = (notes?: string | null, pending?: number) => {
     if ((pending ?? 0) > 10000) return { label: "סיכון תשלום גבוה", color: "text-rose-600 bg-rose-50 border-rose-100", icon: <AlertCircle size={10} /> };
     if (notes?.includes("בעיה") || notes?.includes("כועס") || notes?.includes("עיכוב")) 

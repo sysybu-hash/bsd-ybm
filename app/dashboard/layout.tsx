@@ -11,12 +11,12 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  // 🛡️ BSD-YBM 2026: TOTAL INFRASTRUCTURE ISOLATION
+  // 🛡️ BSD-YBM BSD-YBM: TOTAL INFRASTRUCTURE ISOLATION
   // Mocking all identity and data to bypass systemic production crashes (500s).
   
   const serverEmail = "admin@bsd-ybm.ai";
   const userName = "System Admin";
-  const orgId = "platform-lock-2026";
+  const orgId = "platform-lock-BSD-YBM";
   const userRole = "SUPER_ADMIN";
   const isAdminUser = true;
   const trialBannerDaysLeft = null;

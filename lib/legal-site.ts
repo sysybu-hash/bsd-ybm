@@ -15,5 +15,5 @@ export const legalSite = {
       ? process.env.NEXT_PUBLIC_LEGAL_CONTACT_EMAIL
       : "yb@bsd-ybm.co.il",
   /** תאריך עדכון אחרון של מסמכים (מחרוזת להצגה) */
-  documentsLastUpdated: "מרץ 2026",
+  documentsLastUpdated: "מרץ BSD-YBM",
 } as const;

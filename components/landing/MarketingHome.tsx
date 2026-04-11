@@ -11,7 +11,7 @@ import {
 import { useI18n } from "@/components/I18nProvider";
 
 /**
- * 🌌 BSD-YBM 2026: THE EXECUTIVE AVENUE (Version X-Premium)
+ * 🌌 BSD-YBM BSD-YBM: THE EXECUTIVE AVENUE (Version X-Premium)
  * Design Strategy:
  * 1. "Avenue of Intelligence" - Visual linear flow leading the user through the story.
  * 2. Absolute I18n Consistency - Zero hardcoded strings.
@@ -193,7 +193,7 @@ export default function MarketingHome() {
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
                     <CheckCircle2 size={16} className="text-indigo-500" />
-                    {t("marketing3D.native2026")}
+                    {t("marketing3D.nativeBSD-YBM")}
                  </div>
               </div>
             </GlassCard>
@@ -349,7 +349,7 @@ export default function MarketingHome() {
                 <Zap size={24} />
              </div>
              <div className="text-center md:text-start">
-               <span className="text-xs font-black uppercase tracking-[0.5em] text-white/30 block mb-1 tracking-tighter underline">BSD-YBM EXECUTIVE © 2026</span>
+               <span className="text-xs font-black uppercase tracking-[0.5em] text-white/30 block mb-1 tracking-tighter underline">BSD-YBM EXECUTIVE © BSD-YBM</span>
                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500/50">{t("brand.tagline")}</span>
              </div>
           </div>

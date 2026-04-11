@@ -13,7 +13,7 @@ import CashFlowForecast from "@/components/dashboard/CashFlowForecast";
 import { useI18n } from "@/components/I18nProvider";
 
 /**
- * 🚀 BSD-YBM 2026: MANAGEMENT AVENUE (V3)
+ * 🚀 BSD-YBM BSD-YBM: MANAGEMENT AVENUE (V3)
  * High-end professional dashboard.
  * 100% Language Consistency (No mixed strings).
  */
@@ -109,7 +109,7 @@ export default function DashboardHomePage() {
             {/* Quick Actions Grid */}
             <div className="grid sm:grid-cols-2 gap-6 text-start">
                {[
-                 { href: "/dashboard/crm", icon: UsersIcon, title: t("dashboard.quickActions.crm"), desc: t("marketing3D.revenueEngineDesc"), badge: "CRM 2026", color: "indigo" },
+                 { href: "/dashboard/crm", icon: UsersIcon, title: t("dashboard.quickActions.crm"), desc: t("marketing3D.revenueEngineDesc"), badge: "CRM BSD-YBM", color: "indigo" },
                  { href: "/dashboard/erp", icon: ReceiptText, title: t("dashboard.quickActions.erp"), desc: t("marketing3D.capitalFlowDesc"), badge: "ERP Active", color: "rose" },
                  { href: "/dashboard/ai", icon: Zap, title: t("dashboard.quickActions.negotiate"), desc: t("marketing3D.predictiveCommerceDesc"), badge: "Agentic", color: "violet" },
                  { href: "/dashboard/settings", icon: Settings, title: t("dashboard.quickActions.settings"), desc: t("settings.title"), badge: "System", color: "slate" },
@@ -234,7 +234,7 @@ export default function DashboardHomePage() {
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("dashboard.status.activeAvenue")}</span>
                      </div>
-                     <span className="text-xs font-black text-indigo-600 italic">2026.04</span>
+                     <span className="text-xs font-black text-indigo-600 italic">BSD-YBM.04</span>
                   </div>
                </div>
             </div>

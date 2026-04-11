@@ -13,7 +13,7 @@ import { getFinancialForecastAction, type CashFlowData } from "@/app/actions/fin
 import { useI18n } from "@/components/I18nProvider";
 
 /**
- * 🚀 BSD-YBM 2026: FINANCIAL FORECAST
+ * 🚀 BSD-YBM BSD-YBM: FINANCIAL FORECAST
  * 100% Multi-lingual.
  */
 

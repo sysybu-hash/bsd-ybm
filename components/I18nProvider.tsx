@@ -49,7 +49,7 @@ export function I18nProvider({
     document.documentElement.lang = locale;
     document.documentElement.dir = dir;
     
-    // 🌍 Automatic Browser Language Detection (2026 BSD-YBM Premium UX)
+    // 🌍 Automatic Browser Language Detection (BSD-YBM BSD-YBM Premium UX)
     const hasDetected = localStorage.getItem("bsd_locale_detected");
     if (!hasDetected && typeof navigator !== "undefined") {
       const browserLang = navigator.language.split("-")[0];

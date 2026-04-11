@@ -47,7 +47,7 @@
     },
     "register": {
       "title": "פתיחת חשבון",
-      "subtitle": "הצטרפו לשדרת הניהול של 2026",
+      "subtitle": "הצטרפו לשדרת הניהול של BSD-YBM",
       "google": "הרשמה עם Google",
       "alreadyHave": "כבר רשומים?",
       "loginLink": "כניסה למערכת",
@@ -164,7 +164,7 @@
       "activeTier": "מסלול פעיל",
       "security": "מצב אבטחה",
       "military": "רמה צבאית",
-      "enterprise": "Enterprise Pro 2026",
+      "enterprise": "Enterprise Pro BSD-YBM",
       "responseTime": "זמן תגובה",
       "activeAvenue": "שדרה פעילה",
       "anomaly": "זוהתה חריגה",
@@ -528,7 +528,7 @@
     }
   },
   "marketing3D": {
-    "heroBadge": "מהפכת הניהול האוטונומי 2026",
+    "heroBadge": "מהפכת הניהול האוטונומי BSD-YBM",
     "heroTitle": "השדרה שמחברת",
     "heroTitleGlow": "בין כולם.",
     "heroDesc": "BSD-YBM מגדירה מחדש את גבולות היכולת העסקית. פלטפורמה אחידה המשלבת ERP, CRM ובינה מלאכותית אוטונומית לכדי חוויית ניהול עוצמתית, נקייה ומקצועית.",
@@ -554,12 +554,12 @@
     "intelF4": "ניתוח בריאות לקוח וסנטימנט בזמן אמת",
     "ctaFinalTitle": "הגיע הזמן",
     "ctaFinalGlow": "להתחבר.",
-    "ctaFinalDesc": "מערכת BSD-YBM 2026 היא השדרה המחברת בין כל חלקי העסק שלך. הצטרפו לעידן הניהול האוטונומי שעובד עבורכם.",
+    "ctaFinalDesc": "מערכת BSD-YBM BSD-YBM היא השדרה המחברת בין כל חלקי העסק שלך. הצטרפו לעידן הניהול האוטונומי שעובד עבורכם.",
     "ctaFinalJoin": "הצטרפו לשדרה עכשיו",
     "autonomous": "מערכת אוטונומית",
-    "native2026": "דור 2026",
+    "nativeBSD-YBM": "דור BSD-YBM",
     "footer": {
-      "copy": "BSD-YBM אקזקוטיב © 2026",
+      "copy": "BSD-YBM אקזקוטיב © BSD-YBM",
       "identity": "זהות דיגיטלית",
       "ethics": "אתיקה של פלטפורמה",
       "security": "אבטחה גלובלית"

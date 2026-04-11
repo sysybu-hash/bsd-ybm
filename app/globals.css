@@ -14,7 +14,7 @@
 }
 
 /* ─────────────────────────────────────────
-   DESIGN TOKENS v2 — BSD-YBM 2026
+   DESIGN TOKENS v2 — BSD-YBM BSD-YBM
 ───────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   color: var(--heading-color, inherit);

@@ -47,7 +47,7 @@
     },
     "register": {
       "title": "Create Account",
-      "subtitle": "Join the 2026 Management Avenue",
+      "subtitle": "Join the BSD-YBM Management Avenue",
       "google": "Register with Google",
       "alreadyHave": "Already registered?",
       "loginLink": "Sign In",
@@ -164,7 +164,7 @@
       "activeTier": "Active Tier",
       "security": "Security Status",
       "military": "Military Grade",
-      "enterprise": "Enterprise Pro 2026",
+      "enterprise": "Enterprise Pro BSD-YBM",
       "responseTime": "Response Time",
       "activeAvenue": "Active Avenue",
       "anomaly": "Anomaly Detected",
@@ -528,7 +528,7 @@
     }
   },
   "marketing3D": {
-    "heroBadge": "Autonomous Management Revolution 2026",
+    "heroBadge": "Autonomous Management Revolution BSD-YBM",
     "heroTitle": "The Avenue that",
     "heroTitleGlow": "Connects Everyone.",
     "heroDesc": "BSD-YBM redefines the boundaries of business capability. A unified platform integrating ERP, CRM, and autonomous AI for a powerful, clean, and elite management experience.",
@@ -554,12 +554,12 @@
     "intelF4": "Real-time client health & sentiment analysis",
     "ctaFinalTitle": "It's Time to",
     "ctaFinalGlow": "Connect.",
-    "ctaFinalDesc": "The BSD-YBM 2026 system is the avenue connecting every part of your business. Join the era of autonomous management that works for you.",
+    "ctaFinalDesc": "The BSD-YBM BSD-YBM system is the avenue connecting every part of your business. Join the era of autonomous management that works for you.",
     "ctaFinalJoin": "Join the Avenue Now",
     "autonomous": "Autonomous System",
-    "native2026": "2026 Native",
+    "nativeBSD-YBM": "BSD-YBM Native",
     "footer": {
-      "copy": "BSD-YBM EXECUTIVE © 2026",
+      "copy": "BSD-YBM EXECUTIVE © BSD-YBM",
       "identity": "Digital Identity",
       "ethics": "Platform Ethics",
       "security": "Global Security"

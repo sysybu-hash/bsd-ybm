@@ -3,12 +3,12 @@
 import CrmClient from "./CrmClient";
 
 export default function CrmPage() {
-  // 🛡️ BSD-YBM 2026: HYBRID RECOVERY MODE
+  // 🛡️ BSD-YBM BSD-YBM: HYBRID RECOVERY MODE
   // Sanitized CrmClient (No FM) with Mock Data to isolate DB failures.
   
   const contacts: any[] = [
     {
-      id: "mock-stable-2026",
+      id: "mock-stable-BSD-YBM",
       name: "לקוח יציבות פרימיום (Mock)",
       email: "platinum@bsd-ybm.ai",
       phone: "03-1234567",

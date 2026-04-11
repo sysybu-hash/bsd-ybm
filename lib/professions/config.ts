@@ -1,5 +1,5 @@
 /**
- * 🚀 BSD-YBM 2026: MODULAR INDUSTRY CONFIGURATION SYSTEM
+ * 🚀 BSD-YBM BSD-YBM: MODULAR INDUSTRY CONFIGURATION SYSTEM
  * This system adapts the entire platform UI, AI, and Schema behavior
  * based on the user's profession.
  */
