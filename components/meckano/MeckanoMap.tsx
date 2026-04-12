@@ -105,14 +105,14 @@ export default function MeckanoMap({ zones, activeEmployees }: MeckanoMapProps) 
           popupAnchor: [0, -32],
         });
 
-        const checkedInHere = checkedInEmployees.length; // We don't have per-zone data, show total
+        const checkedInCount = checkedInEmployees.length; // We don't have per-zone data, show total
         const marker = L.marker([lat, lng], { icon }).addTo(map);
         marker.bindPopup(`
           <div dir="rtl" style="font-family:system-ui;min-width:180px">
             <p style="font-weight:900;font-size:14px;margin:0 0 4px">${zone.name}</p>
             <p style="color:#555;font-size:12px;margin:0 0 6px">${zone.address}</p>
             ${zone.description ? `<p style="color:#777;font-size:11px;margin:0 0 6px">${zone.description}</p>` : ""}
-            <p style="font-size:11px;margin:0;color:#555">רדיוס: <b>${zone.radius}מ׳</b></p>
+            <p style="font-size:11px;margin:0;color:#555">רדיוס: <b>${zone.radius}מ׳</b> · נוכחים: <b>${checkedInCount}</b></p>
           </div>
         `);
       };

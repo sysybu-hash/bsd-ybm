@@ -18,7 +18,8 @@ export async function GET(
   const { id } = await params;
 
   const contact = await prisma.contact.findFirst({
-    where: { id, organizationId: orgId },    select: {
+    where: { id, organizationId: orgId },
+    select: {
       id: true,
       name: true,
       email: true,

@@ -38,6 +38,12 @@ Thumbs.db
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 
+# סקריפטים וקבצי פיתוח זמניים — לא לייצור
+scratch/
+settings-mockup.html
+_write_home.js
+_write_layout.js
+
 # נכסי Gemini בשורש — העתק לפריסה ב־public/landing-hero-title-art.png
 /Gemini_Generated_Image_*.png
 

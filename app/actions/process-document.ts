@@ -25,7 +25,7 @@ import {
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isAdmin } from "@/lib/is-admin";
-import { getIndustryConfig } from "@/lib/professions/config";
+import { getIndustryConfig, type AnalysisType } from "@/lib/professions/config";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
@@ -163,7 +163,7 @@ export async function processDocumentAction(
 
     // Industry adaptation for AI instructions
     const industryConfig = getIndustryConfig(userIndustry);
-    const analysisMode = industryConfig.scanner.analysisTypes.find((a: { id: string }) => a.id === analysisId);
+    const analysisMode: AnalysisType | undefined = industryConfig.scanner.analysisTypes.find((a) => a.id === analysisId);
     
     // Merge standard instructions with industry + mode specific tweaks
     const documentInstruction = `${getDocumentJsonInstruction(uiLocale)}\n\n` +
