@@ -99,6 +99,7 @@ export default function DashboardLayoutClient({
     { href: "/dashboard",             icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     color: "indigo"  },
     { href: "/dashboard/control-center", icon: <ShieldCheck size={15} />, label: "מרכז בקרה אחוד (Master)", color: "emerald" },
     { href: "/dashboard/ai",          icon: <Zap size={15} />,            label: t("dashboard.aiHub"),    color: "violet"  },
+    { href: "/dashboard/invoices",    icon: <ReceiptText size={15} />,    label: "מערכת חשבוניות",     color: "rose"    },
   ];
 
   const toolItems = [
@@ -113,6 +114,7 @@ export default function DashboardLayoutClient({
     if (routeActive(pathname, "/dashboard/settings"))       return "הגדרות פלטפורמה";
     if (routeActive(pathname, "/dashboard/meckano"))        return t("dashboard.meckano");
     if (routeActive(pathname, "/dashboard/help"))           return t("dashboard.nav.tutorial");
+    if (routeActive(pathname, "/dashboard/invoices"))       return "ניהול כספים וחשבוניות";
     if (routeActive(pathname, "/dashboard/admin"))          return t("dashboard.nav.admin");
     return t("dashboard.main");
   })();
