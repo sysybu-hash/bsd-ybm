@@ -340,14 +340,18 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     className="flex items-center justify-between gap-4 rounded-xl border border-transparent p-2.5 transition-all hover:border-gray-100 hover:bg-gray-50 group"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-sm shadow-indigo-200">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-sm shadow-indigo-200">
                         {c.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                      c.status === "CLOSED_LOST" ? "bg-gray-50 text-gray-400" :
-                      c.status === "PROPOSAL" ? "bg-indigo-500/15 text-indigo-300" :
-                      "bg-indigo-500/15 text-indigo-300"
-                    }`}>{c.statusLabel}</span>
+                        <p className="truncate text-sm font-bold text-gray-900">{c.name}</p>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                          c.status === "CLOSED_LOST" ? "bg-gray-50 text-gray-400" :
+                          c.status === "PROPOSAL" ? "bg-indigo-500/15 text-indigo-300" :
+                          "bg-indigo-500/15 text-indigo-300"
+                        }`}>{c.statusLabel}</span>
+                      </div>
+                    </div>
                   </Link>
                 ))}
               </div>

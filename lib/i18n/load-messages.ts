@@ -6,11 +6,12 @@ import he from "@/messages/he.json";
 import ar from "@/messages/ar.json";
 import ru from "@/messages/ru.json";
 
+// ar/ru are partial translations — cast via unknown to avoid strict type errors
 const PACKS: Record<string, MessageTree> = {
-  en: en as MessageTree,
-  he: he as MessageTree,
-  ar: ar as MessageTree,
-  ru: ru as MessageTree,
+  en: en as unknown as MessageTree,
+  he: he as unknown as MessageTree,
+  ar: ar as unknown as MessageTree,
+  ru: ru as unknown as MessageTree,
 };
 
 export function getMessages(locale: string): MessageTree {

@@ -611,12 +611,12 @@
     }
   },
   "professions": {
-    "GENERAL": { "label": "ניהול כללי", "client": "לקוח", "project": "פרויקט", "document": "מסמך", "inventory": "מלאי" },
-    "LAWYER": { "label": "משרד עורכי דין", "client": "לקוח / מיוצג", "project": "תיק משפטי", "document": "כתב בית-דין / נספח", "inventory": "ספריה" },
-    "ACCOUNTANT": { "label": "ראיית חשבון / ייעוץ מס", "client": "נישום / לקוח", "project": "ביקורת / דוח", "document": "מסמך חשבונאי", "inventory": "ארכיון" },
-    "CONTRACTOR": { "label": "קבלנות / בנייה / שיפוצים", "client": "יזם / לקוח", "project": "אתר עבודה / פרויקט", "document": "כתב כמויות / חשבונית חומרים", "inventory": "ציוד וכלי עבודה" },
-    "HEALTH": { "label": "רפואה / טיפול / קליניקה", "client": "מטופל / פציינט", "project": "סדרת טיפולים", "document": "תיק רפואי / מרשם", "inventory": "מלאי תרופות/ציוד" },
-    "RETAIL": { "label": "חנות / מסחר / קמעונאות", "client": "לקוח קצה", "project": "ספק / הזמנה", "document": "תעודת משלוח / חשבונית רכש", "inventory": "מדפי חנות / מחסן" },
+    "GENERAL": { "label": "ניהול כללי", "client": "לקוח", "project": "פרויקט", "document": "מסמך / חשבונית", "inventory": "מלאי" },
+    "LEGAL": { "label": "משרד עורכי דין", "client": "לקוח / מיוצג", "project": "תיק משפטי", "document": "כתב בית-דין / נספח", "inventory": "ספריה משפטית" },
+    "ACCOUNTING": { "label": "ראיית חשבון / ייעוץ מס", "client": "נישום / לקוח", "project": "תיק ביקורת", "document": "מסמך חשבונאי", "inventory": "ארכיון" },
+    "CONSTRUCTION": { "label": "קבלנות / בנייה", "client": "יזם / מזמין עבודה", "project": "אתר בנייה / פרויקט", "document": "כתב כמויות / חשבונית חומרים", "inventory": "ציוד וכלי עבודה" },
+    "MEDICAL": { "label": "רפואה / קליניקה", "client": "מטופל / פציינט", "project": "תיק רפואי", "document": "מרשם / הפניה", "inventory": "מלאי תרופות/ציוד" },
+    "RETAIL": { "label": "חנות / קמעונאות", "client": "לקוח קצה", "project": "הזמנת רכש / ספק", "document": "תעודת משלוח / חשבונית", "inventory": "מחסן / מדפי חנות" },
     "REAL_ESTATE": { "label": "נדל\"ן / תיווך", "client": "קונה / שוכר", "project": "נכס / דירה", "document": "חוזה / נסח טאבו", "inventory": "מאגר נכסים" }
   }
 }

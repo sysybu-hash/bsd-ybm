@@ -270,6 +270,7 @@ export default async function BusinessPage() {
         id: true,
         name: true,
         subscriptionTier: true,
+        industry: true,
         createdAt: true,
         users: {
           take: 1,

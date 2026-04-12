@@ -25,6 +25,7 @@ import {
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isAdmin } from "@/lib/is-admin";
+import { getIndustryConfig } from "@/lib/professions/config";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
@@ -158,13 +159,21 @@ export async function processDocumentAction(
     });
     const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
     const userIndustry = accessUser?.organization?.industry ?? "GENERAL";
+    const analysisId = formData.get("analysisType") as string || "INVOICE";
 
     // Industry adaptation for AI instructions
-    const { getIndustryConfig } = await import("@/lib/professions/config");
     const industryConfig = getIndustryConfig(userIndustry);
+    const analysisMode = industryConfig.scanner.analysisTypes.find((a: { id: string }) => a.id === analysisId);
     
-    // Merge standard instructions with industry-specific tweaks
-    const documentInstruction = `${getDocumentJsonInstruction(uiLocale)}\n\nIMPORTANT PROFESSIONAL CONTEXT (INDUSTRY: ${industryConfig.label}):\n${industryConfig.aiInstructions}`;
+    // Merge standard instructions with industry + mode specific tweaks
+    const documentInstruction = `${getDocumentJsonInstruction(uiLocale)}\n\n` +
+      `### PROFESSIONAL CONTEXT\n` +
+      `**Industry**: ${industryConfig.label}\n` +
+      `**Analysis Mode**: ${analysisMode?.label || analysisId}\n` +
+      `**Mode Description**: ${analysisMode?.description || ""}\n` +
+      (analysisMode?.promptExtra ? `**Special AI Focus**: ${analysisMode.promptExtra}\n` : "") +
+      `\n${industryConfig.aiInstructions}`;
+
     const platformAiBypass = !!accessUser?.email && isAdmin(accessUser.email);
     const allowedProviders = getAllowedAiProvidersForPlan(orgPlan, platformAiBypass);
 

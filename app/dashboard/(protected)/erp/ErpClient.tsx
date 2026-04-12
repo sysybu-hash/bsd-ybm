@@ -141,7 +141,7 @@ export default function ErpClient({
 
           {activeTab === "scan" && (
             <div className="bg-white rounded-[2.5rem] p-1 border-0 shadow-2xl shadow-blue-900/5">
-              <MultiEngineScanner fillHeight />
+              <MultiEngineScanner />
             </div>
           )}
 

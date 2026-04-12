@@ -354,10 +354,10 @@ export default function SettingsHubClient({
       </header>
 
       <WizardContainer
+        title="הגדרות מערכת"
         steps={STEPS}
         currentStepIndex={activeStepIndex}
         onStepChange={setActiveStepIndex}
-        theme="indigo"
         finishLabel="סיים הגדרה גלובלית"
       />
 

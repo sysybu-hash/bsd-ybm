@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { Zap } from "lucide-react";
 import {
   canAccessExecutiveSuite,
   canAccessIntelligenceDashboard,

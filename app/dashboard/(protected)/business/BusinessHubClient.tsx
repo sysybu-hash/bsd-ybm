@@ -312,7 +312,7 @@ function HubContent(props: Props) {
                 priceSpikes={priceSpikes}
               />
               <ErpHistoricalImportCallout />
-              <MultiEngineScanner variant="light" />
+              <MultiEngineScanner />
               <SupplierPriceBoard />
               {priceComparison && (
                 <PriceComparisonChart

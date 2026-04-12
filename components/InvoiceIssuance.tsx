@@ -58,6 +58,14 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
   void orgId; // used implicitly via session on the server
   const { t, dir } = useI18n();
 
+  /* ───── Translating DOC_TYPES ───── */
+  const DOC_TYPES_LOCAL = [
+    { value: "INVOICE", label: t("erp.invoice"), icon: FileText },
+    { value: "RECEIPT", label: t("erp.receipt"), icon: Receipt },
+    { value: "INVOICE_RECEIPT", label: t("erp.invoiceReceipt"), icon: CreditCard },
+    { value: "CREDIT_NOTE", label: t("erp.creditNote"), icon: FileDown },
+  ] as const;
+
   /* ---------- state ---------- */
   const [docType, setDocType] = useState<DocType>("INVOICE");
   const [clientName, setClientName] = useState("");
@@ -234,14 +242,6 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
       setSaving(false);
     }
   };
-
-  /* ───── Translating DOC_TYPES ───── */
-  const DOC_TYPES_LOCAL = [
-    { value: "INVOICE", label: t("erp.invoice"), icon: FileText },
-    { value: "RECEIPT", label: t("erp.receipt"), icon: Receipt },
-    { value: "INVOICE_RECEIPT", label: t("erp.invoiceReceipt"), icon: CreditCard },
-    { value: "CREDIT_NOTE", label: t("erp.creditNote"), icon: FileDown },
-  ] as const;
 
   /* ═══════════════════════════════════════════════════════════ */
   return (

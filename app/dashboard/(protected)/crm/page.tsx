@@ -1,29 +1,16 @@
-"use client";
-
 import CrmClient from "./CrmClient";
+import { getCrmDataAction } from "@/app/actions/get-crm-data";
 
-export default function CrmPage() {
-  // 🛡️ BSD-YBM BSD-YBM: HYBRID RECOVERY MODE
-  // Sanitized CrmClient (No FM) with Mock Data to isolate DB failures.
+export default async function CrmPage() {
+  const data = await getCrmDataAction();
   
-  const contacts: any[] = [
-    {
-      id: "mock-stable-BSD-YBM",
-      name: "לקוח יציבות פרימיום (Mock)",
-      email: "platinum@bsd-ybm.ai",
-      phone: "03-1234567",
-      status: "CLOSED_WON",
-      value: 150000,
-      createdAt: new Date().toISOString(),
-      issuedDocuments: [],
-      erp: { totalBilled: 150000, totalPaid: 150000, totalPending: 0, invoiceCount: 1 }
-    }
-  ];
+  const contacts = data.success ? data.contacts : [];
+  const projects = data.success ? data.projects : [];
 
   return (
     <CrmClient
-      contacts={contacts}
-      projects={[]}
+      contacts={contacts as any}
+      projects={projects as any}
       hasOrganization={true}
       organizations={[]}
       orgBilling={null}

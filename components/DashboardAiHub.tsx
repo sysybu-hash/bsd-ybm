@@ -51,7 +51,7 @@ export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
       </div>
 
       {activeTab === "scanner" ? (
-        <MultiEngineScanner orgId={orgId} />
+        <MultiEngineScanner />
       ) : (
         <div className="p-12 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50 text-center">
           <p className="text-slate-400 font-bold uppercase tracking-wider">ממשק הצ'אט האחוד זמין בדשבורד הראשי ובכל דפי המערכת דרך הבועה הצפה</p>

@@ -26,14 +26,24 @@ function routeActive(pathname: string, href: string): boolean {
   return p === h || p.startsWith(`${h}/`);
 }
 
-const COLOR_MAP: Record<string, { active: string; dot: string }> = {
-  indigo:  { active: "bg-indigo-50 text-indigo-700 border-indigo-200",   dot: "bg-indigo-500" },
-  emerald: { active: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
-  rose:    { active: "bg-rose-50 text-rose-700 border-rose-200",          dot: "bg-rose-500" },
-  sky:     { active: "bg-sky-50 text-sky-700 border-sky-200",             dot: "bg-sky-500" },
-  amber:   { active: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-500" },
-  violet:  { active: "bg-violet-50 text-violet-700 border-violet-200",    dot: "bg-violet-500" },
-  slate:   { active: "bg-slate-50 text-slate-700 border-slate-200",       dot: "bg-slate-500" },
+const COLOR_MAP: Record<string, { active: string; dot: string; glow: string }> = {
+  indigo:  { active: "bg-indigo-50 text-indigo-700 border-indigo-200",   dot: "bg-indigo-500", glow: "from-indigo-400 to-indigo-600" },
+  emerald: { active: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500", glow: "from-emerald-400 to-emerald-600" },
+  rose:    { active: "bg-rose-50 text-rose-700 border-rose-200",          dot: "bg-rose-500", glow: "from-rose-400 to-rose-600" },
+  sky:     { active: "bg-sky-50 text-sky-700 border-sky-200",             dot: "bg-sky-500", glow: "from-sky-400 to-sky-600" },
+  amber:   { active: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-500", glow: "from-amber-400 to-amber-600" },
+  violet:  { active: "bg-violet-50 text-violet-700 border-violet-200",    dot: "bg-violet-500", glow: "from-violet-400 to-violet-600" },
+  slate:   { active: "bg-slate-50 text-slate-700 border-slate-200",       dot: "bg-slate-500", glow: "from-slate-400 to-slate-600" },
+};
+
+const INDUSTRY_COLOR_MAP: Record<string, string> = {
+  LEGAL: "indigo",
+  MEDICAL: "emerald",
+  ACCOUNTING: "violet",
+  CONSTRUCTION: "amber",
+  RETAIL: "sky",
+  REAL_ESTATE: "rose",
+  GENERAL: "indigo",
 };
 
 function SidebarLink({
@@ -81,6 +91,7 @@ export default function DashboardLayoutClient({
 }: Props) {
   const { t, locale, dir } = useI18n();
   const industry = useIndustryConfig();
+  const themeColor = INDUSTRY_COLOR_MAP[industry.id] || "indigo";
   const pathname = usePathname() ?? "";
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -96,10 +107,11 @@ export default function DashboardLayoutClient({
   }, [mobileOpen]);
 
   const navItems = [
-    { href: "/dashboard",             icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     color: "indigo"  },
-    { href: "/dashboard/control-center", icon: <ShieldCheck size={15} />, label: "מרכז בקרה אחוד (Master)", color: "emerald" },
+    { href: "/dashboard",             icon: <LayoutDashboard size={15} />, label: t("dashboard.main"),     color: themeColor },
+    { href: "/dashboard/control-center", icon: <ShieldCheck size={15} />, label: "מרכז בקרה (Master)",     color: "emerald" },
     { href: "/dashboard/ai",          icon: <Zap size={15} />,            label: t("dashboard.aiHub"),    color: "violet"  },
-    { href: "/dashboard/invoices",    icon: <ReceiptText size={15} />,    label: "מערכת חשבוניות",     color: "rose"    },
+    { href: "/dashboard/invoices",    icon: <ReceiptText size={15} />,    label: `ניהול ${industry.vocabulary.document}`, color: themeColor },
+    { href: "/dashboard/crm",         icon: <UsersIcon size={15} />,      label: `ניהול ${industry.vocabulary.client}`,   color: themeColor },
   ];
 
   const toolItems = [
@@ -114,7 +126,8 @@ export default function DashboardLayoutClient({
     if (routeActive(pathname, "/dashboard/settings"))       return "הגדרות פלטפורמה";
     if (routeActive(pathname, "/dashboard/meckano"))        return t("dashboard.meckano");
     if (routeActive(pathname, "/dashboard/help"))           return t("dashboard.nav.tutorial");
-    if (routeActive(pathname, "/dashboard/invoices"))       return "ניהול כספים וחשבוניות";
+    if (routeActive(pathname, "/dashboard/invoices"))       return `ניהול ${industry.vocabulary.document}`;
+    if (routeActive(pathname, "/dashboard/crm"))            return `ניהול ${industry.vocabulary.client}`;
     if (routeActive(pathname, "/dashboard/admin"))          return t("dashboard.nav.admin");
     return t("dashboard.main");
   })();
@@ -175,8 +188,10 @@ export default function DashboardLayoutClient({
         </button>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5 px-1">
-        <span className="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-600">
-          {(userRole || "").replaceAll("_", " ")}
+        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${
+          isAdminUser ? "border-amber-100 bg-amber-50 text-amber-600" : "border-indigo-100 bg-indigo-50 text-indigo-600"
+        }`}>
+          {isAdminUser ? "SYSTEM MASTER" : industry.label}
         </span>
         <span className="rounded-full border border-gray-100 bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400" dir="ltr">
           ORG·{orgId.slice(-6).toUpperCase()}
@@ -185,18 +200,22 @@ export default function DashboardLayoutClient({
     </div>
   );
 
-  const SidebarShell = ({ onNav }: { onNav?: () => void }) => (
-    <>
-      <Link href="/" className="group flex items-center gap-3 border-b border-gray-100 px-5 py-5 transition-opacity hover:opacity-90" onClick={onNav}>
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-200 transition-transform group-hover:scale-105">
-          B
-          <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-white" />
-        </div>
+  const SidebarShell = ({ onNav }: { onNav?: () => void }) => {
+    const theme = COLOR_MAP[themeColor] || COLOR_MAP.indigo;
+    return (
+      <>
+        <Link href="/" className="group flex items-center gap-3 border-b border-gray-100 px-5 py-5 transition-opacity hover:opacity-90" onClick={onNav}>
+          <div className={`relative flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black text-white shadow-md transition-transform group-hover:scale-105 bg-gradient-to-br ${theme.glow}`}>
+            B
+            <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-white" />
+          </div>
         <div>
           <p className="text-[15px] font-black leading-tight tracking-wide text-gray-900">
-              BSD-YBM פתרונות AI
+             {isAdminUser ? "BSD-YBM MASTER" : "BSD-YBM פתרונות AI"}
           </p>
-          <p className="mt-0.5 text-[10px] leading-none text-gray-400 font-medium">Business Platform</p>
+          <p className="mt-0.5 text-[10px] leading-none text-gray-400 font-medium">
+             {isAdminUser ? "Infrastructure Control" : industry.label}
+          </p>
         </div>
       </Link>
       <nav className="flex-1 overflow-y-auto px-3 py-1 thin-scrollbar">
@@ -210,7 +229,8 @@ export default function DashboardLayoutClient({
       </div>
       <UserCard />
     </>
-  );
+    );
+  };
 
   return (
     <div className="flex min-h-screen max-w-[100vw] overflow-x-hidden bg-white md:bg-gray-50" dir={dir}>

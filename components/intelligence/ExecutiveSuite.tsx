@@ -1,11 +1,25 @@
 "use client";
 
-import React from "react";
-import { TrendingUp, TrendingDown, DollarSign, BrainCircuit, Activity, PieChart, Users, AlertCircle, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { TrendingUp, TrendingDown, DollarSign, BrainCircuit, Activity, PieChart, Users, AlertCircle, Sparkles, Loader2 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import { getExecutiveDataAction } from "@/app/actions/get-executive-data";
 
 export default function ExecutiveSuite() {
   const { dir } = useI18n();
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const res = await getExecutiveDataAction();
+      if (res.success && res.stats) {
+        setStats(res.stats);
+      }
+      setLoading(false);
+    }
+    void load();
+  }, []);
   
   return (
     <div className="max-w-[1400px] mx-auto py-8 text-start" dir={dir}>
@@ -27,30 +41,36 @@ export default function ExecutiveSuite() {
 
       {/* Stats Bento */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {[
-          { title: "תזרים חודשי צפוי", amt: "₪145,200", up: true, diff: "+12.5%", icon: <DollarSign />, color: "bg-emerald-50 text-emerald-600" },
-          { title: "הוצאות תפעול פתוחות", amt: "₪28,450", up: false, diff: "-3.1%", icon: <Activity />, color: "bg-rose-50 text-rose-600" },
-          { title: "לקוחות חדשים (לידים)", amt: "42", up: true, diff: "+8", icon: <Users />, color: "bg-blue-50 text-blue-600" },
-          { title: "ציון בריאות אוטומטי", amt: "94/100", up: true, diff: "מצוין", icon: <PieChart />, color: "bg-indigo-50 text-indigo-600" }
-        ].map((s, i) => (
-          <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
-             <div className="absolute -right-6 -top-6 rounded-full w-24 h-24 bg-slate-50/50 scale-100 group-hover:scale-150 transition-transform duration-700" />
-             <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-2xl ${s.color}`}>
-                     {s.icon}
+        {loading ? (
+           <div className="col-span-full h-32 bg-white rounded-3xl border border-slate-200 flex items-center justify-center">
+              <Loader2 className="animate-spin text-indigo-500" />
+           </div>
+        ) : (
+          [
+            { title: "תזרים חודשי צפוי", amt: stats?.predictedCashflow || "₪0", up: true, diff: "+0%", icon: <DollarSign />, color: "bg-emerald-50 text-emerald-600" },
+            { title: "הוצאות תפעול פתוחות", amt: stats?.openExpenses || "₪0", up: false, diff: "-0%", icon: <Activity />, color: "bg-rose-50 text-rose-600" },
+            { title: "לקוחות חדשים (לידים)", amt: stats?.leadsCount || "0", up: true, diff: "+0", icon: <Users />, color: "bg-blue-50 text-blue-600" },
+            { title: "ציון בריאות אוטומטי", amt: stats?.healthScore || "0/100", up: true, diff: "סנכרון פעיל", icon: <PieChart />, color: "bg-indigo-50 text-indigo-600" }
+          ].map((s, i) => (
+            <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
+               <div className="absolute -right-6 -top-6 rounded-full w-24 h-24 bg-slate-50/50 scale-100 group-hover:scale-150 transition-transform duration-700" />
+               <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-2xl ${s.color}`}>
+                       {s.icon}
+                    </div>
+                    <span className={`inline-flex items-center gap-1 text-xs font-black px-2 py-1 rounded-lg ${s.up ? "text-emerald-700 bg-emerald-100" : "text-rose-700 bg-rose-100"}`}>
+                       {s.up ? <TrendingUp size={12}/> : <TrendingDown size={12}/>} {s.diff}
+                    </span>
                   </div>
-                  <span className={`inline-flex items-center gap-1 text-xs font-black px-2 py-1 rounded-lg ${s.up ? "text-emerald-700 bg-emerald-100" : "text-rose-700 bg-rose-100"}`}>
-                     {s.up ? <TrendingUp size={12}/> : <TrendingDown size={12}/>} {s.diff}
-                  </span>
-                </div>
-                <div>
-                   <p className="text-sm font-bold text-slate-500 mb-1">{s.title}</p>
-                   <p className="text-3xl font-black text-slate-900 tracking-tight">{s.amt}</p>
-                </div>
-             </div>
-          </div>
-        ))}
+                  <div>
+                     <p className="text-sm font-bold text-slate-500 mb-1">{s.title}</p>
+                     <h3 className="text-3xl font-black text-slate-900 tracking-tight">{s.amt}</h3>
+                  </div>
+               </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Main AI Predictor Zone */}

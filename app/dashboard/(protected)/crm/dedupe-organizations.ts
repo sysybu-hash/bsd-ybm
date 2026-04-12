@@ -4,6 +4,7 @@ export type OrganizationRowFromDb = {
   id: string;
   name: string;
   subscriptionTier: string;
+  industry: string;
   createdAt: Date;
   users: { email: string }[];
 };
@@ -54,6 +55,7 @@ export function dedupeOrganizationsForCrmDisplay(
       id: row.id,
       name: row.name,
       plan: row.subscriptionTier,
+      industry: row.industry,
       users: row.users,
       invoiceTotalAmount: invoiceTotal,
     }),

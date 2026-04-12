@@ -10,8 +10,8 @@ import {
   ChevronRight,
   ShieldCheck
 } from "lucide-react";
-import { format } from "date-fns";
-import { he } from "date-fns/locale";
+const formatDate = (d: string) =>
+  new Date(d).toLocaleString("he-IL", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 type LogEntry = {
   id: string;
@@ -125,7 +125,7 @@ export default function AuditLogViewer() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Calendar size={14} />
-                        {format(new Date(log.createdAt), "dd/MM/yyyy HH:mm", { locale: he })}
+                        {formatDate(log.createdAt)}
                       </div>
                     </td>
                   </tr>

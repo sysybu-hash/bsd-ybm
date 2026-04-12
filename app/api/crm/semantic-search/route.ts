@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     ]);
 
     const text = result.response.text().trim();
-    const matchedIds = JSON.parse(text.match(/\[.*\]/s)?.[0] || "[]");
+    const matchedIds = JSON.parse(text.match(/\[[\s\S]*\]/)?.[0] || "[]");
 
     return NextResponse.json({ matchedIds });
   } catch (error) {

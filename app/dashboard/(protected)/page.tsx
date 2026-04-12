@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import CashFlowForecast from "@/components/dashboard/CashFlowForecast";
 import { useI18n } from "@/components/I18nProvider";
+import { getDashboardStatsAction } from "@/app/actions/get-dashboard-stats";
 
 /**
  * 🚀 BSD-YBM BSD-YBM: MANAGEMENT AVENUE (V3)
@@ -24,10 +25,17 @@ export default function DashboardHomePage() {
   const [userName, setUserName] = useState("...");
   const [activeTab, setActiveTab] = useState<"overview" | "actions" | "finance">("overview");
 
+  const [stats, setStats] = useState({ clients: "—", revenue: "₪—", expenses: "₪—", intelligence: "Active" });
+
   useEffect(() => {
      if (session?.user?.name) {
        setUserName(session.user.name.split(" ")[0].trim());
      }
+     async function loadStats() {
+       const res = await getDashboardStatsAction();
+       if (res.success && res.stats) setStats(res.stats);
+     }
+     void loadStats();
   }, [session]);
 
   const hour = new Date().getHours();
@@ -86,10 +94,10 @@ export default function DashboardHomePage() {
       {/* ── STATS ROW ── */}
       <div className={`grid grid-cols-2 lg:grid-cols-4 gap-6 ${(activeTab !== "overview" && activeTab !== "finance") ? "hidden md:grid" : "grid"}`}>
          {[
-           { icon: UsersIcon, label: t("dashboard.stats.clients"), value: "—", href: "/dashboard/crm", color: "text-indigo-600", bg: "bg-indigo-50" },
-           { icon: ReceiptText, label: t("dashboard.stats.expenses"), value: "₪—", href: "/dashboard/erp", color: "text-rose-600", bg: "bg-rose-50" },
-           { icon: TrendingUp, label: t("dashboard.stats.revenue"), value: "₪—", href: "/dashboard/erp", color: "text-emerald-600", bg: "bg-emerald-50" },
-           { icon: Bot, label: t("dashboard.stats.intelligence"), value: "Active", href: "/dashboard/ai", color: "text-violet-600", bg: "bg-violet-50" },
+           { icon: UsersIcon, label: t("dashboard.stats.clients"), value: stats.clients, href: "/dashboard/crm", color: "text-indigo-600", bg: "bg-indigo-50" },
+           { icon: ReceiptText, label: t("dashboard.stats.expenses"), value: stats.expenses, href: "/dashboard/erp", color: "text-rose-600", bg: "bg-rose-50" },
+           { icon: TrendingUp, label: t("dashboard.stats.revenue"), value: stats.revenue, href: "/dashboard/erp", color: "text-emerald-600", bg: "bg-emerald-50" },
+           { icon: Bot, label: t("dashboard.stats.intelligence"), value: stats.intelligence, href: "/dashboard/ai", color: "text-violet-600", bg: "bg-violet-50" },
          ].map((stat, i) => (
            <Link key={i} href={stat.href} className="bg-white border border-slate-100 p-6 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
               <div className={`h-12 w-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-6 shadow-sm`}>

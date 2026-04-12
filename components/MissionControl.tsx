@@ -6,18 +6,12 @@ import { Zap, Clock, Send, ShieldCheck, RefreshCw } from "lucide-react";
 const SYSTEMS = ["API", "Database", "תשלומים (PayPal)", "AI Engine"] as const;
 
 export default function MissionControl() {
-  const [repairTime, setRepairTime] = useState("02:00");
+  const [repairTime, setRepairTime] = useState("-");
   const [timeSaved, setTimeSaved] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<
     { role: "ai" | "user"; content: string }[]
-  >([
-    {
-      role: "ai",
-      content:
-        "שלום, זוהי בקרת משימות כללית. כאן תוכלו לעקוב אחרי סטטוס מערכות ולהכין הערות תפעול (BSD-YBM פתרונות AI).",
-    },
-  ]);
+  >([]);
   const [liveStatuses, setLiveStatuses] = useState<
     { name: string; ok: boolean; detail: string }[]
   >([]);
