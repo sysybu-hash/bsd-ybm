@@ -76,11 +76,11 @@ export default function InvoicesPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="text-xs font-bold uppercase tracking-widest">מחובר למערכת "חשבוניות ישראל" (API)</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">סטטוס רגולטורי 2026 מופעל</span>
             </div>
-            <h2 className="text-3xl font-black mb-3">חיבור ישיר למשרד האוצר</h2>
+            <h2 className="text-3xl font-black mb-3">תאימות מלאה — רף ₪10,000 (ינואר 2026)</h2>
             <p className="text-indigo-100/80 font-medium leading-relaxed">
-              המערכת מסונכרנת עם רפורמת מספרי ההקצאה של רשות המסים. כל חשבונית מעל ₪25,000 מקבלת מספר הקצאה אוטומטי בתוך שניות, תוך הגנה מלאה על זכויות קיזוז המע״מ של לקוחותיך.
+              המערכת מעודכנת לרף הדיווח החדש של שנת 2026. כל חשבונית מעל ₪10,000 (ומעל ₪5,000 החל מיוני) נשלחת אוטומטית לקבלת מספר הקצאה בזמן אמת כדי להבטיח ניכוי מע״מ תשומות מלא.
             </p>
           </div>
           <div className="flex flex-col gap-3 shrink-0 w-full md:w-auto">
@@ -149,8 +149,8 @@ export default function InvoicesPage() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {[
-                { id: "INV-10024", client: "טכנולוגיות בע״מ", date: "12/04/2026", status: "הוקצה", amount: "₪32,500", allocation: "8472591", type: "חשבונית מס" },
-                { id: "INV-10023", client: "נדל״ן אקטיבי", date: "11/04/2026", status: "בתהליך", amount: "₪12,000", allocation: "-", type: "חשבונית מס" },
+                { id: "INV-10024", client: "טכנולוגיות בע״מ", date: "12/04/2026", status: "הוקצה", amount: "₪12,500", allocation: "8472591", type: "חשבונית מס" },
+                { id: "INV-10023", client: "נדל״ן אקטיבי", date: "11/04/2026", status: "בתהליך", amount: "₪10,200", allocation: "-", type: "חשבונית מס" },
                 { id: "INV-10022", client: "משווקי הדרום", date: "10/04/2026", status: "פטור", amount: "₪4,500", allocation: "-", type: "קבלה" },
                 { id: "INV-10021", client: "חברת הבניה הישראלית", date: "09/04/2026", status: "שגיאת API", amount: "₪48,000", allocation: "ERROR", type: "חשבונית מס" }
               ].map((row, i) => (

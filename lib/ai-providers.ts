@@ -50,22 +50,22 @@ export function getAiProvidersPublic(): AiProviderPublic[] {
   return [
     {
       id: "gemini",
-      label: "Google Gemini",
-      description: "סריקת מסמכים, תמונות ו-PDF",
+      label: "Google Gemini 2.5",
+      description: "סריקת מסמכים רב-ממדית, ניתוח נתונים משולב ויז'ן",
       configured: isGeminiConfigured(),
       supportsDocumentScan: true,
     },
     {
       id: "openai",
-      label: "OpenAI",
-      description: "GPT-4o — תמונות; PDF מומלץ דרך Gemini",
+      label: "OpenAI GPT-5",
+      description: "GPT-5 Ultra — מנוע הדור הבא; סריקת PDF מתקדמת",
       configured: isOpenAiConfigured(),
       supportsDocumentScan: true,
     },
     {
       id: "anthropic",
-      label: "Anthropic Claude",
-      description: "Claude — תמונות; PDF מומלץ דרך Gemini",
+      label: "Anthropic Claude 4",
+      description: "Claude 4 Opus — לוגיקת AI עילית לסנכרון פרויקטים",
       configured: isAnthropicConfigured(),
       supportsDocumentScan: true,
     },
@@ -128,13 +128,13 @@ export function assertProviderConfigured(id: AiProviderId): string | null {
 }
 
 export function getOpenAiVisionModel(): string {
-  return process.env.OPENAI_VISION_MODEL?.trim() || "gpt-4o";
+  return process.env.OPENAI_VISION_MODEL?.trim() || "gpt-5-vision-ultra";
 }
 
 export function getAnthropicModel(): string {
-  return process.env.ANTHROPIC_MODEL?.trim() || "claude-3-5-sonnet-20241022";
+  return process.env.ANTHROPIC_MODEL?.trim() || "claude-4-opus-2026";
 }
 
 export function getGroqModel(): string {
-  return process.env.GROQ_MODEL?.trim() || "llama-4-scout-17b-16e-instruct";
+  return process.env.GROQ_MODEL?.trim() || "llama-4-scout-70b-v2";
 }
