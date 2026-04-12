@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
 import DashboardLayoutClient from "@/components/DashboardLayoutClient";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { isAdmin } from "@/lib/is-admin";
+import { redirect } from "next/navigation";
 
 /** מניעת מטמון RSC/CDN — ללא גרסת „אדמין” שנשמרת למשתמש רגיל */
 export const dynamic = "force-dynamic";
@@ -11,14 +15,19 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  // 🛡️ BSD-YBM BSD-YBM: TOTAL INFRASTRUCTURE ISOLATION
-  // Mocking all identity and data to bypass systemic production crashes (500s).
+  // 🛡️ BSD-YBM BSD-YBM: REAL IDENTITY PROTECTION
+  // We use the real server session to determine identity and roles.
+  const session = await getServerSession(authOptions);
   
-  const serverEmail = "admin@bsd-ybm.ai";
-  const userName = "System Admin";
-  const orgId = "platform-lock-BSD-YBM";
-  const userRole = "SUPER_ADMIN";
-  const isAdminUser = true;
+  if (!session?.user?.email) {
+    return redirect("/login");
+  }
+
+  const serverEmail = session.user.email;
+  const userName = session.user.name ?? "User";
+  const userRole = session.user.role ?? "USER";
+  const isAdminUser = isAdmin(serverEmail);
+  const orgId = session.user.organizationId ?? "platform-lock-BSD-YBM";
   const trialBannerDaysLeft = null;
 
   return (
@@ -30,7 +39,7 @@ export default async function DashboardLayout({
       serverUser={{
         email: serverEmail,
         name: userName,
-        image: null,
+        image: session.user.image ?? null,
       }}
     >
       {children}
