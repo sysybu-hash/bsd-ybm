@@ -13,12 +13,12 @@ export default async function TrialExpiredPage() {
   }
 
   if (session.user.role === "SUPER_ADMIN") {
-    redirect("/dashboard");
+    redirect("/app");
   }
 
   const orgId = session.user.organizationId;
   if (!orgId) {
-    redirect("/dashboard");
+    redirect("/app");
   }
 
   const org = await prisma.organization.findUnique({
@@ -27,7 +27,7 @@ export default async function TrialExpiredPage() {
   });
 
   if (!org || !isFreeTrialExpired(org)) {
-    redirect("/dashboard");
+    redirect("/app");
   }
 
   return (
@@ -53,7 +53,7 @@ export default async function TrialExpiredPage() {
 
         <div className="space-y-4">
           <Link
-            href="/dashboard/billing"
+            href="/app/billing"
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
             <Rocket size={20} /> שדרגו מנוי או רכשו בנדל סריקות

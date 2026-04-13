@@ -31,7 +31,7 @@ function sleepSync(ms) {
   }
 }
 
-const useSensitiveFlag = (key) =>
+const shouldUseSensitiveFlag = (key) =>
   !key.startsWith("NEXT_PUBLIC_") && !NEVER_SENSITIVE.has(key);
 
 function parseDotenv(content) {
@@ -58,7 +58,7 @@ function parseDotenv(content) {
 
 function pushOne(key, val, environment) {
   const args = ["vercel", "env", "add", key, environment, "--yes", "--force"];
-  if (useSensitiveFlag(key)) args.push("--sensitive");
+  if (shouldUseSensitiveFlag(key)) args.push("--sensitive");
 
   const r = spawnSync("npx", args, {
     cwd: root,

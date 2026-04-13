@@ -394,8 +394,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
       setOverviewLoading(true);
       loadEmployees().finally(() => setOverviewLoading(false));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, connected]);
+  }, [activeTab, connected, employees.length, loadAttendance, loadEmployees, loadTaskEntries, loadTasks, tasks.length]);
 
   const saveZoneDetails = async (id: string) => {
     const edits = editZone[id];
@@ -504,7 +503,6 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
     }
     setReportLoading(false);
     setReportGenerated(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportType, reportLocationsMode, reportDate, reportFrom, reportTo, reportEmployeeId, reportDeptId, reportZoneId, employees, zones]);
 
   const exportCsv = () => {
@@ -652,7 +650,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             )}
             <p className="mt-4 text-xs text-gray-400">
               ניתן גם{" "}
-              <Link href="/dashboard/settings?tab=integrations" className="text-indigo-400 hover:underline">
+                <Link href="/app/settings?tab=integrations" className="text-indigo-400 hover:underline">
                 להגדיר בדף ההגדרות
               </Link>
             </p>

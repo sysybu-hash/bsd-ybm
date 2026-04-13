@@ -172,7 +172,7 @@ ${JSON.stringify(tableData, null, 0)}
 export async function deleteOrganization(id: string) {
   try {
     await prisma.organization.delete({ where: { id } });
-    revalidatePath("/dashboard/crm");
+revalidatePath("/app/clients");
     return { success: true as const };
   } catch {
     return { error: "שגיאה במחיקת הארגון" };
@@ -195,8 +195,8 @@ export async function updateOrgPlan(id: string, tierRaw: string) {
         maxCompanies: balances.maxCompanies,
       },
     });
-    revalidatePath("/dashboard/crm");
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/clients");
+revalidatePath("/app/billing");
     return { success: true as const };
   } catch {
     return { error: "שגיאה בעדכון התוכנית" };
@@ -213,7 +213,7 @@ export async function updateOrganizationName(id: string, name: string) {
       where: { id },
       data: { name: trimmed },
     });
-    revalidatePath("/dashboard/crm");
+revalidatePath("/app/clients");
     return { success: true as const };
   } catch {
     return { error: "שגיאה בעדכון השם" };

@@ -696,7 +696,9 @@ export default function CrmClient({
             <div>
               <h2 className="text-2xl font-black italic text-slate-900">לא הוגדרה ישות לחיוב</h2>
               <p className="mt-2 text-sm text-slate-500 font-medium max-w-lg leading-relaxed">
-                מערכת הלקוחות משולבת יד ביד עם כלי מיסוי וחשבוניות. לפני שתוכלו לנהל תיקים, יש להקים "ארגון / עוסק" באזור ההנהלה תחת הגדרות.
+                מערכת הלקוחות משולבת יד ביד עם כלי מיסוי וחשבוניות. לפני
+                שתוכלו לנהל תיקים, יש להקים ארגון או עסק באזור ההנהלה תחת
+                ההגדרות.
               </p>
             </div>
           </div>
@@ -808,7 +810,7 @@ export default function CrmClient({
                   <h2 className="text-3xl font-black italic text-slate-900 mb-2">אוטומציות עבודה Workflow Builders</h2>
                   <p className="max-w-xl text-base font-medium text-slate-500 leading-relaxed mb-8">
                      כאן תוכלו לבנות חוקים עסקיים חכמים ללא קוד (No Code). לדוגמה:
-                     "כאשר לקוח עובר לסטטוס בקשת הצעת מחיר, שלח לו מייל אוטומטי, והוסף תזכורת למנהל תיק הלקוח בעוד יומיים."
+                     &quot;כאשר לקוח עובר לסטטוס בקשת הצעת מחיר, שלח לו מייל אוטומטי, והוסף תזכורת למנהל תיק הלקוח בעוד יומיים.&quot;
                   </p>
                   <button className="btn-secondary pointer-events-none opacity-50 border-slate-200 px-6 py-3 text-sm">
                      סביבת האוטומציות נמצאת בפיתוח עבור גרסת BSD-YBM.

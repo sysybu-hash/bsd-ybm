@@ -176,10 +176,10 @@ export default function BsdYbmDashboard({ homeData }: Props) {
       ═══════════════════════════════════════════ */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { href: "/dashboard/crm", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "indigo" },
-          { href: "/dashboard/erp", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
-          { href: "/dashboard/ai", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "indigo" },
-          { href: "/dashboard/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
+          { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "indigo" },
+          { href: "/app/documents", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
+          { href: "/app/insights", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "indigo" },
+          { href: "/app/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
         ].map((c) => (
           <Link
             key={c.href}
@@ -236,7 +236,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <DashboardRevenueChart data={monthlySeries} />
           </div>
 
-          <Link href="/dashboard/erp" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
+          <Link href="/app/billing" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
             {t("dashboard.quickActions.erp")}
             <ChevronLeft size={14} />
           </Link>
@@ -264,7 +264,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     {isUploading ? <Loader2 className="animate-spin" size={17} /> : <Upload size={17} />}
                     {isUploading ? t("scanner.processing") : t("erpDash.scannerCta")}
                   </label>
-                  <Link href="/dashboard/ai" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+                  <Link href="/app/insights" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
                     {t("dashboard.aiHub")}
                     <ChevronLeft size={15} />
                   </Link>
@@ -316,7 +316,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 </div>
                 <p className="text-sm font-black text-gray-900">{industry.vocabulary.client} {t("dashboard.stats.clients")}</p>
               </div>
-              <Link href="/dashboard/crm" className="text-[11px] font-bold text-indigo-400 hover:underline">
+              <Link href="/app/clients" className="text-[11px] font-bold text-indigo-400 hover:underline">
                 {t("executive.linkIntelligence")}
               </Link>
             </div>
@@ -326,7 +326,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 <UsersIcon className="text-gray-300" size={32} strokeWidth={1} />
                 <div>
                   <p className="text-sm font-bold text-gray-500">{t("dashboard.stats.clients")} — אין נתונים</p>
-                  <Link href="/dashboard/crm" className="mt-2 inline-flex text-xs font-black text-indigo-600 hover:underline">
+                  <Link href="/app/clients" className="mt-2 inline-flex text-xs font-black text-indigo-600 hover:underline">
                      צפו בניהול {industry.vocabulary.client}
                   </Link>
                 </div>
@@ -336,7 +336,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 {recentContacts.slice(0, 5).map((c) => (
                   <Link
                     key={c.id}
-                    href="/dashboard/crm"
+                    href="/app/clients"
                     className="flex items-center justify-between gap-4 rounded-xl border border-transparent p-2.5 transition-all hover:border-gray-100 hover:bg-gray-50 group"
                   >
                     <div className="flex min-w-0 items-center gap-3">
@@ -375,7 +375,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-rose-800">{uploadError}</p>
             {scanQuotaRedirect && (
-              <Link href="/dashboard/billing" className="mt-1 inline-block text-xs font-bold text-indigo-300 hover:underline">שדרוג מנוי</Link>
+              <Link href="/app/billing" className="mt-1 inline-block text-xs font-bold text-indigo-300 hover:underline">שדרוג מנוי</Link>
             )}
           </div>
           <button type="button" onClick={() => setUploadErrorDismissed(true)} className="shrink-0 rounded-lg p-1.5 text-rose-400 hover:bg-rose-100 transition-colors" aria-label="סגור">

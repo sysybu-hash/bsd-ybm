@@ -74,8 +74,11 @@ export async function saveBillingWorkspaceAction(
       where: { id: orgId },
       data: { billingWorkspaceJson: payload as object },
     });
-    revalidatePath("/dashboard/billing");
-    revalidatePath("/dashboard/settings");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+revalidatePath("/app/settings");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch (e) {
     console.error("saveBillingWorkspaceAction", e);

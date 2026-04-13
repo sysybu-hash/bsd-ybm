@@ -12,39 +12,43 @@ export default function ContactPageClient() {
   const { t, dir } = useI18n();
 
   return (
-    <MarketingPublicShell title={t("contactPage.title")}>
-      <p className="mb-8 text-lg leading-relaxed text-gray-500">{t("contactPage.intro")}</p>
+    <MarketingPublicShell
+      title={t("contactPage.title")}
+      eyebrow="Contact"
+      description="דברו איתנו על הדגמה, התאמה ארגונית או בניית flow שמתאים לעסק שלכם."
+    >
+      <p className="mb-8 text-lg leading-8 text-[color:var(--v2-muted)]">{t("contactPage.intro")}</p>
 
       <ul
-        className="card-avenue space-y-5 bg-white p-6 text-gray-700 shadow-sm"
+        className="v2-panel space-y-5 p-6 text-[color:var(--v2-ink)]"
         dir={dir}
       >
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-300/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
             {t("contactPage.addressLabel")}
           </span>
-          <span className="mt-1 block text-base font-medium text-gray-700">
+          <span className="mt-1 block text-base font-medium text-[color:var(--v2-ink)]">
             {t("marketingDrawer.contactAddress")}
           </span>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-300/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
             {t("contactPage.phoneLabel")}
           </span>
           <a
             href="tel:+972525640021"
-            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-indigo-600 underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-[color:var(--v2-accent)] underline-offset-2 transition hover:underline"
           >
             {t("marketingDrawer.contactPhone")}
           </a>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-indigo-300/90">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
             {t("contactPage.emailLabel")}
           </span>
           <a
             href="mailto:sysybu@gmail.com"
-            className="mt-1 block text-lg font-semibold text-indigo-300 hover:text-indigo-600 underline-offset-2 hover:underline"
+            className="mt-1 block text-lg font-semibold text-[color:var(--v2-accent)] underline-offset-2 transition hover:underline"
           >
             {t("marketingDrawer.contactEmail")}
           </a>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -340,7 +341,7 @@ export default function MultiEngineScanner({
            <div className="grid grid-cols-1 lg:grid-cols-12">
               <div className="lg:col-span-5 bg-slate-50 p-6">
                  {row.previewUrl ? (
-                   row.isImage ? <img src={row.previewUrl} alt="" className="w-full rounded-2xl shadow-lg bg-white" />
+                   row.isImage ? <Image src={row.previewUrl} alt="" width={1200} height={1600} className="h-auto w-full rounded-2xl bg-white shadow-lg" unoptimized />
                    : <iframe src={row.previewUrl} className="w-full h-96 rounded-2xl shadow-lg bg-white" />
                  ) : <div className="h-48 bg-white rounded-2xl flex items-center justify-center text-slate-300 italic">No Preview</div>}
               </div>
@@ -381,13 +382,13 @@ export default function MultiEngineScanner({
 
       <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto pt-8">
          <button 
-           onClick={() => router.push("/dashboard/erp")}
+                  onClick={() => router.push("/app/documents/erp")}
            className="flex-1 btn-primary py-5 rounded-[2rem] text-sm font-black shadow-xl shadow-blue-500/20 active:scale-95 transition-all"
          >
             שמור והעבר להנהלת חשבונות
          </button>
          <button 
-           onClick={() => router.push("/dashboard/crm")}
+                  onClick={() => router.push("/app/clients")}
            className="flex-1 btn-secondary py-5 rounded-[2rem] text-sm font-black border-2 border-slate-100 active:scale-95 transition-all"
          >
             שיוך לכרטיסי לקוח ב-CRM
@@ -410,14 +411,29 @@ export default function MultiEngineScanner({
 
   return (
     <div className="p-4 md:p-0">
-      <div className="mb-10 text-center">
+      {compactHeader ? (
+        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white px-5 py-4 shadow-sm">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-1.5 text-indigo-700">
+              <Settings2 size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">סקטור: {config.label}</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-black tracking-tight text-slate-900">{config.scanner.title}</h1>
+              <p className="mt-1 text-sm text-slate-500">{config.scanner.subtitle}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-10 text-center">
          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100 mb-4">
             <Settings2 size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">סקטור: {config.label}</span>
          </div>
          <h1 className="text-4xl font-black italic tracking-tighter text-slate-900 mb-2">{config.scanner.title}</h1>
          <p className="text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">{config.scanner.subtitle}</p>
-      </div>
+        </div>
+      )}
 
       <WizardContainer 
         title={config.scanner.title}

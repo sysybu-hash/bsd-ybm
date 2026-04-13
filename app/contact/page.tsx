@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import ContactPageClient from "./ContactPageClient";
 
 export const metadata: Metadata = {
-  title: "צור קשר | BSD-YBM",
-  description: "יצירת קשר עם BSD-YBM — האתרוג 99 גבעת זאב, טלפון, אימייל ווואטסאפ.",
+  title: "יצירת קשר | BSD-YBM",
+  description:
+    "פנייה ל-BSD-YBM לקבלת הדגמה, התאמה לארגון או שיחה על תהליכי עבודה, מסמכים, חיוב ו-AI.",
 };
 
 export default function ContactPage() {

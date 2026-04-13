@@ -53,7 +53,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
         <div className="flex flex-wrap gap-3 self-start">
           {showSuperManage ? (
             <Link
-              href="/dashboard/billing?tab=control"
+              href="/app/billing?tab=control"
               className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/40/80 bg-gradient-to-br from-indigo-50 to-gray-50 px-5 py-3 text-sm font-bold text-white shadow-sm ring-1 ring-indigo-200/60 transition-colors hover:border-indigo-400"
             >
               <ArrowRight size={18} />
@@ -62,7 +62,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           ) : null}
           {!embedded ? (
             <Link
-              href="/dashboard/intelligence"
+              href="/app/intelligence"
               className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 shadow-sm transition-colors hover:border-indigo-500/30 hover:text-indigo-300"
             >
               <ArrowRight size={18} />

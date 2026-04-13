@@ -90,7 +90,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             עדיין לא הועלו חשבוניות או מסמכים. העלו מסמכים דרך אזור הסריקה ותוכלו לנהל אותם כאן.
           </p>
         </div>
-        <Link href="/dashboard/erp#erp-multi-scanner" className="btn-primary flex items-center gap-2 mt-2">
+          <Link href="/app/documents/erp#erp-multi-scanner" className="btn-primary flex items-center gap-2 mt-2">
           <Upload size={18} aria-hidden />
           מעבר לסריקת מסמכים
         </Link>
@@ -374,7 +374,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
                 />
               </label>
               <label className="block md:col-span-2">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">סוג מסמך מזוהה (חשבונית, קבלה וכו')</span>
+                <span className="mb-1.5 block text-xs font-bold text-slate-700">סוג מסמך מזוהה (חשבונית, קבלה וכו&apos;)</span>
                 <input
                   value={String(readAi(editDoc.aiData).docType ?? "")}
                   onChange={(e) =>

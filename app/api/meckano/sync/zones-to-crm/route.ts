@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
 // POST /api/meckano/sync/zones-to-crm
@@ -11,7 +12,10 @@ export async function POST(_req: NextRequest) {
   if (!session?.user?.organizationId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const orgId = session.user.organizationId;
+  const orgId = await getAuthorizedMeckanoOrganizationId(session);
+  if (!orgId) {
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+  }
 
   const zones = await prisma.meckanoZone.findMany({
     where: { organizationId: orgId, isActive: true },

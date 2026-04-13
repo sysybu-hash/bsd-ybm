@@ -45,8 +45,8 @@ export default function LoginPortal() {
   const registered = searchParams.get("registered");
   const callbackUrl =
     registered === "1"
-      ? "/dashboard?welcome=1"
-      : safeInternalPath(searchParams.get("callbackUrl"), "/dashboard");
+      ? "/app?welcome=1"
+      : safeInternalPath(searchParams.get("callbackUrl"), "/app");
   const errorCode = searchParams.get("error");
   const reason = searchParams.get("reason");
   const oauthError = errorCode ? loginErrorMessages[errorCode] ?? loginErrorMessages.Default : null;

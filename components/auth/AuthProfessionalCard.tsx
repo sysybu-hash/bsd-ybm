@@ -10,31 +10,23 @@ type Props = Readonly<{
 export default function AuthProfessionalCard({ children, title, subtitle, icon }: Props) {
   return (
     <div className="w-full max-w-md">
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-200/50">
-        {/* Header */}
-        <div className="relative border-b border-gray-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 px-8 py-7 text-center">
+      <div className="v2-panel overflow-hidden shadow-[0_40px_120px_-55px_rgba(15,23,42,0.4)]">
+        <div className="border-b border-[color:var(--v2-line)] bg-[linear-gradient(135deg,rgba(255,249,245,0.95),rgba(255,255,255,0.98))] px-7 py-7 text-center sm:px-8">
           {icon ? (
-            <div className="mb-4 flex justify-center text-indigo-600">{icon}</div>
+            <div className="mb-4 flex justify-center text-[color:var(--v2-accent)]">{icon}</div>
           ) : (
             <div className="mb-4 flex justify-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 font-black text-white shadow-lg shadow-indigo-500/30">
-                B
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white shadow-[0_18px_40px_-20px_rgba(193,89,47,0.85)]">
+                BY
               </div>
             </div>
           )}
-          <h1 className="text-2xl font-black tracking-tight text-gray-900">
-            {title}
-          </h1>
+          <h1 className="text-2xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{title}</h1>
           {subtitle ? (
-            <p className="mx-auto mt-2 max-w-xs text-[13px] leading-relaxed text-gray-500">
-              {subtitle}
-            </p>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-[color:var(--v2-muted)]">{subtitle}</p>
           ) : null}
         </div>
-        {/* Body */}
-        <div className="px-8 pb-8 pt-6">
-          {children}
-        </div>
+        <div className="px-7 pb-7 pt-6 sm:px-8">{children}</div>
       </div>
     </div>
   );

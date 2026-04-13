@@ -105,13 +105,16 @@ export async function manageSubsSaveTenantDomainAction(
       }
     }
 
-    await prisma.organization.update({
+  await prisma.organization.update({
       where: { id: organizationId },
       data: { tenantPublicDomain: domainOrNull },
     });
 
-    revalidatePath("/dashboard/billing");
-    revalidatePath("/dashboard/settings");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+revalidatePath("/app/settings");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsSaveTenantDomainAction", e);
@@ -202,8 +205,10 @@ export async function manageSubsCreateManualUserAction(
       console.error("sendProvisionCredentialsEmail manage-subscriptions", err),
     );
 
-    revalidatePath("/dashboard/billing");
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsCreateManualUserAction", e);
@@ -241,8 +246,10 @@ export async function manageSubsAdjustScansAction(
       },
     });
 
-    revalidatePath("/dashboard/billing");
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון יתרה נכשל" };
@@ -290,7 +297,9 @@ export async function manageSubsSendTierInviteAction(
     });
     if (!mail.ok) return { ok: false, error: mail.error };
 
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsSendTierInviteAction", e);
@@ -321,7 +330,10 @@ export async function manageSubsUpdateSubscriptionAction(
         subscriptionStatus: statusRaw,
       },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsUpdateSubscriptionAction", e);
@@ -351,7 +363,9 @@ export async function manageSubsDeleteUserByEmailAction(
 
   try {
     await prisma.user.delete({ where: { id: target.id } });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsDeleteUserByEmailAction", e);
@@ -379,7 +393,9 @@ export async function manageSubsDeleteOrganizationAction(
 
   try {
     await prisma.organization.delete({ where: { id: organizationId } });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("manageSubsDeleteOrganizationAction", e);

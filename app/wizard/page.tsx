@@ -17,19 +17,19 @@ const flow = [
   {
     title: "Billing Setup",
     text: "Choose plan and payment route before activation.",
-    href: "/dashboard/billing",
+    href: "/app/billing",
     icon: CreditCard,
   },
   {
     title: "Workspace Launch",
     text: "Open dashboard and core modules for your team.",
-    href: "/dashboard",
+    href: "/app",
     icon: LayoutDashboard,
   },
   {
     title: "AI Operation",
     text: "Run intelligent workflows and automation in production.",
-    href: "/dashboard/ai",
+    href: "/app/intelligence",
     icon: Bot,
   },
 ];

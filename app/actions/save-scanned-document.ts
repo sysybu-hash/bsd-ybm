@@ -84,8 +84,11 @@ export async function saveScannedDocumentAction(
       }
     }
 
-    revalidatePath("/dashboard/erp");
-    revalidatePath("/dashboard/crm");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/clients");
+    revalidatePath("/app/documents");
+    revalidatePath("/app/clients");
+    revalidatePath("/app/inbox");
 
     return { success: true, documentId: doc.id };
   } catch (e: any) {

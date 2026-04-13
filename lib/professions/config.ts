@@ -19,6 +19,20 @@ export type IndustryType =
   | "RETAIL" 
   | "REAL_ESTATE";
 
+const INDUSTRY_ALIASES: Record<string, IndustryType> = {
+  GENERAL: "GENERAL",
+  LAWYER: "LEGAL",
+  LEGAL: "LEGAL",
+  ACCOUNTANT: "ACCOUNTING",
+  ACCOUNTING: "ACCOUNTING",
+  CONTRACTOR: "CONSTRUCTION",
+  CONSTRUCTION: "CONSTRUCTION",
+  HEALTH: "MEDICAL",
+  MEDICAL: "MEDICAL",
+  RETAIL: "RETAIL",
+  REAL_ESTATE: "REAL_ESTATE",
+};
+
 export interface AnalysisType {
   id: string;
   label: string;
@@ -221,7 +235,12 @@ export const INDUSTRY_CONFIGS: Record<IndustryType, IndustryConfig> = {
   }
 };
 
+export function normalizeIndustryType(id?: string | null): IndustryType {
+  const normalized = String(id ?? "GENERAL").trim().toUpperCase();
+  return INDUSTRY_ALIASES[normalized] ?? "GENERAL";
+}
+
 export function getIndustryConfig(id?: string): IndustryConfig {
-  const normalized = (id || "GENERAL").toUpperCase() as IndustryType;
+  const normalized = normalizeIndustryType(id);
   return INDUSTRY_CONFIGS[normalized] || INDUSTRY_CONFIGS.GENERAL;
 }

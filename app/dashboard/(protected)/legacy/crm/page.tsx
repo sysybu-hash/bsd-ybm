@@ -1,0 +1,5 @@
+import { redirect } from "next/navigation";
+
+export default function LegacyCrmPage() {
+  redirect("/app/clients/advanced");
+}

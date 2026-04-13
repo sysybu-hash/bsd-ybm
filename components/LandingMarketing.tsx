@@ -69,7 +69,7 @@ export default function LandingMarketing() {
             </p>
             <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:gap-5">
               <Link
-                href="/dashboard"
+                href="/app"
                 className="inline-flex rounded-2xl px-10 py-4 text-lg font-black text-white shadow-xl bg-blue-600"
                 style={{
                   boxShadow: "0 20px 40px -10px rgba(59, 130, 246, 0.45)",
@@ -163,7 +163,7 @@ export default function LandingMarketing() {
                 </ul>
 
                 <Link
-                  href="/dashboard/admin?section=subscriptions"
+                  href="/app/billing?tab=control"
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
                       ? "bg-indigo-600 text-white"

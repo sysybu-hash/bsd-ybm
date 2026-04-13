@@ -165,7 +165,7 @@ function HubContent(props: Props) {
             </span>
           </div>
           <Link
-            href="/dashboard/erp/invoice"
+                    href="/app/documents/issue"
             className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all"
           >
             <ReceiptText size={14} /> הנפק {industry.vocabulary.document}

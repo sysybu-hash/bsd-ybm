@@ -4,6 +4,7 @@ import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { sendRegistrationWelcomeEmail } from "@/lib/mail";
 import { defaultScanBalancesForTier, tierLabelHe } from "@/lib/subscription-tier-config";
+import { normalizeIndustryType } from "@/lib/professions/config";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
     const name = String(body.name ?? "").trim() || null;
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
-    const industry = String(body.industry ?? "GENERAL").toUpperCase();
+    const industry = normalizeIndustryType(String(body.industry ?? "GENERAL"));
     const inviteToken = String(body.inviteToken ?? "").trim();
     const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 

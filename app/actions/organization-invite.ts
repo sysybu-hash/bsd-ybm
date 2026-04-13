@@ -77,7 +77,8 @@ export async function createOrganizationInviteAction(formData: FormData): Promis
     return { ok: false, error: mail.error };
   }
 
-  revalidatePath("/dashboard/settings");
+revalidatePath("/app/settings");
+  revalidatePath("/app/settings");
   return { ok: true, registerUrl };
 }
 

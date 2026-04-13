@@ -4,7 +4,7 @@ import { useState } from "react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import DashboardUnifiedAi from "@/components/DashboardUnifiedAi";
 import Link from "next/link";
-import { Zap, ChevronRight, Settings2 } from "lucide-react";
+import { Zap, ChevronRight } from "lucide-react";
 
 export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -16,9 +16,10 @@ export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) 
     >
       {/* THE TOOLKIT DRAWER */}
       <div 
-        className={`flex flex-col items-center gap-6 rounded-r-[3rem] border border-white/30 bg-white/70 p-3.5 shadow-[0_25px_60px_rgba(0,0,0,0.2)] backdrop-blur-3xl ring-1 ring-white/50 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        className={`flex flex-col items-center gap-6 rounded-r-[3rem] border border-white/30 bg-white/70 p-3.5 shadow-[0_25px_60px_rgba(0,0,0,0.2)] backdrop-blur-3xl ring-1 ring-white/50 transition-all duration-700 ${
           isExpanded ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
         }`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
       >
         {/* ACCESSIBILITY */}
         <AccessibilityMenu dock />
@@ -27,7 +28,7 @@ export default function DashboardBottomDock({ orgId = "" }: { orgId?: string }) 
 
         {/* QUICK AI SCANNER */}
         <Link 
-          href="/dashboard/ai"
+      href="/app/insights"
           className="group/btn relative flex h-14 w-14 items-center justify-center rounded-[1.5rem] bg-[var(--primary-brand,#4f46e5)] text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:shadow-[0_0_30px_var(--primary-brand)] hover:-rotate-6 active:scale-90 overflow-hidden"
           title="אשף סריקה"
         >

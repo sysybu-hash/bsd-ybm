@@ -19,13 +19,13 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="text-gray-900 font-bold mb-4">מערכת</h4>
             <Link
-              href="/dashboard/erp"
+    href="/app/documents/erp"
               className="block text-gray-500 hover:text-[var(--primary-color)] transition-colors"
             >
               ניהול ERP
             </Link>
             <Link
-              href="/dashboard/crm"
+    href="/app/clients"
               className="block text-gray-500 hover:text-[var(--primary-color)] transition-colors"
             >
               ניהול CRM

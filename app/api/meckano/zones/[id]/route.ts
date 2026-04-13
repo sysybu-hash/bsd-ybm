@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
 // PUT /api/meckano/zones/[id]
@@ -11,6 +12,10 @@ export async function PUT(
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const organizationId = await getAuthorizedMeckanoOrganizationId(session);
+  if (!organizationId) {
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+  }
 
   const { id } = await params;
   const body = await req.json() as {
@@ -22,7 +27,7 @@ export async function PUT(
   };
 
   const existing = await prisma.meckanoZone.findUnique({ where: { id } });
-  if (!existing || existing.organizationId !== session.user.organizationId)
+  if (!existing || existing.organizationId !== organizationId)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const zone = await prisma.meckanoZone.update({
@@ -55,10 +60,14 @@ export async function DELETE(
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const organizationId = await getAuthorizedMeckanoOrganizationId(session);
+  if (!organizationId) {
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+  }
 
   const { id } = await params;
   const existing = await prisma.meckanoZone.findUnique({ where: { id } });
-  if (!existing || existing.organizationId !== session.user.organizationId)
+  if (!existing || existing.organizationId !== organizationId)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await prisma.meckanoZone.delete({ where: { id } });

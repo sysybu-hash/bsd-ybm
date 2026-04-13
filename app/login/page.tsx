@@ -6,8 +6,8 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "כניסה | BSD-YBM Intelligence",
-  description: "התחברות לפלטפורמת BSD-YBM",
+  title: "כניסה | BSD-YBM",
+  description: "כניסה למערכת BSD-YBM לניהול לקוחות, מסמכים, חיוב ובקרה תפעולית.",
 };
 
 function LoginFallback() {

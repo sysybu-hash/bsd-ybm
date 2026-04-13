@@ -9,6 +9,7 @@ import SessionProvider from "@/components/SessionProvider";
 import Themer from "@/components/Themer";
 import CookieConsentWall from "@/components/CookieConsentWall";
 import { I18nProvider } from "@/components/I18nProvider";
+import { AccessibilitySettingsBootstrap } from "@/components/AccessibilityMenu";
 import { COOKIE_LOCALE, normalizeLocale, isRtlLocale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/load-messages";
 import { buildRootMetadata } from "@/lib/site-metadata";
@@ -75,6 +76,7 @@ export default async function RootLayout({
         <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
             <Themer />
+            <AccessibilitySettingsBootstrap />
             <SiteWizardChrome>{children}</SiteWizardChrome>
             <GlobalFloatingChrome />
             <CookieConsentWall />

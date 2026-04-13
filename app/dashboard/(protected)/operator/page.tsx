@@ -1,10 +1,5 @@
-import ExecutiveSuite from "@/components/intelligence/ExecutiveSuite";
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "חדר מצב AI | מנהל על",
-};
-
-export default function OperatorDashboardPage() {
-  return <ExecutiveSuite />;
+export default function DashboardOperatorRedirectPage() {
+  redirect("/app/intelligence");
 }

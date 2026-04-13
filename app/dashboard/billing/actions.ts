@@ -88,7 +88,7 @@ export async function createIssuedDocument(
       },
     });
 
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/billing");
     return { ok: true, docNumber: newDoc.number };
   } catch (e) {
     console.error("createIssuedDocument", e);
@@ -148,7 +148,7 @@ export async function updateIssuedDocument(
       where: { id: data.id },
       data: { type: data.type, clientName, amount: netAmount, vat, total, items: itemsJson, status: data.status },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("updateIssuedDocument", e);
@@ -175,7 +175,7 @@ export async function deleteIssuedDocument(id: string): Promise<DeleteIssuedDocu
 
   try {
     await prisma.issuedDocument.delete({ where: { id } });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("deleteIssuedDocument", e);

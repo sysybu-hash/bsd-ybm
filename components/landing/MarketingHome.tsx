@@ -1,172 +1,473 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { 
-  Zap, ArrowRight, Scan, BarChart3, 
-  Network, CheckCircle2,
-  ChevronDown
+import type { ReactNode } from "react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  BadgeCheck,
+  BarChart3,
+  Bot,
+  BrainCircuit,
+  Building2,
+  CheckCircle2,
+  CreditCard,
+  FileText,
+  ScanSearch,
+  ShieldCheck,
+  Sparkles,
+  UsersRound,
 } from "lucide-react";
+import { marketingSans } from "@/lib/fonts/marketing-fonts";
+import { ADMIN_SUBSCRIPTION_TIER_OPTIONS, tierAllowance, tierLabelHe } from "@/lib/subscription-tier-config";
 
-/**
- * 🌌 BSD-YBM: THE ULTIMATE MINIMALIST REWRITE (2026)
- * Motto: "השדרה שמחברת בין כולם"
- * Aesthetic: Dreamy Glassmorphism, Clean Typography, Zero Clutter.
- */
+const navItems = [
+  { href: "/#product", label: "המוצר" },
+  { href: "/#workflows", label: "זרימות עבודה" },
+  { href: "/solutions", label: "פתרונות" },
+  { href: "/pricing", label: "תמחור" },
+  { href: "/about", label: "אודות" },
+  { href: "/contact", label: "יצירת קשר" },
+];
 
-const NavItem = ({ label }: { label: string }) => (
-  <Link href="#" className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 hover:text-white transition-all">
-    {label}
-  </Link>
-);
+const featureCards = [
+  {
+    icon: UsersRound,
+    title: "CRM שמזיז עבודה קדימה",
+    body: "תיקי לקוח, משימות, תזכורות וסטטוסים במקום אחד, בלי לקפוץ בין כלים.",
+  },
+  {
+    icon: CreditCard,
+    title: "חיוב ומסמכים עסקיים",
+    body: "חשבוניות, גבייה, מנויים ומעקב כספי בתוך אותה מערכת עבודה.",
+  },
+  {
+    icon: BrainCircuit,
+    title: "AI שמוטמע בתוך התהליך",
+    body: "לא עוד צ'אט מנותק. ה-AI עובד בתוך הלקוחות, המסמכים, הבקרה וההחלטות.",
+  },
+];
 
-const FeatureSection = ({ title, desc, icon: Icon, src, reversed = false }: any) => (
-  <div className={`flex flex-col ${reversed ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-16 py-32 border-b border-white/5`}>
-    <div className="flex-1 space-y-8 text-start">
-      <div className="h-16 w-16 bg-indigo-600/20 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400">
-        <Icon size={32} />
+const modules = [
+  {
+    title: "מסמכים חכמים",
+    body: "סריקה, חילוץ, סיווג ויצירת מסמכים מתוך הפעילות האמיתית של העסק.",
+    icon: ScanSearch,
+  },
+  {
+    title: "שליטה תפעולית",
+    body: "משימות, מעקבים, תהליכים פנימיים והודעות פעולה במקום אחד ברור.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "תובנות ניהוליות",
+    body: "תמונה חיה של הכנסות, עומסים, חריגות והזדמנויות, בלי דו\"חות מנותקים.",
+    icon: BarChart3,
+  },
+  {
+    title: "שכבת AI אחידה",
+    body: "הצעות פעולה, ניסוחים, ניתוחים ותשובות בהקשר המדויק של הארגון שלך.",
+    icon: Bot,
+  },
+];
+
+const workflowSteps = [
+  "לקוח או מסמך נכנסים למערכת",
+  "BSD-YBM מזהה הקשר, משימות וסיכונים",
+  "המערכת מעדכנת CRM, מסמכים וחיוב",
+  "הצוות מקבל תמונת מצב והמלצה לפעולה הבאה",
+];
+
+const industries = ["משרדי עורכי דין", "רואי חשבון", "קבלנים", "קליניקות", "נדל\"ן", "עסקים מבוססי שירות"];
+
+const proofPoints = [
+  "פחות כפילויות בין CRM, מסמכים וחיוב",
+  "פחות אדמין ידני לצוות",
+  "פחות החמצות של משימות וגבייה",
+  "יותר החלטות מתוך תמונת מצב אחת",
+];
+
+const planCards = ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((tier) => {
+  const allowance = tierAllowance(tier);
+  return {
+    tier,
+    label: tierLabelHe(tier),
+    price: allowance.monthlyPriceIls == null ? "בתיאום" : `₪${allowance.monthlyPriceIls}`,
+    summary: `${allowance.cheapScans} זולות · ${allowance.premiumScans} פרימיום · ${
+      allowance.unlimitedCompanies ? "ללא הגבלת חברות" : `עד ${allowance.maxCompanies} חברות`
+    }`,
+    featured: tier === "DEALER",
+  };
+});
+
+function PublicHeader() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/88 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-3 text-[color:var(--v2-ink)]">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white shadow-[0_18px_40px_-20px_rgba(193,89,47,0.85)]">
+            BY
+          </span>
+          <span className="flex flex-col">
+            <span className="text-base font-black tracking-[-0.04em] sm:text-lg">BSD-YBM</span>
+            <span className="text-[11px] font-semibold text-[color:var(--v2-muted)]">
+              מערכת תפעול חכמה לעסקים מקצועיים
+            </span>
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-6 lg:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-semibold text-[color:var(--v2-muted)] transition hover:text-[color:var(--v2-ink)]"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <Link href="/login" className="v2-button v2-button-ghost hidden sm:inline-flex">
+            כניסה
+          </Link>
+          <Link href="/register" className="v2-button v2-button-primary">
+            התחלת עבודה
+          </Link>
+        </div>
       </div>
-      <h2 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white leading-tight">{title}</h2>
-      <p className="text-xl text-slate-400 font-bold leading-relaxed italic max-w-xl">{desc}</p>
-      <div className="flex gap-4">
-        <span className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-indigo-400 italic">Production Ready</span>
+    </header>
+  );
+}
+
+function PublicFooter() {
+  return (
+    <footer className="border-t border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.5fr_1fr] lg:px-8">
+        <div className="space-y-3">
+          <p className="text-lg font-black text-[color:var(--v2-ink)]">BSD-YBM</p>
+          <p className="max-w-2xl text-sm leading-7 text-[color:var(--v2-muted)]">
+            מערכת תפעול אינטליגנטית שמחברת לקוחות, מסמכים, חיוב, שליטה ניהולית ו-AI בתוך סביבת עבודה אחת.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="font-semibold text-[color:var(--v2-muted)] transition hover:text-[color:var(--v2-ink)]"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
-    <div className="flex-1 w-full aspect-video bg-slate-900 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl group">
-      <img src={src} alt={title} className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000" />
-    </div>
-  </div>
-);
+    </footer>
+  );
+}
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return <span className="v2-eyebrow">{children}</span>;
+}
 
 export default function MarketingHome() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <div className="relative min-h-screen bg-[#020617] text-white selection:bg-indigo-500/30 overflow-x-hidden font-sans" dir="rtl">
-      
-      {/* 🌌 Atmospheric Backdrop */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#4f46e515_0%,_transparent_50%)]" />
-        <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[150px]" />
-      </div>
+    <div className={`${marketingSans.className} v2-site-shell`} dir="rtl">
+      <PublicHeader />
 
-      {/* 🚀 Sleek Header */}
-      <nav className={`fixed top-0 inset-x-0 z-[100] transition-all duration-700 px-6 py-6 ${isScrolled ? "bg-slate-950/80 backdrop-blur-3xl border-b border-white/5 py-4" : ""}`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-4">
-            <div className="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-xl">
-               <Zap size={24} fill="white" />
+      <main>
+        <section className="relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="v2-orb v2-orb-primary" />
+            <div className="v2-orb v2-orb-secondary" />
+            <div className="v2-grid-overlay" />
+          </div>
+
+          <div className="relative mx-auto grid max-w-7xl gap-16 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-20">
+            <div className="space-y-8">
+              <SectionLabel>BSD-YBM v2</SectionLabel>
+              <div className="space-y-5">
+                <h1 className="max-w-3xl text-5xl font-black leading-[0.92] tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-6xl lg:text-7xl">
+                  מערכת אחת שמסדרת את העבודה, המסמכים וההחלטות של העסק.
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-[color:var(--v2-muted)] sm:text-xl">
+                  BSD-YBM מחברת CRM, מסמכים, חיוב, בקרה ו-AI בתוך סביבת עבודה אחת שנבנתה לעסקים מקצועיים בישראל.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link href="/register" className="v2-button v2-button-primary">
+                  פתיחת חשבון
+                  <ArrowLeft className="h-4 w-4" aria-hidden />
+                </Link>
+                <Link href="/demo" className="v2-button v2-button-secondary">
+                  לראות הדגמה
+                  <ArrowUpRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {featureCards.map(({ icon: Icon, title, body }) => (
+                  <article key={title} className="v2-panel v2-panel-soft p-5">
+                    <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <h2 className="text-lg font-black text-[color:var(--v2-ink)]">{title}</h2>
+                    <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
+                  </article>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col text-start">
-               <span className="text-2xl font-black italic tracking-tighter leading-none uppercase">BSD-YBM</span>
-               <span className="text-[8px] font-black uppercase tracking-[0.5em] text-indigo-400 mt-1 italic">השדרה שמחברת בין כולם</span>
+
+            <div className="relative">
+              <div className="absolute -left-4 top-6 hidden rounded-[28px] border border-white/60 bg-white/80 px-4 py-3 shadow-[0_30px_70px_-35px_rgba(15,23,42,0.45)] backdrop-blur sm:block">
+                <p className="text-xs font-bold text-[color:var(--v2-muted)]">תשומת לב ניהולית</p>
+                <p className="mt-1 text-sm font-black text-[color:var(--v2-ink)]">3 פריטים דורשים טיפול היום</p>
+              </div>
+
+              <div className="v2-dashboard-frame">
+                <div className="flex items-center justify-between border-b border-[color:var(--v2-line)] px-5 py-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.28em] text-[color:var(--v2-muted)]">
+                      Operational Intelligence
+                    </p>
+                    <p className="mt-2 text-xl font-black text-[color:var(--v2-ink)]">לוח תפעולי חי</p>
+                  </div>
+                  <span className="rounded-full bg-[color:var(--v2-success-soft)] px-3 py-1 text-xs font-bold text-[color:var(--v2-success)]">
+                    פעילות תקינה
+                  </span>
+                </div>
+
+                <div className="grid gap-4 p-5">
+                  <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                    <div className="v2-panel p-4">
+                      <div className="mb-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-[color:var(--v2-muted)]">פוקוס להיום</p>
+                          <p className="text-lg font-black text-[color:var(--v2-ink)]">לקוחות, מסמכים, חיוב</p>
+                        </div>
+                        <Sparkles className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
+                      </div>
+                      <Image
+                        src="/demo/bsd-ybm-demo-hero-desktop.png"
+                        alt="תצוגת הדשבורד של BSD-YBM"
+                        width={1400}
+                        height={880}
+                        className="rounded-[22px] border border-[color:var(--v2-line)] object-cover"
+                        priority
+                      />
+                    </div>
+
+                    <div className="grid gap-4">
+                      <div className="v2-panel p-4">
+                        <p className="text-sm font-bold text-[color:var(--v2-muted)]">המלצת מערכת</p>
+                        <p className="mt-2 text-lg font-black text-[color:var(--v2-ink)]">
+                          7 מסמכים זוהו ומוכנים לשיוך אוטומטי
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">
+                          המערכת זיהתה לקוחות, סכומים וסטטוסים ומציעה את הצעד הבא לכל פריט.
+                        </p>
+                      </div>
+                      <div className="v2-panel p-4">
+                        <p className="text-sm font-bold text-[color:var(--v2-muted)]">בקרה פיננסית</p>
+                        <div className="mt-4 grid grid-cols-2 gap-3">
+                          {[
+                            { label: "גבייה פתוחה", value: "₪48,200" },
+                            { label: "חשבוניות השבוע", value: "32" },
+                            { label: "משימות דחופות", value: "11" },
+                            { label: "פניות חדשות", value: "19" },
+                          ].map((item) => (
+                            <div key={item.label} className="rounded-2xl bg-[color:var(--v2-canvas)] p-3">
+                              <p className="text-xs font-bold text-[color:var(--v2-muted)]">{item.label}</p>
+                              <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{item.value}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {proofPoints.map((point) => (
+                      <div key={point} className="flex items-center gap-3 rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
+                        <CheckCircle2 className="h-5 w-5 text-[color:var(--v2-success)]" aria-hidden />
+                        <span className="text-sm font-semibold text-[color:var(--v2-ink)]">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-          </Link>
-          <div className="hidden lg:flex items-center gap-12">
-            <NavItem label="הסורק" />
-            <NavItem label="בקרה" />
-            <NavItem label="השדרה" />
-            <Link href="/login" className="px-10 py-3 bg-white text-slate-950 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-xl">כניסה</Link>
           </div>
-        </div>
-      </nav>
+        </section>
 
-      {/* 🏛️ Dreamy Hero */}
-      <section className="relative h-screen flex flex-col items-center justify-center px-6 text-center">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="space-y-12"
-        >
-          <div className="inline-flex items-center gap-3 px-5 py-2 bg-indigo-600/10 border border-indigo-500/20 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.4em] text-indigo-400 italic">The Final Protocol 2026</span>
+        <section id="product" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-3xl space-y-4">
+            <SectionLabel>מוצר אחד, שכבות עבודה ברורות</SectionLabel>
+            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">
+              כל מודול נבנה כדי לשרת את התהליך, לא כדי לחיות לבד.
+            </h2>
+            <p className="text-lg leading-8 text-[color:var(--v2-muted)]">
+              BSD-YBM לא מוכרת אוסף פיצ&apos;רים. היא בונה רצף עבודה: קליטה, עיבוד, פעולה, גבייה, ובקרה.
+            </p>
           </div>
-          
-          <h1 className="text-7xl md:text-9xl font-black italic tracking-tighter leading-[0.9] text-white uppercase italic">
-            BSD-YBM <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-500 to-purple-600">פתרונות AI</span>
-          </h1>
-          
-          <p className="text-xl md:text-3xl text-slate-400 max-w-3xl mx-auto font-bold italic leading-relaxed tracking-tighter">
-            "השדרה שמחברת בין כולם" <br/>
-            <span className="text-white">ניצוח מוחלט של בינה מלאכותית על כל פעימה בעסק שלך. פלטפורמה מודולרית שמשתנה עבורך.</span>
-          </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-10">
-            <Link href="/register" className="px-20 py-8 bg-indigo-600 rounded-2xl text-[14px] font-black uppercase tracking-[0.2em] shadow-[0_25px_50px_-12px_rgba(79,70,229,0.5)] hover:scale-105 active:scale-95 transition-all">הצטרפות לשדרה</Link>
-            <div className="flex items-center gap-4 text-slate-500 font-bold italic">
-               <ChevronDown size={20} className="animate-bounce" />
-               <span>לצפייה ב-Live Demos</span>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {modules.map(({ title, body, icon: Icon }) => (
+              <article key={title} className="v2-panel p-6">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-canvas)] text-[color:var(--v2-accent)]">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <h3 className="mt-5 text-xl font-black text-[color:var(--v2-ink)]">{title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="workflows" className="border-y border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/72">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+            <div className="space-y-4">
+              <SectionLabel>זרימת עבודה חיה</SectionLabel>
+              <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">
+                מה קורה מהרגע שנכנס מידע חדש למערכת?
+              </h2>
+              <p className="text-lg leading-8 text-[color:var(--v2-muted)]">
+                במקום צוות שמדביק תהליכים ידנית, BSD-YBM מחברת בין הנתונים, מציעה פעולה, ומתעדת הכול בזמן אמת.
+              </p>
+            </div>
+
+            <div className="grid gap-4">
+              {workflowSteps.map((step, index) => (
+                <div key={step} className="v2-panel flex items-start gap-4 p-5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p className="text-lg font-black text-[color:var(--v2-ink)]">{step}</p>
+                    <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">
+                      שכבת העבודה הבאה מתעדכנת אוטומטית, כך שהצוות רואה תמיד מה השתנה ומה צריך לקרות עכשיו.
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </motion.div>
-      </section>
+        </section>
 
-      {/* 📺 System Overviews (Clean) */}
-      <section className="max-w-7xl mx-auto px-6 pb-64">
-      <FeatureSection 
-          title="פענוח Vision."
-          icon={Scan}
-          src="/demos/system_demo_1.png"
-          desc="סריקה אחת, חכמה אינסופית. המערכת לומדת את המקצוע שלך ומחלצת נתונים מדויקים מחשבוניות, חוזים ומרשמים בתיוק אוטומטי."
-        />
-        <FeatureSection 
-          title="Executive BI."
-          icon={BarChart3}
-          src="/demos/system_demo_2.png"
-          reversed
-          desc="לוח בקרה אקסקלוסיבי למקבלי החלטות. תצוגת על של הכנסות, הוצאות ותחזית תזרים מבוססת AI בזמן אמת."
-        />
-        <FeatureSection 
-          title="Mission Control."
-          icon={Network}
-          src="/demos/system_demo_3.png"
-          desc="השדרה שמחברת בין לקוחות, פרויקטים ועובדים. סנכרון מלא של כל נקודות המגע בארגון לכדי חוויית ניהול מנצחת אחת."
-        />
-      </section>
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="v2-panel p-8">
+              <SectionLabel>התאמה לענפים</SectionLabel>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl">
+                בנוי לעסקים עם עומס תפעולי אמיתי.
+              </h2>
+              <p className="mt-4 text-base leading-8 text-[color:var(--v2-muted)]">
+                משרדים, קליניקות, קבלנים ועסקים מבוססי שירות צריכים מערכת שעובדת עם מסמכים, עם לקוחות ועם כסף. לא רק עם רשימות.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {industries.map((industry) => (
+                  <span key={industry} className="rounded-full border border-[color:var(--v2-line)] bg-[color:var(--v2-canvas)] px-4 py-2 text-sm font-bold text-[color:var(--v2-ink)]">
+                    {industry}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-      {/* 🏙️ Adaptive Protocol */}
-      <section className="py-48 bg-slate-950/40 border-y border-white/5 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 text-center space-y-16">
-          <h3 className="text-[12px] font-black uppercase tracking-[1em] text-indigo-500 italic">ADAPTIVE INTELLIGENCE</h3>
-          <p className="text-4xl md:text-6xl font-black italic tracking-tighter text-white leading-tight">
-             "BSD-YBM משנה את שפת הניהול שלה עבור המקצוע שלך."
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
-             {["עורכי דין", "קבלנים", "רופאים", "רואי חשבון"].map((m, i) => (
-               <div key={i} className="p-10 bg-white/5 rounded-3xl border border-white/10 hover:border-indigo-500/50 transition-colors">
-                  <span className="text-xl font-black text-white italic">{m}</span>
-               </div>
-             ))}
+            <div className="v2-panel v2-panel-highlight overflow-hidden p-0">
+              <div className="border-b border-[color:var(--v2-line)] px-6 py-5">
+                <SectionLabel>למה זה עובד</SectionLabel>
+                <h3 className="mt-3 text-2xl font-black text-[color:var(--v2-ink)]">המערכת חושבת כמו סביבת תפעול, לא כמו אוסף מסכים.</h3>
+              </div>
+              <div className="grid gap-0 divide-y divide-[color:var(--v2-line)]">
+                {[
+                  ["מקור אמת אחד", "לקוחות, מסמכים, משימות, חיוב ותובנות נשענים על אותה תמונה תפעולית."],
+                  ["שפה אחידה", "הצוות לא לומד חמישה כלים שונים כדי להניע את העבודה."],
+                  ["AI עם הקשר", "ההמלצות נוצרות מתוך הנתונים של העסק ולא מתוך prompt כללי."],
+                ].map(([title, body]) => (
+                  <div key={title} className="flex gap-4 px-6 py-5">
+                    <BadgeCheck className="mt-1 h-5 w-5 shrink-0 text-[color:var(--v2-accent)]" aria-hidden />
+                    <div>
+                      <p className="font-black text-[color:var(--v2-ink)]">{title}</p>
+                      <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 🏁 Footer */}
-      <footer className="py-48 px-10 text-center relative">
-        <div className="max-w-4xl mx-auto space-y-12">
-           <div className="flex flex-col items-center gap-6">
-              <Zap className="text-indigo-600" size={48} fill="currentColor" />
-              <span className="text-3xl font-black italic tracking-tightest uppercase">BSD-YBM פתרונות AI</span>
-           </div>
-           <p className="text-2xl text-slate-500 font-bold italic italic">
-             "השפה החדשה של הניהול המקצועי."
-           </p>
-           <div className="pt-20 text-[10px] font-black uppercase tracking-[0.5em] text-white/5">
-             COPYRIGHT © 2026 BSD-YBM — השדרה שמחברת בין כולם
-           </div>
-        </div>
-      </footer>
+        <section id="plans" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-3xl space-y-4">
+            <SectionLabel>מנויים והצטרפות</SectionLabel>
+            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">
+              מסלול ברור לכל שלב, עם כניסה ישירה להרשמה.
+            </h2>
+            <p className="text-lg leading-8 text-[color:var(--v2-muted)]">
+              כל מסלול מחובר כבר היום לעמוד ההצטרפות, למכסות הסריקה ולניהול המנוי בתוך המוצר.
+              אפשר להתחיל בחינם, להצטרף למסלול מתאים, או לדבר איתנו למסלולים גדולים יותר.
+            </p>
+          </div>
 
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            {planCards.map((plan) => (
+              <article
+                key={plan.tier}
+                className={`rounded-[30px] border px-5 py-6 ${
+                  plan.featured
+                    ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]"
+                    : "border-[color:var(--v2-line)] bg-white/88"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-lg font-black text-[color:var(--v2-ink)]">{plan.label}</p>
+                  {plan.featured ? (
+                    <span className="rounded-full bg-white/92 px-3 py-1 text-[11px] font-black text-[color:var(--v2-accent)]">
+                      מומלץ
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-4 text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)]">{plan.price}</p>
+                <p className="mt-3 min-h-[72px] text-sm leading-7 text-[color:var(--v2-muted)]">{plan.summary}</p>
+                <Link
+                  href={`/register?plan=${encodeURIComponent(plan.tier)}`}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[color:var(--v2-ink)] px-4 py-3 text-sm font-black text-white transition hover:opacity-92"
+                >
+                  הצטרפות ל-{plan.label}
+                  <ArrowLeft className="h-4 w-4" aria-hidden />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="v2-cta-strip">
+            <div className="space-y-4">
+              <SectionLabel>מוכנים לעבוד אחרת?</SectionLabel>
+              <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-5xl">
+                עוברים ממערכת מפוזרת למרכז שליטה אחד.
+              </h2>
+              <p className="max-w-2xl text-base leading-8 text-white/78 sm:text-lg">
+                מתחילים עם חשבון, מחברים את הזרימות החשובות באמת, ומקבלים סביבת עבודה שמתאימה למורכבות של העסק שלך.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link href="/register" className="v2-button bg-white text-[color:var(--v2-ink)] hover:bg-white/92">
+                להתחיל עכשיו
+              </Link>
+              <Link href="/contact" className="v2-button border border-white/30 bg-white/10 text-white hover:bg-white/16">
+                לדבר איתנו
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <PublicFooter />
     </div>
   );
 }

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import AboutPageClient from "./AboutPageClient";
 
 export const metadata: Metadata = {
-  title: "מי אנחנו | BSD-YBM",
+  title: "אודות BSD-YBM",
   description:
-    "BSD-YBM — ניסיון של למעלה מ־20 שנה בניהול משרדים וחשבונאות, מזוקק למערכת AI חכמה.",
+    "BSD-YBM נבנתה כדי לחבר בין לקוחות, מסמכים, חיוב, שליטה תפעולית ו-AI בתוך מערכת אחת לעסקים מקצועיים בישראל.",
 };
 
 export default function AboutPage() {

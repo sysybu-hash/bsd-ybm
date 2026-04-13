@@ -55,8 +55,10 @@ export async function createContactAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }
 
@@ -83,8 +85,10 @@ export async function createProjectAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }
 
@@ -101,8 +105,10 @@ export async function deleteContactAction(contactId: string) {
 
   await prisma.quote.deleteMany({ where: { contactId } });
   await prisma.contact.delete({ where: { id: contactId } });
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }
 
@@ -153,8 +159,10 @@ export async function updateContactAction(input: {
     },
   });
 
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }
 
@@ -202,8 +210,10 @@ export async function updateContactStatusAction(contactId: string, status: strin
     }
   }
 
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }
 
@@ -219,7 +229,9 @@ export async function deleteProjectAction(projectId: string) {
   // Unlink contacts from this project before deleting
   await prisma.contact.updateMany({ where: { projectId, organizationId: ctx.orgId }, data: { projectId: null } });
   await prisma.project.delete({ where: { id: projectId } });
-  revalidatePath("/dashboard/crm");
-  revalidatePath("/dashboard/business");
+revalidatePath("/app/clients");
+revalidatePath("/app/business");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/inbox");
   return { ok: true as const };
 }

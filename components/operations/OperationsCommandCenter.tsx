@@ -109,10 +109,10 @@ export default function OperationsCommandCenter({
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href="/dashboard" className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+              <Link href="/app" className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
                 חזרה למסך הבית
               </Link>
-              <Link href="/dashboard/operator" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
+              <Link href="/app/intelligence" className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700">
                 פתח עוזר תפעולי
               </Link>
             </div>
@@ -140,8 +140,8 @@ export default function OperationsCommandCenter({
                 <MiniStat label="הכנסות ממתינות" value={`₪${data.revenuePending30d.toLocaleString()}`} />
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <QuickLink href="/dashboard/control-center" label="מרכז עבודה" tone="primary" />
-                <QuickLink href="/dashboard/billing" label="מנוי ותשלום" />
+                <QuickLink href="/app/inbox" label="מרכז עבודה" tone="primary" />
+                <QuickLink href="/app/billing" label="מנוי ותשלום" />
               </div>
             </Panel>
 
@@ -171,9 +171,9 @@ export default function OperationsCommandCenter({
                 <Health label="Live data tier" ok={data.integrations.liveDataTier !== "FREE"} okLabel={data.integrations.liveDataTier} missingLabel="FREE" />
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <QuickLink href="/dashboard/settings" label="הגדרות" />
-                <QuickLink href="/dashboard/settings?tab=account" label="משתמשים" />
-                {ownerMode ? <QuickLink href="/dashboard/admin" label="Admin" tone="warning" /> : null}
+                <QuickLink href="/app/settings" label="הגדרות" />
+                <QuickLink href="/app/settings" label="משתמשים" />
+                {ownerMode ? <QuickLink href="/app/admin" label="Admin" tone="warning" /> : null}
               </div>
             </Panel>
 
@@ -214,10 +214,10 @@ export default function OperationsCommandCenter({
               <p className="mt-1 text-xs text-gray-500">פחות קיצורים, רק מה שמקדם פעולה אמיתית.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <QuickLink href="/dashboard/help" label="מדריך" />
-              <QuickLink href="/dashboard/control-center" label="משפך Wizard" />
-              <QuickLink href="/dashboard/erp/invoice" label="חשבוניות" />
-              <QuickLink href="/dashboard/crm" label="CRM" />
+              <QuickLink href="/app/help" label="מדריך" />
+               <QuickLink href="/app/inbox" label="משפך Wizard" />
+              <QuickLink href="/app/documents/issue" label="חשבוניות" />
+               <QuickLink href="/app/clients" label="CRM" />
               {ownerMode ? <QuickLink href="/api/admin/system-health" label="בדיקת מערכת" tone="primary" /> : null}
             </div>
           </div>

@@ -1,29 +1,15 @@
-﻿import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import InvoiceIssuance from "@/components/InvoiceIssuance";
-
-export const metadata = { title: "הנפקת חשבוניות — BSD-YBM" };
 
 export default async function InvoicePage({
   searchParams,
 }: {
   searchParams: Promise<{ client?: string; contactId?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.organizationId) redirect("/login");
-
   const sp = await searchParams;
-  const prefillClient = sp.client ? decodeURIComponent(sp.client) : undefined;
-  const prefillContactId = sp.contactId ? decodeURIComponent(sp.contactId) : undefined;
+  const params = new URLSearchParams();
 
-  return (
-    <section className="min-h-screen bg-gray-50/60 px-4 py-8 sm:px-6 lg:px-8">
-      <InvoiceIssuance
-        orgId={session.user.organizationId}
-        prefillClientName={prefillClient}
-        prefillContactId={prefillContactId}
-      />
-    </section>
-  );
+  if (sp.client) params.set("client", sp.client);
+  if (sp.contactId) params.set("contactId", sp.contactId);
+
+  redirect(params.size ? `/app/documents/issue?${params.toString()}` : "/app/documents/issue");
 }

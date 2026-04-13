@@ -2,23 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
-import AiBubble from "@/components/AiBubble";
-import ScannerBubble from "@/components/ScannerBubble";
 
-/** בועות נגישות + AI בדפים הציבוריים בלבד — בדשבורד הכל ב־DashboardBottomDock */
+/** סרגל גישות לדפים הציבוריים. סביבת העבודה עצמה משתמשת ב-WorkspaceUtilityDock. */
 export default function GlobalFloatingChrome() {
   const pathname = usePathname() ?? "";
-  const isDashboard = pathname.startsWith("/dashboard");
+  const isWorkspace = /^\/(?:app|dashboard)(?:\/|$)/.test(pathname);
 
-  if (isDashboard) {
+  if (isWorkspace) {
     return null;
   }
 
-  return (
-    <>
-      <AccessibilityMenu />
-      <AiBubble />
-      <ScannerBubble />
-    </>
-  );
+  return <AccessibilityMenu />;
 }

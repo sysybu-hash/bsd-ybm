@@ -52,7 +52,7 @@ export default function Navbar() {
             <Link href="/register" onClick={() => setIsOpen(false)} className="rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-bold text-white shadow-sm">
               {t("nav.register")}
             </Link>
-            <Link href="/dashboard" onClick={() => setIsOpen(false)} className="rounded-xl border border-gray-200 px-4 py-3 text-center text-sm font-bold text-gray-600 transition hover:bg-gray-50">
+              <Link href="/app" onClick={() => setIsOpen(false)} className="rounded-xl border border-gray-200 px-4 py-3 text-center text-sm font-bold text-gray-600 transition hover:bg-gray-50">
               {t("nav.dashboard")}
             </Link>
           </div>

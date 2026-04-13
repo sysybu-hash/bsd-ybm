@@ -232,8 +232,11 @@ export async function POST(req: Request) {
     orgName: org.name,
   });
 
-  revalidatePath("/dashboard/billing");
-  revalidatePath("/dashboard");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+revalidatePath("/app");
+  revalidatePath("/app/billing");
+  revalidatePath("/app");
 
   return NextResponse.json({
     ok: true,

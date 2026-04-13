@@ -1,0 +1,292 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  AlertTriangle,
+  BellRing,
+  CheckCheck,
+  CreditCard,
+  ExternalLink,
+  FileWarning,
+  Loader2,
+  MailWarning,
+  Sparkles,
+} from "lucide-react";
+import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
+
+type NotificationItem = {
+  id: string;
+  title: string;
+  body: string;
+  read: boolean;
+  createdAt: string;
+};
+
+type ActionItem = {
+  id: string;
+  category: string;
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+  severity: "high" | "medium" | "low";
+};
+
+type DueSoonItem = {
+  id: string;
+  clientName: string;
+  total: number;
+  dueDate: string | null;
+  href: string;
+};
+
+type Props = Readonly<{
+  notifications: NotificationItem[];
+  priorityItems: ActionItem[];
+  dueSoon: DueSoonItem[];
+  unreadCount: number;
+  overdueCount: number;
+  reviewCount: number;
+  missingInfoCount: number;
+}>;
+
+function severityClasses(severity: ActionItem["severity"]) {
+  if (severity === "high") return "bg-rose-100 text-rose-700";
+  if (severity === "medium") return "bg-amber-100 text-amber-700";
+  return "bg-sky-100 text-sky-700";
+}
+
+export default function InboxWorkspaceV2({
+  notifications: initialNotifications,
+  priorityItems,
+  dueSoon,
+  unreadCount,
+  overdueCount,
+  reviewCount,
+  missingInfoCount,
+}: Props) {
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const [markingAll, setMarkingAll] = useState(false);
+  const [markingIds, setMarkingIds] = useState<string[]>([]);
+
+  const unread = notifications.filter((item) => !item.read).length;
+
+  async function markAllRead() {
+    setMarkingAll(true);
+    try {
+      const response = await fetch("/api/user/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+
+      if (!response.ok) return;
+
+      setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+    } finally {
+      setMarkingAll(false);
+    }
+  }
+
+  async function markOneRead(id: string) {
+    setMarkingIds((current) => [...current, id]);
+    try {
+      const response = await fetch("/api/user/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [id] }),
+      });
+
+      if (!response.ok) return;
+
+      setNotifications((current) => current.map((item) => (item.id === id ? { ...item, read: true } : item)));
+    } finally {
+      setMarkingIds((current) => current.filter((item) => item !== id));
+    }
+  }
+
+  const summaryItems = [
+    { label: "לא נקראו", value: unreadCount.toString(), icon: BellRing },
+    { label: "גבייה באיחור", value: overdueCount.toString(), icon: CreditCard },
+    { label: "לבדיקה", value: reviewCount.toString(), icon: FileWarning },
+    { label: "חוסרים", value: missingInfoCount.toString(), icon: MailWarning },
+  ];
+
+  return (
+    <div className="grid gap-5" dir="rtl">
+      <section className="v2-panel v2-panel-soft p-6 sm:p-7">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <span className="v2-eyebrow">Inbox Workspace</span>
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-4xl">
+              כל מה שדורש טיפול מרוכז במקום אחד.
+            </h1>
+            <p className="mt-3 text-base leading-7 text-[color:var(--v2-muted)]">
+              תיבת העבודה מציגה רק את מה שצריך החלטה, מעקב או פעולה עכשיו.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link href="/app/inbox/advanced" className="v2-button v2-button-primary">
+              מרכז בקרה מתקדם
+              <ExternalLink className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link href="/app/clients" className="v2-button v2-button-secondary">
+              מעבר ללקוחות
+              <Sparkles className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {summaryItems.map(({ label, value, icon: Icon }) => (
+            <div key={label} className="rounded-2xl border border-[color:var(--v2-line)] bg-white/92 px-4 py-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                  <Icon className="h-4 w-4" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[color:var(--v2-muted)]">{label}</p>
+                  <p className="mt-1 text-xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="grid gap-4">
+          <div className="v2-panel p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-lg font-black text-[color:var(--v2-ink)]">לטיפול עכשיו</p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">
+                  פריטים מסודרים לפי השפעה על עבודה, כסף ואיכות נתונים.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              {priorityItems.length === 0 ? (
+                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-5 text-sm text-[color:var(--v2-muted)]">
+                  אין כרגע פריטים דחופים. אפשר להמשיך לעבודה שוטפת.
+                </div>
+              ) : null}
+
+              {priorityItems.map((item) => (
+                <div key={item.id} className="rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${severityClasses(item.severity)}`}>
+                        {item.category}
+                      </span>
+                      <p className="mt-3 text-base font-black text-[color:var(--v2-ink)]">{item.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{item.body}</p>
+                    </div>
+                    <Link href={item.href} className="v2-button v2-button-secondary shrink-0">
+                      {item.cta}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="v2-panel p-5 sm:p-6">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">קרוב למועד</p>
+            </div>
+
+            <div className="mt-4 grid gap-3">
+              {dueSoon.length === 0 ? (
+                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                  אין כרגע פריטי גבייה קרובים.
+                </div>
+              ) : null}
+
+              {dueSoon.map((item) => (
+                <div key={item.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-black text-[color:var(--v2-ink)]">{item.clientName}</p>
+                    <p className="text-sm font-black text-[color:var(--v2-ink)]">{formatCurrencyILS(item.total)}</p>
+                  </div>
+                  <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+                    יעד תשלום: {item.dueDate ? new Date(item.dueDate).toLocaleDateString("he-IL") : "לא הוגדר"}
+                  </p>
+                  <Link href={item.href} className="mt-3 inline-flex text-sm font-black text-[color:var(--v2-accent)]">
+                    פתיחת אזור החיוב
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <aside className="v2-panel v2-panel-highlight p-5 sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">התראות מערכת</p>
+              <p className="mt-2 text-sm text-[color:var(--v2-muted)]">עדכונים, תזכורות והודעות מערכת.</p>
+            </div>
+            {unread > 0 ? (
+              <button
+                type="button"
+                onClick={() => void markAllRead()}
+                disabled={markingAll}
+                className="inline-flex items-center gap-2 text-sm font-black text-[color:var(--v2-accent)] disabled:opacity-50"
+              >
+                {markingAll ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                ) : (
+                  <CheckCheck className="h-4 w-4" aria-hidden />
+                )}
+                סמן הכול כנקרא
+              </button>
+            ) : null}
+          </div>
+
+          <div className="mt-4 grid gap-3">
+            {notifications.length === 0 ? (
+              <div className="rounded-2xl bg-white/84 px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                אין כרגע התראות מערכת.
+              </div>
+            ) : null}
+
+            {notifications.map((notification) => (
+              <button
+                key={notification.id}
+                type="button"
+                onClick={() => {
+                  if (!notification.read) void markOneRead(notification.id);
+                }}
+                className={`rounded-2xl px-4 py-4 text-right transition ${
+                  notification.read ? "bg-white/64" : "bg-white text-[color:var(--v2-ink)] shadow-sm"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-black text-[color:var(--v2-ink)]">{notification.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{notification.body}</p>
+                    <p className="mt-2 text-xs font-semibold text-[color:var(--v2-muted)]">
+                      {formatDateTime(notification.createdAt)}
+                    </p>
+                  </div>
+                  {!notification.read ? (
+                    markingIds.includes(notification.id) ? (
+                      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--v2-accent)]" aria-hidden />
+                    ) : (
+                      <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--v2-accent)]" />
+                    )
+                  ) : null}
+                </div>
+              </button>
+            ))}
+          </div>
+        </aside>
+      </section>
+    </div>
+  );
+}

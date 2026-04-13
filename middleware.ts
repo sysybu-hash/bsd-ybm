@@ -63,7 +63,7 @@ const authMiddleware = withAuth(
           return true;
         }
 
-        if (pathname.startsWith("/dashboard")) {
+        if (pathname.startsWith("/dashboard") || pathname.startsWith("/app")) {
           return hasUser;
         }
 

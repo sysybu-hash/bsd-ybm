@@ -15,10 +15,10 @@ interface StatusIndicator {
 
 export default function AdminSystemHealth() {
   const [indicators] = useState<StatusIndicator[]>([
-    { id: "engines", label: "מנועי AI", status: "online", description: "מערכת תקינה", actionUrl: "/dashboard/ai" },
-    { id: "approvals", label: "ממתינים", status: "online", description: "אין ממתינים", actionUrl: "/dashboard/admin?section=subscriptions" },
-    { id: "billing", label: "סליקה", status: "online", description: "מערכת תקינה", actionUrl: "/dashboard/admin" },
-    { id: "security", label: "אבטחה", status: "online", description: "מוגן", actionUrl: "/dashboard/admin" }
+    { id: "engines", label: "מנועי AI", status: "online", description: "מערכת תקינה", actionUrl: "/app/intelligence" },
+    { id: "approvals", label: "ממתינים", status: "online", description: "אין ממתינים", actionUrl: "/app/billing?tab=control" },
+    { id: "billing", label: "סליקה", status: "online", description: "מערכת תקינה", actionUrl: "/app/billing" },
+    { id: "security", label: "אבטחה", status: "online", description: "מוגן", actionUrl: "/app/admin" }
   ]);
 
   const getStatusColor = (s: HealthStatus) => {

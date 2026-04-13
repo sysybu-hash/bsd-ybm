@@ -243,7 +243,7 @@ export default function GlobalBillingPageClient({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/dashboard/settings?tab=billing"
+              href="/app/settings?tab=billing"
               className="btn-secondary flex items-center gap-2 border-slate-200 bg-white"
             >
               הגדרות חשבונאיות המערכת
@@ -432,7 +432,7 @@ export default function GlobalBillingPageClient({
                             <span className="max-w-[140px] text-right text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded" dir="ltr">{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
-                            <Link href="/dashboard/settings?tab=billing" className="text-[10px] font-bold text-indigo-500 underline underline-offset-2">קנפג קבלת תשלומים (PayPal)</Link>
+                            <Link href="/app/settings?tab=billing" className="text-[10px] font-bold text-indigo-500 underline underline-offset-2">קנפג קבלת תשלומים (PayPal)</Link>
                           ) : null}
                         </div>
                       </td>

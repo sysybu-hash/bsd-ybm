@@ -35,7 +35,7 @@ export default function PayPalInvoicesSection({
       </p>
       <p className="mb-6 text-sm font-medium text-gray-400">
         חברו מייל ו־PayPal.Me של <strong>הארגון</strong> ב
-        <Link href="/dashboard/settings?tab=billing" className="mx-1 font-bold text-indigo-300 underline">
+        <Link href="/app/settings?tab=billing" className="mx-1 font-bold text-indigo-300 underline">
           הגדרות › מנויים
         </Link>
         .

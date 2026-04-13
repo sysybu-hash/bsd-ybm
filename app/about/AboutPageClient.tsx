@@ -7,9 +7,15 @@ export default function AboutPageClient() {
   const { t } = useI18n();
 
   return (
-    <MarketingPublicShell title={t("aboutPage.title")}>
-      <div className="space-y-6 text-lg leading-relaxed text-gray-400/95">
-        <p>{t("aboutPage.body")}</p>
+    <MarketingPublicShell
+      title={t("aboutPage.title")}
+      eyebrow="About"
+      description="BSD-YBM נולדה מתוך צורך אמיתי לחבר בין תפעול, לקוחות, מסמכים וחיוב בתוך סביבת עבודה אחת."
+    >
+      <div className="v2-panel p-8">
+        <div className="space-y-6 text-lg leading-8 text-[color:var(--v2-muted)]">
+          <p>{t("aboutPage.body")}</p>
+        </div>
       </div>
     </MarketingPublicShell>
   );

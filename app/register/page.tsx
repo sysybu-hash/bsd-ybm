@@ -5,8 +5,9 @@ import RegisterPortal from "@/components/auth/RegisterPortal";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "הרשמה | BSD-YBM Intelligence",
-  description: "בקשת הרשמה לארגון — אישור מנהל מערכת או קישור הזמנה",
+  title: "הרשמה | BSD-YBM",
+  description:
+    "פתיחת חשבון חדש ב-BSD-YBM והתחלת עבודה עם לקוחות, מסמכים, חיוב ו-AI בתוך מערכת אחת.",
 };
 
 type Props = {

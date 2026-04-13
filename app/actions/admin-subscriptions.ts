@@ -69,8 +69,11 @@ export async function approveOrganizationAction(
         data: { accountStatus: AccountStatus.ACTIVE },
       }),
     ]);
-    revalidatePath("/dashboard/admin");
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/admin");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון נכשל" };
@@ -131,8 +134,11 @@ export async function approvePendingRegistrationAction(
         data: { accountStatus: AccountStatus.ACTIVE, role: nextRole },
       }),
     ]);
-    revalidatePath("/dashboard/admin");
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/admin");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/settings");
 
     void Promise.all([
       sendAccessApprovedEmail(user.email),
@@ -232,6 +238,7 @@ export async function provisionUserAction(formData: FormData): Promise<
     emailed = r.ok;
   }
 
-  revalidatePath("/dashboard/admin");
+revalidatePath("/app/admin");
+  revalidatePath("/app/settings");
   return { ok: true, password: sendEmail ? undefined : plain, emailed };
 }

@@ -52,10 +52,10 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
 
   const INDUSTRY_OPTIONS = [
     { value: "GENERAL", label: t("professions.GENERAL.label"), icon: "Building2" },
-    { value: "LAWYER", label: t("professions.LAWYER.label"), icon: "Gavel" },
-    { value: "ACCOUNTANT", label: t("professions.ACCOUNTANT.label"), icon: "Calculator" },
-    { value: "CONTRACTOR", label: t("professions.CONTRACTOR.label"), icon: "HardHat" },
-    { value: "HEALTH", label: t("professions.HEALTH.label"), icon: "Stethoscope" },
+    { value: "LEGAL", label: t("professions.LEGAL.label") || "משרד עורכי דין", icon: "Gavel" },
+    { value: "ACCOUNTING", label: t("professions.ACCOUNTING.label") || "ראיית חשבון / ייעוץ מס", icon: "Calculator" },
+    { value: "CONSTRUCTION", label: t("professions.CONSTRUCTION.label") || "קבלנות / בנייה", icon: "HardHat" },
+    { value: "MEDICAL", label: t("professions.MEDICAL.label") || "רפואה / קליניקה", icon: "Stethoscope" },
     { value: "RETAIL", label: t("professions.RETAIL.label"), icon: "ShoppingBag" },
     { value: "REAL_ESTATE", label: t("professions.REAL_ESTATE.label"), icon: "Home" },
   ];
@@ -164,7 +164,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
     } finally {
       setLoading(false);
     }
-  }, [form, inviteToken, orgInviteToken, isTeamJoin]);
+  }, [form, inviteToken, orgInviteToken, isTeamJoin, plan]);
 
   const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition text-start";
 

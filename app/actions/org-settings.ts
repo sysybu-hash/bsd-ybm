@@ -3,14 +3,33 @@
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { MECKANO_ACCESS_ERROR, canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { type CompanyType, type CustomerType, Prisma, UserRole } from "@prisma/client";
+import { defaultScanBalancesForTier, parseSubscriptionTier } from "@/lib/subscription-tier-config";
+import { trialEndsAtFromNow } from "@/lib/trial";
+import { normalizeIndustryType } from "@/lib/professions/config";
 
 const TYPES: CustomerType[] = ["HOME", "FREELANCER", "COMPANY", "ENTERPRISE"];
 const COMPANY_TYPES: CompanyType[] = ["EXEMPT_DEALER", "LICENSED_DEALER", "LTD_COMPANY"];
-
 function canEditTaxProfile(role: string): boolean {
   return role === UserRole.ORG_ADMIN || role === UserRole.SUPER_ADMIN;
+}
+
+function revalidateWorkspace() {
+  revalidatePath("/app");
+  revalidatePath("/app/clients");
+  revalidatePath("/app/documents");
+  revalidatePath("/app/documents/erp");
+  revalidatePath("/app/documents/issue");
+  revalidatePath("/app/insights");
+  revalidatePath("/app/billing");
+  revalidatePath("/app/settings");
+}
+
+function normalizeLabel(value: FormDataEntryValue | null) {
+  const normalized = String(value ?? "").trim();
+  return normalized.length > 0 ? normalized : null;
 }
 
 export async function updateOrganizationAction(formData: FormData) {
@@ -66,14 +85,8 @@ export async function updateOrganizationAction(formData: FormData) {
     data.isReportable = formData.get("isReportable") === "on";
   }
 
-  await prisma.organization.update({
-    where: { id: orgId },
-    data,
-  });
-
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/billing");
+  await prisma.organization.update({ where: { id: orgId }, data });
+  revalidateWorkspace();
   return { ok: true as const };
 }
 
@@ -114,8 +127,7 @@ export async function updateTenantPortalAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard");
+  revalidateWorkspace();
   return { ok: true as const };
 }
 
@@ -152,8 +164,7 @@ export async function updateBillingConnectionsAction(formData: FormData) {
     },
   });
 
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard/billing");
+  revalidateWorkspace();
   return { ok: true as const };
 }
 
@@ -162,6 +173,9 @@ export async function updateMeckanoApiKeyAction(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return { ok: false as const, error: "נדרשת התחברות" };
+  }
+  if (!(await canAccessMeckano(session))) {
+    return { ok: false as const, error: MECKANO_ACCESS_ERROR };
   }
   const orgId = session.user.organizationId ?? null;
   const role = String(session.user.role ?? "");
@@ -176,8 +190,9 @@ export async function updateMeckanoApiKeyAction(formData: FormData) {
     where: { id: orgId },
     data: { meckanoApiKey: key.length > 0 ? key : null },
   });
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard/meckano");
+  revalidateWorkspace();
+  revalidatePath("/app/operations");
+  revalidatePath("/app/operations/meckano");
   return { ok: true as const };
 }
 
@@ -227,8 +242,99 @@ export async function updateAiConfigAction(formData: FormData) {
     where: { id: orgId },
     data: { industryConfigJson: newAiConfig },
   });
+  revalidateWorkspace();
+  return { ok: true as const };
+}
 
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard/ai");
+export async function updateIndustryProfileAction(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false as const, error: "נדרשת התחברות" };
+  }
+
+  const orgId = session.user.organizationId ?? null;
+  const role = String(session.user.role ?? "");
+  if (!orgId) {
+    return { ok: false as const, error: "אין ארגון משויך" };
+  }
+  if (role !== UserRole.ORG_ADMIN && role !== UserRole.SUPER_ADMIN) {
+    return { ok: false as const, error: "רק מנהל ארגון רשאי לעדכן מקצוע ושפה" };
+  }
+
+  const industry = normalizeIndustryType(String(formData.get("industry") ?? "GENERAL"));
+
+  const org = await prisma.organization.findUnique({
+    where: { id: orgId },
+    select: { industryConfigJson: true },
+  });
+  const existingConfig =
+    typeof org?.industryConfigJson === "object" && org.industryConfigJson !== null && !Array.isArray(org.industryConfigJson)
+      ? (org.industryConfigJson as Record<string, unknown>)
+      : {};
+
+  const nextConfig = {
+    ...existingConfig,
+    customLabels: {
+      clients: normalizeLabel(formData.get("customClientsLabel")),
+      documents: normalizeLabel(formData.get("customDocumentsLabel")),
+      records: normalizeLabel(formData.get("customRecordsLabel")),
+      client: normalizeLabel(formData.get("customClientWord")),
+      project: normalizeLabel(formData.get("customProjectWord")),
+      document: normalizeLabel(formData.get("customDocumentWord")),
+    },
+    updatedAt: new Date().toISOString(),
+  };
+
+  await prisma.organization.update({
+    where: { id: orgId },
+    data: {
+      industry,
+      industryConfigJson: nextConfig,
+    },
+  });
+
+  revalidateWorkspace();
+  return { ok: true as const };
+}
+
+export async function updateCurrentSubscriptionAction(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false as const, error: "נדרשת התחברות" };
+  }
+
+  const orgId = session.user.organizationId ?? null;
+  const role = String(session.user.role ?? "");
+  if (!orgId) {
+    return { ok: false as const, error: "אין ארגון משויך" };
+  }
+  if (role !== UserRole.ORG_ADMIN && role !== UserRole.SUPER_ADMIN) {
+    return { ok: false as const, error: "רק מנהל ארגון רשאי לעדכן מנוי" };
+  }
+
+  const tier = parseSubscriptionTier(String(formData.get("subscriptionTier") ?? "").trim());
+  const statusRaw = String(formData.get("subscriptionStatus") ?? "ACTIVE").trim().toUpperCase();
+  if (!tier) {
+    return { ok: false as const, error: "רמת מנוי לא חוקית" };
+  }
+  if (!statusRaw) {
+    return { ok: false as const, error: "סטטוס מנוי חסר" };
+  }
+
+  const balances = defaultScanBalancesForTier(tier);
+
+  await prisma.organization.update({
+    where: { id: orgId },
+    data: {
+      subscriptionTier: tier,
+      subscriptionStatus: statusRaw,
+      cheapScansRemaining: balances.cheapScansRemaining,
+      premiumScansRemaining: balances.premiumScansRemaining,
+      maxCompanies: balances.maxCompanies,
+      trialEndsAt: tier === "FREE" ? trialEndsAtFromNow() : null,
+    },
+  });
+
+  revalidateWorkspace();
   return { ok: true as const };
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
 // GET /api/meckano/zones — list all zones for the org
@@ -8,9 +9,13 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const organizationId = await getAuthorizedMeckanoOrganizationId(session);
+  if (!organizationId) {
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+  }
 
   const zones = await prisma.meckanoZone.findMany({
-    where: { organizationId: session.user.organizationId },
+    where: { organizationId },
     orderBy: { createdAt: "asc" },
   });
   return NextResponse.json({ status: true, data: zones });
@@ -21,6 +26,10 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const organizationId = await getAuthorizedMeckanoOrganizationId(session);
+  if (!organizationId) {
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+  }
 
   const body = await req.json() as { name?: string; address?: string; description?: string; lat?: number; lng?: number; radius?: number };
   const { name, address, description, lat, lng, radius } = body;
@@ -29,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const zone = await prisma.meckanoZone.create({
     data: {
-      organizationId: session.user.organizationId,
+      organizationId,
       name,
       address,
       description: description ?? null,

@@ -162,7 +162,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </Link>
 
                 <Link
-                  href="/dashboard/billing"
+                  href="/app/billing"
                   onClick={close}
                   className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-indigo-600 hover:underline"
                 >
@@ -181,7 +181,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   <LogIn size={16} /> כניסה למערכת
                 </Link>
                 <Link
-                  href="/dashboard"
+              href="/app"
                   onClick={close}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
                 >

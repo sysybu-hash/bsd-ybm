@@ -129,8 +129,11 @@ export async function executiveApplyManualSubscriptionAction(
         },
       });
     }
-    revalidatePath("/dashboard/billing");
-    revalidatePath("/dashboard/crm");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+revalidatePath("/app/clients");
+    revalidatePath("/app/billing");
+    revalidatePath("/app/clients");
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון נכשל" };
@@ -168,7 +171,9 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
         tierMonthlyPricesJson,
       },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch {
     return { ok: false, error: "שמירה נכשלה" };
@@ -225,7 +230,9 @@ export async function executiveUpdateBundlePriceAction(
       where: { id: bundleId },
       data: { priceIls },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון נכשל" };

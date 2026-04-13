@@ -12,7 +12,7 @@ export default function DashboardGlobalSearch() {
     e.preventDefault();
     const trimmed = q.trim();
     if (!trimmed) {
-      router.push("/dashboard/erp");
+      router.push("/app/documents/erp");
       return;
     }
     router.push(`/dashboard/erp?q=${encodeURIComponent(trimmed)}`);

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         {
           error: result.error ?? "אירעה שגיאה בפענוח המסמך",
           code: result.code,
-          billingUrl: result.code === "QUOTA_EXCEEDED" ? "/dashboard/billing" : undefined,
+      billingUrl: result.code === "QUOTA_EXCEEDED" ? "/app/billing" : undefined,
         },
         { status },
       );

@@ -1,80 +1,77 @@
 import type { Metadata } from "next";
 
-/**
- * כתובת הקנונית של האתר — חשוב לאימות דומיין, OG ו־sitemap.
- * בפרודקשן: הגדר NEXT_PUBLIC_SITE_URL (למשל https://www.bsd-ybm.co.il)
- */
 export function getCanonicalSiteUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.bsd-ybm.co.il"
-  );
+  return process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.bsd-ybm.co.il";
 }
 
-/** מטא־דאטה ראשית + אימותי דומיין ממשתני סביבה (בלי לשמור טוקנים בקוד). */
 export function buildRootMetadata(): Metadata {
   const siteUrl = getCanonicalSiteUrl();
   const base = new URL(siteUrl.endsWith("/") ? siteUrl.slice(0, -1) : siteUrl);
 
   const verification: Metadata["verification"] = {};
-  const g =
+  const googleVerification =
     process.env.SITE_VERIFICATION_GOOGLE?.trim() ||
     process.env.GOOGLE_SITE_VERIFICATION?.trim();
-  const yahoo = process.env.SITE_VERIFICATION_YAHOO?.trim();
-  const yandex = process.env.SITE_VERIFICATION_YANDEX?.trim();
-  if (g) verification.google = g;
-  if (yahoo) verification.yahoo = yahoo;
-  if (yandex) verification.yandex = yandex;
+  const yahooVerification = process.env.SITE_VERIFICATION_YAHOO?.trim();
+  const yandexVerification = process.env.SITE_VERIFICATION_YANDEX?.trim();
+
+  if (googleVerification) verification.google = googleVerification;
+  if (yahooVerification) verification.yahoo = yahooVerification;
+  if (yandexVerification) verification.yandex = yandexVerification;
 
   const other: Record<string, string> = {};
-  const fb = process.env.SITE_VERIFICATION_FACEBOOK?.trim();
-  if (fb) other["facebook-domain-verification"] = fb;
-  const pinterest = process.env.SITE_VERIFICATION_PINTEREST?.trim();
-  if (pinterest) other["p:domain_verify"] = pinterest;
-  const customName = process.env.SITE_VERIFICATION_META_NAME?.trim();
-  const customContent = process.env.SITE_VERIFICATION_META_CONTENT?.trim();
-  if (customName && customContent) other[customName] = customContent;
+  const facebookVerification = process.env.SITE_VERIFICATION_FACEBOOK?.trim();
+  const pinterestVerification = process.env.SITE_VERIFICATION_PINTEREST?.trim();
+  const customMetaName = process.env.SITE_VERIFICATION_META_NAME?.trim();
+  const customMetaContent = process.env.SITE_VERIFICATION_META_CONTENT?.trim();
+
+  if (facebookVerification) other["facebook-domain-verification"] = facebookVerification;
+  if (pinterestVerification) other["p:domain_verify"] = pinterestVerification;
+  if (customMetaName && customMetaContent) other[customMetaName] = customMetaContent;
 
   return {
     metadataBase: base,
-    applicationName: "BSD-YBM פתרונות AI",
-    title: "BSD-YBM פתרונות AI - ניהול חכם לעסקים",
+    applicationName: "BSD-YBM",
+    title: {
+      default: "BSD-YBM | מערכת תפעול חכמה לעסקים מקצועיים",
+      template: "%s | BSD-YBM",
+    },
     description:
-      "מערכת ניהול חכמה מבוססת AI לשיפור פריון העבודה, ERP ו-CRM מתקדם. פותח ע״י יוחנן בוקשפן.",
+      "BSD-YBM מחברת לקוחות, מסמכים, חיוב, בקרה תפעולית ו-AI בתוך מערכת עבודה אחת לעסקים מקצועיים בישראל.",
     keywords: [
-      "AI",
-      "ERP",
-      "CRM",
-      "Business Intelligence",
       "BSD-YBM",
-      "יוחנן בוקשפן",
+      "CRM",
+      "ERP",
+      "AI",
+      "מסמכים חכמים",
+      "חיוב וגבייה",
+      "תפעול עסקי",
     ],
-    authors: [{ name: "Yohanan Boqshpan", url: "https://bsd-ybm.co.il" }],
-
+    authors: [{ name: "BSD-YBM", url: base.href }],
     openGraph: {
-      title: "BSD-YBM - AI Solutions",
+      title: "BSD-YBM | מערכת תפעול חכמה לעסקים מקצועיים",
       description:
-        "העתיד של הניהול העסקי כבר כאן. מערכת AI אחודה לניהול פיננסי ולקוחות.",
+        "לקוחות, מסמכים, חיוב, בקרה ו-AI במקום אחד. BSD-YBM בנויה לעסקים שרוצים לנהל עבודה מתוך תמונת מצב אחת.",
       url: base.href,
-      siteName: "BSD-YBM Intelligence",
+      siteName: "BSD-YBM",
       images: [
         {
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: "BSD-YBM Intelligence Platform",
+          alt: "BSD-YBM operational intelligence platform",
         },
       ],
       locale: "he_IL",
       type: "website",
     },
-
     twitter: {
       card: "summary_large_image",
-      title: "BSD-YBM - AI Solutions",
-      description: "מערכת ניהול חכמה מבוססת AI לשיפור פריון העבודה.",
+      title: "BSD-YBM | מערכת תפעול חכמה לעסקים מקצועיים",
+      description:
+        "לקוחות, מסמכים, חיוב, בקרה ו-AI במקום אחד לעסקים שרוצים שליטה אמיתית על העבודה.",
       images: ["/og-image.png"],
     },
-
     manifest: "/manifest.json",
     alternates: {
       canonical: "/",
@@ -93,7 +90,6 @@ export function buildRootMetadata(): Metadata {
       icon: "/icon-192.png",
       apple: "/icon-192.png",
     },
-
     ...(Object.keys(verification).length ? { verification } : {}),
     ...(Object.keys(other).length ? { other } : {}),
   };

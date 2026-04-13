@@ -30,7 +30,9 @@ export async function createTestInvoiceAction(): Promise<
         customerEmail: "test@bsd-ybm.co.il",
       },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("createTestInvoiceAction", e);
@@ -76,7 +78,9 @@ export async function createQuickPaymentInvoiceAction(
         customerEmail: session.user.email?.trim() || null,
       },
     });
-    revalidatePath("/dashboard/billing");
+revalidatePath("/app/documents/erp");
+revalidatePath("/app/billing");
+    revalidatePath("/app/billing");
     return { ok: true };
   } catch (e) {
     console.error("createQuickPaymentInvoiceAction", e);

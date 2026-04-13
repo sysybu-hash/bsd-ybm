@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -20,9 +21,9 @@ export async function POST(req: Request) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const orgId = session.user.organizationId;
+  const orgId = await getAuthorizedMeckanoOrganizationId(session);
   if (!orgId) {
-    return NextResponse.json({ error: "אין ארגון" }, { status: 403 });
+    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
   }
 
   const body = (await req.json()) as { employees?: MeckanoEmployee[] };
