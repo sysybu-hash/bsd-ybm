@@ -56,7 +56,7 @@ type Props = Readonly<{
 const statusMeta = {
   LEAD: { label: "ליד חדש", className: "bg-sky-100 text-sky-700" },
   ACTIVE: { label: "בתהליך", className: "bg-blue-100 text-blue-700" },
-  PROPOSAL: { label: "הצעת מחיר", className: "bg-violet-100 text-violet-700" },
+  PROPOSAL: { label: "הצעת מחיר", className: "bg-amber-100 text-amber-800" },
   CLOSED_WON: { label: "נסגר בהצלחה", className: "bg-emerald-100 text-emerald-700" },
   CLOSED_LOST: { label: "לא רלוונטי", className: "bg-rose-100 text-rose-700" },
 } as const;

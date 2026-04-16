@@ -56,7 +56,7 @@ export default function SupplierPriceBoard() {
         <button
           type="button"
           onClick={() => void load()}
-          className="text-sm font-bold text-indigo-400 hover:underline"
+          className="text-sm font-bold text-teal-400 hover:underline"
         >
           רענון
         </button>
@@ -73,11 +73,11 @@ export default function SupplierPriceBoard() {
       )}
 
       {!loading && !error && alerts.length > 0 && (
-        <div className="card-avenue mb-6 space-y-2 border-indigo-500/30 bg-indigo-500/15 p-4">
-          <p className="text-xs font-black text-indigo-800 flex items-center gap-2">
+        <div className="card-avenue mb-6 space-y-2 border-teal-500/30 bg-teal-500/15 p-4">
+          <p className="text-xs font-black text-teal-800 flex items-center gap-2">
             <TrendingDown size={16} /> נמצאו מחירים גבוהים ביחס לרכישה הזולה הידועה
           </p>
-          <ul className="text-xs text-indigo-900 space-y-1">
+          <ul className="text-xs text-teal-900 space-y-1">
             {alerts.slice(0, 5).map((r) => (
               <li key={r.normalizedKey}>
                 <strong>{r.description}</strong> — אצל {r.latestSupplier ?? "—"} נרשם ₪

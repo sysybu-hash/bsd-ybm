@@ -29,8 +29,8 @@ export default function VoiceInsights() {
       dir="rtl"
     >
       <div className="flex items-center gap-4 mb-6">
-        <div className="p-3 bg-indigo-500/15 rounded-2xl border border-indigo-500/20">
-          <BrainCircuit className="text-indigo-400" size={24} aria-hidden />
+        <div className="p-3 bg-teal-500/15 rounded-2xl border border-teal-500/20">
+          <BrainCircuit className="text-teal-400" size={24} aria-hidden />
         </div>
         <div>
           <h4 className="font-black text-xl italic text-gray-900 tracking-tighter">
@@ -46,7 +46,7 @@ export default function VoiceInsights() {
         <div className="flex justify-center mb-8">
           {isProcessing ? (
             <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center animate-pulse border border-gray-200">
-              <Loader2 className="animate-spin text-indigo-400" size={32} />
+              <Loader2 className="animate-spin text-teal-400" size={32} />
             </div>
           ) : (
             <button
@@ -56,7 +56,7 @@ export default function VoiceInsights() {
               className={`flex h-20 w-20 items-center justify-center rounded-full text-white transition-all ${
                 isRecording
                   ? "scale-110 bg-rose-600 shadow-lg shadow-rose-200"
-                  : "bg-indigo-600 shadow-sm hover:bg-indigo-700"
+                  : "bg-teal-600 shadow-sm hover:bg-teal-700"
               }`}
               aria-label={isRecording ? "הפסק הקלטה" : "התחל הקלטה"}
             >

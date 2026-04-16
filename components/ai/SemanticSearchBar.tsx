@@ -52,12 +52,12 @@ export default function SemanticSearchBar({ onResults, placeholder }: SemanticSe
 
   return (
     <div className="relative w-full max-w-2xl mx-auto group">
-      <div className={`relative flex items-center bg-white border-2 rounded-2xl p-1.5 transition-all duration-300 ${isAiMode ? 'border-indigo-500 ring-4 ring-indigo-500/10' : 'border-slate-100 hover:border-slate-200 shadow-sm'}`}>
+      <div className={`relative flex items-center bg-white border-2 rounded-2xl p-1.5 transition-all duration-300 ${isAiMode ? 'border-teal-500 ring-4 ring-teal-500/10' : 'border-slate-100 hover:border-slate-200 shadow-sm'}`}>
         
         {/* Sparkles Mode Toggle */}
         <button
           onClick={() => setIsAiMode(!isAiMode)}
-          className={`flex-none px-3 py-2 rounded-xl flex items-center gap-2 transition-all ${isAiMode ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+          className={`flex-none px-3 py-2 rounded-xl flex items-center gap-2 transition-all ${isAiMode ? 'bg-teal-600 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
         >
           <Sparkles size={16} className={isAiMode ? 'animate-pulse' : ''} />
           <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">AI Search</span>
@@ -84,7 +84,7 @@ export default function SemanticSearchBar({ onResults, placeholder }: SemanticSe
           <button 
             onClick={handleSearch}
             disabled={loading}
-            className={`flex-none px-4 py-2 rounded-xl font-bold text-xs transition-all ${isAiMode ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-slate-900 text-white hover:bg-black'}`}
+            className={`flex-none px-4 py-2 rounded-xl font-bold text-xs transition-all ${isAiMode ? 'bg-teal-600 text-white hover:bg-teal-700' : 'bg-slate-900 text-white hover:bg-black'}`}
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : (isAiMode ? "שאל AI" : "חפש")}
           </button>
@@ -97,9 +97,9 @@ export default function SemanticSearchBar({ onResults, placeholder }: SemanticSe
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 right-0 mt-3 p-4 bg-white/95 backdrop-blur-md rounded-2xl border border-indigo-100 shadow-xl z-20"
+            className="absolute top-full left-0 right-0 mt-3 p-4 bg-white/95 backdrop-blur-md rounded-2xl border border-teal-100 shadow-xl z-20"
           >
-             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+             <p className="text-[10px] font-black text-teal-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Zap size={10} /> הצעות לחיפוש חכם
              </p>
              <div className="flex flex-wrap gap-2">
@@ -112,7 +112,7 @@ export default function SemanticSearchBar({ onResults, placeholder }: SemanticSe
                   <button 
                     key={i} 
                     onClick={() => { setQuery(s); }}
-                    className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-100 hover:bg-indigo-100 transition-colors"
+                    className="px-3 py-1.5 bg-teal-50 text-teal-700 text-xs font-bold rounded-lg border border-teal-100 hover:bg-teal-100 transition-colors"
                   >
                     {s}
                   </button>

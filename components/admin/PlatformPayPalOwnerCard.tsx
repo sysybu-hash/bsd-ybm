@@ -12,15 +12,15 @@ export default function PlatformPayPalOwnerCard() {
     <section
       className={`mb-10 rounded-2xl border p-6 md:p-8 shadow-sm ${
         configured
-          ? "border-indigo-500/30 bg-indigo-500/15"
-          : "border-indigo-500/30 bg-indigo-500/15"
+          ? "border-teal-500/30 bg-teal-500/15"
+          : "border-teal-500/30 bg-teal-500/15"
       }`}
       dir="rtl"
       aria-labelledby="platform-paypal-title"
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex items-start gap-4 min-w-0">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-teal-600 text-white shadow-sm">
             <Wallet size={24} aria-hidden />
           </div>
           <div className="min-w-0">
@@ -37,7 +37,7 @@ export default function PlatformPayPalOwnerCard() {
       </div>
 
       {configured ? (
-        <div className="mt-5 flex flex-col gap-3 border-t border-indigo-500/30 pt-5 text-sm">
+        <div className="mt-5 flex flex-col gap-3 border-t border-teal-500/30 pt-5 text-sm">
           {merchantEmail ? (
             <p className="text-gray-600">
               <span className="font-bold text-gray-700">מייל: </span>
@@ -52,7 +52,7 @@ export default function PlatformPayPalOwnerCard() {
                 href={`https://paypal.me/${encodeURIComponent(meSlug)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 font-bold text-white transition-colors hover:bg-indigo-700"
+                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 font-bold text-white transition-colors hover:bg-teal-700"
               >
                 PayPal.Me / {meSlug}
               </a>
@@ -60,7 +60,7 @@ export default function PlatformPayPalOwnerCard() {
           ) : null}
         </div>
       ) : (
-        <p className="mt-4 text-sm font-medium text-indigo-800">
+        <p className="mt-4 text-sm font-medium text-teal-800">
           לא מוגדר בשרת. הוסיפו ב־Vercel / <code className="text-xs bg-white px-1 rounded">.env.local</code>:{" "}
           <code className="text-xs">PLATFORM_PAYPAL_MERCHANT_EMAIL</code> ו/או{" "}
           <code className="text-xs">PLATFORM_PAYPAL_ME_SLUG</code>.

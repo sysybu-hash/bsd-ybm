@@ -46,10 +46,10 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-indigo-200 hover:bg-indigo-50"
+      className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-teal-200 hover:bg-teal-50"
     >
-      <span className="rounded-lg bg-indigo-500/15 p-1.5">
-        <Icon className="h-4 w-4 text-indigo-600" aria-hidden />
+      <span className="rounded-lg bg-teal-500/15 p-1.5">
+        <Icon className="h-4 w-4 text-teal-600" aria-hidden />
       </span>
       {label}
     </Link>
@@ -126,14 +126,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   <p className="text-gray-500 text-xs">{t("marketingDrawer.contactAddress")}</p>
                   <a
                     href="tel:+972525640021"
-                    className="mt-2 block font-medium text-gray-700 hover:text-indigo-600"
+                    className="mt-2 block font-medium text-gray-700 hover:text-teal-600"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactPhone")}
                   </a>
                   <a
                     href="mailto:sysybu@gmail.com"
-                    className="mt-1 block font-medium text-indigo-400 hover:text-indigo-800"
+                    className="mt-1 block font-medium text-teal-400 hover:text-teal-800"
                     onClick={close}
                   >
                     {t("marketingDrawer.contactEmail")}
@@ -155,7 +155,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   href={pricingHref}
                   scroll={pathname === "/"}
                   onClick={close}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3.5 text-sm font-black text-indigo-600 shadow-sm transition hover:bg-indigo-100"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3.5 text-sm font-black text-teal-600 shadow-sm transition hover:bg-teal-100"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden />
                   {t("marketingDrawer.subscribe")}
@@ -164,7 +164,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <Link
                   href="/app/billing"
                   onClick={close}
-                  className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-indigo-600 hover:underline"
+                  className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-teal-600 hover:underline"
                 >
                   {t("marketingDrawer.billingLink")}
                 </Link>

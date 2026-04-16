@@ -10,12 +10,12 @@ export default function ValuationWidget({ value = 1250000 }: { value?: number })
       className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
       dir="rtl"
     >
-      <div className="absolute -top-10 -left-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute -top-10 -left-10 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
 
       <div className="relative z-10 text-start">
         <div className="flex justify-between items-center mb-6">
-          <div className="p-3 bg-indigo-500/15 rounded-2xl">
-            <Award className="text-indigo-600" size={24} />
+          <div className="p-3 bg-teal-500/15 rounded-2xl">
+            <Award className="text-teal-600" size={24} />
           </div>
           <div className="flex items-center gap-1 text-emerald-600 font-black text-sm">
             <ArrowUpRight size={16} aria-hidden /> 14% החודש

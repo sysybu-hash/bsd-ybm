@@ -329,7 +329,7 @@ export async function BillingPageContent({
             </span>
             {" · "}
             פרימיום נותרו:{" "}
-              <span className="font-semibold text-indigo-400">
+              <span className="font-semibold text-teal-400">
               {formatCreditsForDisplay(org.premiumScansRemaining)}
             </span>
           </p>
@@ -344,7 +344,7 @@ export async function BillingPageContent({
             </span>
             {" — "}
             כל ערכי החשבון, המנויים והאינטגרציות:{" "}
-            <a href={settingsHref} className="font-bold text-indigo-400 underline underline-offset-2 hover:text-indigo-300">
+            <a href={settingsHref} className="font-bold text-teal-400 underline underline-offset-2 hover:text-teal-300">
               הגדרות
             </a>
             .
@@ -392,7 +392,7 @@ export async function BillingPageContent({
       {org.paypalMeSlug || org.paypalMerchantEmail ? (
         <div className="mx-auto mb-6 max-w-[1600px] px-4 sm:px-8">
           <div
-            className="rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.07] p-5 text-sm text-gray-600"
+            className="rounded-2xl border border-teal-500/20 bg-teal-500/[0.07] p-5 text-sm text-gray-600"
             dir="rtl"
           >
             <p className="mb-2 font-bold text-gray-900">קבלת תשלומים מלקוחות (PayPal של הארגון)</p>
@@ -413,7 +413,7 @@ export async function BillingPageContent({
                   href={`https://paypal.me/${encodeURIComponent(org.paypalMeSlug)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 font-bold text-white hover:bg-indigo-700"
+                  className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 font-bold text-white hover:bg-teal-700"
                 >
                   פתיחת PayPal.Me לתשלום
                 </a>

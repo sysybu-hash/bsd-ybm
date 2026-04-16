@@ -394,15 +394,15 @@ export default function GlobalBillingPageClient({
                       </td>
                     </tr>
                   ) : (
-                    <tr key={`p-${row.inv.id}`} className="group transition-colors hover:bg-indigo-50/40">
+                    <tr key={`p-${row.inv.id}`} className="group transition-colors hover:bg-teal-50/40">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 shadow-sm border border-indigo-100 text-sm font-black text-indigo-600">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-teal-50 shadow-sm border border-teal-100 text-sm font-black text-teal-600">
                             #{row.inv.number}
                           </div>
                           <div>
                             <p className="text-sm font-black text-slate-900 max-w-[200px] truncate">{row.inv.description}</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mt-0.5 flex items-center gap-1"><CreditCard size={10}/> PAYPAL</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-teal-500 mt-0.5 flex items-center gap-1"><CreditCard size={10}/> PAYPAL</p>
                           </div>
                         </div>
                       </td>
@@ -424,7 +424,7 @@ export default function GlobalBillingPageClient({
                       <td className="px-6 py-4">
                         <div className="flex flex-col items-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                           {row.inv.status !== "PAID" && paypalMeSlug?.trim() ? (
-                            <a href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-indigo-700 shadow-sm">
+                            <a href={paypalMeUrlWithAmount(paypalMeSlug.trim(), row.inv.amount)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-teal-700 shadow-sm">
                               <ExternalLink size={14} /> גישה לדף סליקה
                             </a>
                           ) : null}
@@ -432,7 +432,7 @@ export default function GlobalBillingPageClient({
                             <span className="max-w-[140px] text-right text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded" dir="ltr">{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
-                            <Link href="/app/settings?tab=billing" className="text-[10px] font-bold text-indigo-500 underline underline-offset-2">קנפג קבלת תשלומים (PayPal)</Link>
+                            <Link href="/app/settings?tab=billing" className="text-[10px] font-bold text-teal-500 underline underline-offset-2">קנפג קבלת תשלומים (PayPal)</Link>
                           ) : null}
                         </div>
                       </td>

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import { useI18n } from "@/components/I18nProvider";
+import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
 
 type Props = Readonly<{
   children: ReactNode;
@@ -12,33 +13,37 @@ type Props = Readonly<{
   description?: string;
 }>;
 
-const navItems = [
-  { href: "/", label: "בית" },
-  { href: "/product", label: "המוצר" },
-  { href: "/solutions", label: "פתרונות" },
-  { href: "/pricing", label: "תמחור" },
-  { href: "/about", label: "אודות" },
-  { href: "/contact", label: "יצירת קשר" },
-];
-
 export default function MarketingPublicShell({
   children,
   title,
-  eyebrow = "ענף הבנייה",
+  eyebrow,
   description,
 }: Props) {
-  const { dir } = useI18n();
+  const { dir, t } = useI18n();
+
+  const navItems = useMemo(
+    () =>
+      [
+        { href: "/", key: "navHome" as const },
+        { href: "/product", key: "navProduct" as const },
+        { href: "/solutions", key: "navSolutions" as const },
+        { href: "/pricing", key: "navPricing" as const },
+        { href: "/about", key: "navAbout" as const },
+        { href: "/contact", key: "navContact" as const },
+      ].map((item) => ({
+        href: item.href,
+        label: t(`publicShell.${item.key}`),
+      })),
+    [t],
+  );
+
+  const eyebrowText = eyebrow ?? t("publicShell.eyebrowSector");
 
   return (
     <div className={`${marketingSans.className} v2-site-shell min-h-screen`} dir={dir}>
-      <header className="border-b border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/90 backdrop-blur-xl">
+      <header className="border-b border-slate-200/90 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3 text-[color:var(--v2-ink)]">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white shadow-[0_18px_40px_-20px_rgba(193,89,47,0.85)]">
-              BY
-            </span>
-            <span className="text-lg font-black tracking-[-0.04em]">BSD-YBM</span>
-          </Link>
+          <BsdYbmLogo href="/" variant="marketing-light" size="md" />
 
           <nav className="hidden items-center gap-5 lg:flex">
             {navItems.map((item) => (
@@ -54,10 +59,10 @@ export default function MarketingPublicShell({
 
           <div className="flex items-center gap-3">
             <Link href="/login" className="v2-button v2-button-ghost hidden sm:inline-flex">
-              כניסה
+              {t("publicShell.ctaLogin")}
             </Link>
             <Link href="/register" className="v2-button v2-button-primary">
-              התחלת עבודה
+              {t("publicShell.ctaStart")}
             </Link>
           </div>
         </div>
@@ -71,7 +76,7 @@ export default function MarketingPublicShell({
 
         <div className="relative mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <section className="v2-panel v2-panel-soft overflow-hidden px-6 py-8 sm:px-10 sm:py-10">
-            <span className="v2-eyebrow">{eyebrow}</span>
+            <span className="v2-eyebrow">{eyebrowText}</span>
             <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
               {title}
             </h1>
@@ -86,7 +91,7 @@ export default function MarketingPublicShell({
 
       <footer className="border-t border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-[color:var(--v2-muted)] sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <p>BSD-YBM היא מערכת תפעול חכמה לעסקים שרוצים לעבוד מתוך תמונה אחת ברורה.</p>
+          <p>{t("publicShell.footerLead")}</p>
           <div className="flex flex-wrap gap-4">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} className="font-semibold transition hover:text-[color:var(--v2-ink)]">

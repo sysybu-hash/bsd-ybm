@@ -54,7 +54,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           {showSuperManage ? (
             <Link
               href="/app/billing?tab=control"
-              className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/40/80 bg-gradient-to-br from-indigo-50 to-gray-50 px-5 py-3 text-sm font-bold text-white shadow-sm ring-1 ring-indigo-200/60 transition-colors hover:border-indigo-400"
+              className="inline-flex items-center gap-2 rounded-2xl border border-teal-500/40/80 bg-gradient-to-br from-teal-50 to-gray-50 px-5 py-3 text-sm font-bold text-white shadow-sm ring-1 ring-teal-200/60 transition-colors hover:border-teal-400"
             >
               <ArrowRight size={18} />
               מרכז שליטה במנויים
@@ -63,7 +63,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           {!embedded ? (
             <Link
               href="/app/intelligence"
-              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 shadow-sm transition-colors hover:border-indigo-500/30 hover:text-indigo-300"
+              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 shadow-sm transition-colors hover:border-teal-500/30 hover:text-teal-300"
             >
               <ArrowRight size={18} />
               {t("executive.linkIntelligence")}
@@ -75,10 +75,10 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <article className="card-avenue bg-gradient-to-br from-white via-blue-50/30 to-white p-8 shadow-sm ring-1 ring-gray-50">
           <div className="mb-6 flex items-center justify-between gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-600 text-white shadow-lg shadow-teal-600/25">
               <TrendingUp size={22} strokeWidth={2.5} />
             </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400/80">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-400/80">
               {t("executive.incomeBadge")}
             </span>
           </div>
@@ -117,7 +117,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           <p className="mb-1 text-sm font-semibold text-gray-400">{t("executive.netLabel")}</p>
           <p
             className={`text-2xl font-black tabular-nums md:text-3xl ${
-              net >= 0 ? "text-emerald-400" : "text-indigo-300"
+              net >= 0 ? "text-emerald-400" : "text-teal-300"
             }`}
           >
             {fmt(net)}
@@ -188,17 +188,17 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
               {priceSpikes.map((s, i) => (
                 <li
                   key={`${s.normalizedKey}-${s.organizationName}-${i}`}
-                  className="rounded-2xl border border-indigo-500/20 bg-gradient-to-l from-indigo-50/80 to-white p-5 ring-1 ring-indigo-50"
+                  className="rounded-2xl border border-teal-500/20 bg-gradient-to-l from-teal-50/80 to-white p-5 ring-1 ring-teal-50"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-sm font-black text-white">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-500/15 text-sm font-black text-white">
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="font-bold leading-snug text-gray-900">{s.description}</p>
                       <p className="mt-1 text-xs font-medium text-gray-400">{s.organizationName}</p>
                     </div>
-                    <span className="shrink-0 text-lg font-black tabular-nums text-indigo-300">
+                    <span className="shrink-0 text-lg font-black tabular-nums text-teal-300">
                       +{s.changePercent.toFixed(1)}%
                     </span>
                   </div>

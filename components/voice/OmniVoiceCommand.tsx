@@ -37,7 +37,7 @@ export default function OmniVoiceCommand() {
         className={`fixed bottom-6 left-6 z-[999] flex h-16 w-16 items-center justify-center rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 ${
           isRecording
             ? "animate-pulse bg-red-500 text-white shadow-red-500/50"
-            : "bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-blue-500/30 ring-2 ring-white"
+            : "bg-gradient-to-br from-teal-600 to-teal-800 text-white shadow-teal-500/30 ring-2 ring-white"
         }`}
         aria-label="פקודות קוליות AI"
       >
@@ -54,7 +54,7 @@ export default function OmniVoiceCommand() {
             : "pointer-events-none translate-y-10 opacity-0"
         }`}
       >
-        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-1" />
+        <div className="bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-600 p-1" />
         <div className="p-6">
           <div className="mb-4 flex items-center gap-3">
             <div
@@ -63,7 +63,7 @@ export default function OmniVoiceCommand() {
                   ? "bg-red-500"
                   : isProcessing
                     ? "bg-amber-500"
-                    : "bg-indigo-600"
+                    : "bg-teal-600"
               }`}
             >
               {isProcessing ? (
@@ -91,7 +91,7 @@ export default function OmniVoiceCommand() {
               {[1, 2, 3, 4, 5, 6, 7].map((bar) => (
                 <div
                   key={bar}
-                  className="w-2 animate-pulse rounded-full bg-blue-500"
+                  className="w-2 animate-pulse rounded-full bg-teal-500"
                   style={{
                     height: `${Math.random() * 30 + 10}px`,
                     animationDelay: `${bar * 0.1}s`,
@@ -102,14 +102,14 @@ export default function OmniVoiceCommand() {
           ) : null}
 
           {transcript ? (
-            <div className="relative rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-              <span className="absolute -right-2 -top-3 text-3xl font-serif text-indigo-200">
+            <div className="relative rounded-2xl border border-teal-100 bg-teal-50 p-4">
+              <span className="absolute -right-2 -top-3 text-3xl font-serif text-teal-200">
                 &quot;
               </span>
-              <p className="text-sm font-medium leading-relaxed text-indigo-900">
+              <p className="text-sm font-medium leading-relaxed text-teal-900">
                 {transcript}
               </p>
-              <div className="mt-4 flex items-center justify-between border-t border-indigo-100 pt-3">
+              <div className="mt-4 flex items-center justify-between border-t border-teal-100 pt-3">
                 <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-emerald-600">
                   בוצע בהצלחה
                 </span>

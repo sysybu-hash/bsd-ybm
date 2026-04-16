@@ -86,8 +86,8 @@ export default function ErpClient({
           <h1 className="text-3xl font-black text-slate-900 tracking-tight italic text-start uppercase">
             BSD-YBM Automated ERP
           </h1>
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm">
-             <Zap size={20} className="fill-indigo-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-50 text-teal-600 border border-teal-100 shadow-sm">
+             <Zap size={20} className="fill-teal-600" />
           </div>
         </div>
         <p className="text-sm font-bold text-slate-500 text-start">

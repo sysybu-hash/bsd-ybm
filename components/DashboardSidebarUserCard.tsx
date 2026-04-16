@@ -34,12 +34,12 @@ export default function DashboardSidebarUserCard({
             title={t("dashboard.forecast.status")}
             aria-hidden
           />
-          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-white">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-teal-400/70 ring-offset-2 ring-offset-white">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={image} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-50 text-sm font-black text-indigo-300">
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-teal-100 to-teal-50 text-sm font-black text-teal-300">
                 {(loading ? "…" : email || "?").charAt(0).toUpperCase()}
               </div>
             )}
@@ -54,7 +54,7 @@ export default function DashboardSidebarUserCard({
         <button
           type="button"
           onClick={() => void signOut({ callbackUrl: "/", redirect: true })}
-          className="shrink-0 rounded-xl border border-gray-200/80 bg-white/90 p-2.5 text-gray-400 transition hover:scale-105 hover:border-indigo-500/30 hover:text-indigo-300"
+          className="shrink-0 rounded-xl border border-gray-200/80 bg-white/90 p-2.5 text-gray-400 transition hover:scale-105 hover:border-teal-500/30 hover:text-teal-300"
           aria-label={t("dashboard.logout")}
         >
           <LogOut size={18} strokeWidth={2.25} />

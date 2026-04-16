@@ -5,7 +5,7 @@ import {
 } from "./config";
 
 /**
- * בחירת שפה מ־Accept-Language: רק he | ar | en | ru לפי סדר העדפות;
+ * בחירת שפה מ־Accept-Language: רק he | en | ru לפי סדר העדפות;
  * אחרת ברירת מחדל (en).
  */
 export function negotiateLocale(acceptLanguage: string | null | undefined): AppLocale {
@@ -29,7 +29,7 @@ export function negotiateLocale(acceptLanguage: string | null | undefined): AppL
   for (const { tag } of parts) {
     if (!tag) continue;
     const base = tag.split("-")[0]?.toLowerCase() ?? "";
-    const candidate = base === "iw" ? "he" : base;
+    const candidate = base === "iw" ? "he" : base === "ar" ? "en" : base;
     if ((PRIMARY_UI_LOCALES as readonly string[]).includes(candidate)) {
       return candidate as AppLocale;
     }

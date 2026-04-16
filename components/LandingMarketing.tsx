@@ -7,10 +7,10 @@ import EuComplianceStrip from "@/components/EuComplianceStrip";
 import LandingVideoTutorials from "@/components/LandingVideoTutorials";
 
 const sectors = [
-  { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-indigo-500/15" },
+  { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-teal-500/15" },
   { title: "עוסק מורשה", desc: "הנהלת חשבונות חכמה, ניהול לקוחות (CRM) ודיווחים מהירים.", icon: Shield, color: "bg-emerald-500/15" },
-  { title: "חברה", desc: "שליטה במלאי, ניהול צוותים, ERP תפעולי ודוחות רווח והפסד.", icon: Briefcase, color: "bg-indigo-500/15" },
-  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-indigo-500/15" },
+  { title: "חברה", desc: "שליטה במלאי, ניהול צוותים, ERP תפעולי ודוחות רווח והפסד.", icon: Briefcase, color: "bg-teal-500/15" },
+  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-teal-500/15" },
 ];
 
 const plans = [
@@ -61,7 +61,7 @@ export default function LandingMarketing() {
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter leading-[0.85] mb-8 text-slate-900">
               <span className="text-blue-600">BSD-YBM.</span>
               <br />
-              <span className="text-indigo-600">Intelligence.</span>
+              <span className="text-teal-600">Intelligence.</span>
             </h1>
             <p className="max-w-xl text-gray-400 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
               פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
@@ -85,7 +85,7 @@ export default function LandingMarketing() {
               </Link>
             </div>
           </div>
-          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg shadow-indigo-500/5 sm:p-10">
+          <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg shadow-teal-500/5 sm:p-10">
             <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
               הדרכה מונפשת
             </p>
@@ -136,12 +136,12 @@ export default function LandingMarketing() {
                 key={plan.name}
                 className={`rounded-2xl border bg-white p-10 ${
                   plan.level === "Premium"
-                    ? "border-indigo-500/30 shadow-lg shadow-indigo-200/60"
+                    ? "border-teal-500/30 shadow-lg shadow-teal-200/60"
                     : "border-gray-200 shadow-sm"
                 } relative`}
               >
                 {plan.level === "Premium" && (
-                  <div className="absolute top-6 start-6 text-indigo-500 p-2 bg-indigo-400/15 rounded-full">
+                  <div className="absolute top-6 start-6 text-teal-500 p-2 bg-teal-400/15 rounded-full">
                     <Star size={18} fill="currentColor" />
                   </div>
                 )}
@@ -157,7 +157,7 @@ export default function LandingMarketing() {
                 <ul className="space-y-3 mb-10 text-sm font-medium text-gray-500">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-start">
-                      <CheckCircle2 size={16} className="text-indigo-500 shrink-0" /> {f}
+                      <CheckCircle2 size={16} className="text-teal-500 shrink-0" /> {f}
                     </li>
                   ))}
                 </ul>
@@ -166,7 +166,7 @@ export default function LandingMarketing() {
                   href="/app/billing?tab=control"
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-teal-600 text-white"
                       : "bg-gray-50 text-gray-950"
                   }`}
                 >

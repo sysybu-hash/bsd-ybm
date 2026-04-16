@@ -14,7 +14,7 @@ export default function InteractivePulse() {
       <div className="flex justify-between items-center gap-4">
         <div className="text-start">
           <h3 className="text-xl font-black italic text-slate-900">Business Pulse</h3>
-          <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">ניטור ביצועים בזמן אמת</p>
+          <p className="text-[10px] font-bold text-teal-500 uppercase tracking-widest mt-1">ניטור ביצועים בזמן אמת</p>
         </div>
         <button
           type="button"
@@ -22,7 +22,7 @@ export default function InteractivePulse() {
           aria-expanded={voicePanelOpen}
           aria-label={voicePanelOpen ? "סגור פאנל קול" : "פתח פאנל קול"}
           className={`rounded-full p-4 transition-all duration-300 shadow-lg ${
-            voicePanelOpen ? "bg-rose-500 text-white rotate-12 scale-110" : "bg-indigo-600 text-white hover:scale-110 active:scale-95"
+            voicePanelOpen ? "bg-rose-500 text-white rotate-12 scale-110" : "bg-teal-600 text-white hover:scale-110 active:scale-95"
           }`}
         >
           <Mic size={24} />
@@ -31,9 +31,9 @@ export default function InteractivePulse() {
 
       {voicePanelOpen && (
         <div
-          className="overflow-hidden rounded-2xl border border-indigo-500/20 bg-indigo-50/50 p-5 animate-in fade-in slide-in-from-top-2 duration-300"
+          className="overflow-hidden rounded-2xl border border-teal-500/20 bg-teal-50/50 p-5 animate-in fade-in slide-in-from-top-2 duration-300"
         >
-          <p className="text-sm font-bold text-indigo-900 leading-relaxed text-start">
+          <p className="text-sm font-bold text-teal-900 leading-relaxed text-start">
              <span className="inline-block h-2 w-2 rounded-full bg-rose-500 animate-pulse me-2" />
             מצב קול (הדגמה): בתשתית מלאה יחובר למנוע תמלול ולפעולות במערכת. לחצו שוב על המיקרופון לסגירה.
           </p>
@@ -43,11 +43,11 @@ export default function InteractivePulse() {
       <div>
         <div className="flex justify-between text-xs mb-3 uppercase font-black tracking-widest text-slate-500">
           <span>יעד הכנסות חודשי</span>
-          <span className="text-indigo-600">80% הושלם</span>
+          <span className="text-teal-600">80% הושלם</span>
         </div>
         <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
           <div
-            className="h-full bg-indigo-600 transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(79,70,229,0.3)]"
+            className="h-full bg-teal-600 transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(79,70,229,0.3)]"
             style={{ width: "80%" }}
           />
         </div>

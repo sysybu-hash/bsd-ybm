@@ -327,10 +327,10 @@ export default function MultiEngineScanner({
         <div key={idx} className="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all">
            <div className="bg-slate-50/50 p-6 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                 <div className="h-10 w-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg"><FileSearch size={20} /></div>
+                 <div className="h-10 w-10 bg-teal-600 text-white rounded-xl flex items-center justify-center shadow-lg"><FileSearch size={20} /></div>
                  <div>
                     <h5 className="font-black text-slate-900 tracking-tight">{row.fileName}</h5>
-                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{config.scanner.analysisTypes.find(a => a.id === row.analysisType)?.label}</p>
+                    <p className="text-[10px] font-black text-teal-500 uppercase tracking-widest">{config.scanner.analysisTypes.find(a => a.id === row.analysisType)?.label}</p>
                  </div>
               </div>
               <span className="text-xs font-black bg-white px-3 py-1 rounded-full border border-slate-200 text-slate-400 italic">#{idx + 1}</span>
@@ -411,7 +411,7 @@ export default function MultiEngineScanner({
       {compactHeader ? (
         <div className="mb-6 rounded-[24px] border border-slate-200 bg-white px-5 py-4 shadow-sm">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-1.5 text-indigo-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-4 py-1.5 text-teal-700">
               <Settings2 size={16} />
               <span className="text-[10px] font-black uppercase tracking-widest">סקטור: {config.label}</span>
             </div>
@@ -423,7 +423,7 @@ export default function MultiEngineScanner({
         </div>
       ) : (
         <div className="mb-10 text-center">
-         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100 mb-4">
+         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-teal-50 text-teal-700 rounded-full border border-teal-100 mb-4">
             <Settings2 size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">סקטור: {config.label}</span>
          </div>

@@ -76,7 +76,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
   return (
     <section
       id="paypal-bundles"
-      className="scroll-mt-24 rounded-2xl border border-indigo-500/20 bg-white p-6 shadow-sm md:p-8"
+      className="scroll-mt-24 rounded-2xl border border-teal-500/20 bg-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <h2 className="mb-2 text-xl font-black text-gray-900">רכישת בנדל סריקות</h2>
@@ -103,8 +103,8 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
             onClick={() => setBundleId(b.id)}
             className={`rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
               bundleId === b.id
-                ? "border-indigo-600 bg-indigo-600 text-white"
-                : "border-gray-100 bg-white text-gray-600 hover:border-indigo-500/30"
+                ? "border-teal-600 bg-teal-600 text-white"
+                : "border-gray-100 bg-white text-gray-600 hover:border-teal-500/30"
             }`}
           >
             {b.name} — ₪{b.priceIls.toFixed(2)}

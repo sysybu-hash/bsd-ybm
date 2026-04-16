@@ -1,59 +1,19 @@
 import type { Metadata } from "next";
-import { BarChart3, Bot, CreditCard, FileText, UsersRound } from "lucide-react";
-import MarketingPublicShell from "@/components/marketing/MarketingPublicShell";
+import { cookies } from "next/headers";
+import { COOKIE_LOCALE, normalizeLocale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/load-messages";
+import ProductPageClient from "./ProductPageClient";
 
-export const metadata: Metadata = {
-  title: "המוצר | BSD-YBM",
-  description:
-    "שכבות המוצר לענף הבנייה: לקוחות ופרויקטים, מסמכים וסריקות AI, חיוב, תפעול בשטח ובקרה.",
-};
-
-const modules = [
-  {
-    title: "לקוחות וקשרי עבודה",
-    body: "CRM שמחבר סטטוסים, משימות, הערות, התקדמות והיסטוריה תפעולית.",
-    icon: UsersRound,
-  },
-  {
-    title: "מסמכים חכמים",
-    body: "קליטה, סריקה, ניתוח, שיוך ויצירה של מסמכים מתוך ההקשר העסקי.",
-    icon: FileText,
-  },
-  {
-    title: "חיוב וגבייה",
-    body: "חשבוניות, מעקב תשלומים, תמחור ומנויים באותו flow תפעולי.",
-    icon: CreditCard,
-  },
-  {
-    title: "בקרה ותובנות",
-    body: "תמונה ניהולית אחת שמראה מה השתנה, מה מתעכב ומה צריך טיפול.",
-    icon: BarChart3,
-  },
-  {
-    title: "AI מוטמע",
-    body: "שכבת עזר שעובדת בתוך הלקוחות, המסמכים והחלטות הניהול, לא לידם.",
-    icon: Bot,
-  },
-];
+export async function generateMetadata(): Promise<Metadata> {
+  const jar = await cookies();
+  const m = getMessages(normalizeLocale(jar.get(COOKIE_LOCALE)?.value)) as Record<string, unknown>;
+  const mp = m.marketingProduct as { metaTitle?: string; metaDescription?: string };
+  return {
+    title: `${mp.metaTitle ?? "המוצר"} | BSD-YBM`,
+    description: mp.metaDescription ?? "",
+  };
+}
 
 export default function ProductPage() {
-  return (
-    <MarketingPublicShell
-      title="שכבות עבודה לפרויקט בנייה — מההצעה ועד חשבון הספק."
-      eyebrow="המוצר"
-      description="כל מודול מתחבר לזרם האמיתי של השטח: מזמין ואתר, מסמכים וספקים, תשלומים ובקרה — עם AI שמכבד את סוג המקצוע בארגון."
-    >
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {modules.map(({ title, body, icon: Icon }) => (
-          <article key={title} className="v2-panel p-6">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
-              <Icon className="h-5 w-5" aria-hidden />
-            </span>
-            <h2 className="mt-5 text-xl font-black text-[color:var(--v2-ink)]">{title}</h2>
-            <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
-          </article>
-        ))}
-      </div>
-    </MarketingPublicShell>
-  );
+  return <ProductPageClient />;
 }

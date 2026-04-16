@@ -108,7 +108,7 @@ export default function PayPalSubscriptionCheckout({
     return (
       <div id="paypal-subscription" className="scroll-mt-24">
         <div
-          className="card-avenue border-indigo-500/30 bg-indigo-500/15 px-4 py-3 text-sm text-indigo-800"
+          className="card-avenue border-teal-500/30 bg-teal-500/15 px-4 py-3 text-sm text-teal-800"
           dir={dir}
         >
           להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
@@ -137,14 +137,14 @@ export default function PayPalSubscriptionCheckout({
   return (
     <section
       id="paypal-subscription"
-      className="card-avenue scroll-mt-24 border-indigo-500/20 bg-white p-6 shadow-sm md:p-8"
+      className="card-avenue scroll-mt-24 border-teal-500/20 bg-white p-6 shadow-sm md:p-8"
       dir={dir}
     >
       <h2 className="mb-2 text-xl font-black text-gray-900">הפעלת מנוי — PayPal (Live)</h2>
       <p className="mb-4 text-sm text-gray-500">
         בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
       </p>
-      <div className="mb-6 rounded-xl border border-indigo-500/20 bg-indigo-500/15 px-4 py-3 text-xs leading-relaxed text-gray-600">
+      <div className="mb-6 rounded-xl border border-teal-500/20 bg-teal-500/15 px-4 py-3 text-xs leading-relaxed text-gray-600">
         <strong className="text-white">חשבון חינם:</strong> רמת FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
         <strong>רק</strong> לשדרוג למשק בית / עוסק / חברה / תאגיד. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; ו־
         PayPal.Me של הארגון בהגדרות.
@@ -173,8 +173,8 @@ export default function PayPalSubscriptionCheckout({
               onClick={() => setSelectedTier(t)}
               className={`rounded-2xl border px-4 py-3 text-sm font-bold transition-all ${
                 effectiveTier === t
-                  ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-200"
-                  : "border-gray-200 bg-gray-50 text-gray-600 hover:border-indigo-500/30"
+                  ? "border-teal-500/40 bg-teal-500/15 text-teal-300 ring-1 ring-teal-200"
+                  : "border-gray-200 bg-gray-50 text-gray-600 hover:border-teal-500/30"
               }`}
             >
               {planLabelHe(t)} — ₪{pr?.toLocaleString("he-IL")}

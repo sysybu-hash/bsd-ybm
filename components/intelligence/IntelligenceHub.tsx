@@ -67,14 +67,14 @@ export default function IntelligenceHub() {
     <div className="space-y-6 p-4 font-sans text-gray-900 md:p-6" dir={dir}>
       {/* ── Premium header ── */}
       <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white px-6 py-7 md:px-8">
-        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-500" />
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-teal-500" />
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/15 px-3 py-1 text-[11px] font-bold text-indigo-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/15 px-3 py-1 text-[11px] font-bold text-teal-400">
               <BrainCircuit size={11} /> BSD Intelligence Hub
             </span>
             <h1 className="mt-3 text-2xl font-black tracking-tight text-gray-900">
-              Mission Control <span className="text-indigo-400">.</span>
+              Mission Control <span className="text-teal-400">.</span>
             </h1>
             <p className="mt-1.5 text-sm leading-relaxed text-gray-400">
               ניהול אוטונומי מלא — תחזיות, ניתוחים והמלצות בזמן אמת
@@ -98,7 +98,7 @@ export default function IntelligenceHub() {
           <div className="rounded-2xl border border-gray-100 bg-white p-6">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
               <h3 className="text-base font-black flex items-center gap-2 text-gray-900">
-                <BrainCircuit className="text-indigo-400" /> חיזוי תזרים וסימולציה
+                <BrainCircuit className="text-teal-400" /> חיזוי תזרים וסימולציה
               </h3>
               <button
                 type="button"
@@ -158,7 +158,7 @@ export default function IntelligenceHub() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-5 rounded-xl border border-indigo-500/25 bg-indigo-500/15 p-4 text-xs text-indigo-400"
+                className="mt-5 rounded-xl border border-teal-500/25 bg-teal-500/15 p-4 text-xs text-teal-400"
               >
                 הדמיה: הוספת הוצאה של ₪15,000 ב-14/04 תגרום לירידה מתחת לקו האדום.
               </motion.div>
@@ -168,7 +168,7 @@ export default function IntelligenceHub() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-2xl border border-gray-100 bg-white p-6">
               <h4 className="font-black mb-4 flex items-center gap-2 text-gray-900">
-                <Target className="text-indigo-400" aria-hidden /> רווחיות פרויקטים חי
+                <Target className="text-teal-400" aria-hidden /> רווחיות פרויקטים חי
               </h4>
               <div className="space-y-4">
                 <div>
@@ -187,14 +187,14 @@ export default function IntelligenceHub() {
 
             <div className="rounded-2xl border border-gray-100 bg-white p-6">
               <h4 className="font-black mb-4 flex items-center gap-2 text-gray-900">
-                <FileSearch className="text-indigo-400" aria-hidden /> לוביסט AI — חיסכון
+                <FileSearch className="text-teal-400" aria-hidden /> לוביסט AI — חיסכון
               </h4>
               <p className="text-xs text-gray-500 leading-relaxed mb-4">
                 נמצאו עמלות בנק חריגות (1.2%). ה-AI ניסח מכתב דרישה להפחתה ל-0.4%.
               </p>
               <button
                 type="button"
-                className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest hover:underline"
+                className="text-[10px] font-bold text-teal-400 uppercase tracking-widest hover:underline"
               >
                 שלח מכתב דרישה לבנק
               </button>
@@ -208,7 +208,7 @@ export default function IntelligenceHub() {
               <h3 className="text-base font-black mb-5 flex items-center gap-2 text-gray-900">
                 <Mic
                   size={16}
-                  className={isRecording ? "text-rose-400 animate-pulse" : "text-indigo-400"}
+                  className={isRecording ? "text-rose-400 animate-pulse" : "text-teal-400"}
                 />{" "}
                 Voice Insights
               </h3>
@@ -216,7 +216,7 @@ export default function IntelligenceHub() {
                 type="button"
                 onMouseDown={() => setIsRecording(true)}
                 onMouseUp={() => setIsRecording(false)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 py-4 font-black text-white shadow-sm shadow-indigo-500/20 transition-colors hover:bg-indigo-400"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-500 py-4 font-black text-white shadow-sm shadow-teal-500/20 transition-colors hover:bg-teal-400"
               >
                 {isRecording ? "מקשיב לך..." : "לחץ ודבר עם המערכת"}
               </button>
@@ -241,7 +241,7 @@ export default function IntelligenceHub() {
                 </div>
                 <button
                   type="button"
-                  className="rounded-xl border border-gray-200 bg-gray-50 p-2 text-indigo-400 transition-colors hover:bg-indigo-500/15"
+                  className="rounded-xl border border-gray-200 bg-gray-50 p-2 text-teal-400 transition-colors hover:bg-teal-500/15"
                   aria-label="ווטסאפ"
                 >
                   <MessageCircle size={18} />
@@ -261,9 +261,9 @@ export default function IntelligenceHub() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.07] p-6">
-            <h4 className="mb-5 flex items-center gap-2 font-black text-indigo-300">
-              <Zap className="text-indigo-400" aria-hidden /> Business Pulse
+          <div className="rounded-2xl border border-teal-500/20 bg-teal-500/[0.07] p-6">
+            <h4 className="mb-5 flex items-center gap-2 font-black text-teal-300">
+              <Zap className="text-teal-400" aria-hidden /> Business Pulse
             </h4>
             <div className="space-y-6">
               <div>
@@ -274,14 +274,14 @@ export default function IntelligenceHub() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: "72%" }}
-                    className="h-full rounded-full bg-indigo-500"
+                    className="h-full rounded-full bg-teal-500"
                   />
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setVaultOpen(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-3 text-xs font-black text-indigo-400 transition-colors hover:bg-indigo-500/15"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-3 text-xs font-black text-teal-400 transition-colors hover:bg-teal-500/15"
               >
                 <Lock size={14} /> כספת רואה חשבון: 14 מסמכים מוכנים
               </button>
@@ -291,7 +291,7 @@ export default function IntelligenceHub() {
                   setDailyOpen(true);
                   void loadDaily();
                 }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 py-3 text-xs font-black text-white shadow-sm shadow-indigo-500/20 transition-colors hover:bg-indigo-400"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-500 py-3 text-xs font-black text-white shadow-sm shadow-teal-500/20 transition-colors hover:bg-teal-400"
               >
                 תובנה פיננסית יומית (מילת היום)
               </button>
@@ -315,7 +315,7 @@ export default function IntelligenceHub() {
           >
             <div className="flex justify-between items-start gap-2 mb-4">
               <h3 id="vault-title" className="text-lg font-black flex items-center gap-2 text-gray-900">
-                <Lock className="text-indigo-400" size={22} /> כספת מסמכים לרואה חשבון
+                <Lock className="text-teal-400" size={22} /> כספת מסמכים לרואה חשבון
               </h3>
               <button
                 type="button"
@@ -359,7 +359,7 @@ export default function IntelligenceHub() {
             dir={dir}
           >
             <div className="flex justify-between items-start gap-2 mb-4">
-              <h3 id="daily-title" className="text-lg font-black text-indigo-400">
+              <h3 id="daily-title" className="text-lg font-black text-teal-400">
                 תובנה פיננסית יומית
               </h3>
               <button
@@ -385,7 +385,7 @@ export default function IntelligenceHub() {
             <button
               type="button"
               onClick={() => setDailyOpen(false)}
-              className="mt-6 w-full rounded-xl bg-indigo-500 py-3 font-bold text-white transition-colors hover:bg-indigo-400"
+              className="mt-6 w-full rounded-xl bg-teal-500 py-3 font-bold text-white transition-colors hover:bg-teal-400"
             >
               סגור
             </button>

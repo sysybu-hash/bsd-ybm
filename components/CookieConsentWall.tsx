@@ -111,7 +111,7 @@ export default function CookieConsentWall() {
         <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/15 text-[var(--primary-color)]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-500/15 text-[var(--primary-color)]">
                 <Cookie size={22} aria-hidden />
               </div>
               <div>
@@ -197,7 +197,7 @@ export default function CookieConsentWall() {
               <button
                 type="button"
                 onClick={saveCustom}
-                className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-indigo-700"
+                className="inline-flex items-center justify-center rounded-2xl bg-teal-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-teal-700"
               >
                 {t("cookie.savePrefs")}
               </button>
@@ -205,7 +205,7 @@ export default function CookieConsentWall() {
             <button
               type="button"
               onClick={acceptAll}
-              className="inline-flex items-center justify-center rounded-2xl bg-[var(--primary-color)] px-4 py-3 text-sm font-black text-white shadow-lg shadow-indigo-600/25 transition hover:opacity-95"
+              className="inline-flex items-center justify-center rounded-2xl bg-[var(--primary-color)] px-4 py-3 text-sm font-black text-white shadow-lg shadow-teal-600/25 transition hover:opacity-95"
             >
               {t("cookie.acceptAll")}
             </button>

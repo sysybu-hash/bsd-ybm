@@ -1,8 +1,11 @@
-﻿import type { ReactNode } from "react";
+﻿"use client";
+
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { legalSite } from "@/lib/legal-site";
+import { useI18n } from "@/components/I18nProvider";
 
 type Props = {
   title: string;
@@ -13,52 +16,55 @@ type Props = {
 const sectionClass = "space-y-4 text-gray-600 leading-relaxed text-[15px]";
 const h2Class = "text-xl font-bold text-gray-900 mt-10 mb-3 scroll-mt-28";
 const noteClass =
-  "rounded-2xl border border-indigo-500/30 bg-indigo-500/15 px-4 py-3 text-sm text-indigo-950 not-italic";
+  "rounded-2xl border border-teal-500/30 bg-teal-500/15 px-4 py-3 text-sm text-teal-950 not-italic";
 
 export default function LegalLayout({ title, subtitle, children }: Props) {
+  const { t, dir } = useI18n();
+  const breadcrumbHome = t("legalShell.breadcrumbHome");
+  const breadcrumbLegal = t("legalShell.breadcrumbLegal");
+  const operatorLabel = t("legalShell.operatorLabel");
+  const docUpdateLabel = t("legalShell.docUpdateLabel");
+  const disclaimerTitle = t("legalShell.disclaimerTitle");
+  const disclaimerBody = t("legalShell.disclaimerBody");
+  const footerContact = t("legalShell.footerContact");
+
   return (
-    <div className="min-h-screen bg-white" dir="rtl">
+    <div className="min-h-screen bg-white" dir={dir}>
       <Navbar />
-      <main className="max-w-3xl mx-auto px-6 pb-20 pt-28 md:pt-32">
-        <nav className="text-sm text-gray-400 mb-8">
+      <main className="mx-auto max-w-3xl px-6 pb-20 pt-28 md:pt-32">
+        <nav className="mb-8 text-sm text-gray-400">
           <Link href="/" className="hover:text-[var(--primary-color)]">
-            דף הבית
+            {breadcrumbHome}
           </Link>
           <span className="mx-2">/</span>
           <Link href="/legal" className="hover:text-[var(--primary-color)]">
-            מסמכים משפטיים
+            {breadcrumbLegal}
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-700 font-medium">{title}</span>
+          <span className="font-medium text-gray-700">{title}</span>
         </nav>
 
         <header className="mb-10 border-b border-gray-100 pb-8">
-          <h1 className="text-3xl md:text-4xl font-black italic text-gray-900 tracking-tight">
-            {title}
-          </h1>
-          {subtitle ? (
-            <p className="mt-3 text-gray-500 text-lg">{subtitle}</p>
-          ) : null}
+          <h1 className="text-3xl font-black italic tracking-tight text-gray-900 md:text-4xl">{title}</h1>
+          {subtitle ? <p className="mt-3 text-lg text-gray-500">{subtitle}</p> : null}
           <p className="mt-4 text-sm text-gray-400">
-            מפעיל: <strong className="text-gray-700">{legalSite.operatorDisplayName}</strong>
+            {operatorLabel} <strong className="text-gray-700">{legalSite.operatorDisplayName}</strong>
             {" · "}
-            עדכון מסמכים (מוצג): {legalSite.documentsLastUpdated}
+            {docUpdateLabel} {legalSite.documentsLastUpdated}
           </p>
           <aside className={`mt-6 ${noteClass}`} role="note">
-            <strong>הבהרה:</strong> הנוסחים להלן הם{" "}
-            <strong>מסגרת בלבד</strong> ואינם מהווים ייעוץ משפטי או מס. יש להשלים ולאמת מול יועץ
-            לפני פרסום סופי.
+            <strong>{disclaimerTitle}</strong> {disclaimerBody}
           </aside>
         </header>
 
         <article className={sectionClass}>{children}</article>
 
-        <footer className="mt-16 pt-8 border-t border-gray-100 text-sm text-gray-400">
+        <footer className="mt-16 border-t border-gray-100 pt-8 text-sm text-gray-400">
           <p>
-            פניות בנושא מסמכים אלו:{" "}
+            {footerContact}{" "}
             <a
               href={`mailto:${legalSite.contactEmail}`}
-              className="text-[var(--primary-color)] font-medium hover:underline"
+              className="font-medium text-[var(--primary-color)] hover:underline"
             >
               {legalSite.contactEmail}
             </a>

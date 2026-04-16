@@ -103,16 +103,16 @@ export default function CreateIssuedDocumentModal({
     >
       <div className="my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-black/30">
         <div className="relative flex items-center justify-between gap-4 border-b border-gray-200 bg-gray-50 p-8">
-          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
+          <div className="absolute inset-y-0 start-0 w-1.5 bg-teal-600" aria-hidden />
           <div className="flex items-center gap-4 min-w-0">
-            <div className="shrink-0 rounded-2xl bg-indigo-500/15 p-3 text-indigo-400 shadow-sm">
+            <div className="shrink-0 rounded-2xl bg-teal-500/15 p-3 text-teal-400 shadow-sm">
               <FileText />
             </div>
             <div className="min-w-0">
               <h2 id="issued-doc-modal-title" className="text-2xl font-black italic tracking-tighter text-gray-900">
                 הפקת מסמך חדש
               </h2>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
+              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-teal-400">
                 {!isReportable
                   ? "מזכר פנימי — ללא דיווח מס"
                   : companyType === CompanyType.EXEMPT_DEALER
@@ -140,7 +140,7 @@ export default function CreateIssuedDocumentModal({
               <select
                 value={docType}
                 onChange={(e) => setDocType(e.target.value as DocType)}
-                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
+                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-300 focus:ring-2 focus:ring-teal-500 font-bold outline-none"
               >
                 <option value={DocType.INVOICE_RECEIPT}>חשבונית מס קבלה</option>
                 <option value={DocType.INVOICE}>חשבונית מס</option>
@@ -165,7 +165,7 @@ export default function CreateIssuedDocumentModal({
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="חפש לקוח קיים או הקלד שם חדש..."
-                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 font-bold outline-none"
+                className="w-full bg-gray-50 p-4 rounded-2xl border-none ring-1 ring-gray-300 focus:ring-2 focus:ring-teal-500 font-bold outline-none"
               />
               <datalist id="crm-contacts-billing">
                 {contacts.map((c) => (
@@ -183,7 +183,7 @@ export default function CreateIssuedDocumentModal({
               <button
                 type="button"
                 onClick={addItem}
-                className="text-indigo-400 font-bold text-sm flex items-center gap-1 hover:bg-indigo-500/15 px-3 py-1 rounded-lg transition-colors"
+                className="text-teal-400 font-bold text-sm flex items-center gap-1 hover:bg-teal-500/15 px-3 py-1 rounded-lg transition-colors"
               >
                 <Plus size={16} /> הוסף שורה
               </button>
@@ -196,7 +196,7 @@ export default function CreateIssuedDocumentModal({
                     placeholder="תיאור השירות/מוצר..."
                     value={item.desc}
                     onChange={(e) => updateItem(index, "desc", e.target.value)}
-                    className="w-full bg-gray-50 p-3 rounded-xl border border-gray-200 focus:border-indigo-500 outline-none font-medium"
+                    className="w-full bg-gray-50 p-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none font-medium"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -268,7 +268,7 @@ export default function CreateIssuedDocumentModal({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={loading}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-12 py-4 font-black text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-teal-600 px-12 py-4 font-black text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {loading ? (
               "מפיק מסמך..."

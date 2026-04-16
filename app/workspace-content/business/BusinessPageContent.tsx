@@ -64,7 +64,7 @@ export async function BusinessPageContent() {
       label: t("erpPage.statMonthExpenses"),
       value: `\u20aa${expenseThisMonth.toLocaleString(intlTag)}`,
       trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t),
-      valueClass: "text-indigo-400",
+      valueClass: "text-teal-400",
     },
     {
       label: t("erpPage.statDocsInView"),

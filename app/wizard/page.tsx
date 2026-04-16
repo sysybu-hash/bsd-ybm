@@ -51,17 +51,17 @@ export default function WizardPage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200"
+                className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-teal-200"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
                     <Icon size={18} />
                   </div>
                   <span className="text-xs font-bold uppercase tracking-[0.16em] text-gray-400">שלב {idx + 1}</span>
                 </div>
                 <h2 className="text-xl font-black text-gray-900">{item.title}</h2>
                 <p className="mt-2 text-sm text-gray-500">{item.text}</p>
-                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-indigo-600">
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-teal-600">
                   Open stage
                   <ArrowRight size={14} />
                 </div>

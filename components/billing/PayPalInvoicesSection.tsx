@@ -31,11 +31,11 @@ export default function PayPalInvoicesSection({
       <p className="mb-4 text-sm font-medium text-gray-400">
         <strong>בקשות תשלום</strong> (חשבוניות עסקה לגבייה) מוצגות בטבלת המסמכים למעלה — בלשוניות{" "}
         <span className="font-bold text-gray-600">״הכל״</span> ו־<span className="font-bold text-gray-600">״חשבוניות״</span>
-        , עם תג <span className="font-bold text-indigo-400">PayPal</span>. משם אפשר גם לפתוח קישור תשלום כשמוגדר PayPal.Me.
+        , עם תג <span className="font-bold text-teal-400">PayPal</span>. משם אפשר גם לפתוח קישור תשלום כשמוגדר PayPal.Me.
       </p>
       <p className="mb-6 text-sm font-medium text-gray-400">
         חברו מייל ו־PayPal.Me של <strong>הארגון</strong> ב
-        <Link href="/app/settings?tab=billing" className="mx-1 font-bold text-indigo-300 underline">
+        <Link href="/app/settings?tab=billing" className="mx-1 font-bold text-teal-300 underline">
           הגדרות › מנויים
         </Link>
         .
@@ -48,7 +48,7 @@ export default function PayPalInvoicesSection({
           השתמשו ב־״הפקת מסמך״ למעלה לחשבונית מס רשמית, או צרו חשבונית בדיקה לגבייה ב־PayPal.
         </p>
         {!hasPaypal ? (
-          <p className="mx-auto mb-4 max-w-md rounded-xl border border-indigo-500/20 bg-indigo-500/15 px-4 py-2 text-xs text-indigo-300">
+          <p className="mx-auto mb-4 max-w-md rounded-xl border border-teal-500/20 bg-teal-500/15 px-4 py-2 text-xs text-teal-300">
             לא הוגדר PayPal לארגון — קישורי תשלום לא יופיעו עד שתשלימו את ההגדרות.
           </p>
         ) : null}

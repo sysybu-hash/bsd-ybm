@@ -99,9 +99,9 @@ const STATUS_LABEL: Record<string, string> = {
   CLOSED_LOST: "נסגר ✗",
 };
 const STATUS_BADGE: Record<string, string> = {
-  LEAD:        "bg-indigo-50 text-indigo-700 border-indigo-200",
+  LEAD:        "bg-teal-50 text-teal-700 border-teal-200",
   ACTIVE:      "bg-sky-50 text-sky-700 border-sky-200",
-  PROPOSAL:    "bg-violet-50 text-violet-700 border-violet-200",
+  PROPOSAL:    "bg-amber-50 text-amber-800 border-amber-200",
   CLOSED_WON:  "bg-emerald-50 text-emerald-700 border-emerald-200",
   CLOSED_LOST: "bg-rose-50 text-rose-700 border-rose-200",
 };
@@ -166,7 +166,7 @@ function HubContent(props: Props) {
           </div>
           <Link
                     href="/app/documents/issue"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition-all"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-teal-700 transition-all"
           >
             <ReceiptText size={14} /> הנפק {industry.vocabulary.document}
           </Link>
@@ -199,24 +199,24 @@ function HubContent(props: Props) {
           </div>
           <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${profit >= 0 ? "bg-indigo-50 text-indigo-600" : "bg-amber-50 text-amber-600"}`}>
+              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${profit >= 0 ? "bg-teal-50 text-teal-600" : "bg-amber-50 text-amber-600"}`}>
                 <CheckCircle2 size={13} />
               </div>
               <p className="text-xs font-bold text-gray-500">רווח גולמי</p>
             </div>
-            <p className={`text-2xl font-black ${profit >= 0 ? "text-indigo-600" : "text-amber-600"}`}>
+            <p className={`text-2xl font-black ${profit >= 0 ? "text-teal-600" : "text-amber-600"}`}>
               {income > 0 || expenses > 0 ? fmtMoney(profit) : "—"}
             </p>
             <p className="text-[10px] text-gray-400 mt-1">הכנסות פחות הוצאות</p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
                 <Layers size={13} />
               </div>
               <p className="text-xs font-bold text-gray-500">פייפליין {industry.vocabulary.client}</p>
             </div>
-            <p className="text-2xl font-black text-indigo-600">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
+            <p className="text-2xl font-black text-teal-600">{pipelineValue > 0 ? fmtMoney(pipelineValue) : "—"}</p>
             <p className="text-[10px] text-gray-400 mt-1">
               {contacts.filter((c) => !["CLOSED_WON", "CLOSED_LOST"].includes(c.status)).length} עסקאות פתוחות
             </p>
@@ -280,8 +280,8 @@ function HubContent(props: Props) {
             className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <span className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50">
-                <FileText size={14} className="text-indigo-600" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-50">
+                <FileText size={14} className="text-teal-600" />
               </span>
               <span>
                 <span className="font-black text-gray-900">כלי ERP</span>
@@ -336,7 +336,7 @@ function FallbackLoader() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center bg-gray-50">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 size={36} className="animate-spin text-indigo-500" />
+        <Loader2 size={36} className="animate-spin text-teal-500" />
         <p className="text-sm font-bold text-gray-400">טוען מרכז עסקי...</p>
       </div>
     </div>

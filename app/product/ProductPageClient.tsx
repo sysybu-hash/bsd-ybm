@@ -1,0 +1,42 @@
+"use client";
+
+import { BarChart3, Bot, CreditCard, FileText, UsersRound } from "lucide-react";
+import MarketingPublicShell from "@/components/marketing/MarketingPublicShell";
+import { useI18n } from "@/components/I18nProvider";
+
+const MODULE_ORDER = [
+  { key: "clients" as const, icon: UsersRound },
+  { key: "docs" as const, icon: FileText },
+  { key: "billing" as const, icon: CreditCard },
+  { key: "insights" as const, icon: BarChart3 },
+  { key: "ai" as const, icon: Bot },
+];
+
+export default function ProductPageClient() {
+  const { messages } = useI18n();
+  const mp = (messages as Record<string, unknown>).marketingProduct as {
+    eyebrow: string;
+    title: string;
+    description: string;
+    modules: Record<string, { title: string; body: string }>;
+  };
+
+  return (
+    <MarketingPublicShell title={mp.title} eyebrow={mp.eyebrow} description={mp.description}>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {MODULE_ORDER.map(({ key, icon: Icon }) => {
+          const mod = mp.modules[key];
+          return (
+            <article key={key} className="v2-panel p-6">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                <Icon className="h-5 w-5" aria-hidden />
+              </span>
+              <h2 className="mt-5 text-xl font-black text-[color:var(--v2-ink)]">{mod.title}</h2>
+              <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{mod.body}</p>
+            </article>
+          );
+        })}
+      </div>
+    </MarketingPublicShell>
+  );
+}

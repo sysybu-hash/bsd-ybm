@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 
 /** צבע מותג ברירת מחדל — מסונכרן ל־--primary-color ב־globals (בנייה B2B) */
-const DEFAULT_COLOR = "#c1592f";
+const DEFAULT_COLOR = "#0d9488";
 const APPROVED_COLORS = new Set([
-  "#c1592f",
-  "#9f4321",
+  "#0d9488",
+  "#0f766e",
+  "#14b8a6",
   "#0f172a",
   "#0c4a6e",
   "#2563eb",

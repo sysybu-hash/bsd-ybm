@@ -38,7 +38,7 @@ export default function ForecastSimulator() {
       <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
         <div className="text-start">
           <h3 className="text-2xl font-black italic flex items-center gap-2 text-gray-900">
-            <BrainCircuit className="text-indigo-500" /> חיזוי וסימולציה AI
+            <BrainCircuit className="text-teal-500" /> חיזוי וסימולציה AI
           </h3>
           <p className="text-gray-400 text-sm italic font-medium">
             נתח את העתיד ושחק עם תרחישים פיננסיים
@@ -53,7 +53,7 @@ export default function ForecastSimulator() {
           className={`rounded-xl px-6 py-2 text-sm font-bold transition-all ${
             isSimulating
               ? "border border-rose-200 bg-rose-50 text-rose-600"
-              : "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 active:scale-95"
+              : "bg-teal-600 text-white shadow-sm hover:bg-teal-700 active:scale-95"
           }`}
         >
           {isSimulating ? 'בטל סימולציה' : 'מצב "מה אם?"'}
@@ -70,7 +70,7 @@ export default function ForecastSimulator() {
           <input
             type="number"
             onChange={(e) => setExtraExpense(Number(e.target.value))}
-            className="w-32 rounded-xl border border-gray-200 bg-white p-2 text-indigo-400 outline-none ring-0 transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder:text-gray-300"
+            className="w-32 rounded-xl border border-gray-200 bg-white p-2 text-teal-400 outline-none ring-0 transition-colors focus:border-teal-400 focus:ring-2 focus:ring-teal-100 placeholder:text-gray-300"
             placeholder="0"
           />
           {extraExpense > 20000 ? (

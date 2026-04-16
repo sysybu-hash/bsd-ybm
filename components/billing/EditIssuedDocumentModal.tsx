@@ -106,7 +106,7 @@ export default function EditIssuedDocumentModal({
     });
   };
 
-  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15";
+  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/15";
 
   return (
     <div
@@ -118,9 +118,9 @@ export default function EditIssuedDocumentModal({
       <div className="my-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl">
         {/* Header */}
         <div className="relative flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5">
-          <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" />
+          <div className="absolute inset-y-0 start-0 w-1.5 bg-teal-600" />
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-400">
               <Edit3 size={18} />
             </div>
             <div>
@@ -219,7 +219,7 @@ export default function EditIssuedDocumentModal({
               <button
                 type="button"
                 onClick={addItem}
-                className="flex items-center gap-1 rounded-lg bg-indigo-500/15 px-3 py-1.5 text-xs font-bold text-indigo-400 hover:bg-indigo-500/25 transition"
+                className="flex items-center gap-1 rounded-lg bg-teal-500/15 px-3 py-1.5 text-xs font-bold text-teal-400 hover:bg-teal-500/25 transition"
               >
                 <Plus size={13} /> הוסף שורה
               </button>
@@ -286,7 +286,7 @@ export default function EditIssuedDocumentModal({
             )}
             <div className="flex justify-between text-lg font-black text-white border-t border-gray-200 pt-2">
               <span>סה״כ לתשלום:</span>
-              <span className="text-indigo-300">₪{totals.total.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
+              <span className="text-teal-300">₪{totals.total.toLocaleString("he-IL", { maximumFractionDigits: 2 })}</span>
             </div>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function EditIssuedDocumentModal({
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 rounded-xl bg-indigo-500/15 px-5 py-2 text-sm font-bold text-white shadow-sm shadow-indigo-500/25 hover:bg-indigo-400 transition disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-teal-500/15 px-5 py-2 text-sm font-bold text-white shadow-sm shadow-teal-500/25 hover:bg-teal-400 transition disabled:opacity-50"
             >
               {saving ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

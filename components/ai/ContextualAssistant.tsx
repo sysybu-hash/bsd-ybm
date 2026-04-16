@@ -80,7 +80,7 @@ export default function ContextualAssistant() {
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: 45 }}
             onClick={() => setIsOpen(true)}
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:scale-110 active:scale-95 border-4 border-white"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-800 text-white shadow-2xl shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-110 active:scale-95 border-4 border-white"
           >
             <Sparkles size={28} className="animate-pulse" />
           </motion.button>
@@ -91,10 +91,10 @@ export default function ContextualAssistant() {
             initial={{ y: 50, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.9 }}
-            className={`flex flex-col rounded-3xl bg-white/95 backdrop-blur-md border border-indigo-100 shadow-2xl transition-all duration-300 ${isMinimized ? 'h-16 w-64' : 'h-[500px] w-[350px]'}`}
+            className={`flex flex-col rounded-3xl bg-white/95 backdrop-blur-md border border-teal-100 shadow-2xl transition-all duration-300 ${isMinimized ? 'h-16 w-64' : 'h-[500px] w-[350px]'}`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-t-[22px] cursor-pointer" onClick={() => setIsMinimized(!isMinimized)}>
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-t-[22px] cursor-pointer" onClick={() => setIsMinimized(!isMinimized)}>
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-white/20 rounded-lg">
                   <Bot size={18} />
@@ -130,7 +130,7 @@ export default function ContextualAssistant() {
                       <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
                         msg.role === 'user' 
                           ? 'bg-white border border-slate-100 text-slate-800 rounded-br-none' 
-                          : 'bg-indigo-600 text-white rounded-bl-none font-medium'
+                          : 'bg-teal-600 text-white rounded-bl-none font-medium'
                       }`}>
                         {msg.content}
                       </div>
@@ -138,11 +138,11 @@ export default function ContextualAssistant() {
                   ))}
                   {loading && (
                     <div className="flex justify-end">
-                      <div className="bg-indigo-600/10 p-3 rounded-2xl rounded-bl-none">
+                      <div className="bg-teal-600/10 p-3 rounded-2xl rounded-bl-none">
                         <div className="flex gap-1">
-                           <span className="h-1.5 w-1.5 rounded-full bg-indigo-600 animate-bounce" />
-                           <span className="h-1.5 w-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.2s]" />
-                           <span className="h-1.5 w-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.4s]" />
+                           <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-bounce" />
+                           <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-bounce [animation-delay:0.2s]" />
+                           <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-bounce [animation-delay:0.4s]" />
                         </div>
                       </div>
                     </div>
@@ -151,7 +151,7 @@ export default function ContextualAssistant() {
 
                 {/* Input Area */}
                 <div className="p-4 border-t border-slate-100 bg-white rounded-b-3xl">
-                  <div className="flex items-center gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-200 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
+                  <div className="flex items-center gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-200 focus-within:ring-4 focus-within:ring-teal-500/10 focus-within:border-teal-500 transition-all">
                     <input 
                       type="text" 
                       placeholder="שאל אותי משהו על העסק..."
@@ -163,7 +163,7 @@ export default function ContextualAssistant() {
                     <button 
                       onClick={handleSend}
                       disabled={!input.trim() || loading}
-                      className="h-9 w-9 flex items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+                      className="h-9 w-9 flex items-center justify-center rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-200 hover:bg-teal-700 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
                     >
                       <Send size={16} />
                     </button>

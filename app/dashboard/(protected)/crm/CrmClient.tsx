@@ -123,7 +123,7 @@ type View = "pipeline" | "list" | "projects" | "automations";
 const STATUS_COLUMNS = [
   { key: "LEAD",        label: "ליד חדש",    bg: "bg-sky-500", text: "text-white", border: "border-sky-600", dot: "bg-sky-200" },
   { key: "ACTIVE",      label: "בתהליך",    bg: "bg-blue-600", text: "text-white", border: "border-blue-700", dot: "bg-blue-200" },
-  { key: "PROPOSAL",    label: "הצעת מחיר", bg: "bg-violet-500", text: "text-white", border: "border-violet-600", dot: "bg-violet-200" },
+  { key: "PROPOSAL",    label: "הצעת מחיר", bg: "bg-amber-500", text: "text-white", border: "border-amber-600", dot: "bg-amber-200" },
   { key: "CLOSED_WON",  label: "נסגר בהצלחה", bg: "bg-emerald-500", text: "text-white", border: "border-emerald-600", dot: "bg-emerald-200" },
   { key: "CLOSED_LOST", label: "לא רלוונטי",  bg: "bg-rose-500", text: "text-white", border: "border-rose-600", dot: "bg-rose-200" },
 ] as const;

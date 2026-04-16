@@ -38,7 +38,7 @@ export default function UnifiedCommandCenter({
   const [activeTab, setActiveTab] = useState<TabId>("executive");
 
   const tabs = [
-    { id: "executive", label: "חדר מצב Executive", icon: <ShieldCheck size={18} />, color: "text-indigo-600", bg: "bg-indigo-50" },
+    { id: "executive", label: "חדר מצב Executive", icon: <ShieldCheck size={18} />, color: "text-teal-600", bg: "bg-teal-50" },
     { id: "crm", label: "ניהול מנויים ו-CRM", icon: <Users size={18} />, color: "text-emerald-600", bg: "bg-emerald-50" },
     { id: "business", label: "ניהול עסקי ותפעול", icon: <Layers size={18} />, color: "text-sky-600", bg: "bg-sky-50" },
     { id: "erp", label: "כספים וחשבוניות (ERP)", icon: <ReceiptText size={18} />, color: "text-rose-600", bg: "bg-rose-50" },
@@ -83,7 +83,7 @@ export default function UnifiedCommandCenter({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
            <div>
               <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                 <LayoutDashboard className="text-indigo-600" /> מרכז בקרה אחוד <span className="text-slate-400 font-medium">| BSD-YBM</span>
+                 <LayoutDashboard className="text-teal-600" /> מרכז בקרה אחוד <span className="text-slate-400 font-medium">| BSD-YBM</span>
               </h2>
               <p className="text-sm font-bold text-slate-500 mt-1">ניהול סינכרוני של כל היבטי הפעילות בחלון אחד.</p>
            </div>
@@ -122,7 +122,7 @@ export default function UnifiedCommandCenter({
       {/* Synchronized Intelligence Footer Tips */}
       <div className="hidden lg:flex items-center justify-center gap-12 py-6 text-slate-400 font-black text-[10px] uppercase tracking-widest border-t border-slate-100 mt-4">
          <span className="flex items-center gap-2"><CheckCircle size={14} className="text-emerald-500" /> סנכרון CRM↔ERP פעיל</span>
-         <span className="flex items-center gap-2"><Zap size={14} className="text-violet-500" /> AI בינה עסקית בזמן אמת</span>
+         <span className="flex items-center gap-2"><Zap size={14} className="text-teal-500" /> AI בינה עסקית בזמן אמת</span>
          <span className="flex items-center gap-2"><ShieldCheck size={14} className="text-blue-500" /> הצפנת נתונים צבאית (BSD)</span>
       </div>
     </div>

@@ -40,7 +40,7 @@ export default function AdminBroadcastNotifications() {
   return (
     <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
       <h3 className="mb-2 flex items-center gap-3 text-2xl font-black text-gray-900">
-        <Megaphone className="text-indigo-500" size={28} aria-hidden />
+        <Megaphone className="text-teal-500" size={28} aria-hidden />
         שידור לכולם
       </h3>
       <p className="mb-6 text-sm font-medium text-gray-400">
@@ -59,7 +59,7 @@ export default function AdminBroadcastNotifications() {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={160}
             required
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-teal-500/20 focus:ring-2"
             placeholder="למשל: עדכון מהפלטפורמה"
             disabled={loading}
           />
@@ -75,7 +75,7 @@ export default function AdminBroadcastNotifications() {
             maxLength={4000}
             required
             rows={5}
-            className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-indigo-500/20 focus:ring-2"
+            className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-900 outline-none ring-teal-500/20 focus:ring-2"
             placeholder="הטקסט שיוצג בהתראה..."
             disabled={loading}
           />
@@ -99,7 +99,7 @@ export default function AdminBroadcastNotifications() {
         <button
           type="submit"
           disabled={loading || !title.trim() || !body.trim()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : <Megaphone size={18} />}
           שלח לכל המשתמשים

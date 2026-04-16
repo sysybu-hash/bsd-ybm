@@ -98,8 +98,8 @@ export default function LoginPortal() {
     <AuthPageShell secondaryNav={{ href: "/register", label: t("auth.login.registerLink") }}>
       <AuthProfessionalCard
         icon={
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
-            <ShieldCheck className="h-6 w-6 text-indigo-600" aria-hidden />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100">
+            <ShieldCheck className="h-6 w-6 text-teal-600" aria-hidden />
           </div>
         }
         title={t("auth.login.title")}
@@ -116,7 +116,7 @@ export default function LoginPortal() {
         {showActiveBanner ? (
           <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-start">
             <div className="flex items-center gap-3">
-              <UserCircle className="h-5 w-5 shrink-0 text-indigo-600" aria-hidden />
+              <UserCircle className="h-5 w-5 shrink-0 text-teal-600" aria-hidden />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-gray-800">{t("auth.login.connectedAs")}{sessionName || sessionEmail}</p>
                 {sessionName ? <p className="text-xs text-gray-400 break-all">{sessionEmail}</p> : null}
@@ -126,7 +126,7 @@ export default function LoginPortal() {
               <button
                 type="button"
                 onClick={() => navigateHard(callbackUrl)}
-                className="flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-700 transition"
+                className="flex-1 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white hover:bg-teal-700 transition"
               >
                 {t("auth.login.continueToDashboard")}
               </button>
@@ -215,7 +215,7 @@ export default function LoginPortal() {
           }}
         >
           <div className="flex items-center gap-2 pb-1 text-xs font-bold text-gray-500 text-start">
-            <KeyRound size={14} className="text-indigo-600" aria-hidden />
+            <KeyRound size={14} className="text-teal-600" aria-hidden />
             {t("auth.login.credsLabel")}
           </div>
           <input
@@ -224,7 +224,7 @@ export default function LoginPortal() {
             required
             autoComplete="email"
             placeholder={t("auth.login.emailPlaceholder")}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-start"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 text-start"
           />
           <input
             name="password"
@@ -232,13 +232,13 @@ export default function LoginPortal() {
             required
             autoComplete="current-password"
             placeholder={t("auth.login.passwordPlaceholder")}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-start"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 text-start"
           />
           {credError ? <p className="text-center text-sm text-rose-600">{credError}</p> : null}
           <button
             type="submit"
             disabled={loadingCreds}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 py-3.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60 shadow-sm"
           >
             {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
             {t("auth.login.submit")}
@@ -249,7 +249,7 @@ export default function LoginPortal() {
         <div className="mt-5 flex flex-col items-center gap-3">
           <p className="text-xs text-gray-500">
             {t("auth.login.noAccount")}{" "}
-            <Link href="/register" className="font-bold text-indigo-600 hover:underline">
+            <Link href="/register" className="font-bold text-teal-600 hover:underline">
               {t("auth.login.registerLink")}
             </Link>
           </p>

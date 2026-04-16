@@ -44,7 +44,7 @@ export default function ScanUsageProgress({
           </div>
           <div className="h-3 rounded-full bg-gray-50 overflow-hidden ring-1 ring-gray-200/80">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-sky-500 to-indigo-600 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-l from-sky-500 to-teal-600 transition-all duration-500"
               style={{ width: `${cheapBar}%` }}
             />
           </div>
@@ -59,7 +59,7 @@ export default function ScanUsageProgress({
           </div>
           <div className="h-3 rounded-full bg-gray-50 overflow-hidden ring-1 ring-gray-200/80">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-500 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-l from-teal-500 to-sky-500 transition-all duration-500"
               style={{ width: `${premBar}%` }}
             />
           </div>

@@ -26,6 +26,7 @@ import DashboardRevenueChart from "@/components/dashboard/DashboardRevenueChart"
 import type { OrgDashboardHomeData } from "@/lib/dashboard-home-data";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import { useI18n } from "@/components/I18nProvider";
+import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
 import { useIndustryConfig } from "@/hooks/use-industry-config";
 import { motion } from "framer-motion";
 import { Loader2, Users as UsersIcon } from "lucide-react";
@@ -156,17 +157,17 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           HERO — Dynamic Greeting
       ═══════════════════════════════════════════ */}
       <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm md:p-10">
-        <div className="absolute inset-y-0 start-0 w-1.5 bg-indigo-600" aria-hidden />
+        <div className="absolute inset-y-0 start-0 w-1.5 bg-teal-600" aria-hidden />
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/15 px-4 py-1.5">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-indigo-300">{subscriptionTier}</span>
+            <span className="text-xs font-bold text-teal-300">{subscriptionTier}</span>
           </div>
           <h1 className="mt-4 text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
             {greeting}, {firstName}
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            {new Date().toLocaleDateString(locale === "he" ? "he-IL" : "en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            {new Date().toLocaleDateString(intlLocaleForApp(locale), { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>
       </div>
@@ -176,24 +177,24 @@ export default function BsdYbmDashboard({ homeData }: Props) {
       ═══════════════════════════════════════════ */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "indigo" },
+          { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "teal" },
           { href: "/app/documents", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
-          { href: "/app/insights", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "indigo" },
+          { href: "/app/insights", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
           { href: "/app/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
         ].map((c) => (
           <Link
             key={c.href}
             href={c.href}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-indigo-200 hover:shadow-md h-full"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-teal-200 hover:shadow-md h-full"
           >
             <div>
-              <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-gray-400 group-hover:bg-indigo-500/15 group-hover:text-indigo-400 transition-colors`}>
+              <div className={`mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-gray-400 group-hover:bg-teal-500/15 group-hover:text-teal-400 transition-colors`}>
                 {c.icon}
               </div>
               <p className="text-sm font-black text-gray-900">{c.label}</p>
               <p className="text-[11px] text-gray-400 mt-0.5">{c.desc}</p>
             </div>
-            <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase text-indigo-400 opacity-60 group-hover:opacity-100 transition-opacity">
+            <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase text-teal-400 opacity-60 group-hover:opacity-100 transition-opacity">
               <span>ניתוב</span>
               <ArrowUpRight size={14} />
             </div>
@@ -250,8 +251,8 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                  <Sparkles size={16} className="text-indigo-500" />
-                  <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Pulse AI</span>
+                  <Sparkles size={16} className="text-teal-500" />
+                  <span className="text-xs font-black uppercase tracking-widest text-teal-400">Pulse AI</span>
                 </div>
                 <h3 className="text-lg font-black leading-tight text-gray-900">{t("scanner.title")}</h3>
                 <p className="mt-1 max-w-sm text-xs text-gray-400">
@@ -259,7 +260,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 </p>
                 
                 <div className="mt-6 flex flex-wrap gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-indigo-500/20 active:scale-95">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-teal-700 hover:shadow-teal-500/20 active:scale-95">
                     <input type="file" className="hidden" onChange={handleFileUpload} disabled={isUploading} accept="image/*,.pdf" />
                     {isUploading ? <Loader2 className="animate-spin" size={17} /> : <Upload size={17} />}
                     {isUploading ? t("scanner.processing") : t("erpDash.scannerCta")}
@@ -274,21 +275,21 @@ export default function BsdYbmDashboard({ homeData }: Props) {
               {/* Quota indicators */}
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
                 <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Standard</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-teal-400 mb-1">Standard</p>
                   <p className="text-2xl font-black text-gray-900">{formatCreditsForDisplay(cheapScansRemaining)}</p>
                 </div>
-                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center ring-1 ring-indigo-500/10">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-1">Premium</p>
-                  <p className="text-2xl font-black text-indigo-600">{formatCreditsForDisplay(premiumScansRemaining)}</p>
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 text-center ring-1 ring-teal-500/10">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-teal-400 mb-1">Premium</p>
+                  <p className="text-2xl font-black text-teal-600">{formatCreditsForDisplay(premiumScansRemaining)}</p>
                 </div>
               </div>
             </div>
 
             {/* AI Results placeholder/list */}
             {scanResult && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 ring-1 ring-white/50">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl border border-teal-200 bg-teal-50/50 p-5 ring-1 ring-white/50">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-xs font-black uppercase tracking-tighter text-indigo-400">תוצאות סריקה אחרונה</p>
+                  <p className="text-xs font-black uppercase tracking-tighter text-teal-400">תוצאות סריקה אחרונה</p>
                   <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-500">נשמר בהצלחה</span>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
@@ -298,7 +299,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     { label: "סיווג", value: scanResult.docType ?? "—" },
                   ].map(({ label, value }) => (
                     <div key={label}>
-                      <p className="text-[10px] text-indigo-300 font-bold">{label}</p>
+                      <p className="text-[10px] text-teal-300 font-bold">{label}</p>
                       <p className="mt-1 text-sm font-black text-gray-900 truncate">{value}</p>
                     </div>
                   ))}
@@ -311,12 +312,12 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 flex-1">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15">
-                  <UsersIcon size={15} className="text-indigo-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15">
+                  <UsersIcon size={15} className="text-teal-400" />
                 </div>
                 <p className="text-sm font-black text-gray-900">{industry.vocabulary.client} {t("dashboard.stats.clients")}</p>
               </div>
-              <Link href="/app/clients" className="text-[11px] font-bold text-indigo-400 hover:underline">
+              <Link href="/app/clients" className="text-[11px] font-bold text-teal-400 hover:underline">
                 {t("executive.linkIntelligence")}
               </Link>
             </div>
@@ -326,7 +327,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                 <UsersIcon className="text-gray-300" size={32} strokeWidth={1} />
                 <div>
                   <p className="text-sm font-bold text-gray-500">{t("dashboard.stats.clients")} — אין נתונים</p>
-                  <Link href="/app/clients" className="mt-2 inline-flex text-xs font-black text-indigo-600 hover:underline">
+                  <Link href="/app/clients" className="mt-2 inline-flex text-xs font-black text-teal-600 hover:underline">
                      צפו בניהול {industry.vocabulary.client}
                   </Link>
                 </div>
@@ -340,15 +341,15 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     className="flex items-center justify-between gap-4 rounded-xl border border-transparent p-2.5 transition-all hover:border-gray-100 hover:bg-gray-50 group"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-sm shadow-indigo-200">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-600 text-xs font-black text-white shadow-sm shadow-teal-200">
                         {c.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-gray-900">{c.name}</p>
                         <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${
                           c.status === "CLOSED_LOST" ? "bg-gray-50 text-gray-400" :
-                          c.status === "PROPOSAL" ? "bg-indigo-500/15 text-indigo-300" :
-                          "bg-indigo-500/15 text-indigo-300"
+                          c.status === "PROPOSAL" ? "bg-teal-500/15 text-teal-300" :
+                          "bg-teal-500/15 text-teal-300"
                         }`}>{c.statusLabel}</span>
                       </div>
                     </div>
@@ -375,7 +376,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-rose-800">{uploadError}</p>
             {scanQuotaRedirect && (
-              <Link href="/app/billing" className="mt-1 inline-block text-xs font-bold text-indigo-300 hover:underline">שדרוג מנוי</Link>
+              <Link href="/app/billing" className="mt-1 inline-block text-xs font-bold text-teal-300 hover:underline">שדרוג מנוי</Link>
             )}
           </div>
           <button type="button" onClick={() => setUploadErrorDismissed(true)} className="shrink-0 rounded-lg p-1.5 text-rose-400 hover:bg-rose-100 transition-colors" aria-label="סגור">

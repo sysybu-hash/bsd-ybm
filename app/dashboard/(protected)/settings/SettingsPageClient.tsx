@@ -79,9 +79,9 @@ export default function SettingsHubClient({
   };
 
   const labelCls = "mb-2.5 block text-[11px] font-black uppercase tracking-[0.1em] text-slate-500/80";
-  const inputCls = "w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 hover:border-indigo-300";
+  const inputCls = "w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 hover:border-teal-300";
   const sectionCls = "rounded-[2.5rem] border border-slate-200/60 bg-white p-8 md:p-12 shadow-2xl shadow-slate-200/40 relative overflow-hidden";
-  const cardIconCls = "flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-indigo-50 text-indigo-600 shadow-sm mb-6";
+  const cardIconCls = "flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-teal-50 text-teal-600 shadow-sm mb-6";
 
   const STEPS: WizardStepConfig[] = [
     {
@@ -124,7 +124,7 @@ export default function SettingsHubClient({
                   </div>
                   
                   <div className="col-span-1 md:col-span-2 pt-6">
-                    <button type="submit" disabled={pending} className="group btn-primary w-full md:w-auto px-12 py-4 shadow-xl shadow-indigo-500/25 flex items-center justify-center gap-3">
+                    <button type="submit" disabled={pending} className="group btn-primary w-full md:w-auto px-12 py-4 shadow-xl shadow-teal-500/25 flex items-center justify-center gap-3">
                        {pending ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
                        {pending ? "מבצע סנכרון נתונים..." : "שמירה והמשך גלובלי"}
                        <ChevronLeft className="group-hover:-translate-x-1 transition-transform" size={18} />
@@ -144,21 +144,21 @@ export default function SettingsHubClient({
       content: (
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
            <div className={sectionCls}>
-             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none text-indigo-600">
+             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none text-teal-600">
                 <Bot size={240} />
              </div>
 
              <div className="relative z-10">
-               <div className={cardIconCls + " bg-indigo-600 text-white"}><Zap size={28} /></div>
+               <div className={cardIconCls + " bg-teal-600 text-white"}><Zap size={28} /></div>
                <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-2">ניהול בינה מלאכותית אחודה</h3>
                <p className="text-slate-500 font-medium mb-12">בחר אילו מנועים מפעילים את ניתוח המסמכים, הסריקה המודולרית והצ׳אט החכם.</p>
 
                <form action={handleAction(updateAiConfigAction, 2)} className="space-y-10">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                      {/* Google Gemini */}
-                     <div className="rounded-3xl border-2 border-slate-100 bg-slate-50/50 p-6 transition-all hover:border-indigo-500/30 hover:bg-white group">
+                     <div className="rounded-3xl border-2 border-slate-100 bg-slate-50/50 p-6 transition-all hover:border-teal-500/30 hover:bg-white group">
                         <div className="flex items-center gap-3 mb-4">
-                           <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center"><Sparkles size={18}/></div>
+                           <div className="h-10 w-10 rounded-xl bg-teal-500 text-white flex items-center justify-center"><Sparkles size={18}/></div>
                            <h4 className="font-black text-slate-800">Google Gemini</h4>
                         </div>
                         <p className="text-xs text-slate-500 mb-6 font-semibold leading-relaxed">מנוע ברירת המחדל לסריקות מהירות וניתוח טקסטואלי עמוק.</p>
@@ -231,21 +231,21 @@ export default function SettingsHubClient({
                      </div>
                   </div>
 
-                  <div className="p-8 bg-indigo-50 border border-indigo-100 rounded-[2rem] flex flex-col md:flex-row items-center gap-8">
+                  <div className="p-8 bg-teal-50 border border-teal-100 rounded-[2rem] flex flex-col md:flex-row items-center gap-8">
                      <div className="flex-1">
-                        <h5 className="font-black text-indigo-900 mb-1 flex items-center gap-2">
+                        <h5 className="font-black text-teal-900 mb-1 flex items-center gap-2">
                            <Search size={18} />
                            הגדרות סריקה סינכרוניות
                         </h5>
-                        <p className="text-sm text-indigo-700 font-medium">כאן נקבע איזה מנוע ינתח את המסמכים שלך כברירת מחדל בכל האתר.</p>
+                        <p className="text-sm text-teal-700 font-medium">כאן נקבע איזה מנוע ינתח את המסמכים שלך כברירת מחדל בכל האתר.</p>
                      </div>
                      <div className="flex gap-4">
-                        <label className="flex items-center gap-3 cursor-pointer bg-white px-5 py-3 rounded-2xl border border-indigo-200 shadow-sm transition-all hover:shadow-md">
-                           <input type="radio" name="ai_primary" value="gemini" defaultChecked={aiConfig.primary === "gemini"} className="w-5 h-5 text-indigo-600 focus:ring-indigo-500" />
+                        <label className="flex items-center gap-3 cursor-pointer bg-white px-5 py-3 rounded-2xl border border-teal-200 shadow-sm transition-all hover:shadow-md">
+                           <input type="radio" name="ai_primary" value="gemini" defaultChecked={aiConfig.primary === "gemini"} className="w-5 h-5 text-teal-600 focus:ring-teal-500" />
                            <span className="text-sm font-black text-slate-800 italic underline">Gemini Primary</span>
                         </label>
-                        <label className="flex items-center gap-3 cursor-pointer bg-white/40 px-5 py-3 rounded-2xl border border-indigo-100/50 transition-all hover:bg-white">
-                           <input type="radio" name="ai_primary" value="openai" defaultChecked={aiConfig.primary === "openai"} className="w-5 h-5 text-indigo-600 focus:ring-indigo-500" />
+                        <label className="flex items-center gap-3 cursor-pointer bg-white/40 px-5 py-3 rounded-2xl border border-teal-100/50 transition-all hover:bg-white">
+                           <input type="radio" name="ai_primary" value="openai" defaultChecked={aiConfig.primary === "openai"} className="w-5 h-5 text-teal-600 focus:ring-teal-500" />
                            <span className="text-sm font-black text-slate-600">OpenAI Hybrid</span>
                         </label>
                      </div>
@@ -333,7 +333,7 @@ export default function SettingsHubClient({
     <div className="max-w-[1400px] mx-auto py-12 px-6" dir={dir}>
       <header className="mb-16 text-start flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 mb-6 group transition-all hover:bg-indigo-600 hover:text-white cursor-default">
+          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-2xl bg-teal-50 text-teal-600 border border-teal-100 mb-6 group transition-all hover:bg-teal-600 hover:text-white cursor-default">
             <Settings size={20} className="group-hover:rotate-90 transition-transform duration-500" />
             <span className="text-[11px] font-black uppercase tracking-widest italic">Global System Hub</span>
           </div>

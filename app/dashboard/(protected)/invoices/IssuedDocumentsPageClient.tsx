@@ -42,7 +42,7 @@ export default function InvoicesPage() {
             <Download size={18} />
             <span>ייצוא דוחות</span>
           </button>
-          <button className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-200 hover:scale-105 active:scale-95 transition-all">
+          <button className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-teal-200 hover:scale-105 active:scale-95 transition-all">
             <Plus size={18} />
             <span>מסמך חדש</span>
           </button>
@@ -54,7 +54,7 @@ export default function InvoicesPage() {
         {[
           { label: "הכנסות החודש", value: documents.length > 0 ? `₪${documents.reduce((acc, d) => acc + (parseFloat(d.amount.replace('₪','').replace(',','')) || 0), 0).toLocaleString()}` : "₪0", trend: "+0%", isUp: true, icon: <TrendingUp className="text-emerald-500" /> },
           { label: "ממתינות להקצאה", value: documents.filter(d => d.status === "בתהליך").length.toString(), trend: "טיפול דחוף", isUp: false, icon: <AlertCircle className="text-amber-500" /> },
-          { label: "מסמכים במערכת", value: documents.length.toString(), trend: "100% תקין", isUp: true, icon: <ShieldCheck className="text-indigo-500" /> },
+          { label: "מסמכים במערכת", value: documents.length.toString(), trend: "100% תקין", isUp: true, icon: <ShieldCheck className="text-teal-500" /> },
           { label: "יתרת מע״מ משוערת", value: "₪0", trend: "צפי תשלום", isUp: false, icon: <ReceiptText className="text-slate-500" /> },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
@@ -71,7 +71,7 @@ export default function InvoicesPage() {
       </div>
 
       {/* ISRAEL INVOICES REFORM - MINISTRY OF FINANCE CONNECTION */}
-      <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-teal-900 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-white/10 transition-colors" />
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-xl text-start">
@@ -83,12 +83,12 @@ export default function InvoicesPage() {
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">סטטוס רגולטורי 2026 מופעל</span>
             </div>
             <h2 className="text-3xl font-black mb-3">תאימות מלאה — רף ₪10,000 (ינואר 2026)</h2>
-            <p className="text-indigo-100/80 font-medium leading-relaxed">
+            <p className="text-teal-100/80 font-medium leading-relaxed">
               המערכת מעודכנת לרף הדיווח החדש של שנת 2026. כל חשבונית מעל ₪10,000 (ומעל ₪5,000 החל מיוני) נשלחת אוטומטית לקבלת מספר הקצאה בזמן אמת כדי להבטיח ניכוי מע״מ תשומות מלא.
             </p>
           </div>
           <div className="flex flex-col gap-3 shrink-0 w-full md:w-auto">
-            <button className="flex items-center justify-center gap-2 bg-white text-indigo-900 px-8 py-4 rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all text-sm uppercase">
+            <button className="flex items-center justify-center gap-2 bg-white text-teal-900 px-8 py-4 rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all text-sm uppercase">
               <Settings2 size={18} />
               <span>הגדרות חיבור אישיות</span>
             </button>
@@ -111,12 +111,12 @@ export default function InvoicesPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`py-5 text-sm font-black transition-all relative ${
-                activeTab === tab.id ? "text-indigo-600" : "text-gray-400 hover:text-gray-600"
+                activeTab === tab.id ? "text-teal-600" : "text-gray-400 hover:text-gray-600"
               }`}
             >
               {tab.label}
               <span className="ms-2 px-1.5 py-0.5 rounded-md bg-gray-50 text-[10px] text-gray-500 border border-gray-200/50">{tab.count}</span>
-              {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 rounded-full" />}
+              {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-teal-600 rounded-full" />}
             </button>
           ))}
         </div>
@@ -128,7 +128,7 @@ export default function InvoicesPage() {
             <input 
               type="text" 
               placeholder="חיפוש לפי מספר חשבונית, שם לקוח או ח״פ..."
-              className="w-full bg-white border border-gray-200 rounded-2xl pr-12 pl-4 py-3 text-sm focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 outline-none transition-all shadow-sm"
+              className="w-full bg-white border border-gray-200 rounded-2xl pr-12 pl-4 py-3 text-sm focus:ring-4 focus:ring-teal-100 focus:border-teal-400 outline-none transition-all shadow-sm"
             />
           </div>
           <button className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-all">
@@ -141,7 +141,7 @@ export default function InvoicesPage() {
         <div className="overflow-x-auto min-h-[300px] flex flex-col">
           {loading ? (
              <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-400 gap-4">
-               <Loader2 className="animate-spin text-indigo-500" size={32} />
+               <Loader2 className="animate-spin text-teal-500" size={32} />
                <p className="font-bold text-sm">מעדכן נתונים חיים...</p>
              </div>
           ) : documents.length === 0 ? (
@@ -153,7 +153,7 @@ export default function InvoicesPage() {
                 <p className="font-black text-gray-600">אין מסמכים עדיין</p>
                 <p className="text-xs font-medium">המערכת נקייה ומוכנה להטמעת המסמך הראשון שלך.</p>
               </div>
-              <button className="mt-2 text-indigo-600 font-bold text-xs hover:underline">הפק חשבונית חדשה</button>
+              <button className="mt-2 text-teal-600 font-bold text-xs hover:underline">הפק חשבונית חדשה</button>
             </div>
           ) : (
             <table className="w-full text-start">
@@ -197,10 +197,10 @@ export default function InvoicesPage() {
                     <td className="px-6 py-5 text-sm font-black text-gray-900 text-end tracking-tighter">{row.amount}</td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                        <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all">
                           <FileText size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                        <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all">
                           <Download size={18} />
                         </button>
                       </div>

@@ -14,8 +14,8 @@ export default function ContactPageClient() {
   return (
     <MarketingPublicShell
       title={t("contactPage.title")}
-      eyebrow="Contact"
-      description="דברו איתנו על הדגמה, התאמה ארגונית או בניית flow שמתאים לעסק שלכם."
+      eyebrow={t("publicShell.navContact")}
+      description={t("contactPage.shellDescription")}
     >
       <p className="mb-8 text-lg leading-8 text-[color:var(--v2-muted)]">{t("contactPage.intro")}</p>
 

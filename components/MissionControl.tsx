@@ -109,7 +109,7 @@ export default function MissionControl() {
         <div className="lg:col-span-2 flex min-h-[480px] max-h-[min(70vh,640px)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="bg-gray-50 p-6 border-b border-gray-200 flex justify-between items-center text-gray-900 gap-4 flex-wrap">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-600 rounded-lg shrink-0 text-white">
+              <div className="p-2 bg-teal-600 rounded-lg shrink-0 text-white">
                 <Zap size={20} aria-hidden />
               </div>
               <span className="font-black italic">BSD AI — לוג תפעול</span>
@@ -126,7 +126,7 @@ export default function MissionControl() {
                   className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
                     m.role === "ai"
                       ? "bg-gray-50 text-gray-700 border border-gray-200"
-                      : "bg-indigo-600 text-white"
+                      : "bg-teal-600 text-white"
                   }`}
                 >
                   {m.content}
@@ -145,12 +145,12 @@ export default function MissionControl() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKeyDown}
               placeholder="הערות תפעול, בדיקות, משימות..."
-              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               aria-label="הודעה לבקרה"
             />
             <button
               type="submit"
-              className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition-all shrink-0 shadow-sm"
+              className="bg-teal-600 text-white p-3 rounded-xl hover:bg-teal-700 transition-all shrink-0 shadow-sm"
               aria-label="שלח"
             >
               <Send size={20} />
@@ -161,7 +161,7 @@ export default function MissionControl() {
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
             <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic text-slate-900 leading-none">
-              <Clock className="text-indigo-500" aria-hidden />
+              <Clock className="text-teal-500" aria-hidden />
               תזמון בדיקות
             </h3>
             <p className="text-gray-400 text-sm mb-6">
@@ -180,7 +180,7 @@ export default function MissionControl() {
               </div>
               <button
                 type="button"
-                className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20"
+                className="w-full bg-teal-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-teal-700 transition-all shadow-md shadow-teal-600/20"
                 onClick={() => {
                   setTimeSaved(true);
                   setTimeout(() => setTimeSaved(false), 3000);
@@ -197,14 +197,14 @@ export default function MissionControl() {
             </div>
           </div>
 
-          <div className="group relative overflow-hidden rounded-2xl bg-indigo-600 p-8 text-white shadow-sm">
+          <div className="group relative overflow-hidden rounded-2xl bg-teal-600 p-8 text-white shadow-sm">
             <ShieldCheck
               className="absolute top-[-10px] left-[-10px] text-white/10 pointer-events-none"
               size={150}
               aria-hidden
             />
             <h3 className="text-xl font-black mb-2 italic">מצב אבטחה</h3>
-            <p className="text-indigo-100 text-xs leading-relaxed">
+            <p className="text-teal-100 text-xs leading-relaxed">
               BSD-YBM פתרונות AI — כל שינויי הקוד והפריסה מנוטרים.
             </p>
           </div>

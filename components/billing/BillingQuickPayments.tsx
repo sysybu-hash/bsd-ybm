@@ -43,11 +43,11 @@ export default function BillingQuickPayments({ presets }: Props) {
 
   return (
     <section
-      className="rounded-2xl border border-indigo-500/30/80 bg-gradient-to-br from-indigo-50/90 to-white p-6 shadow-sm md:p-8"
+      className="rounded-2xl border border-teal-500/30/80 bg-gradient-to-br from-teal-50/90 to-white p-6 shadow-sm md:p-8"
       dir="rtl"
     >
       <div className="flex items-start gap-3 mb-4">
-        <div className="rounded-xl bg-indigo-600 p-2.5 text-white shrink-0">
+        <div className="rounded-xl bg-teal-600 p-2.5 text-white shrink-0">
           <Zap size={22} aria-hidden />
         </div>
         <div>
@@ -55,7 +55,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           <p className="text-sm text-gray-500 mt-1 leading-relaxed">
             <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
             <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
-            <Link href="/app/settings?tab=billing" className="font-bold text-indigo-300 underline">
+            <Link href="/app/settings?tab=billing" className="font-bold text-teal-300 underline">
               הגדרות › מנויים
             </Link>
             .
@@ -76,7 +76,7 @@ export default function BillingQuickPayments({ presets }: Props) {
                   `בקשת תשלום — ${p.label} (₪${p.amountNis.toLocaleString("he-IL")})`,
               )
             }
-            className={`${btn} border-indigo-500/30 bg-white text-indigo-700 hover:bg-indigo-500/15`}
+            className={`${btn} border-teal-500/30 bg-white text-teal-700 hover:bg-teal-500/15`}
           >
             {p.label}
           </button>
@@ -85,7 +85,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           type="button"
           disabled={pending}
           onClick={scrollToPayPalSubscribe}
-          className={`${btn} inline-flex items-center gap-2 border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-700`}
+          className={`${btn} inline-flex items-center gap-2 border-teal-600 bg-teal-600 text-white hover:bg-teal-700`}
         >
           <ArrowDown size={18} aria-hidden />
           מנוי חודשי — PayPal (למטה)
@@ -109,7 +109,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           type="button"
           disabled={pending}
           onClick={applyCustom}
-          className="rounded-xl bg-indigo-600 text-white px-6 py-2.5 text-sm font-black hover:bg-indigo-700 disabled:opacity-50 shrink-0"
+          className="rounded-xl bg-teal-600 text-white px-6 py-2.5 text-sm font-black hover:bg-teal-700 disabled:opacity-50 shrink-0"
         >
           צור בקשה
         </button>

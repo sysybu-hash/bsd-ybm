@@ -10,6 +10,7 @@ import AppCommandPalette from "@/components/app-shell/AppCommandPalette";
 import WorkspaceUtilityDock from "@/components/app-shell/WorkspaceUtilityDock";
 import { buildAppNavCollection, type AppNavItem } from "@/components/app-shell/app-nav";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
+import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import {
   getSubscriptionStatusLabel,
@@ -59,8 +60,8 @@ function SidebarLink({
       href={href}
       className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold transition ${
         active
-          ? "bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]"
-          : "text-[color:var(--v2-muted)] hover:bg-white/88 hover:text-[color:var(--v2-ink)]"
+          ? "border-r-[3px] border-[color:var(--app-sidebar-accent-line)] bg-[color:var(--app-sidebar-active-bg)] text-white"
+          : "text-[color:var(--app-sidebar-muted)] hover:bg-white/5 hover:text-[color:var(--app-sidebar-text)]"
       }`}
     >
       <Icon className="h-4 w-4 shrink-0" aria-hidden />
@@ -85,21 +86,13 @@ function MobilePill({
       href={href}
       className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition ${
         active
-          ? "bg-[color:var(--v2-accent)] text-white"
-          : "border border-[color:var(--v2-line)] bg-white/88 text-[color:var(--v2-muted)]"
+          ? "bg-[#14b8a6] text-white"
+          : "border border-slate-300 bg-white text-slate-600"
       }`}
     >
       <Icon className="h-4 w-4" aria-hidden />
       {label}
     </Link>
-  );
-}
-
-function ProfileChip({ label }: { label: string }) {
-  return (
-    <span className="rounded-full bg-[color:var(--v2-canvas)] px-3 py-1 text-[11px] font-black text-[color:var(--v2-muted)]">
-      {label}
-    </span>
   );
 }
 
@@ -146,7 +139,7 @@ export default function AppShellV2({ children, user }: Props) {
 
   return (
     <div
-      className={`${marketingSans.className} min-h-screen bg-[color:var(--v2-canvas)] text-[color:var(--v2-ink)]`}
+      className={`${marketingSans.className} min-h-screen bg-[color:var(--app-main-bg)] text-[color:var(--v2-ink)]`}
       dir="rtl"
     >
       <a
@@ -157,20 +150,12 @@ export default function AppShellV2({ children, user }: Props) {
       </a>
 
       <div className="grid min-h-screen lg:grid-cols-[276px_1fr]">
-        <aside className="hidden border-l border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 lg:block">
+        <aside className="hidden border-l border-[color:var(--app-sidebar-border)] bg-[color:var(--app-sidebar-bg)] lg:block">
           <div className="sticky top-0 flex min-h-screen flex-col px-4 py-5">
-            <Link href="/app" className="flex items-center gap-3 px-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white">
-                BY
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-base font-black tracking-[-0.04em]">BSD-YBM</span>
-                <span className="block text-xs font-medium text-[color:var(--v2-muted)]">מרחב עבודה</span>
-              </span>
-            </Link>
+            <BsdYbmLogo href="/app" variant="sidebar" size="sm" subtitle={<span className="mt-0.5 block text-[10px] font-medium text-slate-400">מרחב עבודה</span>} />
 
             <div className="mt-8">
-              <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--v2-muted)]">
+              <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
                 עבודה יומית
               </p>
               <nav className="mt-3 grid gap-1.5">
@@ -188,7 +173,7 @@ export default function AppShellV2({ children, user }: Props) {
 
             {utilityNavItems.length > 0 ? (
               <div className="mt-6">
-                <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--v2-muted)]">
+                <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
                   ניווט נוסף
                 </p>
                 <nav className="mt-3 grid gap-1.5">
@@ -206,31 +191,34 @@ export default function AppShellV2({ children, user }: Props) {
             ) : null}
 
             <div className="mt-auto space-y-3 pt-6">
-              <Link href={nav.advanced.href} className="v2-button v2-button-secondary w-full justify-center">
+              <Link
+                href={nav.advanced.href}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-black text-white transition hover:bg-white/10"
+              >
                 <Sparkles className="h-4 w-4" aria-hidden />
                 {nav.advanced.label}
               </Link>
 
-              <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-3.5">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-3.5">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--v2-canvas)] text-sm font-black text-[color:var(--v2-accent)]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#14b8a6]/20 text-sm font-black text-[#5eead4]">
                     {initials}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-black text-[color:var(--v2-ink)]">{user.name}</p>
-                    <p className="truncate text-xs text-[color:var(--v2-muted)]">{user.email}</p>
+                    <p className="truncate text-sm font-black text-white">{user.name}</p>
+                    <p className="truncate text-xs text-slate-400">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <ProfileChip label={roleLabel} />
-                  <ProfileChip label={tierLabel} />
-                  <ProfileChip label={modeLabel} />
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-300">{roleLabel}</span>
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-400">{tierLabel}</span>
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-400">{modeLabel}</span>
                 </div>
 
                 <p
                   className={`mt-3 text-xs font-bold ${
-                    subscriptionActive ? "text-emerald-700" : "text-amber-700"
+                    subscriptionActive ? "text-emerald-400" : "text-amber-400"
                   }`}
                 >
                   {subscriptionLabel}
@@ -240,7 +228,7 @@ export default function AppShellV2({ children, user }: Props) {
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/login" })}
-                className="v2-button w-full justify-center border border-[color:var(--v2-line)] bg-white/88 text-[color:var(--v2-ink)] hover:bg-white"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-4 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-white/5 hover:text-white"
               >
                 <LogOut className="h-4 w-4" aria-hidden />
                 יציאה
@@ -249,8 +237,8 @@ export default function AppShellV2({ children, user }: Props) {
           </div>
         </aside>
 
-        <div className="min-w-0">
-          <header className="sticky top-0 z-30 border-b border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/94 backdrop-blur-md">
+        <div className="min-w-0 bg-[color:var(--app-main-bg)]">
+          <header className="sticky top-0 z-30 border-b border-slate-200/90 bg-white/95 shadow-sm backdrop-blur-md">
             <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-sm font-black text-[color:var(--v2-accent)] shadow-sm lg:hidden">

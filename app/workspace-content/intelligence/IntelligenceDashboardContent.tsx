@@ -44,7 +44,7 @@ export async function IntelligenceDashboardContent({
               {t("intelligence.pageSubtitle")}
             </p>
           </div>
-          <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-100 rounded-2xl px-4 py-2 text-xs font-black text-indigo-700 shadow-sm">
+          <div className="flex items-center gap-2 bg-teal-50 border border-teal-100 rounded-2xl px-4 py-2 text-xs font-black text-teal-700 shadow-sm">
              <Zap size={14} className="text-amber-500 fill-amber-500" /> {t("intelligence.syncActive")}
           </div>
         </div>
@@ -52,7 +52,7 @@ export async function IntelligenceDashboardContent({
 
       {/* 🚀 Autonomous Negotiation Agent - WORLD FIRST */}
       <section className="card-avenue rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl shadow-blue-900/5 relative overflow-hidden border border-slate-200">
-         <div className="absolute top-0 end-0 h-32 w-32 bg-indigo-500/5 blur-3xl rounded-full" />
+         <div className="absolute top-0 end-0 h-32 w-32 bg-teal-500/5 blur-3xl rounded-full" />
          <AutonomousNegotiationCenter />
       </section>
 
@@ -68,11 +68,11 @@ export async function IntelligenceDashboardContent({
           aria-label={t("intelligencePage.dividerLabel")}
         >
           <div className="flex flex-wrap items-center gap-3">
-            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-indigo-500/20 to-indigo-400/60" />
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-400">
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-teal-500/20 to-teal-400/60" />
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-teal-400">
               {t("intelligencePage.dividerLabel")}
             </h2>
-            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/20 to-indigo-400/60" />
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-teal-500/20 to-teal-400/60" />
           </div>
           <ExecutiveDashboardSection embedded userEmail={email} />
         </section>

@@ -113,19 +113,19 @@ export default function BillingUnifiedTabsClient({
                   onClick={() => setTabAndUrl(id)}
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
-                      ? "bg-indigo-600 text-white shadow-sm ring-1 ring-indigo-200"
+                      ? "bg-teal-600 text-white shadow-sm ring-1 ring-teal-200"
                       : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
                   }`}
                 >
                   <span className="flex items-center gap-2 text-xs font-black">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-400"
+                        active ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-400"
                       }`}
                     >
                       {step}
                     </span>
-                    <Icon size={16} className={active ? "text-indigo-400" : "text-gray-400"} strokeWidth={2} />
+                    <Icon size={16} className={active ? "text-teal-400" : "text-gray-400"} strokeWidth={2} />
                     <span className={`font-black ${active ? "text-white" : "text-gray-600"}`}>{label}</span>
                   </span>
                   <span className="pe-8 text-[11px] font-medium text-gray-400">{hint}</span>
