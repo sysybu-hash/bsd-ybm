@@ -22,7 +22,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
       </div>
       <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
         <div
-          className="h-full rounded-full bg-gradient-to-l from-indigo-500 to-indigo-500 transition-all duration-700"
+          className="h-full rounded-full bg-gradient-to-l from-teal-500 to-teal-500 transition-all duration-700"
           style={{ width: `${((step + 1) / total) * 100}%` }}
         />
       </div>
@@ -40,7 +40,7 @@ function AnimErpCrm({ step }: { step: number }) {
 
   const STATUS_COLOR: Record<string, string> = {
     LEAD: "bg-gray-50 text-gray-500",
-    ACTIVE: "bg-indigo-100 text-indigo-300",
+    ACTIVE: "bg-teal-100 text-teal-300",
     PROPOSAL: "bg-amber-100 text-amber-400",
     "CLOSED_WON ✓": "bg-emerald-100 text-emerald-400",
   };
@@ -67,7 +67,7 @@ function AnimErpCrm({ step }: { step: number }) {
               }`}
             >
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-indigo-100 flex items-center justify-center text-[10px] font-black text-indigo-400">
+                <div className="h-7 w-7 rounded-lg bg-teal-100 flex items-center justify-center text-[10px] font-black text-teal-400">
                   {c.name[0]}
                 </div>
                 <span className="text-[12px] font-bold text-gray-700">{c.name}</span>
@@ -89,27 +89,27 @@ function AnimErpCrm({ step }: { step: number }) {
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
             חשבונית ERP נוצרה אוטומטית ✨
           </p>
-          <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-50 to-indigo-50 p-4">
+          <div className="rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-50 to-teal-50 p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-black uppercase text-indigo-400">חשבונית מס #INV-0041</span>
-              <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] font-black text-indigo-300">ממתין לתשלום</span>
+              <span className="text-[10px] font-black uppercase text-teal-400">חשבונית מס #INV-0041</span>
+              <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[9px] font-black text-teal-300">ממתין לתשלום</span>
             </div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center text-[11px] font-black text-indigo-400">מ</div>
+              <div className="h-8 w-8 rounded-lg bg-teal-100 flex items-center justify-center text-[11px] font-black text-teal-400">מ</div>
               <div>
                 <p className="text-[12px] font-black text-gray-700">ממן לוגיסטיקה</p>
                 <p className="text-[10px] text-gray-400">לקוח CRM → ERP</p>
               </div>
             </div>
             {[["שירות ניהול לוגיסטי", "₪14,000"], ["עמלת שירות", "₪4,400"]].map(([desc, amt]) => (
-              <div key={desc} className="flex justify-between py-1.5 border-t border-indigo-500/20 text-[11px]">
+              <div key={desc} className="flex justify-between py-1.5 border-t border-teal-500/20 text-[11px]">
                 <span className="text-gray-500">{desc}</span>
                 <span className="font-black text-gray-700">{amt}</span>
               </div>
             ))}
-            <div className="flex justify-between pt-2 border-t-2 border-indigo-500/30 text-[12px]">
+            <div className="flex justify-between pt-2 border-t-2 border-teal-500/30 text-[12px]">
               <span className="font-black text-gray-600">סה״כ</span>
-              <span className="font-black text-indigo-300">₪18,400</span>
+              <span className="font-black text-teal-300">₪18,400</span>
             </div>
           </div>
         </div>
@@ -133,8 +133,8 @@ function AnimErpCrm({ step }: { step: number }) {
           <div className="grid grid-cols-2 gap-2">
             {[
               { label: "סטטוס CRM", val: "CLOSED_WON", color: "text-emerald-400" },
-              { label: "סטטוס ERP", val: "שולם", color: "text-indigo-400" },
-              { label: "סוג מסמך", val: "חשבונית מס", color: "text-indigo-400" },
+              { label: "סטטוס ERP", val: "שולם", color: "text-teal-400" },
+              { label: "סוג מסמך", val: "חשבונית מס", color: "text-teal-400" },
               { label: "סינכרון", val: "אוטומטי ✓", color: "text-emerald-400" },
             ].map(({ label, val, color }) => (
               <div key={label} className="rounded-xl border border-gray-200 bg-white p-2.5">
@@ -166,12 +166,12 @@ function AnimRegistration({ step }: { step: number }) {
             ].map(({ label, placeholder, filled }) => (
               <div key={label}>
                 <p className="text-[10px] font-bold text-gray-500 mb-1">{label}</p>
-                <div className={`rounded-xl border px-3 py-2 text-[11px] transition-all ${filled ? "border-indigo-500/40 bg-indigo-500/15 text-gray-600 font-semibold" : "border-gray-200 bg-white text-gray-400"}`}>
+                <div className={`rounded-xl border px-3 py-2 text-[11px] transition-all ${filled ? "border-teal-500/40 bg-teal-500/15 text-gray-600 font-semibold" : "border-gray-200 bg-white text-gray-400"}`}>
                   {placeholder}
                 </div>
               </div>
             ))}
-            <div className="rounded-xl bg-indigo-600 py-2.5 text-center text-[12px] font-black text-white shadow-sm shadow-indigo-600/30">
+            <div className="rounded-xl bg-teal-600 py-2.5 text-center text-[12px] font-black text-white shadow-sm shadow-teal-600/30">
               צור חשבון חינם ←
             </div>
           </div>
@@ -185,16 +185,16 @@ function AnimRegistration({ step }: { step: number }) {
           <div className="space-y-2">
             {[
               { name: "FREE", price: "חינם", color: "border-gray-200 bg-white", tag: "" },
-              { name: "BASIC", price: "₪99/חודש", color: "border-indigo-500/40 bg-indigo-500/15 scale-[1.02]", tag: "פופולרי" },
-              { name: "PRO", price: "₪249/חודש", color: "border-indigo-500/30 bg-indigo-500/15", tag: "" },
+              { name: "BASIC", price: "₪99/חודש", color: "border-teal-500/40 bg-teal-500/15 scale-[1.02]", tag: "פופולרי" },
+              { name: "PRO", price: "₪249/חודש", color: "border-teal-500/30 bg-teal-500/15", tag: "" },
             ].map(({ name, price, color, tag }) => (
               <div key={name} className={`flex items-center justify-between rounded-xl border px-3 py-2.5 transition-all ${color}`}>
                 <div className="flex items-center gap-2">
-                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${name === "BASIC" ? "border-indigo-500 bg-indigo-500/15" : "border-gray-300"}`}>
+                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${name === "BASIC" ? "border-teal-500 bg-teal-500/15" : "border-gray-300"}`}>
                     {name === "BASIC" && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
                   </div>
                   <span className="text-[12px] font-black text-gray-700">{name}</span>
-                  {tag && <span className="rounded-full bg-indigo-100 px-1.5 py-0.5 text-[8px] font-black text-indigo-300">{tag}</span>}
+                  {tag && <span className="rounded-full bg-teal-100 px-1.5 py-0.5 text-[8px] font-black text-teal-300">{tag}</span>}
                 </div>
                 <span className="text-[11px] font-bold text-gray-500">{price}</span>
               </div>
@@ -213,7 +213,7 @@ function AnimRegistration({ step }: { step: number }) {
               <span className="text-[13px] font-black text-gray-900">₪99 / חודש</span>
             </div>
             <div className="h-px bg-gray-100" />
-            <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/15 px-3 py-3 flex items-center gap-2.5">
+            <div className="rounded-xl border border-teal-500/20 bg-teal-500/15 px-3 py-3 flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-lg bg-[#003087] flex items-center justify-center">
                 <span className="text-[8px] font-black text-gray-900">Pay</span>
               </div>
@@ -222,7 +222,7 @@ function AnimRegistration({ step }: { step: number }) {
                 <p className="text-[9px] text-gray-400">תשלום מאובטח ב-SSL</p>
               </div>
             </div>
-            <div className="rounded-xl bg-indigo-600 py-2.5 text-center text-[12px] font-black text-white">
+            <div className="rounded-xl bg-teal-600 py-2.5 text-center text-[12px] font-black text-white">
               שלם ₪99 ←
             </div>
             <p className="text-center text-[9px] text-gray-400">🔒 מאובטח · ניתן לביטול בכל עת</p>
@@ -234,7 +234,7 @@ function AnimRegistration({ step }: { step: number }) {
       {step === 3 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
           <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-3">ברוך הבא! ✓ המנוי פעיל</p>
-          <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-50 to-indigo-50 p-4 mb-3">
+          <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-50 to-teal-50 p-4 mb-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-400 text-lg">✓</div>
               <div>
@@ -258,7 +258,7 @@ function AnimRegistration({ step }: { step: number }) {
               </div>
             ))}
           </div>
-          <div className="mt-2 rounded-xl bg-indigo-600 py-2 text-center text-[11px] font-black text-white">
+          <div className="mt-2 rounded-xl bg-teal-600 py-2 text-center text-[11px] font-black text-white">
             כניסה לדשבורד ←
           </div>
         </div>
@@ -276,13 +276,13 @@ function AnimScanner({ step }: { step: number }) {
       {step === 0 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">העלאת מסמך</p>
-          <div className="rounded-2xl border-2 border-dashed border-indigo-500/40 bg-indigo-500/15 p-5 text-center mb-3">
-            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100">
+          <div className="rounded-2xl border-2 border-dashed border-teal-500/40 bg-teal-500/15 p-5 text-center mb-3">
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100">
               <span className="text-2xl">📄</span>
             </div>
             <p className="text-[12px] font-black text-gray-600">גרור קובץ לכאן</p>
             <p className="text-[10px] text-gray-400 mt-1">PDF, JPG, PNG · עד 20MB</p>
-            <div className="mt-3 rounded-xl bg-indigo-600 py-1.5 text-[11px] font-black text-white">
+            <div className="mt-3 rounded-xl bg-teal-600 py-1.5 text-[11px] font-black text-white">
               בחר קובץ
             </div>
           </div>
@@ -299,10 +299,10 @@ function AnimScanner({ step }: { step: number }) {
       {/* Step 1: Scanning progress */}
       {step === 1 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-teal-400 mb-3">
             סורק מסמך... 🔍
           </p>
-          <div className="relative mb-3 overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-50 to-white p-4">
+          <div className="relative mb-3 overflow-hidden rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-50 to-white p-4">
             {/* Document preview mock */}
             <div className="space-y-1.5 opacity-60">
               {[80, 60, 90, 50, 70].map((w, i) => (
@@ -310,13 +310,13 @@ function AnimScanner({ step }: { step: number }) {
               ))}
             </div>
             {/* Scan line animation */}
-            <div className="absolute inset-x-0 h-0.5 bg-gradient-to-l from-transparent via-indigo-500 to-transparent opacity-90" style={{ animation: 'bsd-tut-scan-line 2s ease-in-out infinite', position: 'absolute' }} />
+            <div className="absolute inset-x-0 h-0.5 bg-gradient-to-l from-transparent via-teal-500 to-transparent opacity-90" style={{ animation: 'bsd-tut-scan-line 2s ease-in-out infinite', position: 'absolute' }} />
           </div>
           <div className="space-y-1.5">
             {[
-              { label: "OCR טקסט", pct: 72, color: "bg-indigo-500/15" },
-              { label: "זיהוי שדות", pct: 45, color: "bg-indigo-500/15" },
-              { label: "AI מיפוי", pct: 18, color: "bg-indigo-500/15" },
+              { label: "OCR טקסט", pct: 72, color: "bg-teal-500/15" },
+              { label: "זיהוי שדות", pct: 45, color: "bg-teal-500/15" },
+              { label: "AI מיפוי", pct: 18, color: "bg-teal-500/15" },
             ].map(({ label, pct, color }) => (
               <div key={label}>
                 <div className="flex justify-between text-[9px] font-bold text-gray-400 mb-0.5">
@@ -334,7 +334,7 @@ function AnimScanner({ step }: { step: number }) {
       {/* Step 2: AI extraction */}
       {step === 2 && (
         <div className="flex-1 animate-[bsd-fadein_0.4s_ease]">
-          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-teal-400 mb-3">
             AI מחלץ נתונים... 🤖
           </p>
           <div className="space-y-2">
@@ -453,7 +453,7 @@ export default function LandingTutorialSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6" dir="rtl">
         {/* Section header */}
         <div className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-indigo-600">
+          <span className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-teal-600">
             ▶ הדגמות חיות
           </span>
           <h2 className="mt-4 text-3xl font-black text-gray-900 sm:text-4xl">
@@ -469,7 +469,7 @@ export default function LandingTutorialSection() {
 
           {/* Video 1 */}
           <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
-            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-indigo-700 to-indigo-700">
+            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-teal-700 to-teal-700">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔄</span>
                 <div>
@@ -519,7 +519,7 @@ export default function LandingTutorialSection() {
 
           {/* Video 3 */}
           <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
-            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-indigo-700 to-indigo-600">
+            <div className="px-5 pt-5 pb-4 bg-gradient-to-l from-teal-700 to-teal-600">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🔍</span>
                 <div>

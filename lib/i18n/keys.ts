@@ -370,4 +370,29 @@ export type MessageTree = {
     ctaFinalDesc: string;
     ctaFinalJoin: string;
   };
+  /** מעטפת שיווק ציבורית + מסכי auth — טקסטים אחידים לכל השפות */
+  publicShell: {
+    eyebrowSector: string;
+    navHome: string;
+    navProduct: string;
+    navSolutions: string;
+    navPricing: string;
+    navAbout: string;
+    navContact: string;
+    ctaLogin: string;
+    ctaStart: string;
+    footerLead: string;
+    authEyebrow: string;
+    authHeroTitle: string;
+    authHeroLead: string;
+    authHighlight1: string;
+    authHighlight2: string;
+    authHighlight3: string;
+    authPanelTitle: string;
+    authPanelBody: string;
+    authBackToSite: string;
+    authViewNewSite: string;
+    authFooterLead: string;
+    authFooterCopy: string;
+  };
 };

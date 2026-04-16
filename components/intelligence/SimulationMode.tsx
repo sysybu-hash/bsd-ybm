@@ -11,7 +11,7 @@ export default function SimulationMode() {
     <div
       className={`rounded-2xl border p-8 transition-all duration-500 ${
         isSimulating
-          ? "bg-indigo-600 border-indigo-400 text-white"
+          ? "bg-teal-600 border-teal-400 text-white"
           : "bg-white border-gray-200 text-gray-900"
       }`}
       dir="rtl"
@@ -30,8 +30,8 @@ export default function SimulationMode() {
           onClick={() => setIsSimulating(!isSimulating)}
           className={`rounded-xl px-6 py-2 text-sm font-bold transition-all ${
             isSimulating
-              ? "bg-white text-indigo-400 shadow-sm"
-              : "bg-indigo-600 text-white shadow-sm"
+              ? "bg-white text-teal-400 shadow-sm"
+              : "bg-teal-600 text-white shadow-sm"
           }`}
         >
           {isSimulating ? 'בטל סימולציה' : 'הפעל מצב "מה אם?"'}
@@ -40,7 +40,7 @@ export default function SimulationMode() {
 
       <div className="space-y-4">
         <p
-          className={`text-sm ${isSimulating ? "text-indigo-100" : "text-gray-400"}`}
+          className={`text-sm ${isSimulating ? "text-teal-100" : "text-gray-400"}`}
         >
           הוסף הוצאה או הכנסה דמיונית כדי לראות איך היא תשפיע על תזרים המזומנים של
           BSD-YBM בחצי השנה הקרובה.

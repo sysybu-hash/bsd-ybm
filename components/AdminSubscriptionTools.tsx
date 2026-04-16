@@ -67,9 +67,9 @@ export default function AdminSubscriptionTools({
 
   return (
     <div className="space-y-10">
-      <section className="rounded-2xl border border-indigo-500/30 bg-indigo-500/15 p-6 md:p-8">
+      <section className="rounded-2xl border border-teal-500/30 bg-teal-500/15 p-6 md:p-8">
         <h2 className="text-xl font-black italic text-gray-900 mb-2 flex items-center gap-2">
-          <CheckCircle2 className="text-indigo-400" size={22} />
+          <CheckCircle2 className="text-teal-400" size={22} />
           משתמשים ממתינים לאישור והגדרה
         </h2>
         <p className="text-sm text-gray-700 mb-6">
@@ -82,7 +82,7 @@ export default function AdminSubscriptionTools({
             {pendingUsers.map((u) => (
               <li
                 key={u.id}
-                className="bg-white rounded-xl border border-indigo-500/20 p-4 flex flex-col gap-3"
+                className="bg-white rounded-xl border border-teal-500/20 p-4 flex flex-col gap-3"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
@@ -149,7 +149,7 @@ export default function AdminSubscriptionTools({
                         }
                       });
                     }}
-                    className="rounded-xl bg-indigo-600 hover:bg-indigo-500/15 text-white px-4 py-2 text-sm font-bold disabled:opacity-50 inline-flex items-center gap-2"
+                    className="rounded-xl bg-teal-600 hover:bg-teal-500/15 text-white px-4 py-2 text-sm font-bold disabled:opacity-50 inline-flex items-center gap-2"
                   >
                     {pending ? <Loader2 className="animate-spin" size={16} /> : null}
                     אשר רישום
@@ -161,9 +161,9 @@ export default function AdminSubscriptionTools({
         )}
       </section>
 
-      <section className="rounded-2xl border border-indigo-500/30 bg-indigo-500/15 p-6 md:p-8">
-        <h2 className="text-xl font-black italic text-indigo-800 mb-2 flex items-center gap-2">
-          <CheckCircle2 className="text-indigo-400" size={22} />
+      <section className="rounded-2xl border border-teal-500/30 bg-teal-500/15 p-6 md:p-8">
+        <h2 className="text-xl font-black italic text-teal-800 mb-2 flex items-center gap-2">
+          <CheckCircle2 className="text-teal-400" size={22} />
           בקשות הרשמה ממתינות לאישור
         </h2>
         <p className="text-sm text-gray-700 mb-6">
@@ -177,7 +177,7 @@ export default function AdminSubscriptionTools({
             {pendingOrgs.map((o) => (
               <li
                 key={o.id}
-                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-indigo-500/20 p-4"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-xl border border-teal-500/20 p-4"
               >
                 <div>
                   <p className="font-bold text-gray-900">{o.name}</p>
@@ -222,7 +222,7 @@ export default function AdminSubscriptionTools({
 
       <section className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-sm">
         <h2 className="text-xl font-black italic text-gray-900 mb-2 flex items-center gap-2">
-          <UserPlus className="text-indigo-400" size={22} />
+          <UserPlus className="text-teal-400" size={22} />
           יצירת משתמש ומנוי (סיסמה)
         </h2>
         <p className="text-sm text-gray-500 mb-6">
@@ -301,7 +301,7 @@ export default function AdminSubscriptionTools({
             </label>
             <button
               type="button"
-              className="text-sm font-bold text-indigo-400 flex items-center gap-1"
+              className="text-sm font-bold text-teal-400 flex items-center gap-1"
               onClick={() => setGenPassword(generateProvisionPassword(14))}
             >
               <KeyRound size={16} />
@@ -327,7 +327,7 @@ export default function AdminSubscriptionTools({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-xl bg-indigo-600 hover:bg-indigo-500/15 text-white font-bold py-3 disabled:opacity-50"
+            className="rounded-xl bg-teal-600 hover:bg-teal-500/15 text-white font-bold py-3 disabled:opacity-50"
           >
             {pending ? "שומר…" : "צור משתמש"}
           </button>

@@ -42,8 +42,8 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
 
   const ORG_TYPE_OPTIONS = [
     { value: "HOME", label: t("auth.register.types.home.label"), desc: t("auth.register.types.home.desc"), Icon: Home, activeBg: "bg-emerald-500/15", activeBorder: "border-emerald-500/40", activeText: "text-emerald-400", activeRing: "ring-emerald-500/30" },
-    { value: "FREELANCER", label: t("auth.register.types.freelancer.label"), desc: t("auth.register.types.freelancer.desc"), Icon: Briefcase, activeBg: "bg-indigo-500/15", activeBorder: "border-indigo-500/40", activeText: "text-indigo-400", activeRing: "ring-indigo-500/30" },
-    { value: "COMPANY", label: t("auth.register.types.company.label"), desc: t("auth.register.types.company.desc"), Icon: Building2, activeBg: "bg-indigo-500/15", activeBorder: "border-indigo-500/40", activeText: "text-indigo-400", activeRing: "ring-indigo-500/30" },
+    { value: "FREELANCER", label: t("auth.register.types.freelancer.label"), desc: t("auth.register.types.freelancer.desc"), Icon: Briefcase, activeBg: "bg-teal-500/15", activeBorder: "border-teal-500/40", activeText: "text-teal-400", activeRing: "ring-teal-500/30" },
+    { value: "COMPANY", label: t("auth.register.types.company.label"), desc: t("auth.register.types.company.desc"), Icon: Building2, activeBg: "bg-teal-500/15", activeBorder: "border-teal-500/40", activeText: "text-teal-400", activeRing: "ring-teal-500/30" },
     { value: "ENTERPRISE", label: t("auth.register.types.enterprise.label"), desc: t("auth.register.types.enterprise.desc"), Icon: Factory, activeBg: "bg-orange-500/15", activeBorder: "border-orange-500/40", activeText: "text-orange-400", activeRing: "ring-orange-500/30" },
   ];
 
@@ -154,7 +154,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
     }
   }, [form, inviteToken, orgInviteToken, isTeamJoin, plan]);
 
-  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition text-start";
+  const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition text-start";
 
   if (previewLoading) {
     return (
@@ -172,7 +172,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
       <AuthPageShell secondaryNav={{ href: "/login", label: t("auth.register.loginLink") }}>
           <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-start">
           <p className="font-medium text-rose-700">{previewErr}</p>
-          <Link href="/login" className="mt-4 inline-block text-sm text-indigo-600 hover:underline">{t("auth.register.backToLogin")}</Link>
+          <Link href="/login" className="mt-4 inline-block text-sm text-teal-600 hover:underline">{t("auth.register.backToLogin")}</Link>
         </div>
       </AuthPageShell>
     );
@@ -191,7 +191,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
           <p className="mt-3 leading-relaxed text-sm text-gray-500">
             {isTeamJoin ? t("auth.register.success.descTeam") : t("auth.register.success.desc")}
           </p>
-          <Link href="/login?registered=1" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition shadow-sm">
+          <Link href="/login?registered=1" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 text-sm font-bold text-white hover:bg-teal-700 transition shadow-sm">
             {t("auth.register.success.cta")}
             {dir === "rtl" ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
           </Link>
@@ -207,22 +207,22 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
       <div className="w-full max-w-lg" dir={dir}>
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="h-1 w-full bg-gray-200">
-            <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
+            <div className="h-full bg-teal-500 transition-all duration-500" style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
           </div>
 
           <div className="flex items-center justify-center gap-0 border-b border-gray-100 px-6 py-4">
             {steps.map((label, i) => (
               <div key={i} className="flex items-center">
-                <div title={label} className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-black transition-all ${i < step ? "bg-indigo-500 text-white" : i === step ? "bg-indigo-600 text-white ring-4 ring-indigo-200" : "bg-gray-100 text-gray-400"}`}>
+                <div title={label} className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-black transition-all ${i < step ? "bg-teal-500 text-white" : i === step ? "bg-teal-600 text-white ring-4 ring-teal-200" : "bg-gray-100 text-gray-400"}`}>
                   {i < step ? "✓" : i + 1}
                 </div>
-                {i < steps.length - 1 && <div className={`mx-1.5 h-0.5 w-8 sm:w-14 transition-colors ${i < step ? "bg-indigo-400" : "bg-gray-200"}`} />}
+                {i < steps.length - 1 && <div className={`mx-1.5 h-0.5 w-8 sm:w-14 transition-colors ${i < step ? "bg-teal-400" : "bg-gray-200"}`} />}
               </div>
             ))}
           </div>
 
           <div className="px-8 pb-8 pt-6 text-start">
-            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-indigo-600">
+            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-teal-600">
               {t("auth.register.steps.step")} {step + 1} {t("auth.register.steps.of")} {totalSteps}
             </p>
             <h1 className="mb-6 text-xl font-black text-gray-900">{steps[step]}</h1>
@@ -232,7 +232,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                 {ORG_TYPE_OPTIONS.map(({ value, label, desc, Icon, activeBg, activeBorder, activeText, activeRing }) => {
                   const active = form.orgType === value;
                   return (
-                    <button key={value} type="button" onClick={() => set("orgType", value)} className={`flex flex-col items-center rounded-2xl border-2 p-5 text-center transition-all ${active ? `${activeBg} ${activeBorder} ring-2 ${activeRing}` : "border-gray-200 bg-white hover:border-indigo-200 hover:bg-indigo-50"}`}>
+                    <button key={value} type="button" onClick={() => set("orgType", value)} className={`flex flex-col items-center rounded-2xl border-2 p-5 text-center transition-all ${active ? `${activeBg} ${activeBorder} ring-2 ${activeRing}` : "border-gray-200 bg-white hover:border-teal-200 hover:bg-teal-50"}`}>
                       <Icon size={28} className={active ? activeText : "text-gray-400"} />
                       <span className={`mt-2 block text-sm font-black ${active ? activeText : "text-gray-700"}`}>{label}</span>
                       <span className="mt-1 block text-xs leading-tight text-gray-400">{desc}</span>
@@ -339,7 +339,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                   </div>
                 </div>
                 {err && <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm text-rose-700">{err}</p>}
-                <button type="button" disabled={loading} onClick={handleSubmit} className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 text-sm font-black text-white hover:bg-indigo-700 transition disabled:opacity-60 shadow-sm">
+                <button type="button" disabled={loading} onClick={handleSubmit} className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 py-4 text-sm font-black text-white hover:bg-teal-700 transition disabled:opacity-60 shadow-sm">
                   {loading ? <Loader2 className="animate-spin" size={17} /> : <MailCheck size={17} />}
                   {isTeamJoin ? t("auth.register.submitTeam") : t("auth.register.submit")}
                 </button>
@@ -359,7 +359,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                 </Link>
               )}
               {!isLast && (
-                <button type="button" disabled={!canAdvance()} onClick={() => setStep((s) => s + 1)} className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition disabled:opacity-40 shadow-sm">
+                <button type="button" disabled={!canAdvance()} onClick={() => setStep((s) => s + 1)} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-40 shadow-sm">
                   {t("auth.register.next")}
                   {dir === "rtl" ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
                 </button>
@@ -369,7 +369,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
         </div>
         <p className="mt-4 text-center text-xs text-gray-400">
           {t("auth.register.alreadyHave")}{" "}
-          <Link href="/login" className="font-bold text-indigo-600 hover:underline">{t("auth.register.loginLink")}</Link>
+          <Link href="/login" className="font-bold text-teal-600 hover:underline">{t("auth.register.loginLink")}</Link>
         </p>
       </div>
     </AuthPageShell>

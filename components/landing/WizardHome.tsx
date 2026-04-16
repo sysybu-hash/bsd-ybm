@@ -45,8 +45,8 @@ const AI_FEED = [
   { icon: TrendingUp, text: "ספק ABC העלה מחיר ב-14% — נמצאה חלופה", color: "text-emerald-400" },
   { icon: ReceiptText, text: "חשבונית #1042 הונפקה אוטומטית", color: "text-sky-400" },
   { icon: AlertCircle, text: "תזרים מזומנים: צפוי חוסר ב-18 יום", color: "text-rose-400" },
-  { icon: Brain, text: "נסרקו ועובדו 7 מסמכים חדשים", color: "text-violet-400" },
-  { icon: Activity, text: "תחזית הכנסות Q2: +23% לעומת Q1", color: "text-indigo-400" },
+  { icon: Brain, text: "נסרקו ועובדו 7 מסמכים חדשים", color: "text-teal-400" },
+  { icon: Activity, text: "תחזית הכנסות Q2: +23% לעומת Q1", color: "text-teal-400" },
 ];
 
 /* ─── Feature tabs ──────────────────────────────────────────────────────── */
@@ -63,7 +63,7 @@ const FEATURE_TABS = [
       "איתור סתירות ומחירים חריגים",
       "אחסון והשוואה היסטורית",
     ],
-    accent: "from-violet-500 to-indigo-500",
+    accent: "from-teal-500 to-cyan-500",
   },
   {
     id: "predictive",
@@ -98,7 +98,7 @@ const FEATURE_TABS = [
     label: "Conversational ERP",
     icon: MessageSquare,
     title: "שאל את העסק שלך",
-    desc: 'שאל "כמה הרווחתי החודש?" — קבל תשובה. בשפה טבעית, בעברית, אנגלית, ערבית או רוסית. לא עוד reports — שיחה.',
+    desc: 'שאל "כמה הרווחתי החודש?" — קבל תשובה. בשפה טבעית, בעברית, אנגלית או רוסית. לא עוד reports — שיחה.',
     points: [
       "שאלות בשפה טבעית בכל שפה",
       "תשובות עם ניתוח ולא רק נתונים",
@@ -163,12 +163,12 @@ export default function WizardHome() {
 
           {/* Logo */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 font-black text-sm shadow-lg shadow-indigo-500/30">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 font-black text-sm shadow-lg shadow-teal-500/30">
               <span>B</span>
               <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#050508]" />
             </div>
             <span className="font-black text-gray-900 text-[15px] tracking-tight">
-              BSD<span className="text-indigo-500">-YBM</span>
+              BSD<span className="text-teal-500">-YBM</span>
             </span>
           </div>
 
@@ -197,7 +197,7 @@ export default function WizardHome() {
               התחבר
             </Link>
             <Link href="/register"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-[13px] font-bold text-white hover:bg-indigo-700 transition shadow-sm">
+              className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-2 text-[13px] font-bold text-white hover:bg-teal-700 transition shadow-sm">
               ניסיון חינם <ArrowLeft size={12} />
             </Link>
           </div>
@@ -210,8 +210,8 @@ export default function WizardHome() {
 
         {/* Mesh gradient */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 right-1/4 h-[700px] w-[700px] rounded-full bg-indigo-600/[0.18] blur-[140px]" />
-          <div className="absolute top-1/2 left-0 h-[400px] w-[400px] rounded-full bg-violet-700/[0.12] blur-[100px]" />
+          <div className="absolute top-0 right-1/4 h-[700px] w-[700px] rounded-full bg-teal-600/[0.18] blur-[140px]" />
+          <div className="absolute top-1/2 left-0 h-[400px] w-[400px] rounded-full bg-teal-700/[0.12] blur-[100px]" />
           <div className="absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-sky-600/[0.08] blur-[80px]" />
           {/* Grid */}
           <div className="absolute inset-0 opacity-[0.025]"
@@ -221,7 +221,7 @@ export default function WizardHome() {
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 text-center">
 
           {/* Badge */}
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-[11px] font-semibold text-indigo-600 backdrop-blur-sm">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-[11px] font-semibold text-teal-600 backdrop-blur-sm">
             <Sparkles size={11} />
             הדור הבא של ניהול עסקי — Powered by AI
           </div>
@@ -230,7 +230,7 @@ export default function WizardHome() {
           <h1 className="text-[52px] font-black leading-[1.06] tracking-tight text-gray-900 sm:text-[64px] md:text-[80px] lg:text-[96px]">
             The Business OS
             <br />
-            <span className="bg-gradient-to-l from-indigo-400 via-violet-400 to-sky-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-l from-teal-400 via-cyan-400 to-sky-400 bg-clip-text text-transparent">
               {" "}המיועד לך
             </span>
           </h1>
@@ -252,7 +252,7 @@ export default function WizardHome() {
           {/* CTAs */}
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link href="/register"
-              className="group relative inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-[15px] font-bold text-white shadow-lg shadow-indigo-600/25 transition hover:bg-indigo-700">
+              className="group relative inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-[15px] font-bold text-white shadow-lg shadow-teal-600/25 transition hover:bg-teal-700">
               <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 transition group-hover:opacity-100" />
               התחל ניסיון חינם — 30 יום
               <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-0.5" />
@@ -272,7 +272,7 @@ export default function WizardHome() {
               [Zap, "הגדרה תוך 3 דקות"],
             ] as const).map(([Icon, text], i) => (
               <span key={i} className="flex items-center gap-1.5 text-[11px] font-medium text-gray-400">
-                <Icon size={11} className="text-indigo-400 shrink-0" />
+                <Icon size={11} className="text-teal-400 shrink-0" />
                 {text}
               </span>
             ))}
@@ -323,7 +323,7 @@ export default function WizardHome() {
       <section id="features" className="border-t border-gray-100 py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-12 text-center">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-indigo-500">מה גורם לנו להיות שונים</p>
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-teal-500">מה גורם לנו להיות שונים</p>
             <h2 className="text-3xl font-black text-gray-900 sm:text-4xl">AI שפועל — לא רק מציג</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500">
               ארבע יכולות ליבה שלא קיימות בשום מוצר אחר בשוק הישראלי.
@@ -341,8 +341,8 @@ export default function WizardHome() {
                   onClick={() => setActiveTab(i)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-bold transition-all ${
                     active
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                      : "border border-gray-200 text-gray-500 hover:border-indigo-300 hover:text-gray-800"
+                      ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20"
+                      : "border border-gray-200 text-gray-500 hover:border-teal-300 hover:text-gray-800"
                   }`}
                 >
                   <Icon size={14} />
@@ -368,7 +368,7 @@ export default function WizardHome() {
                   <ul className="mt-5 space-y-2.5">
                     {tab.points.map((p) => (
                       <li key={p} className="flex items-start gap-2.5 text-sm text-gray-600">
-                        <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-indigo-400" />
+                        <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-teal-400" />
                         {p}
                       </li>
                     ))}
@@ -387,7 +387,7 @@ export default function WizardHome() {
                           {idx + 1}
                         </div>
                         <span className="text-[12px] text-gray-600">{p}</span>
-                        <CheckCircle2 size={13} className="mr-auto text-indigo-400 shrink-0" />
+                        <CheckCircle2 size={13} className="mr-auto text-teal-400 shrink-0" />
                       </div>
                     ))}
                   </div>
@@ -401,7 +401,7 @@ export default function WizardHome() {
       {/* ════════════════ HOW IT WORKS ════════════════ */}
       <section className="border-t border-gray-100 py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-indigo-500">איך מתחילים</p>
+          <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-teal-500">איך מתחילים</p>
           <h2 className="text-3xl font-black text-gray-900 sm:text-4xl">מ-0 לפעיל תוך 3 דקות</h2>
           <div className="mt-12 grid gap-4 sm:grid-cols-3 text-right">
             {[
@@ -415,8 +415,8 @@ export default function WizardHome() {
                 )}
                 <div className="mb-3 flex items-center gap-3">
                   <span className="text-4xl font-black text-gray-100">{n}</span>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/20">
-                    <Icon size={16} className="text-indigo-400" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/20">
+                    <Icon size={16} className="text-teal-400" />
                   </div>
                 </div>
                 <h3 className="text-base font-bold text-gray-900">{title}</h3>
@@ -426,7 +426,7 @@ export default function WizardHome() {
           </div>
           <div className="mt-10">
             <Link href="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-[15px] font-bold text-white shadow-xl shadow-indigo-600/20 transition hover:bg-indigo-700">
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-[15px] font-bold text-white shadow-xl shadow-teal-600/20 transition hover:bg-teal-700">
               פתח חשבון חינם <ArrowLeft size={15} />
             </Link>
           </div>
@@ -437,7 +437,7 @@ export default function WizardHome() {
       <section id="compare" className="border-t border-gray-100 py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="mb-12 text-center">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-indigo-500">מדוע BSD-YBM</p>
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-teal-500">מדוע BSD-YBM</p>
             <h2 className="text-3xl font-black text-gray-900 sm:text-4xl">השוואה כנה עם המתחרים</h2>
           </div>
 
@@ -447,8 +447,8 @@ export default function WizardHome() {
                 <tr className="border-b border-gray-100">
                   <th className="py-4 px-5 text-right text-[11px] font-bold text-gray-400 uppercase tracking-widest w-1/3">יכולת</th>
                   {COMPARE_COLS.map((col) => (
-                    <th key={col.name} className={`py-4 px-4 text-center text-[13px] font-black ${col.highlight ? "text-indigo-600" : "text-gray-400"}`}>
-                      {col.highlight && <span className="mr-1 text-[9px] text-indigo-500">★</span>}
+                    <th key={col.name} className={`py-4 px-4 text-center text-[13px] font-black ${col.highlight ? "text-teal-600" : "text-gray-400"}`}>
+                      {col.highlight && <span className="mr-1 text-[9px] text-teal-500">★</span>}
                       {col.name}
                     </th>
                   ))}
@@ -461,7 +461,7 @@ export default function WizardHome() {
                     {COMPARE_COLS.map((col) => (
                       <td key={col.name} className="py-3.5 px-4 text-center">
                         {col.vals[fi] ? (
-                          <Check size={16} className={`mx-auto ${col.highlight ? "text-indigo-500" : "text-gray-300"}`} />
+                          <Check size={16} className={`mx-auto ${col.highlight ? "text-teal-500" : "text-gray-300"}`} />
                         ) : (
                           <X size={14} className="mx-auto text-gray-200" />
                         )}
@@ -489,14 +489,14 @@ export default function WizardHome() {
       <section className="border-t border-gray-100 py-32">
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-[500px] w-[700px] rounded-full bg-indigo-600/[0.12] blur-[120px]" />
+            <div className="h-[500px] w-[700px] rounded-full bg-teal-600/[0.12] blur-[120px]" />
           </div>
           <div className="relative">
-            <p className="mb-4 text-[11px] font-bold uppercase tracking-widest text-indigo-500">העתיד של ניהול עסקי</p>
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-widest text-teal-500">העתיד של ניהול עסקי</p>
             <h2 className="text-4xl font-black text-gray-900 sm:text-5xl lg:text-6xl leading-tight">
               הצטרף לעסקים
               <br />
-              <span className="bg-gradient-to-l from-indigo-400 via-violet-400 to-sky-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-l from-teal-400 via-cyan-400 to-sky-400 bg-clip-text text-transparent">
                 שעובדים חכם יותר
               </span>
             </h2>
@@ -505,7 +505,7 @@ export default function WizardHome() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register"
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-9 py-4 text-[15px] font-bold text-white shadow-xl shadow-indigo-600/25 transition hover:bg-indigo-700">
+                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-9 py-4 text-[15px] font-bold text-white shadow-xl shadow-teal-600/25 transition hover:bg-teal-700">
                 התחל ניסיון חינם <ArrowLeft size={15} />
               </Link>
               <Link href="/login"
@@ -525,8 +525,8 @@ export default function WizardHome() {
             {/* Brand */}
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-black text-sm">B</div>
-                <span className="font-black text-gray-900 text-[15px]">BSD<span className="text-indigo-500">-YBM</span></span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white font-black text-sm">B</div>
+                <span className="font-black text-gray-900 text-[15px]">BSD<span className="text-teal-500">-YBM</span></span>
               </div>
               <p className="text-[12px] text-gray-400 leading-relaxed max-w-[220px]">
                 The Business OS — מערכת הפעלה לעסק עם AI מובנה. ERP + CRM + Financial Intelligence בממשק אחד.

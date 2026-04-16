@@ -47,7 +47,7 @@ export default async function ERPPage() {
   const avgPerDoc = rawDocs.length > 0 ? Math.round(totalExpenses / rawDocs.length) : 0;
 
   const stats = [
-    { label: t("erpPage.statMonthExpenses"), value: `₪${expenseThisMonth.toLocaleString()}`, trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t), valueClass: "text-indigo-600" },
+    { label: t("erpPage.statMonthExpenses"), value: `₪${expenseThisMonth.toLocaleString()}`, trend: formatExpenseTrendVsPrevious(expenseThisMonth, expensePrevMonth, t), valueClass: "text-teal-600" },
     { label: t("erpPage.statDocsInView"), value: String(rawDocs.length), trend: t("erpPage.trendAllDocs"), valueClass: "text-slate-900" },
     { label: t("erpPage.statAvgInvoice"), value: rawDocs.length ? `₪${avgPerDoc.toLocaleString()}` : "—", trend: t("erpPage.statAvgTrend"), valueClass: "text-emerald-600" },
   ];

@@ -251,7 +251,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
         <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-white px-3 py-1 text-xs font-black text-indigo-300">BSD-YBM ERP</p>
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-teal-500/20 bg-white px-3 py-1 text-xs font-black text-teal-300">BSD-YBM ERP</p>
               <h1 className="mt-3 text-3xl font-black tracking-tight text-gray-900">{t("erp.issuance")}</h1>
               <p className="mt-2 text-sm leading-6 text-gray-500">{t("landing.featureInvDesc")}</p>
             </div>
@@ -268,7 +268,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-2xl border border-indigo-500/20 bg-white px-4 py-4">
+            <div className="rounded-2xl border border-teal-500/20 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-400">{t("erp.invoice")}</p>
               <p className="mt-1 text-lg font-black text-gray-900">{typeLabel}</p>
             </div>
@@ -276,7 +276,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <p className="text-xs font-bold text-gray-400">{t("erp.step2")}</p>
               <p className="mt-1 text-2xl font-black text-gray-900">{items.length}</p>
             </div>
-            <div className="rounded-2xl border border-indigo-500/20 bg-white px-4 py-4">
+            <div className="rounded-2xl border border-teal-500/20 bg-white px-4 py-4">
               <p className="text-xs font-bold text-gray-400">{t("erp.total")}</p>
               <p className="mt-1 text-2xl font-black text-gray-900">₪{total.toLocaleString()}</p>
             </div>
@@ -297,7 +297,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onClick={() => setWizardStep(s as 1 | 2 | 3 | 4)}
                   className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
                     wizardStep === s
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-teal-600 text-white"
                       : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
@@ -363,7 +363,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onClick={() => setDocType(value)}
                   className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
                     docType === value
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
+                      ? "bg-teal-600 text-white shadow-md shadow-teal-600/25"
                       : "border border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-50"
                   }`}
                 >
@@ -383,7 +383,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   onFocus={() => clientName && setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   placeholder={t("crm.search")}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                 />
                 {contactId && (
                   <span className="absolute end-3 top-10 text-[10px] font-black text-emerald-400 bg-emerald-500/15 rounded-full px-2 py-0.5">CRM ✓</span>
@@ -396,7 +396,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                         key={c.id}
                         type="button"
                         onMouseDown={() => selectCrmContact(c)}
-                        className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-indigo-500/15 transition"
+                        className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-teal-500/15 transition"
                       >
                         <span className="font-bold text-gray-900">{c.name}</span>
                         {c.value != null && <span className="text-xs text-emerald-400 font-black">₪{c.value.toLocaleString()}</span>}
@@ -411,14 +411,14 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                 />
               </div>
             </div>
             <button
               type="button"
               onClick={() => setWizardStep(2)}
-              className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700"
+              className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700"
             >
               {t("auth.register.next")}
             </button>
@@ -442,7 +442,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       value={item.desc}
                       onChange={(e) => updateItem(idx, "desc", e.target.value)}
                       placeholder="תיאור הפריט"
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
                   </div>
                   <div className="w-20">
@@ -452,7 +452,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       min={1}
                       value={item.qty}
                       onChange={(e) => updateItem(idx, "qty", Math.max(1, +e.target.value))}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
                   </div>
                   <div className="w-28">
@@ -463,7 +463,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       step={0.01}
                       value={item.price || ""}
                       onChange={(e) => updateItem(idx, "price", Math.max(0, +e.target.value))}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
                   </div>
                   <div className="w-24 text-left">
@@ -488,7 +488,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <button
                 type="button"
                 onClick={() => setItems((prev) => [...prev, emptyItem()])}
-                className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-indigo-400 transition-colors hover:bg-indigo-500/15"
+                className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-teal-400 transition-colors hover:bg-teal-500/15"
               >
                 <Plus size={16} /> הוסף פריט
               </button>
@@ -502,7 +502,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <button
                 type="button"
                 onClick={() => setWizardStep(3)}
-                className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700"
+                className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700"
               >
                 {t("auth.register.next")}
               </button>
@@ -529,7 +529,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               </div>
               <div className="flex justify-between text-base font-extrabold text-gray-700">
                 <span>{t("erp.total")}</span>
-                <span className="text-indigo-400">₪{total.toLocaleString()}</span>
+                <span className="text-teal-400">₪{total.toLocaleString()}</span>
               </div>
             </div>
 
@@ -546,7 +546,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                 whileTap={{ scale: 0.98 }}
                 disabled={saving}
                 onClick={submit}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-indigo-600/25 transition-colors hover:bg-indigo-700 disabled:opacity-60"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-teal-600 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-teal-600/25 transition-colors hover:bg-teal-700 disabled:opacity-60"
               >
                 {saving ? <Loader2 size={20} className="animate-spin" /> : <Send size={18} />}
                 {saving ? t("scanner.processing") : t("erp.generate")}
@@ -608,7 +608,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       key={doc.id}
                       className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/15 text-teal-400">
                         <Icon size={18} />
                       </div>
                       <div className="min-w-0 flex-1">

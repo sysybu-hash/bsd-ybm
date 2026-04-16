@@ -44,9 +44,9 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
   };
 
   return (
-    <div className="p-6 md:p-8 rounded-2xl border border-indigo-500/30/80 bg-gradient-to-br from-indigo-50/60 to-white">
+    <div className="p-6 md:p-8 rounded-2xl border border-teal-500/30/80 bg-gradient-to-br from-teal-50/60 to-white">
       <div className="flex items-start gap-3 mb-4">
-        <div className="rounded-xl bg-indigo-600 p-2.5 text-white shrink-0">
+        <div className="rounded-xl bg-teal-600 p-2.5 text-white shrink-0">
           <Zap size={20} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
@@ -60,7 +60,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
 
       <div className="space-y-3 mb-4">
         {presets.length === 0 ? (
-          <p className="text-sm text-indigo-300 bg-indigo-500/15 border border-indigo-500/20 rounded-xl px-4 py-3">
+          <p className="text-sm text-teal-300 bg-teal-500/15 border border-teal-500/20 rounded-xl px-4 py-3">
             אין כפתורים — בדף החיוב יוצגו רק &quot;מנוי חודשי&quot; ו&quot;סכום מותאם&quot;. לחצו &quot;שחזר ברירת מחדל&quot; או
             &quot;שורה נוספת&quot;.
           </p>
@@ -136,7 +136,7 @@ export default function QuickPaymentPresetsSettings({ workspace }: Props) {
           type="button"
           onClick={save}
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 text-white px-5 py-2 text-sm font-black hover:bg-indigo-700 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl bg-teal-600 text-white px-5 py-2 text-sm font-black hover:bg-teal-700 disabled:opacity-50"
         >
           <Save size={18} /> שמור כפתורים
         </button>

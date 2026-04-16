@@ -20,7 +20,7 @@ export default function ProjectProfitability() {
       dir="rtl"
     >
       <header className="mb-12">
-        <h1 className="text-4xl font-black italic tracking-tighter text-indigo-400">
+        <h1 className="text-4xl font-black italic tracking-tighter text-teal-400">
           {project.name}
         </h1>
         <p className="text-gray-400 font-medium">סטטוס רווחיות ופיננסים חי</p>

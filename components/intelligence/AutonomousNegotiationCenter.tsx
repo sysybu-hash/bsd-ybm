@@ -88,7 +88,7 @@ BSD-YBM Autonomous Agent`;
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white shadow-lg">
             <Zap size={20} />
           </div>
           <div>
@@ -96,7 +96,7 @@ BSD-YBM Autonomous Agent`;
             <p className="text-xs font-bold text-slate-400">AI שמזהה התייקרויות ונלחם עבור הרווחים שלך</p>
           </div>
         </div>
-        <button className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 hover:bg-indigo-100 transition">
+        <button className="text-[10px] font-black uppercase tracking-widest text-teal-600 bg-teal-50 px-3 py-1.5 rounded-lg border border-teal-100 hover:bg-teal-100 transition">
            סרוק חריגות עכשיו <RefreshCcw size={10} className="inline ms-1" />
         </button>
       </div>
@@ -114,7 +114,7 @@ BSD-YBM Autonomous Agent`;
               <div 
                 key={c.id} 
                 onClick={() => generateDraft(c)}
-                className={`group relative overflow-hidden rounded-2xl border p-4 cursor-pointer transition-all ${activeCase?.id === c.id ? "border-indigo-500 bg-indigo-50 shadow-md" : "border-slate-200 bg-white hover:border-indigo-300 shadow-sm"}`}
+                className={`group relative overflow-hidden rounded-2xl border p-4 cursor-pointer transition-all ${activeCase?.id === c.id ? "border-teal-500 bg-teal-50 shadow-md" : "border-slate-200 bg-white hover:border-teal-300 shadow-sm"}`}
               >
                  <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ BSD-YBM Autonomous Agent`;
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     className="flex-1 flex flex-col items-center justify-center p-8 text-center"
                  >
-                    <Loader2 size={32} className="animate-spin text-indigo-500 mb-4" />
+                    <Loader2 size={32} className="animate-spin text-teal-500 mb-4" />
                     <p className="text-sm font-black text-slate-700">ה-AI מנתח היסטוריית מחירים ומייצר טיוטת מו״מ...</p>
                  </motion.div>
                ) : (
@@ -164,7 +164,7 @@ BSD-YBM Autonomous Agent`;
                    initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                    className="flex-1 flex flex-col p-6"
                  >
-                    <div className="flex items-center gap-2 mb-4 text-[11px] font-black text-indigo-600 uppercase tracking-widest border-b border-indigo-50 pb-2">
+                    <div className="flex items-center gap-2 mb-4 text-[11px] font-black text-teal-600 uppercase tracking-widest border-b border-teal-50 pb-2">
                        <Mail size={14} /> טיוטת מייל אוטונומית
                     </div>
                     <div className="flex-1 bg-slate-50 rounded-2xl p-4 text-xs font-medium text-slate-700 leading-relaxed overflow-y-auto whitespace-pre-wrap">

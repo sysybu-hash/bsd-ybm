@@ -141,7 +141,7 @@ export default function CrmOrganizationsAdminTable({
     <div className="card-avenue relative overflow-hidden" dir={dir}>
       <div className="overflow-x-auto">
       <table className="w-full min-w-[800px] text-start">
-        <thead className="bg-indigo-500/[0.12] text-xs font-bold text-indigo-300">
+        <thead className="bg-teal-500/[0.12] text-xs font-bold text-teal-300">
           <tr>
             <th className="px-6 py-4 sm:px-8">שם הלקוח</th>
             <th className="px-6 py-4 sm:px-8 text-center sm:px-8">תוכנית</th>
@@ -183,7 +183,7 @@ export default function CrmOrganizationsAdminTable({
                       router.refresh();
                     });
                   }}
-                  className="bg-indigo-500/15 text-indigo-300 px-3 py-1.5 rounded-xl text-[10px] font-black border border-indigo-500/25 outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer transition-all disabled:opacity-50"
+                  className="bg-teal-500/15 text-teal-300 px-3 py-1.5 rounded-xl text-[10px] font-black border border-teal-500/25 outline-none focus:ring-2 focus:ring-teal-500/30 cursor-pointer transition-all disabled:opacity-50"
                 >
                   <option value="FREE">FREE — חינם</option>
                   <option value="HOUSEHOLD">HOUSEHOLD</option>
@@ -205,7 +205,7 @@ export default function CrmOrganizationsAdminTable({
                   type="button"
                   onClick={() => void handleAnalyze(org)}
                   disabled={loadingId === org.id}
-                  className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-[11px] font-black text-white shadow-md shadow-indigo-500/20 transition hover:bg-indigo-400 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-teal-500 px-4 py-2 text-[11px] font-black text-white shadow-md shadow-teal-500/20 transition hover:bg-teal-400 disabled:opacity-50"
                 >
                   {loadingId === org.id ? (
                     <Loader2 className="animate-spin" size={14} />
@@ -220,7 +220,7 @@ export default function CrmOrganizationsAdminTable({
                   {showUnifiedBillingLinks ? (
                     <Link
                       href={`/app/billing?tab=control&orgId=${encodeURIComponent(org.id)}`}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/25 bg-indigo-500/10 px-3 py-1.5 text-sm font-bold text-indigo-300 transition hover:border-indigo-500/40 hover:bg-indigo-500/20"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-teal-500/25 bg-teal-500/10 px-3 py-1.5 text-sm font-bold text-teal-300 transition hover:border-teal-500/40 hover:bg-teal-500/20"
                     >
                       <CreditCard size={16} />
                       מנוי
@@ -232,7 +232,7 @@ export default function CrmOrganizationsAdminTable({
                     aria-label={`עריכת ${org.name}`}
                     disabled={pending}
                     onClick={() => handleEdit(org)}
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-400 hover:text-indigo-300 disabled:opacity-50 px-2 py-1.5 rounded-xl hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-teal-400 hover:text-teal-300 disabled:opacity-50 px-2 py-1.5 rounded-xl hover:bg-teal-500/10 border border-transparent hover:border-teal-500/20"
                   >
                     <Edit3 size={16} />
                     ערוך
@@ -265,7 +265,7 @@ export default function CrmOrganizationsAdminTable({
             aria-modal="true"
             aria-labelledby="crm-ai-modal-title"
           >
-            <div className="h-1 w-full shrink-0 bg-gradient-to-l from-indigo-500 to-indigo-400" />
+            <div className="h-1 w-full shrink-0 bg-gradient-to-l from-teal-500 to-teal-400" />
             <button
               type="button"
               onClick={() => setAiModal(null)}
@@ -278,7 +278,7 @@ export default function CrmOrganizationsAdminTable({
             <div className="px-8 pt-8 pb-5 border-b border-gray-100 shrink-0 bg-gradient-to-b from-white/[0.02] to-transparent">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-2xl bg-indigo-500 p-3.5 text-white shadow-lg shadow-indigo-500/25">
+                  <div className="rounded-2xl bg-teal-500 p-3.5 text-white shadow-lg shadow-teal-500/25">
                     <Sparkles size={26} strokeWidth={2} aria-hidden />
                   </div>
                   <div>
@@ -309,7 +309,7 @@ export default function CrmOrganizationsAdminTable({
             <div className="overflow-y-auto flex-1 px-8 py-6 space-y-6">
               {aiModal.loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
-                  <Loader2 className="animate-spin text-indigo-400" size={44} />
+                  <Loader2 className="animate-spin text-teal-400" size={44} />
                   <p className="font-bold text-gray-500">מנתח עם Gemini 2.5 Flash…</p>
                 </div>
               ) : aiModal.error ? (
@@ -333,8 +333,8 @@ export default function CrmOrganizationsAdminTable({
                       </p>
                     </section>
 
-                    <section className="rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.07] p-5">
-                      <div className="flex items-center gap-2 text-indigo-300 font-black text-xs uppercase tracking-wide mb-3">
+                    <section className="rounded-2xl border border-teal-500/25 bg-teal-500/[0.07] p-5">
+                      <div className="flex items-center gap-2 text-teal-300 font-black text-xs uppercase tracking-wide mb-3">
                         <AlertTriangle size={18} strokeWidth={2.25} />
                         התראות
                       </div>
@@ -351,7 +351,7 @@ export default function CrmOrganizationsAdminTable({
                               className="flex items-start gap-2.5 text-sm text-gray-600 leading-snug"
                             >
                               <AlertTriangle
-                                className="shrink-0 text-indigo-400 mt-0.5"
+                                className="shrink-0 text-teal-400 mt-0.5"
                                 size={16}
                               />
                               {a}
@@ -375,18 +375,18 @@ export default function CrmOrganizationsAdminTable({
                   <section className="rounded-2xl border border-gray-100 bg-white p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                       <h4 className="text-base font-black text-gray-900 flex items-center gap-2">
-                        <Receipt className="text-indigo-400" size={22} />
+                        <Receipt className="text-teal-400" size={22} />
                         תשלומים ועמלות PayPlus
                       </h4>
                       <p className="text-xs text-gray-400 font-semibold bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 inline-flex items-center gap-2">
-                        <Percent size={14} className="text-indigo-400" />
+                        <Percent size={14} className="text-teal-400" />
                         לכל עסקה: ‎1.2% × ברוטו + ‎₪1.20 — הנטו מחושב בשרת
                       </p>
                     </div>
                     <div className="rounded-xl border border-gray-100 bg-white overflow-hidden overflow-x-auto">
                       <table className="w-full text-sm text-right min-w-[560px]">
                         <thead>
-                          <tr className="bg-indigo-500/[0.10] text-[11px] font-black uppercase tracking-wider text-indigo-300">
+                          <tr className="bg-teal-500/[0.10] text-[11px] font-black uppercase tracking-wider text-teal-300">
                             <th className="px-4 py-3.5 font-semibold">תאריך</th>
                             <th className="px-4 py-3.5 font-semibold">תיאור</th>
                             <th className="px-4 py-3.5 font-semibold">ברוטו</th>
@@ -420,7 +420,7 @@ export default function CrmOrganizationsAdminTable({
                                 <td className="px-4 py-3 font-semibold tabular-nums text-gray-900">
                                   {formatMoney(row.amountGross)}
                                 </td>
-                                <td className="px-4 py-3 tabular-nums text-indigo-300 font-semibold">
+                                <td className="px-4 py-3 tabular-nums text-teal-300 font-semibold">
                                   {formatMoney(row.feePayPlus)}
                                 </td>
                                 <td className="px-4 py-3 font-bold tabular-nums text-emerald-300">
@@ -449,7 +449,7 @@ export default function CrmOrganizationsAdminTable({
                                   payPlusTableTotals(aiModal.data.tableData).gross,
                                 )}
                               </td>
-                              <td className="px-4 py-3.5 text-sm font-black tabular-nums text-indigo-300">
+                              <td className="px-4 py-3.5 text-sm font-black tabular-nums text-teal-300">
                                 {formatMoney(
                                   payPlusTableTotals(aiModal.data.tableData).fee,
                                 )}

@@ -15,7 +15,7 @@ function LoginFallback() {
     <div className="min-h-app flex items-center justify-center bg-gray-50" dir="rtl">
       <div
         className="h-10 w-10 animate-spin rounded-full border-2 border-t-transparent"
-        style={{ borderColor: "var(--primary-color,#2563eb)", borderTopColor: "transparent" }}
+        style={{ borderColor: "var(--primary-color)", borderTopColor: "transparent" }}
       />
     </div>
   );

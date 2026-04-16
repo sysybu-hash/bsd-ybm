@@ -54,7 +54,7 @@ export default function OperatorAssistantPanel() {
     <div className="space-y-5" dir="rtl">
       <section className="overflow-hidden rounded-[32px] border border-gray-200 bg-white shadow-sm">
         <div className="bg-[linear-gradient(135deg,_#f8fbff_0%,_#eef6ff_55%,_#ffffff_100%)] px-6 py-7 md:px-8">
-          <p className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-white px-3 py-1 text-xs font-black text-indigo-300">
+          <p className="inline-flex items-center gap-2 rounded-full border border-teal-500/20 bg-white px-3 py-1 text-xs font-black text-teal-300">
             <Bot size={13} />
             Operator Agent
           </p>
@@ -91,7 +91,7 @@ export default function OperatorAssistantPanel() {
         <div className="max-h-[46vh] space-y-2 overflow-y-auto rounded-[24px] border border-gray-200 bg-gray-50 p-3.5">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}>
-              <div className={`max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-sm leading-6 ${m.role === "user" ? "bg-indigo-600 text-white" : "border border-gray-200 bg-white text-gray-700"}`}>
+              <div className={`max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-sm leading-6 ${m.role === "user" ? "bg-teal-600 text-white" : "border border-gray-200 bg-white text-gray-700"}`}>
                 {m.text}
               </div>
             </div>
@@ -112,13 +112,13 @@ export default function OperatorAssistantPanel() {
               }
             }}
             placeholder="כתוב הוראת תפעול..."
-            className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/15"
+            className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-teal-400 focus:bg-white focus:ring-2 focus:ring-teal-500/15"
           />
           <button
             type="button"
             onClick={() => void send(false)}
             disabled={loading || !input.trim()}
-            className="rounded-2xl bg-indigo-600 px-4 py-3 text-white disabled:opacity-50"
+            className="rounded-2xl bg-teal-600 px-4 py-3 text-white disabled:opacity-50"
           >
             <Send size={15} />
           </button>

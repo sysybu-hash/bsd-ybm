@@ -22,7 +22,7 @@ type Props = {
 const TIER_META: Record<SubscriptionTierKey, { icon: any; color: string; bg: string; badge: string }> = {
   FREE: { icon: Check, color: "text-slate-500", bg: "bg-slate-50", badge: "border-slate-200 text-slate-600" },
   HOUSEHOLD: { icon: Zap, color: "text-blue-500", bg: "bg-blue-50", badge: "border-blue-200 text-blue-700" },
-  DEALER: { icon: Star, color: "text-indigo-500", bg: "bg-indigo-50", badge: "bg-indigo-600 text-white border-transparent shadow-md" },
+  DEALER: { icon: Star, color: "text-teal-500", bg: "bg-teal-50", badge: "bg-teal-600 text-white border-transparent shadow-md" },
   COMPANY: { icon: Building, color: "text-emerald-500", bg: "bg-emerald-50", badge: "border-emerald-200 text-emerald-700" },
   CORPORATE: { icon: Crown, color: "text-amber-500", bg: "bg-amber-50", badge: "bg-slate-900 border-slate-800 text-amber-300" },
 };
@@ -62,7 +62,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
             >
               {highlight ? (
                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-[2]">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-1 text-[11px] font-black text-white shadow-lg shadow-blue-500/30 tracking-widest">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 px-4 py-1 text-[11px] font-black text-white shadow-lg shadow-blue-500/30 tracking-widest">
                       <Star size={12} className="fill-white"/> הפופולרי ביותר
                     </span>
                  </div>
@@ -102,7 +102,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-slate-500">מנועי פרמיום (OpenAI)</span>
-                    <span className="font-black text-slate-900 tabular-nums bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">{a.premiumScans.toLocaleString()} שאילתות</span>
+                    <span className="font-black text-slate-900 tabular-nums bg-teal-50 text-teal-700 px-2 py-0.5 rounded">{a.premiumScans.toLocaleString()} שאילתות</span>
                   </li>
                   <li className="flex flex-col gap-1 mt-2">
                     <span className="text-slate-500">מספר ישויות (חברות)</span>

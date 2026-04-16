@@ -15,6 +15,7 @@ import { type AppLocale, isRtlLocale } from "@/lib/i18n/config";
 
 type I18nContextValue = {
   locale: AppLocale;
+  messages: MessageTree;
   t: TFunction;
   setLocale: (l: AppLocale) => Promise<void>;
   dir: "rtl" | "ltr";
@@ -54,10 +55,10 @@ export function I18nProvider({
     if (!hasDetected && typeof navigator !== "undefined") {
       const browserLang = navigator.language.split("-")[0];
       const supported: Record<string, AppLocale> = {
-        he: "he", iw: "he",
+        he: "he",
+        iw: "he",
         ru: "ru",
-        ar: "ar",
-        en: "en"
+        en: "en",
       };
       const match = supported[browserLang];
       if (match && match !== locale) {
@@ -70,8 +71,8 @@ export function I18nProvider({
   }, [locale, dir, setLocale]);
 
   const value = useMemo(
-    () => ({ locale, t, setLocale, dir }),
-    [locale, t, setLocale, dir],
+    () => ({ locale, messages, t, setLocale, dir }),
+    [locale, messages, t, setLocale, dir],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

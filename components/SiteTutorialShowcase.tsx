@@ -31,7 +31,7 @@ function BrowserChrome({ children }: { children: React.ReactNode }) {
       <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-200">
         <div className="flex gap-1.5">
           <span className="w-3 h-3 rounded-full bg-red-400/90" />
-          <span className="w-3 h-3 rounded-full bg-indigo-400/90" />
+          <span className="w-3 h-3 rounded-full bg-teal-400/90" />
           <span className="w-3 h-3 rounded-full bg-emerald-400/90" />
         </div>
         <div className="flex-1 text-center text-[10px] text-gray-400 font-mono truncate px-2">
@@ -50,7 +50,7 @@ function SceneHome() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-black italic text-indigo-700"
+          className="text-2xl font-black italic text-teal-700"
         >
           BSD-YBM<span className="text-[var(--primary-color,#3b82f6)]">.</span>
         </motion.div>
@@ -68,7 +68,7 @@ function SceneHome() {
           transition={{ delay: 0.35 }}
           className="flex gap-2 justify-end flex-wrap"
         >
-          <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-bold">
+          <span className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-[10px] font-bold">
             AI
           </span>
           <span className="px-3 py-1 rounded-full bg-gray-50 text-gray-600 text-[10px] font-bold">
@@ -122,7 +122,7 @@ function SceneDashboard() {
             <div
               key={label}
               className={`flex items-center gap-1.5 flex-row-reverse text-[9px] p-1.5 rounded-lg ${
-                active ? "bg-indigo-500/15 text-indigo-800 font-bold" : "text-gray-500"
+                active ? "bg-teal-500/15 text-teal-800 font-bold" : "text-gray-500"
               }`}
             >
               <Icon size={12} /> {label}
@@ -163,7 +163,7 @@ function SceneERP() {
             animate={{ scaleX: 1 }}
             transition={{ repeat: Infinity, duration: 2.5, repeatDelay: 0.4, ease: "easeInOut" }}
             style={{ transformOrigin: "100% 50%" }}
-            className="h-full w-[85%] rounded-full bg-indigo-500/15 ms-auto"
+            className="h-full w-[85%] rounded-full bg-teal-500/15 ms-auto"
           />
         </div>
       </div>
@@ -205,7 +205,7 @@ function SceneAI() {
         <motion.div
           animate={{ y: [0, -4, 0] }}
           transition={{ repeat: Infinity, duration: 2.5 }}
-          className="absolute bottom-0 left-0 w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg"
+          className="absolute bottom-0 left-0 w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center shadow-lg"
         >
           <Bot className="text-white" size={22} />
         </motion.div>
@@ -289,7 +289,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/15 border border-indigo-500/20 text-indigo-800 text-xs font-bold mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/15 border border-teal-500/20 text-teal-800 text-xs font-bold mb-4"
           >
             <Sparkles size={16} /> הדרכה ויזואלית
           </motion.div>
@@ -368,7 +368,7 @@ export default function SiteTutorialShowcase({ variant = "page" }: Props) {
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
             <Link
                 href="/app"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500/15 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-teal-600 text-white text-sm font-bold hover:bg-teal-500/15 transition-colors"
             >
               כניסה לדשבורד
             </Link>

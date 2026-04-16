@@ -64,7 +64,7 @@ export default function SignClient({
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 flex items-center justify-center p-6" dir="rtl">
         <div className="max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
           <p className="text-emerald-700 font-bold">ההצעה כבר אושרה וחתומה.</p>
-          <Link href="/" className="text-indigo-600 font-bold underline underline-offset-2 hover:text-indigo-800">
+          <Link href="/" className="text-teal-600 font-bold underline underline-offset-2 hover:text-teal-800">
             חזרה לאתר
           </Link>
         </div>
@@ -75,7 +75,7 @@ export default function SignClient({
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 p-6" dir="rtl">
       <div className="max-w-lg mx-auto space-y-6">
-        <h1 className="text-2xl font-black text-indigo-600">חתימה דיגיטלית – BSD-YBM</h1>
+        <h1 className="text-2xl font-black text-teal-600">חתימה דיגיטלית – BSD-YBM</h1>
         <p className="text-gray-600 text-sm">
           הצעת מחיר עבור <strong className="text-gray-900">{quote.contact.name}</strong>
         </p>
@@ -109,7 +109,7 @@ export default function SignClient({
               type="button"
               onClick={submit}
               disabled={loading}
-              className="flex-1 px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold disabled:opacity-50 hover:bg-indigo-700 shadow-sm"
+              className="flex-1 px-4 py-2 rounded-xl bg-teal-600 text-white font-bold disabled:opacity-50 hover:bg-teal-700 shadow-sm"
             >
               {loading ? "שומר..." : "חתום ואשר"}
             </button>
@@ -118,7 +118,7 @@ export default function SignClient({
 
         {msg && (
           <p
-            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-emerald-700" : "text-indigo-700"}`}
+            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-emerald-700" : "text-teal-700"}`}
           >
             {msg}
           </p>

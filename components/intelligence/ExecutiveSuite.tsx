@@ -27,10 +27,10 @@ export default function ExecutiveSuite() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-800 text-[11px] font-black uppercase tracking-widest rounded-lg mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-100 text-teal-800 text-[11px] font-black uppercase tracking-widest rounded-lg mb-3">
              <BrainCircuit size={14} /> AI Executive Mode
           </div>
-          <h1 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">חדר מצב — <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Executive BI</span></h1>
+          <h1 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">חדר מצב — <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">Executive BI</span></h1>
           <p className="text-slate-500 font-medium text-lg mt-2">תצוגת על מבוססת בינה מלאכותית לקבלת החלטות מהירות בזמן אמת.</p>
         </div>
         <div className="flex gap-3">
@@ -43,14 +43,14 @@ export default function ExecutiveSuite() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {loading ? (
            <div className="col-span-full h-32 bg-white rounded-3xl border border-slate-200 flex items-center justify-center">
-              <Loader2 className="animate-spin text-indigo-500" />
+              <Loader2 className="animate-spin text-teal-500" />
            </div>
         ) : (
           [
             { title: "תזרים חודשי צפוי", amt: stats?.predictedCashflow || "₪0", up: true, diff: "+0%", icon: <DollarSign />, color: "bg-emerald-50 text-emerald-600" },
             { title: "הוצאות תפעול פתוחות", amt: stats?.openExpenses || "₪0", up: false, diff: "-0%", icon: <Activity />, color: "bg-rose-50 text-rose-600" },
             { title: "לקוחות חדשים (לידים)", amt: stats?.leadsCount || "0", up: true, diff: "+0", icon: <Users />, color: "bg-blue-50 text-blue-600" },
-            { title: "ציון בריאות אוטומטי", amt: stats?.healthScore || "0/100", up: true, diff: "סנכרון פעיל", icon: <PieChart />, color: "bg-indigo-50 text-indigo-600" }
+            { title: "ציון בריאות אוטומטי", amt: stats?.healthScore || "0/100", up: true, diff: "סנכרון פעיל", icon: <PieChart />, color: "bg-teal-50 text-teal-600" }
           ].map((s, i) => (
             <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
                <div className="absolute -right-6 -top-6 rounded-full w-24 h-24 bg-slate-50/50 scale-100 group-hover:scale-150 transition-transform duration-700" />

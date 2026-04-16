@@ -74,9 +74,9 @@ export default function LegalHubPage() {
             <li key={href}>
               <Link
                 href={href}
-                className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-indigo-500/30 hover:shadow-md"
+                className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-teal-500/30 hover:shadow-md"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-[var(--primary-color)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-500/15 text-[var(--primary-color)]">
                   <Icon size={24} />
                 </div>
                 <div>

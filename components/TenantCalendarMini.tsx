@@ -31,7 +31,7 @@ export default function TenantCalendarMini() {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm" dir="rtl">
       <div className="mb-3 flex items-center gap-2 text-sm font-black text-gray-700">
-        <CalendarDays size={18} className="text-indigo-400" aria-hidden />
+        <CalendarDays size={18} className="text-teal-400" aria-hidden />
         {label}
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-gray-400">
@@ -49,7 +49,7 @@ export default function TenantCalendarMini() {
               day == null
                 ? "text-transparent"
                 : isToday(day)
-                  ? "bg-indigo-600 text-white font-black"
+                  ? "bg-teal-600 text-white font-black"
                   : "text-gray-600 hover:bg-gray-50"
             }`}
           >

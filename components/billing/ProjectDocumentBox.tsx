@@ -97,7 +97,7 @@ export default function ProjectDocumentBox({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-500/15 text-teal-400">
             <FileText size={15} />
           </div>
           <div>
@@ -108,7 +108,7 @@ export default function ProjectDocumentBox({
         <Link
           href={`/app/billing?createFor=${encodeURIComponent(clientName ?? "")}`}
           onClick={() => {}}
-          className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+          className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-teal-700 transition"
         >
           <Plus size={12} /> הפקת מסמך
         </Link>
@@ -136,7 +136,7 @@ export default function ProjectDocumentBox({
       <div className="divide-y divide-white/[0.05]">
         {loading ? (
           <div className="flex items-center justify-center py-10">
-            <Loader2 size={24} className="animate-spin text-indigo-400" />
+            <Loader2 size={24} className="animate-spin text-teal-400" />
           </div>
         ) : error ? (
           <div className="px-5 py-6 text-center text-sm text-rose-600">{error}</div>
@@ -155,7 +155,7 @@ export default function ProjectDocumentBox({
             return (
               <div key={doc.id} className="group flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50/60 transition-colors">
                 {/* Doc number badge */}
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-xs font-black text-indigo-400">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-500/15 text-xs font-black text-teal-400">
                   #{doc.number}
                 </div>
 
@@ -179,7 +179,7 @@ export default function ProjectDocumentBox({
                     type="button"
                     onClick={() => onPreviewDoc(doc)}
                     title="תצוגה מקדימה + הדפסה"
-                    className="rounded-lg p-1.5 text-gray-400 hover:bg-indigo-500/15 hover:text-indigo-400 transition"
+                    className="rounded-lg p-1.5 text-gray-400 hover:bg-teal-500/15 hover:text-teal-400 transition"
                   >
                     <Eye size={14} />
                   </button>
@@ -187,7 +187,7 @@ export default function ProjectDocumentBox({
                     type="button"
                     onClick={() => onPreviewDoc(doc)}
                     title="הדפסה"
-                    className="rounded-lg p-1.5 text-gray-400 hover:bg-indigo-500/15 hover:text-indigo-400 transition"
+                    className="rounded-lg p-1.5 text-gray-400 hover:bg-teal-500/15 hover:text-teal-400 transition"
                   >
                     <Printer size={14} />
                   </button>
@@ -210,7 +210,7 @@ export default function ProjectDocumentBox({
         <div className="border-t border-gray-100 px-5 py-3 text-center">
           <Link
             href="/app/billing"
-            className="text-xs font-bold text-indigo-400 hover:underline"
+            className="text-xs font-bold text-teal-400 hover:underline"
           >
             פתח מרכז פיננסי מלא ←
           </Link>

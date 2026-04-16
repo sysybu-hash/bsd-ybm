@@ -44,8 +44,8 @@ export default function ReportingCenter() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-100 bg-white p-8 text-gray-900 shadow-sm transition-all group hover:border-indigo-500/30 md:flex-row">
-        <div className="bg-indigo-500/15 p-5 rounded-2xl text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform shrink-0">
+      <div className="flex flex-col items-center gap-6 rounded-2xl border border-gray-100 bg-white p-8 text-gray-900 shadow-sm transition-all group hover:border-teal-500/30 md:flex-row">
+        <div className="bg-teal-500/15 p-5 rounded-2xl text-teal-400 border border-teal-500/20 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>
         <div className="flex-1 text-center md:text-right min-w-0">
@@ -58,7 +58,7 @@ export default function ReportingCenter() {
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-white font-black text-indigo-300 outline-none px-3 py-2 rounded-xl border border-gray-100"
+            className="bg-white font-black text-teal-300 outline-none px-3 py-2 rounded-xl border border-gray-100"
             aria-label="חודש"
           >
             {Array.from({ length: 12 }, (_, i) => (
@@ -70,7 +70,7 @@ export default function ReportingCenter() {
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="bg-white font-black text-indigo-300 outline-none px-3 py-2 rounded-xl border border-gray-100"
+            className="bg-white font-black text-teal-300 outline-none px-3 py-2 rounded-xl border border-gray-100"
             aria-label="שנה"
           >
             {yearOptions.map((y) => (
@@ -85,7 +85,7 @@ export default function ReportingCenter() {
           onClick={() => void handleExport()}
           disabled={loading}
           className={`shrink-0 px-8 py-4 rounded-2xl font-black transition-all flex items-center gap-2 shadow-xl disabled:opacity-50 disabled:pointer-events-none ${
-            success ? "bg-green-600 hover:bg-green-600" : "bg-indigo-600 hover:bg-indigo-700"
+            success ? "bg-green-600 hover:bg-green-600" : "bg-teal-600 hover:bg-teal-700"
           }`}
         >
           {loading ? (

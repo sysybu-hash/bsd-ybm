@@ -89,7 +89,7 @@ export default function ExecutiveReportCharts({ data, year }: Props) {
       </RechartsBounded>
       <p className="mt-4 flex flex-wrap gap-4 text-xs font-bold text-gray-400 justify-center">
         <span className="inline-flex items-center gap-2">
-          <span className="h-2 w-6 rounded-full bg-indigo-600" /> {t("executiveCharts.legendIncome")}
+          <span className="h-2 w-6 rounded-full bg-teal-600" /> {t("executiveCharts.legendIncome")}
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-2 w-6 rounded-full bg-rose-500" /> {t("executiveCharts.legendExpense")}

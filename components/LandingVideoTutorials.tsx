@@ -45,7 +45,7 @@ const VIDEOS: VideoTutorialItem[] = [
 function AnimatedClip({ id }: { id: string }) {
   if (id === "dashboard") {
     return (
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-indigo-50 p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-teal-50 p-4">
         <div className="grid grid-cols-[120px_1fr] gap-3 h-full">
           <div className="rounded-xl bg-white border border-gray-200 p-2 space-y-1">
             {["דשבורד", "CRM", "ERP", "הגדרות"].map((l, i) => (
@@ -54,7 +54,7 @@ function AnimatedClip({ id }: { id: string }) {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.15 }}
-                className={`text-[10px] rounded-lg px-2 py-1 ${i === 0 ? "bg-indigo-500/15 text-indigo-300 font-bold" : "text-gray-500"}`}
+                className={`text-[10px] rounded-lg px-2 py-1 ${i === 0 ? "bg-teal-500/15 text-teal-300 font-bold" : "text-gray-500"}`}
               >
                 {l}
               </motion.div>
@@ -74,8 +74,8 @@ function AnimatedClip({ id }: { id: string }) {
   }
   if (id === "erp") {
     return (
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-indigo-50 p-4">
-        <div className="rounded-2xl border-2 border-dashed border-indigo-500/40 bg-white h-full flex flex-col items-center justify-center gap-3">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-teal-50 p-4">
+        <div className="rounded-2xl border-2 border-dashed border-teal-500/40 bg-white h-full flex flex-col items-center justify-center gap-3">
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8 }}
@@ -85,7 +85,7 @@ function AnimatedClip({ id }: { id: string }) {
           </motion.div>
           <div className="w-40 h-2 rounded-full bg-gray-100 overflow-hidden">
             <motion.div
-              className="h-full bg-indigo-500/15"
+              className="h-full bg-teal-500/15"
               animate={{ width: ["0%", "100%"] }}
               transition={{ repeat: Infinity, duration: 2.4 }}
             />
@@ -147,7 +147,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
       </div>
       <div className="flex flex-1 flex-col gap-2 p-6">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/15 text-[var(--primary-color,#3b82f6)]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-500/15 text-[var(--primary-color,#3b82f6)]">
             <Icon size={22} aria-hidden />
           </div>
           <div>
@@ -172,7 +172,7 @@ export default function LandingVideoTutorials() {
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-indigo-800"
+          className="mb-3 inline-flex items-center gap-2 rounded-full border border-teal-500/20 bg-teal-500/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-teal-800"
         >
           <Play size={14} className="shrink-0" aria-hidden />
           שלוש הדרכות וידאו

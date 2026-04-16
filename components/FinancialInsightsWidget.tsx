@@ -14,10 +14,10 @@ export default async function FinancialInsightsWidget({
   if (!organizationId) {
     return (
       <div
-        className="card-avenue border-indigo-500/30 bg-indigo-500/15 p-6 text-sm text-indigo-800"
+        className="card-avenue border-teal-500/30 bg-teal-500/15 p-6 text-sm text-teal-800"
         dir={dir}
       >
-        <p className="mb-2 font-bold text-indigo-300">תובנות BSD-YBM</p>
+        <p className="mb-2 font-bold text-teal-300">תובנות BSD-YBM</p>
         <p>שייך משתמש לארגון כדי לקבל תובנות AI.</p>
       </div>
     );

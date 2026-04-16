@@ -47,10 +47,10 @@ export default function CashFlowForecast() {
   const d = data || { actual: 0, pending: 0, forecast: 0, totalProjected: 0 };
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all hover:shadow-xl hover:shadow-indigo-500/5">
+    <div className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all hover:shadow-xl hover:shadow-teal-500/5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
         <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-100 italic">
+          <div className="p-3.5 bg-teal-600 text-white rounded-2xl shadow-lg shadow-teal-100 italic">
             <TrendingUp size={22} />
           </div>
           <div>
@@ -92,9 +92,9 @@ export default function CashFlowForecast() {
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
             <Target size={12} /> {t("dashboard.forecast.crm")}
           </p>
-          <p className="text-2xl font-black text-indigo-600 italic">₪{d.forecast.toLocaleString()}</p>
+          <p className="text-2xl font-black text-teal-600 italic">₪{d.forecast.toLocaleString()}</p>
           <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-             <div className="h-full bg-indigo-400 rounded-full shadow-[0_0_10px_rgba(129,140,248,0.2)]" style={{ width: `${Math.min(100, (d.forecast / (d.totalProjected || 1)) * 100)}%` }} />
+             <div className="h-full bg-teal-400 rounded-full shadow-[0_0_10px_rgba(13,148,136,0.25)]" style={{ width: `${Math.min(100, (d.forecast / (d.totalProjected || 1)) * 100)}%` }} />
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function CashFlowForecast() {
           <p className="text-4xl font-black text-slate-900 italic tracking-tighter">₪{d.totalProjected.toLocaleString()}</p>
         </div>
         <div className="flex items-start gap-4 max-w-sm bg-slate-50 p-5 rounded-3xl border border-slate-100/50">
-           <Info size={16} className="text-indigo-400 shrink-0 mt-0.5" />
+           <Info size={16} className="text-teal-400 shrink-0 mt-0.5" />
            <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
              {t("dashboard.forecast.hint")}
            </p>

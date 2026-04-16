@@ -176,6 +176,17 @@ export default function SettingsWorkspaceV2({
 
   return (
     <div className="grid gap-6" dir="rtl">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-5 py-3.5 text-sm text-white shadow-sm">
+        <span className="font-black tracking-tight">לוח בקרה · הגדרות</span>
+        <span className="inline-flex items-center gap-2 font-semibold text-emerald-400">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+          </span>
+          סטטוס מערכת תקין
+        </span>
+      </div>
+
       <section className="v2-panel v2-panel-soft p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>

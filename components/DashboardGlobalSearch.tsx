@@ -28,7 +28,7 @@ export default function DashboardGlobalSearch() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ארכיון חכם – חפש מסמך, ספק, סיכום AI..."
-            className="w-full bg-white border border-gray-200 rounded-full py-2 pr-10 pl-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 shadow-sm"
+            className="w-full bg-white border border-gray-200 rounded-full py-2 pr-10 pl-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/25 focus:border-teal-500 shadow-sm"
             dir="rtl"
           />
         </div>
@@ -39,7 +39,7 @@ export default function DashboardGlobalSearch() {
           href="https://vercel.com/docs"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-indigo-400 hover:underline font-medium"
+          className="text-teal-400 hover:underline font-medium"
         >
           תיעוד Vercel
         </a>
@@ -47,7 +47,7 @@ export default function DashboardGlobalSearch() {
           href="https://docs.github.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-indigo-400 hover:underline font-medium"
+          className="text-teal-400 hover:underline font-medium"
         >
           GitHub Docs
         </a>

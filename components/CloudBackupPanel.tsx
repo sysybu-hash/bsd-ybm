@@ -146,15 +146,15 @@ export default function CloudBackupPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-3 p-4 rounded-2xl bg-indigo-500/15 border border-indigo-500/20">
-        <Cloud className="text-indigo-400 shrink-0 mt-0.5" size={22} />
+      <div className="flex items-start gap-3 p-4 rounded-2xl bg-teal-500/15 border border-teal-500/20">
+        <Cloud className="text-teal-400 shrink-0 mt-0.5" size={22} />
         <div className="text-sm text-gray-600 leading-relaxed">
           <p className="font-bold text-gray-900">גיבוי וסריקה אוטונומית מול ענן</p>
           <p className="mt-1">
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
           </p>
-          <p className="mt-2 text-gray-500 border-t border-indigo-500/30/60 pt-2">
+          <p className="mt-2 text-gray-500 border-t border-teal-500/30/60 pt-2">
             <strong>מסמכים ישנים מהמחשב:</strong> העלאה ופענוח אצלנו ב־ERP דרך &quot;סורק ה־AI&quot;
             (גרירה של כמה קבצים). חיבור ענן כאן מתאים בעיקר לגיבוי וסנכרון שוטפים אחרי שכבר עובדים
             במערכת.
@@ -170,7 +170,7 @@ export default function CloudBackupPanel() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="animate-spin text-indigo-400" size={32} />
+          <Loader2 className="animate-spin text-teal-400" size={32} />
         </div>
       ) : (
         <ul className="space-y-4">
@@ -204,7 +204,7 @@ export default function CloudBackupPanel() {
                           onClick={() =>
                             void toggleProvider(p.id, { autoScan: false, backupExports: true })
                           }
-                          className="px-4 py-2.5 text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500/15 disabled:opacity-50"
+                          className="px-4 py-2.5 text-sm font-bold bg-teal-600 text-white hover:bg-teal-500/15 disabled:opacity-50"
                         >
                           {saving === p.id ? (
                             <Loader2 className="animate-spin inline" size={16} />
@@ -254,7 +254,7 @@ export default function CloudBackupPanel() {
                   <div className="border-t border-gray-200 bg-white px-4 py-4 text-sm text-gray-600 space-y-3">
                     <p className="font-black text-gray-900">{guide.title} — רשימת הכנה</p>
                     <div>
-                      <p className="text-xs font-bold text-indigo-300 mb-1">בשרת (Vercel / .env)</p>
+                      <p className="text-xs font-bold text-teal-300 mb-1">בשרת (Vercel / .env)</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">
                         {guide.serverEnv.map((line) => (
                           <li key={line}>{line}</li>
@@ -262,7 +262,7 @@ export default function CloudBackupPanel() {
                       </ul>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-indigo-300 mb-1">בפורטל הספק</p>
+                      <p className="text-xs font-bold text-teal-300 mb-1">בפורטל הספק</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">
                         {guide.portalSteps.map((line) => (
                           <li key={line}>{line}</li>
@@ -280,7 +280,7 @@ export default function CloudBackupPanel() {
       <button
         type="button"
         onClick={() => void load()}
-        className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-indigo-400"
+        className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-teal-400"
       >
         <RefreshCw size={16} />
         רענון רשימה

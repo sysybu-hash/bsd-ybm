@@ -101,15 +101,15 @@ export default function PriceComparisonChart({
       )}
 
       {latest && previous ? (
-        <div className="flex items-start gap-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/15 p-6">
-          <div className="bg-indigo-600 text-white p-2 rounded-xl shrink-0">
+        <div className="flex items-start gap-4 rounded-2xl border border-teal-500/20 bg-teal-500/15 p-6">
+          <div className="bg-teal-600 text-white p-2 rounded-xl shrink-0">
             <Lightbulb size={20} />
           </div>
           <div>
             <p className="text-gray-900 font-black text-sm uppercase tracking-widest">
               {t("priceCompare.insightKicker")}
             </p>
-            <p className="text-indigo-800 text-sm mt-1 leading-relaxed">
+            <p className="text-teal-800 text-sm mt-1 leading-relaxed">
               {t("priceCompare.insightBody", {
                 diff: (latest.price - previous.price).toFixed(2),
               })}

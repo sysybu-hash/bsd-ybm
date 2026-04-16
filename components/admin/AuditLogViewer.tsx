@@ -55,7 +55,7 @@ export default function AuditLogViewer() {
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+          <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl">
             <ShieldCheck size={24} />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default function AuditLogViewer() {
           <input 
             type="text"
             placeholder="חפש לפי פעולה, משתמש או אימייל..."
-            className="w-full pr-12 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+            className="w-full pr-12 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
@@ -112,7 +112,7 @@ export default function AuditLogViewer() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-100">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-bold border border-teal-100">
                         <Activity size={12} />
                         {log.action}
                       </span>

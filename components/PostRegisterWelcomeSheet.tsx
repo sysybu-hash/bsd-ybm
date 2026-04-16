@@ -52,11 +52,11 @@ export default function PostRegisterWelcomeSheet() {
         <p className="mt-2 text-center text-sm text-gray-400">החשבון שלך מחובר ומוכן לעבודה</p>
 
         <div className="mt-8 flex flex-col items-center gap-4">
-          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-500/20 bg-gray-50 shadow-inner">
+          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-teal-500/20 bg-gray-50 shadow-inner">
             {img ? (
               <Image src={img} alt="" fill className="object-cover" sizes="96px" unoptimized />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-3xl font-black text-indigo-300">
+              <div className="flex h-full w-full items-center justify-center text-3xl font-black text-teal-300">
                 {name.slice(0, 1).toUpperCase()}
               </div>
             )}
@@ -67,7 +67,7 @@ export default function PostRegisterWelcomeSheet() {
           </div>
           <div
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold ${
-              connected ? "bg-emerald-500/15 text-emerald-800" : "bg-indigo-500/15 text-white"
+              connected ? "bg-emerald-500/15 text-emerald-800" : "bg-teal-500/15 text-white"
             }`}
           >
             {connected ? <Wifi size={16} aria-hidden /> : <WifiOff size={16} aria-hidden />}
@@ -87,7 +87,7 @@ export default function PostRegisterWelcomeSheet() {
           <button
             type="button"
             onClick={close}
-            className="w-full rounded-2xl bg-indigo-600 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-500/15"
+            className="w-full rounded-2xl bg-teal-600 py-3.5 text-sm font-black text-white shadow-lg shadow-teal-500/25 hover:bg-teal-500/15"
           >
             המשך לדשבורד
           </button>

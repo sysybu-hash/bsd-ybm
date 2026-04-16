@@ -84,7 +84,7 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
           <button
             type="button"
             onClick={handlePrint}
-            className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+            className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-teal-700 transition"
           >
             <Printer size={15} /> הדפסה
           </button>

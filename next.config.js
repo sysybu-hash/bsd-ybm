@@ -34,6 +34,13 @@ const nextConfig = {
       { source: "/dashboard/success", destination: "/app/success", permanent: true },
       { source: "/dashboard/invoices", destination: "/app/documents/issued", permanent: true },
       { source: "/dashboard/trial-expired", destination: "/app/trial-expired", permanent: true },
+      { source: "/dashboard/operations", destination: "/app/operations", permanent: true },
+      { source: "/dashboard/legacy/ai", destination: "/app/insights", permanent: true },
+      { source: "/dashboard/legacy/crm", destination: "/app/clients", permanent: true },
+      { source: "/dashboard/legacy/control-center", destination: "/app/inbox", permanent: true },
+      { source: "/dashboard/legacy/operations", destination: "/app/operations", permanent: true },
+      { source: "/dashboard/legacy/settings", destination: "/app/settings", permanent: true },
+      { source: "/dashboard/legacy", destination: "/app", permanent: true },
     ];
   },
   transpilePackages: ["react-signature-canvas", "signature_pad"],

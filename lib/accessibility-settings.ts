@@ -1,7 +1,7 @@
 export const ACCESSIBILITY_STORAGE_KEY = "bsd:accessibility-settings";
 
 export const ACCESSIBILITY_THEME_OPTIONS = [
-  { id: "indigo", label: "אינדיגו", color: "#4f46e5" },
+  { id: "teal", label: "טיל (ברירת מחדל)", color: "#0d9488" },
   { id: "emerald", label: "אמרלד", color: "#059669" },
   { id: "blue", label: "כחול", color: "#2563eb" },
   { id: "amber", label: "ענבר", color: "#d97706" },
@@ -31,7 +31,7 @@ export const DEFAULT_ACCESSIBILITY_SETTINGS: AccessibilitySettings = {
   reducedMotion: false,
   focusRing: true,
   lineSpacing: false,
-  themeColor: "indigo",
+  themeColor: "teal",
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -39,8 +39,9 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function normalizeTheme(themeColor: unknown): AccessibilityThemeId {
-  return ACCESSIBILITY_THEME_OPTIONS.some((option) => option.id === themeColor)
-    ? (themeColor as AccessibilityThemeId)
+  const raw = themeColor === "indigo" ? "teal" : themeColor;
+  return ACCESSIBILITY_THEME_OPTIONS.some((option) => option.id === raw)
+    ? (raw as AccessibilityThemeId)
     : DEFAULT_ACCESSIBILITY_SETTINGS.themeColor;
 }
 
@@ -98,7 +99,7 @@ export function writeStoredAccessibilitySettings(settings: AccessibilitySettings
 
 function hexToRgb(hexColor: string) {
   const cleaned = hexColor.replace("#", "");
-  if (cleaned.length !== 6) return "79, 70, 229";
+  if (cleaned.length !== 6) return "13, 148, 136";
 
   const red = Number.parseInt(cleaned.slice(0, 2), 16);
   const green = Number.parseInt(cleaned.slice(2, 4), 16);

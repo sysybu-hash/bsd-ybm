@@ -92,7 +92,7 @@ export default function DashboardNotificationBell() {
               <button
                 type="button"
                 onClick={() => void markAll()}
-                className="text-[11px] font-bold text-indigo-400 hover:underline"
+                className="text-[11px] font-bold text-teal-400 hover:underline"
               >
                 סמן הכל כנקרא
               </button>
@@ -112,7 +112,7 @@ export default function DashboardNotificationBell() {
                     if (!n.read) void markRead([n.id]);
                   }}
                   className={`w-full text-right border-b border-gray-100 px-3 py-2.5 hover:bg-gray-50 ${
-                    n.read ? "opacity-70" : "bg-indigo-500/15"
+                    n.read ? "opacity-70" : "bg-teal-500/15"
                   }`}
                 >
                   <p className="text-xs font-black text-gray-900">{n.title}</p>
