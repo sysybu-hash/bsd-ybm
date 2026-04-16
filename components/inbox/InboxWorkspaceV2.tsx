@@ -13,6 +13,7 @@ import {
   MailWarning,
   Sparkles,
 } from "lucide-react";
+import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
 type NotificationItem = {
@@ -66,6 +67,7 @@ export default function InboxWorkspaceV2({
   reviewCount,
   missingInfoCount,
 }: Props) {
+  const advancedInboxHref = getAdvancedWorkspaceHref("inbox");
   const [notifications, setNotifications] = useState(initialNotifications);
   const [markingAll, setMarkingAll] = useState(false);
   const [markingIds, setMarkingIds] = useState<string[]>([]);
@@ -128,7 +130,7 @@ export default function InboxWorkspaceV2({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/app/inbox/advanced" className="v2-button v2-button-primary">
+            <Link href={advancedInboxHref} className="v2-button v2-button-primary">
               מרכז בקרה מתקדם
               <ExternalLink className="h-4 w-4" aria-hidden />
             </Link>

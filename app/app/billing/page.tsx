@@ -5,10 +5,22 @@ import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
 import { prisma } from "@/lib/prisma";
 import { getIndustryProfile } from "@/lib/professions/runtime";
+import {
+  canAccessPlatformBillingControl,
+  canManageOrganization,
+  getWorkspaceRoleLabel,
+  type WorkspaceAccessContext,
+} from "@/lib/workspace-access";
 
 export const dynamic = "force-dynamic";
 
-export default async function AppBillingPage() {
+type BillingSearchParams = Promise<{ tab?: string; orgId?: string }>;
+
+export default async function AppBillingPage({
+  searchParams,
+}: {
+  searchParams: BillingSearchParams;
+}) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
 
@@ -16,23 +28,38 @@ export default async function AppBillingPage() {
     redirect("/login");
   }
 
-  const [organization, openIssuedCount, paidIssuedTotal, adminOrganizations] = await Promise.all([
-    prisma.organization.findUnique({
-      where: { id: organizationId },
-      select: {
-        id: true,
-        name: true,
-        subscriptionTier: true,
-        subscriptionStatus: true,
-        cheapScansRemaining: true,
-        premiumScansRemaining: true,
-        maxCompanies: true,
-        trialEndsAt: true,
-        industry: true,
-        industryConfigJson: true,
-        tenantPublicDomain: true,
-      },
-    }),
+  const organization = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: {
+      id: true,
+      name: true,
+      subscriptionTier: true,
+      subscriptionStatus: true,
+      cheapScansRemaining: true,
+      premiumScansRemaining: true,
+      maxCompanies: true,
+      trialEndsAt: true,
+      industry: true,
+      constructionTrade: true,
+      industryConfigJson: true,
+      tenantPublicDomain: true,
+    },
+  });
+
+  if (!organization) {
+    redirect("/login");
+  }
+
+  const platformAdmin = isAdmin(session?.user?.email);
+  const accessContext: WorkspaceAccessContext = {
+    role: session?.user?.role ?? "",
+    isPlatformAdmin: platformAdmin,
+    subscriptionTier: organization.subscriptionTier,
+    subscriptionStatus: organization.subscriptionStatus,
+    hasOrganization: true,
+  };
+
+  const [openIssuedCount, paidIssuedTotal, adminOrganizations, params] = await Promise.all([
     prisma.issuedDocument.count({
       where: { organizationId, status: "PENDING" },
     }),
@@ -40,7 +67,7 @@ export default async function AppBillingPage() {
       where: { organizationId, status: "PAID" },
       _sum: { total: true },
     }),
-    isAdmin(session?.user?.email)
+    platformAdmin
       ? prisma.organization.findMany({
           orderBy: { createdAt: "desc" },
           select: {
@@ -60,13 +87,18 @@ export default async function AppBillingPage() {
           },
         })
       : Promise.resolve([]),
+    searchParams,
   ]);
 
-  if (!organization) {
-    redirect("/login");
-  }
-
-  const industryProfile = getIndustryProfile(organization.industry, organization.industryConfigJson);
+  const industryProfile = getIndustryProfile(
+    organization.industry,
+    organization.industryConfigJson,
+    organization.constructionTrade,
+  );
+  const initialSection =
+    canAccessPlatformBillingControl(accessContext) && params.tab?.trim().toLowerCase() === "control"
+      ? "control"
+      : "overview";
 
   return (
     <SubscriptionManagementWorkspace
@@ -88,6 +120,14 @@ export default async function AppBillingPage() {
         tenantPublicDomain: organizationRow.tenantPublicDomain,
         primaryEmail: organizationRow.users[0]?.email ?? null,
       }))}
+      viewer={{
+        role: session?.user?.role ?? "",
+        roleLabel: getWorkspaceRoleLabel(accessContext),
+        canManageCurrentOrganization: canManageOrganization(accessContext),
+        canAccessPlatformControls: canAccessPlatformBillingControl(accessContext),
+      }}
+      initialSection={initialSection}
+      focusedOrganizationId={params.orgId?.trim() || null}
     />
   );
 }

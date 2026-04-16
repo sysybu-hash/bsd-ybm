@@ -1,5 +1,6 @@
 /**
- * ספקי AI נתמכים לפי מפתחות ב-.env / Vercel (ללא חשיפת ערכים ללקוח).
+ * ספקי AI נתמכים לפי מפתחות ב-.env / Vercel.
+ * שים לב: MindStudio נשאר כסוג שמור לאחור, אבל לא נחשף ב-UI עד שתהיה אינטגרציית runtime אמיתית.
  */
 
 export type AiProviderId = "gemini" | "openai" | "anthropic" | "groq" | "mindstudio" | "docai";
@@ -9,17 +10,15 @@ export type AiProviderPublic = {
   label: string;
   description: string;
   configured: boolean;
-  /** סריקת קובץ (תמונה/PDF לפי יכולת הספק) */
   supportsDocumentScan: boolean;
 };
 
-/** אחרי סינון מנוי ב־API */
 export type AiProviderWithPlan = AiProviderPublic & {
   allowedByPlan: boolean;
 };
 
-function has(k: string | undefined): boolean {
-  return typeof k === "string" && k.trim().length > 0;
+function has(value: string | undefined): boolean {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 export function isGeminiConfigured(): boolean {
@@ -51,42 +50,35 @@ export function getAiProvidersPublic(): AiProviderPublic[] {
     {
       id: "gemini",
       label: "Google Gemini 2.5",
-      description: "סריקת מסמכים רב-ממדית, ניתוח נתונים משולב ויז'ן",
+      description: "סריקת מסמכים רב-ממדית, ניתוח נתונים משולב ו-vision",
       configured: isGeminiConfigured(),
       supportsDocumentScan: true,
     },
     {
       id: "openai",
-      label: "OpenAI GPT-5",
-      description: "GPT-5 Ultra — מנוע הדור הבא; סריקת PDF מתקדמת",
+      label: "OpenAI GPT",
+      description: "מנוע שיחה וניתוח כללי עם תמיכה במסמכים מתקדמים",
       configured: isOpenAiConfigured(),
       supportsDocumentScan: true,
     },
     {
       id: "anthropic",
-      label: "Anthropic Claude 4",
-      description: "Claude 4 Opus — לוגיקת AI עילית לסנכרון פרויקטים",
+      label: "Anthropic Claude",
+      description: "מנוע ניתוח וכתיבה ארגונית לעומק",
       configured: isAnthropicConfigured(),
       supportsDocumentScan: true,
     },
     {
       id: "groq",
       label: "Groq (Llama)",
-      description: "פענוח מהיר במיוחד (טקסט בלבד)",
+      description: "מנוע מהיר במיוחד לטקסט ול-fallback בזמן עומס",
       configured: isGroqConfigured(),
       supportsDocumentScan: false,
     },
     {
-      id: "mindstudio",
-      label: "MindStudio",
-      description: "סוכני עבודה וירטואלים ארגוניים",
-      configured: isMindStudioConfigured(),
-      supportsDocumentScan: true,
-    },
-    {
       id: "docai",
-      label: "Google Document AI (Premium)",
-      description: "מנוע סריקה מוסדי ברמת דיוק מקסימלית — מומלץ לחשבוניות מורכבות",
+      label: "Google Document AI",
+      description: "OCR מוסדי ברמת דיוק גבוהה למסמכים מורכבים",
       configured: isDocAiConfigured(),
       supportsDocumentScan: true,
     },
@@ -94,16 +86,16 @@ export function getAiProvidersPublic(): AiProviderPublic[] {
 }
 
 export function normalizeAiProviderId(raw: string | null | undefined): AiProviderId {
-  const s = (raw ?? "").trim().toLowerCase();
+  const value = (raw ?? "").trim().toLowerCase();
   if (
-    s === "openai" ||
-    s === "anthropic" ||
-    s === "groq" ||
-    s === "gemini" ||
-    s === "mindstudio" ||
-    s === "docai"
+    value === "openai" ||
+    value === "anthropic" ||
+    value === "groq" ||
+    value === "gemini" ||
+    value === "mindstudio" ||
+    value === "docai"
   ) {
-    return s as AiProviderId;
+    return value as AiProviderId;
   }
   return "gemini";
 }
@@ -119,7 +111,7 @@ export function assertProviderConfigured(id: AiProviderId): string | null {
     case "groq":
       return isGroqConfigured() ? null : "חסר GROQ_API_KEY";
     case "mindstudio":
-      return isMindStudioConfigured() ? null : "חסר MIND_STUDIO_API_KEY";
+      return "MindStudio עדיין לא מחובר ב-runtime בפרויקט הזה";
     case "docai":
       return isDocAiConfigured() ? null : "חסר GOOGLE_DOCUMENT_AI_PROCESSOR_ID או GOOGLE_DOCUMENT_AI_CREDENTIALS";
     default:
@@ -136,5 +128,5 @@ export function getAnthropicModel(): string {
 }
 
 export function getGroqModel(): string {
-  return process.env.GROQ_MODEL?.trim() || "llama-4-scout-70b-v2";
+  return process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile";
 }

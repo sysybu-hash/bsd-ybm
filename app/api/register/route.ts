@@ -4,7 +4,7 @@ import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { sendRegistrationWelcomeEmail } from "@/lib/mail";
 import { defaultScanBalancesForTier, tierLabelHe } from "@/lib/subscription-tier-config";
-import { normalizeIndustryType } from "@/lib/professions/config";
+import { normalizeConstructionTrade } from "@/lib/construction-trades";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
       organizationName?: string;
       orgType?: string;
       industry?: string;
+      constructionTrade?: string;
       inviteToken?: string;
       orgInviteToken?: string;
       plan?: string;
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     const name = String(body.name ?? "").trim() || null;
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
-    const industry = normalizeIndustryType(String(body.industry ?? "GENERAL"));
+    const constructionTrade = normalizeConstructionTrade(body.constructionTrade);
     const inviteToken = String(body.inviteToken ?? "").trim();
     const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 
@@ -169,7 +170,8 @@ export async function POST(req: Request) {
           data: {
             name: organizationName,
             type: orgType,
-            industry,
+            industry: "CONSTRUCTION",
+            constructionTrade,
             subscriptionTier: inv.subscriptionTier,
             subscriptionStatus: "ACTIVE",
             cheapScansRemaining: balances.cheapScansRemaining,
@@ -229,7 +231,8 @@ export async function POST(req: Request) {
       data: {
         name: organizationName,
         type: orgType,
-        industry,
+        industry: "CONSTRUCTION",
+        constructionTrade,
         subscriptionTier: tier,
         trialEndsAt: tier === "FREE" ? trialEndsAtFromNow() : null,
         subscriptionStatus: initialSubStatus,

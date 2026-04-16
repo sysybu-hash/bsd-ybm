@@ -38,13 +38,15 @@ export default async function DashboardLayout({
         where: { id: session.user.organizationId },
         select: {
           industry: true,
+          constructionTrade: true,
           industryConfigJson: true,
         },
       })
     : null;
   const industryProfile = getIndustryProfile(
-    organization?.industry ?? (session.user as any).organizationIndustry ?? "GENERAL",
+    organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
+    organization?.constructionTrade ?? session.user.organizationConstructionTrade,
   );
 
   return (

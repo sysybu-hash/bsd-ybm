@@ -45,6 +45,7 @@ export default async function AppDocumentsPage() {
       where: { id: organizationId },
       select: {
         industry: true,
+        constructionTrade: true,
         industryConfigJson: true,
       },
     }),
@@ -85,7 +86,11 @@ export default async function AppDocumentsPage() {
     }),
   ]);
 
-  const industryProfile = getIndustryProfile(organization?.industry ?? "GENERAL", organization?.industryConfigJson);
+  const industryProfile = getIndustryProfile(
+    organization?.industry ?? "CONSTRUCTION",
+    organization?.industryConfigJson,
+    organization?.constructionTrade,
+  );
 
   const scannedDocuments = scannedRaw.map((document) => {
     const ai = readAi(document.aiData);

@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { getIndustryConfig, IndustryConfig } from "@/lib/professions/config";
+import { IndustryConfig } from "@/lib/professions/config";
+import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import { useI18n } from "@/components/I18nProvider";
 
 /**
@@ -11,9 +12,10 @@ import { useI18n } from "@/components/I18nProvider";
 export function useIndustryConfig(): IndustryConfig {
   const { data: session } = useSession();
   const { t } = useI18n();
-  
-  const industryId = (session?.user as any)?.organizationIndustry || "GENERAL";
-  const config = getIndustryConfig(industryId);
+
+  const industryId = (session?.user as { organizationIndustry?: string | null })?.organizationIndustry || "CONSTRUCTION";
+  const trade = (session?.user as { organizationConstructionTrade?: string | null })?.organizationConstructionTrade;
+  const config = getMergedIndustryConfig(industryId, trade);
 
   // 🌍 BSD-YBM BSD-YBM: Dynamic Hydration
   // We override the hardcoded labels with localized ones from t() system

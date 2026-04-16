@@ -28,11 +28,8 @@ import { pickBestEngineIndex, scoreExtractedDocument } from "@/lib/score-scan-re
 import { useI18n } from "@/components/I18nProvider";
 import WizardContainer, { WizardStepConfig } from "./wizard/WizardContainer";
 import { saveScannedDocumentAction } from "@/app/actions/save-scanned-document";
-import { 
-  getIndustryConfig,
-  IndustryType, 
-  AnalysisType 
-} from "@/lib/professions/config";
+import { IndustryType, AnalysisType } from "@/lib/professions/config";
+import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import * as LucideIcons from "lucide-react";
 
 type ProviderRow = {
@@ -83,9 +80,9 @@ export default function MultiEngineScanner({
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
 
-  // Modular Data based on industry
-  const userIndustry = (industryOverride || (session?.user as any)?.organization?.industry || "GENERAL") as IndustryType;
-  const config = getIndustryConfig(userIndustry);
+  const userIndustry = (industryOverride || session?.user?.organizationIndustry || "CONSTRUCTION") as IndustryType;
+  const trade = session?.user?.organizationConstructionTrade ?? null;
+  const config = getMergedIndustryConfig(userIndustry, trade);
   
   // Icon resolution from name
   const ActiveIcon = (LucideIcons as any)[config.iconName] || LucideIcons.Bot;

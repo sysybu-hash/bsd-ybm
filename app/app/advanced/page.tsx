@@ -1,62 +1,16 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import {
-  ArrowLeft,
-  Bot,
-  BriefcaseBusiness,
-  FileClock,
-  LayoutDashboard,
-  Settings,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { appAdvancedItems } from "@/components/app-shell/app-nav";
 import { authOptions } from "@/lib/auth";
 import { canAccessMeckano } from "@/lib/meckano-access";
-
-const advancedItems = [
-  {
-    href: "/app/inbox/advanced",
-    title: "מרכז בקרה מתקדם",
-    body: "כלי ניטור, בקרה ותהליכי עומק שעוזרים לצוותי ניהול ותפעול לטפל במקרים מורכבים.",
-    icon: ShieldCheck,
-  },
-  {
-    href: "/app/clients/advanced",
-    title: "CRM מתקדם",
-    body: "כלי ה-CRM המלאים למצבים שבהם צריך שליטה עמוקה יותר, דוחות וכלי עומק.",
-    icon: BriefcaseBusiness,
-  },
-  {
-    href: "/app/insights/advanced",
-    title: "AI Hub מתקדם",
-    body: "לשוניות AI, סורקים וכלי עומק אנליטיים שמיועדים לעבודה מתקדמת יותר.",
-    icon: Bot,
-  },
-  {
-    href: "/app/settings/advanced",
-    title: "הגדרות מתקדמות",
-    body: "מרכז ההגדרות המלא לאזורים שדורשים שליטה מפורטת יותר בארגון ובאינטגרציות.",
-    icon: Settings,
-  },
-  {
-    href: "/app/operations/advanced",
-    title: "תפעול מתקדם",
-    body: "Workflows, כלי עומק לצוות ותהליכים שחוצים כמה מחלקות או כמה מערכות יחד.",
-    icon: FileClock,
-  },
-  {
-    href: "/app/operations/meckano",
-    title: "Meckano",
-    body: "מודול השטח הייעודי נשאר כאן כמרחב עבודה מתקדם למנוי המורשה בלבד.",
-    icon: LayoutDashboard,
-  },
-] as const;
 
 export default async function AppAdvancedPage() {
   const session = await getServerSession(authOptions);
   const hasMeckanoAccess = await canAccessMeckano(session);
   const visibleItems = hasMeckanoAccess
-    ? advancedItems
-    : advancedItems.filter((item) => item.href !== "/app/operations/meckano");
+    ? appAdvancedItems
+    : appAdvancedItems.filter((item) => !item.requiresMeckano);
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6" dir="rtl">
@@ -68,8 +22,8 @@ export default async function AppAdvancedPage() {
           כלי העומק של BSD-YBM מרוכזים כאן בצורה מסודרת, בלי להעמיס על סביבת העבודה היומיומית.
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-500 sm:text-base">
-          ברירת המחדל של המערכת היא סביבת /app, אבל כשצריך שליטה עמוקה יותר, ניתוח מתקדם או כלים ייעודיים,
-          כל אזורי העומק זמינים כאן במרחב נפרד, ברור ומרוכז.
+          ברירת המחדל של המערכת היא סביבת <code>/app</code>, אבל כשצריך שליטה עמוקה יותר, ניתוח מתקדם או כלי
+          מומחה, כל אזורי העומק זמינים כאן במרחב ברור ומרוכז.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/app" className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white">

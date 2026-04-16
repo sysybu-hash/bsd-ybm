@@ -20,6 +20,7 @@ export default async function AppClientsPage() {
       where: { id: organizationId },
       select: {
         industry: true,
+        constructionTrade: true,
         industryConfigJson: true,
       },
     }),
@@ -115,7 +116,11 @@ export default async function AppClientsPage() {
     };
   });
 
-  const industryProfile = getIndustryProfile(organization?.industry ?? "GENERAL", organization?.industryConfigJson);
+  const industryProfile = getIndustryProfile(
+    organization?.industry ?? "CONSTRUCTION",
+    organization?.industryConfigJson,
+    organization?.constructionTrade,
+  );
 
   return <ClientsWorkspaceV2 contacts={contacts} projects={projects} industryProfile={industryProfile} />;
 }

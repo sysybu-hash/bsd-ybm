@@ -5,7 +5,7 @@ import MarketingPublicShell from "@/components/marketing/MarketingPublicShell";
 export const metadata: Metadata = {
   title: "המוצר | BSD-YBM",
   description:
-    "היכרות עם שכבות העבודה של BSD-YBM: לקוחות, מסמכים, חיוב, תפעול, בקרה ו-AI במערכת אחת.",
+    "שכבות המוצר לענף הבנייה: לקוחות ופרויקטים, מסמכים וסריקות AI, חיוב, תפעול בשטח ובקרה.",
 };
 
 const modules = [
@@ -39,9 +39,9 @@ const modules = [
 export default function ProductPage() {
   return (
     <MarketingPublicShell
-      title="שכבות עבודה ברורות למערכת אחת שעובדת כמו עסק אמיתי."
-      eyebrow="Product"
-      description="BSD-YBM בנויה כך שכל מודול מחזק את השני: לקוח מייצר מסמך, מסמך מייצר פעולה, פעולה מייצרת חיוב, והכול חוזר לבקרה ניהולית אחת."
+      title="שכבות עבודה לפרויקט בנייה — מההצעה ועד חשבון הספק."
+      eyebrow="המוצר"
+      description="כל מודול מתחבר לזרם האמיתי של השטח: מזמין ואתר, מסמכים וספקים, תשלומים ובקרה — עם AI שמכבד את סוג המקצוע בארגון."
     >
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {modules.map(({ title, body, icon: Icon }) => (

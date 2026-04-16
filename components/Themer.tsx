@@ -2,9 +2,16 @@
 
 import { useEffect } from "react";
 
-const DEFAULT_COLOR = "#2563eb";
+/** צבע מותג ברירת מחדל — מסונכרן ל־--primary-color ב־globals (בנייה B2B) */
+const DEFAULT_COLOR = "#c1592f";
 const APPROVED_COLORS = new Set([
-  "#2563eb", "#10b981", "#7c3aed", "#0891b2", "#dc2626",
+  "#c1592f",
+  "#9f4321",
+  "#0f172a",
+  "#0c4a6e",
+  "#2563eb",
+  "#10b981",
+  "#7c3aed",
 ]);
 
 /** מסנכרן --primary-color מ-localStorage (דפי נחיתה ללא תפריט נגישות) */

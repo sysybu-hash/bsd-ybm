@@ -12,95 +12,221 @@ import {
 } from "@/lib/ai-providers";
 import { getAiChatSystemPrefix } from "@/lib/i18n/ai-prompts";
 
+const RETRYABLE_STATUS_CODES = [429, 500, 503, 504];
+const FALLBACK_PROVIDER_ORDER: AiProviderId[] = ["groq", "openai", "anthropic"];
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function extractErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return String(error);
+}
+
+function isRetryableProviderError(error: unknown) {
+  const message = extractErrorMessage(error).toLowerCase();
+  return (
+    RETRYABLE_STATUS_CODES.some((status) => message.includes(`${status}`)) ||
+    message.includes("service unavailable") ||
+    message.includes("currently experiencing high demand") ||
+    message.includes("resource exhausted") ||
+    message.includes("rate limit") ||
+    message.includes("overloaded") ||
+    message.includes("timeout")
+  );
+}
+
+function isFallbackEligibleProviderError(error: unknown) {
+  const message = extractErrorMessage(error).toLowerCase();
+  return (
+    isRetryableProviderError(error) ||
+    message.includes("insufficient_quota") ||
+    message.includes("exceeded your current quota") ||
+    message.includes("credit balance is too low") ||
+    message.includes("purchase credits") ||
+    message.includes("plans & billing") ||
+    message.includes("billing details") ||
+    message.includes("model overloaded") ||
+    message.includes("temporarily unavailable")
+  );
+}
+
+export function getUserFacingAiErrorMessage(error: unknown) {
+  if (isFallbackEligibleProviderError(error)) {
+    return "שירות ה-AI עמוס כרגע או חסום זמנית באחד הספקים. נסה שוב בעוד רגע.";
+  }
+
+  const message = extractErrorMessage(error);
+  return message.slice(0, 400) || "שגיאה זמנית בשירות ה-AI.";
+}
+
+async function runWithRetry<T>(task: () => Promise<T>, retries = 2, baseDelayMs = 450): Promise<T> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await task();
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries || !isRetryableProviderError(error)) {
+        throw error;
+      }
+      await sleep(baseDelayMs * (attempt + 1));
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Unknown AI provider error");
+}
+
+async function runOpenAiPrompt(prompt: string) {
+  if (!isOpenAiConfigured()) throw new Error("חסר OPENAI_API_KEY");
+  const key = process.env.OPENAI_API_KEY!.trim();
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini",
+      max_tokens: 2048,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!res.ok) throw new Error((await res.text()).slice(0, 400));
+  const data = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  return data.choices?.[0]?.message?.content ?? "";
+}
+
+async function runAnthropicPrompt(prompt: string) {
+  if (!isAnthropicConfigured()) throw new Error("חסר ANTHROPIC_API_KEY");
+  const key = process.env.ANTHROPIC_API_KEY!.trim();
+  const model = getAnthropicModel();
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 2048,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!res.ok) throw new Error((await res.text()).slice(0, 400));
+  const data = (await res.json()) as {
+    content?: Array<{ type?: string; text?: string }>;
+  };
+  return data.content?.find((block) => block.type === "text")?.text ?? "";
+}
+
+async function runGroqPrompt(prompt: string) {
+  if (!isGroqConfigured()) throw new Error("חסר GROQ_API_KEY");
+  const key = process.env.GROQ_API_KEY!.trim();
+  const model = getGroqModel();
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 2048,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!res.ok) throw new Error((await res.text()).slice(0, 400));
+  const data = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  return data.choices?.[0]?.message?.content ?? "";
+}
+
+async function runGeminiPrompt(prompt: string) {
+  if (!isGeminiConfigured()) throw new Error("חסר מפתח Gemini");
+  const genAI = new GoogleGenerativeAI(
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || "",
+  );
+  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}
+
+async function executeProvider(provider: AiProviderId, prompt: string) {
+  switch (provider) {
+    case "openai":
+      return runOpenAiPrompt(prompt);
+    case "anthropic":
+      return runAnthropicPrompt(prompt);
+    case "groq":
+      return runGroqPrompt(prompt);
+    case "gemini":
+    default:
+      return runGeminiPrompt(prompt);
+  }
+}
+
+function canUseProvider(provider: AiProviderId) {
+  switch (provider) {
+    case "openai":
+      return isOpenAiConfigured();
+    case "anthropic":
+      return isAnthropicConfigured();
+    case "groq":
+      return isGroqConfigured();
+    case "gemini":
+      return isGeminiConfigured();
+    default:
+      return false;
+  }
+}
+
 export async function runAiChat(
   providerRaw: string | undefined,
   userPrompt: string,
   contextJson: string,
   locale: string,
 ): Promise<{ text: string; provider: AiProviderId }> {
-  const provider = normalizeAiProviderId(providerRaw);
-
+  const requestedProvider = normalizeAiProviderId(providerRaw);
   const systemPrefix = getAiChatSystemPrefix(contextJson, locale);
+  const prompt = systemPrefix + userPrompt;
 
-  if (provider === "openai") {
-    if (!isOpenAiConfigured()) throw new Error("חסר OPENAI_API_KEY");
-    const key = process.env.OPENAI_API_KEY!.trim();
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini",
-        max_tokens: 2048,
-        messages: [{ role: "user", content: systemPrefix + userPrompt }],
-      }),
-    });
-    if (!res.ok) throw new Error((await res.text()).slice(0, 400));
-    const data = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    const text = data.choices?.[0]?.message?.content ?? "";
-    return { text, provider: "openai" };
+  const providersToTry: AiProviderId[] = [
+    requestedProvider,
+    ...FALLBACK_PROVIDER_ORDER.filter((provider) => provider !== requestedProvider),
+  ].filter(canUseProvider);
+
+  let lastError: unknown;
+
+  for (const [index, provider] of providersToTry.entries()) {
+    try {
+      const text =
+        provider === "gemini"
+          ? await runWithRetry(() => executeProvider(provider, prompt))
+          : await executeProvider(provider, prompt);
+
+      return { text, provider };
+    } catch (error) {
+      lastError = error;
+      const hasNextProvider = index < providersToTry.length - 1;
+      const shouldFallback = hasNextProvider;
+
+      if (!shouldFallback) {
+        throw error;
+      }
+    }
   }
 
-  if (provider === "anthropic") {
-    if (!isAnthropicConfigured()) throw new Error("חסר ANTHROPIC_API_KEY");
-    const key = process.env.ANTHROPIC_API_KEY!.trim();
-    const model = getAnthropicModel();
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 2048,
-        messages: [{ role: "user", content: systemPrefix + userPrompt }],
-      }),
-    });
-    if (!res.ok) throw new Error((await res.text()).slice(0, 400));
-    const data = (await res.json()) as {
-      content?: Array<{ type?: string; text?: string }>;
-    };
-    const text = data.content?.find((b) => b.type === "text")?.text ?? "";
-    return { text, provider: "anthropic" };
-  }
-
-  if (provider === "groq") {
-    if (!isGroqConfigured()) throw new Error("חסר GROQ_API_KEY");
-    const key = process.env.GROQ_API_KEY!.trim();
-    const model = getGroqModel();
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 2048,
-        messages: [{ role: "user", content: systemPrefix + userPrompt }],
-      }),
-    });
-    if (!res.ok) throw new Error((await res.text()).slice(0, 400));
-    const data = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    const text = data.choices?.[0]?.message?.content ?? "";
-    return { text, provider: "groq" };
-  }
-
-  /** ברירת מחדל — Gemini */
-  if (!isGeminiConfigured()) throw new Error("חסר מפתח Gemini");
-  const genAI = new GoogleGenerativeAI(
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || "",
-  );
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
-  const result = await model.generateContent(systemPrefix + userPrompt);
-  const text = result.response.text();
-  return { text, provider: "gemini" };
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("שירות ה-AI לא הצליח להשיב כרגע.");
 }
+
+export { isRetryableProviderError, isFallbackEligibleProviderError };

@@ -12,6 +12,7 @@ import {
   UsersRound,
   Workflow,
 } from "lucide-react";
+import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatDateTime } from "@/lib/ui-formatters";
 
 type WorkflowStatus = "healthy" | "attention" | "blocked";
@@ -76,6 +77,7 @@ export default function OperationsWorkspaceV2({
   zones,
   recentActivity,
 }: Props) {
+  const advancedOperationsHref = getAdvancedWorkspaceHref("operations");
   return (
     <div className="grid gap-6" dir="rtl">
       <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
@@ -251,7 +253,13 @@ export default function OperationsWorkspaceV2({
               <Link href="/app/documents" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
                 מעבר למסמכים
               </Link>
-              <Link href="/app/operations/advanced" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/automations" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+                Automation Center
+              </Link>
+              <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+                Onboarding חכם
+              </Link>
+              <Link href={advancedOperationsHref} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
                 תפעול מתקדם
               </Link>
             </div>

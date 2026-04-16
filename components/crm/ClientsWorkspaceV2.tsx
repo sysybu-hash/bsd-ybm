@@ -17,6 +17,7 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
+import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
 
@@ -75,7 +76,7 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function ClientCard({ contact }: { contact: ClientRecord }) {
+function ClientCard({ contact, advancedHref }: { contact: ClientRecord; advancedHref: string }) {
   const badge = getStatusBadge(contact.status);
 
   return (
@@ -139,7 +140,7 @@ function ClientCard({ contact }: { contact: ClientRecord }) {
       </div>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href="/app/clients/advanced" className="v2-button v2-button-primary">
+        <Link href={advancedHref} className="v2-button v2-button-primary">
           CRM מתקדם
           <ArrowLeft className="h-4 w-4" aria-hidden />
         </Link>
@@ -160,9 +161,11 @@ function ClientCard({ contact }: { contact: ClientRecord }) {
 function PipelineColumn({
   label,
   contacts,
+  advancedHref,
 }: {
   label: string;
   contacts: ClientRecord[];
+  advancedHref: string;
 }) {
   return (
     <div className="v2-panel flex min-h-[280px] flex-col p-4">
@@ -187,7 +190,7 @@ function PipelineColumn({
               <span className="font-bold text-[color:var(--v2-muted)]">
                 {contact.value != null ? formatCurrencyILS(contact.value) : "ללא שווי"}
               </span>
-              <Link href="/app/clients/advanced" className="font-black text-[color:var(--v2-accent)]">
+              <Link href={advancedHref} className="font-black text-[color:var(--v2-accent)]">
                 פתיחה מתקדמת
               </Link>
             </div>
@@ -199,6 +202,7 @@ function PipelineColumn({
 }
 
 export default function ClientsWorkspaceV2({ contacts, projects, industryProfile }: Props) {
+  const advancedClientsHref = getAdvancedWorkspaceHref("clients");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [projectFilter, setProjectFilter] = useState("ALL");
@@ -248,7 +252,7 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/clients/advanced" className="v2-button v2-button-primary">
+              <Link href={advancedClientsHref} className="v2-button v2-button-primary">
                 פתיחת CRM מתקדם
                 <ArrowLeft className="h-4 w-4" aria-hidden />
               </Link>
@@ -370,7 +374,7 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                 </div>
               ) : null}
               {filteredContacts.map((contact) => (
-                <ClientCard key={contact.id} contact={contact} />
+                <ClientCard key={contact.id} contact={contact} advancedHref={advancedClientsHref} />
               ))}
             </div>
           ) : (
@@ -380,6 +384,7 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                   key={status}
                   label={statusMeta[status].label}
                   contacts={filteredContacts.filter((contact) => contact.status === status)}
+                  advancedHref={advancedClientsHref}
                 />
               ))}
             </div>

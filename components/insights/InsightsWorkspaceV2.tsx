@@ -10,6 +10,7 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
+import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
 type MetricIcon = "revenue" | "review" | "contacts" | "pipeline";
@@ -85,6 +86,7 @@ export default function InsightsWorkspaceV2({
   recommendations,
   pendingClients,
 }: Props) {
+  const advancedInsightsHref = getAdvancedWorkspaceHref("insights");
   const [view, setView] = useState<"summary" | "actions">("summary");
   const insightParagraphs = insightText
     .split(/\n+/)
@@ -106,7 +108,7 @@ export default function InsightsWorkspaceV2({
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/insights/advanced" className="v2-button v2-button-primary">
+              <Link href={advancedInsightsHref} className="v2-button v2-button-primary">
                 AI Hub מתקדם
               </Link>
               <Link href="/app/billing" className="v2-button v2-button-secondary">

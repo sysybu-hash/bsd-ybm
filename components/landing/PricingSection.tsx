@@ -20,14 +20,14 @@ export default function PricingSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* כותרת */}
         <div className="mb-14 text-center">
-          <span className="inline-block rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-600">
+          <span className="inline-block rounded-full border border-orange-200/90 bg-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-[color:var(--primary-color)]">
             {t("landing.pricingBadge")}
           </span>
           <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
             {t("landing.pricingHeadline")}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-gray-400 sm:text-base">
-            חמש רמות מנוי — סריקות Gemini ופרימיום. תשלום חודשי בשקלים.
+            חמש רמות מנוי — מכסות סריקה לפי מסלול. מתאים לצוותים בענף הבנייה ולמקצועות הנלווים.
           </p>
         </div>
 
@@ -44,12 +44,20 @@ export default function PricingSection() {
                 key={tierKey}
                 className={`relative flex flex-col rounded-2xl border p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${
                   popular
-                    ? "border-indigo-500/40 bg-indigo-600 text-white shadow-indigo-200/60 ring-2 ring-indigo-200"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-indigo-500/30"
+                    ? "border-orange-300/50 text-white shadow-orange-900/25 ring-2 ring-orange-200/80"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-orange-200/80"
                 }`}
+                style={
+                  popular
+                    ? {
+                        backgroundColor: "var(--primary-color)",
+                        boxShadow: "0 20px 50px -24px rgba(193, 89, 47, 0.55)",
+                      }
+                    : undefined
+                }
               >
                 {popular ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-4 py-1 text-[10px] font-black text-indigo-600 shadow-md ring-1 ring-indigo-200">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-4 py-1 text-[10px] font-black text-[color:var(--primary-color)] shadow-md ring-1 ring-orange-200">
                     ⭐ מומלץ
                   </span>
                 ) : null}
@@ -68,27 +76,27 @@ export default function PricingSection() {
                   <span className={`text-4xl font-black tabular-nums ${popular ? "text-white" : "text-gray-900"}`}>
                     {price}
                   </span>
-                  <span className={`text-xs font-medium ms-1 ${popular ? "text-indigo-100" : "text-gray-400"}`}>
+                  <span className={`text-xs font-medium ms-1 ${popular ? "text-white/90" : "text-gray-400"}`}>
                     {tierKey === "FREE" ? "/ ניסיון חינם" : "/ חודש + מע״מ"}
                   </span>
                 </div>
 
                 {/* Features */}
-                <ul className={`mt-6 flex-1 space-y-3 text-sm ${popular ? "text-indigo-50" : "text-gray-500"}`}>
+                <ul className={`mt-6 flex-1 space-y-3 text-sm ${popular ? "text-white/95" : "text-gray-500"}`}>
                   <li className="flex items-start gap-2.5">
-                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-indigo-500"}`} />
+                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-white/90" : "text-[color:var(--primary-color)]"}`} />
                     <span>
                       <strong className={popular ? "text-white" : "text-gray-700"}>{a.cheapScans}</strong> סריקות Gemini
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <Zap size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-indigo-500"}`} />
+                    <Zap size={15} className={`mt-0.5 shrink-0 ${popular ? "text-white/90" : "text-[color:var(--primary-color)]"}`} />
                     <span>
                       <strong className={popular ? "text-white" : "text-gray-700"}>{a.premiumScans}</strong> סריקות פרימיום
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-indigo-100" : "text-gray-400"}`} />
+                    <Check size={15} className={`mt-0.5 shrink-0 ${popular ? "text-white/90" : "text-gray-400"}`} />
                     <span>
                       {a.unlimitedCompanies ? (
                         "חברות ללא הגבלה"
@@ -104,8 +112,8 @@ export default function PricingSection() {
                   href={`/register?plan=${tierKey}`}
                   className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-black transition hover:opacity-90 ${
                     popular
-                      ? "bg-white text-indigo-300 shadow-sm"
-                      : "border border-gray-200 bg-gray-50 text-gray-700 hover:border-indigo-500/30 hover:bg-indigo-500/15 hover:text-indigo-300"
+                      ? "bg-white text-[color:var(--primary-color)] shadow-sm"
+                      : "border border-gray-200 bg-gray-50 text-gray-700 hover:border-orange-300/60 hover:bg-orange-50/80"
                   }`}
                 >
                   {t("landing.pricingChoose")}

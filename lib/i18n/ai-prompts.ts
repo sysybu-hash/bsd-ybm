@@ -10,7 +10,7 @@ export const DOCUMENT_JSON_SCHEMA_VERSION = 2;
 export function getDocumentJsonInstruction(locale: string): string {
   const loc = normalizeLocale(locale) as AppLocale;
   const lang = LOCALE_AI_LANGUAGE_NAMES[loc] ?? "English";
-  return `Analyze the document for BSD-YBM. Return ONLY a JSON object (no markdown), with this exact shape:
+  return `Analyze the document for BSD-YBM (construction sector in Israel — sites, projects, suppliers, and allied trades). Return ONLY a JSON object (no markdown), with this exact shape:
 {"vendor": string, "total": number, "date": string, "docType": string, "summary": string, "lineItems": Array<{"description": string, "quantity"?: number, "unitPrice"?: number, "lineTotal"?: number, "sku"?: string}>}
 
 Rules for lineItems:
@@ -26,5 +26,5 @@ All human-readable string values in the JSON (vendor, docType, summary, line ite
 export function getAiChatSystemPrefix(contextJson: string, locale: string): string {
   const loc = normalizeLocale(locale) as AppLocale;
   const lang = LOCALE_AI_LANGUAGE_NAMES[loc] ?? "English";
-  return `You are the BSD-YBM assistant. Answer clearly and concisely in ${lang}. Context (JSON):\n${contextJson.slice(0, 100_000)}\n\nQuestion:\n`;
+  return `You are the BSD-YBM assistant for Israeli construction-sector organizations (contracting, sites, and allied trades such as electrical, plumbing, HVAC, finishing). Use the context JSON (industry, constructionTrade, documents). Answer clearly and concisely in ${lang}. Context (JSON):\n${contextJson.slice(0, 100_000)}\n\nQuestion:\n`;
 }

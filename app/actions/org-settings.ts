@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { type CompanyType, type CustomerType, Prisma, UserRole } from "@prisma/client";
 import { defaultScanBalancesForTier, parseSubscriptionTier } from "@/lib/subscription-tier-config";
 import { trialEndsAtFromNow } from "@/lib/trial";
-import { normalizeIndustryType } from "@/lib/professions/config";
+import { normalizeConstructionTrade } from "@/lib/construction-trades";
 
 const TYPES: CustomerType[] = ["HOME", "FREELANCER", "COMPANY", "ENTERPRISE"];
 const COMPANY_TYPES: CompanyType[] = ["EXEMPT_DEALER", "LICENSED_DEALER", "LTD_COMPANY"];
@@ -261,7 +261,7 @@ export async function updateIndustryProfileAction(formData: FormData) {
     return { ok: false as const, error: "רק מנהל ארגון רשאי לעדכן מקצוע ושפה" };
   }
 
-  const industry = normalizeIndustryType(String(formData.get("industry") ?? "GENERAL"));
+  const constructionTrade = normalizeConstructionTrade(String(formData.get("constructionTrade") ?? ""));
 
   const org = await prisma.organization.findUnique({
     where: { id: orgId },
@@ -288,7 +288,8 @@ export async function updateIndustryProfileAction(formData: FormData) {
   await prisma.organization.update({
     where: { id: orgId },
     data: {
-      industry,
+      industry: "CONSTRUCTION",
+      constructionTrade,
       industryConfigJson: nextConfig,
     },
   });

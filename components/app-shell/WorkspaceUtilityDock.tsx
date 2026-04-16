@@ -22,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
-import { appNavItems } from "@/components/app-shell/app-nav";
+import { buildAppNavCollection } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 
 const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
@@ -105,7 +105,8 @@ function isRouteActive(pathname: string, href: string) {
 }
 
 function resolveSectionMeta(pathname: string, industryProfile: IndustryProfile) {
-  const current = appNavItems.find((item) => isRouteActive(pathname, item.href)) ?? appNavItems[0];
+  const nav = buildAppNavCollection(industryProfile);
+  const current = nav.all.find((item) => isRouteActive(pathname, item.href)) ?? nav.primary[0];
 
   if (current.href === "/app/clients") {
     return {
@@ -135,13 +136,11 @@ function DockButton({
   icon: Icon,
   label,
   onClick,
-  pulse = false,
 }: {
   active: boolean;
   icon: LucideIcon;
   label: string;
   onClick: () => void;
-  pulse?: boolean;
 }) {
   return (
     <button
@@ -155,9 +154,6 @@ function DockButton({
       aria-label={label}
       title={label}
     >
-      {pulse ? (
-        <span className="absolute inset-0 rounded-2xl border border-[color:var(--v2-accent)] animate-ping" />
-      ) : null}
       <Icon className="h-5 w-5 transition group-hover:scale-110" aria-hidden />
     </button>
   );
@@ -463,10 +459,9 @@ export default function WorkspaceUtilityDock({
   }, [sendAssistantMessage, voiceDraft]);
 
   const scannerButtonDisabled = !orgId;
-  const messageCount = messages.filter((message) => message.role === "assistant").length;
 
   const compactPanelClassName =
-    "fixed bottom-24 left-4 z-[255] w-[min(100vw-2rem,26rem)] rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl lg:bottom-6 lg:left-24";
+    "fixed bottom-24 left-4 z-[255] flex max-h-[calc(100vh-7rem)] w-[min(100vw-2rem,26rem)] flex-col overflow-hidden rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl lg:bottom-6 lg:left-24 lg:max-h-[calc(100vh-3rem)]";
 
   const desktopDock = (
     <div className="fixed bottom-6 left-6 z-[260] hidden flex-col gap-3 lg:flex">
@@ -483,7 +478,6 @@ export default function WorkspaceUtilityDock({
             icon={Sparkles}
             label="עוזר AI"
             onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
-            pulse={messageCount <= 1}
           />
           <DockButton
             active={openPanel === "voice"}
@@ -575,7 +569,7 @@ export default function WorkspaceUtilityDock({
             </button>
           </div>
 
-          <div className="space-y-4 px-5 py-4">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">
                 הקשר נוכחי
@@ -729,7 +723,7 @@ export default function WorkspaceUtilityDock({
             </button>
           </div>
 
-          <div className="space-y-4 px-5 py-4">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4">
               <div className="flex items-center justify-between gap-4">
                 <div>

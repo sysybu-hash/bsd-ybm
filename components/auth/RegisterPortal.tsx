@@ -12,12 +12,9 @@ import {
   ArrowRight,
   ArrowLeft,
   MailCheck,
-  Gavel,
-  Calculator,
   HardHat,
-  Stethoscope,
-  ShoppingBag,
 } from "lucide-react";
+import { constructionTradeLabelHe, listConstructionTradesForSelect, normalizeConstructionTrade } from "@/lib/construction-trades";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useI18n } from "@/components/I18nProvider";
 
@@ -26,7 +23,7 @@ import { useI18n } from "@/components/I18nProvider";
 type Preview = { orgName: string; role: string; emailHint: string };
 type WizardForm = {
   orgType: string;
-  industry: string;
+  constructionTrade: string;
   name: string;
   email: string;
   organizationName: string;
@@ -50,16 +47,6 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
     { value: "ENTERPRISE", label: t("auth.register.types.enterprise.label"), desc: t("auth.register.types.enterprise.desc"), Icon: Factory, activeBg: "bg-orange-500/15", activeBorder: "border-orange-500/40", activeText: "text-orange-400", activeRing: "ring-orange-500/30" },
   ];
 
-  const INDUSTRY_OPTIONS = [
-    { value: "GENERAL", label: t("professions.GENERAL.label"), icon: "Building2" },
-    { value: "LEGAL", label: t("professions.LEGAL.label") || "משרד עורכי דין", icon: "Gavel" },
-    { value: "ACCOUNTING", label: t("professions.ACCOUNTING.label") || "ראיית חשבון / ייעוץ מס", icon: "Calculator" },
-    { value: "CONSTRUCTION", label: t("professions.CONSTRUCTION.label") || "קבלנות / בנייה", icon: "HardHat" },
-    { value: "MEDICAL", label: t("professions.MEDICAL.label") || "רפואה / קליניקה", icon: "Stethoscope" },
-    { value: "RETAIL", label: t("professions.RETAIL.label"), icon: "ShoppingBag" },
-    { value: "REAL_ESTATE", label: t("professions.REAL_ESTATE.label"), icon: "Home" },
-  ];
-
   const ROLE_LABELS: Record<string, string> = {
     EMPLOYEE: t("dashboard.crm"), 
     ORG_ADMIN: t("dashboard.admin"),
@@ -79,7 +66,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<WizardForm>({
     orgType: "COMPANY",
-    industry: "GENERAL",
+    constructionTrade: "GENERAL_CONTRACTOR",
     name: "",
     email: "",
     organizationName: "",
@@ -129,7 +116,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
       return true;
     }
     if (step === 0) return !!form.orgType;
-    if (step === 1) return !!form.industry;
+    if (step === 1) return !!form.constructionTrade;
     if (step === 2) return form.name.trim().length > 0 && EMAIL_RE.test(form.email.trim());
     if (step === 3) return form.organizationName.trim().length >= 1;
     return true;
@@ -147,7 +134,8 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
           name: form.name.trim() || null,
           organizationName: isTeamJoin ? "—" : form.organizationName.trim(),
           orgType: isTeamJoin ? "COMPANY" : form.orgType,
-          industry: isTeamJoin ? "GENERAL" : form.industry,
+          industry: "CONSTRUCTION",
+          constructionTrade: isTeamJoin ? "GENERAL_CONTRACTOR" : normalizeConstructionTrade(form.constructionTrade),
           inviteToken: inviteToken || undefined,
           orgInviteToken: orgInviteToken || undefined,
           plan: plan || undefined,
@@ -255,20 +243,28 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
             )}
 
             {!isTeamJoin && step === 1 && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {INDUSTRY_OPTIONS.map(({ value, label, icon: IconName }) => {
-                  const active = form.industry === value;
-                  const DynamicIcon = {
-                    Building2, Gavel, Calculator, HardHat, Stethoscope, ShoppingBag, Home
-                  }[IconName] || Building2;
-
-                  return (
-                    <button key={value} type="button" onClick={() => set("industry", value)} className={`flex flex-col items-center rounded-2xl border p-4 text-center transition-all ${active ? "border-indigo-500 bg-indigo-50/50 ring-2 ring-indigo-500/20 shadow-sm" : "border-gray-100 bg-white hover:border-indigo-200 hover:bg-indigo-50"}`}>
-                      <DynamicIcon size={24} className={active ? "text-indigo-600" : "text-gray-400"} />
-                      <span className={`mt-2 block text-[10px] font-black leading-tight ${active ? "text-indigo-800" : "text-gray-600"}`}>{label}</span>
-                    </button>
-                  );
-                })}
+              <div className="space-y-3">
+                <p className="text-sm leading-relaxed text-gray-600">
+                  BSD-YBM מיועדת לענף הבנייה והמקצועות הנלווים. בחרו את ההתמחות כדי להתאים פענוחי AI ומסמכים.
+                </p>
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold text-gray-500">סוג עסק / התמחות</span>
+                  <select
+                    value={form.constructionTrade}
+                    onChange={(e) => set("constructionTrade", e.target.value)}
+                    className={inputCls}
+                  >
+                    {listConstructionTradesForSelect().map(({ id, label }) => (
+                      <option key={id} value={id}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="flex items-center gap-2 rounded-xl border border-orange-100 bg-orange-50/80 px-4 py-3 text-xs text-gray-700">
+                  <HardHat className="h-5 w-5 shrink-0 text-[color:var(--primary-color)]" aria-hidden />
+                  <span>אפשר לשנות בהמשך בהגדרות הארגון.</span>
+                </div>
               </div>
             )}
 
@@ -315,8 +311,10 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                   )}
                   {!isTeamJoin && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-gray-500">{t("nav.solutions")}</span>
-                      <span className="font-black text-gray-900">{INDUSTRY_OPTIONS.find(i => i.value === form.industry)?.label || form.industry}</span>
+                      <span className="text-gray-500">התמחות</span>
+                      <span className="font-black text-gray-900">
+                        {constructionTradeLabelHe(normalizeConstructionTrade(form.constructionTrade))}
+                      </span>
                     </div>
                   )}
                   {!isTeamJoin && (

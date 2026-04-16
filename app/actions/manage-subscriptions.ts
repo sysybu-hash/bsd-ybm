@@ -15,6 +15,7 @@ import {
 } from "@/lib/subscription-tier-config";
 import { PLATFORM_UNLIMITED_CREDITS } from "@/lib/platform-developers";
 import { hashPassword, generateProvisionPassword } from "@/lib/password";
+import { logActivity } from "@/lib/activity-log";
 import { sendProvisionCredentialsEmail } from "@/app/actions/send-credentials-email";
 import { sendSubscriptionTierInvitationEmail } from "@/lib/mail";
 import { trialEndsAtFromNow } from "@/lib/trial";
@@ -28,9 +29,14 @@ async function requireSuperAdmin() {
   return session;
 }
 
-export async function manageSubsListOrganizationsAction(): Promise<
-  ExecutiveOrgRow[] | { error: string }
-> {
+function revalidateSubscriptionSurfaces() {
+  revalidatePath("/app/admin");
+  revalidatePath("/app/documents/erp");
+  revalidatePath("/app/billing");
+  revalidatePath("/app/settings");
+}
+
+export async function manageSubsListOrganizationsAction(): Promise<ExecutiveOrgRow[] | { error: string }> {
   const s = await requireSuperAdmin();
   if (!s) return { error: "אין הרשאה" };
 
@@ -76,7 +82,6 @@ function normalizeTenantDomainInput(raw: string): string | null {
   return d || null;
 }
 
-/** עדכון דומיין ציבורי לארגון — רק סופר־אדמין מנויים */
 export async function manageSubsSaveTenantDomainAction(
   formData: FormData,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
@@ -84,12 +89,10 @@ export async function manageSubsSaveTenantDomainAction(
   if (!s) return { ok: false, error: "אין הרשאה" };
 
   const organizationId = String(formData.get("organizationId") ?? "").trim();
-  const domainOrNull = normalizeTenantDomainInput(
-    String(formData.get("tenantPublicDomain") ?? ""),
-  );
+  const domainOrNull = normalizeTenantDomainInput(String(formData.get("tenantPublicDomain") ?? ""));
 
   if (!organizationId) return { ok: false, error: "חסר ארגון" };
-  if (domainOrNull === "") return { ok: false, error: "דומיין חוקי בלבד (שם מארח קצר מדי או לא תקין)" };
+  if (domainOrNull === "") return { ok: false, error: "דומיין לא תקין" };
 
   try {
     if (domainOrNull) {
@@ -101,20 +104,16 @@ export async function manageSubsSaveTenantDomainAction(
         select: { id: true },
       });
       if (clash) {
-        return { ok: false, error: "דומיין זה כבר בשימוש בארגון אחר" };
+        return { ok: false, error: "הדומיין כבר בשימוש בארגון אחר" };
       }
     }
 
-  await prisma.organization.update({
+    await prisma.organization.update({
       where: { id: organizationId },
       data: { tenantPublicDomain: domainOrNull },
     });
 
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-revalidatePath("/app/settings");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsSaveTenantDomainAction", e);
@@ -146,7 +145,7 @@ export async function manageSubsCreateManualUserAction(
     where: { email: { equals: email, mode: "insensitive" } },
     select: { id: true },
   });
-  if (existing) return { ok: false, error: "משתמש עם אימייל זה כבר קיים" };
+  if (existing) return { ok: false, error: "משתמש עם האימייל הזה כבר קיים" };
 
   const plain = generateProvisionPassword();
   const passwordHash = await hashPassword(plain);
@@ -205,14 +204,22 @@ export async function manageSubsCreateManualUserAction(
       console.error("sendProvisionCredentialsEmail manage-subscriptions", err),
     );
 
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    if (s.user?.id) {
+      const createdOrg = await prisma.organization.findFirst({
+        where: { name: organizationName },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
+      });
+      if (createdOrg) {
+        await logActivity(s.user.id, createdOrg.id, "SUBSCRIPTION:manual_org_created", `email=${email};vip=${vip}`);
+      }
+    }
+
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsCreateManualUserAction", e);
-    return { ok: false, error: "יצירת משתמש נכשלה" };
+    return { ok: false, error: "יצירת ארגון נכשלה" };
   }
 }
 
@@ -228,7 +235,7 @@ export async function manageSubsAdjustScansAction(
 
   if (!organizationId) return { ok: false, error: "חסר ארגון" };
   if (!Number.isFinite(cheapDelta) || !Number.isFinite(premiumDelta)) {
-    return { ok: false, error: "מספרים לא חוקיים" };
+    return { ok: false, error: "מספרים לא תקינים" };
   }
 
   try {
@@ -246,10 +253,7 @@ export async function manageSubsAdjustScansAction(
       },
     });
 
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch {
     return { ok: false, error: "עדכון יתרה נכשל" };
@@ -268,9 +272,7 @@ export async function manageSubsSendTierInviteAction(
 
   if (!email.includes("@")) return { ok: false, error: "אימייל לא תקין" };
   const tier = parseSubscriptionTier(tierRaw);
-  if (!tier) {
-    return { ok: false, error: "רמת מנוי לא חוקית" };
-  }
+  if (!tier) return { ok: false, error: "רמת מנוי לא תקינה" };
 
   const days = Number.isFinite(daysRaw) && daysRaw > 0 && daysRaw <= 90 ? daysRaw : 14;
   const token = randomBytes(24).toString("base64url");
@@ -293,13 +295,11 @@ export async function manageSubsSendTierInviteAction(
     const mail = await sendSubscriptionTierInvitationEmail(email, {
       tierLabel: `${tierLabelHe(tier)} (${tier})`,
       registerUrl,
-      expiresNote: `הקישור תקף כ־${days} ימים. יש להירשם עם אותו אימייל.`,
+      expiresNote: `הקישור תקף ל-${days} ימים. יש להירשם עם אותו אימייל.`,
     });
     if (!mail.ok) return { ok: false, error: mail.error };
 
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsSendTierInviteAction", e);
@@ -319,7 +319,7 @@ export async function manageSubsUpdateSubscriptionAction(
 
   const tier = parseSubscriptionTier(tierRaw);
   if (!organizationId) return { ok: false, error: "חסר ארגון" };
-  if (!tier) return { ok: false, error: "רמת מנוי לא חוקית" };
+  if (!tier) return { ok: false, error: "רמת מנוי לא תקינה" };
   if (!statusRaw) return { ok: false, error: "סטטוס מנוי חסר" };
 
   try {
@@ -330,10 +330,10 @@ export async function manageSubsUpdateSubscriptionAction(
         subscriptionStatus: statusRaw,
       },
     });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    if (s.user?.id) {
+      await logActivity(s.user.id, organizationId, "SUBSCRIPTION:updated", `tier=${tier};status=${statusRaw}`);
+    }
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsUpdateSubscriptionAction", e);
@@ -352,7 +352,7 @@ export async function manageSubsDeleteUserByEmailAction(
   if (!email.includes("@")) return { ok: false, error: "אימייל לא תקין" };
   if (email === actor) return { ok: false, error: "לא ניתן למחוק את המשתמש המחובר" };
   if (isExecutiveSubscriptionSuperAdmin(email)) {
-    return { ok: false, error: "לא ניתן למחוק את חשבון הסופר־אדמין" };
+    return { ok: false, error: "לא ניתן למחוק את חשבון הסופר-אדמין" };
   }
 
   const target = await prisma.user.findFirst({
@@ -362,10 +362,12 @@ export async function manageSubsDeleteUserByEmailAction(
   if (!target) return { ok: false, error: "המשתמש לא נמצא" };
 
   try {
+    const org = await prisma.user.findUnique({ where: { id: target.id }, select: { organizationId: true } });
     await prisma.user.delete({ where: { id: target.id } });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
+    if (s.user?.id && org?.organizationId) {
+      await logActivity(s.user.id, org.organizationId, "SUBSCRIPTION:user_deleted", `email=${email}`);
+    }
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsDeleteUserByEmailAction", e);
@@ -380,22 +382,45 @@ export async function manageSubsDeleteOrganizationAction(
   if (!s) return { ok: false, error: "אין הרשאה" };
 
   const organizationId = String(formData.get("organizationId") ?? "").trim();
+  const confirmation = String(formData.get("confirmation") ?? "").trim();
   if (!organizationId) return { ok: false, error: "חסר ארגון" };
+  if (!confirmation) return { ok: false, error: "יש להקליד את שם הארגון כדי למחוק." };
 
   const org = await prisma.organization.findUnique({
     where: { id: organizationId },
-    select: { id: true, users: { select: { id: true }, take: 1 } },
+    select: { id: true, name: true },
   });
   if (!org) return { ok: false, error: "הארגון לא נמצא" };
-  if (org.users.length > 0) {
-    return { ok: false, error: "יש למחוק/להעביר משתמשים מהארגון לפני מחיקת הארגון" };
+  if (s.user?.organizationId === organizationId) {
+    return { ok: false, error: "לא ניתן למחוק את הארגון המחובר כרגע." };
+  }
+  if (confirmation !== org.name) {
+    return { ok: false, error: "שם הארגון לא תואם לאישור המחיקה." };
   }
 
   try {
-    await prisma.organization.delete({ where: { id: organizationId } });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
+    if (s.user?.id) {
+      await logActivity(s.user.id, organizationId, "SUBSCRIPTION:organization_deleted", `name=${org.name}`);
+    }
+    await prisma.$transaction(async (tx) => {
+      await tx.activityLog.deleteMany({ where: { organizationId } });
+      await tx.productPriceObservation.deleteMany({ where: { organizationId } });
+      await tx.documentLineItem.deleteMany({ where: { organizationId } });
+      await tx.documentScanCache.deleteMany({ where: { organizationId } });
+      await tx.quote.deleteMany({ where: { organizationId } });
+      await tx.issuedDocument.deleteMany({ where: { organizationId } });
+      await tx.invoice.deleteMany({ where: { organizationId } });
+      await tx.financialInsight.deleteMany({ where: { organizationId } });
+      await tx.cloudIntegration.deleteMany({ where: { organizationId } });
+      await tx.meckanoZone.deleteMany({ where: { organizationId } });
+      await tx.organizationInvite.deleteMany({ where: { organizationId } });
+      await tx.project.deleteMany({ where: { organizationId } });
+      await tx.contact.deleteMany({ where: { organizationId } });
+      await tx.document.deleteMany({ where: { organizationId } });
+      await tx.user.deleteMany({ where: { organizationId } });
+      await tx.organization.delete({ where: { id: organizationId } });
+    });
+    revalidateSubscriptionSurfaces();
     return { ok: true };
   } catch (e) {
     console.error("manageSubsDeleteOrganizationAction", e);

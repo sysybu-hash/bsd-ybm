@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import AppShellV2 from "@/components/app-shell/AppShellV2";
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
+import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
@@ -19,18 +20,25 @@ export default async function AppWorkspaceLayout({ children }: { children: React
   }
 
   const organizationId = session.user.organizationId ?? null;
-  const organization = organizationId
-    ? await prisma.organization.findUnique({
-        where: { id: organizationId },
-        select: {
-          industry: true,
-          industryConfigJson: true,
-        },
-      })
-    : null;
+  const [organization, hasMeckanoAccess] = await Promise.all([
+    organizationId
+      ? prisma.organization.findUnique({
+          where: { id: organizationId },
+          select: {
+            industry: true,
+            constructionTrade: true,
+            industryConfigJson: true,
+            subscriptionTier: true,
+            subscriptionStatus: true,
+          },
+        })
+      : Promise.resolve(null),
+    canAccessMeckano(session),
+  ]);
   const industryProfile = getIndustryProfile(
-    organization?.industry ?? (session.user as any).organizationIndustry ?? "GENERAL",
+    organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
+    organization?.constructionTrade ?? session.user.organizationConstructionTrade,
   );
 
   return (
@@ -39,7 +47,11 @@ export default async function AppWorkspaceLayout({ children }: { children: React
         name: session.user.name?.trim() || session.user.email.split("@")[0],
         email: session.user.email,
         organizationId,
+        role: session.user.role ?? "",
         isPlatformAdmin: isAdmin(session.user.email),
+        subscriptionTier: organization?.subscriptionTier ?? "FREE",
+        subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
+        hasMeckanoAccess,
         industryProfile,
       }}
     >

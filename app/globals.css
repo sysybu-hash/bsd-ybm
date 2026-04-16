@@ -17,22 +17,23 @@
    DESIGN TOKENS v2 — BSD-YBM BSD-YBM
 ───────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6, .heading-primary {
-  color: var(--primary-brand) !important;
+  color: var(--heading-color) !important;
   transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
   --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 241, 245, 249;
+  --background-start-rgb: 248, 246, 242;
+  --background-end-rgb: 241, 237, 230;
 
-  /* Brand — Indigo 600 */
-  --primary-brand: #4f46e5;
-  --primary-color: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --primary-muted: #c7d2fe;
-  --primary-rgb: 79, 70, 229;
+  /* Brand — בנייה B2B: כותרות פלדה / פעולות חמה */
+  --primary-brand: #0f172a;
+  --heading-color: #0f172a;
+  --primary-color: #c1592f;
+  --primary-hover: #9f4321;
+  --primary-light: rgba(193, 89, 47, 0.1);
+  --primary-muted: rgba(193, 89, 47, 0.22);
+  --primary-rgb: 193, 89, 47;
 
   /* Surface */
   --surface-white: #ffffff;
@@ -41,7 +42,6 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --surface-dark: #020617;
 
   /* Text */
-  --heading-color: var(--primary-brand);
   --body-color: #334155;
   --muted-color: #64748b;
 
@@ -53,9 +53,9 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --sidebar-bg: #ffffff;
   --sidebar-border: #e2e8f0;
   --sidebar-text: #64748b;
-  --sidebar-text-active: #4f46e5;
-  --sidebar-active-bg: #eef2ff;
-  --sidebar-hover-bg: #f8fafc;
+  --sidebar-text-active: #c1592f;
+  --sidebar-active-bg: rgba(193, 89, 47, 0.08);
+  --sidebar-hover-bg: #f8f5f1;
 
   /* Elevation shadows */
   --shadow-xs: 0 1px 2px 0 rgba(0,0,0,.04);
@@ -63,8 +63,8 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --shadow-md: 0 4px 12px -2px rgba(0,0,0,.08), 0 2px 6px -2px rgba(0,0,0,.05);
   --shadow-lg: 0 10px 30px -6px rgba(0,0,0,.10), 0 4px 10px -4px rgba(0,0,0,.06);
   --shadow-xl: 0 20px 50px -10px rgba(0,0,0,.12), 0 8px 20px -8px rgba(0,0,0,.07);
-  --shadow-glow-blue: 0 0 24px rgba(37,99,235,.25);
-  --shadow-glow-indigo: 0 0 24px rgba(99,102,241,.25);
+  --shadow-glow-blue: 0 0 24px rgba(193, 89, 47, 0.22);
+  --shadow-glow-indigo: 0 0 24px rgba(12, 74, 110, 0.18);
 
   /* Radius scale */
   --radius-sm: 0.5rem;
@@ -101,14 +101,14 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
     border: 1px solid transparent;
     background:
       linear-gradient(rgba(255,255,255,0.98), rgba(255,255,255,0.98)) padding-box,
-      linear-gradient(135deg, rgba(79,70,229,.24), rgba(229,231,235,.9)) border-box;
+      linear-gradient(135deg, rgba(193, 89, 47, 0.22), rgba(229, 231, 235, 0.95)) border-box;
   }
   .crystal-hover {
     @apply transition-all duration-300;
   }
   .crystal-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(79,70,229,.08);
+    box-shadow: 0 14px 28px rgba(193, 89, 47, 0.1);
   }
 
   /* Dark hero card */
@@ -124,7 +124,13 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-2.5 text-sm font-bold text-indigo-700 transition-all duration-200 hover:bg-indigo-100 active:scale-95 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold transition-all duration-200 active:scale-95 disabled:opacity-50;
+    border-color: rgba(193, 89, 47, 0.25);
+    background: rgba(193, 89, 47, 0.06);
+    color: #9f4321;
+  }
+  .btn-secondary:hover {
+    background: rgba(193, 89, 47, 0.11);
   }
 
   .btn-ghost {
@@ -132,7 +138,10 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition-all duration-200 hover:border-indigo-200 hover:bg-gray-50 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-95;
+  }
+  .btn-outline:hover {
+    border-color: rgba(193, 89, 47, 0.35);
   }
 
   .btn-danger {
@@ -145,7 +154,10 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   .dashboard-card-active {
-    @apply rounded-2xl border border-indigo-200 bg-indigo-50/60 p-5 shadow-sm ring-1 ring-indigo-100;
+    @apply rounded-2xl border p-5 shadow-sm ring-1;
+    border-color: rgba(193, 89, 47, 0.28);
+    background: rgba(193, 89, 47, 0.06);
+    --tw-ring-color: rgba(193, 89, 47, 0.12);
   }
 
   .stat-card {
@@ -161,7 +173,11 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
 
   /* ── Form inputs ── */
   .input-field {
-    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm transition-all duration-200 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100/80 disabled:bg-gray-50 disabled:text-gray-500;
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm transition-all duration-200 outline-none disabled:bg-gray-50 disabled:text-gray-500;
+  }
+  .input-field:focus {
+    border-color: rgba(193, 89, 47, 0.55);
+    box-shadow: 0 0 0 3px rgba(193, 89, 47, 0.12);
   }
 
   .input-label {
@@ -174,7 +190,10 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   .section-badge {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-xs font-bold text-indigo-700;
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold;
+    border-color: rgba(193, 89, 47, 0.22);
+    background: rgba(193, 89, 47, 0.08);
+    color: #9f4321;
   }
 
   /* ── Sidebar nav ── */
@@ -193,12 +212,12 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
 
   /* ── Badges ── */
   .badge         { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
-  .badge-blue    { @apply badge bg-indigo-100 text-indigo-800; }
+  .badge-blue    { @apply badge bg-orange-100 text-orange-900; }
   .badge-green   { @apply badge bg-emerald-100 text-emerald-800; }
   .badge-red     { @apply badge bg-rose-100 text-rose-800; }
   .badge-orange  { @apply badge bg-orange-100 text-orange-800; }
   .badge-gray    { @apply badge bg-gray-100 text-gray-700; }
-  .badge-indigo  { @apply badge bg-indigo-100 text-indigo-800; }
+  .badge-indigo  { @apply badge bg-orange-100 text-orange-900; }
 
   /* ── Table ── */
   .data-table {
@@ -235,7 +254,7 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+    -webkit-tap-highlight-color: rgba(193, 89, 47, 0.12);
   }
 
   img, video, canvas {
@@ -251,13 +270,13 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   fieldset { min-width: 0; }
 
   h1, h2, h3, h4, h5, h6 {
-    color: var(--primary-brand);
+    color: var(--heading-color);
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
 
   ::selection {
-    background-color: rgba(37, 99, 235, 0.15);
+    background-color: rgba(193, 89, 47, 0.18);
     color: inherit;
   }
 
@@ -469,13 +488,13 @@ html.reduce-motion *::after {
    LANDING PAGE — HERO GRADIENT
 ───────────────────────────────────────── */
 .hero-gradient {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 100%);
+  background: linear-gradient(135deg, #0c1929 0%, #1e3a4a 42%, #134e4a 100%);
 }
 
 .hero-mesh {
   background-image:
-    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(79,70,229,.28) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 80% 80%,  rgba(99,102,241,.15) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(193, 89, 47, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 80%, rgba(12, 74, 110, 0.18) 0%, transparent 50%);
 }
 
 /* Floating card for hero mockup */
@@ -500,7 +519,11 @@ html.reduce-motion *::after {
    AUTH PAGE
 ───────────────────────────────────────── */
 .auth-input {
-  @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100/70;
+  @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:bg-white;
+}
+.auth-input:focus {
+  border-color: rgba(193, 89, 47, 0.5);
+  box-shadow: 0 0 0 3px rgba(193, 89, 47, 0.12);
 }
 
 /* ─────────────────────────────────────────

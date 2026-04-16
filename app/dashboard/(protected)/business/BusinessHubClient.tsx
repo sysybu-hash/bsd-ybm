@@ -247,7 +247,7 @@ function HubContent(props: Props) {
               {wonContacts.slice(0, 3).map((c) => (
                 <Link
                   key={c.id}
-                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
+                  href={`/app/documents/issue?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-400 transition whitespace-nowrap"
                 >
                   <ReceiptText size={11} /> {c.name}

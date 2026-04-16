@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { runAiChat } from "@/lib/ai-chat";
-import { assertProviderConfigured, normalizeAiProviderId } from "@/lib/ai-providers";
+import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { getServerLocale } from "@/lib/i18n/server";
+import { assertProviderConfigured, normalizeAiProviderId } from "@/lib/ai-providers";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,10 +21,7 @@ export async function POST(req: NextRequest) {
     };
 
     if (!orgId || !message) {
-      return NextResponse.json(
-        { error: "חסר orgId או message בבקשה" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "חסר orgId או message בבקשה" }, { status: 400 });
     }
 
     if (orgId !== session.user.organizationId) {
@@ -39,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     const org = await prisma.organization.findUnique({
       where: { id: orgId },
-      select: { industry: true }
+      select: { industry: true, constructionTrade: true },
     });
 
     const data = await prisma.document.findMany({
@@ -48,21 +45,24 @@ export async function POST(req: NextRequest) {
       take: 20,
     });
 
-    const contextJson = JSON.stringify({ 
-      industry: org?.industry || "GENERAL",
-      documentCount: data.length, 
-      documents: data.map(d => d.fileName) 
+    const contextJson = JSON.stringify({
+      industry: org?.industry || "CONSTRUCTION",
+      constructionTrade: org?.constructionTrade || "GENERAL_CONTRACTOR",
+      documentCount: data.length,
+      documents: data.map((document) => document.fileName),
     });
-    const locale = await getServerLocale();
-    const { text } = await runAiChat(providerBody, message, contextJson, locale);
 
-    return NextResponse.json({ answer: text, provider });
+    const locale = await getServerLocale();
+    const { text, provider: resolvedProvider } = await runAiChat(
+      providerBody,
+      message,
+      contextJson,
+      locale,
+    );
+
+    return NextResponse.json({ answer: text, provider: resolvedProvider });
   } catch (error) {
     console.error("AI assistant error:", error);
-    const msg = error instanceof Error ? error.message : String(error);
-    return NextResponse.json(
-      { error: msg.slice(0, 400) || "שגיאה פנימית בעוזר הפיננסי" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: getUserFacingAiErrorMessage(error) }, { status: 500 });
   }
 }

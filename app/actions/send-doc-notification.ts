@@ -32,7 +32,7 @@ export async function sendDocNotification(
             <li><strong>ספק:</strong> ${vendor}</li>
             <li><strong>סכום:</strong> ₪${total}</li>
           </ul>
-          <a href="https://www.bsd-ybm.co.il/dashboard/erp" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">לצפייה ב-ERP</a>
+          <a href="https://www.bsd-ybm.co.il/app/documents/erp" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">לצפייה ב-ERP</a>
         </div>
       `,
     });

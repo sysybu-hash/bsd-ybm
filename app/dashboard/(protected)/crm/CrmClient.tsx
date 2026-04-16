@@ -352,7 +352,7 @@ function ContactModal({
                   {erpLoading && <Loader2 size={13} className="animate-spin text-blue-500" />}
                 </p>
                 <Link
-                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c?.name ?? "")}&contactId=${c?.id ?? ""}`}
+                  href={`/app/documents/issue?client=${encodeURIComponent(c?.name ?? "")}&contactId=${c?.id ?? ""}`}
                   className="font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-blue-200 shadow-sm text-[11px]"
                 >
                   <Plus size={12}/> הפק חשבונית חדשה
@@ -423,7 +423,7 @@ function ContactModal({
             )}
             {isEdit && c?.status === "CLOSED_WON" && (
               <Link
-                href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}`}
+                href={`/app/documents/issue?client=${encodeURIComponent(c.name)}`}
                 className="flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition shadow-sm"
               >
                 <ReceiptText size={15} /> הפקת מסמך
@@ -953,7 +953,7 @@ export default function CrmClient({
                               </button>
                               {c.status === "CLOSED_WON" && (
                                 <Link
-                                  href={`/dashboard/erp/invoice?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
+                                  href={`/app/documents/issue?client=${encodeURIComponent(c.name)}&contactId=${c.id}`}
                                   className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-bold text-white shadow-sm hover:bg-blue-700 transition"
                                 >
                                   <ReceiptText size={12} /> חשבונית

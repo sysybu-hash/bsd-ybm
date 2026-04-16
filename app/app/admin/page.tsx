@@ -12,6 +12,7 @@ import {
 import AdminBroadcastNotifications from "@/components/admin/AdminBroadcastNotifications";
 import PlatformPayPalOwnerCard from "@/components/admin/PlatformPayPalOwnerCard";
 import AdminSystemHealth from "@/components/admin/AdminSystemHealth";
+import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
 import { prisma } from "@/lib/prisma";
@@ -197,6 +198,19 @@ export default async function AppAdminPage({
                 ))}
               </div>
             </aside>
+          </section>
+
+          <section className="v2-panel p-6">
+            <div className="mb-5">
+              <span className="v2-eyebrow">Audit Trail</span>
+              <h2 className="mt-3 text-2xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)]">
+                יומן פעולות מרוכז לכל שינוי קריטי
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-[color:var(--v2-muted)]">
+                מי מחק, מי שידר, מי עדכן מנוי ומי שינה הגדרות. הכול מרוכז כאן כדי שלא תצטרך לנחש מה קרה.
+              </p>
+            </div>
+            <AuditLogViewer />
           </section>
         </>
       ) : null}

@@ -24,7 +24,7 @@ const navItems = [
 export default function MarketingPublicShell({
   children,
   title,
-  eyebrow = "BSD-YBM v2",
+  eyebrow = "ענף הבנייה",
   description,
 }: Props) {
   const { dir } = useI18n();

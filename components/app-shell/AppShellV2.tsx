@@ -5,20 +5,21 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import {
-  BrainCircuit,
-  BriefcaseBusiness,
-  CheckCircle2,
-  CircleHelp,
-  LogOut,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
-import { marketingSans } from "@/lib/fonts/marketing-fonts";
+import { LogOut, Sparkles } from "lucide-react";
 import AppCommandPalette from "@/components/app-shell/AppCommandPalette";
-import { appNavItems } from "@/components/app-shell/app-nav";
 import WorkspaceUtilityDock from "@/components/app-shell/WorkspaceUtilityDock";
+import { buildAppNavCollection, type AppNavItem } from "@/components/app-shell/app-nav";
+import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import type { IndustryProfile } from "@/lib/professions/runtime";
+import {
+  getSubscriptionStatusLabel,
+  getVisibleUtilitySectionIds,
+  getWorkspaceModeLabel,
+  getWorkspaceRoleLabel,
+  getWorkspaceTierLabel,
+  hasActiveWorkspaceSubscription,
+  type WorkspaceAccessContext,
+} from "@/lib/workspace-access";
 
 type Props = Readonly<{
   children: ReactNode;
@@ -26,62 +27,14 @@ type Props = Readonly<{
     name: string;
     email: string;
     organizationId?: string | null;
+    role: string;
     isPlatformAdmin?: boolean;
+    subscriptionTier?: string | null;
+    subscriptionStatus?: string | null;
+    hasMeckanoAccess?: boolean;
     industryProfile: IndustryProfile;
   };
 }>;
-
-type SectionMeta = {
-  href: string;
-  label: string;
-  summary: string;
-  icon: LucideIcon;
-  adminOnly?: boolean;
-  showInNav?: boolean;
-};
-
-const appUtilitySections: SectionMeta[] = [
-  {
-    href: "/app/help",
-    label: "עזרה",
-    summary: "מדריך קצר, סדר עבודה ברור וקיצורי דרך למסכים המרכזיים.",
-    icon: CircleHelp,
-  },
-  {
-    href: "/app/business",
-    label: "מרחב עסקי",
-    summary: "תמונה רוחבית של לקוחות, מסמכים, תמחור ותפעול עסקי.",
-    icon: BriefcaseBusiness,
-  },
-  {
-    href: "/app/intelligence",
-    label: "Intelligence",
-    summary: "Executive AI, תובנות רוחביות ומעקב אחרי החלטות ניהוליות.",
-    icon: BrainCircuit,
-  },
-  {
-    href: "/app/admin",
-    label: "Admin",
-    summary: "בקרת פלטפורמה, שידורים, מנויים ותמונת מצב למפעילי BSD-YBM.",
-    icon: ShieldCheck,
-    adminOnly: true,
-  },
-  {
-    href: "/app/success",
-    label: "הצלחה",
-    summary: "אישור מסלול והמשך מהיר לצעד הבא במערכת.",
-    icon: CheckCircle2,
-    showInNav: false,
-  },
-];
-
-const advancedSection: SectionMeta = {
-  href: "/app/advanced",
-  label: "כלים מתקדמים",
-  summary: "גישה מרוכזת לכלי עומק, גשרים ומערכות מתקדמות.",
-  icon: Sparkles,
-  showInNav: false,
-};
 
 function isRouteActive(pathname: string, href: string) {
   const current = pathname.replace(/\/$/, "") || "/";
@@ -142,64 +95,54 @@ function MobilePill({
   );
 }
 
+function ProfileChip({ label }: { label: string }) {
+  return (
+    <span className="rounded-full bg-[color:var(--v2-canvas)] px-3 py-1 text-[11px] font-black text-[color:var(--v2-muted)]">
+      {label}
+    </span>
+  );
+}
+
+function buildCommandItem(item: AppNavItem) {
+  return {
+    href: item.href,
+    label: item.label,
+    summary: item.summary,
+    icon: item.icon,
+    keywords: [item.legacyHref, item.label, item.summary],
+  };
+}
+
 export default function AppShellV2({ children, user }: Props) {
   const pathname = usePathname() ?? "/app";
   const firstName = user.name.trim().split(" ")[0] || user.email.split("@")[0] || "User";
   const initials = firstName.slice(0, 2).toUpperCase();
-  const allowedUtilitySections = appUtilitySections.filter(
-    (item) => !item.adminOnly || user.isPlatformAdmin,
-  );
-  const currentSection =
-    [...appNavItems, ...allowedUtilitySections, advancedSection].find((item) =>
-      isRouteActive(pathname, item.href),
-    ) ?? appNavItems[0];
-  const primaryNavItems = appNavItems.map((item) => {
-    if (item.href === "/app/clients") {
-      return {
-        ...item,
-        label: user.industryProfile.clientsLabel,
-        summary: `ניהול ${user.industryProfile.clientsLabel.toLowerCase()} והקשר שלהם ל-${user.industryProfile.documentsLabel.toLowerCase()}.`,
-      };
-    }
-    if (item.href === "/app/documents") {
-      return {
-        ...item,
-        label: user.industryProfile.documentsLabel,
-        summary: `סריקה, פענוח וניהול ${user.industryProfile.recordsLabel.toLowerCase()} לפי ${user.industryProfile.industryLabel}.`,
-      };
-    }
-    return item;
-  });
-  const activeSectionLabel =
-    currentSection.href === "/app/clients"
-      ? user.industryProfile.clientsLabel
-      : currentSection.href === "/app/documents"
-        ? user.industryProfile.documentsLabel
-        : currentSection.label;
 
-  const commandItems = [
-    ...primaryNavItems.map((item) => ({
-      href: item.href,
-      label: item.label,
-      summary: item.summary,
-      icon: item.icon,
-      keywords: [item.legacyHref, item.label, item.summary],
-    })),
-    ...allowedUtilitySections.map((item) => ({
-        href: item.href,
-        label: item.label,
-        summary: item.summary,
-        icon: item.icon,
-        keywords: [item.label, item.summary],
-      })),
-    {
-      href: advancedSection.href,
-      label: advancedSection.label,
-      summary: advancedSection.summary,
-      icon: advancedSection.icon,
-      keywords: ["advanced", "legacy", "bridge", "כלי עומק"],
-    },
-  ];
+  const accessContext: WorkspaceAccessContext = {
+    role: user.role,
+    isPlatformAdmin: user.isPlatformAdmin,
+    subscriptionTier: user.subscriptionTier,
+    subscriptionStatus: user.subscriptionStatus,
+    hasOrganization: Boolean(user.organizationId),
+    hasMeckanoAccess: user.hasMeckanoAccess,
+  };
+
+  const visibleUtilityIds = getVisibleUtilitySectionIds(accessContext);
+  const nav = buildAppNavCollection(user.industryProfile, { visibleUtilityIds });
+  const utilityNavItems = nav.utility.filter(
+    (item) =>
+      item.showInNav !== false &&
+      visibleUtilityIds.includes(item.id as "help" | "business" | "intelligence" | "admin"),
+  );
+  const currentSection = nav.all.find((item) => isRouteActive(pathname, item.href)) ?? nav.primary[0];
+
+  const roleLabel = getWorkspaceRoleLabel(accessContext);
+  const modeLabel = getWorkspaceModeLabel(accessContext);
+  const tierLabel = getWorkspaceTierLabel(accessContext);
+  const subscriptionLabel = getSubscriptionStatusLabel(user.subscriptionStatus);
+  const subscriptionActive = hasActiveWorkspaceSubscription(user.subscriptionStatus);
+
+  const commandItems = [...nav.primary, ...nav.utility, nav.advanced].map(buildCommandItem);
 
   return (
     <div
@@ -213,7 +156,7 @@ export default function AppShellV2({ children, user }: Props) {
         דלג לתוכן הראשי
       </a>
 
-      <div className="grid min-h-screen lg:grid-cols-[248px_1fr]">
+      <div className="grid min-h-screen lg:grid-cols-[276px_1fr]">
         <aside className="hidden border-l border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 lg:block">
           <div className="sticky top-0 flex min-h-screen flex-col px-4 py-5">
             <Link href="/app" className="flex items-center gap-3 px-2">
@@ -226,22 +169,46 @@ export default function AppShellV2({ children, user }: Props) {
               </span>
             </Link>
 
-            <nav className="mt-8 grid gap-1.5">
-              {primaryNavItems.map((item) => (
-                <SidebarLink
-                  key={item.href}
-                  href={item.href}
-                  label={item.label}
-                  icon={item.icon}
-                  active={isRouteActive(pathname, item.href)}
-                />
-              ))}
-            </nav>
+            <div className="mt-8">
+              <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--v2-muted)]">
+                עבודה יומית
+              </p>
+              <nav className="mt-3 grid gap-1.5">
+                {nav.primary.map((item) => (
+                  <SidebarLink
+                    key={item.href}
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    active={isRouteActive(pathname, item.href)}
+                  />
+                ))}
+              </nav>
+            </div>
+
+            {utilityNavItems.length > 0 ? (
+              <div className="mt-6">
+                <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--v2-muted)]">
+                  ניווט נוסף
+                </p>
+                <nav className="mt-3 grid gap-1.5">
+                  {utilityNavItems.map((item) => (
+                    <SidebarLink
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      icon={item.icon}
+                      active={isRouteActive(pathname, item.href)}
+                    />
+                  ))}
+                </nav>
+              </div>
+            ) : null}
 
             <div className="mt-auto space-y-3 pt-6">
-              <Link href="/app/advanced" className="v2-button v2-button-secondary w-full justify-center">
+              <Link href={nav.advanced.href} className="v2-button v2-button-secondary w-full justify-center">
                 <Sparkles className="h-4 w-4" aria-hidden />
-                כלים מתקדמים
+                {nav.advanced.label}
               </Link>
 
               <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-3.5">
@@ -254,6 +221,20 @@ export default function AppShellV2({ children, user }: Props) {
                     <p className="truncate text-xs text-[color:var(--v2-muted)]">{user.email}</p>
                   </div>
                 </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ProfileChip label={roleLabel} />
+                  <ProfileChip label={tierLabel} />
+                  <ProfileChip label={modeLabel} />
+                </div>
+
+                <p
+                  className={`mt-3 text-xs font-bold ${
+                    subscriptionActive ? "text-emerald-700" : "text-amber-700"
+                  }`}
+                >
+                  {subscriptionLabel}
+                </p>
               </div>
 
               <button
@@ -276,11 +257,15 @@ export default function AppShellV2({ children, user }: Props) {
                   {initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--v2-muted)]">
-                    {user.industryProfile.industryLabel}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+                    <span>{user.industryProfile.industryLabel}</span>
+                    <span>•</span>
+                    <span>{roleLabel}</span>
+                    <span>•</span>
+                    <span>{tierLabel}</span>
+                  </div>
                   <h1 className="truncate text-lg font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-xl">
-                    {activeSectionLabel}
+                    {currentSection.label}
                   </h1>
                 </div>
               </div>
@@ -297,7 +282,7 @@ export default function AppShellV2({ children, user }: Props) {
                   <LogOut className="h-4 w-4" aria-hidden />
                 </button>
 
-                <Link href="/app/advanced" className="v2-button v2-button-secondary hidden sm:inline-flex">
+                <Link href={nav.advanced.href} className="v2-button v2-button-secondary hidden sm:inline-flex">
                   <Sparkles className="h-4 w-4" aria-hidden />
                   מתקדם
                 </Link>
@@ -305,7 +290,7 @@ export default function AppShellV2({ children, user }: Props) {
             </div>
 
             <nav className="mx-auto flex max-w-[1600px] gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:hidden lg:px-8">
-              {primaryNavItems.map((item) => (
+              {nav.primary.map((item) => (
                 <MobilePill
                   key={item.href}
                   href={item.href}
@@ -315,6 +300,20 @@ export default function AppShellV2({ children, user }: Props) {
                 />
               ))}
             </nav>
+
+            {utilityNavItems.length > 0 ? (
+              <nav className="mx-auto flex max-w-[1600px] gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:hidden lg:px-8">
+                {utilityNavItems.map((item) => (
+                  <MobilePill
+                    key={item.href}
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    active={isRouteActive(pathname, item.href)}
+                  />
+                ))}
+              </nav>
+            ) : null}
           </header>
 
           <main id="app-main-content" className="mx-auto max-w-[1600px] px-4 py-5 pb-20 sm:px-6 lg:px-8 lg:pb-8">

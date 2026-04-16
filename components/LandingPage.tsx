@@ -13,7 +13,6 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LandingTutorialSection from "@/components/landing/LandingTutorialSection";
 import LandingNavDrawer from "@/components/landing/LandingNavDrawer";
 import PricingSection from "@/components/landing/PricingSection";
-import DashboardBottomDock from "@/components/DashboardBottomDock";
 
 export default function LandingPage() {
   const { t, dir } = useI18n();
@@ -50,17 +49,17 @@ export default function LandingPage() {
   ], [t]);
 
   const stats = [
-    { value: "5,000+", label: "עסקים מנוהלים" },
-    { value: "99%", label: "זמינות מערכת" },
-    { value: "10×", label: "חיסכון בזמן" },
-    { value: "24/7", label: "AI זמין תמיד" },
+    { value: "פרויקט", label: "מסמכים ואתרים במקום אחד" },
+    { value: "מקצוע", label: "התאמת AI לסוג העסק" },
+    { value: "שטח", label: "נוכחות וצוותים" },
+    { value: "ענן", label: "גישה מכל אתר" },
   ];
 
   const trustItems = [
-    { icon: <Lock size={14} />,       text: "JWT + OAuth 2.0 מאובטח" },
-    { icon: <Cpu size={14} />,        text: "Gemini · GPT · Claude" },
-    { icon: <Globe size={14} />,      text: "Multi-Tenant מלא" },
-    { icon: <Sparkles size={14} />,   text: "CRM + ERP בפלטפורמה אחת" },
+    { icon: <Lock size={14} />,       text: "אבטחה וסשנים מאובטחים" },
+    { icon: <Cpu size={14} />,        text: "מנועי AI מרובים לפי מנוי" },
+    { icon: <Globe size={14} />,      text: "מותאם לקבלנים ומקצועות נלווים" },
+    { icon: <Sparkles size={14} />,   text: "CRM · ERP · מסמכים במערכת אחת" },
   ];
 
   const chevron = dir === "rtl"
@@ -82,18 +81,23 @@ export default function LandingPage() {
               style={{ backgroundColor: "var(--primary-color)" }}
             >B</span>
             <span style={{ color: "var(--primary-color)" }}>BSD-</span>
-            <span className="text-gray-900">YBM פתרונות AI</span>
+            <span className="text-gray-900">YBM · בנייה</span>
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-6 md:flex">
-            {["#features", "#tutorial-videos", "#pricing"].map((href, i) => (
+            {[
+              ["/product", "המוצר"],
+              ["/solutions", "פתרונות"],
+              ["#features", "יכולות"],
+              ["#pricing", "תמחור"],
+            ].map(([href, label]) => (
               <Link
-                key={href}
+                key={href + label}
                 href={href}
-                className="text-sm font-semibold text-gray-600 transition-colors hover:text-indigo-600"
+                className="text-sm font-semibold text-gray-600 transition-colors hover:text-[color:var(--primary-color)]"
               >
-                {["פתרונות AI", "הדגמות", "מחירים"][i]}
+                {label}
               </Link>
             ))}
           </nav>
@@ -114,7 +118,7 @@ export default function LandingPage() {
 
             <Link
               href="/login"
-              className="hidden text-sm font-semibold text-gray-600 transition-colors hover:text-indigo-600 sm:inline px-2 py-1.5"
+              className="hidden text-sm font-semibold text-gray-600 transition-colors hover:text-[color:var(--primary-color)] sm:inline px-2 py-1.5"
             >
               {t("nav.login")}
             </Link>
@@ -138,7 +142,7 @@ export default function LandingPage() {
       <section
         className="relative overflow-hidden border-b border-gray-200/80"
         style={{
-          background: "linear-gradient(180deg, #ffffff 0%, #eef2ff 55%, #f8fafc 100%)",
+          background: "linear-gradient(180deg, #fffdf9 0%, #f6f1eb 55%, #f8fafc 100%)",
         }}
       >
         {/* Mesh overlay */}
@@ -146,8 +150,8 @@ export default function LandingPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `
-              radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,.16) 0%, transparent 60%),
-              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(59,130,246,.1) 0%, transparent 50%)
+              radial-gradient(ellipse 80% 60% at 50% -10%, rgba(193,89,47,.12) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(12,74,110,.08) 0%, transparent 50%)
             `,
           }}
           aria-hidden
@@ -166,9 +170,9 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 md:py-32 lg:py-44">
 
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-bold text-indigo-600 shadow-sm">
-            <CheckCircle2 size={13} className="text-indigo-500" />
-            פלטפורמת CRM + ERP + AI לעסקים ישראלים — Made in Israel
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-orange-50/90 px-4 py-2 text-xs font-bold text-[color:var(--primary-color)] shadow-sm">
+            <CheckCircle2 size={13} className="text-[color:var(--primary-color)]" />
+            נבנה לענף הבנייה והמקצועות הנלווים — מסמכים, כסף ופרויקטים
           </div>
 
           {/* H1 */}
@@ -185,7 +189,11 @@ export default function LandingPage() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
               href="/register?plan=FREE"
-              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-black text-white shadow-xl shadow-indigo-900/40 transition-all hover:bg-indigo-500/15 hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-base font-black text-white shadow-xl transition-all hover:scale-[1.02] hover:brightness-105"
+              style={{
+                backgroundColor: "var(--primary-color)",
+                boxShadow: "0 20px 40px -12px rgba(193, 89, 47, 0.45)",
+              }}
             >
               {t("landing.ctaStart")} {chevron}
             </Link>
@@ -193,7 +201,7 @@ export default function LandingPage() {
               href="#tutorial-videos"
               className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-8 py-4 text-base font-bold text-gray-700 shadow-sm transition-all hover:bg-gray-50"
             >
-              <Play size={16} className="text-indigo-500" />
+              <Play size={16} className="text-[color:var(--primary-color)]" />
               {t("landing.tutorialCta")}
             </Link>
           </div>
@@ -202,7 +210,7 @@ export default function LandingPage() {
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {trustItems.map((item, i) => (
               <span key={i} className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                <span className="text-indigo-500">{item.icon}</span>
+                <span className="text-[color:var(--primary-color)]">{item.icon}</span>
                 {item.text}
               </span>
             ))}
@@ -215,7 +223,7 @@ export default function LandingPage() {
                 key={s.value}
                 className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
-                <p className="text-2xl font-black text-indigo-600">{s.value}</p>
+                <p className="text-2xl font-black text-[color:var(--primary-color)]">{s.value}</p>
                 <p className="mt-1 text-xs font-semibold text-gray-500">{s.label}</p>
               </div>
             ))}
@@ -246,10 +254,10 @@ export default function LandingPage() {
           <div className="mb-14 text-center">
             <span className="section-badge">יכולות ליבה</span>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-              CRM + ERP + AI — הכל בפלטפורמה אחת
+              מהמשרד לשטח — כלים אחידים לענף הבנייה
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
-              BSD-YBM פתרונות AI מאחדת ניהול לקוחות, חשבונאות וסריקת מסמכים AI — בממשק אחד עוצמתי
+              ניהול לקוחות וספקים, מסמכים ותזרים, סריקות AI מותאמות למקצוע — בלי לפצל בין מערכות.
             </p>
           </div>
 
@@ -257,7 +265,7 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <div
                 key={feat.title}
-                className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-indigo-200"
+                className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-orange-200/80"
               >
                 {/* Top gradient bar */}
                 <div className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${feat.gradient} opacity-80`} aria-hidden />
@@ -290,15 +298,15 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           WHY US — Social proof strip
       ══════════════════════════════════ */}
-      <section className="bg-indigo-50 border-y border-indigo-100 py-16">
+      <section className="border-y border-orange-100 bg-orange-50/50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             {[1,2,3,4,5].map(i => <Star key={i} size={18} className="fill-amber-400 text-amber-400" />)}
           </div>
           <p className="text-2xl font-black text-gray-900 sm:text-3xl max-w-2xl mx-auto">
-            &ldquo;BSD-YBM פתרונות AI שינתה את הדרך שאנחנו מנהלים את העסק — חסכנו 10 שעות ניירת בשבוע&rdquo;
+            &ldquo;סוף סדר: חשבוניות ספק, אתרים ולקוחות באותה מערכת — הצוות בשטח רואה מה המשרד סגר&rdquo;
           </p>
-          <p className="mt-4 text-sm font-semibold text-gray-400">יעקב לוי, מנכ&quot;ל פיינטק IL</p>
+          <p className="mt-4 text-sm font-semibold text-gray-400">מנהל פרויקטים, חברת בנייה</p>
         </div>
       </section>
 

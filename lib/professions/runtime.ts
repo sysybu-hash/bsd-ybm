@@ -1,4 +1,10 @@
 import { getIndustryConfig, type IndustryType } from "@/lib/professions/config";
+import {
+  constructionTradeLabelHe,
+  getMergedIndustryConfig,
+  normalizeConstructionTrade,
+  type ConstructionTradeId,
+} from "@/lib/construction-trades";
 
 export type ProfessionalTemplateKind = "OFFICIAL" | "APPROVAL" | "FORM" | "REPORT";
 export type OfficialIssuedDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
@@ -33,6 +39,9 @@ export type IndustryProfile = IndustryProfileBase & {
     label: string;
     description: string;
   }>;
+  /** מזהה התמחות בענף הבנייה — כשלא רלוונטי undefined */
+  constructionTradeId?: ConstructionTradeId;
+  constructionTradeLabel?: string;
 };
 
 type IndustryOverrides = {
@@ -158,15 +167,27 @@ function readString(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
 }
 
-export function getIndustryProfile(industryId?: string, rawConfig?: unknown): IndustryProfile {
+export function getIndustryProfile(
+  industryId?: string,
+  rawConfig?: unknown,
+  constructionTrade?: string | null,
+): IndustryProfile {
   const config = getIndustryConfig(industryId);
+  const merged = getMergedIndustryConfig(industryId, constructionTrade);
   const profile = INDUSTRY_PROFILES[config.id];
   const overrides = readOverrides(rawConfig);
   const customLabels = overrides.customLabels ?? {};
+  const tradeId = normalizeConstructionTrade(constructionTrade);
+  const tradeLabel = constructionTradeLabelHe(tradeId);
+
+  const industryLabel =
+    config.id === "CONSTRUCTION"
+      ? `${config.label} · ${tradeLabel}`
+      : config.label;
 
   return {
     id: config.id,
-    industryLabel: config.label,
+    industryLabel,
     clientsLabel: readString(customLabels.clients, profile.clientsLabel),
     documentsLabel: readString(customLabels.documents, profile.documentsLabel),
     recordsLabel: readString(customLabels.records, profile.recordsLabel),
@@ -177,7 +198,9 @@ export function getIndustryProfile(industryId?: string, rawConfig?: unknown): In
       project: readString(customLabels.project, config.vocabulary.project),
       document: readString(customLabels.document, config.vocabulary.document),
     },
-    analysisTypes: config.scanner.analysisTypes,
+    analysisTypes: merged.scanner.analysisTypes,
     templates: profile.templates,
+    constructionTradeId: config.id === "CONSTRUCTION" ? tradeId : undefined,
+    constructionTradeLabel: config.id === "CONSTRUCTION" ? tradeLabel : undefined,
   };
 }

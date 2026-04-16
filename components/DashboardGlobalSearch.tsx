@@ -15,7 +15,7 @@ export default function DashboardGlobalSearch() {
       router.push("/app/documents/erp");
       return;
     }
-    router.push(`/dashboard/erp?q=${encodeURIComponent(trimmed)}`);
+    router.push(`/app/documents/erp?q=${encodeURIComponent(trimmed)}`);
   };
 
   return (

@@ -92,7 +92,8 @@ describe("POST /api/register", () => {
       data: expect.objectContaining({
         name: "Example Org",
         type: "COMPANY",
-        industry: "GENERAL",
+        industry: "CONSTRUCTION",
+        constructionTrade: "GENERAL_CONTRACTOR",
         subscriptionTier: "FREE",
         subscriptionStatus: "PENDING_APPROVAL",
         trialEndsAt: new Date("2026-05-12T00:00:00.000Z"),
@@ -136,9 +137,11 @@ describe("POST /api/register", () => {
       data: expect.objectContaining({
         name: "Paid Org",
         type: "ENTERPRISE",
-        industry: "LEGAL",
+        industry: "CONSTRUCTION",
+        constructionTrade: "GENERAL_CONTRACTOR",
         subscriptionTier: "COMPANY",
         subscriptionStatus: "ACTIVE",
+        trialEndsAt: null,
         cheapScansRemaining: 200,
         premiumScansRemaining: 40,
         maxCompanies: 2,

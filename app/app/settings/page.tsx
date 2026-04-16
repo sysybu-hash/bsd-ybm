@@ -2,19 +2,26 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import SettingsWorkspaceV2 from "@/components/settings/SettingsWorkspaceV2";
 import { authOptions } from "@/lib/auth";
+import { isAdmin } from "@/lib/is-admin";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
+import {
+  canManageOrganization,
+  getWorkspaceRoleLabel,
+  type WorkspaceAccessContext,
+} from "@/lib/workspace-access";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppSettingsPage() {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
-  const meckanoEnabled = await canAccessMeckano(session);
 
   if (!organizationId) {
     redirect("/login");
   }
+
+  const meckanoEnabled = await canAccessMeckano(session);
 
   const [organization, usersTotal, activeUsers, integrationsRaw] = await Promise.all([
     prisma.organization.findUnique({
@@ -33,6 +40,7 @@ export default async function AppSettingsPage() {
         paypalMeSlug: true,
         liveDataTier: true,
         industry: true,
+        constructionTrade: true,
         industryConfigJson: true,
         meckanoApiKey: true,
         subscriptionTier: true,
@@ -72,16 +80,30 @@ export default async function AppSettingsPage() {
     lastSyncAt: integration.lastSyncAt?.toISOString() ?? null,
   }));
 
+  const accessContext: WorkspaceAccessContext = {
+    role: session?.user?.role ?? "",
+    isPlatformAdmin: isAdmin(session?.user?.email),
+    subscriptionTier: organization.subscriptionTier,
+    subscriptionStatus: organization.subscriptionStatus,
+    hasOrganization: true,
+    hasMeckanoAccess: meckanoEnabled,
+  };
+
   return (
-      <SettingsWorkspaceV2
-        organization={{
-          ...organization,
-          meckanoApiKey: meckanoEnabled ? organization.meckanoApiKey : null,
-        }}
-        usersTotal={usersTotal}
-        activeUsers={activeUsers}
-        integrations={integrations}
-        meckanoEnabled={meckanoEnabled}
-      />
-    );
+    <SettingsWorkspaceV2
+      organization={{
+        ...organization,
+        meckanoApiKey: meckanoEnabled ? organization.meckanoApiKey : null,
+      }}
+      usersTotal={usersTotal}
+      activeUsers={activeUsers}
+      integrations={integrations}
+      meckanoEnabled={meckanoEnabled}
+      viewer={{
+        role: session?.user?.role ?? "",
+        roleLabel: getWorkspaceRoleLabel(accessContext),
+        canManageOrganization: canManageOrganization(accessContext),
+      }}
+    />
+  );
 }

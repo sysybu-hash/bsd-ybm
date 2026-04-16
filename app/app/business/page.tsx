@@ -1,4 +1,4 @@
-import { BusinessPageContent } from "@/app/dashboard/(protected)/business/BusinessPageContent";
+import { BusinessPageContent } from "@/app/workspace-content/business/BusinessPageContent";
 
 export const metadata = {
   title: "מרכז עסקי | BSD-YBM",

@@ -23,11 +23,16 @@ export default async function AppIssuePage({
     where: { id: organizationId },
     select: {
       industry: true,
+      constructionTrade: true,
       industryConfigJson: true,
     },
   });
 
-  const profile = getIndustryProfile(organization?.industry ?? "GENERAL", organization?.industryConfigJson);
+  const profile = getIndustryProfile(
+    organization?.industry ?? "CONSTRUCTION",
+    organization?.industryConfigJson,
+    organization?.constructionTrade,
+  );
 
   return (
     <div className="grid gap-6" dir="rtl">

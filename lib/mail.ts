@@ -252,7 +252,7 @@ export async function sendPayPalSubscriptionConfirmationEmail(
       ברוך הבא לשדרה שמחברת בין כולם — BSD-YBM.
     </p>
     <p style="text-align:center;margin:0;">
-      <a href="${SITE_URL}/dashboard" style="display:inline-block;background:#2563eb;color:#fff;font-weight:800;padding:14px 28px;border-radius:12px;text-decoration:none;">
+      <a href="${SITE_URL}/app" style="display:inline-block;background:#2563eb;color:#fff;font-weight:800;padding:14px 28px;border-radius:12px;text-decoration:none;">
         כניסה ללוח הבקרה
       </a>
     </p>`;

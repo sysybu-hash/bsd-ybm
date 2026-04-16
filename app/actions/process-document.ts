@@ -25,7 +25,7 @@ import {
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isAdmin } from "@/lib/is-admin";
-import { getIndustryConfig } from "@/lib/professions/config";
+import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
@@ -154,15 +154,16 @@ export async function processDocumentAction(
       select: {
         email: true,
         role: true,
-        organization: { select: { subscriptionTier: true, industry: true } },
+        organization: { select: { subscriptionTier: true, industry: true, constructionTrade: true } },
       },
     });
     const orgPlan = accessUser?.organization?.subscriptionTier ?? "FREE";
-    const userIndustry = accessUser?.organization?.industry ?? "GENERAL";
+    const userIndustry = accessUser?.organization?.industry ?? "CONSTRUCTION";
+    const orgTrade = accessUser?.organization?.constructionTrade ?? null;
     const analysisId = formData.get("analysisType") as string || "INVOICE";
 
-    // Industry adaptation for AI instructions
-    const industryConfig = getIndustryConfig(userIndustry);
+    // Industry adaptation for AI instructions (בנייה + התמחות נלווית)
+    const industryConfig = getMergedIndustryConfig(userIndustry, orgTrade);
     const analysisMode = industryConfig.scanner.analysisTypes.find((a: { id: string }) => a.id === analysisId);
     
     // Merge standard instructions with industry + mode specific tweaks

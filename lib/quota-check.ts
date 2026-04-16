@@ -54,7 +54,7 @@ export async function resolveOrganizationForUser(
 
 /**
  * בודק ומנכה יתרת סריקה לפי סוג מנוע (זול / פרימיום).
- * QUOTA_EXCEEDED → הפניה ל־/dashboard/billing לרכישת בנדל.
+ * QUOTA_EXCEEDED → הפניה ל־/app/billing לרכישת בנדל.
  */
 export async function checkAndDeductScanCredit(
   orgId: string,

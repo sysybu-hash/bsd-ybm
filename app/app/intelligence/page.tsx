@@ -1,4 +1,4 @@
-import { IntelligenceDashboardContent } from "@/app/dashboard/(protected)/intelligence/IntelligenceDashboardContent";
+import { IntelligenceDashboardContent } from "@/app/workspace-content/intelligence/IntelligenceDashboardContent";
 
 export const metadata = {
   title: "Intelligence | BSD-YBM",
