@@ -14,6 +14,38 @@ const APPROVED_COLORS = new Set([
   "#7c3aed",
 ]);
 
+function parseHex(hex: string): { r: number; g: number; b: number } | null {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function rgbToHex(r: number, g: number, b: number) {
+  const c = (x: number) => Math.max(0, Math.min(255, Math.round(x)));
+  return `#${[c(r), c(g), c(b)]
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+/** כהה יותר לכפתור hover / accent-strong */
+function darkenHex(hex: string, ratio: number) {
+  const p = parseHex(hex);
+  if (!p) return hex;
+  const k = 1 - ratio;
+  return rgbToHex(p.r * k, p.g * k, p.b * k);
+}
+
+/** מסנכרן גם טוקני v2 (סרגל / כרטיסים) כדי שלא יישארו כחול/סגול מקומי בעוד שהמערכת כבר ממותגת בנייה */
+function applyV2AccentFromBrand(hex: string) {
+  const p = parseHex(hex);
+  if (!p) return;
+  const soft = `rgba(${p.r}, ${p.g}, ${p.b}, 0.1)`;
+  document.documentElement.style.setProperty("--v2-accent", hex);
+  document.documentElement.style.setProperty("--v2-accent-soft", soft);
+  document.documentElement.style.setProperty("--v2-accent-strong", darkenHex(hex, 0.18));
+}
+
 /** מסנכרן --primary-color מ-localStorage (דפי נחיתה ללא תפריט נגישות) */
 export default function Themer() {
   useEffect(() => {
@@ -22,6 +54,7 @@ export default function Themer() {
       document.documentElement.style.setProperty("--primary-color", color);
       document.documentElement.style.setProperty("--header-color", color);
       document.documentElement.style.setProperty("--heading-color", color);
+      applyV2AccentFromBrand(color);
     };
 
     const readAndApply = () => {
