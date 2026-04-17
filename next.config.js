@@ -3,6 +3,32 @@ const path = require("path");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname),
+  /** כותרות אבטחה ופרטיות (תאימות מומלצת לאיחוד האירופי / מצב best-practice) */
+  async headers() {
+    const isProd = process.env.NODE_ENV === "production";
+    const security = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "SAMEORIGIN" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Permissions-Policy",
+        value:
+          "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()",
+      },
+    ];
+    if (isProd) {
+      security.push({
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      });
+    }
+    return [
+      {
+        source: "/:path*",
+        headers: security,
+      },
+    ];
+  },
   async redirects() {
     return [
       {

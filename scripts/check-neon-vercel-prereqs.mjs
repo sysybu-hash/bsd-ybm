@@ -44,9 +44,15 @@ function main() {
   };
 
   const db = getVal("DATABASE_URL");
+  const direct = getVal("DIRECT_URL");
   const issues = [];
 
   if (!db) issues.push("DATABASE_URL ריק");
+  if (!direct) {
+    issues.push(
+      "חסר DIRECT_URL — ב-Neon: העתק חיבור Direct (ללא pooler); בפיתוח מקומי: שכפל את DATABASE_URL",
+    );
+  }
   else if (/localhost|127\.0\.0\.1/i.test(db)) {
     issues.push(
       "DATABASE_URL מצביע על localhost — בפרודקשן ב־Vercel צריך מחרוזת Neon (לרוב host עם ep-…-pooler…)",

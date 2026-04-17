@@ -1,6 +1,9 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  /** Pooled (PgBouncer) — מתאים ל־Vercel / serverless */
+  url       = env("DATABASE_URL")
+  /** חיבור ישיר ל-Postgres — חובה ל־`prisma db push` / migrate כשמשתמשים ב-Neon pooler */
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {

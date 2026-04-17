@@ -1,21 +1,19 @@
-אימות דומיין — קבצים סטטיים (בנוסף למטא־תגיות מ־.env.local)
-================================================================
+אימות בעלות על דומיין (Google Search Console ואחרים)
+====================================================
 
-1) Google Search Console — שיטת קובץ HTML
-   - גוגל נותנים שם קובץ מדויק, למשל: google123abc.html
-   - צור את הקובץ תחת: public/google123abc.html
-   - תוכן הקובץ: מה שהממשק של גוגל מציג (שורה אחת עם google-site-verification)
-   - אחרי deploy: ודא שזה נפתח ב-https://הדומיין-שלך/google123abc.html
+1) אימות דרך מטא־תג (מומלץ ב-Vercel)
+   - ב-Google Search Console: בחר "HTML tag" והעתק את ערך content של meta google-site-verification.
+   - ב-Vercel → Environment Variables הוסף:
+     SITE_VERIFICATION_GOOGLE="<הערך בלבד>"
+     או GOOGLE_SITE_VERIFICATION (תואם).
+   - פרוס מחדש. Next.js יזריק את התג דרך lib/site-metadata.ts.
 
-2) Microsoft Bing — BingSiteAuth.xml
-   - הורד מהממשק את BingSiteAuth.xml
-   - העתק ל: public/BingSiteAuth.xml (שם קובץ בדיוק כפי שבינג דורשים)
-   - ערוך את הקובץ: BingSiteAuth.xml.example כאן בתיקייה — זה רק תבנית
+2) אימות Bing Webmaster Tools
+   - הוסף SITE_VERIFICATION_BING="<ערך msvalidate.01>"
 
-3) מטא־תגיות (מומלץ עם Vercel)
-   - מלא ב-.env.local את SITE_VERIFICATION_GOOGLE וכו׳ — ראה .env.example
-   - redeploy כדי שהטוקנים ייכנסו ל-layout
+3) אימות דרך קובץ HTML (חלופה)
+   - הורד מהקונסול קובץ כמו googleXXXXXXXX.html והנח כאן:
+     public/googleXXXXXXXX.html
+   - ודא שהקובץ נגיש ב-https://<הדומיין>/googleXXXXXXXX.html
 
-4) NEXT_PUBLIC_SITE_URL
-   - בפרודקשן הגדר לכתובת הקנונית (למשל https://www.bsd-ybm.co.il)
-   - משפיע על metadataBase ו-openGraph
+4) אל תעלה קבצי אימות עם סודות ל-git אם הם חד-פעמיים — עדיף משתני סביבה.

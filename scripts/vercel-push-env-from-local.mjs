@@ -14,6 +14,11 @@ const root = resolve(__dirname, "..");
 const envPath = resolve(root, ".env.local");
 
 const SKIP_KEYS = new Set(["VERCEL_OIDC_TOKEN"]);
+/**
+ * רק Production — תואם ל־CLI של Vercel:
+ * Preview דורש ציון ענף Git; Development לא מקבל משתני sensitive.
+ * Preview/Dev: הגדרה ידנית בדשבורד או פריסה מקומית.
+ */
 const ENVIRONMENTS = ["production"];
 const DELAY_MS = 650;
 const NEVER_SENSITIVE = new Set([
@@ -149,7 +154,7 @@ function main() {
 
   if (onlyKeys?.length) {
     console.log(
-      `מצב --only: ${onlyKeys.length} משתנים → production (NEXTAUTH_URL קבוע לפרודקשן).\n`,
+      `מצב --only: ${onlyKeys.length} משתנים → ${ENVIRONMENTS.join(", ")} (NEXTAUTH_URL לפי קובץ / ברירת מחדל).\n`,
     );
     for (const key of onlyKeys) {
       const val = resolveValueForOnlyKey(key, byKey);
@@ -165,7 +170,7 @@ function main() {
     const filtered = pairs.filter((p) => p.key !== "NEXTAUTH_URL");
 
     console.log(
-      `מעלה ${filtered.length} משתנים ל־production (+ NEXTAUTH_URL). Preview: דרך דשבורד.\n`,
+      `מעלה ${filtered.length} משתנים ל־${ENVIRONMENTS.join(", ")} (+ NEXTAUTH_URL).\n`,
     );
 
     for (const { key, val } of filtered) {

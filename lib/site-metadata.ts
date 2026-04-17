@@ -22,11 +22,14 @@ export function buildRootMetadata(): Metadata {
   const other: Record<string, string> = {};
   const facebookVerification = process.env.SITE_VERIFICATION_FACEBOOK?.trim();
   const pinterestVerification = process.env.SITE_VERIFICATION_PINTEREST?.trim();
+  /** Bing Webmaster Tools — ערך התוכן של מטא־תגית msvalidate.01 */
+  const bingVerification = process.env.SITE_VERIFICATION_BING?.trim();
   const customMetaName = process.env.SITE_VERIFICATION_META_NAME?.trim();
   const customMetaContent = process.env.SITE_VERIFICATION_META_CONTENT?.trim();
 
   if (facebookVerification) other["facebook-domain-verification"] = facebookVerification;
   if (pinterestVerification) other["p:domain_verify"] = pinterestVerification;
+  if (bingVerification) other["msvalidate.01"] = bingVerification;
   if (customMetaName && customMetaContent) other[customMetaName] = customMetaContent;
 
   return {

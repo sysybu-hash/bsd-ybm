@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth";
 import SessionProvider from "@/components/SessionProvider";
 import Themer from "@/components/Themer";
 import CookieConsentWall from "@/components/CookieConsentWall";
+import ConsentAwareAnalytics from "@/components/ConsentAwareAnalytics";
 import { I18nProvider } from "@/components/I18nProvider";
 import { AccessibilitySettingsBootstrap } from "@/components/AccessibilityMenu";
 import { COOKIE_LOCALE, normalizeLocale, isRtlLocale } from "@/lib/i18n/config";
@@ -80,6 +81,7 @@ export default async function RootLayout({
             <SiteWizardChrome>{children}</SiteWizardChrome>
             <GlobalFloatingChrome />
             <CookieConsentWall />
+            <ConsentAwareAnalytics />
           </I18nProvider>
         </SessionProvider>
       </body>
