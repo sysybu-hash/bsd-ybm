@@ -6,6 +6,7 @@ import { isAdmin } from "@/lib/is-admin";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 /** מניעת מטמון RSC/CDN — ללא גרסת „אדמין” שנשמרת למשתמש רגיל */
@@ -43,10 +44,12 @@ export default async function DashboardLayout({
         },
       })
     : null;
+  const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade ?? session.user.organizationConstructionTrade,
+    messages,
   );
 
   return (

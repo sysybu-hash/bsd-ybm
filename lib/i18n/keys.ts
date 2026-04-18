@@ -93,6 +93,8 @@ export type MessageTree = {
     cloudSaveCTA: string;
     inviteOk: string;
     assignError: string;
+    tradeAdaptHint: string;
+    tradeSaveRefreshHint: string;
   };
   scanner: {
     title: string;
@@ -395,4 +397,8 @@ export type MessageTree = {
     authFooterLead: string;
     authFooterCopy: string;
   };
+  /** תרגום מקצועות בנייה (EN/RU) — מוזג מקבצים נפרדים */
+  constructionTrades?: Record<string, Record<string, unknown>>;
+  /** תווית קצרה לכל מזהה trade (לתצוגה ליד שם הענף) */
+  constructionTradeLabels?: Record<string, string>;
 };

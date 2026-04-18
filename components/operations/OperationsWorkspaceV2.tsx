@@ -12,6 +12,7 @@ import {
   UsersRound,
   Workflow,
 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatDateTime } from "@/lib/ui-formatters";
 
@@ -49,6 +50,8 @@ type ActivityItem = {
 
 type Props = Readonly<{
   organizationName: string;
+  /** תווית הקשר (מקצוע/ענף) לריקים דינמיים — מ־IndustryProfile */
+  operationsContextLabel?: string;
   meckanoEnabled: boolean;
   stats: {
     activeUsers: string;
@@ -70,6 +73,7 @@ function workflowClass(status: WorkflowStatus) {
 
 export default function OperationsWorkspaceV2({
   organizationName,
+  operationsContextLabel,
   meckanoEnabled,
   stats,
   workflows,
@@ -77,30 +81,37 @@ export default function OperationsWorkspaceV2({
   zones,
   recentActivity,
 }: Props) {
+  const { t, dir } = useI18n();
   const advancedOperationsHref = getAdvancedWorkspaceHref("operations");
+
+  const workflowStatusLabel = (status: WorkflowStatus) => {
+    if (status === "healthy") return t("workspaceOperations.workflowHealthy");
+    if (status === "attention") return t("workspaceOperations.workflowAttention");
+    return t("workspaceOperations.workflowBlocked");
+  };
+
   return (
-    <div className="grid gap-6" dir="rtl">
+    <div className="grid gap-6" dir={dir}>
       <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">Operations Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceOperations.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
-              תפעול חדש שמרכז צוות, שטח, מסמכים וגבייה למסלול עבודה אחד ברור.
+              {t("workspaceOperations.heroTitle")}
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
-              במקום לקפוץ בין מסכי תפעול שונים, כאן רואים מה תקין, מה תקוע ואיזה workflow דורש תשומת לב כדי
-              שהעבודה תמשיך לזוז. כרגע המסך מכוון לארגון {organizationName}.
+              {t("workspaceOperations.heroSubtitle", { org: organizationName })}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {meckanoEnabled ? (
                 <Link href="/app/operations/meckano" className="v2-button v2-button-primary">
-                  פתיחת Meckano
+                  {t("workspaceOperations.meckanoCta")}
                   <ArrowLeft className="h-4 w-4" aria-hidden />
                 </Link>
               ) : null}
               <Link href="/app/inbox" className="v2-button v2-button-secondary">
-                מעבר לתיבת העבודה
+                {t("workspaceOperations.inboxCta")}
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
             </div>
@@ -108,10 +119,10 @@ export default function OperationsWorkspaceV2({
 
           <div className="grid gap-3 sm:grid-cols-2">
             {[
-              { label: "צוות זמין", value: stats.activeUsers, icon: UsersRound },
-              { label: "תורים פתוחים", value: stats.openQueues, icon: Workflow },
-              { label: "כיסוי שטח", value: stats.fieldCoverage, icon: MapPinned },
-              { label: "עומס בדיקה", value: stats.reviewLoad, icon: ClipboardList },
+              { label: t("workspaceOperations.statActiveUsers"), value: stats.activeUsers, icon: UsersRound },
+              { label: t("workspaceOperations.statOpenQueues"), value: stats.openQueues, icon: Workflow },
+              { label: t("workspaceOperations.statFieldCoverage"), value: stats.fieldCoverage, icon: MapPinned },
+              { label: t("workspaceOperations.statReviewLoad"), value: stats.reviewLoad, icon: ClipboardList },
             ].map(({ label, value, icon: Icon }) => (
               <div key={label} className="v2-panel p-5">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
@@ -130,7 +141,7 @@ export default function OperationsWorkspaceV2({
           <div className="v2-panel p-6">
             <div className="flex items-center gap-2">
               <Workflow className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <h2 className="text-xl font-black text-[color:var(--v2-ink)]">זרימות עבודה</h2>
+              <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.workflowsTitle")}</h2>
             </div>
             <div className="mt-5 grid gap-4">
               {workflows.map((workflow) => (
@@ -139,7 +150,7 @@ export default function OperationsWorkspaceV2({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded-full px-3 py-1 text-xs font-black ${workflowClass(workflow.status)}`}>
-                          {workflow.status === "healthy" ? "תקין" : workflow.status === "attention" ? "במעקב" : "חסום"}
+                          {workflowStatusLabel(workflow.status)}
                         </span>
                       </div>
                       <h3 className="mt-4 text-lg font-black text-[color:var(--v2-ink)]">{workflow.title}</h3>
@@ -165,12 +176,14 @@ export default function OperationsWorkspaceV2({
             <div className="v2-panel p-6">
               <div className="flex items-center gap-2">
                 <MapPinned className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                <h2 className="text-xl font-black text-[color:var(--v2-ink)]">אזורי שטח פעילים</h2>
+                <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.zonesTitle")}</h2>
               </div>
               <div className="mt-4 grid gap-3">
                 {zones.length === 0 ? (
                   <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
-                    עדיין לא הוגדרו אזורי דיווח פעילים. אפשר להתחיל דרך מסך Meckano.
+                    {operationsContextLabel
+                      ? t("workspaceOperations.zonesEmptyWithTrade", { trade: operationsContextLabel })
+                      : t("workspaceOperations.zonesEmpty")}
                   </div>
                 ) : null}
                 {zones.map((zone) => (
@@ -182,11 +195,12 @@ export default function OperationsWorkspaceV2({
                           zone.synced ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
                         }`}
                       >
-                        {zone.synced ? "מסונכרן ל-CRM" : "טרם סונכרן"}
+                        {zone.synced ? t("workspaceOperations.zoneSynced") : t("workspaceOperations.zoneNotSynced")}
                       </span>
                     </div>
                     <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
-                      מנהל: {zone.managerName || "לא הוגדר"} · עובדים משויכים: {zone.assigneeCount}
+                      {t("workspaceOperations.zoneManagerLabel")}: {zone.managerName || t("workspaceOperations.zoneManagerUnset")} ·{" "}
+                      {t("workspaceOperations.zoneAssigneesLabel")}: {zone.assigneeCount}
                     </p>
                   </div>
                 ))}
@@ -199,7 +213,7 @@ export default function OperationsWorkspaceV2({
           <div className="v2-panel v2-panel-highlight p-6">
             <div className="flex items-center gap-2">
               <Link2 className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">חיבורי מערכת</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.integrationsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               {integrations.map((integration) => (
@@ -211,7 +225,9 @@ export default function OperationsWorkspaceV2({
                         integration.connected ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
                       }`}
                     >
-                      {integration.connected ? "מחובר" : "דורש הגדרה"}
+                      {integration.connected
+                        ? t("workspaceOperations.integrationConnected")
+                        : t("workspaceOperations.integrationNeedsSetup")}
                     </span>
                   </div>
                   <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{integration.details}</p>
@@ -223,12 +239,14 @@ export default function OperationsWorkspaceV2({
           <div className="v2-panel p-6">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">פעילות אחרונה</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.recentTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               {recentActivity.length === 0 ? (
                 <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
-                  אין פעילות אחרונה להצגה כרגע.
+                  {operationsContextLabel
+                    ? t("workspaceOperations.recentEmptyWithTrade", { trade: operationsContextLabel })
+                    : t("workspaceOperations.recentEmpty")}
                 </div>
               ) : null}
               {recentActivity.map((activity, index) => (
@@ -244,23 +262,23 @@ export default function OperationsWorkspaceV2({
           <div className="v2-panel p-6">
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">קיצורי פעולה</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.shortcutsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               <Link href="/app/billing" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
-                מעבר לחיוב ולגבייה
+                {t("workspaceOperations.shortcutBilling")}
               </Link>
               <Link href="/app/documents" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
-                מעבר למסמכים
+                {t("workspaceOperations.shortcutDocuments")}
               </Link>
               <Link href="/app/automations" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
-                Automation Center
+                {t("workspaceOperations.shortcutAutomation")}
               </Link>
               <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
-                Onboarding חכם
+                {t("workspaceOperations.shortcutOnboarding")}
               </Link>
               <Link href={advancedOperationsHref} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
-                תפעול מתקדם
+                {t("workspaceOperations.shortcutAdvanced")}
               </Link>
             </div>
           </div>

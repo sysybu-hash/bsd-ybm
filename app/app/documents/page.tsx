@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import DocumentsWorkspaceV2 from "@/components/documents/DocumentsWorkspaceV2";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
+import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
@@ -86,10 +88,12 @@ export default async function AppDocumentsPage() {
     }),
   ]);
 
+  const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization?.industry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade,
+    messages,
   );
 
   const scannedDocuments = scannedRaw.map((document) => {
@@ -101,10 +105,10 @@ export default async function AppDocumentsPage() {
       type: document.type,
       status: document.status,
       createdAt: document.createdAt.toISOString(),
-      vendor: stringOrFallback(ai.vendor, "ספק לא זוהה"),
+      vendor: stringOrFallback(ai.vendor, DOC_UI_FALLBACK.unknownVendor),
       total: numberOrZero(ai.total),
-      summary: stringOrFallback(ai.summary, "עדיין אין תקציר זמין למסמך הזה."),
-      extractedType: stringOrFallback(ai.docType, document.type || "סוג מסמך לא זוהה"),
+      summary: stringOrFallback(ai.summary, DOC_UI_FALLBACK.noSummary),
+      extractedType: stringOrFallback(ai.docType, document.type || DOC_UI_FALLBACK.unknownDocType),
       lineItemCount: document._count.lineItems,
     };
   });

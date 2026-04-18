@@ -1,6 +1,12 @@
 import { getIndustryConfig, type IndustryType } from "@/lib/professions/config";
+import type { MessageTree } from "@/lib/i18n/keys";
+import {
+  mergeConstructionTradeLabel,
+  mergeTradeProfileFromMessages,
+} from "@/lib/construction-trades-i18n";
 import {
   constructionTradeLabelHe,
+  getConstructionTradeProfileOverlay,
   getMergedIndustryConfig,
   normalizeConstructionTrade,
   type ConstructionTradeId,
@@ -167,39 +173,63 @@ function readString(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
 }
 
+function pickMessageString(messages: MessageTree | undefined, key: string): string | undefined {
+  if (!messages) return undefined;
+  const parts = key.split(".");
+  let cur: unknown = messages as unknown;
+  for (const p of parts) {
+    if (cur === null || typeof cur !== "object") return undefined;
+    cur = (cur as Record<string, unknown>)[p];
+  }
+  return typeof cur === "string" && cur.trim() ? cur.trim() : undefined;
+}
+
 export function getIndustryProfile(
   industryId?: string,
   rawConfig?: unknown,
   constructionTrade?: string | null,
+  localeMessages?: MessageTree | null,
 ): IndustryProfile {
   const config = getIndustryConfig(industryId);
-  const merged = getMergedIndustryConfig(industryId, constructionTrade);
+  const merged = getMergedIndustryConfig(industryId, constructionTrade, localeMessages ?? undefined);
   const profile = INDUSTRY_PROFILES[config.id];
   const overrides = readOverrides(rawConfig);
   const customLabels = overrides.customLabels ?? {};
   const tradeId = normalizeConstructionTrade(constructionTrade);
-  const tradeLabel = constructionTradeLabelHe(tradeId);
+  const tradeLabelHe = constructionTradeLabelHe(tradeId);
+  const tradeLabel = mergeConstructionTradeLabel(localeMessages ?? undefined, tradeId, tradeLabelHe);
+  let tradeProfile =
+    config.id === "CONSTRUCTION" ? getConstructionTradeProfileOverlay(constructionTrade) : null;
+  if (localeMessages && tradeProfile) {
+    tradeProfile = mergeTradeProfileFromMessages(localeMessages, tradeId, tradeProfile);
+  }
 
+  const baseIndustryLabel = pickMessageString(localeMessages ?? undefined, `professions.${config.id}.label`) ?? config.label;
   const industryLabel =
-    config.id === "CONSTRUCTION"
-      ? `${config.label} · ${tradeLabel}`
-      : config.label;
+    config.id === "CONSTRUCTION" ? `${baseIndustryLabel} · ${tradeLabel}` : baseIndustryLabel;
+
+  const clientsBase = tradeProfile?.clientsLabel ?? profile.clientsLabel;
+  const documentsBase = tradeProfile?.documentsLabel ?? profile.documentsLabel;
+  const recordsBase = tradeProfile?.recordsLabel ?? profile.recordsLabel;
+  const homeTitleBase = tradeProfile?.homeTitle ?? profile.homeTitle;
+  const homeDescriptionBase = tradeProfile?.homeDescription ?? profile.homeDescription;
+  const templatesBase = tradeProfile?.templates ?? profile.templates;
 
   return {
     id: config.id,
     industryLabel,
-    clientsLabel: readString(customLabels.clients, profile.clientsLabel),
-    documentsLabel: readString(customLabels.documents, profile.documentsLabel),
-    recordsLabel: readString(customLabels.records, profile.recordsLabel),
-    homeTitle: profile.homeTitle,
-    homeDescription: profile.homeDescription,
+    clientsLabel: readString(customLabels.clients, clientsBase),
+    documentsLabel: readString(customLabels.documents, documentsBase),
+    recordsLabel: readString(customLabels.records, recordsBase),
+    homeTitle: homeTitleBase,
+    homeDescription: homeDescriptionBase,
     vocabulary: {
-      client: readString(customLabels.client, config.vocabulary.client),
-      project: readString(customLabels.project, config.vocabulary.project),
-      document: readString(customLabels.document, config.vocabulary.document),
+      client: readString(customLabels.client, merged.vocabulary.client),
+      project: readString(customLabels.project, merged.vocabulary.project),
+      document: readString(customLabels.document, merged.vocabulary.document),
     },
     analysisTypes: merged.scanner.analysisTypes,
-    templates: profile.templates,
+    templates: templatesBase as IndustryProfileBase["templates"],
     constructionTradeId: config.id === "CONSTRUCTION" ? tradeId : undefined,
     constructionTradeLabel: config.id === "CONSTRUCTION" ? tradeLabel : undefined,
   };

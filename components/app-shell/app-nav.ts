@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import type { TFunction } from "@/lib/i18n/translate";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 
 export type AppRouteId =
@@ -60,211 +61,136 @@ export type AppNavCollection = Readonly<{
   all: AppNavItem[];
 }>;
 
-export const appNavItems: AppNavItem[] = [
-  {
-    id: "home",
-    href: "/app",
-    label: "בית",
-    icon: Home,
-    legacyHref: "/app/advanced",
-    summary: "תמונת מצב, קיצורי דרך וכניסה מסודרת לכל אזורי העבודה.",
-  },
-  {
-    id: "inbox",
-    href: "/app/inbox",
-    label: "תיבת עבודה",
-    icon: BellRing,
-    legacyHref: "/app/inbox/advanced",
-    summary: "מה דורש טיפול עכשיו, אילו אישורים פתוחים, ומה מחכה לצוות.",
-  },
-  {
-    id: "clients",
-    href: "/app/clients",
-    label: "לקוחות",
-    icon: BriefcaseBusiness,
-    legacyHref: "/app/clients/advanced",
-    summary: "לקוחות, צנרת, פרויקטים וחיבור ישיר למסמכים ולחיוב.",
-  },
-  {
-    id: "documents",
-    href: "/app/documents",
-    label: "מסמכים",
-    icon: FileText,
-    legacyHref: "/app/documents/erp",
-    summary: "סריקה, שיוך, בקרה והפקת מסמכים עסקיים במקום אחד.",
-  },
-  {
-    id: "billing",
-    href: "/app/billing",
-    label: "חיוב",
-    icon: CreditCard,
-    legacyHref: "/app/documents/erp",
-    summary: "תזרים, חשבוניות, גבייה ומעקב תשלומים שוטף.",
-  },
-  {
-    id: "operations",
-    href: "/app/operations",
-    label: "תפעול",
-    icon: FolderCog,
-    legacyHref: "/app/operations/advanced",
-    summary: "תהליכים, משימות, אוטומציות וכלי צוות.",
-  },
-  {
-    id: "insights",
-    href: "/app/insights",
-    label: "תובנות",
-    icon: Lightbulb,
-    legacyHref: "/app/insights/advanced",
-    summary: "AI, המלצות חכמות ותמונה ניהולית לפי ההקשר העסקי.",
-  },
-  {
-    id: "settings",
-    href: "/app/settings",
-    label: "הגדרות",
-    icon: Settings,
-    legacyHref: "/app/settings/advanced",
-    summary: "הגדרות ארגון, צוות, אינטגרציות, AI וחיוב.",
-  },
-] as const;
+type PrimaryNavSpec = {
+  id: Extract<
+    AppRouteId,
+    "home" | "inbox" | "clients" | "documents" | "billing" | "operations" | "insights" | "settings"
+  >;
+  href: string;
+  icon: LucideIcon;
+  legacyHref: string;
+};
 
-export const appUtilityItems: AppNavItem[] = [
-  {
-    id: "help",
-    href: "/app/help",
-    label: "עזרה",
-    icon: CircleHelp,
-    legacyHref: "/app/help",
-    summary: "מדריך קצר, סדר עבודה ברור וקיצורי דרך למסכים המרכזיים.",
-  },
-  {
-    id: "business",
-    href: "/app/business",
-    label: "מרחב עסקי",
-    icon: BriefcaseBusiness,
-    legacyHref: "/app/business",
-    summary: "תמונה רוחבית של לקוחות, מסמכים, תמחור ותפעול עסקי.",
-  },
-  {
-    id: "intelligence",
-    href: "/app/intelligence",
-    label: "Intelligence",
-    icon: BrainCircuit,
-    legacyHref: "/app/intelligence",
-    summary: "Executive AI, תובנות רוחביות ומעקב אחרי החלטות ניהוליות.",
-  },
-  {
-    id: "admin",
-    href: "/app/admin",
-    label: "Admin",
-    icon: ShieldCheck,
-    legacyHref: "/app/admin",
-    summary: "בקרת פלטפורמה, שידורים, מנויים ותמונת מצב למפעילי BSD-YBM.",
-    adminOnly: true,
-  },
+const PRIMARY_NAV_SPECS: readonly PrimaryNavSpec[] = [
+  { id: "home", href: "/app", icon: Home, legacyHref: "/app/advanced" },
+  { id: "inbox", href: "/app/inbox", icon: BellRing, legacyHref: "/app/inbox/advanced" },
+  { id: "clients", href: "/app/clients", icon: BriefcaseBusiness, legacyHref: "/app/clients/advanced" },
+  { id: "documents", href: "/app/documents", icon: FileText, legacyHref: "/app/documents/erp" },
+  { id: "billing", href: "/app/billing", icon: CreditCard, legacyHref: "/app/documents/erp" },
+  { id: "operations", href: "/app/operations", icon: FolderCog, legacyHref: "/app/operations/advanced" },
+  { id: "insights", href: "/app/insights", icon: Lightbulb, legacyHref: "/app/insights/advanced" },
+  { id: "settings", href: "/app/settings", icon: Settings, legacyHref: "/app/settings/advanced" },
+];
+
+/** מזהי הנתיבים הראשיים — לשימוש במדיניות הרשאות / מקצוע */
+export const PRIMARY_NAV_ROUTE_IDS = PRIMARY_NAV_SPECS.map((s) => s.id) as readonly PrimaryNavSpec["id"][];
+
+type UtilityNavSpec = {
+  id: Extract<AppRouteId, "help" | "business" | "intelligence" | "admin" | "success">;
+  href: string;
+  icon: LucideIcon;
+  legacyHref: string;
+  adminOnly?: boolean;
+  showInNav?: boolean;
+};
+
+const UTILITY_NAV_SPECS: readonly UtilityNavSpec[] = [
+  { id: "help", href: "/app/help", icon: CircleHelp, legacyHref: "/app/help" },
+  { id: "business", href: "/app/business", icon: BriefcaseBusiness, legacyHref: "/app/business" },
+  { id: "intelligence", href: "/app/intelligence", icon: BrainCircuit, legacyHref: "/app/intelligence" },
+  { id: "admin", href: "/app/admin", icon: ShieldCheck, legacyHref: "/app/admin", adminOnly: true },
   {
     id: "success",
     href: "/app/success",
-    label: "הצלחה",
     icon: CheckCircle2,
     legacyHref: "/app/success",
-    summary: "אישור מסלול והמשך מהיר לצעד הבא במערכת.",
     showInNav: false,
-  },
-] as const;
-
-export const advancedAppItem: AppNavItem = {
-  id: "advanced",
-  href: "/app/advanced",
-  label: "כלים מתקדמים",
-  icon: Sparkles,
-  legacyHref: "/app/advanced",
-  summary: "גישה מרוכזת לכלי עומק, גשרים ומערכות מתקדמות.",
-  showInNav: false,
-};
-
-export function getAppNavItem(id: AppRouteId) {
-  return [...appNavItems, ...appUtilityItems, advancedAppItem].find((item) => item.id === id);
-}
-
-export function getAdvancedWorkspaceHref(
-  id: Extract<AppRouteId, "inbox" | "clients" | "operations" | "insights" | "settings">,
-) {
-  return getAppNavItem(id)?.legacyHref ?? "/app/advanced";
-}
-
-export const appAdvancedItems: AppAdvancedItem[] = [
-  {
-    id: "onboarding",
-    href: "/app/onboarding",
-    title: "Onboarding חכם",
-    body: "אשף התארגנות שמתרגם את מצב הארגון לצעדים ברורים: מקצוע, חיבורים, מנוי, פורטל ומסמכים.",
-    icon: CheckCircle2,
-  },
-  {
-    id: "automations",
-    href: "/app/automations",
-    title: "Automation Center",
-    body: "מרכז אחד לבניית אוטומציות, תסריטים מומלצים וקישור ישיר לזרימות עבודה של מסמכים, גבייה ולקוחות.",
-    icon: Sparkles,
-  },
-  {
-    id: "portal",
-    href: "/app/portal",
-    title: "Client Portal",
-    body: "ניהול הפורטל הציבורי, דומיין, שיתוף מסמכים ומעקב אחרי מה שהלקוח רואה מחוץ למערכת הפנימית.",
-    icon: LayoutDashboard,
-  },
-  {
-    id: "inbox",
-    href: getAdvancedWorkspaceHref("inbox"),
-    title: "מרכז בקרה מתקדם",
-    body: "כלי ניטור, בקרה ותהליכי עומק שעוזרים לצוותי ניהול ותפעול לטפל במקרים מורכבים.",
-    icon: ShieldCheck,
-  },
-  {
-    id: "clients",
-    href: getAdvancedWorkspaceHref("clients"),
-    title: "CRM מתקדם",
-    body: "כלי CRM מלאים למצבים שבהם צריך שליטה עמוקה יותר, דוחות וכלי עומק.",
-    icon: BriefcaseBusiness,
-  },
-  {
-    id: "insights",
-    href: getAdvancedWorkspaceHref("insights"),
-    title: "AI Hub מתקדם",
-    body: "לשוניות AI, סורקים וכלי עומק אנליטיים שמיועדים לעבודה מתקדמת יותר.",
-    icon: BrainCircuit,
-  },
-  {
-    id: "settings",
-    href: getAdvancedWorkspaceHref("settings"),
-    title: "הגדרות מתקדמות",
-    body: "מרכז ההגדרות המלא לאזורים שדורשים שליטה מפורטת יותר בארגון ובאינטגרציות.",
-    icon: Settings,
-  },
-  {
-    id: "operations",
-    href: getAdvancedWorkspaceHref("operations"),
-    title: "תפעול מתקדם",
-    body: "Workflows, כלי עומק לצוות ותהליכים שחוצים כמה מחלקות או כמה מערכות יחד.",
-    icon: FolderCog,
-  },
-  {
-    id: "meckano",
-    href: "/app/operations/meckano",
-    title: "Meckano",
-    body: "מודול השטח הייעודי נשאר כאן כמרחב עבודה מתקדם למנוי המורשה בלבד.",
-    icon: LayoutDashboard,
-    requiresMeckano: true,
   },
 ];
 
-export function personalizeAppNavItem(item: AppNavItem, industryProfile: IndustryProfile): AppNavItem {
+const ADVANCED_SPEC = {
+  id: "advanced" as const,
+  href: "/app/advanced",
+  icon: Sparkles,
+  legacyHref: "/app/advanced",
+};
+
+const LEGACY_HREF_BY_ROUTE: Partial<
+  Record<Extract<AppRouteId, "inbox" | "clients" | "operations" | "insights" | "settings">, string>
+> = {
+  inbox: "/app/inbox/advanced",
+  clients: "/app/clients/advanced",
+  operations: "/app/operations/advanced",
+  insights: "/app/insights/advanced",
+  settings: "/app/settings/advanced",
+};
+
+const ADVANCED_CARD_SPECS: readonly {
+  id: string;
+  href: string;
+  icon: LucideIcon;
+  requiresMeckano?: boolean;
+}[] = [
+  { id: "onboarding", href: "/app/onboarding", icon: CheckCircle2 },
+  { id: "automations", href: "/app/automations", icon: Sparkles },
+  { id: "portal", href: "/app/portal", icon: LayoutDashboard },
+  { id: "inbox", href: "/app/inbox/advanced", icon: ShieldCheck },
+  { id: "clients", href: "/app/clients/advanced", icon: BriefcaseBusiness },
+  { id: "insights", href: "/app/insights/advanced", icon: BrainCircuit },
+  { id: "settings", href: "/app/settings/advanced", icon: Settings },
+  { id: "operations", href: "/app/operations/advanced", icon: FolderCog },
+  { id: "meckano", href: "/app/operations/meckano", icon: LayoutDashboard, requiresMeckano: true },
+];
+
+function primaryNavItemFromSpec(spec: PrimaryNavSpec, t: TFunction): AppNavItem {
+  return {
+    id: spec.id,
+    href: spec.href,
+    label: t(`workspaceNav.items.${spec.id}.label`),
+    summary: t(`workspaceNav.items.${spec.id}.summary`),
+    icon: spec.icon,
+    legacyHref: spec.legacyHref,
+  };
+}
+
+function utilityNavItemFromSpec(spec: UtilityNavSpec, t: TFunction): AppNavItem {
+  return {
+    id: spec.id,
+    href: spec.href,
+    label: t(`workspaceNav.utility.${spec.id}.label`),
+    summary: t(`workspaceNav.utility.${spec.id}.summary`),
+    icon: spec.icon,
+    legacyHref: spec.legacyHref,
+    adminOnly: spec.adminOnly,
+    showInNav: spec.showInNav,
+  };
+}
+
+function advancedNavItem(t: TFunction): AppNavItem {
+  return {
+    id: "advanced",
+    href: ADVANCED_SPEC.href,
+    label: t("workspaceNav.advanced.label"),
+    summary: t("workspaceNav.advanced.summary"),
+    icon: ADVANCED_SPEC.icon,
+    legacyHref: ADVANCED_SPEC.legacyHref,
+    showInNav: false,
+  };
+}
+
+export function personalizeAppNavItem(
+  item: AppNavItem,
+  industryProfile: IndustryProfile,
+  t: TFunction,
+): AppNavItem {
   if (item.id === "clients") {
     return {
       ...item,
       label: industryProfile.clientsLabel,
-      summary: `ניהול ${industryProfile.clientsLabel.toLowerCase()} וחיבור ישיר אל ${industryProfile.documentsLabel.toLowerCase()}.`,
+      summary: t("workspaceNav.items.clients.summary", {
+        clients: industryProfile.clientsLabel.toLowerCase(),
+        documents: industryProfile.documentsLabel.toLowerCase(),
+      }),
     };
   }
 
@@ -272,7 +198,10 @@ export function personalizeAppNavItem(item: AppNavItem, industryProfile: Industr
     return {
       ...item,
       label: industryProfile.documentsLabel,
-      summary: `סריקה, בקרה והפקה של ${industryProfile.recordsLabel.toLowerCase()} עבור ${industryProfile.industryLabel}.`,
+      summary: t("workspaceNav.items.documents.summary", {
+        records: industryProfile.recordsLabel.toLowerCase(),
+        industry: industryProfile.industryLabel.toLowerCase(),
+      }),
     };
   }
 
@@ -281,14 +210,23 @@ export function personalizeAppNavItem(item: AppNavItem, industryProfile: Industr
 
 export function buildAppNavCollection(
   industryProfile: IndustryProfile,
+  t: TFunction,
   options?: {
     visibleUtilityIds?: string[];
+    /** נתיבים ראשיים שלא יוצגו בניווט (למשל לפי מקצוע או תפקיד) */
+    hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>;
   },
 ): AppNavCollection {
-  const primary = appNavItems.map((item) => personalizeAppNavItem(item, industryProfile));
+  const hiddenPrimary = options?.hiddenPrimaryRouteIds;
+  const primarySpecs = hiddenPrimary
+    ? PRIMARY_NAV_SPECS.filter((spec) => !hiddenPrimary.has(spec.id))
+    : PRIMARY_NAV_SPECS;
+  const primary = primarySpecs.map((spec) =>
+    personalizeAppNavItem(primaryNavItemFromSpec(spec, t), industryProfile, t),
+  );
   const visibleUtilityIds = options?.visibleUtilityIds;
-  const utility = appUtilityItems.filter((item) => {
-    if (item.adminOnly && !visibleUtilityIds?.includes("admin")) {
+  const utility = UTILITY_NAV_SPECS.filter((spec) => {
+    if (spec.adminOnly && !visibleUtilityIds?.includes("admin")) {
       return false;
     }
 
@@ -296,13 +234,33 @@ export function buildAppNavCollection(
       return true;
     }
 
-    return visibleUtilityIds.includes(item.id);
-  });
+    return visibleUtilityIds.includes(spec.id);
+  }).map((spec) => utilityNavItemFromSpec(spec, t));
+
+  const advanced = advancedNavItem(t);
 
   return {
     primary,
     utility,
-    advanced: advancedAppItem,
-    all: [...primary, ...utility, advancedAppItem],
+    advanced,
+    all: [...primary, ...utility, advanced],
   };
+}
+
+export function getAdvancedWorkspaceHref(
+  id: Extract<AppRouteId, "inbox" | "clients" | "operations" | "insights" | "settings">,
+) {
+  return LEGACY_HREF_BY_ROUTE[id] ?? "/app/advanced";
+}
+
+/** כרטיסי `/app/advanced` — כותרות ותיאורים לפי שפת הממשק */
+export function buildAppAdvancedItems(t: TFunction): AppAdvancedItem[] {
+  return ADVANCED_CARD_SPECS.map((spec) => ({
+    id: spec.id,
+    href: spec.href,
+    title: t(`workspaceNav.advancedCards.${spec.id}.title`),
+    body: t(`workspaceNav.advancedCards.${spec.id}.body`),
+    icon: spec.icon,
+    requiresMeckano: spec.requiresMeckano,
+  }));
 }

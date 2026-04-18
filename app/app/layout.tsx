@@ -6,12 +6,14 @@ import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
+/** אכיפת נתיבי primary לפי מקצוע — ב־`middleware.ts` (getHiddenPrimaryRouteIds) + ניווט מסונן ב־AppShell */
 export default async function AppWorkspaceLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
 
@@ -35,10 +37,12 @@ export default async function AppWorkspaceLayout({ children }: { children: React
       : Promise.resolve(null),
     canAccessMeckano(session),
   ]);
+  const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade ?? session.user.organizationConstructionTrade,
+    messages,
   );
 
   return (

@@ -12,7 +12,6 @@ import {
   Users,
   BrainCircuit,
   CheckCircle2,
-  Star,
   BarChart3,
   HardHat,
   LineChart,
@@ -134,7 +133,7 @@ export default function LandingPage() {
           <div className="order-2 text-center md:order-1 md:text-right">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#14b8a6]/40 bg-[#14b8a6]/10 px-4 py-2 text-xs font-bold text-[#5eead4]">
               <CheckCircle2 size={14} className="shrink-0" />
-              CRM · ERP · AI — לענף הבנייה והמקצועות הנלווים
+              {t("landing.heroKicker")}
             </div>
             <h1 className="text-4xl font-black leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">
               {t("landing.heroTitle")}
@@ -161,13 +160,13 @@ export default function LandingPage() {
           <div className="order-1 md:order-2">
             <div className="relative mx-auto max-w-lg rounded-2xl border border-white/10 bg-slate-900/50 p-4 shadow-2xl backdrop-blur-sm">
               <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3">
-                <span className="text-xs font-bold text-slate-400">דשבורד — תצוגה לדוגמה</span>
+                <span className="text-xs font-bold text-slate-400">{t("landing.mockDashboardTitle")}</span>
                 <LayoutDashboard className="h-4 w-4 text-[#5eead4]" aria-hidden />
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="rounded-xl bg-white/5 p-3 text-center">
-                    <p className="text-[10px] font-bold text-slate-500">KPI</p>
+                    <p className="text-[10px] font-bold text-slate-500">{t("landing.mockKpiLabel")}</p>
                     <p className="mt-1 text-lg font-black text-white">{i === 1 ? "24" : i === 2 ? "₪1.2M" : "94%"}</p>
                   </div>
                 ))}
@@ -223,21 +222,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ Social proof ═══ */}
-      <section className="border-y border-slate-200 bg-slate-50 py-14">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6">
-          <div className="mb-5 flex justify-center gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
-            ))}
-          </div>
-          <p className="mx-auto max-w-3xl text-xl font-black text-slate-900 sm:text-2xl">
-            &ldquo;מסמכים, לקוחות וחיוב באותה מערכת — הצוות בשטח רואה מה המשרד סגר.&rdquo;
-          </p>
-          <p className="mt-3 text-sm font-semibold text-slate-500">מנהל פרויקטים, ענף הבנייה</p>
-        </div>
-      </section>
-
       {/* ═══ Pricing ═══ */}
       <div dir={dir} className="bg-white">
         <PricingSection />
@@ -250,11 +234,11 @@ export default function LandingPage() {
             <BsdYbmLogo variant="footer-dark" size="md" href="/" />
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm font-semibold">
               {[
-                ["/about", "אודות"],
-                ["/contact", "צור קשר"],
-                ["/legal", "משפטי"],
-                ["/privacy", "פרטיות"],
-                ["/terms", "תנאים"],
+                ["/about", t("landing.footerAbout")],
+                ["/contact", t("landing.footerContact")],
+                ["/legal", t("landing.footerLegal")],
+                ["/privacy", t("landing.footerPrivacy")],
+                ["/terms", t("landing.footerTerms")],
               ].map(([href, label]) => (
                 <Link key={href} href={href} className="transition hover:text-white">
                   {label}

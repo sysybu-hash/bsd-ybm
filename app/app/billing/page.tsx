@@ -4,6 +4,7 @@ import SubscriptionManagementWorkspace from "@/components/billing/SubscriptionMa
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import {
   canAccessPlatformBillingControl,
@@ -90,10 +91,12 @@ export default async function AppBillingPage({
     searchParams,
   ]);
 
+  const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization.industry,
     organization.industryConfigJson,
     organization.constructionTrade,
+    messages,
   );
   const initialSection =
     canAccessPlatformBillingControl(accessContext) && params.tab?.trim().toLowerCase() === "control"

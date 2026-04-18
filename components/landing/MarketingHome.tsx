@@ -164,19 +164,28 @@ export default function MarketingHome() {
       <main>
         <section className="relative overflow-hidden">
           <div className="pointer-events-none absolute inset-0">
+            <Image
+              src="/marketing/marketing-bg-industrial-16x9.png"
+              alt=""
+              fill
+              className="object-cover opacity-[0.2]"
+              sizes="100vw"
+              priority
+              aria-hidden
+            />
+            <div className="absolute inset-0 bg-[color:var(--v2-canvas)]/88" />
             <div className="v2-orb v2-orb-primary" />
-            <div className="v2-orb v2-orb-secondary" />
             <div className="v2-grid-overlay" />
           </div>
 
-          <div className="relative mx-auto grid max-w-7xl gap-16 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-20">
-            <div className="space-y-8">
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-14 pt-12 sm:gap-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:px-8 lg:pb-16 lg:pt-16">
+            <div className="space-y-6 sm:space-y-7">
               <SectionLabel>{mh.hero.kicker}</SectionLabel>
-              <div className="space-y-5">
-                <h1 className="max-w-3xl text-5xl font-black leading-[0.92] tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-6xl lg:text-7xl">
+              <div className="space-y-4 sm:space-y-5">
+                <h1 className="max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl lg:text-6xl">
                   {mh.hero.title}
                 </h1>
-                <p className="max-w-2xl text-lg leading-8 text-[color:var(--v2-muted)] sm:text-xl">{mh.hero.subtitle}</p>
+                <p className="max-w-2xl text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.hero.subtitle}</p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -190,11 +199,11 @@ export default function MarketingHome() {
                 </Link>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {mh.features.map(({ title, body }, i) => {
                   const Icon = featureIcons[i] ?? UsersRound;
                   return (
-                    <article key={title} className="v2-panel v2-panel-soft p-5">
+                    <article key={title} className="v2-panel v2-panel-soft p-4 sm:p-5">
                       <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
                         <Icon className="h-5 w-5" aria-hidden />
                       </span>
@@ -234,10 +243,11 @@ export default function MarketingHome() {
                         <Sparkles className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
                       </div>
                       <Image
-                        src="/demo/bsd-ybm-demo-hero-desktop.png"
+                        src="/marketing/prelogin-hero-16x9.png"
                         alt={mh.mock.imageAlt}
-                        width={1400}
-                        height={880}
+                        width={1600}
+                        height={900}
+                        sizes="(max-width: 1024px) 100vw, 48vw"
                         className="rounded-[22px] border border-[color:var(--v2-line)] object-cover"
                         priority
                       />
@@ -263,9 +273,9 @@ export default function MarketingHome() {
                     </div>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid gap-2 sm:grid-cols-2">
                     {mh.proofPoints.map((point) => (
-                      <div key={point} className="flex items-center gap-3 rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
+                      <div key={point} className="flex items-center gap-2.5 rounded-2xl bg-[color:var(--v2-canvas)] px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
                         <CheckCircle2 className="h-5 w-5 text-[color:var(--v2-success)]" aria-hidden />
                         <span className="text-sm font-semibold text-[color:var(--v2-ink)]">{point}</span>
                       </div>
@@ -277,18 +287,18 @@ export default function MarketingHome() {
           </div>
         </section>
 
-        <section id="product" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mb-10 max-w-3xl space-y-4">
+        <section id="product" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+          <div className="mb-8 max-w-3xl space-y-3 sm:mb-10 sm:space-y-4">
             <SectionLabel>{mh.modulesSection.label}</SectionLabel>
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">{mh.modulesSection.title}</h2>
-            <p className="text-lg leading-8 text-[color:var(--v2-muted)]">{mh.modulesSection.body}</p>
+            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.modulesSection.title}</h2>
+            <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.modulesSection.body}</p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
             {mh.modules.map(({ title, body }, i) => {
               const Icon = moduleIcons[i] ?? ScanSearch;
               return (
-                <article key={title} className="v2-panel p-6">
+                <article key={title} className="v2-panel p-5 sm:p-6">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-canvas)] text-[color:var(--v2-accent)]">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
@@ -301,16 +311,16 @@ export default function MarketingHome() {
         </section>
 
         <section id="workflows" className="border-y border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/72">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-            <div className="space-y-4">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:gap-10 sm:px-6 sm:py-16 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+            <div className="space-y-3 sm:space-y-4">
               <SectionLabel>{mh.workflow.label}</SectionLabel>
-              <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">{mh.workflow.title}</h2>
-              <p className="text-lg leading-8 text-[color:var(--v2-muted)]">{mh.workflow.lead}</p>
+              <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.workflow.title}</h2>
+              <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.workflow.lead}</p>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               {mh.workflow.steps.map((step, index) => (
-                <div key={step} className="v2-panel flex items-start gap-4 p-5">
+                <div key={step} className="v2-panel flex items-start gap-3 p-4 sm:gap-4 sm:p-5">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white">
                     {index + 1}
                   </span>
@@ -324,9 +334,9 @@ export default function MarketingHome() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="v2-panel p-8">
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+          <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:gap-6">
+            <div className="v2-panel p-6 sm:p-8">
               <SectionLabel>{mh.industries.label}</SectionLabel>
               <h2 className="mt-4 text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl">{mh.industries.title}</h2>
               <p className="mt-4 text-base leading-8 text-[color:var(--v2-muted)]">{mh.industries.body}</p>
@@ -362,18 +372,18 @@ export default function MarketingHome() {
           </div>
         </section>
 
-        <section id="plans" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mb-10 max-w-3xl space-y-4">
+        <section id="plans" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+          <div className="mb-8 max-w-3xl space-y-3 sm:mb-10 sm:space-y-4">
             <SectionLabel>{mh.plans.label}</SectionLabel>
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl">{mh.plans.title}</h2>
-            <p className="text-lg leading-8 text-[color:var(--v2-muted)]">{mh.plans.body}</p>
+            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.plans.title}</h2>
+            <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.plans.body}</p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
             {planCards.map((plan) => (
               <article
                 key={plan.tier}
-                className={`rounded-[30px] border px-5 py-6 ${
+                className={`rounded-[24px] border px-4 py-5 sm:rounded-[30px] sm:px-5 sm:py-6 ${
                   plan.featured
                     ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]"
                     : "border-[color:var(--v2-line)] bg-white/88"
@@ -402,12 +412,12 @@ export default function MarketingHome() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-16 lg:px-8">
           <div className="v2-cta-strip">
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <SectionLabel>{mh.cta.label}</SectionLabel>
-              <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-5xl">{mh.cta.title}</h2>
-              <p className="max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{mh.cta.body}</p>
+              <h2 className="text-2xl font-black tracking-[-0.05em] text-white sm:text-4xl lg:text-5xl">{mh.cta.title}</h2>
+              <p className="max-w-2xl text-sm leading-7 text-white/78 sm:text-base sm:leading-8 lg:text-lg">{mh.cta.body}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link href="/register" className="v2-button bg-white text-[color:var(--v2-ink)] hover:bg-white/92">

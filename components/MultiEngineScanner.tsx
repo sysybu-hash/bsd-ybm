@@ -76,13 +76,13 @@ export default function MultiEngineScanner({
   industry: industryOverride,
   compactHeader = false,
 }: ScannerProps) {
-  const { t } = useI18n();
+  const { t, messages } = useI18n();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
 
   const userIndustry = (industryOverride || session?.user?.organizationIndustry || "CONSTRUCTION") as IndustryType;
   const trade = session?.user?.organizationConstructionTrade ?? null;
-  const config = getMergedIndustryConfig(userIndustry, trade);
+  const config = getMergedIndustryConfig(userIndustry, trade, messages);
   
   // Icon resolution from name
   const ActiveIcon = (LucideIcons as any)[config.iconName] || LucideIcons.Bot;

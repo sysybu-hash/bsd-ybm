@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useMemo, useState, useTransition } from "react";
+import { type FormEvent, type ReactNode, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
   Bot,
@@ -26,6 +27,10 @@ import {
   updateTenantPortalAction,
 } from "@/app/actions/org-settings";
 import { ADMIN_SUBSCRIPTION_TIER_OPTIONS, tierAllowance, tierLabelHe } from "@/lib/subscription-tier-config";
+import { useWorkspaceShellTransition } from "@/components/app-shell/WorkspaceShellTransition";
+import { useI18n } from "@/components/I18nProvider";
+import { mergeConstructionTradeLabel } from "@/lib/construction-trades-i18n";
+import { CONSTRUCTION_TRADE_IDS, constructionTradeLabelHe } from "@/lib/construction-trades";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 type IntegrationRecord = {
@@ -126,10 +131,12 @@ export default function SettingsWorkspaceV2({
   viewer,
 }: Props) {
   const router = useRouter();
+  const { update } = useSession();
+  const { messages, t } = useI18n();
+  const runWithShellTransition = useWorkspaceShellTransition();
   const [busySection, setBusySection] = useState<BusySection>(null);
   const [activeTab, setActiveTab] = useState<SettingsTab>("overview");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [, startTransition] = useTransition();
   const canManage = viewer.canManageOrganization;
 
   const industryConfig = asRecord(organization.industryConfigJson);
@@ -137,8 +144,21 @@ export default function SettingsWorkspaceV2({
   const aiControl = asRecord(industryConfig.aiControl);
   const profile = useMemo(
     () =>
-      getIndustryProfile(organization.industry, organization.industryConfigJson, organization.constructionTrade),
-    [organization.industry, organization.industryConfigJson, organization.constructionTrade],
+      getIndustryProfile(
+        organization.industry,
+        organization.industryConfigJson,
+        organization.constructionTrade,
+        messages,
+      ),
+    [organization.industry, organization.industryConfigJson, organization.constructionTrade, messages],
+  );
+  const tradeSelectOptions = useMemo(
+    () =>
+      CONSTRUCTION_TRADE_IDS.map((id) => ({
+        id,
+        label: mergeConstructionTradeLabel(messages, id, constructionTradeLabelHe(id)),
+      })),
+    [messages],
   );
   const allowance = tierAllowance(organization.subscriptionTier);
   const completionRate = Math.round(([organization.taxId, organization.address, organization.tenantPublicDomain, organization.paypalMerchantEmail || organization.paypalMeSlug].filter(Boolean).length / 4) * 100);
@@ -149,7 +169,7 @@ export default function SettingsWorkspaceV2({
       const formData = new FormData(event.currentTarget);
       setBusySection(section);
       setMessage(null);
-      startTransition(async () => {
+      runWithShellTransition(async () => {
         try {
           const result = await action(formData);
           if (!result.ok) {
@@ -157,6 +177,7 @@ export default function SettingsWorkspaceV2({
             return;
           }
           setMessage({ type: "success", text: "ההגדרות נשמרו." });
+          await update();
           router.refresh();
         } finally {
           setBusySection(null);
@@ -326,6 +347,10 @@ export default function SettingsWorkspaceV2({
             <SectionCard title="התאמה מקצועית" body="כאן מגדירים את השפה של המערכת לפי תחום הפעילות שלך." icon={<Layers3 className="h-5 w-5" aria-hidden />}>
               <form onSubmit={submitWith("profession", updateIndustryProfileAction)} className="grid gap-4">
                 <fieldset disabled={!canManage} className="grid gap-4">
+                  <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/70 px-4 py-3 text-sm leading-7 text-[color:var(--v2-ink)]">
+                    <p>{t("settings.tradeAdaptHint")}</p>
+                    <p className="mt-2 text-xs text-[color:var(--v2-muted)]">{t("settings.tradeSaveRefreshHint")}</p>
+                  </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="rounded-2xl border border-[color:var(--v2-line)] bg-white/90 px-4 py-4">
                       <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">ענף</p>
@@ -335,19 +360,8 @@ export default function SettingsWorkspaceV2({
                     <label className="grid gap-2">
                       <span className="text-xs font-black text-[color:var(--v2-muted)]">התמחות בענף</span>
                       <select name="constructionTrade" defaultValue={organization.constructionTrade} className={inputClass} required>
-                        {[
-                          ["GENERAL_CONTRACTOR", "קבלן ראשי / ליווי פרויקט"],
-                          ["ELECTRICAL", "חשמלאי / עבודות חשמל"],
-                          ["PLUMBING", "אינסטלציה ותברואה"],
-                          ["HVAC", "מיזוג אוויר"],
-                          ["PAINTING", "צבע, טיח ושליכט"],
-                          ["FLOORING", "ריצוף, אבן וקרמיקה"],
-                          ["ALUMINUM", "אלומיניום וזכוכית"],
-                          ["FINISHING", "גמר פנים"],
-                          ["LANDSCAPING", "גינון קשיח / חוץ"],
-                          ["SUBCONTRACTOR_OTHER", "קבלן משנה / אחר"],
-                        ].map(([value, label]) => (
-                          <option key={value} value={value}>
+                        {tradeSelectOptions.map(({ id, label }) => (
+                          <option key={id} value={id}>
                             {label}
                           </option>
                         ))}

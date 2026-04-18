@@ -90,7 +90,13 @@
         "orgName": "Organization",
         "name": "Name",
         "email": "Email",
-        "joining": "Joining "
+        "joining": "Joining ",
+        "trade": "Trade"
+      },
+      "construction": {
+        "lead": "BSD-YBM is built for construction and allied trades. Pick your trade to align AI scanning and documents.",
+        "selectLabel": "Business type / trade",
+        "hint": "You can change this anytime in organization settings."
       },
       "submit": "Submit Application",
       "submitTeam": "Complete Team Join",
@@ -193,7 +199,9 @@
     "prefsSavedLocal": "Preferences saved in this browser on this device.",
     "cloudSaveCTA": "Use the panel buttons to save cloud settings",
     "inviteOk": "User {email} was assigned to your organisation.",
-    "assignError": "Could not assign user"
+    "assignError": "Could not assign user",
+    "tradeAdaptHint": "Changing your construction trade updates issuance templates, UI wording, AI analysis modes and scanner headers immediately — in your selected language (Hebrew / English / Russian).",
+    "tradeSaveRefreshHint": "After saving, refresh the page to see the change across all workspaces."
   },
   "scanner": {
     "title": "Multi-Engine AI Scanner",
@@ -328,7 +336,15 @@
   "landing": {
     "registerQuick": "Quick sign-up",
     "heroTitle": "One platform for construction — documents, cash, projects, field",
-    "heroSubtitle": "For contractors, developers and allied trades (electrical, plumbing, HVAC, finishing): CRM, ERP, AI scanning and team ops in one professional stack.",
+    "heroKicker": "CRM · ERP · AI — construction & allied trades",
+    "heroSubtitle": "For contractors, developers and allied trades: CRM, ERP, AI scanning and team workflows — one stack, tuned to the trade you choose.",
+    "mockDashboardTitle": "Sample dashboard preview",
+    "mockKpiLabel": "KPI",
+    "footerAbout": "About",
+    "footerContact": "Contact",
+    "footerLegal": "Legal",
+    "footerPrivacy": "Privacy",
+    "footerTerms": "Terms",
     "ctaDiscover": "Discover more",
     "ctaStart": "Start now",
     "pricingBadge": "Plans",

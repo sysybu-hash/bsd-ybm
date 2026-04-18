@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { withWorkspacesAuthDynamic } from "@/lib/api-handler";
+import { DocumentSchema } from "@/lib/schemas/document";
 
 function parseAiData(raw: unknown): Record<string, unknown> | null {
   if (!raw) return null;
@@ -10,69 +10,50 @@ function parseAiData(raw: unknown): Record<string, unknown> | null {
   return null;
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizationId;
-  if (!session?.user?.id || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export const PATCH = withWorkspacesAuthDynamic<{ id: string }, typeof DocumentSchema>(
+  async (_req, { orgId }, { params }, body) => {
+    const { id } = await params;
 
-  const { id } = await params;
-  const body = (await req.json()) as {
-    fileName?: string;
-    type?: string;
-    status?: string;
-    aiData?: Record<string, unknown>;
-  };
+    const row = await prisma.document.findFirst({
+      where: { id, organizationId: orgId },
+      select: { id: true, aiData: true },
+    });
 
-  const row = await prisma.document.findFirst({
-    where: { id, organizationId: orgId },
-    select: { id: true, aiData: true },
-  });
+    if (!row) {
+      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+    }
 
-  if (!row) {
-    return NextResponse.json({ error: "Document not found" }, { status: 404 });
-  }
+    const currentAi = parseAiData(row.aiData) ?? {};
+    const nextAi = body.aiData ? { ...currentAi, ...body.aiData } : currentAi;
 
-  const currentAi = parseAiData(row.aiData) ?? {};
-  const nextAi = body.aiData ? { ...currentAi, ...body.aiData } : currentAi;
+    const updated = await prisma.document.update({
+      where: { id },
+      data: {
+        fileName: typeof body.fileName === "string" ? body.fileName.trim() || undefined : undefined,
+        type: typeof body.type === "string" ? body.type.trim() || undefined : undefined,
+        status: typeof body.status === "string" ? body.status.trim() || undefined : undefined,
+        aiData: nextAi as Prisma.InputJsonValue,
+      },
+    });
 
-  const updated = await prisma.document.update({
-    where: { id },
-    data: {
-      fileName: typeof body.fileName === "string" ? body.fileName.trim() || undefined : undefined,
-      type: typeof body.type === "string" ? body.type.trim() || undefined : undefined,
-      status: typeof body.status === "string" ? body.status.trim() || undefined : undefined,
-      aiData: nextAi as Prisma.InputJsonValue,
-    },
-  });
+    return NextResponse.json({ document: updated });
+  },
+  { schema: DocumentSchema, parseTarget: "body" },
+);
 
-  return NextResponse.json({ document: updated });
-}
+export const DELETE = withWorkspacesAuthDynamic<{ id: string }>(
+  async (_req, { orgId }, { params }) => {
+    const { id } = await params;
+    const row = await prisma.document.findFirst({
+      where: { id, organizationId: orgId },
+      select: { id: true },
+    });
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizationId;
-  if (!session?.user?.id || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    if (!row) {
+      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+    }
 
-  const { id } = await params;
-  const row = await prisma.document.findFirst({
-    where: { id, organizationId: orgId },
-    select: { id: true },
-  });
-
-  if (!row) {
-    return NextResponse.json({ error: "Document not found" }, { status: 404 });
-  }
-
-  await prisma.document.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
-}
+    await prisma.document.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  },
+);

@@ -25,6 +25,7 @@ import {
 import { scanCreditKindForProvider } from "@/lib/scan-credit-kind";
 import { getAllowedAiProvidersForPlan } from "@/lib/ai-engine-access";
 import { isAdmin } from "@/lib/is-admin";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { sendDocNotification } from "./send-doc-notification";
@@ -144,6 +145,7 @@ export async function processDocumentAction(
     }
 
     const uiLocale = await getServerLocale();
+    const uiMessages = await readRequestMessages();
 
     const requested = normalizeAiProviderId(formData.get("provider") as string | null);
     const rawMime = file.type || "application/octet-stream";
@@ -162,8 +164,8 @@ export async function processDocumentAction(
     const orgTrade = accessUser?.organization?.constructionTrade ?? null;
     const analysisId = formData.get("analysisType") as string || "INVOICE";
 
-    // Industry adaptation for AI instructions (בנייה + התמחות נלווית)
-    const industryConfig = getMergedIndustryConfig(userIndustry, orgTrade);
+    // Industry adaptation for AI instructions (בנייה + התמחות נלווית) — כולל תרגום UI כשיש
+    const industryConfig = getMergedIndustryConfig(userIndustry, orgTrade, uiMessages);
     const analysisMode = industryConfig.scanner.analysisTypes.find((a: { id: string }) => a.id === analysisId);
     
     // Merge standard instructions with industry + mode specific tweaks

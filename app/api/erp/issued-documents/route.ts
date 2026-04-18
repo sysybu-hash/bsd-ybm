@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { withWorkspacesAuth } from "@/lib/api-handler";
 
 /* ───── GET  — רשימת מסמכים שהונפקו ───── */
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizationId;
-  if (!orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export const GET = withWorkspacesAuth(async (_req, { orgId }) => {
   const docs = await prisma.issuedDocument.findMany({
     where: { organizationId: orgId },
     orderBy: { createdAt: "desc" },
@@ -22,16 +15,10 @@ export async function GET() {
   });
 
   return NextResponse.json({ documents: docs });
-}
+});
 
 /* ───── POST — הנפקת מסמך חדש (חשבונית / קבלה / חש״ק / זיכוי) ───── */
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizationId;
-  if (!orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export const POST = withWorkspacesAuth(async (req, { orgId }) => {
   const body = await req.json();
   const { type, clientName, items, dueDate, contactId } = body as {
     type: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
@@ -87,4 +74,4 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({ document: doc }, { status: 201 });
-}
+});

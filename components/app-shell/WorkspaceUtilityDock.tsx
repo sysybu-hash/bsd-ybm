@@ -22,19 +22,37 @@ import {
   X,
 } from "lucide-react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
-import { buildAppNavCollection } from "@/components/app-shell/app-nav";
+import { useI18n } from "@/components/I18nProvider";
+import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
+import type { MessageTree } from "@/lib/i18n/keys";
+import type { TFunction } from "@/lib/i18n/translate";
 
-const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
-  ssr: false,
-  loading: () => (
+function readStringArray(messages: MessageTree, path: string): string[] {
+  const parts = path.split(".");
+  let cur: unknown = messages;
+  for (const p of parts) {
+    if (cur === null || typeof cur !== "object") return [];
+    cur = (cur as Record<string, unknown>)[p];
+  }
+  return Array.isArray(cur) ? (cur as string[]) : [];
+}
+
+function ScannerLoadingFallback() {
+  const { t } = useI18n();
+  return (
     <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-[color:var(--v2-line)] bg-white/80">
       <div className="flex items-center gap-3 text-sm font-black text-slate-600">
         <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-        טוען את לוח הסריקה המתקדם...
+        {t("workspaceDock.loadingScanner")}
       </div>
     </div>
-  ),
+  );
+}
+
+const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
+  ssr: false,
+  loading: () => <ScannerLoadingFallback />,
 });
 
 type DockPanel = "accessibility" | "assistant" | "voice" | "scanner" | null;
@@ -50,6 +68,7 @@ type WorkspaceUtilityDockProps = {
   orgId?: string | null;
   industryProfile: IndustryProfile;
   userName: string;
+  hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>;
 };
 
 type SpeechRecognitionResultLike = {
@@ -104,15 +123,23 @@ function isRouteActive(pathname: string, href: string) {
   return current === target || current.startsWith(`${target}/`);
 }
 
-function resolveSectionMeta(pathname: string, industryProfile: IndustryProfile) {
-  const nav = buildAppNavCollection(industryProfile);
+function resolveSectionMeta(
+  pathname: string,
+  industryProfile: IndustryProfile,
+  t: TFunction,
+  hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>,
+) {
+  const nav = buildAppNavCollection(industryProfile, t, { hiddenPrimaryRouteIds });
   const current = nav.all.find((item) => isRouteActive(pathname, item.href)) ?? nav.primary[0];
 
   if (current.href === "/app/clients") {
     return {
       ...current,
       label: industryProfile.clientsLabel,
-      summary: `ניהול ${industryProfile.clientsLabel.toLowerCase()} וחיבור ישיר אל ${industryProfile.documentsLabel.toLowerCase()}.`,
+      summary: t("workspaceDock.sectionMeta.clientsSummary", {
+        clients: industryProfile.clientsLabel.toLowerCase(),
+        documents: industryProfile.documentsLabel.toLowerCase(),
+      }),
     };
   }
 
@@ -120,15 +147,29 @@ function resolveSectionMeta(pathname: string, industryProfile: IndustryProfile) 
     return {
       ...current,
       label: industryProfile.documentsLabel,
-      summary: `סריקה, בקרה והפקה של ${industryProfile.recordsLabel.toLowerCase()} עבור ${industryProfile.industryLabel}.`,
+      summary: t("workspaceDock.sectionMeta.documentsSummary", {
+        records: industryProfile.recordsLabel.toLowerCase(),
+        industry: industryProfile.industryLabel.toLowerCase(),
+      }),
     };
   }
 
   return current;
 }
 
-function buildWelcomeMessage(userName: string, industryProfile: IndustryProfile, sectionLabel: string) {
-  return `שלום ${userName.split(" ")[0] || "לך"}, אני שכבת ה-AI החדשה של BSD-YBM. כרגע אנחנו ב-${sectionLabel}, עם התאמה ל-${industryProfile.industryLabel}. אני יכול לעזור לך בניתוח ${industryProfile.documentsLabel.toLowerCase()}, ניסוח משימות, תשובות קוליות והפעלה מהירה של לוח הסריקה.`;
+function buildWelcomeMessage(
+  userName: string,
+  industryProfile: IndustryProfile,
+  sectionLabel: string,
+  t: TFunction,
+) {
+  const first = userName.split(" ")[0] || t("workspaceDock.guestName");
+  return t("workspaceDock.welcome", {
+    name: first,
+    section: sectionLabel,
+    industry: industryProfile.industryLabel,
+    documents: industryProfile.documentsLabel.toLowerCase(),
+  });
 }
 
 function DockButton({
@@ -146,7 +187,7 @@ function DockButton({
     <button
       type="button"
       onClick={onClick}
-      className={`group relative flex h-12 w-12 items-center justify-center rounded-2xl border transition ${
+      className={`group relative flex h-12 w-12 touch-manipulation items-center justify-center rounded-2xl border transition ${
         active
           ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent)] text-white shadow-[0_18px_36px_-24px_rgba(15,23,42,0.55)]"
           : "border-slate-200 bg-white text-slate-600 shadow-sm hover:border-slate-300 hover:text-slate-900"
@@ -163,67 +204,55 @@ export default function WorkspaceUtilityDock({
   orgId,
   industryProfile,
   userName,
+  hiddenPrimaryRouteIds,
 }: WorkspaceUtilityDockProps) {
+  const { t, messages: localeMessages, locale, dir } = useI18n();
   const pathname = usePathname() ?? "/app";
   const currentSection = useMemo(
-    () => resolveSectionMeta(pathname, industryProfile),
-    [industryProfile, pathname],
+    () => resolveSectionMeta(pathname, industryProfile, t, hiddenPrimaryRouteIds),
+    [hiddenPrimaryRouteIds, industryProfile, pathname, t],
   );
   const welcomeMessage = useMemo(
-    () => buildWelcomeMessage(userName, industryProfile, currentSection.label),
-    [currentSection.label, industryProfile, userName],
+    () => buildWelcomeMessage(userName, industryProfile, currentSection.label, t),
+    [currentSection.label, industryProfile, userName, t],
   );
   const quickPrompts = useMemo(() => {
     const professionTemplate = industryProfile.templates[0]?.label;
 
     switch (currentSection.href) {
       case "/app/inbox":
-        return [
-          "סכם לי מה דחוף לטיפול היום.",
-          "בנה לי סדר עבודה ל-30 הדקות הקרובות.",
-          "איפה יש צוואר בקבוק בתיבת העבודה?",
-        ];
+        return readStringArray(localeMessages, "workspaceDock.quickPrompts.inbox");
       case "/app/clients":
         return [
-          `מי מתוך ${industryProfile.clientsLabel} דורש מעקב מיידי?`,
-          "נסח לי הודעת המשך ללקוח שלא ענה.",
-          "איזה לקוחות תקועים בלי מסמך סופי?",
+          t("workspaceDock.quickPrompts.clients.0", { clients: industryProfile.clientsLabel }),
+          t("workspaceDock.quickPrompts.clients.1"),
+          t("workspaceDock.quickPrompts.clients.2"),
         ];
       case "/app/documents":
         return [
-          `איזה ${industryProfile.recordsLabel} הכי חשוב לסרוק עכשיו?`,
-          professionTemplate ? `הכן לי מסגרת ל-${professionTemplate}.` : "איזה מסמך כדאי להפיק עכשיו?",
-          "בדוק לי אילו מסמכים חסרים תיוק.",
+          t("workspaceDock.quickPrompts.documents.0", { records: industryProfile.recordsLabel }),
+          professionTemplate
+            ? t("workspaceDock.quickPrompts.documents.withTemplate", { template: professionTemplate })
+            : t("workspaceDock.quickPrompts.documents.noTemplate"),
+          t("workspaceDock.quickPrompts.documents.2"),
         ];
       case "/app/billing":
-        return [
-          "איזה תשלומים נמצאים בסיכון השבוע?",
-          "איפה יש מסמכים פתוחים בלי גבייה?",
-          "תן לי תמונת תזרים קצרה.",
-        ];
+        return readStringArray(localeMessages, "workspaceDock.quickPrompts.billing");
       case "/app/operations":
-        return [
-          "איפה יש עומס תפעולי כרגע?",
-          "איזו משימה כדאי לאוטומט קודם?",
-          "תן לי מצב קצר על קצב הביצוע.",
-        ];
+        return readStringArray(localeMessages, "workspaceDock.quickPrompts.operations");
       case "/app/settings":
-        return [
-          "מה כדאי להגדיר מחדש למקצוע שלי?",
-          "בדוק אם התפריטים שלי מתאימים למקצוע.",
-          "איך לחזק את שכבת ה-AI עבור הצוות?",
-        ];
+        return readStringArray(localeMessages, "workspaceDock.quickPrompts.settings");
       default:
         return [
-          "תן לי תמונת מצב קצרה על העסק.",
-          `מה כדאי לשפר במסך ${currentSection.label}?`,
-          "הכן לי תוכנית עבודה ליום הזה.",
+          t("workspaceDock.quickPrompts.default.0"),
+          t("workspaceDock.quickPrompts.default.1", { section: currentSection.label }),
+          t("workspaceDock.quickPrompts.default.2"),
         ];
     }
-  }, [currentSection.href, currentSection.label, industryProfile]);
+  }, [currentSection.href, currentSection.label, industryProfile, localeMessages, t]);
 
   const [openPanel, setOpenPanel] = useState<DockPanel>(null);
-  const [messages, setMessages] = useState<AssistantMessage[]>([
+  const [chatMessages, setChatMessages] = useState<AssistantMessage[]>([
     createMessage("assistant", welcomeMessage, "system"),
   ]);
   const [input, setInput] = useState("");
@@ -239,7 +268,7 @@ export default function WorkspaceUtilityDock({
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
-    setMessages((current) => {
+    setChatMessages((current) => {
       if (current.length === 1 && current[0]?.source === "system") {
         return [createMessage("assistant", welcomeMessage, "system")];
       }
@@ -265,12 +294,13 @@ export default function WorkspaceUtilityDock({
 
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = document.documentElement.lang === "he" ? "he-IL" : "en-US";
+      utterance.lang =
+        locale === "he" ? "he-IL" : locale === "ru" ? "ru-RU" : "en-US";
       utterance.onend = () => setSpeakingMessageId(null);
       window.speechSynthesis.speak(utterance);
       setSpeakingMessageId(messageId);
     },
-    [speakingMessageId],
+    [locale, speakingMessageId],
   );
 
   const sendAssistantMessage = useCallback(
@@ -279,21 +309,23 @@ export default function WorkspaceUtilityDock({
       if (!trimmed || sending) return;
 
       const userMessage = createMessage("user", trimmed, source);
-      setMessages((current) => [...current, userMessage]);
+      setChatMessages((current) => [...current, userMessage]);
       setSending(true);
 
       try {
         let reply = "";
 
         if (orgId) {
-          const contextualMessage = [
-            `מסך נוכחי: ${currentSection.label}.`,
-            `תיאור קצר: ${currentSection.summary}`,
-            `מקצוע: ${industryProfile.industryLabel}.`,
-            `מונחים עיקריים: ${industryProfile.clientsLabel}, ${industryProfile.documentsLabel}, ${industryProfile.recordsLabel}.`,
-            `תבניות מקצועיות: ${industryProfile.templates.map((template) => template.label).slice(0, 5).join(", ")}.`,
-            `בקשת משתמש: ${trimmed}`,
-          ].join(" ");
+          const contextualMessage = t("workspaceDock.contextualOrgBlock", {
+            section: currentSection.label,
+            summary: currentSection.summary,
+            industry: industryProfile.industryLabel,
+            clients: industryProfile.clientsLabel,
+            documents: industryProfile.documentsLabel,
+            records: industryProfile.recordsLabel,
+            templates: industryProfile.templates.map((template) => template.label).slice(0, 5).join(", "),
+            request: trimmed,
+          });
 
           const response = await fetch("/api/ai-assistant", {
             method: "POST",
@@ -306,10 +338,10 @@ export default function WorkspaceUtilityDock({
           const data = (await response.json()) as { answer?: string; error?: string };
 
           if (!response.ok) {
-            throw new Error(data.error ?? "שכבת ה-AI לא הצליחה להשיב כרגע.");
+            throw new Error(data.error ?? t("workspaceDock.errors.aiLayerFailed"));
           }
 
-          reply = data.answer?.trim() || "לא התקבלה תשובה שימושית מה-AI.";
+          reply = data.answer?.trim() || t("workspaceDock.errors.noUsefulReply");
         } else {
           const response = await fetch("/api/ai/chat", {
             method: "POST",
@@ -318,7 +350,11 @@ export default function WorkspaceUtilityDock({
               messages: [
                 {
                   role: "user",
-                  content: `אני במסך ${currentSection.label}. המקצוע שלי הוא ${industryProfile.industryLabel}. ${trimmed}`,
+                  content: t("workspaceDock.contextualUserNoOrg", {
+                    section: currentSection.label,
+                    industry: industryProfile.industryLabel,
+                    request: trimmed,
+                  }),
                 },
               ],
             }),
@@ -326,23 +362,22 @@ export default function WorkspaceUtilityDock({
           const data = (await response.json()) as { text?: string; error?: string };
 
           if (!response.ok) {
-            throw new Error(data.error ?? "שכבת ה-AI לא הצליחה להשיב כרגע.");
+            throw new Error(data.error ?? t("workspaceDock.errors.aiLayerFailed"));
           }
 
-          reply = data.text?.trim() || "לא התקבלה תשובה שימושית מה-AI.";
+          reply = data.text?.trim() || t("workspaceDock.errors.noUsefulReply");
         }
 
         const assistantMessage = createMessage("assistant", reply, source);
-        setMessages((current) => [...current, assistantMessage]);
+        setChatMessages((current) => [...current, assistantMessage]);
         setLastAssistantReply(reply);
 
         if (autoSpeak && source === "voice") {
           speakMessage(reply, assistantMessage.id);
         }
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "אירעה שגיאה בשכבת ה-AI.";
-        setMessages((current) => [...current, createMessage("assistant", message, source)]);
+        const message = error instanceof Error ? error.message : t("workspaceDock.errors.generic");
+        setChatMessages((current) => [...current, createMessage("assistant", message, source)]);
         setLastAssistantReply(message);
       } finally {
         setSending(false);
@@ -356,6 +391,7 @@ export default function WorkspaceUtilityDock({
       orgId,
       sending,
       speakMessage,
+      t,
     ],
   );
 
@@ -402,7 +438,7 @@ export default function WorkspaceUtilityDock({
   useEffect(() => {
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-  }, [messages, openPanel, sending]);
+  }, [chatMessages, openPanel, sending]);
 
   useEffect(() => {
     if (!openPanel) return;
@@ -461,34 +497,34 @@ export default function WorkspaceUtilityDock({
   const scannerButtonDisabled = !orgId;
 
   const compactPanelClassName =
-    "fixed bottom-24 left-4 z-[255] flex max-h-[calc(100vh-7rem)] w-[min(100vw-2rem,26rem)] flex-col overflow-hidden rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl lg:bottom-6 lg:left-24 lg:max-h-[calc(100vh-3rem)]";
+    "fixed z-[255] flex max-h-[min(calc(100dvh-7rem),calc(100vh-7rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl bottom-[max(6rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))] lg:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] lg:left-[max(6rem,env(safe-area-inset-left,0px))] lg:max-h-[min(calc(100dvh-3rem),calc(100vh-3rem))]";
 
   const desktopDock = (
-    <div className="fixed bottom-6 left-6 z-[260] hidden flex-col gap-3 lg:flex">
+    <div className="fixed z-[260] hidden flex-col gap-3 lg:flex bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] left-[max(1.5rem,env(safe-area-inset-left,0px))]">
       <div className="rounded-[28px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 p-2 shadow-[0_28px_60px_-32px_rgba(15,23,42,0.45)] backdrop-blur-xl">
         <div className="flex flex-col gap-2">
           <DockButton
             active={openPanel === "accessibility"}
             icon={Accessibility}
-            label="סרגל גישות"
+            label={t("workspaceDock.dock.accessibility")}
             onClick={() => setOpenPanel((current) => (current === "accessibility" ? null : "accessibility"))}
           />
           <DockButton
             active={openPanel === "assistant"}
             icon={Sparkles}
-            label="עוזר AI"
+            label={t("workspaceDock.dock.assistant")}
             onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
           />
           <DockButton
             active={openPanel === "voice"}
             icon={isListening ? MicOff : Mic}
-            label="פקודות קוליות"
+            label={t("workspaceDock.dock.voice")}
             onClick={() => setOpenPanel((current) => (current === "voice" ? null : "voice"))}
           />
           <DockButton
             active={openPanel === "scanner"}
             icon={ScanSearch}
-            label="לוח סריקה מתקדם"
+            label={t("workspaceDock.dock.scanner")}
             onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
           />
         </div>
@@ -497,30 +533,30 @@ export default function WorkspaceUtilityDock({
   );
 
   const mobileDock = (
-    <div className="fixed inset-x-3 bottom-3 z-[260] lg:hidden">
+    <div className="fixed z-[260] lg:hidden left-[max(0.75rem,env(safe-area-inset-left,0px))] right-[max(0.75rem,env(safe-area-inset-right,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
       <div className="grid grid-cols-4 gap-2 rounded-[28px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 p-2 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.5)] backdrop-blur-xl">
         <DockButton
           active={openPanel === "accessibility"}
           icon={Accessibility}
-          label="סרגל גישות"
+          label={t("workspaceDock.dock.accessibility")}
           onClick={() => setOpenPanel((current) => (current === "accessibility" ? null : "accessibility"))}
         />
         <DockButton
           active={openPanel === "assistant"}
           icon={Sparkles}
-          label="עוזר AI"
+          label={t("workspaceDock.dock.assistant")}
           onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
         />
         <DockButton
           active={openPanel === "voice"}
           icon={isListening ? MicOff : Mic}
-          label="פקודות קוליות"
+          label={t("workspaceDock.dock.voice")}
           onClick={() => setOpenPanel((current) => (current === "voice" ? null : "voice"))}
         />
         <DockButton
           active={openPanel === "scanner"}
           icon={ScanSearch}
-          label="לוח סריקה מתקדם"
+          label={t("workspaceDock.dock.scanner")}
           onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
         />
       </div>
@@ -543,7 +579,7 @@ export default function WorkspaceUtilityDock({
       ) : null}
 
       {openPanel === "assistant" ? (
-        <section className={compactPanelClassName} dir="rtl" aria-label="עוזר AI">
+        <section className={compactPanelClassName} dir={dir} aria-label={t("workspaceDock.assistant.panelAria")}>
           <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4">
             <div className="min-w-0">
               <div className="flex items-center gap-3">
@@ -551,9 +587,12 @@ export default function WorkspaceUtilityDock({
                   <BrainCircuit className="h-5 w-5" aria-hidden />
                 </span>
                 <div>
-                  <h2 className="text-base font-black text-slate-900">בועת AI חדשה</h2>
+                  <h2 className="text-base font-black text-slate-900">{t("workspaceDock.assistant.title")}</h2>
                   <p className="mt-1 text-xs text-slate-500">
-                    מחוברת ל-{currentSection.label} ול-{industryProfile.industryLabel}.
+                    {t("workspaceDock.assistant.subtitle", {
+                      section: currentSection.label,
+                      industry: industryProfile.industryLabel,
+                    })}
                   </p>
                 </div>
               </div>
@@ -563,7 +602,7 @@ export default function WorkspaceUtilityDock({
               type="button"
               onClick={() => setOpenPanel(null)}
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
-              aria-label="סגירת עוזר AI"
+              aria-label={t("workspaceDock.assistant.closeAria")}
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
@@ -572,7 +611,7 @@ export default function WorkspaceUtilityDock({
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">
-                הקשר נוכחי
+                {t("workspaceDock.assistant.contextLabel")}
               </p>
               <p className="mt-2 text-sm font-black text-slate-900">{currentSection.label}</p>
               <p className="mt-1 text-xs leading-5 text-slate-500">{currentSection.summary}</p>
@@ -598,7 +637,7 @@ export default function WorkspaceUtilityDock({
               ref={messagesRef}
               className="max-h-[min(45vh,22rem)] space-y-3 overflow-y-auto rounded-[24px] border border-slate-200 bg-white p-4"
             >
-              {messages.map((message) => (
+              {chatMessages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === "user" ? "justify-start" : "justify-end"}`}
@@ -623,11 +662,13 @@ export default function WorkspaceUtilityDock({
                           ) : (
                             <Volume2 className="h-3.5 w-3.5" aria-hidden />
                           )}
-                          {speakingMessageId === message.id ? "עצור" : "הקרא"}
+                          {speakingMessageId === message.id
+                            ? t("workspaceDock.assistant.readAloudStop")
+                            : t("workspaceDock.assistant.readAloud")}
                         </button>
                         {message.source === "voice" ? (
                           <span className="rounded-full bg-[color:var(--v2-accent-soft)] px-2 py-1 text-[11px] font-black text-[color:var(--v2-accent)]">
-                            תגובת קול
+                            {t("workspaceDock.assistant.voiceReplyBadge")}
                           </span>
                         ) : null}
                       </div>
@@ -640,7 +681,7 @@ export default function WorkspaceUtilityDock({
                 <div className="flex justify-end">
                   <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-500">
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    ה-AI עובד על תשובה...
+                    {t("workspaceDock.assistant.thinking")}
                   </div>
                 </div>
               ) : null}
@@ -652,7 +693,7 @@ export default function WorkspaceUtilityDock({
                   type="button"
                   onClick={() => setOpenPanel("voice")}
                   className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900"
-                  aria-label="מעבר לפקודות קוליות"
+                  aria-label={t("workspaceDock.assistant.goVoiceAria")}
                 >
                   <Mic className="h-4 w-4" aria-hidden />
                 </button>
@@ -661,26 +702,24 @@ export default function WorkspaceUtilityDock({
                   onClick={() => setOpenPanel("scanner")}
                   disabled={scannerButtonDisabled}
                   className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label="פתיחת לוח הסריקה"
+                  aria-label={t("workspaceDock.assistant.openScannerAria")}
                 >
                   <ScanSearch className="h-4 w-4" aria-hidden />
                 </button>
                 <label className="min-w-0 flex-1">
-                  <span className="sr-only">הודעה לעוזר ה-AI</span>
+                  <span className="sr-only">{t("workspaceDock.assistant.messageLabel")}</span>
                   <textarea
                     value={input}
                     onChange={(event) => setInput(event.target.value)}
                     rows={3}
-                    placeholder="כתוב כאן מה צריך: ניתוח, ניסוח, תשובה, סדר עבודה או פתיחת תהליך..."
+                    placeholder={t("workspaceDock.assistant.placeholder")}
                     className="min-h-[84px] w-full resize-none rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
                   />
                 </label>
               </div>
 
               <div className="mt-3 flex items-center justify-between gap-3">
-                <p className="text-[11px] text-slate-500">
-                  מבוסס על מסך נוכחי, מקצוע ונתוני הארגון שלך.
-                </p>
+                <p className="text-[11px] text-slate-500">{t("workspaceDock.assistant.footerHint")}</p>
                 <button
                   type="button"
                   onClick={submitInput}
@@ -688,7 +727,7 @@ export default function WorkspaceUtilityDock({
                   className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <WandSparkles className="h-4 w-4" aria-hidden />
-                  שלח ל-AI
+                  {t("workspaceDock.assistant.send")}
                 </button>
               </div>
             </div>
@@ -697,7 +736,7 @@ export default function WorkspaceUtilityDock({
       ) : null}
 
       {openPanel === "voice" ? (
-        <section className={compactPanelClassName} dir="rtl" aria-label="חוויית דיבור מלאה">
+        <section className={compactPanelClassName} dir={dir} aria-label={t("workspaceDock.voice.panelAria")}>
           <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4">
             <div className="min-w-0">
               <div className="flex items-center gap-3">
@@ -705,10 +744,8 @@ export default function WorkspaceUtilityDock({
                   <AudioLines className="h-5 w-5" aria-hidden />
                 </span>
                 <div>
-                  <h2 className="text-base font-black text-slate-900">חוויית דיבור מלאה</h2>
-                  <p className="mt-1 text-xs text-slate-500">
-                    הקלטה, תמלול, שליחה ל-AI והקראת תשובות חזרה.
-                  </p>
+                  <h2 className="text-base font-black text-slate-900">{t("workspaceDock.voice.title")}</h2>
+                  <p className="mt-1 text-xs text-slate-500">{t("workspaceDock.voice.subtitle")}</p>
                 </div>
               </div>
             </div>
@@ -717,7 +754,7 @@ export default function WorkspaceUtilityDock({
               type="button"
               onClick={() => setOpenPanel(null)}
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
-              aria-label="סגירת חוויית הדיבור"
+              aria-label={t("workspaceDock.voice.closeAria")}
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
@@ -728,12 +765,10 @@ export default function WorkspaceUtilityDock({
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-black text-slate-900">
-                    {voiceSupported ? "המיקרופון מוכן לעבודה" : "הדפדפן לא תומך בתמלול קולי"}
+                    {voiceSupported ? t("workspaceDock.voice.micReady") : t("workspaceDock.voice.micUnsupported")}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
-                    {voiceSupported
-                      ? "השתמש בהקלטה חיה, ערוך את התמלול, ושלח ישירות ל-AI."
-                      : "אפשר עדיין להדביק טקסט ידנית ולהשתמש בהקראת תשובות."}
+                    {voiceSupported ? t("workspaceDock.voice.micReadyHint") : t("workspaceDock.voice.micFallbackHint")}
                   </p>
                 </div>
 
@@ -746,7 +781,9 @@ export default function WorkspaceUtilityDock({
                       ? "bg-rose-500 shadow-rose-500/30"
                       : "bg-[color:var(--v2-accent)] shadow-[0_20px_40px_-18px_rgba(193,89,47,0.48)]"
                   } disabled:cursor-not-allowed disabled:bg-slate-300`}
-                  aria-label={isListening ? "עצירת הקלטה" : "התחלת הקלטה"}
+                  aria-label={
+                    isListening ? t("workspaceDock.voice.recordStopAria") : t("workspaceDock.voice.recordStartAria")
+                  }
                 >
                   {isListening ? <Square className="h-5 w-5" aria-hidden /> : <Mic className="h-5 w-5" aria-hidden />}
                 </button>
@@ -762,9 +799,9 @@ export default function WorkspaceUtilityDock({
                       : "border-slate-200 bg-slate-50 text-slate-600"
                   }`}
                 >
-                  <span className="block text-sm font-black">שליחה אוטומטית</span>
+                  <span className="block text-sm font-black">{t("workspaceDock.voice.autoSendTitle")}</span>
                   <span className="mt-1 block text-[11px] text-slate-500">
-                    כשמסתיים תמלול, הוא נשלח מיד ל-AI.
+                    {t("workspaceDock.voice.autoSendHint")}
                   </span>
                 </button>
 
@@ -785,9 +822,9 @@ export default function WorkspaceUtilityDock({
                       : "border-slate-200 bg-slate-50 text-slate-600"
                   }`}
                 >
-                  <span className="block text-sm font-black">הקראת תשובות</span>
+                  <span className="block text-sm font-black">{t("workspaceDock.voice.readRepliesTitle")}</span>
                   <span className="mt-1 block text-[11px] text-slate-500">
-                    קרא בקול את התשובה האחרונה או עצור הקראה.
+                    {t("workspaceDock.voice.readRepliesHint")}
                   </span>
                 </button>
               </div>
@@ -800,7 +837,7 @@ export default function WorkspaceUtilityDock({
                     onChange={(event) => setAutoSpeak(event.target.checked)}
                     className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
                   />
-                  הפעל הקראת תשובות אוטומטית כשפקודת קול נשלחת.
+                  {t("workspaceDock.voice.autoSpeakHint")}
                 </label>
               </div>
             </div>
@@ -808,14 +845,12 @@ export default function WorkspaceUtilityDock({
             <div className="rounded-[24px] border border-slate-200 bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-slate-900">תמלול חי</p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    אפשר לערוך את הטקסט לפני שליחה.
-                  </p>
+                  <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.liveTitle")}</p>
+                  <p className="mt-1 text-xs text-slate-500">{t("workspaceDock.voice.liveHint")}</p>
                 </div>
                 {isListening ? (
                   <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-black text-rose-600">
-                    מקליט עכשיו
+                    {t("workspaceDock.voice.recordingNow")}
                   </span>
                 ) : null}
               </div>
@@ -824,7 +859,7 @@ export default function WorkspaceUtilityDock({
                 value={voiceDraft}
                 onChange={(event) => setVoiceDraft(event.target.value)}
                 rows={5}
-                placeholder="הקלטה תופיע כאן... למשל: פתח את המסמכים שלי, בדוק מה דחוף בטיפול, או הכן לי אישור מקצועי."
+                placeholder={t("workspaceDock.voice.voicePlaceholder")}
                 className="mt-4 min-h-[140px] w-full resize-none rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
               />
 
@@ -847,7 +882,7 @@ export default function WorkspaceUtilityDock({
                   onClick={() => setVoiceDraft("")}
                   className="v2-button v2-button-secondary"
                 >
-                  נקה
+                  {t("workspaceDock.voice.clear")}
                 </button>
                 <div className="flex items-center gap-2">
                   <button
@@ -855,7 +890,7 @@ export default function WorkspaceUtilityDock({
                     onClick={() => setOpenPanel("assistant")}
                     className="v2-button v2-button-secondary"
                   >
-                    עבור לבועת AI
+                    {t("workspaceDock.voice.goBubble")}
                   </button>
                   <button
                     type="button"
@@ -864,7 +899,7 @@ export default function WorkspaceUtilityDock({
                     className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Play className="h-4 w-4" aria-hidden />
-                    שלח כפקודת קול
+                    {t("workspaceDock.voice.sendAsVoice")}
                   </button>
                 </div>
               </div>
@@ -874,7 +909,7 @@ export default function WorkspaceUtilityDock({
               <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-black text-slate-900">תשובה אחרונה של ה-AI</p>
+                    <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.lastReplyTitle")}</p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">{lastAssistantReply}</p>
                   </div>
                   <button
@@ -885,7 +920,7 @@ export default function WorkspaceUtilityDock({
                         : speakMessage(lastAssistantReply, "last-reply")
                     }
                     className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                    aria-label="הקראת תשובה אחרונה"
+                    aria-label={t("workspaceDock.voice.readLastAria")}
                   >
                     {speakingMessageId === "last-reply" ? (
                       <VolumeX className="h-4 w-4" aria-hidden />
@@ -903,8 +938,8 @@ export default function WorkspaceUtilityDock({
       {openPanel === "scanner" ? (
         <section
           className="fixed inset-0 z-[270] bg-slate-950/35 p-3 backdrop-blur-sm sm:p-5"
-          dir="rtl"
-          aria-label="לוח סריקה מתקדם"
+          dir={dir}
+          aria-label={t("workspaceDock.scanner.panelAria")}
         >
           <div className="flex h-full flex-col rounded-[32px] border border-white/40 bg-[color:var(--v2-surface)]/98 shadow-[0_40px_120px_-48px_rgba(15,23,42,0.7)]">
             <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4 sm:px-6">
@@ -914,9 +949,9 @@ export default function WorkspaceUtilityDock({
                     <ScanSearch className="h-5 w-5" aria-hidden />
                   </span>
                   <div>
-                    <h2 className="text-lg font-black text-slate-900">לוח סריקה מתקדם</h2>
+                    <h2 className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.title")}</h2>
                     <p className="mt-1 text-sm text-slate-500">
-                      מסונכרן עם {industryProfile.industryLabel}, זמין מכל `/app`, וממשיך ישר למסמכים ולגבייה.
+                      {t("workspaceDock.scanner.subtitle", { industry: industryProfile.industryLabel })}
                     </p>
                   </div>
                 </div>
@@ -945,13 +980,13 @@ export default function WorkspaceUtilityDock({
                   onClick={() => setOpenPanel(null)}
                   className="v2-button v2-button-secondary"
                 >
-                  למסמכים
+                  {t("workspaceDock.scanner.toDocuments")}
                 </Link>
                 <button
                   type="button"
                   onClick={() => setOpenPanel(null)}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                  aria-label="סגירת לוח הסריקה"
+                  aria-label={t("workspaceDock.scanner.closeAria")}
                 >
                   <X className="h-5 w-5" aria-hidden />
                 </button>
@@ -962,10 +997,8 @@ export default function WorkspaceUtilityDock({
               {scannerButtonDisabled ? (
                 <div className="flex h-full items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/80 p-8 text-center">
                   <div className="max-w-md">
-                    <p className="text-lg font-black text-slate-900">לוח הסריקה זמין אחרי חיבור לארגון</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                      צריך מזהה ארגון פעיל כדי לחבר את הסריקה ל-AI, למסמכים ולהפקה.
-                    </p>
+                    <p className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.needOrgTitle")}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">{t("workspaceDock.scanner.needOrgBody")}</p>
                   </div>
                 </div>
               ) : (

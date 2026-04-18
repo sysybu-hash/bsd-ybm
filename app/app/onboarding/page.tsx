@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { BadgeCheck, Building2, CreditCard, FileText, Globe, Sparkles } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
@@ -42,10 +43,12 @@ export default async function AppOnboardingPage() {
     redirect("/login");
   }
 
+  const messages = await readRequestMessages();
   const profile = getIndustryProfile(
     organization.industry,
     organization.industryConfigJson,
     organization.constructionTrade,
+    messages,
   );
   const steps = [
     {

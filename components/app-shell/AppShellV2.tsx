@@ -21,6 +21,9 @@ import {
   hasActiveWorkspaceSubscription,
   type WorkspaceAccessContext,
 } from "@/lib/workspace-access";
+import { getHiddenPrimaryRouteIds, toWorkspaceFeatureInput } from "@/lib/workspace-features";
+import { WorkspaceShellTransitionProvider } from "@/components/app-shell/WorkspaceShellTransition";
+import { useI18n } from "@/components/I18nProvider";
 
 type Props = Readonly<{
   children: ReactNode;
@@ -107,6 +110,7 @@ function buildCommandItem(item: AppNavItem) {
 }
 
 export default function AppShellV2({ children, user }: Props) {
+  const { t, dir } = useI18n();
   const pathname = usePathname() ?? "/app";
   const firstName = user.name.trim().split(" ")[0] || user.email.split("@")[0] || "User";
   const initials = firstName.slice(0, 2).toUpperCase();
@@ -121,7 +125,8 @@ export default function AppShellV2({ children, user }: Props) {
   };
 
   const visibleUtilityIds = getVisibleUtilitySectionIds(accessContext);
-  const nav = buildAppNavCollection(user.industryProfile, { visibleUtilityIds });
+  const hiddenPrimaryRouteIds = getHiddenPrimaryRouteIds(toWorkspaceFeatureInput(accessContext, user.industryProfile));
+  const nav = buildAppNavCollection(user.industryProfile, t, { visibleUtilityIds, hiddenPrimaryRouteIds });
   const utilityNavItems = nav.utility.filter(
     (item) =>
       item.showInNav !== false &&
@@ -138,25 +143,33 @@ export default function AppShellV2({ children, user }: Props) {
   const commandItems = [...nav.primary, ...nav.utility, nav.advanced].map(buildCommandItem);
 
   return (
+    <WorkspaceShellTransitionProvider>
     <div
       className={`${marketingSans.className} min-h-screen bg-[color:var(--app-main-bg)] text-[color:var(--v2-ink)]`}
-      dir="rtl"
+      dir={dir}
     >
       <a
         href="#app-main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[60] focus:rounded-2xl focus:bg-[color:var(--v2-accent)] focus:px-4 focus:py-3 focus:text-sm focus:font-black focus:text-white"
       >
-        דלג לתוכן הראשי
+        {t("workspaceNav.skipToMain")}
       </a>
 
       <div className="grid min-h-screen lg:grid-cols-[276px_1fr]">
         <aside className="hidden border-l border-[color:var(--app-sidebar-border)] bg-[color:var(--app-sidebar-bg)] lg:block">
           <div className="sticky top-0 flex min-h-screen flex-col px-4 py-5">
-            <BsdYbmLogo href="/app" variant="sidebar" size="sm" subtitle={<span className="mt-0.5 block text-[10px] font-medium text-slate-400">מרחב עבודה</span>} />
+            <BsdYbmLogo
+              href="/app"
+              variant="sidebar"
+              size="sm"
+              subtitle={
+                <span className="mt-0.5 block text-[10px] font-medium text-slate-400">{t("workspaceNav.logoSubtitle")}</span>
+              }
+            />
 
             <div className="mt-8">
               <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                עבודה יומית
+                {t("workspaceNav.sectionDailyWork")}
               </p>
               <nav className="mt-3 grid gap-1.5">
                 {nav.primary.map((item) => (
@@ -174,7 +187,7 @@ export default function AppShellV2({ children, user }: Props) {
             {utilityNavItems.length > 0 ? (
               <div className="mt-6">
                 <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                  ניווט נוסף
+                  {t("workspaceNav.sectionMoreNav")}
                 </p>
                 <nav className="mt-3 grid gap-1.5">
                   {utilityNavItems.map((item) => (
@@ -231,7 +244,7 @@ export default function AppShellV2({ children, user }: Props) {
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-4 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-white/5 hover:text-white"
               >
                 <LogOut className="h-4 w-4" aria-hidden />
-                יציאה
+                {t("workspaceNav.signOut")}
               </button>
             </div>
           </div>
@@ -265,14 +278,14 @@ export default function AppShellV2({ children, user }: Props) {
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--v2-line)] bg-white/88 text-[color:var(--v2-ink)] sm:hidden"
-                  aria-label="יציאה"
+                  aria-label={t("workspaceNav.signOutAria")}
                 >
                   <LogOut className="h-4 w-4" aria-hidden />
                 </button>
 
                 <Link href={nav.advanced.href} className="v2-button v2-button-secondary hidden sm:inline-flex">
                   <Sparkles className="h-4 w-4" aria-hidden />
-                  מתקדם
+                  {t("workspaceNav.advancedShort")}
                 </Link>
               </div>
             </div>
@@ -304,7 +317,10 @@ export default function AppShellV2({ children, user }: Props) {
             ) : null}
           </header>
 
-          <main id="app-main-content" className="mx-auto max-w-[1600px] px-4 py-5 pb-20 sm:px-6 lg:px-8 lg:pb-8">
+          <main
+            id="app-main-content"
+            className="mx-auto max-w-[1600px] px-4 py-5 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8 lg:pb-8"
+          >
             {children}
           </main>
         </div>
@@ -314,7 +330,9 @@ export default function AppShellV2({ children, user }: Props) {
         orgId={user.organizationId}
         industryProfile={user.industryProfile}
         userName={user.name}
+        hiddenPrimaryRouteIds={hiddenPrimaryRouteIds}
       />
     </div>
+    </WorkspaceShellTransitionProvider>
   );
 }

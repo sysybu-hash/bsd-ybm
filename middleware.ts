@@ -4,6 +4,10 @@ import type { NextRequest } from "next/server";
 import type { NextFetchEvent } from "next/server";
 import { negotiateLocale } from "@/lib/i18n/negotiate";
 import { COOKIE_LOCALE } from "@/lib/i18n/config";
+import {
+  shouldBlockWorkspacePrimaryPath,
+  workspaceFeatureInputFromJwtClaims,
+} from "@/lib/workspace-features";
 
 function patchLocaleCookie(request: NextRequest, response: NextResponse) {
   if (!request.cookies.get(COOKIE_LOCALE)?.value) {
@@ -33,6 +37,14 @@ const authMiddleware = withAuth(
         JSON.stringify({ error: "Unauthorized access - נא להתחבר" }),
         { status: 401, headers: { "Content-Type": "application/json" } },
       );
+    }
+
+    /** חסימת גישה ישירה לנתיבי workspace שנחבאו לפי מקצוע/תפקיד (מיושר ל־getHiddenPrimaryRouteIds) */
+    if (token && pathname.startsWith("/app") && !pathname.startsWith("/api/")) {
+      const featureInput = workspaceFeatureInputFromJwtClaims(token);
+      if (featureInput && shouldBlockWorkspacePrimaryPath(pathname, featureInput)) {
+        return NextResponse.redirect(new URL("/app", req.url));
+      }
     }
 
     return NextResponse.next();

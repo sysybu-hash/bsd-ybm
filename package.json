@@ -31,6 +31,7 @@
     "check:deploy": "node scripts/check-neon-vercel-prereqs.mjs",
     "neon:ensure-direct": "node scripts/ensure-neon-direct-env.mjs",
     "icons:generate": "node scripts/generate-pwa-icons.mjs",
+    "i18n:construction-trades": "node scripts/build-construction-trade-locales.mjs",
     "tutorials:encode": "node scripts/generate-tutorial-videos.mjs"
   },
   "dependencies": {
@@ -67,7 +68,8 @@
     "recharts": "^2.15.4",
     "resend": "^4.8.0",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.3.6"
   },
   "overrides": {
     "effect": ">=3.20.0"

@@ -12,5 +12,5 @@ export default function GlobalFloatingChrome() {
     return null;
   }
 
-  return <AccessibilityMenu />;
+  return <AccessibilityMenu compactFab />;
 }

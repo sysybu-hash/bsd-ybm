@@ -1,0 +1,30 @@
+{
+  "siteFooter": {
+    "lead": "Умное управление на базе AI для продуктивности и финансового контроля.",
+    "navSystem": "Продукт",
+    "navInfo": "Информация",
+    "linkErp": "ERP",
+    "linkCrm": "CRM",
+    "linkLegal": "Юридические документы",
+    "linkTerms": "Условия использования",
+    "linkPrivacy": "Конфиденциальность",
+    "linkGdpr": "GDPR / защита данных",
+    "linkTutorial": "Анимированное обучение",
+    "copyright": "Все права защищены",
+    "credit": "Йоханан Бокшен — BSD-YBM"
+  },
+  "commandPalette": {
+    "openSearchAria": "Открыть быстрый поиск",
+    "searchHintDesktop": "Быстрый поиск и переход между экранами",
+    "searchShort": "Поиск",
+    "closeAria": "Закрыть быстрый поиск",
+    "dialogAria": "Быстрый поиск",
+    "placeholder": "Экран, действие или раздел",
+    "emptyTitle": "Ничего не найдено",
+    "emptyHint": "Попробуйте другое название экрана или инструмента.",
+    "badgeHere": "Здесь",
+    "openAction": "Открыть",
+    "footerHint": "Поиск по приложению: основные и глубокие экраны.",
+    "enterToOpen": "Enter — открыть"
+  }
+}

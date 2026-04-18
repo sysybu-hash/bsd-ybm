@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import LegacyInvoiceIssuePage from "@/app/dashboard/(protected)/erp/invoice/InvoiceIssuePageContent";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export default async function AppIssuePage({
@@ -28,10 +29,12 @@ export default async function AppIssuePage({
     },
   });
 
+  const messages = await readRequestMessages();
   const profile = getIndustryProfile(
     organization?.industry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade,
+    messages,
   );
 
   return (

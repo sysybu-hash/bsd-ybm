@@ -4,6 +4,8 @@ import OperationsWorkspaceV2 from "@/components/operations/OperationsWorkspaceV2
 import { authOptions } from "@/lib/auth";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
+import { getIndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +25,9 @@ export default async function AppOperationsPage() {
         where: { id: organizationId },
         select: {
           name: true,
+          industry: true,
+          constructionTrade: true,
+          industryConfigJson: true,
           calendarGoogleEnabled: true,
           paypalMerchantEmail: true,
           paypalMeSlug: true,
@@ -102,6 +107,16 @@ export default async function AppOperationsPage() {
   if (!organization) {
     redirect("/login");
   }
+
+  const messages = await readRequestMessages();
+  const industryProfile = getIndustryProfile(
+    organization.industry ?? "CONSTRUCTION",
+    organization.industryConfigJson,
+    organization.constructionTrade,
+    messages,
+  );
+  const operationsContextLabel =
+    industryProfile.constructionTradeLabel ?? industryProfile.industryLabel;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -248,6 +263,7 @@ export default async function AppOperationsPage() {
   return (
     <OperationsWorkspaceV2
       organizationName={organization.name}
+      operationsContextLabel={operationsContextLabel}
       meckanoEnabled={meckanoEnabled}
       stats={{
         activeUsers: `${activeUsers}/${usersTotal}`,

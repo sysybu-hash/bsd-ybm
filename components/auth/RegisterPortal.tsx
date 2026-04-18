@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Home,
@@ -14,7 +14,8 @@ import {
   MailCheck,
   HardHat,
 } from "lucide-react";
-import { constructionTradeLabelHe, listConstructionTradesForSelect, normalizeConstructionTrade } from "@/lib/construction-trades";
+import { mergeConstructionTradeLabel } from "@/lib/construction-trades-i18n";
+import { CONSTRUCTION_TRADE_IDS, constructionTradeLabelHe, normalizeConstructionTrade } from "@/lib/construction-trades";
 import AuthPageShell from "@/components/auth/AuthPageShell";
 import { useI18n } from "@/components/I18nProvider";
 
@@ -36,7 +37,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // ─── component ───────────────────────────────────────────────────────────────
 
 export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Props) {
-  const { t, dir } = useI18n();
+  const { t, dir, messages } = useI18n();
+  const tradeSelectOptions = useMemo(
+    () =>
+      CONSTRUCTION_TRADE_IDS.map((id) => ({
+        id,
+        label: mergeConstructionTradeLabel(messages, id, constructionTradeLabelHe(id)),
+      })),
+    [messages],
+  );
   const isTeamJoin = !!orgInviteToken;
   const isDirectPlan = !!plan;
 
@@ -244,17 +253,15 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
 
             {!isTeamJoin && step === 1 && (
               <div className="space-y-3">
-                <p className="text-sm leading-relaxed text-gray-600">
-                  BSD-YBM מיועדת לענף הבנייה והמקצועות הנלווים. בחרו את ההתמחות כדי להתאים פענוחי AI ומסמכים.
-                </p>
+                <p className="text-sm leading-relaxed text-gray-600">{t("auth.register.construction.lead")}</p>
                 <label className="block">
-                  <span className="mb-2 block text-xs font-bold text-gray-500">סוג עסק / התמחות</span>
+                  <span className="mb-2 block text-xs font-bold text-gray-500">{t("auth.register.construction.selectLabel")}</span>
                   <select
                     value={form.constructionTrade}
                     onChange={(e) => set("constructionTrade", e.target.value)}
                     className={inputCls}
                   >
-                    {listConstructionTradesForSelect().map(({ id, label }) => (
+                    {tradeSelectOptions.map(({ id, label }) => (
                       <option key={id} value={id}>
                         {label}
                       </option>
@@ -263,7 +270,7 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                 </label>
                 <div className="flex items-center gap-2 rounded-xl border border-orange-100 bg-orange-50/80 px-4 py-3 text-xs text-gray-700">
                   <HardHat className="h-5 w-5 shrink-0 text-[color:var(--primary-color)]" aria-hidden />
-                  <span>אפשר לשנות בהמשך בהגדרות הארגון.</span>
+                  <span>{t("auth.register.construction.hint")}</span>
                 </div>
               </div>
             )}
@@ -311,9 +318,13 @@ export default function RegisterPortal({ inviteToken, orgInviteToken, plan }: Pr
                   )}
                   {!isTeamJoin && (
                     <div className="flex items-center justify-between px-4 py-3 text-sm">
-                      <span className="text-gray-500">התמחות</span>
+                      <span className="text-gray-500">{t("auth.register.summary.trade")}</span>
                       <span className="font-black text-gray-900">
-                        {constructionTradeLabelHe(normalizeConstructionTrade(form.constructionTrade))}
+                        {mergeConstructionTradeLabel(
+                          messages,
+                          normalizeConstructionTrade(form.constructionTrade),
+                          constructionTradeLabelHe(normalizeConstructionTrade(form.constructionTrade)),
+                        )}
                       </span>
                     </div>
                   )}

@@ -10,6 +10,7 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
@@ -86,6 +87,7 @@ export default function InsightsWorkspaceV2({
   recommendations,
   pendingClients,
 }: Props) {
+  const { t, dir } = useI18n();
   const advancedInsightsHref = getAdvancedWorkspaceHref("insights");
   const [view, setView] = useState<"summary" | "actions">("summary");
   const insightParagraphs = insightText
@@ -93,26 +95,37 @@ export default function InsightsWorkspaceV2({
     .map((part) => part.trim())
     .filter(Boolean);
 
+  const signalToneLabel = (tone: Signal["tone"]) => {
+    if (tone === "accent") return t("workspaceInsights.signalFocus");
+    if (tone === "success") return t("workspaceInsights.signalOk");
+    return t("workspaceInsights.signalWatch");
+  };
+
+  const severityLabel = (severity: Recommendation["severity"]) => {
+    if (severity === "high") return t("workspaceInsights.severityHigh");
+    if (severity === "medium") return t("workspaceInsights.severityMedium");
+    return t("workspaceInsights.severityLow");
+  };
+
   return (
-    <div className="grid gap-6" dir="rtl">
+    <div className="grid gap-6" dir={dir}>
       <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">Insights Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceInsights.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
-              חלון תובנות שמרכז את מה שהמערכת כבר יודעת, ומה כדאי לעשות עם זה עכשיו.
+              {t("workspaceInsights.heroTitle")}
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
-              במקום מסך AI מנותק מהעבודה היומיומית, התובנות מתחברות לגבייה, למסמכים, ללקוחות ולצנרת, ומציגות
-              תמונה קצרה, בהירה וישימה.
+              {t("workspaceInsights.heroSubtitle")}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link href={advancedInsightsHref} className="v2-button v2-button-primary">
-                AI Hub מתקדם
+                {t("workspaceInsights.advancedCta")}
               </Link>
               <Link href="/app/billing" className="v2-button v2-button-secondary">
-                מעבר לחיוב
+                {t("workspaceInsights.billingCta")}
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
             </div>
@@ -140,10 +153,8 @@ export default function InsightsWorkspaceV2({
           <div className="v2-panel p-5">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-lg font-black text-[color:var(--v2-ink)]">מבט מנהלים</p>
-                <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">
-                  תצוגה אחת לסיכום ולהמלצות פעולה, במקום לעבור בין כמה מסכי בקרה שונים.
-                </p>
+                <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInsights.executiveTitle")}</p>
+                <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{t("workspaceInsights.executiveSubtitle")}</p>
               </div>
 
               <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--v2-canvas)] p-1">
@@ -154,7 +165,7 @@ export default function InsightsWorkspaceV2({
                     view === "summary" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
                   }`}
                 >
-                  סיכום
+                  {t("workspaceInsights.viewSummary")}
                 </button>
                 <button
                   type="button"
@@ -163,7 +174,7 @@ export default function InsightsWorkspaceV2({
                     view === "actions" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
                   }`}
                 >
-                  המלצות פעולה
+                  {t("workspaceInsights.viewActions")}
                 </button>
               </div>
             </div>
@@ -174,10 +185,11 @@ export default function InsightsWorkspaceV2({
               <div className="v2-panel p-6">
                 <div className="flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                  <h2 className="text-xl font-black text-[color:var(--v2-ink)]">תובנת מערכת</h2>
+                  <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{t("workspaceInsights.insightTitle")}</h2>
                 </div>
                 <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
-                  עודכן ב-{updatedAt ? formatDateTime(updatedAt) : "זמן אמת"}
+                  {t("workspaceInsights.updatedPrefix")}
+                  {updatedAt ? formatDateTime(updatedAt) : t("workspaceInsights.updatedLive")}
                 </p>
                 <div className="mt-5 grid gap-4">
                   {insightParagraphs.map((paragraph) => (
@@ -195,7 +207,7 @@ export default function InsightsWorkspaceV2({
                 {signals.map((signal) => (
                   <article key={signal.title} className="v2-panel p-5">
                     <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${toneClass(signal.tone)}`}>
-                      {signal.tone === "accent" ? "מוקד" : signal.tone === "success" ? "תקין" : "מעקב"}
+                      {signalToneLabel(signal.tone)}
                     </span>
                     <h3 className="mt-4 text-lg font-black text-[color:var(--v2-ink)]">{signal.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{signal.body}</p>
@@ -207,10 +219,8 @@ export default function InsightsWorkspaceV2({
             <div className="grid gap-4">
               {recommendations.length === 0 ? (
                 <div className="v2-panel p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--v2-ink)]">אין כרגע המלצות פתוחות.</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">
-                    הזרימות המרכזיות נראות רגועות. אפשר להמשיך לעבודה שוטפת בלקוחות, במסמכים או בחיוב.
-                  </p>
+                  <p className="text-2xl font-black text-[color:var(--v2-ink)]">{t("workspaceInsights.emptyRecsTitle")}</p>
+                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{t("workspaceInsights.emptyRecsBody")}</p>
                 </div>
               ) : null}
 
@@ -223,7 +233,7 @@ export default function InsightsWorkspaceV2({
                           {item.source}
                         </span>
                         <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
-                          {item.severity === "high" ? "גבוה" : item.severity === "medium" ? "בינוני" : "נמוך"}
+                          {severityLabel(item.severity)}
                         </span>
                       </div>
                       <h3 className="mt-4 text-lg font-black text-[color:var(--v2-ink)]">{item.title}</h3>
@@ -243,7 +253,7 @@ export default function InsightsWorkspaceV2({
           <div className="v2-panel v2-panel-highlight p-6">
             <div className="flex items-center gap-2">
               <BadgeCheck className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">בריאות מקורות המידע</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInsights.healthTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               {health.map((item) => (
@@ -255,7 +265,7 @@ export default function InsightsWorkspaceV2({
                         item.status === "good" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
                       }`}
                     >
-                      {item.status === "good" ? "תקין" : "דורש מעקב"}
+                      {item.status === "good" ? t("workspaceInsights.healthGood") : t("workspaceInsights.healthWatch")}
                     </span>
                   </div>
                   <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{item.value}</p>
@@ -265,11 +275,11 @@ export default function InsightsWorkspaceV2({
           </div>
 
           <div className="v2-panel p-6">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">לקוחות עם גבייה פתוחה</p>
+            <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInsights.pendingTitle")}</p>
             <div className="mt-4 grid gap-3">
               {pendingClients.length === 0 ? (
                 <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
-                  אין כרגע לקוחות בולטים עם גבייה פתוחה.
+                  {t("workspaceInsights.pendingEmpty")}
                 </div>
               ) : null}
               {pendingClients.map((client) => (

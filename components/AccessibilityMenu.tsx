@@ -29,6 +29,8 @@ import {
 type AccessibilityMenuProps = {
   dock?: boolean;
   panelOnly?: boolean;
+  /** כפתור צף קטן יותר — מתאים לדפי שיווק ציבוריים */
+  compactFab?: boolean;
   onClose?: () => void;
 };
 
@@ -263,6 +265,7 @@ function AccessibilityPanel({
 export default function AccessibilityMenu({
   dock = false,
   panelOnly = false,
+  compactFab = false,
   onClose,
 }: AccessibilityMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -316,21 +319,38 @@ export default function AccessibilityMenu({
   }
 
   return (
-    <div className="fixed bottom-6 left-6 z-[320]" dir="rtl">
+    <div
+      className={`fixed z-[320] ${
+        compactFab
+          ? "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))] sm:bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:left-[max(1.25rem,env(safe-area-inset-left,0px))]"
+          : "bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] left-[max(1.5rem,env(safe-area-inset-left,0px))]"
+      }`}
+      dir="rtl"
+    >
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className={`inline-flex h-14 w-14 items-center justify-center rounded-full border-4 border-white text-white shadow-2xl transition ${
-          isOpen ? "bg-slate-900" : "bg-[color:var(--primary-brand)]"
-        }`}
+        className={
+          compactFab
+            ? `inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-2xl border-2 border-white text-white shadow-lg transition ${
+                isOpen ? "bg-slate-900" : "bg-[color:var(--primary-brand)]"
+              }`
+            : `inline-flex h-14 w-14 touch-manipulation items-center justify-center rounded-full border-4 border-white text-white shadow-2xl transition ${
+                isOpen ? "bg-slate-900" : "bg-[color:var(--primary-brand)]"
+              }`
+        }
         aria-label="פתיחת סרגל גישות"
       >
-        {isOpen ? <X className="h-6 w-6" aria-hidden /> : <Accessibility className="h-6 w-6" aria-hidden />}
+        {isOpen ? (
+          <X className={compactFab ? "h-5 w-5" : "h-6 w-6"} aria-hidden />
+        ) : (
+          <Accessibility className={compactFab ? "h-5 w-5" : "h-6 w-6"} aria-hidden />
+        )}
       </button>
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[340] flex items-end justify-start bg-slate-950/30 p-4 backdrop-blur-sm sm:items-center sm:justify-center"
+          className="fixed inset-0 z-[340] flex items-end justify-start bg-slate-950/30 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:items-center sm:justify-center sm:pb-4"
           onClick={() => setIsOpen(false)}
         >
           <div onClick={(event) => event.stopPropagation()}>{panel}</div>

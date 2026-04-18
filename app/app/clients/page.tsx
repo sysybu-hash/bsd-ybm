@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import ClientsWorkspaceV2 from "@/components/crm/ClientsWorkspaceV2";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
@@ -116,10 +117,12 @@ export default async function AppClientsPage() {
     };
   });
 
+  const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization?.industry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade,
+    messages,
   );
 
   return <ClientsWorkspaceV2 contacts={contacts} projects={projects} industryProfile={industryProfile} />;

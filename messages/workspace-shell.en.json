@@ -1,0 +1,152 @@
+{
+  "workspaceNav": {
+    "skipToMain": "Skip to main content",
+    "logoSubtitle": "Workspace",
+    "sectionDailyWork": "Daily work",
+    "sectionMoreNav": "More navigation",
+    "signOut": "Sign out",
+    "signOutAria": "Sign out",
+    "advancedShort": "Advanced",
+    "items": {
+      "home": {
+        "label": "Home",
+        "summary": "Status, shortcuts, and a clear entry point to every workspace area."
+      },
+      "inbox": {
+        "label": "Work inbox",
+        "summary": "What needs attention now, open approvals, and what’s waiting for the team."
+      },
+      "clients": {
+        "label": "Clients",
+        "summary": "Manage {clients} with a direct link to {documents}."
+      },
+      "documents": {
+        "label": "Documents",
+        "summary": "Scan, control, and produce {records} for {industry}."
+      },
+      "billing": {
+        "label": "Billing",
+        "summary": "Cash flow, invoices, collections, and ongoing payment tracking."
+      },
+      "operations": {
+        "label": "Operations",
+        "summary": "Processes, tasks, automations, and team tools."
+      },
+      "insights": {
+        "label": "Insights",
+        "summary": "AI, smart recommendations, and management context for your business."
+      },
+      "settings": {
+        "label": "Settings",
+        "summary": "Organization, team, integrations, AI, and billing settings."
+      }
+    },
+    "utility": {
+      "help": {
+        "label": "Help",
+        "summary": "A short guide, clear workflow, and shortcuts to main screens."
+      },
+      "business": {
+        "label": "Business hub",
+        "summary": "Cross-view of clients, documents, pricing, and operations."
+      },
+      "intelligence": {
+        "label": "Intelligence",
+        "summary": "Executive AI, cross-cutting insights, and decision tracking."
+      },
+      "admin": {
+        "label": "Admin",
+        "summary": "Platform control, broadcasts, subscriptions, and operator health."
+      },
+      "success": {
+        "label": "Success",
+        "summary": "Confirm your path and move quickly to the next step."
+      }
+    },
+    "advanced": {
+      "label": "Advanced tools",
+      "summary": "Central access to deep tools, bridges, and advanced systems."
+    },
+    "advancedPage": {
+      "kicker": "Advanced tools",
+      "title": "BSD-YBM’s deep tools are organized here without cluttering your daily workspace.",
+      "subtitle": "The default is the `/app` environment, but when you need deeper control, advanced analysis, or expert tools, everything is grouped in one clear place.",
+      "backCta": "Back to Workspace v2"
+    },
+    "advancedCards": {
+      "onboarding": {
+        "title": "Smart onboarding",
+        "body": "A setup wizard that turns your organization’s state into clear steps: trade, connections, subscription, portal, and documents."
+      },
+      "automations": {
+        "title": "Automation Center",
+        "body": "One hub for automations, recommended scripts, and flows tied to documents, billing, and clients."
+      },
+      "portal": {
+        "title": "Client Portal",
+        "body": "Manage the public portal, domain, document sharing, and what clients see outside the internal app."
+      },
+      "inbox": {
+        "title": "Advanced control center",
+        "body": "Monitoring, control, and deep workflows for ops and management teams."
+      },
+      "clients": {
+        "title": "Advanced CRM",
+        "body": "Full CRM tools when you need deeper control, reports, and power features."
+      },
+      "insights": {
+        "title": "Advanced AI Hub",
+        "body": "AI tabs, scanners, and deeper analytics for advanced work."
+      },
+      "settings": {
+        "title": "Advanced settings",
+        "body": "The full settings center for areas that need finer control over org and integrations."
+      },
+      "operations": {
+        "title": "Advanced operations",
+        "body": "Workflows, team deep tools, and processes across departments or systems."
+      },
+      "meckano": {
+        "title": "Meckano",
+        "body": "The dedicated field module stays here as an advanced workspace for entitled subscribers only."
+      }
+    }
+  },
+  "workspaceHome": {
+    "eyebrow": "Home",
+    "advancedCta": "Advanced tools",
+    "stats": {
+      "activeProjects": "Active projects",
+      "billingVolume": "Billing volume (invoices)"
+    },
+    "scheduleRow": "Schedule progress (summary)",
+    "projectsTitle": "Projects",
+    "projectsSubtitle": "Active projects in the organization (last three)",
+    "demoProjects": {
+      "p1": "Sample: construction site — Tel Aviv",
+      "p2": "Sample: office renovation",
+      "p3": "Add projects from the clients screen"
+    },
+    "updatedPrefix": "Updated:",
+    "docsActivityTitle": "Recent document activity",
+    "docsEmptyHint": "Upload your first document from the documents screen — it will appear here.",
+    "shortcutsEyebrow": "Shortcuts",
+    "shortcutsTitle": "Jump straight to the next workspace",
+    "moreEyebrow": "More in the app",
+    "moreTitle": "Setup, automation, and portal",
+    "moreLinks": {
+      "onboarding": { "label": "Onboarding", "summary": "Organization and trade fit." },
+      "automations": { "label": "Automations", "summary": "Scripts for documents and billing." },
+      "portal": { "label": "Client portal", "summary": "Branding and domain." },
+      "admin": { "label": "System health", "summary": "Admin and logs." }
+    },
+    "tipsTitle": "Quick tips",
+    "tips": {
+      "trade": "Set your professional trade in settings so AI and menus speak your language.",
+      "upload": "Upload supplier documents on the documents screen — summaries update on the dashboard."
+    }
+  },
+  "workspaceShell": {
+    "refreshingOverlay": "Refreshing workspace…"
+  }
+}

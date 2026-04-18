@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { withWorkspacesAuth } from "@/lib/api-handler";
 import type { Document } from "@prisma/client";
 
 /** חיפוש מסמכי ERP (ארכיון חכם) – פרמטר `q` */
-export async function GET(req: Request) {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizationId;
-  if (!orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export const GET = withWorkspacesAuth(async (req, { orgId }) => {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.trim();
 
@@ -36,4 +29,4 @@ export async function GET(req: Request) {
   `;
 
   return NextResponse.json({ documents: docs, q });
-}
+});

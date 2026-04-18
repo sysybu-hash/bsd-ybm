@@ -13,6 +13,7 @@ import {
   MailWarning,
   Sparkles,
 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
@@ -67,6 +68,8 @@ export default function InboxWorkspaceV2({
   reviewCount,
   missingInfoCount,
 }: Props) {
+  const { t, dir, locale } = useI18n();
+  const dateLocale = locale === "he" ? "he-IL" : locale === "ru" ? "ru-RU" : "en-GB";
   const advancedInboxHref = getAdvancedWorkspaceHref("inbox");
   const [notifications, setNotifications] = useState(initialNotifications);
   const [markingAll, setMarkingAll] = useState(false);
@@ -109,33 +112,31 @@ export default function InboxWorkspaceV2({
   }
 
   const summaryItems = [
-    { label: "לא נקראו", value: unreadCount.toString(), icon: BellRing },
-    { label: "גבייה באיחור", value: overdueCount.toString(), icon: CreditCard },
-    { label: "לבדיקה", value: reviewCount.toString(), icon: FileWarning },
-    { label: "חוסרים", value: missingInfoCount.toString(), icon: MailWarning },
+    { label: t("workspaceInbox.summaryUnread"), value: unreadCount.toString(), icon: BellRing },
+    { label: t("workspaceInbox.summaryOverdue"), value: overdueCount.toString(), icon: CreditCard },
+    { label: t("workspaceInbox.summaryReview"), value: reviewCount.toString(), icon: FileWarning },
+    { label: t("workspaceInbox.summaryMissing"), value: missingInfoCount.toString(), icon: MailWarning },
   ];
 
   return (
-    <div className="grid gap-5" dir="rtl">
+    <div className="grid gap-5" dir={dir}>
       <section className="v2-panel v2-panel-soft p-6 sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <span className="v2-eyebrow">Inbox Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceInbox.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-4xl">
-              כל מה שדורש טיפול מרוכז במקום אחד.
+              {t("workspaceInbox.heroTitle")}
             </h1>
-            <p className="mt-3 text-base leading-7 text-[color:var(--v2-muted)]">
-              תיבת העבודה מציגה רק את מה שצריך החלטה, מעקב או פעולה עכשיו.
-            </p>
+            <p className="mt-3 text-base leading-7 text-[color:var(--v2-muted)]">{t("workspaceInbox.heroSubtitle")}</p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href={advancedInboxHref} className="v2-button v2-button-primary">
-              מרכז בקרה מתקדם
+              {t("workspaceInbox.advancedCta")}
               <ExternalLink className="h-4 w-4" aria-hidden />
             </Link>
             <Link href="/app/clients" className="v2-button v2-button-secondary">
-              מעבר ללקוחות
+              {t("workspaceInbox.clientsCta")}
               <Sparkles className="h-4 w-4" aria-hidden />
             </Link>
           </div>
@@ -163,17 +164,15 @@ export default function InboxWorkspaceV2({
           <div className="v2-panel p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-lg font-black text-[color:var(--v2-ink)]">לטיפול עכשיו</p>
-                <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">
-                  פריטים מסודרים לפי השפעה על עבודה, כסף ואיכות נתונים.
-                </p>
+                <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.priorityTitle")}</p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{t("workspaceInbox.prioritySubtitle")}</p>
               </div>
             </div>
 
             <div className="mt-5 grid gap-3">
               {priorityItems.length === 0 ? (
                 <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-5 text-sm text-[color:var(--v2-muted)]">
-                  אין כרגע פריטים דחופים. אפשר להמשיך לעבודה שוטפת.
+                  {t("workspaceInbox.priorityEmpty")}
                 </div>
               ) : null}
 
@@ -199,13 +198,13 @@ export default function InboxWorkspaceV2({
           <div className="v2-panel p-5 sm:p-6">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">קרוב למועד</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.dueSoonTitle")}</p>
             </div>
 
             <div className="mt-4 grid gap-3">
               {dueSoon.length === 0 ? (
                 <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
-                  אין כרגע פריטי גבייה קרובים.
+                  {t("workspaceInbox.dueSoonEmpty")}
                 </div>
               ) : null}
 
@@ -216,10 +215,11 @@ export default function InboxWorkspaceV2({
                     <p className="text-sm font-black text-[color:var(--v2-ink)]">{formatCurrencyILS(item.total)}</p>
                   </div>
                   <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
-                    יעד תשלום: {item.dueDate ? new Date(item.dueDate).toLocaleDateString("he-IL") : "לא הוגדר"}
+                    {t("workspaceInbox.paymentDuePrefix")}{" "}
+                    {item.dueDate ? new Date(item.dueDate).toLocaleDateString(dateLocale) : t("workspaceInbox.paymentDueUnset")}
                   </p>
                   <Link href={item.href} className="mt-3 inline-flex text-sm font-black text-[color:var(--v2-accent)]">
-                    פתיחת אזור החיוב
+                    {t("workspaceInbox.openBillingArea")}
                   </Link>
                 </div>
               ))}
@@ -230,8 +230,8 @@ export default function InboxWorkspaceV2({
         <aside className="v2-panel v2-panel-highlight p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">התראות מערכת</p>
-              <p className="mt-2 text-sm text-[color:var(--v2-muted)]">עדכונים, תזכורות והודעות מערכת.</p>
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.notificationsTitle")}</p>
+              <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{t("workspaceInbox.notificationsSubtitle")}</p>
             </div>
             {unread > 0 ? (
               <button
@@ -245,7 +245,7 @@ export default function InboxWorkspaceV2({
                 ) : (
                   <CheckCheck className="h-4 w-4" aria-hidden />
                 )}
-                סמן הכול כנקרא
+                {t("workspaceInbox.markAllRead")}
               </button>
             ) : null}
           </div>
@@ -253,7 +253,7 @@ export default function InboxWorkspaceV2({
           <div className="mt-4 grid gap-3">
             {notifications.length === 0 ? (
               <div className="rounded-2xl bg-white/84 px-4 py-4 text-sm text-[color:var(--v2-muted)]">
-                אין כרגע התראות מערכת.
+                {t("workspaceInbox.notificationsEmpty")}
               </div>
             ) : null}
 
@@ -264,7 +264,7 @@ export default function InboxWorkspaceV2({
                 onClick={() => {
                   if (!notification.read) void markOneRead(notification.id);
                 }}
-                className={`rounded-2xl px-4 py-4 text-right transition ${
+                className={`rounded-2xl px-4 py-4 text-end transition ${
                   notification.read ? "bg-white/64" : "bg-white text-[color:var(--v2-ink)] shadow-sm"
                 }`}
               >
