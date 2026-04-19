@@ -27,6 +27,7 @@ import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/a
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import type { MessageTree } from "@/lib/i18n/keys";
 import type { TFunction } from "@/lib/i18n/translate";
+import { resolveActiveAppNavItem } from "@/lib/app-shell-active-nav";
 
 function readStringArray(messages: MessageTree, path: string): string[] {
   const parts = path.split(".");
@@ -116,13 +117,6 @@ function createMessage(
   };
 }
 
-function isRouteActive(pathname: string, href: string) {
-  const current = pathname.replace(/\/$/, "") || "/";
-  const target = href.replace(/\/$/, "") || "/";
-  if (target === "/app") return current === "/app";
-  return current === target || current.startsWith(`${target}/`);
-}
-
 function resolveSectionMeta(
   pathname: string,
   industryProfile: IndustryProfile,
@@ -130,7 +124,7 @@ function resolveSectionMeta(
   hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>,
 ) {
   const nav = buildAppNavCollection(industryProfile, t, { hiddenPrimaryRouteIds });
-  const current = nav.all.find((item) => isRouteActive(pathname, item.href)) ?? nav.primary[0];
+  const current = resolveActiveAppNavItem(pathname, nav);
 
   if (current.href === "/app/clients") {
     return {
@@ -187,15 +181,15 @@ function DockButton({
     <button
       type="button"
       onClick={onClick}
-      className={`group relative flex h-12 w-12 touch-manipulation items-center justify-center rounded-2xl border transition ${
+      className={`group relative flex h-10 w-10 touch-manipulation items-center justify-center rounded-xl border transition ${
         active
-          ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent)] text-white shadow-[0_18px_36px_-24px_rgba(15,23,42,0.55)]"
-          : "border-slate-200 bg-white text-slate-600 shadow-sm hover:border-slate-300 hover:text-slate-900"
+          ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent)] text-white shadow-sm"
+          : "border-slate-200/90 bg-white/95 text-slate-600 shadow-sm hover:border-slate-300 hover:text-slate-900"
       }`}
       aria-label={label}
       title={label}
     >
-      <Icon className="h-5 w-5 transition group-hover:scale-110" aria-hidden />
+      <Icon className="h-4 w-4 transition group-hover:scale-105" aria-hidden />
     </button>
   );
 }
@@ -500,9 +494,9 @@ export default function WorkspaceUtilityDock({
     "fixed z-[255] flex max-h-[min(calc(100dvh-7rem),calc(100vh-7rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl bottom-[max(6rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))] lg:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] lg:left-[max(6rem,env(safe-area-inset-left,0px))] lg:max-h-[min(calc(100dvh-3rem),calc(100vh-3rem))]";
 
   const desktopDock = (
-    <div className="fixed z-[260] hidden flex-col gap-3 lg:flex bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] left-[max(1.5rem,env(safe-area-inset-left,0px))]">
-      <div className="rounded-[28px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 p-2 shadow-[0_28px_60px_-32px_rgba(15,23,42,0.45)] backdrop-blur-xl">
-        <div className="flex flex-col gap-2">
+    <div className="fixed z-[260] hidden flex-col gap-2 lg:flex bottom-[max(1rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))]">
+      <div className="rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/95 p-1.5 shadow-md backdrop-blur-md">
+        <div className="flex flex-col gap-1">
           <DockButton
             active={openPanel === "accessibility"}
             icon={Accessibility}
@@ -534,7 +528,7 @@ export default function WorkspaceUtilityDock({
 
   const mobileDock = (
     <div className="fixed z-[260] lg:hidden left-[max(0.75rem,env(safe-area-inset-left,0px))] right-[max(0.75rem,env(safe-area-inset-right,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
-      <div className="grid grid-cols-4 gap-2 rounded-[28px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/96 p-2 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.5)] backdrop-blur-xl">
+      <div className="grid grid-cols-4 gap-1 rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/95 p-1.5 shadow-md backdrop-blur-md">
         <DockButton
           active={openPanel === "accessibility"}
           icon={Accessibility}

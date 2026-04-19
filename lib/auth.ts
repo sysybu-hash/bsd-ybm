@@ -201,12 +201,16 @@ export const authOptions: NextAuthOptions = {
         const tid = typeof token.id === "string" && token.id.length > 0 ? token.id : null;
         const tokenEmailRaw = typeof token.email === "string" ? token.email.trim() : "";
         if (tid && !tokenEmailRaw) {
-          const row = await prisma.user.findUnique({
-            where: { id: tid },
-            select: { email: true, accountStatus: true },
-          });
-          if (row?.email && row.accountStatus === AccountStatus.ACTIVE) {
-            token.email = row.email.trim().toLowerCase();
+          try {
+            const row = await prisma.user.findUnique({
+              where: { id: tid },
+              select: { email: true, accountStatus: true },
+            });
+            if (row?.email && row.accountStatus === AccountStatus.ACTIVE) {
+              token.email = row.email.trim().toLowerCase();
+            }
+          } catch (e) {
+            console.warn("[auth/jwt] DB unreachable — skipping email recovery from id", e);
           }
         }
       }
@@ -232,60 +236,66 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      const dev = await ensurePlatformDeveloperAccount(email);
-      if (dev) {
-        token.id = dev.id;
-        token.role = dev.role;
-        token.organizationId = dev.organizationId;
-        return token;
-      }
+      try {
+        const dev = await ensurePlatformDeveloperAccount(email);
+        if (dev) {
+          token.id = dev.id;
+          token.role = dev.role;
+          token.organizationId = dev.organizationId;
+          return token;
+        }
 
-      const dbUser = await prisma.user.findFirst({
-        where: { email: { equals: email, mode: "insensitive" } },
-        select: {
-          id: true,
-          role: true,
-          organizationId: true,
-          accountStatus: true,
-          name: true,
-          image: true,
-          organization: {
-            select: { industry: true, constructionTrade: true },
+        const dbUser = await prisma.user.findFirst({
+          where: { email: { equals: email, mode: "insensitive" } },
+          select: {
+            id: true,
+            role: true,
+            organizationId: true,
+            accountStatus: true,
+            name: true,
+            image: true,
+            organization: {
+              select: { industry: true, constructionTrade: true },
+            },
           },
-        },
-      });
+        });
 
-      if (!dbUser || dbUser.accountStatus !== AccountStatus.ACTIVE) {
-        token.id = "";
-        token.role = "";
-        token.organizationId = null;
+        if (!dbUser || dbUser.accountStatus !== AccountStatus.ACTIVE) {
+          token.id = "";
+          token.role = "";
+          token.organizationId = null;
+          return token;
+        }
+
+        token.id = dbUser.id;
+        token.organizationId = dbUser.organizationId;
+        token.organizationIndustry = dbUser.organization?.industry ?? "CONSTRUCTION";
+        token.organizationConstructionTrade =
+          dbUser.organization?.constructionTrade ?? "GENERAL_CONTRACTOR";
+
+        /**
+         * הגנה כפולה: אם משתמש שאינו Steel Admin קיבל SUPER_ADMIN ב-DB (באג עבר) —
+         * מתקנים את ה-DB מיד ומורידים ל-ORG_ADMIN כדי שכל שאילתת DB ישירה גם מוגנת.
+         */
+        if (String(dbUser.role) === "SUPER_ADMIN" && !isAdmin(email)) {
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: { role: "ORG_ADMIN" },
+          });
+          token.role = "ORG_ADMIN";
+        } else {
+          token.role = jwtRoleForSession(email, dbUser.role);
+        }
+
+        if (dbUser.name) token.name = dbUser.name;
+        if (dbUser.image) token.picture = dbUser.image;
+
+        return token;
+      } catch (e) {
+        /** DB לא זמין (רשת, Neon במצב שינה, וכו') — לא מפילים את כל האפליקציה */
+        console.warn("[auth/jwt] DB unreachable — returning stale JWT without refresh", e);
         return token;
       }
-
-      token.id = dbUser.id;
-      token.organizationId = dbUser.organizationId;
-      token.organizationIndustry = dbUser.organization?.industry ?? "CONSTRUCTION";
-      token.organizationConstructionTrade =
-        dbUser.organization?.constructionTrade ?? "GENERAL_CONTRACTOR";
-
-      /**
-       * הגנה כפולה: אם משתמש שאינו Steel Admin קיבל SUPER_ADMIN ב-DB (באג עבר) —
-       * מתקנים את ה-DB מיד ומורידים ל-ORG_ADMIN כדי שכל שאילתת DB ישירה גם מוגנת.
-       */
-      if (String(dbUser.role) === "SUPER_ADMIN" && !isAdmin(email)) {
-        await prisma.user.update({
-          where: { id: dbUser.id },
-          data: { role: "ORG_ADMIN" },
-        });
-        token.role = "ORG_ADMIN";
-      } else {
-        token.role = jwtRoleForSession(email, dbUser.role);
-      }
-
-      if (dbUser.name) token.name = dbUser.name;
-      if (dbUser.image) token.picture = dbUser.image;
-
-      return token;
     },
   },
   events: {

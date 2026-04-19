@@ -5,6 +5,7 @@ describe("getMessages merge", () => {
     const m = getMessages("he") as Record<string, unknown>;
     expect(m.marketingProduct).toBeDefined();
     expect(m.marketingHome).toBeDefined();
+    expect((m.brandBriefPage as Record<string, unknown>).metaTitle).toBeTruthy();
     expect((m.aboutPage as Record<string, string>).shellDescription).toBeTruthy();
   });
 

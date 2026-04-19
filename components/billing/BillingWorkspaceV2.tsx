@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
+import { useI18n } from "@/components/I18nProvider";
 
 type BillingDocumentRecord = {
   id: string;
@@ -122,6 +123,7 @@ function DocumentCard({ document }: { document: BillingDocumentRecord }) {
 }
 
 export default function BillingWorkspaceV2({ documents }: Props) {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
@@ -160,7 +162,7 @@ export default function BillingWorkspaceV2({ documents }: Props) {
       <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">Billing Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceBilling.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
               חלון חיוב רגוע, ברור ומדויק שמרכז תזרים, גבייה ומסמכים פיננסיים.
             </h1>

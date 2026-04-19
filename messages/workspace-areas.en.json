@@ -241,5 +241,17 @@
     },
     "confirmDeleteScanned": "Delete document \"{name}\"?",
     "confirmDeleteIssued": "Delete document {type} #{number}?"
+  },
+  "workspaceSettings": {
+    "eyebrow": "Settings workspace"
+  },
+  "workspaceBilling": {
+    "eyebrow": "Billing workspace"
+  },
+  "workspaceSubscription": {
+    "eyebrow": "Subscriptions workspace"
+  },
+  "workspacePortal": {
+    "eyebrow": "Client portal"
   }
 }

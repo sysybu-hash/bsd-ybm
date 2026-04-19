@@ -24,6 +24,10 @@ import {
 import { getHiddenPrimaryRouteIds, toWorkspaceFeatureInput } from "@/lib/workspace-features";
 import { WorkspaceShellTransitionProvider } from "@/components/app-shell/WorkspaceShellTransition";
 import { useI18n } from "@/components/I18nProvider";
+import {
+  isAppNavPathActive,
+  resolveActiveAppNavItem,
+} from "@/lib/app-shell-active-nav";
 
 type Props = Readonly<{
   children: ReactNode;
@@ -39,13 +43,6 @@ type Props = Readonly<{
     industryProfile: IndustryProfile;
   };
 }>;
-
-function isRouteActive(pathname: string, href: string) {
-  const current = pathname.replace(/\/$/, "") || "/";
-  const target = href.replace(/\/$/, "") || "/";
-  if (target === "/app") return current === "/app";
-  return current === target || current.startsWith(`${target}/`);
-}
 
 function SidebarLink({
   href,
@@ -132,7 +129,7 @@ export default function AppShellV2({ children, user }: Props) {
       item.showInNav !== false &&
       visibleUtilityIds.includes(item.id as "help" | "business" | "intelligence" | "admin"),
   );
-  const currentSection = nav.all.find((item) => isRouteActive(pathname, item.href)) ?? nav.primary[0];
+  const currentSection = resolveActiveAppNavItem(pathname, nav);
 
   const roleLabel = getWorkspaceRoleLabel(accessContext);
   const modeLabel = getWorkspaceModeLabel(accessContext);
@@ -157,7 +154,7 @@ export default function AppShellV2({ children, user }: Props) {
 
       <div className="grid min-h-screen lg:grid-cols-[276px_1fr]">
         <aside className="hidden border-l border-[color:var(--app-sidebar-border)] bg-[color:var(--app-sidebar-bg)] lg:block">
-          <div className="sticky top-0 flex min-h-screen flex-col px-4 py-5">
+          <div className="sticky top-0 flex min-h-screen flex-col px-3 py-4">
             <BsdYbmLogo
               href="/app"
               variant="sidebar"
@@ -178,7 +175,7 @@ export default function AppShellV2({ children, user }: Props) {
                     href={item.href}
                     label={item.label}
                     icon={item.icon}
-                    active={isRouteActive(pathname, item.href)}
+                    active={isAppNavPathActive(pathname, item.href)}
                   />
                 ))}
               </nav>
@@ -196,7 +193,7 @@ export default function AppShellV2({ children, user }: Props) {
                       href={item.href}
                       label={item.label}
                       icon={item.icon}
-                      active={isRouteActive(pathname, item.href)}
+                      active={isAppNavPathActive(pathname, item.href)}
                     />
                   ))}
                 </nav>
@@ -251,21 +248,14 @@ export default function AppShellV2({ children, user }: Props) {
         </aside>
 
         <div className="min-w-0 bg-[color:var(--app-main-bg)]">
-          <header className="sticky top-0 z-30 border-b border-slate-200/90 bg-white/95 shadow-sm backdrop-blur-md">
-            <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm">
+            <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-sm font-black text-[color:var(--v2-accent)] shadow-sm lg:hidden">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-xs font-black text-[color:var(--v2-accent)] shadow-sm lg:hidden">
                   {initials}
                 </div>
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
-                    <span>{user.industryProfile.industryLabel}</span>
-                    <span>•</span>
-                    <span>{roleLabel}</span>
-                    <span>•</span>
-                    <span>{tierLabel}</span>
-                  </div>
-                  <h1 className="truncate text-lg font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-xl">
+                  <h1 className="truncate text-base font-black tracking-[-0.04em] text-[color:var(--v2-ink)] sm:text-lg">
                     {currentSection.label}
                   </h1>
                 </div>
@@ -297,7 +287,7 @@ export default function AppShellV2({ children, user }: Props) {
                   href={item.href}
                   label={item.label}
                   icon={item.icon}
-                  active={isRouteActive(pathname, item.href)}
+                  active={isAppNavPathActive(pathname, item.href)}
                 />
               ))}
             </nav>
@@ -310,7 +300,7 @@ export default function AppShellV2({ children, user }: Props) {
                     href={item.href}
                     label={item.label}
                     icon={item.icon}
-                    active={isRouteActive(pathname, item.href)}
+                    active={isAppNavPathActive(pathname, item.href)}
                   />
                 ))}
               </nav>
@@ -319,7 +309,7 @@ export default function AppShellV2({ children, user }: Props) {
 
           <main
             id="app-main-content"
-            className="mx-auto max-w-[1600px] px-4 py-5 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8 lg:pb-8"
+            className="mx-auto max-w-[1600px] px-4 py-4 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8 lg:pb-6"
           >
             {children}
           </main>

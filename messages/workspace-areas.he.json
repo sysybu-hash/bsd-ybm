@@ -241,5 +241,17 @@
     },
     "confirmDeleteScanned": "למחוק את המסמך \"{name}\"?",
     "confirmDeleteIssued": "למחוק את המסמך {type} #{number}?"
+  },
+  "workspaceSettings": {
+    "eyebrow": "מרחב הגדרות"
+  },
+  "workspaceBilling": {
+    "eyebrow": "מרחב חיוב וגבייה"
+  },
+  "workspaceSubscription": {
+    "eyebrow": "מרחב מנויים"
+  },
+  "workspacePortal": {
+    "eyebrow": "פורטל לקוחות"
   }
 }

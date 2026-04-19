@@ -2,96 +2,212 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
-  BadgeCheck,
   BarChart3,
-  Bot,
   BrainCircuit,
-  CheckCircle2,
+  Building2,
   CreditCard,
   FileText,
-  ScanSearch,
-  ShieldCheck,
+  Linkedin,
+  Mail,
+  MapPinned,
+  Menu,
+  Quote,
   Sparkles,
   UsersRound,
+  X,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import { ADMIN_SUBSCRIPTION_TIER_OPTIONS, tierAllowance, tierLabelHe } from "@/lib/subscription-tier-config";
 import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useI18n } from "@/components/I18nProvider";
+import type { AppLocale } from "@/lib/i18n/config";
 
-type MH = {
-  nav: {
-    product: string;
-    workflows: string;
-    solutions: string;
-    pricing: string;
-    about: string;
-    contact: string;
-  };
-  header: { tagline: string };
-  hero: {
-    kicker: string;
-    title: string;
-    subtitle: string;
-    ctaRegister: string;
-    ctaDemo: string;
-  };
-  features: { title: string; body: string }[];
-  mock: {
-    attentionLabel: string;
-    attentionTitle: string;
-    boardKicker: string;
-    boardTitle: string;
-    boardBadge: string;
-    focusLabel: string;
-    focusTitle: string;
-    imageAlt: string;
-    suggestLabel: string;
-    suggestTitle: string;
-    suggestBody: string;
-    financeLabel: string;
-    stats: { label: string; value: string }[];
-  };
-  modulesSection: { label: string; title: string; body: string };
-  modules: { title: string; body: string }[];
-  workflow: {
-    label: string;
-    title: string;
-    lead: string;
-    stepSub: string;
-    steps: string[];
-  };
-  industries: { label: string; title: string; body: string; tags: string[] };
-  why: { label: string; title: string; rows: { title: string; body: string }[] };
-  proofPoints: string[];
-  plans: { label: string; title: string; body: string; featured: string; joinPrefix: string };
-  cta: { label: string; title: string; body: string; primary: string; secondary: string };
-  footer: { brand: string; lead: string };
+type EditorialNav = {
+  about: string;
+  projects: string;
+  services: string;
+  blog: string;
+  contact: string;
 };
 
-const featureIcons = [UsersRound, CreditCard, BrainCircuit];
-const moduleIcons = [ScanSearch, ShieldCheck, BarChart3, Bot];
+type EditorialQuote = { body: string; role: string };
+type EditorialProjectCard = { title: string };
 
-function SectionLabel({ children }: { children: ReactNode }) {
-  return <span className="v2-eyebrow">{children}</span>;
+type Editorial = {
+  nav: EditorialNav;
+  heroEyebrow: string;
+  heroTitle: string;
+  heroLead: string;
+  heroCta: string;
+  heroSecondaryCta: string;
+  projectsSectionTitle: string;
+  projectCardCta: string;
+  projectCards: EditorialProjectCard[];
+  quotesSectionTitle: string;
+  quotes: EditorialQuote[];
+  featuredTitle: string;
+  featuredLead: string;
+  featuredCta: string;
+  footerProductTitle: string;
+  footerCompanyTitle: string;
+  footerLegalTitle: string;
+  footerContactBlurb: string;
+};
+
+type MHPlans = {
+  label: string;
+  title: string;
+  body: string;
+  featured: string;
+  joinPrefix: string;
+};
+
+type MHCta = {
+  label: string;
+  title: string;
+  body: string;
+  primary: string;
+  secondary: string;
+};
+
+type MHFooter = { brand: string; lead: string };
+
+type MHHero = { title: string; subtitle: string; ctaRegister: string; ctaDemo: string; kicker: string };
+type MHFeature = { title: string; body: string };
+type MHNav = {
+  product: string;
+  workflows: string;
+  solutions: string;
+  pricing: string;
+  about: string;
+  contact: string;
+};
+
+type MH = {
+  nav: MHNav;
+  header: { tagline: string };
+  hero: MHHero;
+  features: MHFeature[];
+  plans: MHPlans;
+  cta: MHCta;
+  footer: MHFooter;
+};
+
+const FEATURE_ICONS = [UsersRound, CreditCard, BrainCircuit] as const;
+
+/** כרטיסי «פרויקטים» — אייקון + גרדיאנט לכל שורה (לא רקע ריק) */
+const PROJECT_CARD_VISUALS: readonly { Icon: LucideIcon; panel: string }[] = [
+  {
+    Icon: Building2,
+    panel:
+      "bg-gradient-to-br from-slate-800 via-slate-700 to-teal-950 shadow-inner",
+  },
+  {
+    Icon: FileText,
+    panel: "bg-gradient-to-br from-teal-900/95 via-slate-800 to-slate-900 shadow-inner",
+  },
+  {
+    Icon: CreditCard,
+    panel: "bg-gradient-to-br from-emerald-900/90 via-slate-800 to-slate-950 shadow-inner",
+  },
+  {
+    Icon: MapPinned,
+    panel: "bg-gradient-to-br from-slate-900 via-teal-950/80 to-slate-950 shadow-inner",
+  },
+  {
+    Icon: BarChart3,
+    panel: "bg-gradient-to-br from-cyan-950/90 via-slate-800 to-slate-900 shadow-inner",
+  },
+  {
+    Icon: Sparkles,
+    panel: "bg-gradient-to-br from-violet-950/70 via-slate-800 to-teal-950 shadow-inner",
+  },
+];
+
+function fallbackEditorial(mh: MH, locale: AppLocale, mhRaw: Record<string, unknown>): Editorial {
+  const blog =
+    locale === "he" ? "תוכן מקצועי" : locale === "ru" ? "Материалы" : "Insights";
+  const proofPoints = (mhRaw.proofPoints as string[] | undefined) ?? [];
+  const roleFallback =
+    locale === "he" ? "צוות משתמשים" : locale === "ru" ? "Команда пользователей" : "User team";
+  const quotes: EditorialQuote[] =
+    proofPoints.length >= 3
+      ? proofPoints.slice(0, 3).map((body) => ({ body, role: roleFallback }))
+      : mh.features.map((f) => ({ body: f.body, role: roleFallback }));
+  const featuredCta =
+    locale === "he" ? "לעמוד המוצר" : locale === "ru" ? "К продукту" : "Product overview";
+  return {
+    nav: {
+      about: mh.nav.about,
+      projects: mh.nav.product,
+      services: mh.nav.solutions,
+      blog,
+      contact: mh.nav.contact,
+    },
+    heroEyebrow: mh.hero.kicker,
+    heroTitle: mh.hero.title,
+    heroLead: mh.hero.subtitle,
+    heroCta: mh.hero.ctaDemo,
+    heroSecondaryCta: mh.hero.ctaRegister,
+    projectsSectionTitle: locale === "he" ? "יכולות המערכת" : locale === "ru" ? "Возможности" : "Capabilities",
+    projectCardCta: locale === "he" ? "למוצר" : locale === "ru" ? "К продукту" : "To product",
+    projectCards: mh.features.map((f) => ({ title: f.title })),
+    quotesSectionTitle: locale === "he" ? "מה אומרים אצלנו" : locale === "ru" ? "Отзывы" : "What teams say",
+    quotes,
+    featuredTitle: locale === "he" ? "BSD-YBM במבט על" : locale === "ru" ? "Обзор" : "Overview",
+    featuredLead: mh.hero.subtitle,
+    featuredCta,
+    footerProductTitle: locale === "he" ? "מוצר" : locale === "ru" ? "Продукт" : "Product",
+    footerCompanyTitle: locale === "he" ? "חברה" : locale === "ru" ? "Компания" : "Company",
+    footerLegalTitle: locale === "he" ? "משפטי" : locale === "ru" ? "Право" : "Legal",
+    footerContactBlurb: "",
+  };
+}
+
+function resolveEditorial(mhRaw: Record<string, unknown>, mh: MH, locale: AppLocale): Editorial {
+  const e = mhRaw.editorial as Editorial | undefined;
+  if (e?.nav?.about && e.heroTitle && e.projectCards?.length) {
+    return e;
+  }
+  return fallbackEditorial(mh, locale, mhRaw);
 }
 
 export default function MarketingHome() {
   const { dir, locale, messages, t } = useI18n();
-  const mh = (messages as Record<string, unknown>).marketingHome as MH;
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const navLinks = [
-    { href: "/#product", label: mh.nav.product },
-    { href: "/#workflows", label: mh.nav.workflows },
-    { href: "/solutions", label: mh.nav.solutions },
-    { href: "/pricing", label: mh.nav.pricing },
-    { href: "/about", label: mh.nav.about },
-    { href: "/contact", label: mh.nav.contact },
-  ];
+  const mhRaw = (messages as Record<string, unknown>).marketingHome as Record<string, unknown>;
+  const mh = mhRaw as unknown as MH;
+  const ed = useMemo(() => {
+    const mhInner = mhRaw as unknown as MH;
+    return resolveEditorial(mhRaw, mhInner, locale as AppLocale);
+  }, [mhRaw, locale]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileNavOpen]);
+
+  const editorialNav = useMemo(
+    () => [
+      { href: "/about", label: ed.nav.about },
+      { href: "/product#projects", label: ed.nav.projects },
+      { href: "/solutions", label: ed.nav.services },
+      { href: "/brief", label: ed.nav.blog },
+      { href: "/contact", label: ed.nav.contact },
+    ],
+    [ed.nav],
+  );
 
   const planCards = ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((tier) => {
     const allowance = tierAllowance(tier);
@@ -118,312 +234,366 @@ export default function MarketingHome() {
           : `${allowance.cheapScans} cheap scans · ${allowance.premiumScans} premium · ${
               allowance.unlimitedCompanies ? "Unlimited companies" : `Up to ${allowance.maxCompanies} companies`
             }`;
-    return {
-      tier,
-      label,
-      price,
-      summary,
-      featured: tier === "DEALER",
-    };
+    return { tier, label, price, summary, featured: tier === "DEALER" };
   });
 
+  const productFooterLinks = [
+    { href: "/product", label: t("publicShell.navProduct") },
+    { href: "/solutions", label: t("publicShell.navSolutions") },
+    { href: "/pricing", label: t("publicShell.navPricing") },
+    { href: "/demo", label: t("marketingHome.hero.ctaDemo") },
+  ];
+
+  const companyFooterLinks = [
+    { href: "/about", label: t("publicShell.navAbout") },
+    { href: "/contact", label: t("publicShell.navContact") },
+    { href: "/brief", label: t("publicShell.navBrief") },
+  ];
+
+  const legalFooterLinks = [
+    { href: "/privacy", label: t("landing.footerPrivacy") },
+    { href: "/terms", label: t("landing.footerTerms") },
+    { href: "/legal", label: t("landing.footerLegal") },
+  ];
+
   return (
-    <div className={`${marketingSans.className} v2-site-shell`} dir={dir}>
-      <header className="sticky top-0 z-40 border-b border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/88 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+    <div className={`${marketingSans.className} v2-site-shell bg-white`} dir={dir}>
+      <header className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <BsdYbmLogo href="/" variant="marketing-light" size="md" />
-            <span className="hidden min-w-0 flex-col sm:flex">
-              <span className="truncate text-[11px] font-semibold text-[color:var(--v2-muted)]">{mh.header.tagline}</span>
+            <span className="hidden min-w-0 truncate text-[11px] font-semibold text-slate-500 sm:inline">
+              {mh.header.tagline}
             </span>
           </div>
 
-          <nav className="hidden items-center gap-6 lg:flex">
-            {navLinks.map((item) => (
+          <nav className="hidden items-center gap-5 lg:flex" aria-label="ראשי">
+            {editorialNav.map((item) => (
               <Link
-                key={item.href}
+                key={`${item.href}-${item.label}`}
                 href={item.href}
-                className="text-sm font-semibold text-[color:var(--v2-muted)] transition hover:text-[color:var(--v2-ink)]"
+                className="whitespace-nowrap text-[13px] font-bold text-slate-600 transition hover:text-[color:var(--v2-ink)]"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="v2-button v2-button-ghost hidden sm:inline-flex">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <LanguageSwitcher className="max-sm:[&_select]:min-w-[7rem] max-sm:[&_select]:px-2 max-sm:[&_select]:text-xs" />
+            <Link
+              href="/login"
+              className="hidden text-[13px] font-bold text-slate-600 hover:text-[color:var(--v2-ink)] md:inline"
+            >
               {t("publicShell.ctaLogin")}
             </Link>
-            <Link href="/register" className="v2-button v2-button-primary">
+            <Link
+              href="/register"
+              className="hidden items-center rounded-lg bg-[color:var(--v2-accent)] px-3 py-2 text-[13px] font-black text-white shadow-sm transition hover:bg-[color:var(--v2-accent-strong)] sm:inline-flex"
+            >
               {t("publicShell.ctaStart")}
             </Link>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-800 lg:hidden"
+              aria-expanded={mobileNavOpen}
+              aria-controls="marketing-mobile-nav"
+              aria-label={locale === "he" ? "פתיחת תפריט" : "Open menu"}
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </header>
 
+      {mobileNavOpen ? (
+        <div className="fixed inset-0 z-50 lg:hidden" id="marketing-mobile-nav">
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"
+            aria-label={locale === "he" ? "סגירת תפריט" : "Close menu"}
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div
+            className={`absolute inset-y-0 flex w-[min(100%,20rem)] flex-col bg-white shadow-2xl ${
+              dir === "rtl" ? "right-0 border-l border-slate-200" : "left-0 border-r border-slate-200"
+            }`}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+              <span className="text-sm font-black text-slate-900">BSD-YBM</span>
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label={locale === "he" ? "סגירה" : "Close"}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-4" aria-label="מובייל">
+              {editorialNav.map((item) => (
+                <Link
+                  key={`m-${item.href}`}
+                  href={item.href}
+                  className="rounded-xl px-3 py-3 text-base font-bold text-slate-800 hover:bg-slate-50"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <hr className="my-2 border-slate-100" />
+              <Link
+                href="/login"
+                className="rounded-xl px-3 py-3 text-base font-bold text-slate-600 hover:bg-slate-50"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                {t("publicShell.ctaLogin")}
+              </Link>
+              <Link
+                href="/register"
+                className="mt-2 inline-flex items-center justify-center rounded-xl bg-[color:var(--v2-accent)] px-3 py-3 text-base font-black text-white"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                {t("publicShell.ctaStart")}
+              </Link>
+            </nav>
+          </div>
+        </div>
+      ) : null}
+
       <main>
-        <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0">
-            <Image
-              src="/marketing/marketing-bg-industrial-16x9.png"
-              alt=""
-              fill
-              className="object-cover opacity-[0.2]"
-              sizes="100vw"
-              priority
-              aria-hidden
-            />
-            <div className="absolute inset-0 bg-[color:var(--v2-canvas)]/88" />
-            <div className="v2-orb v2-orb-primary" />
-            <div className="v2-grid-overlay" />
-          </div>
-
-          <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-14 pt-12 sm:gap-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:px-8 lg:pb-16 lg:pt-16">
-            <div className="space-y-6 sm:space-y-7">
-              <SectionLabel>{mh.hero.kicker}</SectionLabel>
-              <div className="space-y-4 sm:space-y-5">
-                <h1 className="max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-5xl lg:text-6xl">
-                  {mh.hero.title}
-                </h1>
-                <p className="max-w-2xl text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.hero.subtitle}</p>
+        <section className="relative bg-white" aria-labelledby="marketing-hero-heading">
+          {/* סדר ויזואלי קבוע: תמונה שמאל, טקסט ימין (גם ב־RTL) */}
+          <div className="grid min-h-0 lg:grid-cols-2 lg:items-stretch" dir="ltr">
+            <div className="relative min-h-[260px] w-full lg:min-h-[min(90vh,820px)]">
+              <div className="absolute inset-0 lg:[clip-path:polygon(0_0,100%_0,68%_100%,0_100%)]">
+                <Image
+                  src="/marketing/bsd-ybm-hero-boulevard-16x9.png"
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" aria-hidden />
               </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Link href="/register" className="v2-button v2-button-primary">
-                  {mh.hero.ctaRegister}
-                  <ArrowLeft className="h-4 w-4" aria-hidden />
-                </Link>
-                <Link href="/demo" className="v2-button v2-button-secondary">
-                  {mh.hero.ctaDemo}
-                  <ArrowUpRight className="h-4 w-4" aria-hidden />
-                </Link>
+              <div className="pointer-events-none absolute bottom-6 end-6 z-10 hidden w-[min(44%,210px)] rotate-2 border-4 border-white shadow-2xl lg:block">
+                <div className="relative aspect-[4/3] w-full grayscale">
+                  <Image src="/marketing/bsd-ybm-crm-erp-bridge.png" alt="" fill className="object-cover" sizes="210px" />
+                </div>
               </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {mh.features.map(({ title, body }, i) => {
-                  const Icon = featureIcons[i] ?? UsersRound;
-                  return (
-                    <article key={title} className="v2-panel v2-panel-soft p-4 sm:p-5">
-                      <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
-                        <Icon className="h-5 w-5" aria-hidden />
-                      </span>
-                      <h2 className="text-lg font-black text-[color:var(--v2-ink)]">{title}</h2>
-                      <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
-                    </article>
-                  );
-                })}
+              <div className="pointer-events-none absolute end-[15%] top-[10%] z-10 hidden w-[min(36%,180px)] -rotate-2 border-4 border-white shadow-2xl lg:block">
+                <div className="relative aspect-[4/3] w-full grayscale">
+                  <Image
+                    src="/marketing/bsd-ybm-documents-ai-flow.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="180px"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -left-4 top-6 hidden rounded-[28px] border border-white/60 bg-white/80 px-4 py-3 shadow-[0_30px_70px_-35px_rgba(15,23,42,0.45)] backdrop-blur sm:block">
-                <p className="text-xs font-bold text-[color:var(--v2-muted)]">{mh.mock.attentionLabel}</p>
-                <p className="mt-1 text-sm font-black text-[color:var(--v2-ink)]">{mh.mock.attentionTitle}</p>
-              </div>
-
-              <div className="v2-dashboard-frame">
-                <div className="flex items-center justify-between border-b border-[color:var(--v2-line)] px-5 py-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.28em] text-[color:var(--v2-muted)]">{mh.mock.boardKicker}</p>
-                    <p className="mt-2 text-xl font-black text-[color:var(--v2-ink)]">{mh.mock.boardTitle}</p>
-                  </div>
-                  <span className="rounded-full bg-[color:var(--v2-success-soft)] px-3 py-1 text-xs font-bold text-[color:var(--v2-success)]">
-                    {mh.mock.boardBadge}
-                  </span>
-                </div>
-
-                <div className="grid gap-4 p-5">
-                  <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                    <div className="v2-panel p-4">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-bold text-[color:var(--v2-muted)]">{mh.mock.focusLabel}</p>
-                          <p className="text-lg font-black text-[color:var(--v2-ink)]">{mh.mock.focusTitle}</p>
-                        </div>
-                        <Sparkles className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                      </div>
-                      <Image
-                        src="/marketing/prelogin-hero-16x9.png"
-                        alt={mh.mock.imageAlt}
-                        width={1600}
-                        height={900}
-                        sizes="(max-width: 1024px) 100vw, 48vw"
-                        className="rounded-[22px] border border-[color:var(--v2-line)] object-cover"
-                        priority
-                      />
-                    </div>
-
-                    <div className="grid gap-4">
-                      <div className="v2-panel p-4">
-                        <p className="text-sm font-bold text-[color:var(--v2-muted)]">{mh.mock.suggestLabel}</p>
-                        <p className="mt-2 text-lg font-black text-[color:var(--v2-ink)]">{mh.mock.suggestTitle}</p>
-                        <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{mh.mock.suggestBody}</p>
-                      </div>
-                      <div className="v2-panel p-4">
-                        <p className="text-sm font-bold text-[color:var(--v2-muted)]">{mh.mock.financeLabel}</p>
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                          {mh.mock.stats.map((item) => (
-                            <div key={item.label} className="rounded-2xl bg-[color:var(--v2-canvas)] p-3">
-                              <p className="text-xs font-bold text-[color:var(--v2-muted)]">{item.label}</p>
-                              <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{item.value}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {mh.proofPoints.map((point) => (
-                      <div key={point} className="flex items-center gap-2.5 rounded-2xl bg-[color:var(--v2-canvas)] px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
-                        <CheckCircle2 className="h-5 w-5 text-[color:var(--v2-success)]" aria-hidden />
-                        <span className="text-sm font-semibold text-[color:var(--v2-ink)]">{point}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div
+              className="flex flex-col justify-center px-5 py-12 sm:px-10 lg:min-h-[min(90vh,820px)] lg:px-14 lg:py-16"
+              dir={dir}
+            >
+              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[color:var(--v2-accent)]">
+                {ed.heroEyebrow}
+              </p>
+              <h1
+                id="marketing-hero-heading"
+                className="mt-4 max-w-xl text-4xl font-black leading-[0.98] tracking-[-0.055em] text-slate-900 sm:text-5xl lg:text-[3.15rem]"
+              >
+                {ed.heroTitle}
+              </h1>
+              <p className="mt-6 max-w-lg text-base leading-8 text-slate-600 sm:text-lg">{ed.heroLead}</p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--v2-accent)] px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-[color:var(--v2-accent-strong)]"
+                >
+                  {ed.heroCta}
+                  <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                </Link>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-6 py-3.5 text-sm font-black text-slate-800 transition hover:border-[color:var(--v2-accent)] hover:text-[color:var(--v2-accent-strong)]"
+                >
+                  {ed.heroSecondaryCta}
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="product" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <div className="mb-8 max-w-3xl space-y-3 sm:mb-10 sm:space-y-4">
-            <SectionLabel>{mh.modulesSection.label}</SectionLabel>
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.modulesSection.title}</h2>
-            <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.modulesSection.body}</p>
-          </div>
-
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {mh.modules.map(({ title, body }, i) => {
-              const Icon = moduleIcons[i] ?? ScanSearch;
-              return (
-                <article key={title} className="v2-panel p-5 sm:p-6">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-canvas)] text-[color:var(--v2-accent)]">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  <h3 className="mt-5 text-xl font-black text-[color:var(--v2-ink)]">{title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
-                </article>
-              );
-            })}
+        {/* שלושת עמודי היכולות — תוכן אמיתי מה־JSON */}
+        <section className="border-t border-slate-100 bg-white py-14 sm:py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-5 sm:grid-cols-3">
+              {mh.features.map((f, i) => {
+                const Icon = FEATURE_ICONS[i] ?? UsersRound;
+                return (
+                  <article
+                    key={f.title}
+                    className="rounded-2xl border border-slate-100 bg-slate-50/60 p-5 shadow-sm sm:p-6"
+                  >
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <h2 className="mt-4 text-lg font-black text-slate-900">{f.title}</h2>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">{f.body}</p>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 
-        <section id="workflows" className="border-y border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/72">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:gap-10 sm:px-6 sm:py-16 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-            <div className="space-y-3 sm:space-y-4">
-              <SectionLabel>{mh.workflow.label}</SectionLabel>
-              <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.workflow.title}</h2>
-              <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.workflow.lead}</p>
+        <section id="projects" className="scroll-mt-24 border-t border-slate-100 bg-slate-50/80 py-16 sm:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">{ed.projectsSectionTitle}</h2>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {ed.projectCards.map((card, i) => {
+                const visual = PROJECT_CARD_VISUALS[i % PROJECT_CARD_VISUALS.length];
+                const CardIcon = visual.Icon;
+                return (
+                  <article
+                    key={card.title}
+                    className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition hover:border-[color:var(--v2-accent)]/50 hover:shadow-lg"
+                  >
+                    <div
+                      className={`relative flex aspect-[16/10] items-center justify-center overflow-hidden ${visual.panel}`}
+                      aria-hidden
+                    >
+                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_30%_15%,rgba(255,255,255,0.14),transparent_55%)]" />
+                      <div className="pointer-events-none absolute -end-6 -top-8 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
+                      <CardIcon className="relative z-[1] h-14 w-14 text-white drop-shadow-lg sm:h-[4.25rem] sm:w-[4.25rem]" />
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="text-lg font-black text-slate-900">{card.title}</h3>
+                      <Link
+                        href="/product#projects"
+                        className="mt-4 inline-flex w-fit items-center gap-1 text-sm font-black text-[color:var(--v2-accent)] hover:underline"
+                      >
+                        {ed.projectCardCta}
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
+          </div>
+        </section>
 
-            <div className="grid gap-3 sm:gap-4">
-              {mh.workflow.steps.map((step, index) => (
-                <div key={step} className="v2-panel flex items-start gap-3 p-4 sm:gap-4 sm:p-5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--v2-accent)] text-sm font-black text-white">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <p className="text-lg font-black text-[color:var(--v2-ink)]">{step}</p>
-                    <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{mh.workflow.stepSub}</p>
-                  </div>
-                </div>
+        <section className="border-t border-slate-100 bg-white py-16 sm:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="text-center text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">
+              {ed.quotesSectionTitle}
+            </h2>
+            <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6">
+              {ed.quotes.map((q, qi) => (
+                <blockquote
+                  key={qi}
+                  className="relative rounded-2xl border border-slate-100 bg-slate-50/90 p-6 pt-10 shadow-sm"
+                >
+                  <Quote
+                    className="absolute start-5 top-4 h-10 w-10 text-[color:var(--v2-accent)] opacity-90"
+                    aria-hidden
+                  />
+                  <p className="text-sm font-semibold leading-7 text-slate-700">{q.body}</p>
+                  <footer className="mt-4 text-xs font-bold text-slate-500">{q.role}</footer>
+                </blockquote>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:gap-6">
-            <div className="v2-panel p-6 sm:p-8">
-              <SectionLabel>{mh.industries.label}</SectionLabel>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl">{mh.industries.title}</h2>
-              <p className="mt-4 text-base leading-8 text-[color:var(--v2-muted)]">{mh.industries.body}</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                {mh.industries.tags.map((industry) => (
-                  <span
-                    key={industry}
-                    className="rounded-full border border-[color:var(--v2-line)] bg-[color:var(--v2-canvas)] px-4 py-2 text-sm font-bold text-[color:var(--v2-ink)]"
-                  >
-                    {industry}
-                  </span>
-                ))}
-              </div>
+        <section className="border-t border-slate-100 bg-white py-16 sm:py-20">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8">
+            <div
+              className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-slate-200 shadow-lg lg:order-1"
+              dir="ltr"
+            >
+              <Image
+                src="/marketing/bsd-ybm-crm-erp-bridge.png"
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-[color:var(--v2-accent)]/10 mix-blend-multiply" aria-hidden />
             </div>
-
-            <div className="v2-panel v2-panel-highlight overflow-hidden p-0">
-              <div className="border-b border-[color:var(--v2-line)] px-6 py-5">
-                <SectionLabel>{mh.why.label}</SectionLabel>
-                <h3 className="mt-3 text-2xl font-black text-[color:var(--v2-ink)]">{mh.why.title}</h3>
-              </div>
-              <div className="grid gap-0 divide-y divide-[color:var(--v2-line)]">
-                {mh.why.rows.map((row) => (
-                  <div key={row.title} className="flex gap-4 px-6 py-5">
-                    <BadgeCheck className="mt-1 h-5 w-5 shrink-0 text-[color:var(--v2-accent)]" aria-hidden />
-                    <div>
-                      <p className="font-black text-[color:var(--v2-ink)]">{row.title}</p>
-                      <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{row.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="plans" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <div className="mb-8 max-w-3xl space-y-3 sm:mb-10 sm:space-y-4">
-            <SectionLabel>{mh.plans.label}</SectionLabel>
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">{mh.plans.title}</h2>
-            <p className="text-base leading-7 text-[color:var(--v2-muted)] sm:text-lg sm:leading-8">{mh.plans.body}</p>
-          </div>
-
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {planCards.map((plan) => (
-              <article
-                key={plan.tier}
-                className={`rounded-[24px] border px-4 py-5 sm:rounded-[30px] sm:px-5 sm:py-6 ${
-                  plan.featured
-                    ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]"
-                    : "border-[color:var(--v2-line)] bg-white/88"
-                }`}
+            <div className="lg:order-2">
+              <h2 className="text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">{ed.featuredTitle}</h2>
+              <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">{ed.featuredLead}</p>
+              <Link
+                href="/product"
+                className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[color:var(--v2-accent)] px-5 py-3 text-sm font-black text-white transition hover:bg-[color:var(--v2-accent-strong)]"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-lg font-black text-[color:var(--v2-ink)]">{plan.label}</p>
-                  {plan.featured ? (
-                    <span className="rounded-full bg-white/92 px-3 py-1 text-[11px] font-black text-[color:var(--v2-accent)]">
-                      {mh.plans.featured}
-                    </span>
-                  ) : null}
-                </div>
-                <p className="mt-4 text-3xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)]">{plan.price}</p>
-                <p className="mt-3 min-h-[72px] text-sm leading-7 text-[color:var(--v2-muted)]">{plan.summary}</p>
-                <Link
-                  href={`/register?plan=${encodeURIComponent(plan.tier)}`}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[color:var(--v2-ink)] px-4 py-3 text-sm font-black text-white transition hover:opacity-92"
-                >
-                  {mh.plans.joinPrefix}
-                  {plan.label}
-                  <ArrowLeft className="h-4 w-4" aria-hidden />
-                </Link>
-              </article>
-            ))}
+                {ed.featuredCta}
+                <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
+              </Link>
+            </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-16 lg:px-8">
-          <div className="v2-cta-strip">
-            <div className="space-y-3 sm:space-y-4">
-              <SectionLabel>{mh.cta.label}</SectionLabel>
-              <h2 className="text-2xl font-black tracking-[-0.05em] text-white sm:text-4xl lg:text-5xl">{mh.cta.title}</h2>
-              <p className="max-w-2xl text-sm leading-7 text-white/78 sm:text-base sm:leading-8 lg:text-lg">{mh.cta.body}</p>
+        <section id="plans" className="border-t border-slate-100 bg-slate-50/80 py-16 sm:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[color:var(--v2-accent)]">{mh.plans.label}</p>
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">{mh.plans.title}</h2>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{mh.plans.body}</p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {planCards.map((plan) => (
+                <article
+                  key={plan.tier}
+                  className={`rounded-2xl border px-5 py-6 ${
+                    plan.featured ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]" : "border-slate-200 bg-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-lg font-black text-slate-900">{plan.label}</p>
+                    {plan.featured ? (
+                      <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-black text-[color:var(--v2-accent)]">
+                        {mh.plans.featured}
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-4 text-3xl font-black text-slate-900">{plan.price}</p>
+                  <p className="mt-3 min-h-[4.5rem] text-sm leading-7 text-slate-600">{plan.summary}</p>
+                  <Link
+                    href={`/register?plan=${encodeURIComponent(plan.tier)}`}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-sm font-black text-white transition hover:bg-slate-800"
+                  >
+                    {mh.plans.joinPrefix}
+                    {plan.label}
+                    <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                  </Link>
+                </article>
+              ))}
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className="v2-button bg-white text-[color:var(--v2-ink)] hover:bg-white/92">
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl bg-gradient-to-br from-[color:var(--v2-accent-strong)] to-[color:var(--v2-accent)] px-6 py-12 text-center sm:px-12 sm:py-14">
+            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-white/85">{mh.cta.label}</p>
+            <h2 className="mt-4 text-2xl font-black tracking-[-0.04em] text-white sm:text-4xl">{mh.cta.title}</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base">{mh.cta.body}</p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href="/register"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-black text-slate-900 shadow-md transition hover:bg-slate-100 sm:w-auto"
+              >
                 {mh.cta.primary}
               </Link>
-              <Link href="/contact" className="v2-button border border-white/30 bg-white/10 text-white hover:bg-white/16">
+              <Link
+                href="/contact"
+                className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white/40 bg-white/10 px-6 py-3.5 text-sm font-black text-white transition hover:bg-white/15 sm:w-auto"
+              >
                 {mh.cta.secondary}
               </Link>
             </div>
@@ -431,23 +601,72 @@ export default function MarketingHome() {
         </section>
       </main>
 
-      <footer className="border-t border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.5fr_1fr] lg:px-8">
-          <div className="space-y-3">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">{mh.footer.brand}</p>
-            <p className="max-w-2xl text-sm leading-7 text-[color:var(--v2-muted)]">{mh.footer.lead}</p>
+      <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-lg font-black text-white">{mh.footer.brand}</p>
+              <p className="mt-3 text-sm leading-7">{mh.footer.lead}</p>
+              {ed.footerContactBlurb ? <p className="mt-4 text-sm leading-7 text-slate-500">{ed.footerContactBlurb}</p> : null}
+              <div className="mt-6 flex gap-3">
+                <Link
+                  href="/contact"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--v2-accent)] hover:text-white"
+                  aria-label={t("publicShell.navContact")}
+                >
+                  <Mail className="h-4 w-4" />
+                </Link>
+                <a
+                  href="https://www.linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--v2-accent)] hover:text-white"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{ed.footerProductTitle}</p>
+              <ul className="mt-4 space-y-2.5">
+                {productFooterLinks.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="text-sm font-semibold text-slate-300 hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{ed.footerCompanyTitle}</p>
+              <ul className="mt-4 space-y-2.5">
+                {companyFooterLinks.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="text-sm font-semibold text-slate-300 hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{ed.footerLegalTitle}</p>
+              <ul className="mt-4 space-y-2.5">
+                {legalFooterLinks.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="text-sm font-semibold text-slate-300 hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {navLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="font-semibold text-[color:var(--v2-muted)] transition hover:text-[color:var(--v2-ink)]"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          <p className="mt-12 border-t border-slate-800 pt-8 text-center text-xs text-slate-600">
+            © {new Date().getFullYear()} {mh.footer.brand}
+          </p>
         </div>
       </footer>
     </div>

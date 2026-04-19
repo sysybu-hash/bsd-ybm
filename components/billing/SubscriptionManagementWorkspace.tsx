@@ -35,6 +35,7 @@ import {
   WorkspaceSectionCard,
   WorkspaceSubmitButton,
 } from "@/components/workspace/WorkspaceSectionCard";
+import { useI18n } from "@/components/I18nProvider";
 
 type CurrentOrganization = {
   id: string;
@@ -98,6 +99,7 @@ export default function SubscriptionManagementWorkspace({
   initialSection = "overview",
   focusedOrganizationId,
 }: Props) {
+  const { t } = useI18n();
   const router = useRouter();
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -145,7 +147,7 @@ export default function SubscriptionManagementWorkspace({
       <section className="v2-panel v2-panel-soft p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">Subscription Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceSubscription.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
               ניהול מנויים ברור, עם שליטה אמיתית על ארגונים קיימים.
             </h1>

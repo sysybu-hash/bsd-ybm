@@ -5,6 +5,8 @@ import { ExternalLink, FileText, Globe, ImageIcon, Sparkles, UsersRound } from "
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatShortDate } from "@/lib/ui-formatters";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
+import { createTranslator } from "@/lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +57,9 @@ export default async function AppPortalPage() {
     redirect("/login");
   }
 
+  const messages = await readRequestMessages();
+  const t = createTranslator(messages);
+
   const branding =
     typeof organization.tenantSiteBrandingJson === "object" &&
     organization.tenantSiteBrandingJson &&
@@ -67,7 +72,7 @@ export default async function AppPortalPage() {
   return (
     <div className="grid gap-6" dir="rtl">
       <section className="v2-panel v2-panel-soft p-6 sm:p-8">
-        <span className="v2-eyebrow">Client Portal</span>
+        <span className="v2-eyebrow">{t("workspacePortal.eyebrow")}</span>
         <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
           הפורטל החיצוני של {organization.name}
         </h1>

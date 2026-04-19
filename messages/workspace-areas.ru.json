@@ -241,5 +241,17 @@
     },
     "confirmDeleteScanned": "Удалить документ «{name}»?",
     "confirmDeleteIssued": "Удалить документ {type} №{number}?"
+  },
+  "workspaceSettings": {
+    "eyebrow": "Рабочая область настроек"
+  },
+  "workspaceBilling": {
+    "eyebrow": "Рабочая область оплаты"
+  },
+  "workspaceSubscription": {
+    "eyebrow": "Рабочая область подписок"
+  },
+  "workspacePortal": {
+    "eyebrow": "Клиентский портал"
   }
 }

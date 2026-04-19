@@ -59,7 +59,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   noStore();
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (e) {
+    console.warn("[layout] getServerSession failed — continuing without session", e);
+  }
   const jar = await cookies();
   const locale = normalizeLocale(jar.get(COOKIE_LOCALE)?.value);
   const messages = getMessages(locale);

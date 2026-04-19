@@ -10,6 +10,9 @@ import siteMarketingRu from "@/messages/site-marketing.ru.json";
 import marketingHomeHe from "@/messages/marketing-home.he.json";
 import marketingHomeEn from "@/messages/marketing-home.en.json";
 import marketingHomeRu from "@/messages/marketing-home.ru.json";
+import brandBriefHe from "@/messages/brand-brief.he.json";
+import brandBriefEn from "@/messages/brand-brief.en.json";
+import brandBriefRu from "@/messages/brand-brief.ru.json";
 import constructionTradesEn from "@/messages/construction-trades.en.json";
 import constructionTradesRu from "@/messages/construction-trades.ru.json";
 import workspaceShellHe from "@/messages/workspace-shell.he.json";
@@ -59,19 +62,28 @@ function deepMerge(
 function siteExtras(locale: AppLocale): Record<string, unknown> {
   if (locale === "he") {
     return deepMerge(
-      siteMarketingHe as unknown as Record<string, unknown>,
-      marketingHomeHe as unknown as Record<string, unknown>,
+      deepMerge(
+        siteMarketingHe as unknown as Record<string, unknown>,
+        marketingHomeHe as unknown as Record<string, unknown>,
+      ),
+      brandBriefHe as unknown as Record<string, unknown>,
     );
   }
   if (locale === "ru") {
     return deepMerge(
-      siteMarketingRu as unknown as Record<string, unknown>,
-      marketingHomeRu as unknown as Record<string, unknown>,
+      deepMerge(
+        siteMarketingRu as unknown as Record<string, unknown>,
+        marketingHomeRu as unknown as Record<string, unknown>,
+      ),
+      brandBriefRu as unknown as Record<string, unknown>,
     );
   }
   return deepMerge(
-    siteMarketingEn as unknown as Record<string, unknown>,
-    marketingHomeEn as unknown as Record<string, unknown>,
+    deepMerge(
+      siteMarketingEn as unknown as Record<string, unknown>,
+      marketingHomeEn as unknown as Record<string, unknown>,
+    ),
+    brandBriefEn as unknown as Record<string, unknown>,
   );
 }
 

@@ -114,36 +114,54 @@
   },
   "workspaceHome": {
     "eyebrow": "Home",
-    "advancedCta": "Advanced tools",
+    "startHere": {
+      "eyebrow": "Start here",
+      "title": "Three links",
+      "subtitle": "Everything else lives in the menu.",
+      "navHint": "More areas in the workspace menu.",
+      "cards": {
+        "documents": {
+          "title": "Documents",
+          "body": "Scanning and your document file."
+        },
+        "clients": {
+          "title": "Clients",
+          "body": "Pipeline and contacts."
+        },
+        "inbox": {
+          "title": "Inbox",
+          "body": "What needs a decision."
+        },
+        "billing": {
+          "title": "Billing",
+          "body": "Invoices and cash flow."
+        },
+        "operations": {
+          "title": "Operations",
+          "body": "Processes and field."
+        },
+        "insights": {
+          "title": "Insights",
+          "body": "Management snapshot."
+        },
+        "settings": {
+          "title": "Settings",
+          "body": "Trade, org, and preferences."
+        }
+      }
+    },
+    "advancedCta": "Advanced",
     "stats": {
       "activeProjects": "Active projects",
       "billingVolume": "Billing volume (invoices)"
     },
-    "scheduleRow": "Schedule progress (summary)",
-    "projectsTitle": "Projects",
-    "projectsSubtitle": "Active projects in the organization (last three)",
-    "demoProjects": {
-      "p1": "Sample: construction site — Tel Aviv",
-      "p2": "Sample: office renovation",
-      "p3": "Add projects from the clients screen"
-    },
-    "updatedPrefix": "Updated:",
-    "docsActivityTitle": "Recent document activity",
-    "docsEmptyHint": "Upload your first document from the documents screen — it will appear here.",
-    "shortcutsEyebrow": "Shortcuts",
-    "shortcutsTitle": "Jump straight to the next workspace",
-    "moreEyebrow": "More in the app",
-    "moreTitle": "Setup, automation, and portal",
-    "moreLinks": {
-      "onboarding": { "label": "Onboarding", "summary": "Organization and trade fit." },
-      "automations": { "label": "Automations", "summary": "Scripts for documents and billing." },
-      "portal": { "label": "Client portal", "summary": "Branding and domain." },
-      "admin": { "label": "System health", "summary": "Admin and logs." }
-    },
-    "tipsTitle": "Quick tips",
-    "tips": {
-      "trade": "Set your professional trade in settings so AI and menus speak your language.",
-      "upload": "Upload supplier documents on the documents screen — summaries update on the dashboard."
+    "footerHint": "Set your trade in settings. Upload documents from the documents screen.",
+    "footer": {
+      "onboarding": "Setup",
+      "automations": "Automations",
+      "portal": "Portal",
+      "settings": "Settings",
+      "admin": "Admin"
     }
   },
   "workspaceShell": {

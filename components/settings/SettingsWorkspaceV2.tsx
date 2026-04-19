@@ -211,7 +211,7 @@ export default function SettingsWorkspaceV2({
       <section className="v2-panel v2-panel-soft p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">Settings Workspace</span>
+            <span className="v2-eyebrow">{t("workspaceSettings.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
               הגדרות מסודרות לפי משימות, לא לפי בלגן.
             </h1>

@@ -23,7 +23,7 @@ export default function ProductPageClient() {
 
   return (
     <MarketingPublicShell title={mp.title} eyebrow={mp.eyebrow} description={mp.description}>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div id="projects" className="scroll-mt-24 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {MODULE_ORDER.map(({ key, icon: Icon }) => {
           const mod = mp.modules[key];
           return (

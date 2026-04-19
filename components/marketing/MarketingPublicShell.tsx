@@ -5,6 +5,7 @@ import { useMemo, type ReactNode } from "react";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import { useI18n } from "@/components/I18nProvider";
 import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Props = Readonly<{
   children: ReactNode;
@@ -29,6 +30,7 @@ export default function MarketingPublicShell({
         { href: "/solutions", key: "navSolutions" as const },
         { href: "/pricing", key: "navPricing" as const },
         { href: "/about", key: "navAbout" as const },
+        { href: "/brief", key: "navBrief" as const },
         { href: "/contact", key: "navContact" as const },
       ].map((item) => ({
         href: item.href,
@@ -57,7 +59,8 @@ export default function MarketingPublicShell({
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
+            <LanguageSwitcher className="max-sm:[&_select]:min-w-[7.5rem] max-sm:[&_select]:px-2 max-sm:[&_select]:text-xs" />
             <Link href="/login" className="v2-button v2-button-ghost hidden sm:inline-flex">
               {t("publicShell.ctaLogin")}
             </Link>

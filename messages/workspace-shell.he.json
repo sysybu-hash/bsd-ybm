@@ -113,37 +113,55 @@
     }
   },
   "workspaceHome": {
-    "eyebrow": "דף הבית",
-    "advancedCta": "כלים מתקדמים",
+    "eyebrow": "בית",
+    "startHere": {
+      "eyebrow": "מתחילים כאן",
+      "title": "שלושה קישורים",
+      "subtitle": "שאר האזורים בתפריט מימין.",
+      "navHint": "עוד אזורים בתפריט העבודה.",
+      "cards": {
+        "documents": {
+          "title": "מסמכים",
+          "body": "סריקה ותיק מסמכים."
+        },
+        "clients": {
+          "title": "לקוחות",
+          "body": "צנרת ואנשי קשר."
+        },
+        "inbox": {
+          "title": "תיבת עבודה",
+          "body": "מה ממתין להחלטה."
+        },
+        "billing": {
+          "title": "חיוב",
+          "body": "חשבוניות ותזרים."
+        },
+        "operations": {
+          "title": "תפעול",
+          "body": "תהליכים ושטח."
+        },
+        "insights": {
+          "title": "תובנות",
+          "body": "תמונה ניהולית."
+        },
+        "settings": {
+          "title": "הגדרות",
+          "body": "מקצוע, ארגון והתאמות."
+        }
+      }
+    },
+    "advancedCta": "מתקדם",
     "stats": {
       "activeProjects": "פרויקטים פעילים",
       "billingVolume": "מחזור חיוב (חשבוניות)"
     },
-    "scheduleRow": "התקדמות לוח זמנים (סיכום)",
-    "projectsTitle": "פרויקטים",
-    "projectsSubtitle": "פרויקטים פעילים בארגון (עד שלושה אחרונים)",
-    "demoProjects": {
-      "p1": "דוגמה: אתר בנייה — תל אביב",
-      "p2": "דוגמה: שיפוץ משרדים",
-      "p3": "הוסיפו פרויקטים ממסך לקוחות"
-    },
-    "updatedPrefix": "עודכן:",
-    "docsActivityTitle": "פעילות אחרונה במסמכים",
-    "docsEmptyHint": "העלו מסמך ראשון ממסך המסמכים — יופיע כאן.",
-    "shortcutsEyebrow": "קיצורי דרך",
-    "shortcutsTitle": "מעבר ישיר לאזור העבודה הבא",
-    "moreEyebrow": "עוד באפליקציה",
-    "moreTitle": "הגדרה, אוטומציה ופורטל",
-    "moreLinks": {
-      "onboarding": { "label": "Onboarding", "summary": "התאמת ארגון ומקצוע." },
-      "automations": { "label": "אוטומציות", "summary": "תסריטים למסמכים וחיוב." },
-      "portal": { "label": "פורטל לקוחות", "summary": "מיתוג ודומיין." },
-      "admin": { "label": "בריאות מערכת", "summary": "אדמין ויומנים." }
-    },
-    "tipsTitle": "טיפים מהירים",
-    "tips": {
-      "trade": "הגדירו התמחות מקצועית בהגדרות — כדי שה-AI והתפריטים ידברו בשפה שלכם.",
-      "upload": "העלו מסמכי ספקים למסך המסמכים — הסיכומים יתעדכנו בדשבורד."
+    "footerHint": "התאימו מקצוע בהגדרות. העלו מסמכים ממסך המסמכים.",
+    "footer": {
+      "onboarding": "התאמה",
+      "automations": "אוטומציות",
+      "portal": "פורטל",
+      "settings": "הגדרות",
+      "admin": "ניהול"
     }
   },
   "workspaceShell": {

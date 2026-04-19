@@ -27,9 +27,6 @@
       "boardKicker": "Operational Intelligence",
       "boardTitle": "Live operations board",
       "boardBadge": "Healthy activity",
-      "focusLabel": "Today's focus",
-      "focusTitle": "Clients, documents, billing",
-      "imageAlt": "BSD-YBM dashboard preview",
       "suggestLabel": "System suggestion",
       "suggestTitle": "7 documents identified and ready to auto-assign",
       "suggestBody": "The system detected clients, amounts and statuses and suggests the next step for each item.",
@@ -102,6 +99,52 @@
     "footer": {
       "brand": "BSD-YBM",
       "lead": "An intelligent operations system that connects clients, documents, billing, management control and AI in one workspace."
+    },
+    "editorial": {
+      "nav": {
+        "about": "About",
+        "projects": "Projects",
+        "services": "Services",
+        "blog": "Insights",
+        "contact": "Contact"
+      },
+      "heroEyebrow": "BSD-YBM · AI Solutions",
+      "heroTitle": "The future of construction",
+      "heroLead": "One platform connecting site, office, clients and documents — CRM and ERP with a modular AI layer, built for construction and trades.",
+      "heroCta": "Book a demo",
+      "heroSecondaryCta": "Create account",
+      "projectsSectionTitle": "Projects",
+      "projectCardCta": "Details",
+      "projectCards": [
+        { "title": "Sites & projects" },
+        { "title": "Documents & vendors" },
+        { "title": "Billing & collections" },
+        { "title": "Field operations" },
+        { "title": "Insights & decisions" },
+        { "title": "Automation & AI" }
+      ],
+      "quotesSectionTitle": "What teams say",
+      "quotes": [
+        {
+          "body": "Fewer duplicates across CRM, documents and billing — we finally see the same number in one place.",
+          "role": "Operations lead, contractor"
+        },
+        {
+          "body": "The team doesn’t need five tools just to move the week forward.",
+          "role": "Project manager"
+        },
+        {
+          "body": "Recommendations come from our data, not a generic chat.",
+          "role": "CFO"
+        }
+      ],
+      "featuredTitle": "Featured capabilities",
+      "featuredLead": "Product layers connect clients, documents and money — one picture per project, from proposal to supplier invoice.",
+      "featuredCta": "Product overview",
+      "footerProductTitle": "Product",
+      "footerCompanyTitle": "Company",
+      "footerLegalTitle": "Legal",
+      "footerContactBlurb": "Want a demo or enterprise rollout? Let’s talk."
     }
   }
 }
