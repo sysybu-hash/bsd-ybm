@@ -250,7 +250,7 @@ export default function AppShellV2({ children, user }: Props) {
 
             <main
               id="app-main-content"
-              className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-6 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-10 lg:pb-12"
+              className="relative flex-1 px-4 py-6 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-10 lg:pb-8"
             >
               {children}
             </main>

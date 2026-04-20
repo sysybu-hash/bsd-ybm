@@ -137,7 +137,8 @@
       "title": "אנשים מאחורי המספרים",
       "all": "לכל הלקוחות",
       "empty": "עדיין אין לקוחות במערכת",
-      "addFirst": "הוסף לקוח ראשון"
+      "addFirst": "הוסף לקוח ראשון",
+      "addClient": "לקוח חדש"
     },
     "axisFinance": {
       "eyebrow": "ציר כספים",
@@ -146,7 +147,14 @@
       "empty": "עדיין אין מסמכים פיננסיים",
       "totalInvoiced": "סה\"כ חויב",
       "totalPaid": "נגבה",
-      "collectionRate": "שיעור גבייה"
+      "pending": "ממתין",
+      "collectionRate": "שיעור גבייה",
+      "issue": "הנפק מסמך"
+    },
+    "stats": {
+      "activeProjects": "פרויקטים פעילים",
+      "activeClients": "לקוחות פעילים",
+      "billingVolume": "מחזור חיוב (חשבוניות)"
     },
     "recentActivity": {
       "title": "מסמכים ופעילות אחרונה",
@@ -229,10 +237,6 @@
       "clientsMonthly": "+{count} מחודש",
       "projectsActive": "{count} פעילים",
       "financeFresh": "+8.5% חדש"
-    },
-    "stats": {
-      "activeProjects": "פרויקטים פעילים",
-      "billingVolume": "מחזור חיוב (חשבוניות)"
     },
     "footerHint": "התאימו מקצוע בהגדרות. העלו מסמכים ממסך המסמכים.",
     "footer": {

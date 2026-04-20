@@ -137,7 +137,8 @@
       "title": "Люди за цифрами",
       "all": "Все клиенты",
       "empty": "Клиентов пока нет",
-      "addFirst": "Добавить клиента"
+      "addFirst": "Добавить клиента",
+      "addClient": "Новый клиент"
     },
     "axisFinance": {
       "eyebrow": "Финансовая ось",
@@ -146,7 +147,14 @@
       "empty": "Нет финансовых документов",
       "totalInvoiced": "Выставлено",
       "totalPaid": "Получено",
-      "collectionRate": "Уровень сбора"
+      "pending": "Ожидает",
+      "collectionRate": "Уровень сбора",
+      "issue": "Выставить"
+    },
+    "stats": {
+      "activeProjects": "Активные проекты",
+      "activeClients": "Активные клиенты",
+      "billingVolume": "Объём выставления"
     },
     "recentActivity": {
       "title": "Последние документы и активность",
@@ -229,10 +237,6 @@
       "clientsMonthly": "+{count} за месяц",
       "projectsActive": "{count} активных",
       "financeFresh": "+8.5% новое"
-    },
-    "stats": {
-      "activeProjects": "Активные проекты",
-      "billingVolume": "Оборот по счетам"
     },
     "footerHint": "Укажите специализацию в настройках. Загружайте документы с экрана документов.",
     "footer": {

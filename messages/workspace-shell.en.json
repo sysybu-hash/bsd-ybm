@@ -137,7 +137,8 @@
       "title": "The people behind the numbers",
       "all": "All clients",
       "empty": "No clients yet",
-      "addFirst": "Add first client"
+      "addFirst": "Add first client",
+      "addClient": "New client"
     },
     "axisFinance": {
       "eyebrow": "Finance axis",
@@ -146,7 +147,14 @@
       "empty": "No financial documents yet",
       "totalInvoiced": "Invoiced",
       "totalPaid": "Collected",
-      "collectionRate": "Collection rate"
+      "pending": "Pending",
+      "collectionRate": "Collection rate",
+      "issue": "Issue document"
+    },
+    "stats": {
+      "activeProjects": "Active projects",
+      "activeClients": "Active clients",
+      "billingVolume": "Billing volume (invoices)"
     },
     "recentActivity": {
       "title": "Recent documents & activity",
@@ -229,10 +237,6 @@
       "clientsMonthly": "+{count} this month",
       "projectsActive": "{count} active",
       "financeFresh": "+8.5% new"
-    },
-    "stats": {
-      "activeProjects": "Active projects",
-      "billingVolume": "Billing volume (invoices)"
     },
     "footerHint": "Set your trade in settings. Upload documents from the documents screen.",
     "footer": {
