@@ -34,57 +34,113 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   BSD-YBM — COMMAND CENTER Design System 2026
+   ציר כספים (זהב) × ציר לקוחות (ציאן) × AI (סגול) = חזון המערכת
+   ═══════════════════════════════════════════════════════════ */
 :root {
-  --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 248, 246, 242;
-  --background-end-rgb: 241, 237, 230;
+  --foreground-rgb: 11, 15, 20;
+  --background-start-rgb: 247, 248, 250;
+  --background-end-rgb: 239, 241, 245;
 
-  /* Brand — קו טיל / בנייה (מותג 2026) */
-  --primary-brand: #0f172a;
-  --heading-color: #0f172a;
-  --primary-color: #0d9488;
-  --primary-hover: #0f766e;
-  --primary-light: rgba(13, 148, 136, 0.12);
-  --primary-muted: rgba(13, 148, 136, 0.22);
-  --primary-rgb: 13, 148, 136;
+  /* ─── Ink (טקסט) ─── */
+  --ink-900: #0B0F14;
+  --ink-800: #111827;
+  --ink-700: #1F2937;
+  --ink-600: #334155;
+  --ink-500: #64748B;
+  --ink-400: #94A3B8;
+  --ink-300: #CBD5E1;
 
-  /* Surface */
-  --surface-white: #ffffff;
-  --surface-card: #f8fafc;
-  --surface-subtle: #f1f5f9;
-  --surface-dark: #020617;
+  /* ─── Surface (רקעים) ─── */
+  --canvas: #F7F8FA;
+  --canvas-raised: #FFFFFF;
+  --canvas-sunken: #EFF1F5;
+  --canvas-overlay: rgba(247, 248, 250, 0.88);
 
-  /* Text */
-  --body-color: #334155;
-  --muted-color: #64748b;
+  /* ─── Lines ─── */
+  --line: #E5E7EB;
+  --line-strong: #D1D5DB;
+  --line-subtle: #F1F3F6;
 
-  /* Border */
-  --border-color: #e2e8f0;
-  --border-strong: #cbd5e1;
+  /* ─── ציר כספים (Finance — זהב חם) ─── */
+  --axis-finance:         #B8811A;
+  --axis-finance-strong:  #8F6414;
+  --axis-finance-ink:     #6B4A0E;
+  --axis-finance-soft:    #FBF3E0;
+  --axis-finance-border:  rgba(184, 129, 26, 0.28);
+  --axis-finance-glow:    rgba(184, 129, 26, 0.14);
 
-  /* Sidebar — Light Pro (white) */
-  --sidebar-bg: #ffffff;
-  --sidebar-border: #e2e8f0;
-  --sidebar-text: #64748b;
-  --sidebar-text-active: #0d9488;
-  --sidebar-active-bg: rgba(13, 148, 136, 0.1);
-  --sidebar-hover-bg: #f8f5f1;
+  /* ─── ציר לקוחות (Clients — ציאן אמון) ─── */
+  --axis-clients:         #0E7C86;
+  --axis-clients-strong:  #0A5D64;
+  --axis-clients-ink:     #074247;
+  --axis-clients-soft:    #E1F4F5;
+  --axis-clients-border:  rgba(14, 124, 134, 0.28);
+  --axis-clients-glow:    rgba(14, 124, 134, 0.14);
 
-  /* Elevation shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(0,0,0,.04);
-  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.07), 0 1px 2px -1px rgba(0,0,0,.05);
-  --shadow-md: 0 4px 12px -2px rgba(0,0,0,.08), 0 2px 6px -2px rgba(0,0,0,.05);
-  --shadow-lg: 0 10px 30px -6px rgba(0,0,0,.10), 0 4px 10px -4px rgba(0,0,0,.06);
-  --shadow-xl: 0 20px 50px -10px rgba(0,0,0,.12), 0 8px 20px -8px rgba(0,0,0,.07);
-  --shadow-glow-accent: 0 0 24px rgba(13, 148, 136, 0.2);
+  /* ─── ציר AI (Violet intelligence) ─── */
+  --axis-ai:         #6D51D1;
+  --axis-ai-strong:  #5538B5;
+  --axis-ai-ink:     #3E2B8A;
+  --axis-ai-soft:    #EFE9FB;
+  --axis-ai-border:  rgba(109, 81, 209, 0.28);
+  --axis-ai-glow:    rgba(109, 81, 209, 0.14);
 
-  /* Radius scale */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
+  /* ─── States ─── */
+  --state-success:      #1F7A4C;
+  --state-success-soft: #E4F4EB;
+  --state-warning:      #B87A1C;
+  --state-warning-soft: #FDF2DC;
+  --state-danger:       #B03A3A;
+  --state-danger-soft:  #FBE5E5;
+  --state-info:         #2463C7;
+  --state-info-soft:    #E2EDFB;
+
+  /* ─── Brand aliases (legacy compatibility) ─── */
+  --primary-brand: var(--ink-900);
+  --heading-color: var(--ink-900);
+  --primary-color: var(--axis-clients);
+  --primary-hover: var(--axis-clients-strong);
+  --primary-light: var(--axis-clients-soft);
+  --primary-muted: var(--axis-clients-border);
+  --primary-rgb: 14, 124, 134;
+
+  --surface-white:  #ffffff;
+  --surface-card:   var(--canvas-raised);
+  --surface-subtle: var(--canvas-sunken);
+  --surface-dark:   var(--ink-900);
+
+  --body-color:   var(--ink-600);
+  --muted-color:  var(--ink-500);
+  --border-color: var(--line);
+  --border-strong: var(--line-strong);
+
+  /* Sidebar — dark professional (קו מסודר של Linear / Stripe) */
+  --sidebar-bg:            #0B0F14;
+  --sidebar-border:        rgba(255, 255, 255, 0.06);
+  --sidebar-text:          #CBD5E1;
+  --sidebar-muted:         #64748B;
+  --sidebar-text-active:   #FFFFFF;
+  --sidebar-active-bg:     rgba(255, 255, 255, 0.06);
+  --sidebar-hover-bg:      rgba(255, 255, 255, 0.04);
+  --sidebar-accent-line:   var(--axis-clients);
+
+  /* ─── Elevation (מדוד, בלי זוהר צבעוני) ─── */
+  --shadow-xs: 0 1px 2px rgba(11, 15, 20, 0.04);
+  --shadow-sm: 0 1px 3px rgba(11, 15, 20, 0.06), 0 1px 2px rgba(11, 15, 20, 0.04);
+  --shadow-md: 0 4px 12px rgba(11, 15, 20, 0.08), 0 2px 4px rgba(11, 15, 20, 0.04);
+  --shadow-lg: 0 12px 32px rgba(11, 15, 20, 0.10), 0 4px 8px rgba(11, 15, 20, 0.05);
+  --shadow-xl: 0 24px 56px rgba(11, 15, 20, 0.14), 0 8px 16px rgba(11, 15, 20, 0.06);
+  --shadow-glow-accent: 0 0 0 3px var(--axis-clients-glow);
+
+  /* ─── Radii (ניקוי — פחות "פנינה", יותר "כלי עבודה") ─── */
+  --radius-sm:  0.5rem;   /*  8px */
+  --radius-md:  0.75rem;  /* 12px */
+  --radius-lg:  1rem;     /* 16px */
+  --radius-xl:  1.25rem;  /* 20px */
+  --radius-2xl: 1.5rem;   /* 24px — כרטיסי גיבור */
+  --radius-3xl: 1.75rem;  /* 28px — רק מסגרות חיצוניות */
 
   color-scheme: light;
 }
@@ -99,35 +155,32 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   .card-glass,
   .card-elevated {
     position: relative;
-    border-radius: 24px;
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 50%, white);
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.82));
-    box-shadow: var(--glass-2026-glow), var(--v2-shadow);
-    backdrop-filter: blur(14px) saturate(1.15);
-    -webkit-backdrop-filter: blur(14px) saturate(1.15);
-    transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
   }
 
   .card-avenue:hover,
   .card-glass:hover,
   .card-elevated:hover {
-    border-color: color-mix(in srgb, var(--glass-2026-border-strong) 70%, white);
-    box-shadow: var(--glass-2026-glow), 0 24px 60px -28px rgba(15, 23, 42, 0.18);
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-md);
   }
 
-  /* "Crystal" gradient-border card */
+  /* Crystal border — promoted card with axis accent */
   .crystal-border {
-    border: 1px solid transparent;
-    background:
-      linear-gradient(rgba(255,255,255,0.98), rgba(255,255,255,0.98)) padding-box,
-      linear-gradient(135deg, rgba(13, 148, 136, 0.22), rgba(229, 231, 235, 0.95)) border-box;
+    border: 1px solid var(--line);
+    background: var(--canvas-raised);
   }
   .crystal-hover {
-    @apply transition-all duration-300;
+    @apply transition-all duration-200;
   }
   .crystal-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(13, 148, 136, 0.1);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--line-strong);
   }
 
   /* Dark hero card */
@@ -192,19 +245,20 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
 
   /* ── Form inputs ── */
   .input-field {
-    @apply w-full rounded-xl px-4 py-2.5 text-sm text-[color:var(--v2-ink)] placeholder-slate-400 outline-none transition-all duration-300 disabled:opacity-60;
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 60%, transparent);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(248, 250, 252, 0.5));
-    box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.04);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    @apply w-full rounded-lg px-3.5 py-2.5 text-sm outline-none transition duration-150 disabled:opacity-60;
+    color: var(--ink-900);
+    border: 1px solid var(--line-strong);
+    background: var(--canvas-raised);
+  }
+  .input-field::placeholder {
+    color: var(--ink-400);
+  }
+  .input-field:hover:not(:disabled) {
+    border-color: var(--ink-400);
   }
   .input-field:focus {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: var(--v2-accent);
-    box-shadow:
-      inset 0 1px 2px rgba(15, 23, 42, 0.02),
-      0 0 0 4px rgba(13, 148, 136, 0.15);
+    border-color: var(--axis-clients);
+    box-shadow: 0 0 0 3px var(--axis-clients-glow);
   }
 
   .input-label {
@@ -273,15 +327,15 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   body {
-    color: rgb(var(--foreground-rgb));
-    background-color: #f8fafc;
+    color: var(--ink-900);
+    background-color: var(--canvas);
     min-height: 100vh;
     min-height: -webkit-fill-available;
     min-height: 100dvh;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: rgba(13, 148, 136, 0.12);
+    -webkit-tap-highlight-color: var(--axis-clients-glow);
   }
 
   img, video, canvas {
@@ -558,365 +612,310 @@ html.reduce-motion *::after {
 ───────────────────────────────────────── */
 .page-enter { animation: fadeIn .3s ease-out forwards; }
 
-/* v2 — מערכת עבודה + שיווק (טיל) */
+/* ═══════════════════════════════════════════════════════════
+   Legacy v2 / pearl aliases — קו המוצר עבר ל-Command Center,
+   אבל קלאסים קיימים ברחבי הפרויקט ממשיכים לעבוד דרך מיפוי זה.
+   ═══════════════════════════════════════════════════════════ */
 :root {
-  --v2-canvas: #f3f4f6;
-  --v2-surface: #ffffff;
-  --v2-surface-strong: #f9fafb;
-  --v2-elevated: #ffffff;
-  --v2-ink: #111827;
-  --v2-muted: #6b7280;
-  --v2-line: rgba(148, 163, 184, 0.22);
-  --v2-accent: #0d9488;
-  --v2-accent-soft: rgba(13, 148, 136, 0.12);
-  --v2-accent-strong: #0f766e;
-  --v2-success: #157f63;
-  --v2-success-soft: rgba(21, 127, 99, 0.12);
-  --v2-shadow: 0 18px 42px -28px rgba(15, 23, 42, 0.12);
-  /* Glossy 2026 — זכוכית / ברק */
-  --glass-2026-border: rgba(255, 255, 255, 0.72);
-  --glass-2026-border-strong: rgba(148, 163, 184, 0.35);
-  --glass-2026-sheen: linear-gradient(
-    125deg,
-    rgba(255, 255, 255, 0.65) 0%,
-    rgba(255, 255, 255, 0.08) 38%,
-    rgba(255, 255, 255, 0) 52%,
-    rgba(255, 255, 255, 0.12) 100%
-  );
-  --glass-2026-glow: 0 0 0 1px rgba(45, 212, 191, 0.12), 0 22px 48px -28px rgba(15, 23, 42, 0.28);
-  /* Holographic Pearl 2026 */
-  --pearl-ink: #0f172a;
-  --pearl-muted: rgba(15, 23, 42, 0.62);
-  --pearl-glass: rgba(255, 255, 255, 0.64);
-  --pearl-glass-strong: rgba(255, 255, 255, 0.78);
-  --pearl-line: rgba(255, 255, 255, 0.62);
-  --pearl-shadow: 0 22px 60px -34px rgba(15, 23, 42, 0.32);
-  --pearl-shadow-soft: 0 18px 44px -30px rgba(15, 23, 42, 0.22);
-  --holo-border: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(126, 231, 255, 0.9) 14%,
-    rgba(192, 132, 252, 0.78) 32%,
-    rgba(251, 182, 206, 0.78) 52%,
-    rgba(253, 230, 138, 0.62) 70%,
-    rgba(110, 231, 183, 0.7) 86%,
-    rgba(255, 255, 255, 0.92) 100%
-  );
-  --holo-glow: 0 0 0 1px rgba(255, 255, 255, 0.45), 0 18px 55px -34px rgba(59, 130, 246, 0.25);
-  --pearl-sheen: linear-gradient(
-    125deg,
-    rgba(255, 255, 255, 0.68) 0%,
-    rgba(255, 255, 255, 0.16) 32%,
-    rgba(255, 255, 255, 0) 52%,
-    rgba(255, 255, 255, 0.18) 100%
-  );
-  /* מעטפת אפליקציה — סרגל כהה */
-  --app-sidebar-bg: #0f172a;
-  --app-sidebar-border: rgba(255, 255, 255, 0.06);
-  --app-sidebar-text: #e2e8f0;
-  --app-sidebar-muted: #94a3b8;
-  --app-sidebar-active-bg: rgba(255, 255, 255, 0.08);
-  --app-sidebar-accent-line: #14b8a6;
-  --app-main-bg: #f3f4f6;
+  --v2-canvas:         var(--canvas);
+  --v2-surface:        var(--canvas-raised);
+  --v2-surface-strong: var(--canvas-sunken);
+  --v2-elevated:       var(--canvas-raised);
+  --v2-ink:            var(--ink-900);
+  --v2-muted:          var(--ink-500);
+  --v2-line:           var(--line);
+  --v2-accent:         var(--axis-clients);
+  --v2-accent-soft:    var(--axis-clients-soft);
+  --v2-accent-strong:  var(--axis-clients-strong);
+  --v2-success:        var(--state-success);
+  --v2-success-soft:   var(--state-success-soft);
+  --v2-shadow:         var(--shadow-md);
+
+  /* מעטפת אפליקציה — סרגל כהה Command Center */
+  --app-sidebar-bg:         var(--sidebar-bg);
+  --app-sidebar-border:     var(--sidebar-border);
+  --app-sidebar-text:       var(--sidebar-text);
+  --app-sidebar-muted:      var(--sidebar-muted);
+  --app-sidebar-active-bg:  var(--sidebar-active-bg);
+  --app-sidebar-accent-line: var(--sidebar-accent-line);
+  --app-main-bg:            var(--canvas);
+
   /* שיווק — Hero כהה */
-  --marketing-hero-bg: #0a0f1a;
-  --marketing-hero-accent: #14b8a6;
-  --marketing-accent-soft: #5eead4;
-  /*
-   חוקי שימוש (v2 + מעטפת):
-   טקסט ראשי — var(--v2-ink); משני — var(--v2-muted).
-   מסגרות — var(--v2-line); כפתור ראשי — var(--v2-accent) / --v2-accent-strong.
-   כרטיסי תוכן — .v2-panel / .v2-panel-soft; רקע עמוד — var(--v2-canvas) או --app-main-bg.
-  */
+  --marketing-hero-bg:     #070B11;
+  --marketing-hero-accent: var(--axis-clients);
+  --marketing-accent-soft: #5EEAD4;
+
+  /* Legacy glass/pearl tokens — נשארו שקטים ונקיים (משמשים רק קלאסים ישנים) */
+  --glass-2026-border:        var(--line);
+  --glass-2026-border-strong: var(--line-strong);
+  --glass-2026-sheen:         none;
+  --glass-2026-glow:          0 0 0 1px var(--line-subtle);
+  --pearl-ink:                var(--ink-900);
+  --pearl-muted:              var(--ink-500);
+  --pearl-glass:              var(--canvas-raised);
+  --pearl-glass-strong:       var(--canvas-raised);
+  --pearl-line:               var(--line);
+  --pearl-shadow:             var(--shadow-md);
+  --pearl-shadow-soft:        var(--shadow-sm);
+  --holo-border:              var(--line);
+  --holo-glow:                var(--shadow-sm);
+  --pearl-sheen:              none;
 }
 
 @layer components {
+  /* ═══════════════════════════════════════════════════════════
+     COMMAND CENTER — Shell + Panels
+     ═══════════════════════════════════════════════════════════ */
+
   .v2-site-shell {
     position: relative;
-    background:
-      radial-gradient(ellipse 70% 60% at 12% 18%, rgba(255, 255, 255, 0.82) 0%, transparent 62%),
-      radial-gradient(ellipse 52% 48% at 86% 26%, rgba(191, 219, 254, 0.55) 0%, transparent 62%),
-      radial-gradient(ellipse 55% 48% at 78% 78%, rgba(253, 230, 138, 0.24) 0%, transparent 62%),
-      radial-gradient(ellipse 60% 55% at 22% 86%, rgba(251, 182, 206, 0.24) 0%, transparent 62%),
-      radial-gradient(ellipse 58% 56% at 55% 40%, rgba(45, 212, 191, 0.18) 0%, transparent 62%),
-      linear-gradient(145deg, #f5f7fb 0%, #edf2f8 26%, #eef0f6 52%, #f7f2f6 78%, #eef7fb 100%);
-    color: var(--v2-ink);
+    color: var(--ink-900);
+    background: var(--canvas);
   }
 
-  .v2-site-shell::after {
+  .v2-site-shell::before {
     content: "";
     position: fixed;
-    top: -20%;
-    left: -10%;
-    width: 50%;
-    height: 60%;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.08) 36%, transparent 72%);
-    filter: blur(46px);
+    inset: 0;
     pointer-events: none;
     z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 24px 24px, rgba(11, 15, 20, 0.035), transparent 1.5px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at top, black 30%, transparent 75%);
   }
 
-  /* Holographic Pearl helpers */
-  .holo-border-card {
+  /* ── Panel (primary container) ── */
+  .v2-panel,
+  .pearl-panel,
+  .glass-2026-panel {
     position: relative;
-    border-radius: 26px;
-    border: 1px solid transparent;
-    background:
-      linear-gradient(var(--pearl-glass-strong), var(--pearl-glass-strong)) padding-box,
-      var(--holo-border) border-box;
-    box-shadow: var(--holo-glow), var(--pearl-shadow-soft);
-    backdrop-filter: blur(18px) saturate(1.2);
-    -webkit-backdrop-filter: blur(18px) saturate(1.2);
-    overflow: hidden;
-  }
-
-  .holo-border-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--pearl-sheen);
-    opacity: 0.7;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-
-  .holo-border-card > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .pearl-panel {
-    position: relative;
-    border-radius: 24px;
-    border: 1px solid color-mix(in srgb, rgba(255, 255, 255, 0.9) 70%, rgba(148, 163, 184, 0.2));
-    background: linear-gradient(170deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
-    box-shadow: var(--pearl-shadow-soft);
-    backdrop-filter: blur(18px) saturate(1.18);
-    -webkit-backdrop-filter: blur(18px) saturate(1.18);
-    overflow: hidden;
-  }
-
-  .pearl-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--pearl-sheen);
-    opacity: 0.6;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-
-  .pearl-panel > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .v2-panel {
-    position: relative;
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 55%, white);
-    border-radius: 22px;
-    background: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.82));
-    box-shadow: var(--glass-2026-glow), var(--v2-shadow);
-    backdrop-filter: blur(14px) saturate(1.15);
-    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-sm);
   }
 
   .v2-panel-soft {
-    background: linear-gradient(165deg, rgba(255, 255, 255, 0.88), rgba(241, 245, 249, 0.9));
+    background: var(--canvas-sunken);
+    border-color: var(--line-subtle);
+    box-shadow: none;
   }
 
   .v2-panel-highlight {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(240, 253, 250, 0.92));
+    background: var(--canvas-raised);
+    border-color: var(--axis-clients-border);
+    box-shadow: var(--shadow-md), 0 0 0 1px var(--axis-clients-border);
   }
 
+  /* Axis accent borders — left-edge color bar for finance/clients/ai panels */
+  .holo-border-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .axis-finance {
+    border-inline-start: 3px solid var(--axis-finance);
+  }
+  .axis-clients {
+    border-inline-start: 3px solid var(--axis-clients);
+  }
+  .axis-ai {
+    border-inline-start: 3px solid var(--axis-ai);
+  }
+
+  /* ── Buttons ── */
   .v2-button {
-    @apply inline-flex touch-manipulation items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition duration-300;
+    @apply inline-flex touch-manipulation items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition;
   }
 
   .v2-button-primary {
-    position: relative;
-    background: linear-gradient(145deg, var(--v2-accent), var(--v2-accent-strong));
+    background: var(--ink-900);
     color: #fff;
-    box-shadow:
-      0 14px 28px -12px rgba(13, 148, 136, 0.5),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      inset 0 -3px 8px rgba(15, 118, 110, 0.4);
-    border: 1px solid rgba(13, 148, 136, 0.8);
-    overflow: hidden;
+    border: 1px solid var(--ink-900);
+    box-shadow: var(--shadow-sm);
   }
-
-  .v2-button-primary::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(125deg, transparent 20%, rgba(255, 255, 255, 0.2) 40%, transparent 60%);
-    background-size: 200% 200%;
-    background-position: -100% 0;
-    transition: background-position 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
   .v2-button-primary:hover {
-    box-shadow:
-      0 18px 36px -12px rgba(13, 148, 136, 0.65),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
-      inset 0 -3px 8px rgba(15, 118, 110, 0.5);
-    transform: translateY(-1px);
+    background: var(--ink-800);
+    box-shadow: var(--shadow-md);
   }
-
-  .v2-button-primary:hover::after {
-    background-position: 100% 0;
-  }
-
   .v2-button-primary:active {
+    background: var(--ink-900);
     transform: translateY(1px);
-    box-shadow:
-      0 6px 16px -8px rgba(13, 148, 136, 0.6),
-      inset 0 2px 6px rgba(15, 118, 110, 0.6);
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* Axis-colored primaries */
+  .v2-button-primary.axis-finance {
+    background: var(--axis-finance);
+    border-color: var(--axis-finance);
+  }
+  .v2-button-primary.axis-finance:hover {
+    background: var(--axis-finance-strong);
+  }
+  .v2-button-primary.axis-clients {
+    background: var(--axis-clients);
+    border-color: var(--axis-clients);
+  }
+  .v2-button-primary.axis-clients:hover {
+    background: var(--axis-clients-strong);
+  }
+  .v2-button-primary.axis-ai {
+    background: var(--axis-ai);
+    border-color: var(--axis-ai);
+  }
+  .v2-button-primary.axis-ai:hover {
+    background: var(--axis-ai-strong);
   }
 
   .v2-button-secondary {
-    background: linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.88));
-    color: var(--v2-ink);
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 40%, white);
-    box-shadow:
-      0 6px 16px -8px rgba(15, 23, 42, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--canvas-raised);
+    color: var(--ink-800);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-xs);
   }
-
-  .v2-button-secondary:hover,
-  .v2-button-ghost:hover {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow:
-      0 12px 24px -12px rgba(15, 23, 42, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 1);
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--glass-2026-border-strong) 60%, white);
+  .v2-button-secondary:hover {
+    background: var(--canvas-sunken);
+    border-color: var(--ink-400);
   }
-
   .v2-button-secondary:active {
+    background: var(--canvas-sunken);
     transform: translateY(1px);
-    box-shadow: 0 4px 12px -8px rgba(15, 23, 42, 0.1);
   }
 
   .v2-button-ghost {
-    color: var(--v2-ink);
+    color: var(--ink-700);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .v2-button-ghost:hover {
+    background: var(--canvas-sunken);
+    color: var(--ink-900);
   }
 
+  /* ── Eyebrow label ── */
   .v2-eyebrow {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-black tracking-[0.18em] uppercase;
-    background: rgba(255, 255, 255, 0.88);
-    color: var(--v2-accent);
-    border: 1px solid rgba(13, 148, 136, 0.2);
+    @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.16em] uppercase;
+    background: var(--canvas-sunken);
+    color: var(--ink-500);
+    border: 1px solid var(--line);
   }
 
+  /* ── Dashboard frame ── */
   .v2-dashboard-frame {
-    @apply relative overflow-hidden rounded-[24px];
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 40%, white);
-    background: linear-gradient(170deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.78));
-    box-shadow: var(--glass-2026-glow), 0 24px 60px -36px rgba(15, 23, 42, 0.18);
-    backdrop-filter: blur(14px) saturate(1.1);
-    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    @apply relative overflow-hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-sm);
   }
 
+  /* ── CTA strip (kept dark for contrast against canvas) ── */
   .v2-cta-strip {
-    @apply flex flex-col gap-8 rounded-[32px] px-6 py-8 sm:px-8 sm:py-10 lg:flex-row lg:items-center lg:justify-between;
-    background:
-      linear-gradient(135deg, rgba(13, 148, 136, 0.98), rgba(15, 118, 110, 0.96));
-    box-shadow: 0 40px 110px -60px rgba(15, 118, 110, 0.8);
+    @apply flex flex-col gap-8 rounded-2xl px-6 py-8 sm:px-8 sm:py-10 lg:flex-row lg:items-center lg:justify-between;
+    background: var(--ink-900);
+    color: #fff;
+    box-shadow: var(--shadow-lg);
   }
 
-  /* פאנל זכוכית ייעודי (GlassPanel) */
-  .glass-2026-panel {
-    position: relative;
-    border-radius: 24px;
-    border: 1px solid color-mix(in srgb, var(--glass-2026-border-strong) 50%, white);
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.78), rgba(248, 250, 252, 0.72));
-    box-shadow: var(--glass-2026-glow);
-    backdrop-filter: blur(16px) saturate(1.12);
-    -webkit-backdrop-filter: blur(16px) saturate(1.12);
-    overflow: hidden;
-  }
-
-  .glass-2026-panel::before,
-  .v2-panel::before,
-  .card-avenue::before,
-  .card-glass::before,
-  .card-elevated::before,
-  .v2-dashboard-frame::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--glass-2026-sheen);
-    opacity: 0.85;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-
-  .glass-2026-panel > *,
-  .v2-panel > *,
-  .card-avenue > *,
-  .card-glass > *,
-  .card-elevated > *,
-  .v2-dashboard-frame > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* תפריט עליון צף — מעטפת App */
+  /* ══════════════ Top Nav (inline bar, no glass) ══════════════ */
   .glass-2026-topnav {
-    border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow:
-      0 4px 24px -8px rgba(15, 23, 42, 0.12),
-      inset 0 1px 0 rgba(255,255,255,1);
-    backdrop-filter: blur(20px) saturate(1.05);
-    -webkit-backdrop-filter: blur(20px) saturate(1.05);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-xs);
   }
 
   .glass-2026-topnav-link {
-    @apply inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-black transition;
-    color: var(--v2-muted);
+    @apply inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition;
+    color: var(--ink-500);
   }
 
   .glass-2026-topnav-link:hover {
-    color: var(--v2-ink);
-    background: rgba(255, 255, 255, 0.65);
+    color: var(--ink-900);
+    background: var(--canvas-sunken);
   }
 
   .glass-2026-topnav-link--active {
-    color: #fff;
-    background: linear-gradient(135deg, var(--v2-accent), var(--v2-accent-strong));
-    box-shadow: 0 12px 28px -16px rgba(13, 148, 136, 0.65);
+    color: var(--ink-900);
+    background: var(--canvas-sunken);
+    box-shadow: inset 0 -2px 0 var(--axis-clients);
   }
 
-  /* אריח KPI תלת־ממדי */
+  /* ══════════════ KPI / Metric Card (flat, typography-first) ══════════════ */
   .metric-3d-card {
     position: relative;
-    border-radius: 26px;
-    border: 1px solid color-mix(in srgb, white 70%, var(--glass-2026-border-strong));
-    background: linear-gradient(148deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.88));
-    box-shadow:
-      0 22px 48px -34px rgba(15, 23, 42, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -12px 28px -18px rgba(148, 163, 184, 0.18);
-    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--canvas-raised);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
   }
 
-  .metric-3d-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--glass-2026-sheen);
-    opacity: 0.55;
-    pointer-events: none;
+  .metric-3d-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+    border-color: var(--line-strong);
   }
 
   .metric-3d-card__inner {
     position: relative;
     z-index: 1;
+  }
+
+  /* ══════════════ AI Insight Strip (unique, narrative element) ══════════════ */
+  .ai-insight-strip {
+    position: relative;
+    border: 1px solid var(--axis-ai-border);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(90deg, var(--axis-ai-soft) 0%, var(--canvas-raised) 70%);
+    box-shadow: var(--shadow-xs);
+    padding: 1rem 1.25rem;
+  }
+
+  .ai-insight-strip__dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background: var(--axis-ai);
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════ Data tables ══════════════ */
+  .v2-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .v2-table thead th {
+    text-align: start;
+    padding: 0.625rem 1rem;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-400);
+    border-bottom: 1px solid var(--line);
+    background: var(--canvas-sunken);
+  }
+  .v2-table tbody td {
+    padding: 0.75rem 1rem;
+    color: var(--ink-700);
+    border-bottom: 1px solid var(--line-subtle);
+  }
+  .v2-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .v2-table tbody tr:hover td {
+    background: var(--canvas-sunken);
   }
 }
 

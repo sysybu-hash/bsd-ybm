@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+type Axis = "finance" | "clients" | "ai" | "neutral";
 
 type Props = Readonly<{
   label: string;
@@ -9,58 +12,88 @@ type Props = Readonly<{
   linkLabel?: string;
   linkHref?: string;
   uid: string;
+  axis?: Axis;
 }>;
 
-export default function Metric3DCard({ label, value, icon: Icon, trend, linkLabel, linkHref, uid }: Props) {
+/**
+ * Command Center KPI tile.
+ * - שטוח, מקצועי, טיפוגרפיה חזקה
+ * - אקסנט צבעוני עדין לפי ציר (finance=זהב, clients=ציאן, ai=סגול)
+ * - ערך גדול בטבלת מספרים (tabular-nums), תווית קטנה, מגמה, קישור חץ
+ */
+export default function Metric3DCard({
+  label,
+  value,
+  icon: Icon,
+  trend,
+  linkLabel,
+  linkHref,
+  uid,
+  axis = "neutral",
+}: Props) {
+  const axisColor =
+    axis === "finance"
+      ? "var(--axis-finance)"
+      : axis === "clients"
+        ? "var(--axis-clients)"
+        : axis === "ai"
+          ? "var(--axis-ai)"
+          : "var(--ink-500)";
+
+  const axisSoft =
+    axis === "finance"
+      ? "var(--axis-finance-soft)"
+      : axis === "clients"
+        ? "var(--axis-clients-soft)"
+        : axis === "ai"
+          ? "var(--axis-ai-soft)"
+          : "var(--canvas-sunken)";
+
   return (
-    <div className="group relative w-full" style={{ height: "140px" }} dir="rtl">
+    <div className="metric-3d-card h-full" data-uid={uid}>
       <div
-        className="holo-border-card h-full w-full transition-transform duration-300 group-hover:-translate-y-1.5"
-        aria-label={label}
-        data-uid={uid}
+        className="metric-3d-card__inner flex h-full flex-col gap-4 p-5"
+        style={{ borderInlineStartColor: axisColor, borderInlineStartWidth: axis === "neutral" ? 0 : 3, borderInlineStartStyle: "solid" }}
       >
-        {/* Halo */}
-        <div
-          className="pointer-events-none absolute -inset-10 opacity-60"
-          style={{
-            background:
-              "radial-gradient(circle at 30% 20%, rgba(126,231,255,0.45) 0%, transparent 55%), radial-gradient(circle at 80% 70%, rgba(251,182,206,0.35) 0%, transparent 58%), radial-gradient(circle at 55% 55%, rgba(110,231,183,0.22) 0%, transparent 60%)",
-            filter: "blur(22px)",
-          }}
-          aria-hidden
-        />
-
-        <div className="flex h-full flex-col justify-between p-4 sm:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-[12px] font-black leading-tight text-slate-700/90">{label}</p>
-              <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-[28px] leading-none font-black tabular-nums tracking-tight text-slate-900">
-                  {value}
-                </span>
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-white/55 ring-1 ring-white/70 shadow-sm">
-                  <Icon className="h-[18px] w-[18px] text-teal-600" aria-hidden />
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-end justify-between gap-3 pt-2">
-            {trend ? (
-              <p className="text-[11px] font-black text-emerald-700/90">{trend}</p>
-            ) : (
-              <span />
-            )}
-            {linkLabel && linkHref ? (
-              <Link
-                href={linkHref}
-                className="rounded-full bg-white/55 px-3 py-1 text-[11px] font-black text-teal-700 ring-1 ring-white/70 shadow-sm transition hover:bg-white/75"
-              >
-                {linkLabel}
-              </Link>
-            ) : null}
-          </div>
+        {/* Header row: label + icon */}
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[11px] font-bold tracking-[0.08em] uppercase text-[color:var(--ink-500)]">
+            {label}
+          </p>
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-lg"
+            style={{ background: axisSoft, color: axisColor }}
+            aria-hidden
+          >
+            <Icon className="h-4 w-4" />
+          </span>
         </div>
+
+        {/* Value */}
+        <div className="flex-1">
+          <span className="block text-[32px] leading-none font-black tabular-nums tracking-tight text-[color:var(--ink-900)]">
+            {value}
+          </span>
+          {trend ? (
+            <p className="mt-2 text-[12px] font-semibold text-[color:var(--ink-500)]">
+              {trend}
+            </p>
+          ) : null}
+        </div>
+
+        {/* Footer link */}
+        {linkLabel && linkHref ? (
+          <div className="pt-2 border-t border-[color:var(--line-subtle)]">
+            <Link
+              href={linkHref}
+              className="inline-flex items-center gap-1 text-[12px] font-bold text-[color:var(--ink-700)] transition hover:text-[color:var(--ink-900)]"
+              style={{ color: axis === "neutral" ? undefined : axisColor }}
+            >
+              {linkLabel}
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+            </Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );

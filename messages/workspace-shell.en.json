@@ -119,8 +119,35 @@
   },
   "workspaceHome": {
     "greeting": "Hello, {name}",
-    "subtitle": "Personal workspace",
+    "subtitle": "Your business command center — clients and finance, deciphered by AI.",
+    "dashboardEyebrow": "Dashboard",
     "dailyWorkTitle": "Daily work",
+    "dualAxisAria": "Two business axes — clients and finance",
+    "aiNarrative": {
+      "aria": "AI summary for today",
+      "eyebrow": "Live AI insight",
+      "open": "Ask the AI",
+      "empty": "All quiet. No anomalies, delays, or opportunities detected today.",
+      "pendingInvoices": "{count} invoices pending collection, totaling {amount}.",
+      "collectionRate": "Your current collection rate is {rate}%.",
+      "clientsActive": "{count} active clients in your network."
+    },
+    "axisClients": {
+      "eyebrow": "Clients axis",
+      "title": "The people behind the numbers",
+      "all": "All clients",
+      "empty": "No clients yet",
+      "addFirst": "Add first client"
+    },
+    "axisFinance": {
+      "eyebrow": "Finance axis",
+      "title": "Cash flow & what the business produces",
+      "all": "All finance",
+      "empty": "No financial documents yet",
+      "totalInvoiced": "Invoiced",
+      "totalPaid": "Collected",
+      "collectionRate": "Collection rate"
+    },
     "recentActivity": {
       "title": "Recent documents & activity",
       "subtitle": "Updates from issued documents in your organization.",

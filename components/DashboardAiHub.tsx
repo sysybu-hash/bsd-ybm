@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BrainCircuit, ScanSearch } from "lucide-react";
+import { BrainCircuit, ScanSearch, Sparkles } from "lucide-react";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
 import { useI18n } from "@/components/I18nProvider";
 import { WorkspaceSurface } from "@/components/workspace/WorkspacePageScaffold";
@@ -15,34 +15,50 @@ export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
   const [activeTab, setActiveTab] = useState<"scanner" | "assistant">("scanner");
 
   return (
-    <div className="w-full animate-fade-in space-y-8" dir="rtl">
+    <div className="w-full space-y-6" dir="rtl">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900">
+          <span
+            className="v2-eyebrow"
+            style={{ color: "var(--axis-ai)", background: "var(--axis-ai-soft)", borderColor: "transparent" }}
+          >
+            <Sparkles className="me-1 h-3 w-3" aria-hidden />
+            {t("workspaceAiHub.eyebrow") || "AI"}
+          </span>
+          <h1 className="mt-3 text-[40px] leading-[1.05] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[48px]">
             {t("workspaceAiHub.title")}
           </h1>
-          <p className="mt-2 max-w-2xl font-medium text-slate-500">{t("workspaceAiHub.subtitle")}</p>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[color:var(--ink-500)]">
+            {t("workspaceAiHub.subtitle")}
+          </p>
         </div>
 
-        <div className="flex rounded-2xl border border-slate-200 bg-slate-100 p-1">
+        <div
+          className="flex rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-1"
+          role="tablist"
+        >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === "scanner"}
             onClick={() => setActiveTab("scanner")}
-            className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+            className={`rounded-md px-4 py-1.5 text-[13px] font-bold transition ${
               activeTab === "scanner"
-                ? "bg-white text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
             }`}
           >
             {t("workspaceAiHub.tabScanner")}
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === "assistant"}
             onClick={() => setActiveTab("assistant")}
-            className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+            className={`rounded-md px-4 py-1.5 text-[13px] font-bold transition ${
               activeTab === "assistant"
-                ? "bg-white text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
             }`}
           >
             {t("workspaceAiHub.tabAssistant")}
@@ -52,6 +68,7 @@ export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
 
       {activeTab === "scanner" ? (
         <WorkspaceSurface
+          axis="ai"
           title={t("workspaceAiHub.tabScanner")}
           description={t("workspaceAiHub.scannerBody")}
         >
@@ -59,24 +76,35 @@ export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
         </WorkspaceSurface>
       ) : (
         <WorkspaceSurface
+          axis="ai"
           title={t("workspaceAiHub.tabAssistant")}
           description={t("workspaceAiHub.assistantBody")}
         >
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-6">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+            <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5">
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-lg"
+                style={{ background: "var(--axis-ai-soft)", color: "var(--axis-ai)" }}
+              >
                 <BrainCircuit className="h-5 w-5" aria-hidden />
               </span>
-              <p className="mt-4 text-base font-black text-slate-900">{t("workspaceAiHub.assistantHint")}</p>
-              <p className="mt-2 text-sm leading-7 text-slate-500">
+              <p className="mt-4 text-base font-bold text-[color:var(--ink-900)]">
+                {t("workspaceAiHub.assistantHint")}
+              </p>
+              <p className="mt-2 text-[13px] leading-6 text-[color:var(--ink-500)]">
                 Org ID: {orgId || "N/A"}
               </p>
             </div>
-            <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-6">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+            <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5">
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-lg"
+                style={{ background: "var(--axis-ai-soft)", color: "var(--axis-ai)" }}
+              >
                 <ScanSearch className="h-5 w-5" aria-hidden />
               </span>
-              <p className="mt-4 text-base font-black text-slate-900">{t("workspaceAiHub.scannerBody")}</p>
+              <p className="mt-4 text-base font-bold text-[color:var(--ink-900)]">
+                {t("workspaceAiHub.scannerBody")}
+              </p>
             </div>
           </div>
         </WorkspaceSurface>

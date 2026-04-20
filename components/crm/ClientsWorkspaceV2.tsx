@@ -121,9 +121,9 @@ function ClientCard({ contact, advancedHref }: { contact: ClientRecord; advanced
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[color:var(--v2-line)] bg-white/76 px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceClients.card.billingDocs")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">
+        <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceClients.card.billingDocs")}</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">
             {contact.invoiceCount > 0
               ? t("workspaceClients.card.invoiceCount", { count: String(contact.invoiceCount) })
               : t("workspaceClients.card.noBillingYet")}
@@ -146,7 +146,7 @@ function ClientCard({ contact, advancedHref }: { contact: ClientRecord; advanced
         </div>
 
         {contact.notes ? (
-          <p className="rounded-2xl border border-[color:var(--v2-line)] bg-white/76 px-4 py-3 text-sm leading-7 text-[color:var(--v2-muted)]">
+          <p className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3 text-sm leading-7 text-[color:var(--ink-600)]">
             {contact.notes}
           </p>
         ) : null}
@@ -262,12 +262,13 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
   return (
     <div className="grid gap-6" dir={dir}>
       <WorkspacePageHero
+        axis="clients"
         eyebrow={t("workspaceClients.eyebrow")}
         title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
         description={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
         actions={
           <>
-            <Link href={advancedClientsHref} className="v2-button v2-button-primary">
+            <Link href={advancedClientsHref} className="v2-button v2-button-primary axis-clients">
               {t("workspaceClients.advancedCta")}
               <ArrowLeft className="h-4 w-4" aria-hidden />
             </Link>
@@ -283,14 +284,16 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
         }
         aside={
           <>
-            <WorkspaceStatTile label={clientsLabel} value={filteredContacts.length.toString()} icon={UsersRound} />
+            <WorkspaceStatTile axis="clients" label={clientsLabel} value={filteredContacts.length.toString()} icon={UsersRound} />
             <WorkspaceStatTile
+              axis="finance"
               label={t("workspaceClients.statPipelineValue")}
               value={formatCurrencyILS(totalValue)}
               icon={CircleDollarSign}
               hint={t("workspaceClients.statPipelineValueHint")}
             />
             <WorkspaceStatTile
+              axis="finance"
               label={t("workspaceClients.statOpenCollection")}
               value={formatCurrencyILS(totalPending)}
               icon={ReceiptText}
@@ -310,33 +313,33 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
         <div className="grid gap-4">
           <div className="v2-panel p-5">
             <div className="grid gap-3 lg:grid-cols-[1.4fr_0.8fr_0.8fr_auto]">
-              <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+              <label className="grid gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">
                   {t("workspaceClients.searchLabel")}
                 </span>
-                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3">
-                  <Filter className="h-4 w-4 text-[color:var(--v2-muted)]" aria-hidden />
+                <div className="flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2.5 transition focus-within:border-[color:var(--axis-clients)] focus-within:ring-2 focus-within:ring-[color:var(--axis-clients-glow)]">
+                  <Filter className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
                   <input
                     value={search}
                     onChange={(event) => {
                       const nextValue = event.target.value;
                       startFilterTransition(() => setSearch(nextValue));
                     }}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--v2-muted)]"
+                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-400)]"
                     placeholder={t("workspaceClients.searchPlaceholder")}
                   />
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--v2-accent)]" aria-hidden /> : null}
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
                 </div>
               </label>
 
-              <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+              <label className="grid gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">
                   {t("workspaceClients.statusLabel")}
                 </span>
                 <select
                   value={statusFilter}
                   onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                  className="rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2.5 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition focus:border-[color:var(--axis-clients)]"
                 >
                   <option value="ALL">{t("workspaceClients.statusAll")}</option>
                   {statusOrder.map((status) => (
@@ -347,14 +350,14 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                 </select>
               </label>
 
-              <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+              <label className="grid gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">
                   {t("workspaceClients.projectLabel")}
                 </span>
                 <select
                   value={projectFilter}
                   onChange={(event) => startFilterTransition(() => setProjectFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                  className="rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2.5 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition focus:border-[color:var(--axis-clients)]"
                 >
                   <option value="ALL">{t("workspaceClients.projectAll")}</option>
                   {projects.map((project) => (
@@ -365,16 +368,18 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                 </select>
               </label>
 
-              <div className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+              <div className="grid gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">
                   {t("workspaceClients.viewLabel")}
                 </span>
-                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--v2-canvas)] p-1">
+                <div className="flex items-center gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-1">
                   <button
                     type="button"
                     onClick={() => startTransition(() => setView("overview"))}
-                    className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      view === "overview" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-bold transition ${
+                      view === "overview"
+                        ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
+                        : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
                     }`}
                   >
                     <LayoutGrid className="h-4 w-4" aria-hidden />
@@ -383,8 +388,10 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                   <button
                     type="button"
                     onClick={() => startTransition(() => setView("board"))}
-                    className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      view === "board" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-bold transition ${
+                      view === "board"
+                        ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
+                        : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
                     }`}
                   >
                     <ListFilter className="h-4 w-4" aria-hidden />

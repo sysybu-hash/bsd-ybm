@@ -119,8 +119,35 @@
   },
   "workspaceHome": {
     "greeting": "שלום, {name}",
-    "subtitle": "מרחב עבודה אישי",
+    "subtitle": "המרכז השקט של העסק שלך — לקוחות וכספים מפוענחים על ידי AI.",
+    "dashboardEyebrow": "דשבורד",
     "dailyWorkTitle": "עבודה יומית",
+    "dualAxisAria": "שני צירי הארגון — לקוחות וכספים",
+    "aiNarrative": {
+      "aria": "סיכום AI ליום הנוכחי",
+      "eyebrow": "תובנה חיה של AI",
+      "open": "שאל את ה-AI",
+      "empty": "הכל שקט. לא זיהיתי חריגות, עיכובים או הזדמנויות מיוחדות היום.",
+      "pendingInvoices": "{count} חשבוניות ממתינות לגבייה, סה\"כ {amount}.",
+      "collectionRate": "שיעור הגבייה שלך כרגע {rate}%.",
+      "clientsActive": "{count} לקוחות פעילים ברשת שלך."
+    },
+    "axisClients": {
+      "eyebrow": "ציר לקוחות",
+      "title": "אנשים מאחורי המספרים",
+      "all": "לכל הלקוחות",
+      "empty": "עדיין אין לקוחות במערכת",
+      "addFirst": "הוסף לקוח ראשון"
+    },
+    "axisFinance": {
+      "eyebrow": "ציר כספים",
+      "title": "תזרים ומה שהארגון מייצר",
+      "all": "לכל הכספים",
+      "empty": "עדיין אין מסמכים פיננסיים",
+      "totalInvoiced": "סה\"כ חויב",
+      "totalPaid": "נגבה",
+      "collectionRate": "שיעור גבייה"
+    },
     "recentActivity": {
       "title": "מסמכים ופעילות אחרונה",
       "subtitle": "עדכונים מהמסמכים המונפקים בארגון.",
