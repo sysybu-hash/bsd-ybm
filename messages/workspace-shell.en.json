@@ -126,11 +126,62 @@
     "aiNarrative": {
       "aria": "AI summary for today",
       "eyebrow": "Live AI insight",
+      "eyebrowShort": "AI detected",
       "open": "Ask the AI",
       "empty": "All quiet. No anomalies, delays, or opportunities detected today.",
       "pendingInvoices": "{count} invoices pending collection, totaling {amount}.",
       "collectionRate": "Your current collection rate is {rate}%.",
       "clientsActive": "{count} active clients in your network."
+    },
+    "cashForecast": {
+      "eyebrow": "Cash forecast",
+      "cta": "Details",
+      "expectedWeek": "Expected this week"
+    },
+    "documents": {
+      "eyebrow": "Documents scanned",
+      "cta": "Go to documents",
+      "processed": "processed by AI"
+    },
+    "docTypes": {
+      "invoice": "Invoices",
+      "receipt": "Receipts",
+      "other": "Other"
+    },
+    "projects": {
+      "activeHint": "active now"
+    },
+    "utility": {
+      "settings": {
+        "title": "Settings",
+        "hint": "Profession, org, billing",
+        "progress": "completed"
+      },
+      "automations": {
+        "title": "Automations",
+        "hint": "AI-powered rules",
+        "active": "active"
+      },
+      "inbox": {
+        "title": "Inbox",
+        "hint": "Awaiting decision",
+        "pending": "open"
+      },
+      "help": {
+        "title": "Help",
+        "hint": "Guides & support",
+        "aiHint": "AI can help"
+      }
+    },
+    "quickActions": {
+      "issue": "Invoice",
+      "addClient": "Client",
+      "addProject": "Project",
+      "askAi": "Ask AI",
+      "erp": "ERP",
+      "scan": "Scan",
+      "billing": "Billing",
+      "admin": "Admin"
     },
     "axisClients": {
       "eyebrow": "Clients axis",
@@ -138,18 +189,21 @@
       "all": "All clients",
       "empty": "No clients yet",
       "addFirst": "Add first client",
-      "addClient": "New client"
+      "addClient": "New client",
+      "activeLabel": "active clients",
+      "latest": "Latest clients"
     },
     "axisFinance": {
       "eyebrow": "Finance axis",
       "title": "Cash flow & what the business produces",
       "all": "All finance",
       "empty": "No financial documents yet",
-      "totalInvoiced": "Invoiced",
+      "totalInvoiced": "Invoiced this month",
       "totalPaid": "Collected",
       "pending": "Pending",
       "collectionRate": "Collection rate",
-      "issue": "Issue document"
+      "issue": "Issue document",
+      "target": "Target {amount}"
     },
     "stats": {
       "activeProjects": "Active projects",

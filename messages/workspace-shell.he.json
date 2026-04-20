@@ -126,11 +126,62 @@
     "aiNarrative": {
       "aria": "סיכום AI ליום הנוכחי",
       "eyebrow": "תובנה חיה של AI",
+      "eyebrowShort": "AI זיהה",
       "open": "שאל את ה-AI",
       "empty": "הכל שקט. לא זיהיתי חריגות, עיכובים או הזדמנויות מיוחדות היום.",
       "pendingInvoices": "{count} חשבוניות ממתינות לגבייה, סה\"כ {amount}.",
       "collectionRate": "שיעור הגבייה שלך כרגע {rate}%.",
       "clientsActive": "{count} לקוחות פעילים ברשת שלך."
+    },
+    "cashForecast": {
+      "eyebrow": "תזרים צפוי",
+      "cta": "פירוט",
+      "expectedWeek": "צפוי השבוע"
+    },
+    "documents": {
+      "eyebrow": "מסמכים סרוקים",
+      "cta": "מעבר למסמכים",
+      "processed": "עובדו ע\"י AI"
+    },
+    "docTypes": {
+      "invoice": "חשבוניות",
+      "receipt": "קבלות",
+      "other": "אחר"
+    },
+    "projects": {
+      "activeHint": "פעילים כרגע"
+    },
+    "utility": {
+      "settings": {
+        "title": "הגדרות",
+        "hint": "מקצוע, ארגון, חיוב",
+        "progress": "הושלם"
+      },
+      "automations": {
+        "title": "אוטומציות",
+        "hint": "כללים שה-AI מפעיל",
+        "active": "פעילות"
+      },
+      "inbox": {
+        "title": "תיבת עבודה",
+        "hint": "ממתין להחלטה",
+        "pending": "פתוחים"
+      },
+      "help": {
+        "title": "עזרה",
+        "hint": "מדריכים ותמיכה",
+        "aiHint": "AI עוזר"
+      }
+    },
+    "quickActions": {
+      "issue": "חשבונית",
+      "addClient": "לקוח",
+      "addProject": "פרויקט",
+      "askAi": "שאל AI",
+      "erp": "ERP",
+      "scan": "סרוק",
+      "billing": "חיוב",
+      "admin": "ניהול"
     },
     "axisClients": {
       "eyebrow": "ציר לקוחות",
@@ -138,18 +189,21 @@
       "all": "לכל הלקוחות",
       "empty": "עדיין אין לקוחות במערכת",
       "addFirst": "הוסף לקוח ראשון",
-      "addClient": "לקוח חדש"
+      "addClient": "לקוח חדש",
+      "activeLabel": "לקוחות פעילים",
+      "latest": "לקוחות אחרונים"
     },
     "axisFinance": {
       "eyebrow": "ציר כספים",
       "title": "תזרים ומה שהארגון מייצר",
       "all": "לכל הכספים",
       "empty": "עדיין אין מסמכים פיננסיים",
-      "totalInvoiced": "סה\"כ חויב",
+      "totalInvoiced": "חויב החודש",
       "totalPaid": "נגבה",
       "pending": "ממתין",
       "collectionRate": "שיעור גבייה",
-      "issue": "הנפק מסמך"
+      "issue": "הנפק מסמך",
+      "target": "Target {amount}"
     },
     "stats": {
       "activeProjects": "פרויקטים פעילים",

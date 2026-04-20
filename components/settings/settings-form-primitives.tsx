@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 export const inputClass =
-  "w-full rounded-2xl border border-[color:var(--v2-line)] bg-white/90 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none transition placeholder:text-[color:var(--v2-muted)] focus:border-[color:var(--v2-accent)]";
+  "w-full rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3.5 py-2.5 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition placeholder:text-[color:var(--ink-400)] focus:border-[color:var(--axis-clients)] focus:ring-2 focus:ring-[color:var(--axis-clients-glow)]";
 
 export const textareaClass = `${inputClass} min-h-[120px] resize-y leading-7`;
 
@@ -54,17 +54,20 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="v2-panel p-6">
-      <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+    <section className="tile p-5 sm:p-6">
+      <div className="flex items-start gap-3 pb-4 mb-4 border-b border-[color:var(--line-subtle)]">
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+          style={{ background: "var(--axis-clients-soft)", color: "var(--axis-clients)" }}
+        >
           {icon}
         </span>
         <div className="min-w-0">
-          <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{title}</h2>
-          <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{body}</p>
+          <h2 className="text-[17px] font-black tracking-tight text-[color:var(--ink-900)]">{title}</h2>
+          <p className="mt-1 text-[13px] leading-6 text-[color:var(--ink-500)]">{body}</p>
         </div>
       </div>
-      <div className="mt-5">{children}</div>
+      <div>{children}</div>
     </section>
   );
 }

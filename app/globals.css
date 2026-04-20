@@ -97,14 +97,58 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --state-info:         #2463C7;
   --state-info-soft:    #E2EDFB;
 
-  /* ─── Split Duality — canvasים דו־צירים וחוט שדרה של AI ─── */
-  --canvas-finance-start: #FAE5C8; /* אפרסק חם */
-  --canvas-finance-end:   #F0C995; /* זהב חלבי */
-  --canvas-clients-start: #D4EDF0; /* ציאן חלבי */
-  --canvas-clients-end:   #A8D5DB; /* ציאן עומק */
+  /* ═══════════════════════════════════════════════════════════
+     PRO BENTO 2026 — מערכת אריחים עם פרוגרס ויזואלי
+     ═══════════════════════════════════════════════════════════ */
+
+  /* רקעי אריחים — עדינים, באותו משפחת צבעים של הציר */
+  --tile-finance-bg:         #FBF0D8;   /* אפרסק זהב חלבי */
+  --tile-finance-bg-strong:  #F4DDB0;
+  --tile-finance-wash:       linear-gradient(165deg, #FBF0D8, #F4DDB0);
+
+  --tile-clients-bg:         #E4F3F4;   /* ציאן חלבי */
+  --tile-clients-bg-strong:  #C8E9EC;
+  --tile-clients-wash:       linear-gradient(165deg, #E4F3F4, #C8E9EC);
+
+  --tile-ai-bg-start:        #332089;   /* סגול עמוק (הכרטיס הדרמטי) */
+  --tile-ai-bg-end:          #1A0F3F;
+  --tile-ai-wash:            linear-gradient(160deg, #332089, #1A0F3F);
+  --tile-ai-glow:            rgba(167, 139, 250, 0.45);
+
+  --tile-neutral-bg:         #FFFFFF;
+  --tile-neutral-bg-raised:  #FAFAFC;
+
+  --tile-lavender-bg:        #EDE5FA;
+  --tile-mint-bg:            #E3F4EA;
+  --tile-rose-bg:            #FCE7EF;
+  --tile-sky-bg:             #E0EEF7;
+
+  /* רדיוסים לאריחים */
+  --tile-radius:       22px;
+  --tile-radius-lg:    28px;
+  --tile-radius-sm:    16px;
+
+  /* צללים מדודים */
+  --tile-shadow:       0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
+  --tile-shadow-raised: 0 2px 4px rgba(15, 23, 42, 0.06), 0 12px 32px rgba(15, 23, 42, 0.09);
+  --tile-shadow-ai:    0 20px 60px -20px rgba(45, 25, 150, 0.5), 0 0 40px -10px var(--tile-ai-glow);
+
+  /* חוקי פרוגרס */
+  --progress-track:       #E8EAEF;
+  --progress-fill-finance: linear-gradient(90deg, #D9A13E, #B8811A);
+  --progress-fill-clients: linear-gradient(90deg, #14A4AE, #0E7C86);
+  --progress-fill-ai:      linear-gradient(90deg, #9B7DFF, #6D51D1);
+  --progress-fill-success: linear-gradient(90deg, #28A765, #1F7A4C);
+  --progress-fill-warning: linear-gradient(90deg, #E0A13A, #B87A1C);
+
+  /* Legacy Split Duality tokens (still referenced elsewhere) */
+  --canvas-finance-start: var(--tile-finance-bg);
+  --canvas-finance-end:   var(--tile-finance-bg-strong);
+  --canvas-clients-start: var(--tile-clients-bg);
+  --canvas-clients-end:   var(--tile-clients-bg-strong);
   --spine-ai:             #6D51D1;
   --spine-ai-deep:        #4C3FA8;
-  --spine-ai-glow:        rgba(109, 81, 209, 0.45);
+  --spine-ai-glow:        var(--tile-ai-glow);
   --bridge-bg-start:      #7B5AD4;
   --bridge-bg-end:        #4C3FA8;
 
@@ -901,36 +945,243 @@ html.reduce-motion *::after {
   }
 
   /* ═══════════════════════════════════════════════════════════
-     SPLIT DUALITY — ציר כספים × ציר לקוחות × AI באמצע
+     PRO BENTO — מערכת אריחים (Tile) + Progress Visualization
      ═══════════════════════════════════════════════════════════ */
 
-  /* ── קנבס מפוצל: גרדיאנט זהב-ציאן + חוט שדרה סגול ── */
+  /* ── BentoGrid — grid 12 טורים עם ריווח ── */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  /* ── Tile — האריח הבסיסי ── */
+  .tile {
+    position: relative;
+    border-radius: var(--tile-radius);
+    background: var(--tile-neutral-bg);
+    border: 1px solid var(--line);
+    box-shadow: var(--tile-shadow);
+    overflow: hidden;
+    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  }
+
+  .tile:hover {
+    box-shadow: var(--tile-shadow-raised);
+    border-color: var(--line-strong);
+  }
+
+  .tile-interactive {
+    cursor: pointer;
+  }
+  .tile-interactive:hover {
+    transform: translateY(-1px);
+  }
+
+  /* ── טוני אריחים לפי ציר ── */
+  .tile--finance {
+    background: var(--tile-finance-wash);
+    border-color: rgba(184, 129, 26, 0.14);
+  }
+  .tile--clients {
+    background: var(--tile-clients-wash);
+    border-color: rgba(14, 124, 134, 0.16);
+  }
+  .tile--ai {
+    background: var(--tile-ai-wash);
+    border-color: rgba(167, 139, 250, 0.25);
+    box-shadow: var(--tile-shadow-ai);
+    color: #F8F5FF;
+  }
+  .tile--ai:hover {
+    box-shadow: 0 24px 72px -18px rgba(45, 25, 150, 0.6), 0 0 60px -10px var(--tile-ai-glow);
+  }
+  .tile--lavender { background: var(--tile-lavender-bg); }
+  .tile--mint     { background: var(--tile-mint-bg); }
+  .tile--rose     { background: var(--tile-rose-bg); }
+  .tile--sky      { background: var(--tile-sky-bg); }
+  .tile--dark     { background: #161821; color: #F5F6F8; border-color: #2A2E38; }
+
+  /* ── גדלי אריחים בתוך ה-grid (12 טורים) ── */
+  .tile-span-3  { grid-column: span 3; }
+  .tile-span-4  { grid-column: span 4; }
+  .tile-span-5  { grid-column: span 5; }
+  .tile-span-6  { grid-column: span 6; }
+  .tile-span-7  { grid-column: span 7; }
+  .tile-span-8  { grid-column: span 8; }
+  .tile-span-9  { grid-column: span 9; }
+  .tile-span-12 { grid-column: span 12; }
+
+  .tile-rows-1 { grid-row: span 1; }
+  .tile-rows-2 { grid-row: span 2; }
+  .tile-rows-3 { grid-row: span 3; }
+
+  @media (max-width: 1024px) {
+    .tile-span-3, .tile-span-4, .tile-span-5 { grid-column: span 6; }
+    .tile-span-7, .tile-span-8 { grid-column: span 12; }
+  }
+
+  @media (max-width: 640px) {
+    .tile-span-3, .tile-span-4, .tile-span-5,
+    .tile-span-6, .tile-span-7, .tile-span-8, .tile-span-9 { grid-column: span 12; }
+  }
+
+  /* ── Tile inner slots ── */
+  .tile-body  { padding: 18px 20px; }
+  .tile-body-lg { padding: 22px 24px; }
+  .tile-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .tile--ai .tile-eyebrow { color: rgba(199, 182, 255, 0.9); }
+  .tile--dark .tile-eyebrow { color: rgba(220, 227, 240, 0.7); }
+
+  .tile-hero-value {
+    font-size: clamp(34px, 4.2vw, 56px);
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-900);
+  }
+  .tile--ai .tile-hero-value { color: #FFFFFF; }
+  .tile--dark .tile-hero-value { color: #FFFFFF; }
+
+  .tile-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-500);
+  }
+  .tile--ai .tile-label { color: rgba(228, 221, 255, 0.85); }
+
+  /* ── Progress Bar (horizontal) ── */
+  .progress-bar {
+    position: relative;
+    height: 8px;
+    background: var(--progress-track);
+    border-radius: 99px;
+    overflow: visible;
+  }
+  .tile--ai .progress-bar  { background: rgba(255, 255, 255, 0.12); }
+  .tile--dark .progress-bar { background: rgba(255, 255, 255, 0.08); }
+
+  .progress-bar__fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform-origin: left center;
+  }
+  [dir="rtl"] .progress-bar__fill {
+    transform-origin: right center;
+    left: auto; right: 0;
+  }
+  .progress-bar__fill--finance { background: var(--progress-fill-finance); }
+  .progress-bar__fill--clients { background: var(--progress-fill-clients); }
+  .progress-bar__fill--ai      { background: var(--progress-fill-ai); }
+  .progress-bar__fill--success { background: var(--progress-fill-success); }
+  .progress-bar__fill--warning { background: var(--progress-fill-warning); }
+
+  .progress-bar__fill--glow { box-shadow: 0 0 12px -2px currentColor; }
+
+  .progress-bar__target {
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    width: 2px;
+    background: var(--ink-500);
+    border-radius: 2px;
+  }
+  .progress-bar__target::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--ink-700);
+  }
+
+  /* ── Segmented bar (for pipelines) ── */
+  .segment-bar {
+    display: flex;
+    height: 10px;
+    gap: 3px;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .segment-bar__part {
+    height: 100%;
+    border-radius: 99px;
+    min-width: 4px;
+  }
+
+  /* ── Activity timeline dot indicators ── */
+  .timeline-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+  }
+  .timeline-dot--finance { background: var(--axis-finance); }
+  .timeline-dot--clients { background: var(--axis-clients); }
+  .timeline-dot--ai      { background: var(--axis-ai); }
+  .timeline-dot--success { background: var(--state-success); }
+  .timeline-dot--warning { background: var(--state-warning); }
+  .timeline-dot--live {
+    position: relative;
+  }
+  .timeline-dot--live::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 99px;
+    background: currentColor;
+    opacity: 0.3;
+    animation: tile-pulse 2s ease-in-out infinite;
+  }
+  @keyframes tile-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ── Tile CTA (כפתור פעולה בתוך אריח) ── */
+  .tile-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.1);
+    color: currentColor;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background 150ms ease;
+  }
+  .tile-cta:hover { background: rgba(255, 255, 255, 0.2); }
+  .tile:not(.tile--ai):not(.tile--dark) .tile-cta {
+    background: var(--canvas-raised);
+    color: var(--ink-900);
+    border-color: var(--line-strong);
+  }
+  .tile:not(.tile--ai):not(.tile--dark) .tile-cta:hover {
+    background: var(--canvas-sunken);
+  }
+
+  /* ── Legacy split-duality wrapper kept for backward compat (renders as plain spacer) ── */
   .split-duality {
     position: relative;
-    isolation: isolate;
-    /* פריצה מהפדינג של ה-<main> כך שהצבע יזרום לכל הרוחב */
-    margin-left: -1rem;
-    margin-right: -1rem;
-    margin-top: -1.5rem;
-    padding: 2rem 1rem 3rem;
-    min-height: calc(100% + 3rem);
   }
-
-  @media (min-width: 640px) {
-    .split-duality {
-      margin-left: -1.5rem;
-      margin-right: -1.5rem;
-      padding: 2.5rem 1.5rem 3.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .split-duality {
-      margin-left: -2.5rem;
-      margin-right: -2.5rem;
-      padding: 3rem 2.5rem 4rem;
-    }
-  }
+  .split-duality::before,
+  .split-duality::after,
+  .split-duality-spine-dots { display: none; }
 
   /* רקע הקנבס — שני גרדיאנטים צמודים + פס סגול זוהר באמצע.
      ב-RTL: clients בימין (קריאה ראשונה), finance בשמאל.

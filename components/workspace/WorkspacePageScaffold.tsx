@@ -18,9 +18,8 @@ const axisSoftVar: Record<Axis, string> = {
 };
 
 /**
- * Command Center page hero.
- * שורת eyebrow → כותרת ענקית → תיאור → פעולות. aside — כרטיסי סטטיסטיקה בצד.
- * נטו טיפוגרפיה, בלי glass, בלי gradients.
+ * Pro Bento page hero.
+ * Eyebrow → H1 → description → optional actions / aside stat tiles.
  */
 export function WorkspacePageHero({
   eyebrow,
@@ -38,22 +37,19 @@ export function WorkspacePageHero({
   axis?: Axis;
 }) {
   return (
-    <section className="relative pb-6">
-      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
+    <section className="relative pb-4">
+      <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
         <div>
-          <span
-            className="v2-eyebrow"
-            style={axis === "neutral" ? undefined : { color: axisColorVar[axis], borderColor: "transparent", background: axisSoftVar[axis] }}
-          >
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={axis === "neutral" ? { color: "var(--ink-400)" } : { color: axisColorVar[axis] }}>
             {eyebrow}
-          </span>
-          <h1 className="mt-4 text-[40px] leading-[1.05] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[52px]">
+          </p>
+          <h1 className="mt-2 text-[32px] leading-[1.1] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[40px]">
             {title}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--ink-500)] sm:text-[17px]">
+          <p className="mt-3 max-w-2xl text-[14px] leading-6 text-[color:var(--ink-500)] sm:text-[15px]">
             {description}
           </p>
-          {actions ? <div className="mt-6 flex flex-wrap gap-2.5">{actions}</div> : null}
+          {actions ? <div className="mt-5 flex flex-wrap gap-2">{actions}</div> : null}
         </div>
         {aside ? <div className="grid gap-3 sm:grid-cols-2">{aside}</div> : null}
       </div>
@@ -61,9 +57,7 @@ export function WorkspacePageHero({
   );
 }
 
-/**
- * כרטיס סטטיסטיקה יחיד — שטוח, אקסנט לפי ציר.
- */
+/** Stat tile for page hero asides */
 export function WorkspaceStatTile({
   label,
   value,
@@ -80,7 +74,10 @@ export function WorkspaceStatTile({
   const axisColor = axisColorVar[axis];
   const axisSoft = axisSoftVar[axis];
   return (
-    <div className="holo-border-card flex flex-col gap-3 p-5" style={axis === "neutral" ? undefined : { borderInlineStartColor: axisColor, borderInlineStartWidth: 3 }}>
+    <div
+      className="tile flex flex-col gap-2 p-4"
+      style={axis === "neutral" ? undefined : { borderInlineStartColor: axisColor, borderInlineStartWidth: 3 }}
+    >
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-bold tracking-[0.08em] uppercase text-[color:var(--ink-500)]">{label}</p>
         <span
@@ -99,9 +96,7 @@ export function WorkspaceStatTile({
   );
 }
 
-/**
- * משטח תוכן — לבן נקי עם גבול דק, כותרת מעל, תוכן מתחת.
- */
+/** Content surface — same look as a tile, with a header. */
 export function WorkspaceSurface({
   title,
   description,
@@ -117,10 +112,13 @@ export function WorkspaceSurface({
 }) {
   const axisColor = axisColorVar[axis];
   return (
-    <section className="holo-border-card overflow-hidden" style={axis === "neutral" ? undefined : { borderInlineStartColor: axisColor, borderInlineStartWidth: 3 }}>
+    <section
+      className="tile overflow-hidden"
+      style={axis === "neutral" ? undefined : { borderInlineStartColor: axisColor, borderInlineStartWidth: 3 }}
+    >
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[color:var(--line-subtle)] px-5 py-4 sm:px-6">
         <div>
-          <h2 className="text-lg font-black tracking-tight text-[color:var(--ink-900)]">{title}</h2>
+          <h2 className="text-[17px] font-black tracking-tight text-[color:var(--ink-900)]">{title}</h2>
           {description ? (
             <p className="mt-1 text-[13px] leading-6 text-[color:var(--ink-500)]">{description}</p>
           ) : null}

@@ -1,14 +1,24 @@
 type Props = {
   title: string;
   description: string;
+  eyebrow?: string;
 };
 
-/** כותרת אחידה לעמודי מרכז ההגדרות */
-export default function SettingsPageHeader({ title, description }: Props) {
+/** Pro Bento — כותרת אחידה לעמודי מרכז ההגדרות */
+export default function SettingsPageHeader({ title, description, eyebrow }: Props) {
   return (
-    <header className="glass-2026-panel relative z-0 mb-6 overflow-hidden p-5 sm:p-6">
-      <h1 className="relative z-[1] text-2xl font-black tracking-[-0.05em] text-[color:var(--v2-ink)] sm:text-3xl">{title}</h1>
-      <p className="relative z-[1] mt-2 max-w-3xl text-sm leading-7 text-[color:var(--v2-muted)] sm:text-base">{description}</p>
+    <header className="mb-6 flex flex-col gap-1 px-1">
+      {eyebrow ? (
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h1 className="text-[28px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[34px]">
+        {title}
+      </h1>
+      <p className="mt-1 max-w-2xl text-[14px] leading-6 text-[color:var(--ink-500)]">
+        {description}
+      </p>
     </header>
   );
 }

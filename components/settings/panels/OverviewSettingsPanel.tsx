@@ -70,57 +70,91 @@ export default function OverviewSettingsPanel({
 
   return (
     <div className="grid gap-6" dir="rtl">
-      <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-2xl">
-            <span className="v2-eyebrow">{t("workspaceSettings.eyebrow")}</span>
-            <h1 className="mt-3 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-4xl lg:text-5xl">
-              מרכז ההגדרות
-            </h1>
-            <p className="mt-4 text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
-              זהות עסק, מקצוע, פורטל ללקוחות, גבייה, מנועי AI וחיבורים — במבנה ברור לפי נושאים.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-ink)]">
-                {viewer.roleLabel}
-              </span>
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-muted)]">
-                {canManage ? "ניהול" : "צפייה בלבד"}
-              </span>
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-muted)]">
-                {tierLabelHe(organization.subscriptionTier)}
-              </span>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={settingsHubPath("billing")} className="v2-button v2-button-primary">
-                מנויים וחיוב (BSD-YBM)
-                <CreditCard className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link href="/app/documents" className="v2-button v2-button-secondary">
-                מסמכים
-                <Layers3 className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </div>
-          <div className="grid w-full max-w-md grid-cols-2 gap-3 sm:max-w-lg">
-            {[
-              { label: "מוכנות פרופיל", value: `${completionRate}%`, icon: ShieldCheck },
-              { label: "משתמשים פעילים", value: `${activeUsers}/${usersTotal}`, icon: UsersRound },
-              { label: "מקצוע", value: profile.industryLabel, icon: BriefcaseBusiness },
-              { label: "מנוי", value: organization.subscriptionStatus, icon: Sparkles },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="v2-panel rounded-2xl p-4">
-                <Icon className="h-4 w-4 text-[color:var(--v2-accent)]" aria-hidden />
-                <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">{label}</p>
-                <p className="mt-1 truncate text-lg font-black text-[color:var(--v2-ink)]" title={value}>
-                  {value}
-                </p>
-              </div>
-            ))}
-          </div>
+      {/* Hero - Pro Bento style */}
+      <header className="flex flex-col gap-1 px-1">
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
+          {t("workspaceSettings.eyebrow")}
+        </p>
+        <h1 className="text-[30px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[36px]">
+          מרכז ההגדרות
+        </h1>
+        <p className="mt-1 max-w-2xl text-[14px] leading-6 text-[color:var(--ink-500)]">
+          זהות עסק, מקצוע, פורטל ללקוחות, גבייה, מנועי AI וחיבורים — במבנה ברור לפי נושאים.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="rounded-full bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-700)]">
+            {viewer.roleLabel}
+          </span>
+          <span className="rounded-full bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-500)]">
+            {canManage ? "ניהול" : "צפייה בלבד"}
+          </span>
+          <span className="rounded-full bg-[color:var(--axis-finance-soft)] px-3 py-1 text-[11px] font-black text-[color:var(--axis-finance-ink)]">
+            {tierLabelHe(organization.subscriptionTier)}
+          </span>
         </div>
-      </section>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href={settingsHubPath("billing")}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[color:var(--axis-finance)] px-3 py-2 text-[12px] font-bold text-white hover:bg-[color:var(--axis-finance-strong)]"
+          >
+            <CreditCard className="h-3.5 w-3.5" aria-hidden />
+            מנויים וחיוב
+          </Link>
+          <Link
+            href="/app/documents"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-[12px] font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white hover:border-[color:var(--ink-900)]"
+          >
+            <Layers3 className="h-3.5 w-3.5" aria-hidden />
+            מסמכים
+          </Link>
+        </div>
+      </header>
 
+      {/* KPI tiles row */}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: "מוכנות פרופיל", value: `${completionRate}%`, icon: ShieldCheck, tone: "finance" as const, progress: completionRate },
+          { label: "משתמשים פעילים", value: `${activeUsers}/${usersTotal}`, icon: UsersRound, tone: "clients" as const, progress: usersTotal > 0 ? Math.round((activeUsers / usersTotal) * 100) : 0 },
+          { label: "מקצוע", value: profile.industryLabel, icon: BriefcaseBusiness, tone: "neutral" as const, progress: null },
+          { label: "מנוי", value: organization.subscriptionStatus, icon: Sparkles, tone: "ai" as const, progress: null },
+        ].map(({ label, value, icon: Icon, tone, progress }) => {
+          const axisColor =
+            tone === "finance" ? "var(--axis-finance)" :
+            tone === "clients" ? "var(--axis-clients)" :
+            tone === "ai" ? "var(--axis-ai)" : "var(--ink-900)";
+          const axisSoft =
+            tone === "finance" ? "var(--axis-finance-soft)" :
+            tone === "clients" ? "var(--axis-clients-soft)" :
+            tone === "ai" ? "var(--axis-ai-soft)" : "var(--canvas-sunken)";
+          return (
+            <div
+              key={label}
+              className="tile p-4"
+              style={tone !== "neutral" ? { borderInlineStartColor: axisColor, borderInlineStartWidth: 3 } : undefined}
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink-500)]">{label}</p>
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: axisSoft, color: axisColor }} aria-hidden>
+                  <Icon className="h-3.5 w-3.5" />
+                </span>
+              </div>
+              <p className="mt-2 truncate text-[18px] font-black tabular-nums text-[color:var(--ink-900)]" title={value}>
+                {value}
+              </p>
+              {progress !== null ? (
+                <div className="mt-2 h-1.5 rounded-full bg-[color:var(--progress-track)] overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${progress}%`, background: axisColor }}
+                  />
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Shortcuts */}
       <div className="min-w-0 space-y-4">
         <SectionCard
           title="אזורים במרכז ההגדרות"
@@ -132,12 +166,12 @@ export default function OverviewSettingsPanel({
               <Link
                 key={id}
                 href={settingsHubPath(id)}
-                className="flex items-start gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/90 p-4 text-start transition hover:border-[color:var(--v2-accent)] hover:bg-[color:var(--v2-accent-soft)]"
+                className="group flex items-start gap-3 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 transition hover:-translate-y-0.5 hover:border-[color:var(--axis-clients)] hover:shadow-[var(--shadow-sm)]"
               >
-                <Icon className="mt-0.5 h-6 w-6 shrink-0 text-[color:var(--v2-accent)]" aria-hidden />
+                <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--axis-clients)]" aria-hidden />
                 <span>
-                  <span className="block font-black text-[color:var(--v2-ink)]">{label}</span>
-                  <span className="mt-1 block text-sm text-[color:var(--v2-muted)]">{description}</span>
+                  <span className="block text-[14px] font-black text-[color:var(--ink-900)]">{label}</span>
+                  <span className="mt-1 block text-[12px] text-[color:var(--ink-500)]">{description}</span>
                 </span>
               </Link>
             ))}
@@ -148,13 +182,13 @@ export default function OverviewSettingsPanel({
           <div className="grid gap-3 sm:grid-cols-2">
             <Link
               href={settingsHubPath("billing")}
-              className="rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-bold text-[color:var(--v2-ink)] transition hover:bg-white"
+              className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3 text-[13px] font-bold text-[color:var(--ink-900)] transition hover:bg-white hover:border-[color:var(--axis-finance)]"
             >
               מנויים, מחירון ותשלום על BSD-YBM
             </Link>
             <Link
               href={settingsHubPath("operations")}
-              className="rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-bold text-[color:var(--v2-ink)] transition hover:bg-white"
+              className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3 text-[13px] font-bold text-[color:var(--ink-900)] transition hover:bg-white hover:border-[color:var(--axis-ai)]"
             >
               תפעול וחיבורים נוספים
             </Link>

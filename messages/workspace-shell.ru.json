@@ -126,11 +126,62 @@
     "aiNarrative": {
       "aria": "AI-сводка на сегодня",
       "eyebrow": "Живая AI-подсказка",
+      "eyebrowShort": "AI нашёл",
       "open": "Спросить AI",
       "empty": "Всё спокойно. Аномалий, задержек или возможностей не обнаружено.",
       "pendingInvoices": "{count} счетов ожидают оплаты на сумму {amount}.",
       "collectionRate": "Текущий уровень взыскания: {rate}%.",
       "clientsActive": "{count} активных клиентов в вашей сети."
+    },
+    "cashForecast": {
+      "eyebrow": "Прогноз потока",
+      "cta": "Подробнее",
+      "expectedWeek": "Ожидается на неделе"
+    },
+    "documents": {
+      "eyebrow": "Документы сканированы",
+      "cta": "К документам",
+      "processed": "обработано AI"
+    },
+    "docTypes": {
+      "invoice": "Счета",
+      "receipt": "Квитанции",
+      "other": "Прочее"
+    },
+    "projects": {
+      "activeHint": "активны"
+    },
+    "utility": {
+      "settings": {
+        "title": "Настройки",
+        "hint": "Профессия, организация, оплата",
+        "progress": "завершено"
+      },
+      "automations": {
+        "title": "Автоматизации",
+        "hint": "Правила AI",
+        "active": "активных"
+      },
+      "inbox": {
+        "title": "Входящие",
+        "hint": "Ждёт решения",
+        "pending": "открытых"
+      },
+      "help": {
+        "title": "Помощь",
+        "hint": "Руководства и поддержка",
+        "aiHint": "AI поможет"
+      }
+    },
+    "quickActions": {
+      "issue": "Счёт",
+      "addClient": "Клиент",
+      "addProject": "Проект",
+      "askAi": "Спросить AI",
+      "erp": "ERP",
+      "scan": "Скан",
+      "billing": "Оплата",
+      "admin": "Админ"
     },
     "axisClients": {
       "eyebrow": "Ось клиентов",
@@ -138,18 +189,21 @@
       "all": "Все клиенты",
       "empty": "Клиентов пока нет",
       "addFirst": "Добавить клиента",
-      "addClient": "Новый клиент"
+      "addClient": "Новый клиент",
+      "activeLabel": "активных клиентов",
+      "latest": "Последние клиенты"
     },
     "axisFinance": {
       "eyebrow": "Финансовая ось",
       "title": "Денежный поток и результаты бизнеса",
       "all": "Все финансы",
       "empty": "Нет финансовых документов",
-      "totalInvoiced": "Выставлено",
+      "totalInvoiced": "Выставлено в месяце",
       "totalPaid": "Получено",
       "pending": "Ожидает",
       "collectionRate": "Уровень сбора",
-      "issue": "Выставить"
+      "issue": "Выставить",
+      "target": "Цель {amount}"
     },
     "stats": {
       "activeProjects": "Активные проекты",
