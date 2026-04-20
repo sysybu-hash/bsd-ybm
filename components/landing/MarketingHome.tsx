@@ -203,7 +203,7 @@ export default function MarketingHome() {
       { href: "/about", label: ed.nav.about },
       { href: "/product#projects", label: ed.nav.projects },
       { href: "/solutions", label: ed.nav.services },
-      { href: "/brief", label: ed.nav.blog },
+      { href: "/professional", label: ed.nav.blog },
       { href: "/contact", label: ed.nav.contact },
     ],
     [ed.nav],

@@ -349,11 +349,22 @@ export default function MultiEngineScanner({
                        <CheckCircle2 size={12} /> Confidence Active
                     </div>
                  </div>
-                 {row.engines.filter(e => e.ok).map((e, ei) => {
+                 {row.engines.map((e, ei) => {
                     const ai = e.aiData || {};
                     const isBest = ei === row.recommendedIndex;
+                    if (!e.ok) {
+                       return (
+                          <div key={ei} className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-600 shadow-sm mb-4">
+                             <div className="flex items-center gap-2 mb-2">
+                                <Brain size={16} />
+                                <span className="font-black tracking-tighter uppercase">{e.label} (שגיאה)</span>
+                             </div>
+                             <p className="text-xs font-bold">{e.error}</p>
+                          </div>
+                       );
+                    }
                     return (
-                       <div key={ei} className={`rounded-3xl border p-6 transition-all ${isBest ? "border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-500/10" : "border-slate-100 bg-white"}`}>
+                       <div key={ei} className={`rounded-3xl border p-6 mb-4 transition-all ${isBest ? "border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-500/10" : "border-slate-100 bg-white"}`}>
                           <div className="flex items-center justify-between mb-4">
                              <div className="flex items-center gap-2">
                                 <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isBest ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}><Brain size={16} /></div>

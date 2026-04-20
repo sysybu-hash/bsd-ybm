@@ -219,7 +219,7 @@ export default function CrmOrganizationsAdminTable({
                 <div className="flex flex-wrap items-center gap-3">
                   {showUnifiedBillingLinks ? (
                     <Link
-                      href={`/app/billing?tab=control&orgId=${encodeURIComponent(org.id)}`}
+                      href={`/app/settings/billing?tab=control&orgId=${encodeURIComponent(org.id)}`}
                       className="inline-flex items-center gap-1.5 rounded-xl border border-teal-500/25 bg-teal-500/10 px-3 py-1.5 text-sm font-bold text-teal-300 transition hover:border-teal-500/40 hover:bg-teal-500/20"
                     >
                       <CreditCard size={16} />

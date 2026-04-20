@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { LogOut, Sparkles } from "lucide-react";
+import { BellRing, Grid2X2, LogOut, Settings, Sparkles } from "lucide-react";
 import AppCommandPalette from "@/components/app-shell/AppCommandPalette";
 import WorkspaceUtilityDock from "@/components/app-shell/WorkspaceUtilityDock";
+import WorkspaceGlassTopNav from "@/components/app-shell/WorkspaceGlassTopNav";
 import { buildAppNavCollection, type AppNavItem } from "@/components/app-shell/app-nav";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
@@ -44,28 +45,40 @@ type Props = Readonly<{
   };
 }>;
 
-function SidebarLink({
+function SidebarIconLink({
   href,
   label,
   icon: Icon,
   active,
+  routeId,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   active: boolean;
+  routeId?: AppNavItem["id"];
 }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold transition ${
+      title={label}
+      aria-label={label}
+      className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition ${
         active
-          ? "border-r-[3px] border-[color:var(--app-sidebar-accent-line)] bg-[color:var(--app-sidebar-active-bg)] text-white"
-          : "text-[color:var(--app-sidebar-muted)] hover:bg-white/5 hover:text-[color:var(--app-sidebar-text)]"
+          ? "bg-[color:var(--app-sidebar-active-bg)] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+          : "text-[color:var(--app-sidebar-muted)] hover:bg-white/6 hover:text-[color:var(--app-sidebar-text)]"
       }`}
     >
-      <Icon className="h-4 w-4 shrink-0" aria-hidden />
-      <span className="truncate">{label}</span>
+      {active ? (
+        <span
+          className="pointer-events-none absolute inset-y-2 start-0 w-[3px] rounded-e-full bg-[color:var(--app-sidebar-accent-line)]"
+          aria-hidden
+        />
+      ) : null}
+      <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden />
+      {routeId === "ai" ? (
+        <Sparkles className="pointer-events-none absolute end-0.5 top-0.5 h-3 w-3 text-teal-300" aria-hidden />
+      ) : null}
     </Link>
   );
 }
@@ -75,23 +88,28 @@ function MobilePill({
   label,
   icon: Icon,
   active,
+  routeId,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   active: boolean;
+  routeId?: AppNavItem["id"];
 }) {
   return (
     <Link
       href={href}
       className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition ${
         active
-          ? "bg-[#14b8a6] text-white"
-          : "border border-slate-300 bg-white text-slate-600"
+          ? "glass-2026-topnav-link--active text-white"
+          : "border border-slate-200/90 bg-white/80 text-slate-600 backdrop-blur-sm"
       }`}
     >
       <Icon className="h-4 w-4" aria-hidden />
-      {label}
+      <span className="flex items-center gap-1">
+        {label}
+        {routeId === "ai" ? <Sparkles className="h-3.5 w-3.5 text-amber-200" aria-hidden /> : null}
+      </span>
     </Link>
   );
 }
@@ -127,7 +145,7 @@ export default function AppShellV2({ children, user }: Props) {
   const utilityNavItems = nav.utility.filter(
     (item) =>
       item.showInNav !== false &&
-      visibleUtilityIds.includes(item.id as "help" | "business" | "intelligence" | "admin"),
+      visibleUtilityIds.includes(item.id as "help" | "business" | "admin"),
   );
   const currentSection = resolveActiveAppNavItem(pathname, nav);
 
@@ -141,188 +159,157 @@ export default function AppShellV2({ children, user }: Props) {
 
   return (
     <WorkspaceShellTransitionProvider>
-    <div
-      className={`${marketingSans.className} min-h-screen bg-[color:var(--app-main-bg)] text-[color:var(--v2-ink)]`}
-      dir={dir}
-    >
-      <a
-        href="#app-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[60] focus:rounded-2xl focus:bg-[color:var(--v2-accent)] focus:px-4 focus:py-3 focus:text-sm focus:font-black focus:text-white"
+      <div
+        className={`${marketingSans.className} v2-site-shell min-h-screen text-[color:var(--v2-ink)] lg:flex lg:items-center lg:justify-center lg:p-6 xl:p-8`}
+        dir={dir}
       >
-        {t("workspaceNav.skipToMain")}
-      </a>
+        <a
+          href="#app-main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[60] focus:rounded-2xl focus:bg-[color:var(--v2-accent)] focus:px-4 focus:py-3 focus:text-sm focus:font-black focus:text-white"
+        >
+          {t("workspaceNav.skipToMain")}
+        </a>
 
-      <div className="grid min-h-screen lg:grid-cols-[276px_1fr]">
-        <aside className="hidden border-l border-[color:var(--app-sidebar-border)] bg-[color:var(--app-sidebar-bg)] lg:block">
-          <div className="sticky top-0 flex min-h-screen flex-col px-3 py-4">
-            <BsdYbmLogo
-              href="/app"
-              variant="sidebar"
-              size="sm"
-              subtitle={
-                <span className="mt-0.5 block text-[10px] font-medium text-slate-400">{t("workspaceNav.logoSubtitle")}</span>
-              }
-            />
-
-            <div className="mt-8">
-              <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                {t("workspaceNav.sectionDailyWork")}
-              </p>
-              <nav className="mt-3 grid gap-1.5">
-                {nav.primary.map((item) => (
-                  <SidebarLink
-                    key={item.href}
-                    href={item.href}
-                    label={item.label}
-                    icon={item.icon}
-                    active={isAppNavPathActive(pathname, item.href)}
-                  />
-                ))}
-              </nav>
+        <div className="relative z-10 grid min-h-screen w-full max-w-[1800px] lg:min-h-[calc(100vh-3rem)] lg:grid-cols-[1fr_4rem] lg:overflow-hidden lg:rounded-[36px] lg:border lg:border-white/70 lg:bg-white/55 lg:backdrop-blur-2xl lg:shadow-[0_34px_90px_-34px_rgba(15,23,42,0.42),0_0_0_1px_rgba(255,255,255,0.55)_inset] xl:min-h-[calc(100vh-4rem)]">
+          <div className="min-w-0 flex flex-col h-full overflow-hidden bg-white/35 backdrop-blur-2xl">
+            {/* Desktop Top Nav — logo outside pill on the right */}
+            <div className="hidden lg:flex pt-5 pb-2 px-6 z-50 sticky top-0 bg-white/35 backdrop-blur-2xl">
+              <WorkspaceGlassTopNav items={nav.primary} pathname={pathname} navLabel={t("workspaceNav.primaryNavAria")} userInitials={initials} />
             </div>
 
-            {utilityNavItems.length > 0 ? (
-              <div className="mt-6">
-                <p className="px-2 text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                  {t("workspaceNav.sectionMoreNav")}
-                </p>
-                <nav className="mt-3 grid gap-1.5">
-                  {utilityNavItems.map((item) => (
-                    <SidebarLink
+            {/* Mobile Header (Only visible on small screens) */}
+            <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-md lg:hidden">
+              <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-xs font-black text-[color:var(--v2-accent)] shadow-sm ring-1 ring-slate-200/80">
+                    {initials}
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="truncate text-base font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">
+                      {currentSection.label}
+                    </h1>
+                  </div>
+                </div>
+
+                <AppCommandPalette items={commandItems} />
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--v2-line)] bg-white/90 text-[color:var(--v2-ink)]"
+                    aria-label={t("workspaceNav.signOutAria")}
+                  >
+                    <LogOut className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              </div>
+
+              <nav
+                className="glass-2026-topnav mx-4 mb-3 flex gap-2 overflow-x-auto pb-1 sm:mx-6"
+                aria-label={t("workspaceNav.primaryNavAria")}
+              >
+                <div className="flex min-w-min gap-2 px-1.5 py-1">
+                  {nav.primary.map((item) => (
+                    <MobilePill
                       key={item.href}
                       href={item.href}
                       label={item.label}
                       icon={item.icon}
                       active={isAppNavPathActive(pathname, item.href)}
+                      routeId={item.id}
+                    />
+                  ))}
+                </div>
+              </nav>
+
+              {utilityNavItems.length > 0 ? (
+                <nav className="mx-auto flex gap-2 overflow-x-auto px-4 pb-3 sm:px-6" aria-label={t("workspaceNav.sectionMoreNav")}>
+                  {utilityNavItems.map((item) => (
+                    <MobilePill
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      icon={item.icon}
+                      active={isAppNavPathActive(pathname, item.href)}
+                      routeId={item.id}
                     />
                   ))}
                 </nav>
-              </div>
-            ) : null}
+              ) : null}
+            </header>
 
-            <div className="mt-auto space-y-3 pt-6">
-              <Link
-                href={nav.advanced.href}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-black text-white transition hover:bg-white/10"
-              >
-                <Sparkles className="h-4 w-4" aria-hidden />
-                {nav.advanced.label}
-              </Link>
+            <main
+              id="app-main-content"
+              className="mx-auto w-full max-w-[1500px] px-6 py-4 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-8 lg:px-10 lg:pb-8 flex-1 overflow-y-auto"
+            >
+              {children}
+            </main>
+          </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-3.5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#14b8a6]/20 text-sm font-black text-[#5eead4]">
-                    {initials}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-black text-white">{user.name}</p>
-                    <p className="truncate text-xs text-slate-400">{user.email}</p>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-300">{roleLabel}</span>
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-400">{tierLabel}</span>
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-slate-400">{modeLabel}</span>
-                </div>
-
-                <p
-                  className={`mt-3 text-xs font-bold ${
-                    subscriptionActive ? "text-emerald-400" : "text-amber-400"
+          {/* Narrow utility sidebar on the visual LEFT (last child in DOM = end in RTL) */}
+          <aside className="hidden border-s border-white/40 bg-white/18 backdrop-blur-2xl lg:flex lg:flex-col">
+            <div className="flex min-h-screen flex-col items-center px-2 py-5">
+              <nav className="mt-4 flex w-full flex-1 flex-col items-center gap-2.5" aria-label={t("workspaceNav.sectionDailyWork")}>
+                <Link
+                  href="/app/inbox"
+                  title={t("workspaceNav.items.inbox.label")}
+                  aria-label={t("workspaceNav.items.inbox.label")}
+                  className={`relative flex h-10 w-10 items-center justify-center rounded-2xl transition ${
+                    isAppNavPathActive(pathname, "/app/inbox")
+                      ? "bg-white/55 text-slate-900 shadow-[0_10px_22px_-14px_rgba(15,23,42,0.35)] ring-1 ring-white/70"
+                      : "text-slate-700/70 hover:bg-white/40 hover:text-slate-900 ring-1 ring-white/30"
                   }`}
                 >
-                  {subscriptionLabel}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-4 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-white/5 hover:text-white"
-              >
-                <LogOut className="h-4 w-4" aria-hidden />
-                {t("workspaceNav.signOut")}
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        <div className="min-w-0 bg-[color:var(--app-main-bg)]">
-          <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm">
-            <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-xs font-black text-[color:var(--v2-accent)] shadow-sm lg:hidden">
-                  {initials}
-                </div>
-                <div className="min-w-0">
-                  <h1 className="truncate text-base font-black tracking-[-0.04em] text-[color:var(--v2-ink)] sm:text-lg">
-                    {currentSection.label}
-                  </h1>
-                </div>
-              </div>
-
-              <AppCommandPalette items={commandItems} />
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--v2-line)] bg-white/88 text-[color:var(--v2-ink)] sm:hidden"
-                  aria-label={t("workspaceNav.signOutAria")}
+                  <BellRing className="h-[18px] w-[18px]" aria-hidden />
+                </Link>
+                <Link
+                  href="/app/advanced"
+                  title={t("workspaceNav.advanced.label")}
+                  aria-label={t("workspaceNav.advanced.label")}
+                  className={`flex h-10 w-10 items-center justify-center rounded-2xl transition ${
+                    isAppNavPathActive(pathname, "/app/advanced")
+                      ? "bg-white/55 text-slate-900 shadow-[0_10px_22px_-14px_rgba(15,23,42,0.35)] ring-1 ring-white/70"
+                      : "text-slate-700/70 hover:bg-white/40 hover:text-slate-900 ring-1 ring-white/30"
+                  }`}
                 >
-                  <LogOut className="h-4 w-4" aria-hidden />
-                </button>
+                  <Grid2X2 className="h-[18px] w-[18px]" aria-hidden />
+                </Link>
+                <Link
+                  href="/app/settings"
+                  title={t("workspaceNav.items.settings.label")}
+                  aria-label={t("workspaceNav.items.settings.label")}
+                  className={`flex h-10 w-10 items-center justify-center rounded-2xl transition ${
+                    isAppNavPathActive(pathname, "/app/settings")
+                      ? "bg-white/55 text-slate-900 shadow-[0_10px_22px_-14px_rgba(15,23,42,0.35)] ring-1 ring-white/70"
+                      : "text-slate-700/70 hover:bg-white/40 hover:text-slate-900 ring-1 ring-white/30"
+                  }`}
+                >
+                  <Settings className="h-[18px] w-[18px]" aria-hidden />
+                </Link>
+              </nav>
 
-                <Link href={nav.advanced.href} className="v2-button v2-button-secondary hidden sm:inline-flex">
-                  <Sparkles className="h-4 w-4" aria-hidden />
-                  {t("workspaceNav.advancedShort")}
+              <div className="mt-auto pb-2">
+                <Link
+                  href="/app/settings/overview"
+                  title={`${user.name} · ${user.email}`}
+                  aria-label={user.name}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-white/55 text-sm font-black text-teal-800 ring-2 ring-white/65 shadow-[0_18px_34px_-26px_rgba(15,23,42,0.45)] transition hover:bg-white/70"
+                >
+                  {initials}
                 </Link>
               </div>
             </div>
-
-            <nav className="mx-auto flex max-w-[1600px] gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:hidden lg:px-8">
-              {nav.primary.map((item) => (
-                <MobilePill
-                  key={item.href}
-                  href={item.href}
-                  label={item.label}
-                  icon={item.icon}
-                  active={isAppNavPathActive(pathname, item.href)}
-                />
-              ))}
-            </nav>
-
-            {utilityNavItems.length > 0 ? (
-              <nav className="mx-auto flex max-w-[1600px] gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:hidden lg:px-8">
-                {utilityNavItems.map((item) => (
-                  <MobilePill
-                    key={item.href}
-                    href={item.href}
-                    label={item.label}
-                    icon={item.icon}
-                    active={isAppNavPathActive(pathname, item.href)}
-                  />
-                ))}
-              </nav>
-            ) : null}
-          </header>
-
-          <main
-            id="app-main-content"
-            className="mx-auto max-w-[1600px] px-4 py-4 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8 lg:pb-6"
-          >
-            {children}
-          </main>
+          </aside>
         </div>
-      </div>
 
-      <WorkspaceUtilityDock
-        orgId={user.organizationId}
-        industryProfile={user.industryProfile}
-        userName={user.name}
-        hiddenPrimaryRouteIds={hiddenPrimaryRouteIds}
-      />
-    </div>
+        <WorkspaceUtilityDock
+          orgId={user.organizationId}
+          industryProfile={user.industryProfile}
+          userName={user.name}
+          hiddenPrimaryRouteIds={hiddenPrimaryRouteIds}
+        />
+      </div>
     </WorkspaceShellTransitionProvider>
   );
 }

@@ -32,6 +32,8 @@ describe("workspace-features", () => {
 
   it("pathnameToWorkspacePrimaryRoute מזהה מקטע ראשי", () => {
     expect(pathnameToWorkspacePrimaryRoute("/app")).toBe("home");
+    expect(pathnameToWorkspacePrimaryRoute("/app/finance")).toBe("finance");
+    expect(pathnameToWorkspacePrimaryRoute("/app/ai")).toBe("ai");
     expect(pathnameToWorkspacePrimaryRoute("/app/operations/meckano")).toBe("operations");
     expect(pathnameToWorkspacePrimaryRoute("/app/admin")).toBeNull();
   });

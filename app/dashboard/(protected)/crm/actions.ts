@@ -170,6 +170,10 @@ ${JSON.stringify(tableData, null, 0)}
 }
 
 export async function deleteOrganization(id: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email || !isAdmin(session.user.email)) {
+    return { error: "אין הרשאה למחיקת ארגון" };
+  }
   try {
     await prisma.organization.delete({ where: { id } });
 revalidatePath("/app/clients");
@@ -180,6 +184,10 @@ revalidatePath("/app/clients");
 }
 
 export async function updateOrgPlan(id: string, tierRaw: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email || !isAdmin(session.user.email)) {
+    return { error: "אין הרשאה לעדכון מסלול ארגון" };
+  }
   const tier = parseSubscriptionTier(tierRaw);
   if (!tier) {
     return { error: "רמת מנוי לא חוקית" };
@@ -204,6 +212,10 @@ revalidatePath("/app/billing");
 }
 
 export async function updateOrganizationName(id: string, name: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email || !isAdmin(session.user.email)) {
+    return { error: "אין הרשאה לעדכון שם ארגון" };
+  }
   const trimmed = name.trim();
   if (trimmed.length < 2) {
     return { error: "שם קצר מדי" };

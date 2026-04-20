@@ -265,7 +265,7 @@ export default function OperationsWorkspaceV2({
               <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.shortcutsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
-              <Link href="/app/billing" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/settings/billing" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
                 {t("workspaceOperations.shortcutBilling")}
               </Link>
               <Link href="/app/documents" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">

@@ -76,13 +76,13 @@ describe("workspace-access", () => {
         role: "CLIENT",
         isPlatformAdmin: false,
       }),
-    ).toEqual(["help", "business", "intelligence"]);
+    ).toEqual(["help", "business"]);
 
     expect(
       getVisibleUtilitySectionIds({
         role: "SUPER_ADMIN",
         isPlatformAdmin: true,
       }),
-    ).toEqual(["help", "business", "intelligence", "admin"]);
+    ).toEqual(["help", "business", "admin"]);
   });
 });

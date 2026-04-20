@@ -75,26 +75,20 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       subtitle: "תעודות בדיקה, הזמנות חומר, חשבוניות ספק — בהקשר חשמלאי",
       dropzoneTitle: "העלה תעודות בדיקה, חשבוניות או הזמנות חומר",
       analysisTypes: [
-        {
-          id: "ELECTRICAL_TEST_CERT",
-          label: "תעודת בדיקה / אישור התקנה",
-          description: "זיהוי תקן, תאריך בדיקה, קבלן מאשר",
-        },
-        {
-          id: "MATERIAL_ORDER",
-          label: "הזמנת חומרים / ספק",
-          description: "כבלים, לוחות, תאורה — כמויות ומחירים",
-        },
-        {
-          id: "SITE_LOG",
-          label: "יומן עבודה באתר",
-          description: "כוח אדם, שלבים והתקדמות יומית",
-        },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק", description: "רכש כבלים, לוחות, תאורה ואביזרים" },
+        { id: "MATERIAL_ORDER", label: "הזמנת חומרים / הצעת מחיר", description: "השוואת כמויות ומחירי ציוד חשמל" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח ציוד", description: "וידוא קבלת אביזרים וארונות חשמל באתר" },
+        { id: "SITE_LOG", label: "יומן עבודה וכוח אדם", description: "סיכום יומי של צוותי חשמל, שעות והתקדמות" },
+        { id: "ELECTRICAL_TEST_CERT", label: "תעודת בדיקה (בודק/חברת חשמל)", description: "זיהוי תקן, תאריך בדיקה, רג'קטים" },
+        { id: "APPROVAL_CERT", label: "אישור התקנה / מסירה", description: "אישור עבודות הארקה, מיתוג ולוחות חשמל" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות חשמל", description: "סעיפי ביצוע, אומדן מחירי נקודות ותשתיות" }
       ],
       resultColumns: [
+        { key: "doc_type", label: "סוג מסמך" },
         { key: "site_or_panel", label: "אתר / לוח" },
+        { key: "total_items", label: "כמות / היקף" },
         { key: "standard_ref", label: "תקן / אישור" },
-        { key: "approval_status", label: "סטטוס" },
+        { key: "approval_status", label: "סטטוס מסמך" },
       ],
     },
     aiInstructionsSuffix:
@@ -141,26 +135,20 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי אינסטלציה",
       subtitle: "הזמנות צינורות, אספקה, קולטים וספקים",
       analysisTypes: [
-        {
-          id: "PLUMBING_SUPPLY_ORDER",
-          label: "הזמנת חומר (צינורות/אביזרים)",
-          description: "פירוט פריטים, כמויות וספק",
-        },
-        {
-          id: "PRESSURE_TEST_REPORT",
-          label: "בדיקת לחץ / אטימות",
-          description: "תאריכים, תוצאות ואישור",
-        },
-        {
-          id: "SITE_LOG",
-          label: "יומן עבודה",
-          description: "התקדמות צוות באתר",
-        },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק", description: "רכש אביזרים, צינורות, ברזים וכלים סניטריים" },
+        { id: "PLUMBING_SUPPLY_ORDER", label: "הזמנת חומר / הצעת מחיר", description: "השוואת מחירים לצינורות (SP, פלסאון) ואביזרים" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח", description: "מעקב אחר הגעת חומרי צנרת לאתר" },
+        { id: "SITE_LOG", label: "יומן עבודה וכוח אדם", description: "פירוט התקדמות יומית של אינסטלטורים" },
+        { id: "PRESSURE_TEST_REPORT", label: "בדיקת לחץ / אטימות", description: "תיעוד בדיקות לחץ מים וביוב" },
+        { id: "APPROVAL_CERT", label: "אישור שלב מים/ביוב", description: "מסירת תשתיות צנרת למזמין" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות אינסטלציה", description: "פירוט נקודות מים, ביוב וכלים סניטריים" }
       ],
       resultColumns: [
+        { key: "doc_type", label: "סוג מסמך" },
         { key: "system_type", label: "מערכת (קולט/ביוב/מים)" },
-        { key: "material_type", label: "חומר עיקרי" },
-        { key: "supplier", label: "ספק" },
+        { key: "total_items", label: "כמות פריטים" },
+        { key: "supplier", label: "ספק / מבצע" },
+        { key: "approval_status", label: "סטטוס מסמך" }
       ],
     },
     aiInstructionsSuffix: "Emphasize plumbing systems: water, drainage, fixtures, and supplier invoices.",
@@ -205,22 +193,20 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי מיזוג אוויר",
       subtitle: "יחידות, צ׳ילרים, התקנות ואיזון",
       analysisTypes: [
-        {
-          id: "HVAC_ORDER",
-          label: "הזמנת ציוד מיזוג",
-          description: "דגמים, BTU/קילווט, כמויות",
-        },
-        {
-          id: "COMMISSIONING_DOC",
-          label: "השלמת התקנה / כיול",
-          description: "בדיקות הפעלה ותאריכים",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "צוות והתקדמות" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק", description: "רכש מזגנים, צ'ילרים, תעלות ואביזרים" },
+        { id: "HVAC_ORDER", label: "הזמנת ציוד / הצעת מחיר", description: "דגמים, BTU/קילווט, פתחי אוורור" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח ממוזג", description: "קבלת מעבים, מאיידים ותעלות פח באתר" },
+        { id: "SITE_LOG", label: "יומן עבודה וכוח אדם", description: "שלבי התקנה, תליית תעלות והרכבת יחידות" },
+        { id: "COMMISSIONING_DOC", label: "בדיקת הפעלה / כיול (Commissioning)", description: "תאריכי הפעלה ראשונית, מדידות ספיקה וטמפ'" },
+        { id: "APPROVAL_CERT", label: "אישור מסירה למזמין", description: "אישור העברת מערכת המיזוג לאחריות הלקוח" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות מיזוג אוויר", description: "פירוט תעלות, גרילים, ויחידות לפי חללים" }
       ],
       resultColumns: [
+        { key: "doc_type", label: "סוג מסמך" },
         { key: "equipment_tag", label: "ציוד / דגם" },
         { key: "capacity", label: "הספק / נפח" },
         { key: "location", label: "מיקום באתר" },
+        { key: "status", label: "סטטוס התקנה" }
       ],
     },
     aiInstructionsSuffix: "Focus on HVAC equipment tags, capacities, and installation milestones.",
@@ -265,22 +251,19 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי צבע וגמר",
       subtitle: "כמויות שטח, חומרים ושכבות",
       analysisTypes: [
-        {
-          id: "PAINT_QUANTITY",
-          label: "כמויות צבע / שטחים",
-          description: "מ״ר, מספר שכבות, סוג צבע",
-        },
-        {
-          id: "MATERIAL_ORDER",
-          label: "הזמנת חומר",
-          description: "דליים, רולרים, מריחה",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "שלבי גמר" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק צבע", description: "רכש דליי צבע, שליכט, שפכטל, מברשות" },
+        { id: "PAINT_QUANTITY", label: "כתב כמויות / אומדן מ\"ר", description: "חישוב מ\"ר, מספר שכבות, סוג צבע ושליכט" },
+        { id: "MATERIAL_ORDER", label: "הזמנת חומרי גמר / הצעת מחיר", description: "כמויות פח, דליים, רולרים וחומרי מריחה" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח גוונים", description: "קבלת פחי צבע וגוונים שהוזמנו לאתר" },
+        { id: "SITE_LOG", label: "יומן עבודה וכוח אדם", description: "רישום שלבי הכנה (שפכטל, פריימר) וגמר" },
+        { id: "APPROVAL_CERT", label: "אישור סיום שלב גמר", description: "אישור מסירת שטח צבוע או שליכט" }
       ],
       resultColumns: [
-        { key: "area_sqm", label: "שטח (מ״ר)" },
-        { key: "layers", label: "שכבות" },
-        { key: "color_code", label: "גוון / קוד" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "area_sqm", label: "שטח (מ״ר) / היקף" },
+        { key: "layers", label: "סוג עבודה / שכבות" },
+        { key: "color_code", label: "גוון / קוד צבע" },
+        { key: "status", label: "סטטוס שלב" }
       ],
     },
     aiInstructionsSuffix: "Highlight surface areas, paint systems, and finishing scope.",
@@ -325,22 +308,19 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי ריצוף ואבן",
       subtitle: "חתכים, כמויות ואספקה",
       analysisTypes: [
-        {
-          id: "TILE_ORDER",
-          label: "הזמנת ריצוף / קרמיקה",
-          description: "מידות, מ״ר, אצווה",
-        },
-        {
-          id: "DELIVERY_NOTE",
-          label: "תעודת משלוח",
-          description: "פריטים שהגיעו לאתר",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "התקדמות" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק קרמיקה", description: "רכש אריחים, חיפויים, רובה ודבקים" },
+        { id: "TILE_ORDER", label: "הזמנת ריצוף / הצעת מחיר", description: "מידות, מ״ר, סוג אבן/קרמיקה ועלות" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח ממשטח", description: "וידוא אצוות, פריטים שהגיעו ופגומים" },
+        { id: "SITE_LOG", label: "יומן עבודה וכוח אדם", description: "התקדמות יומית של רצפים באתר" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות ריצוף וחיפוי", description: "פירוט מידות, פנלים ושטחי ריצוף" },
+        { id: "APPROVAL_CERT", label: "אישור סיום ריצוף", description: "מסירת חלל או דירה לאחר רובה" }
       ],
       resultColumns: [
+        { key: "doc_type", label: "סוג מסמך" },
         { key: "tile_sku", label: "דגם / מידה" },
-        { key: "qty_sqm", label: "כמות מ״ר" },
-        { key: "batch", label: "אצווה" },
+        { key: "qty_sqm", label: "כמות מ״ר / יחידות" },
+        { key: "batch", label: "אצווה / גוון" },
+        { key: "status", label: "סטטוס ביצוע" }
       ],
     },
     aiInstructionsSuffix: "Focus on flooring quantities, SKUs, and delivery batches.",
@@ -385,22 +365,20 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי אלומיניום וזכוכית",
       subtitle: "מסגרות, מידות וייצור",
       analysisTypes: [
-        {
-          id: "ALU_MEASUREMENT",
-          label: "מדידות / שרטוט כנף",
-          description: "מידות פתחים ופרופילים",
-        },
-        {
-          id: "GLASS_ORDER",
-          label: "הזמנת זכוכית",
-          description: "עובי, סוג ומידות",
-        },
-        { id: "SITE_LOG", label: "יומן התקנה", description: "ביצוע באתר" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק אלומיניום", description: "רכש פרופילים, זכוכית, פירזול ואטמים" },
+        { id: "ALU_MEASUREMENT", label: "מדידות / שרטוט פתחים", description: "מידות פתחים, כנפיים, סוגי פרופיל (קליל, אקסטל)" },
+        { id: "GLASS_ORDER", label: "הזמנת זכוכית למפעל", description: "עובי, מפרט (טריפלקס, בידודית, מחוסמת)" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח זכוכית/פרופיל", description: "אישור קבלת חלונות ודלתות מוכנים לאתר" },
+        { id: "SITE_LOG", label: "יומן התקנות וכוח אדם", description: "תיעוד צוותי הרכבה לפי קומות ודירות" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות אלומיניום", description: "פירוט פתחים, ויטרינות, מעקות ומחירים" },
+        { id: "APPROVAL_CERT", label: "אישור מסירת פתחים", description: "בדיקת אטימות, תריסים, ומסירה למזמין" }
       ],
       resultColumns: [
-        { key: "opening_ref", label: "פתח" },
-        { key: "profile", label: "פרופיל" },
-        { key: "glass_spec", label: "מפרט זכוכית" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "opening_ref", label: "מספר פתח / חלל" },
+        { key: "profile", label: "סוג פרופיל / פירזול" },
+        { key: "glass_spec", label: "מפרט זכוכית / כמות" },
+        { key: "status", label: "סטטוס התקנה" }
       ],
     },
     aiInstructionsSuffix: "Emphasize openings, profiles, glass specs, and installation notes.",
@@ -445,22 +423,19 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי גמר פנים",
       subtitle: "דלתות, מטבחים, ארונות — הזמנות ואספקה",
       analysisTypes: [
-        {
-          id: "JOINERY_ORDER",
-          label: "הזמנת נגרות / מטבח",
-          description: "מפרטים ותאריכי אספקה",
-        },
-        {
-          id: "DELIVERY_NOTE",
-          label: "תעודת משלוח",
-          description: "פריטים שהגיעו",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "התקנה" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק נגרות/גמר", description: "רכש דלתות פנים, מטבחים, פרזול וארונות" },
+        { id: "JOINERY_ORDER", label: "הזמנת נגרות / שרטוט נגר", description: "מפרטים, מידות מדויקות, צירי בלום" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח ריהוט/דלתות", description: "מעקב אחר קבלת פריטי גמר לאתר" },
+        { id: "SITE_LOG", label: "יומן עבודה / התקנות גמר", description: "תיעוד ימי התקנת דלתות, מטבחים וחיפויים" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות גמר פנים", description: "פירוט עלויות נגרות, חיפוי קיר, וכלים לבנים" },
+        { id: "APPROVAL_CERT", label: "אישור מסירת גמר", description: "טופס בדיקת איכות ומסירת חללים ללקוח קצה" }
       ],
       resultColumns: [
-        { key: "room_ref", label: "חלל" },
-        { key: "item_desc", label: "פריט" },
-        { key: "supplier", label: "ספק" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "room_ref", label: "חלל / דירה" },
+        { key: "item_desc", label: "סוג פריט / מפרט" },
+        { key: "supplier", label: "ספק / חברת נגרות" },
+        { key: "status", label: "סטטוס התקנה" }
       ],
     },
     aiInstructionsSuffix: "Focus on interior finishing orders: kitchens, doors, built-ins.",
@@ -505,22 +480,19 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי גינון וחוץ",
       subtitle: "צמחייה, השקיה, ריצוף חוץ",
       analysisTypes: [
-        {
-          id: "LANDSCAPE_QUOTE",
-          label: "הצעת גינון",
-          description: "שטחים, עצים, מערכת השקיה",
-        },
-        {
-          id: "IRRIGATION_PARTS",
-          label: "רכיבי השקיה",
-          description: "ממטרות, צינורות, בקרה",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "ביצוע" },
+        { id: "VENDOR_INVOICE", label: "חשבונית משתלה / ספק", description: "רכש צמחייה, אדמה, טוף, מחשבי השקיה" },
+        { id: "LANDSCAPE_QUOTE", label: "כתב כמויות / הצעת גינון", description: "פירוט שטחי דשא, כמות עצים, ורכיבי השקיה" },
+        { id: "IRRIGATION_PARTS", label: "הזמנת מערכת השקיה", description: "ממטרות, צינורות טפטוף, ברזים חשמליים" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח", description: "קבלת כדי ענק, דשא מוכן, חלוקי נחל וצמחים" },
+        { id: "SITE_LOG", label: "יומן עבודות פיתוח", description: "תיעוד יומיומי של צוותי גינון וטרקטורים" },
+        { id: "APPROVAL_CERT", label: "אישור מסירת שטח חוץ", description: "בדיקת גינון, השקיה ופיתוח פיתוח סביבתי" }
       ],
       resultColumns: [
-        { key: "zone", label: "אזור" },
-        { key: "plant_or_material", label: "חומר / צמח" },
-        { key: "qty", label: "כמות" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "zone_ref", label: "שטח / גינה" },
+        { key: "item_desc", label: "צמחייה / ציוד השקיה" },
+        { key: "quantity", label: "כמות / שטח" },
+        { key: "status", label: "סטטוס ביצוע" }
       ],
     },
     aiInstructionsSuffix: "Emphasize landscaping scope, irrigation, and hardscape elements.",
@@ -565,22 +537,19 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       title: "פענוח מסמכי קבלן משנה",
       subtitle: "הצעות מחיר, חשבוניות ותעודות מהשטח",
       analysisTypes: [
-        {
-          id: "SUB_QUOTE",
-          label: "הצעת מחיר משנה",
-          description: "היקף, יחידות ומחירים",
-        },
-        {
-          id: "PROGRESS_INVOICE",
-          label: "חשבון ביצוע / התקדמות",
-          description: "אחוזים ושלבים",
-        },
-        { id: "SITE_LOG", label: "יומן עבודה", description: "דיווח שטח" },
+        { id: "VENDOR_INVOICE", label: "חשבונית ספק / רכש חומרים", description: "כללי: רכש ציוד, חומרי גלם וכלים" },
+        { id: "SUB_QUOTE", label: "הצעת מחיר / כתב כמויות", description: "היקף עבודה, יחידות מידה, מחירי יסוד" },
+        { id: "PROGRESS_INVOICE", label: "חשבון חלקי / חשבון סופי", description: "אחוזי ביצוע מתמטברים, ניכוי מקדמות" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח / שקילה", description: "פירוט ציוד שהגיע לאתר או משקל פסולת" },
+        { id: "SITE_LOG", label: "יומן עבודה יומי", description: "נוכחות צוותים, שעות טרקטור, אירועים מיוחדים" },
+        { id: "APPROVAL_CERT", label: "אישור שלב / טופס איכות", description: "אישור מפקח או יזם לסיום שלב עבודה" }
       ],
       resultColumns: [
-        { key: "project_site", label: "אתר" },
-        { key: "phase", label: "שלב" },
-        { key: "total", label: "סה״כ" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "project_site", label: "אתר / מזמין" },
+        { key: "phase", label: "שלב / אחוז ביצוע" },
+        { key: "total", label: "סכום כולל / כמות" },
+        { key: "status", label: "סטטוס מסמך" }
       ],
     },
     aiInstructionsSuffix: "Focus on subcontractor quotes, progress billing, and site reporting.",

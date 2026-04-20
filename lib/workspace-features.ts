@@ -16,6 +16,7 @@ import type { WorkspaceAccessContext } from "@/lib/workspace-access";
  */
 export type WorkspaceFeatureKey =
   | "module_inbox"
+  | "module_projects"
   | "module_clients"
   | "module_documents"
   | "module_billing"
@@ -31,6 +32,7 @@ export type WorkspaceFeatureInput = WorkspaceAccessContext & {
 
 const ALL_MODULES: WorkspaceFeatureKey[] = [
   "module_inbox",
+  "module_projects",
   "module_clients",
   "module_documents",
   "module_billing",
@@ -59,21 +61,22 @@ function normalizeIndustryTypeForJwt(id?: string | null): IndustryType {
 
 const ROUTE_FEATURE: Partial<Record<AppRouteId, WorkspaceFeatureKey>> = {
   inbox: "module_inbox",
+  projects: "module_projects",
   clients: "module_clients",
   documents: "module_documents",
-  billing: "module_billing",
+  finance: "module_billing",
+  ai: "module_insights",
   operations: "module_operations",
-  insights: "module_insights",
 };
 
 /**
  * מפת הסתרת נתיבים לפי מקצוע בנייה — ברירת מחדל ריקה (הכול גלוי).
- * דוגמה: `PLUMBING: ["insights"]` כדי להסתיר תובנות למקצוע מסוים.
+ * דוגמה: `PLUMBING: ["ai"]` כדי להסתיר מסך AI למקצוע מסוים.
  */
 export const TRADE_HIDDEN_PRIMARY_ROUTES: Partial<Readonly<Record<ConstructionTradeId, readonly AppRouteId[]>>> =
   {
     // דוגמה להרחבה:
-    // PLUMBING: ["insights"],
+    // PLUMBING: ["ai"],
   };
 
 /**
@@ -158,11 +161,12 @@ export function toWorkspaceFeatureInput(
 
 const APP_SEGMENT_TO_ROUTE: Record<string, AppRouteId> = {
   inbox: "inbox",
+  projects: "projects",
   clients: "clients",
   documents: "documents",
-  billing: "billing",
+  finance: "finance",
+  ai: "ai",
   operations: "operations",
-  insights: "insights",
   settings: "settings",
 };
 
@@ -179,6 +183,13 @@ export function pathnameToWorkspacePrimaryRoute(pathname: string): AppRouteId | 
   if (parts.length === 1) return "home";
   const seg = parts[1];
   if (!seg) return "home";
+  /** חיוב פלטפורמה תחת הגדרות — מקושר לפריט «כספים» בניווט */
+  if (seg === "settings" && parts[2] === "billing") {
+    return "finance";
+  }
+  if (seg === "insights" || seg === "intelligence") {
+    return "ai";
+  }
   return APP_SEGMENT_TO_ROUTE[seg] ?? null;
 }
 

@@ -1,15 +1,15 @@
 "use client";
 
-import { BarChart3, Bot, CreditCard, FileText, UsersRound } from "lucide-react";
+import { BarChart3, CreditCard, FileText, FolderCog, UsersRound } from "lucide-react";
 import MarketingPublicShell from "@/components/marketing/MarketingPublicShell";
 import { useI18n } from "@/components/I18nProvider";
 
 const MODULE_ORDER = [
   { key: "clients" as const, icon: UsersRound },
   { key: "docs" as const, icon: FileText },
-  { key: "billing" as const, icon: CreditCard },
-  { key: "insights" as const, icon: BarChart3 },
-  { key: "ai" as const, icon: Bot },
+  { key: "finance" as const, icon: CreditCard },
+  { key: "ai" as const, icon: BarChart3 },
+  { key: "operations" as const, icon: FolderCog },
 ];
 
 export default function ProductPageClient() {

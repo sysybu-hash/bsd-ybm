@@ -62,7 +62,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           ) : null}
           {!embedded ? (
             <Link
-              href="/app/intelligence"
+              href="/app/ai"
               className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 shadow-sm transition-colors hover:border-teal-500/30 hover:text-teal-300"
             >
               <ArrowRight size={18} />
@@ -136,7 +136,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
       <ExecutiveReportCharts data={flowSeries} year={year} />
 
       <section className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
+        <div className="card-avenue p-8 shadow-sm md:p-10">
           <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.userActivity")}
           </h3>
@@ -176,7 +176,7 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
           )}
         </div>
 
-        <div className="card-avenue bg-white p-8 shadow-sm md:p-10">
+        <div className="card-avenue p-8 shadow-sm md:p-10">
           <h3 className="mb-2 text-xl font-black italic tracking-tight text-gray-900 md:text-2xl">
             {t("executive.priceAlerts")}
           </h3>

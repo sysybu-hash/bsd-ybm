@@ -7,6 +7,7 @@
     "signOut": "Sign out",
     "signOutAria": "Sign out",
     "advancedShort": "Advanced",
+    "primaryNavAria": "Primary workspace navigation",
     "items": {
       "home": {
         "label": "Home",
@@ -16,6 +17,10 @@
         "label": "Work inbox",
         "summary": "What needs attention now, open approvals, and what’s waiting for the team."
       },
+      "projects": {
+        "label": "Projects",
+        "summary": "Active projects, status, and links to clients."
+      },
       "clients": {
         "label": "Clients",
         "summary": "Manage {clients} with a direct link to {documents}."
@@ -24,17 +29,17 @@
         "label": "Documents",
         "summary": "Scan, control, and produce {records} for {industry}."
       },
-      "billing": {
-        "label": "Billing",
-        "summary": "Cash flow, invoices, collections, and ongoing payment tracking."
+      "finance": {
+        "label": "Finance",
+        "summary": "Cash flow, invoices, collections, ERP, and payment tracking."
+      },
+      "ai": {
+        "label": "AI",
+        "summary": "Insights, operational intelligence, and smart recommendations in one place."
       },
       "operations": {
         "label": "Operations",
         "summary": "Processes, tasks, automations, and team tools."
-      },
-      "insights": {
-        "label": "Insights",
-        "summary": "AI, smart recommendations, and management context for your business."
       },
       "settings": {
         "label": "Settings",
@@ -94,7 +99,7 @@
         "title": "Advanced CRM",
         "body": "Full CRM tools when you need deeper control, reports, and power features."
       },
-      "insights": {
+      "ai": {
         "title": "Advanced AI Hub",
         "body": "AI tabs, scanners, and deeper analytics for advanced work."
       },
@@ -113,12 +118,42 @@
     }
   },
   "workspaceHome": {
+    "greeting": "Hello, {name}",
+    "subtitle": "Personal workspace",
+    "dailyWorkTitle": "Daily work",
+    "recentActivity": {
+      "title": "Recent documents & activity",
+      "subtitle": "Updates from issued documents in your organization.",
+      "empty": "No issued documents yet — start from Documents.",
+      "linkAll": "All documents",
+      "colClient": "Client",
+      "colType": "Type",
+      "colStatus": "Status",
+      "colDate": "Date",
+      "colTotal": "Amount"
+    },
+    "docType": {
+      "INVOICE": "Tax invoice",
+      "RECEIPT": "Receipt",
+      "INVOICE_RECEIPT": "Invoice-receipt",
+      "CREDIT_NOTE": "Credit note"
+    },
+    "docStatus": {
+      "PENDING": "Pending",
+      "PAID": "Paid",
+      "CANCELLED": "Cancelled"
+    },
     "eyebrow": "Home",
     "startHere": {
       "eyebrow": "Start here",
       "title": "Three links",
       "subtitle": "Everything else lives in the menu.",
       "navHint": "More areas in the workspace menu.",
+      "actions": {
+        "documents": "Create document",
+        "clients": "Add client",
+        "projects": "Create project"
+      },
       "cards": {
         "documents": {
           "title": "Documents",
@@ -132,17 +167,21 @@
           "title": "Inbox",
           "body": "What needs a decision."
         },
-        "billing": {
-          "title": "Billing",
-          "body": "Invoices and cash flow."
+        "projects": {
+          "title": "Projects",
+          "body": "List and link to clients."
+        },
+        "finance": {
+          "title": "Finance",
+          "body": "Cash flow, collections, ERP."
         },
         "operations": {
           "title": "Operations",
           "body": "Processes and field."
         },
-        "insights": {
-          "title": "Insights",
-          "body": "Management snapshot."
+        "ai": {
+          "title": "AI",
+          "body": "Insights and intelligence."
         },
         "settings": {
           "title": "Settings",
@@ -151,6 +190,19 @@
       }
     },
     "advancedCta": "Advanced",
+    "metricLinks": {
+      "documents": "View documents",
+      "clients": "Manage clients",
+      "projects": "See projects",
+      "finance": "See finance"
+    },
+    "metricTrends": {
+      "noneYet": "None yet",
+      "documentsTotal": "{count} total",
+      "clientsMonthly": "+{count} this month",
+      "projectsActive": "{count} active",
+      "financeFresh": "+8.5% new"
+    },
     "stats": {
       "activeProjects": "Active projects",
       "billingVolume": "Billing volume (invoices)"
@@ -165,6 +217,11 @@
     }
   },
   "workspaceShell": {
-    "refreshingOverlay": "Refreshing workspace…"
+    "refreshingOverlay": "Refreshing workspace…",
+    "topBar": {
+      "searchAria": "Search",
+      "notificationsAria": "Notifications",
+      "profileAria": "Profile"
+    }
   }
 }

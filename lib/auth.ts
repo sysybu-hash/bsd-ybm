@@ -15,6 +15,14 @@ import { sendWelcomeEmail } from "@/lib/mail";
 if (!process.env.NEXTAUTH_URL && process.env.AUTH_URL) {
   process.env.NEXTAUTH_URL = process.env.AUTH_URL;
 }
+/** פריוויו ב-Vercel: לרוב אין NEXTAUTH_URL קבוע — VERCEL_URL מזוהה אוטומטית */
+if (!process.env.NEXTAUTH_URL && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
+
+const googleOAuthConfigured =
+  Boolean(process.env.GOOGLE_CLIENT_ID?.trim()) &&
+  Boolean(process.env.GOOGLE_CLIENT_SECRET?.trim());
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -26,22 +34,26 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      /**
-       * נדרש: משתמשים נוצרים ידנית / דרך הזמנה ללא Account record.
-       * בלי הפלאג הזה NextAuth יזרוק OAuthAccountNotLinked.
-       * הנתונים הפגומים שגרמו לבאג תוקנו ישירות ב-DB.
-       */
-      allowDangerousEmailAccountLinking: true,
-      authorization: {
-        params: {
-          prompt: "select_account",
-          access_type: "online",
-        },
-      },
-    }),
+    ...(googleOAuthConfigured
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            /**
+             * נדרש: משתמשים נוצרים ידנית / דרך הזמנה ללא Account record.
+             * בלי הפלאג הזה NextAuth יזרוק OAuthAccountNotLinked.
+             * הנתונים הפגומים שגרמו לבאג תוקנו ישירות ב-DB.
+             */
+            allowDangerousEmailAccountLinking: true,
+            authorization: {
+              params: {
+                prompt: "select_account",
+                access_type: "online",
+              },
+            },
+          }),
+        ]
+      : []),
     CredentialsProvider({
       id: "credentials",
       name: "אימייל וסיסמה",

@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import DocumentGeneratorsStrip from "@/components/documents/DocumentGeneratorsStrip";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
@@ -388,6 +389,11 @@ export default function DocumentsWorkspaceV2({
     });
   }
 
+  function appendIssuedFromGenerator(payload: IssuedDocumentRecord) {
+    setIssuedState((current) => [payload, ...current]);
+    setActionMessage({ type: "success", text: t("workspaceDocuments.generatorsSuccessDraft") });
+  }
+
   async function saveScannedDraft() {
     if (!scannedDraft) return;
     setActionMessage(null);
@@ -524,8 +530,8 @@ export default function DocumentsWorkspaceV2({
 
   return (
     <div className="grid gap-6" dir={dir}>
-      <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+      <section className="glass-2026-panel relative z-0 overflow-hidden p-6 sm:p-8">
+        <div className="relative z-[1] grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
             <span className="v2-eyebrow">{t("workspaceDocuments.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
@@ -569,6 +575,8 @@ export default function DocumentsWorkspaceV2({
           </div>
         </div>
       </section>
+
+      <DocumentGeneratorsStrip industryProfile={industryProfile} onDraftIssued={appendIssuedFromGenerator} />
 
       {actionMessage ? (
         <div

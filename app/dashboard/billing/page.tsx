@@ -17,5 +17,5 @@ export default async function DashboardBillingRedirectPage({
     params.set("orgId", sp.orgId.trim());
   }
 
-  redirect(params.size > 0 ? `/app/billing?${params.toString()}` : "/app/billing");
+  redirect(params.size > 0 ? `/app/settings/billing?${params.toString()}` : "/app/settings/billing");
 }

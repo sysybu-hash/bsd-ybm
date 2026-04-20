@@ -30,6 +30,7 @@ export default function MarketingPublicShell({
         { href: "/solutions", key: "navSolutions" as const },
         { href: "/pricing", key: "navPricing" as const },
         { href: "/about", key: "navAbout" as const },
+        { href: "/professional", key: "navProfessional" as const },
         { href: "/brief", key: "navBrief" as const },
         { href: "/contact", key: "navContact" as const },
       ].map((item) => ({

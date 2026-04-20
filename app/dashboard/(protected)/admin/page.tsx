@@ -14,7 +14,7 @@ export default async function DashboardAdminRedirectPage({
     if (sp.orgId?.trim()) {
       params.set("orgId", sp.orgId.trim());
     }
-    redirect(`/app/billing?${params.toString()}`);
+    redirect(`/app/settings/billing?${params.toString()}`);
   }
 
   if (sp.section === "broadcast") {

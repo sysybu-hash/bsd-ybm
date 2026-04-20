@@ -163,7 +163,7 @@ export default async function AppHomePage() {
             {t("workspaceHome.greeting", { name: firstName })}<span className="text-teal-500">!</span>
           </h1>
           <p className="text-sm font-semibold text-slate-500">{t("workspaceHome.subtitle")}</p>
-          <p className="text-base font-black text-slate-700 mt-3 pt-1">עבודה יומית</p>
+          <p className="text-base font-black text-slate-700 mt-3 pt-1">{t("workspaceHome.dailyWorkTitle")}</p>
         </div>
       </header>
 
@@ -175,8 +175,12 @@ export default async function AppHomePage() {
             label={industryProfile.documentsLabel}
             value={String(documentsCount)}
             icon={FileText}
-            trend={documentsCount > 0 ? `${documentsCount} סה"כ` : "אין עדיין"}
-            linkLabel="צפה במסמכים"
+            trend={
+              documentsCount > 0
+                ? t("workspaceHome.metricTrends.documentsTotal", { count: String(documentsCount) })
+                : t("workspaceHome.metricTrends.noneYet")
+            }
+            linkLabel={t("workspaceHome.metricLinks.documents")}
             linkHref="/app/documents"
           />
           <Metric3DCard
@@ -184,8 +188,12 @@ export default async function AppHomePage() {
             label={industryProfile.clientsLabel}
             value={String(clientsCount)}
             icon={UsersRound}
-            trend={clientsCount > 0 ? `+${Math.min(clientsCount, 15)} מחודש` : undefined}
-            linkLabel="ניהול לקוחות"
+            trend={
+              clientsCount > 0
+                ? t("workspaceHome.metricTrends.clientsMonthly", { count: String(Math.min(clientsCount, 15)) })
+                : undefined
+            }
+            linkLabel={t("workspaceHome.metricLinks.clients")}
             linkHref="/app/clients"
           />
           <Metric3DCard
@@ -193,8 +201,12 @@ export default async function AppHomePage() {
             label={t("workspaceHome.stats.activeProjects")}
             value={String(activeProjectsCount)}
             icon={FolderKanban}
-            trend={activeProjectsCount > 0 ? `${activeProjectsCount} פעילים` : "אין עדיין"}
-            linkLabel="ראה פרויקטים"
+            trend={
+              activeProjectsCount > 0
+                ? t("workspaceHome.metricTrends.projectsActive", { count: String(activeProjectsCount) })
+                : t("workspaceHome.metricTrends.noneYet")
+            }
+            linkLabel={t("workspaceHome.metricLinks.projects")}
             linkHref="/app/projects"
           />
           <Metric3DCard
@@ -202,8 +214,8 @@ export default async function AppHomePage() {
             label={t("workspaceHome.stats.billingVolume")}
             value={formatCurrencyILS(totalInvoiced)}
             icon={CreditCard}
-            trend={totalInvoiced > 0 ? "+8.5% חדש" : undefined}
-            linkLabel="ראה כספים"
+            trend={totalInvoiced > 0 ? t("workspaceHome.metricTrends.financeFresh") : undefined}
+            linkLabel={t("workspaceHome.metricLinks.finance")}
             linkHref="/app/finance"
           />
         </div>
@@ -268,7 +280,7 @@ export default async function AppHomePage() {
         {/* Start Here — quick access cards */}
         <section aria-labelledby="start-here-heading" className="space-y-3">
           <h2 id="start-here-heading" className="text-lg font-black text-[color:var(--v2-ink)]">
-            מתחילים כאן
+            {t("workspaceHome.startHere.eyebrow")}
           </h2>
           <div className="space-y-3">
             {startHereItems.map(({ id, href, Icon }) => (
@@ -282,7 +294,11 @@ export default async function AppHomePage() {
                   href={href}
                   className="shrink-0 rounded-full bg-white/55 px-4 py-2 text-sm font-black text-teal-800 ring-1 ring-white/70 shadow-[0_18px_34px_-26px_rgba(15,23,42,0.35)] transition hover:bg-white/75 hover:-translate-y-0.5"
                 >
-                  {id === "documents" ? "צור מסמך" : id === "clients" ? "הוסף לקוח" : "צור פרויקט"}
+                  {id === "documents"
+                    ? t("workspaceHome.startHere.actions.documents")
+                    : id === "clients"
+                      ? t("workspaceHome.startHere.actions.clients")
+                      : t("workspaceHome.startHere.actions.projects")}
                 </Link>
               </div>
             ))}

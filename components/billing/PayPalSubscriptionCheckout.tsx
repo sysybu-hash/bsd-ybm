@@ -137,7 +137,7 @@ export default function PayPalSubscriptionCheckout({
   return (
     <section
       id="paypal-subscription"
-      className="card-avenue scroll-mt-24 border-teal-500/20 bg-white p-6 shadow-sm md:p-8"
+      className="card-avenue scroll-mt-24 border-teal-500/20 p-6 shadow-sm md:p-8"
       dir={dir}
     >
       <h2 className="mb-2 text-xl font-black text-gray-900">הפעלת מנוי — PayPal (Live)</h2>

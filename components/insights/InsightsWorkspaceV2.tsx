@@ -88,7 +88,7 @@ export default function InsightsWorkspaceV2({
   pendingClients,
 }: Props) {
   const { t, dir } = useI18n();
-  const advancedInsightsHref = getAdvancedWorkspaceHref("insights");
+  const advancedInsightsHref = getAdvancedWorkspaceHref("ai");
   const [view, setView] = useState<"summary" | "actions">("summary");
   const insightParagraphs = insightText
     .split(/\n+/)

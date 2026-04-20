@@ -8,9 +8,9 @@
     "modules": {
       "clients": { "title": "Clients & work relationships", "body": "CRM that connects statuses, tasks, notes, progress and operational history." },
       "docs": { "title": "Smart documents", "body": "Intake, scan, analyze, assign and create documents from business context." },
-      "billing": { "title": "Billing & collections", "body": "Invoices, payment tracking, pricing and subscriptions in one operational flow." },
-      "insights": { "title": "Control & insights", "body": "One management view of what changed, what is stuck and what needs action." },
-      "ai": { "title": "Embedded AI", "body": "A layer that works inside clients, documents and decisions — not beside them." }
+      "finance": { "title": "Finance & collections", "body": "Cash flow hub, issued documents, ERP links and platform billing settings — separate from the AI screen." },
+      "ai": { "title": "AI & insights", "body": "One AI hub: recommendations, intelligence and a management snapshot tied to clients and documents." },
+      "operations": { "title": "Operations & field", "body": "Workflows, inbox and team tools aligned with construction projects." }
     }
   },
   "marketingSolutions": {
@@ -69,6 +69,13 @@
   "contactPage": {
     "shellDescription": "Talk to us about a demo, org rollout or a workflow that fits your business."
   },
+  "professionalPage": {
+    "metaTitle": "Professional insights",
+    "metaDescription": "Methodology, field notes and practical guidance for construction and professional services.",
+    "title": "Professional insights",
+    "shellDescription": "Short articles and operational notes—documents, clients and field work in one coherent flow.",
+    "body": "We publish professional content here over time: workflow examples, product-layer context for construction trades, and ways teams reduce operational drag. Use Contact to suggest topics."
+  },
   "publicShell": {
     "eyebrowSector": "Construction sector",
     "navHome": "Home",
@@ -76,6 +83,7 @@
     "navSolutions": "Solutions",
     "navPricing": "Pricing",
     "navAbout": "About",
+    "navProfessional": "Insights",
     "navBrief": "Brief",
     "navContact": "Contact",
     "ctaLogin": "Sign in",

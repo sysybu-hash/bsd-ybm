@@ -111,7 +111,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/register?plan=FREE"
-              className="inline-flex items-center gap-1.5 rounded-xl border-2 border-[#14b8a6] bg-transparent px-4 py-2 text-sm font-bold text-[#5eead4] transition hover:bg-[#14b8a6]/10"
+              className="inline-flex items-center gap-1.5 rounded-xl border-2 border-[color:var(--marketing-hero-accent)] bg-transparent px-4 py-2 text-sm font-bold text-[color:var(--marketing-accent-soft)] transition hover:bg-[color:var(--marketing-hero-accent)]/10"
             >
               {t("landing.registerQuick")} <Zap size={13} />
             </Link>
@@ -131,7 +131,7 @@ export default function LandingPage() {
       >
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24 lg:py-28">
           <div className="order-2 text-center md:order-1 md:text-right">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#14b8a6]/40 bg-[#14b8a6]/10 px-4 py-2 text-xs font-bold text-[#5eead4]">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--marketing-hero-accent)]/40 bg-[color:var(--marketing-hero-accent)]/10 px-4 py-2 text-xs font-bold text-[color:var(--marketing-accent-soft)]">
               <CheckCircle2 size={14} className="shrink-0" />
               {t("landing.heroKicker")}
             </div>
@@ -144,7 +144,7 @@ export default function LandingPage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
               <Link
                 href="/register?plan=FREE"
-                className="inline-flex items-center gap-2 rounded-2xl border-2 border-[#14b8a6] px-7 py-3.5 text-base font-black text-[#5eead4] transition hover:bg-[#14b8a6]/15"
+                className="inline-flex items-center gap-2 rounded-2xl border-2 border-[color:var(--marketing-hero-accent)] px-7 py-3.5 text-base font-black text-[color:var(--marketing-accent-soft)] transition hover:bg-[color:var(--marketing-hero-accent)]/15"
               >
                 {t("landing.ctaTrial")} {chevron}
               </Link>
@@ -161,7 +161,7 @@ export default function LandingPage() {
             <div className="relative mx-auto max-w-lg rounded-2xl border border-white/10 bg-slate-900/50 p-4 shadow-2xl backdrop-blur-sm">
               <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3">
                 <span className="text-xs font-bold text-slate-400">{t("landing.mockDashboardTitle")}</span>
-                <LayoutDashboard className="h-4 w-4 text-[#5eead4]" aria-hidden />
+                <LayoutDashboard className="h-4 w-4 text-[color:var(--marketing-accent-soft)]" aria-hidden />
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {[1, 2, 3].map((i) => (
@@ -174,7 +174,7 @@ export default function LandingPage() {
               <div className="mt-3 h-24 rounded-xl bg-gradient-to-t from-[#14b8a6]/20 to-transparent p-3">
                 <div className="h-full rounded-lg bg-white/5" />
               </div>
-              <Sparkles className="absolute -left-2 -top-2 h-8 w-8 text-[#5eead4] opacity-80" aria-hidden />
+              <Sparkles className="absolute -left-2 -top-2 h-8 w-8 text-[color:var(--marketing-accent-soft)] opacity-80" aria-hidden />
             </div>
           </div>
         </div>
@@ -199,9 +199,9 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <article
                 key={feat.title}
-                className="group rounded-2xl border border-slate-200/80 bg-slate-50/50 p-7 shadow-sm transition hover:-translate-y-0.5 hover:border-[#14b8a6]/35 hover:shadow-md"
+                className="group rounded-2xl border border-slate-200/80 bg-slate-50/50 p-7 shadow-sm transition hover:-translate-y-0.5 hover:border-[color:var(--v2-accent)]/35 hover:shadow-md"
               >
-                <div className="mb-4 inline-flex rounded-2xl border border-[#14b8a6]/25 bg-[#14b8a6]/10 p-3.5 text-[#0d9488]">
+                <div className="mb-4 inline-flex rounded-2xl border border-[color:var(--v2-accent)]/25 bg-[color:var(--v2-accent-soft)] p-3.5 text-[color:var(--v2-accent-strong)]">
                   <feat.icon size={24} strokeWidth={2} aria-hidden />
                 </div>
                 <p className="text-[11px] font-black uppercase tracking-wider text-slate-400">{feat.title}</p>

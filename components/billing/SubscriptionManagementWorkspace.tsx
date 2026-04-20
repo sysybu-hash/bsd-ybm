@@ -107,6 +107,8 @@ export default function SubscriptionManagementWorkspace({
   const [, startTransition] = useTransition();
 
   const currentAllowance = useMemo(() => tierAllowance(currentOrganization.subscriptionTier), [currentOrganization.subscriptionTier]);
+  /** רק בעל הפלטפורמה — מנהל ארגון רגיל לא יכול לשדרג מנוי בלי תשלום */
+  const canDirectEditSubscriptionTier = viewer.canAccessPlatformControls && viewer.canManageCurrentOrganization;
 
   useEffect(() => {
     setActiveSection(viewer.canAccessPlatformControls ? initialSection : "overview");
@@ -165,7 +167,7 @@ export default function SubscriptionManagementWorkspace({
                 עמוד ההצטרפות
                 <MailPlus className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/app/settings" className="v2-button v2-button-secondary">
+              <Link href="/app/settings/overview" className="v2-button v2-button-secondary">
                 הגדרות ארגון ומקצוע
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
@@ -214,32 +216,50 @@ export default function SubscriptionManagementWorkspace({
           <div className="grid gap-4">
             <SectionCard
               title="המסלול של הארגון"
-              description="כאן מנהלים את המסלול והסטטוס של הארגון המחובר. משתמש ללא הרשאת ניהול רואה את המצב בלבד."
+              description="מסלול בתשלום נקבע אחרי תשלום או הזמנה. עריכה ידנית של מסלול/סטטוס זמינה רק לבעל הפלטפורמה; מנהל ארגון יכול לצפות ולשדרג דרך תשלום."
               icon={<CreditCard className="h-5 w-5" aria-hidden />}
             >
-              <ManagementNotice visible={!viewer.canManageCurrentOrganization} text="אפשר לצפות בפרטי המנוי, אבל רק מנהל ארגון או מנהל פלטפורמה יכולים לשמור שינויים." />
-              <ActionForm onSubmit={submitWith("current-org", updateCurrentSubscriptionAction)}>
-                <fieldset disabled={!viewer.canManageCurrentOrganization} className="grid gap-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <select name="subscriptionTier" defaultValue={currentOrganization.subscriptionTier} className={inputClass}>
-                      {ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((tier) => (
-                        <option key={tier} value={tier}>
-                          {tierLabelHe(tier)} ({tier})
-                        </option>
-                      ))}
-                    </select>
-                    <select name="subscriptionStatus" defaultValue={currentOrganization.subscriptionStatus} className={inputClass}>
-                      <option value="ACTIVE">ACTIVE</option>
-                      <option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
-                      <option value="SUSPENDED">SUSPENDED</option>
-                      <option value="INACTIVE">INACTIVE</option>
-                    </select>
-                  </div>
-                  <div className="flex justify-end">
-                    <SubmitButton busy={busyKey === "current-org"} disabled={!viewer.canManageCurrentOrganization} label={viewer.canManageCurrentOrganization ? "שמור מנוי" : "צפייה בלבד"} />
-                  </div>
-                </fieldset>
-              </ActionForm>
+              <ManagementNotice visible={!viewer.canManageCurrentOrganization} text="אפשר לצפות בפרטי המנוי, אבל רק מנהל ארגון או מנהל פלטפורמה יכולים לבצע פעולות ניהול." />
+              <ManagementNotice
+                visible={viewer.canManageCurrentOrganization && !viewer.canAccessPlatformControls}
+                text="שינוי מסלול בתשלום מתבצע דרך כפתורי התשלום למטה — לא ניתן לקבוע מסלול בתשלום ידנית מהטופס."
+              />
+              {canDirectEditSubscriptionTier ? (
+                <ActionForm onSubmit={submitWith("current-org", updateCurrentSubscriptionAction)}>
+                  <fieldset className="grid gap-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <select name="subscriptionTier" defaultValue={currentOrganization.subscriptionTier} className={inputClass}>
+                        {ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((tier) => (
+                          <option key={tier} value={tier}>
+                            {tierLabelHe(tier)} ({tier})
+                          </option>
+                        ))}
+                      </select>
+                      <select name="subscriptionStatus" defaultValue={currentOrganization.subscriptionStatus} className={inputClass}>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
+                        <option value="INACTIVE">INACTIVE</option>
+                      </select>
+                    </div>
+                    <div className="flex justify-end">
+                      <SubmitButton busy={busyKey === "current-org"} label="שמור מנוי (בעל פלטפורמה)" />
+                    </div>
+                  </fieldset>
+                </ActionForm>
+              ) : (
+                <div className="grid gap-4 rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
+                  <p className="text-sm font-semibold text-[color:var(--v2-ink)]">מסלול וסטטוס נוכחיים</p>
+                  <p className="text-sm text-[color:var(--v2-muted)]">
+                    {tierLabelHe(currentOrganization.subscriptionTier)} · {currentOrganization.subscriptionStatus}
+                  </p>
+                  {viewer.canManageCurrentOrganization ? (
+                    <Link href="/app/settings/billing" className="v2-button v2-button-secondary w-fit">
+                      שדרוג ותשלום (עמוד חיוב)
+                    </Link>
+                  ) : null}
+                </div>
+              )}
             </SectionCard>
 
             <SectionCard
@@ -477,7 +497,7 @@ export default function SubscriptionManagementWorkspace({
                 <Link href="/app/admin" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
                   חזרה למסך Admin
                 </Link>
-                <Link href="/app/settings" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
+                <Link href="/app/settings/overview" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
                   הגדרות הארגון המחובר
                 </Link>
               </div>

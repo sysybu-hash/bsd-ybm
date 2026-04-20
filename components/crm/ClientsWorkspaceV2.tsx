@@ -18,9 +18,12 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
-import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
+import {
+  WorkspacePageHero,
+  WorkspaceStatTile,
+} from "@/components/workspace/WorkspacePageScaffold";
 
 type ClientRecord = {
   id: string;
@@ -52,6 +55,8 @@ type Props = Readonly<{
   contacts: ClientRecord[];
   projects: ProjectRecord[];
   industryProfile: IndustryProfile;
+  /** מ־`/app/clients?projectId=` — סינון ראשוני לפי פרויקט */
+  initialProjectFilter?: string;
 }>;
 
 const STATUS_BADGE_CLASS = {
@@ -213,12 +218,14 @@ function PipelineColumn({
   );
 }
 
-export default function ClientsWorkspaceV2({ contacts, projects, industryProfile }: Props) {
+export default function ClientsWorkspaceV2({ contacts, projects, industryProfile, initialProjectFilter }: Props) {
   const { t, dir } = useI18n();
-  const advancedClientsHref = getAdvancedWorkspaceHref("clients");
+  const advancedClientsHref = "/app/advanced";
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [projectFilter, setProjectFilter] = useState("ALL");
+  const [projectFilter, setProjectFilter] = useState(() =>
+    initialProjectFilter && projects.some((p) => p.id === initialProjectFilter) ? initialProjectFilter : "ALL",
+  );
   const [view, setView] = useState<"overview" | "board">("overview");
   const [isPending, startFilterTransition] = useTransition();
   const deferredSearch = useDeferredValue(search);
@@ -254,47 +261,50 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
 
   return (
     <div className="grid gap-6" dir={dir}>
-      <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div>
-            <span className="v2-eyebrow">{t("workspaceClients.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
-              {t("workspaceClients.heroTitle", { clients: clientsLabel })}
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
-              {t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
-            </p>
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href={advancedClientsHref} className="v2-button v2-button-primary">
-                {t("workspaceClients.advancedCta")}
-                <ArrowLeft className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link href="/app/inbox" className="v2-button v2-button-secondary">
-                {t("workspaceClients.inboxCta")}
-                <Sparkles className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[
-              { label: clientsLabel, value: filteredContacts.length.toString(), icon: UsersRound },
-              { label: t("workspaceClients.statPipelineValue"), value: formatCurrencyILS(totalValue), icon: CircleDollarSign },
-              { label: t("workspaceClients.statOpenCollection"), value: formatCurrencyILS(totalPending), icon: ReceiptText },
-              { label: t("workspaceClients.statActiveProjects"), value: activeProjects.toString(), icon: CheckCircle2 },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="v2-panel p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--v2-muted)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <WorkspacePageHero
+        eyebrow={t("workspaceClients.eyebrow")}
+        title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
+        description={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
+        actions={
+          <>
+            <Link href={advancedClientsHref} className="v2-button v2-button-primary">
+              {t("workspaceClients.advancedCta")}
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link href="/app/finance" className="v2-button v2-button-secondary">
+              {t("workspaceClients.financeCta")}
+              <ReceiptText className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link href="/app/inbox" className="v2-button v2-button-secondary">
+              {t("workspaceClients.inboxCta")}
+              <Sparkles className="h-4 w-4" aria-hidden />
+            </Link>
+          </>
+        }
+        aside={
+          <>
+            <WorkspaceStatTile label={clientsLabel} value={filteredContacts.length.toString()} icon={UsersRound} />
+            <WorkspaceStatTile
+              label={t("workspaceClients.statPipelineValue")}
+              value={formatCurrencyILS(totalValue)}
+              icon={CircleDollarSign}
+              hint={t("workspaceClients.statPipelineValueHint")}
+            />
+            <WorkspaceStatTile
+              label={t("workspaceClients.statOpenCollection")}
+              value={formatCurrencyILS(totalPending)}
+              icon={ReceiptText}
+              hint={t("workspaceClients.statOpenCollectionHint")}
+            />
+            <WorkspaceStatTile
+              label={t("workspaceClients.statActiveProjects")}
+              value={activeProjects.toString()}
+              icon={CheckCircle2}
+              hint={t("workspaceClients.statActiveProjectsHint")}
+            />
+          </>
+        }
+      />
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
@@ -453,7 +463,15 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
           </div>
 
           <div className="v2-panel p-6">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceClients.projectsTitle")}</p>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceClients.projectsTitle")}</p>
+              <Link
+                href="/app/projects"
+                className="text-sm font-black text-[color:var(--v2-accent)] underline-offset-2 hover:underline"
+              >
+                {t("workspaceClients.projectsAllLink")}
+              </Link>
+            </div>
             <div className="mt-4 grid gap-3">
               {recentProjects.map((project) => (
                 <div key={project.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
@@ -469,6 +487,12 @@ export default function ClientsWorkspaceV2({ contacts, projects, industryProfile
                       total: formatCurrencyILS(project.totalValue),
                     })}
                   </p>
+                  <Link
+                    href={`/app/clients?projectId=${encodeURIComponent(project.id)}`}
+                    className="mt-3 inline-flex text-sm font-black text-[color:var(--v2-accent)] hover:underline"
+                  >
+                    {t("workspaceClients.projectOpenClients")}
+                  </Link>
                 </div>
               ))}
             </div>

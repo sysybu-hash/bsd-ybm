@@ -59,8 +59,13 @@ export function isTextLikeMime(mime: string): boolean {
     mime === "application/json" ||
     mime === "application/xml" ||
     mime === "text/xml" ||
-    mime === "text/csv"
+    mime === "text/csv" ||
+    mime === "application/rtf"
   );
+}
+
+export function isDocxMime(mime: string): boolean {
+  return mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 }
 
 /** OpenAI / Anthropic במסלול תמונה — רק תמונות (לא PDF) */

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function DashboardOperatorRedirectPage() {
-  redirect("/app/intelligence");
+  redirect("/app/ai");
 }

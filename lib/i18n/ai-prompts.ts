@@ -5,7 +5,7 @@ import {
 } from "./config";
 
 /** גרסת סכימת JSON — חייב לזהות עם DocumentScanCache.schemaVersion */
-export const DOCUMENT_JSON_SCHEMA_VERSION = 2;
+export const DOCUMENT_JSON_SCHEMA_VERSION = 3;
 
 export function getDocumentJsonInstruction(locale: string): string {
   const loc = normalizeLocale(locale) as AppLocale;

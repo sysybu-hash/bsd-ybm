@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
+import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import { useI18n } from "@/components/I18nProvider";
 import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
@@ -230,7 +231,7 @@ export default function WorkspaceUtilityDock({
             : t("workspaceDock.quickPrompts.documents.noTemplate"),
           t("workspaceDock.quickPrompts.documents.2"),
         ];
-      case "/app/billing":
+      case "/app/settings/billing":
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.billing");
       case "/app/operations":
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.operations");
@@ -327,6 +328,8 @@ export default function WorkspaceUtilityDock({
             body: JSON.stringify({
               orgId,
               message: contextualMessage,
+              sectionLabel: currentSection.label,
+              sectionSummary: currentSection.summary,
             }),
           });
           const data = (await response.json()) as { answer?: string; error?: string };
@@ -632,43 +635,18 @@ export default function WorkspaceUtilityDock({
               className="max-h-[min(45vh,22rem)] space-y-3 overflow-y-auto rounded-[24px] border border-slate-200 bg-white p-4"
             >
               {chatMessages.map((message) => (
-                <div
+                <AssistantMessageBubble
                   key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-start" : "justify-end"}`}
-                >
-                  <div
-                    className={`max-w-[88%] rounded-[22px] px-4 py-3 text-sm leading-6 ${
-                      message.role === "user"
-                        ? "bg-[color:var(--v2-accent)] text-white"
-                        : "border border-slate-200 bg-slate-50 text-slate-700"
-                    }`}
-                  >
-                    <p>{message.content}</p>
-                    {message.role === "assistant" ? (
-                      <div className="mt-3 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => speakMessage(message.content, message.id)}
-                          className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-[11px] font-black text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                        >
-                          {speakingMessageId === message.id ? (
-                            <VolumeX className="h-3.5 w-3.5" aria-hidden />
-                          ) : (
-                            <Volume2 className="h-3.5 w-3.5" aria-hidden />
-                          )}
-                          {speakingMessageId === message.id
-                            ? t("workspaceDock.assistant.readAloudStop")
-                            : t("workspaceDock.assistant.readAloud")}
-                        </button>
-                        {message.source === "voice" ? (
-                          <span className="rounded-full bg-[color:var(--v2-accent-soft)] px-2 py-1 text-[11px] font-black text-[color:var(--v2-accent)]">
-                            {t("workspaceDock.assistant.voiceReplyBadge")}
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
+                  role={message.role}
+                  content={message.content}
+                  source={message.source}
+                  showSpeak={message.role === "assistant"}
+                  isSpeaking={speakingMessageId === message.id}
+                  onSpeakToggle={() => speakMessage(message.content, message.id)}
+                  readLabel={t("workspaceDock.assistant.readAloud")}
+                  stopLabel={t("workspaceDock.assistant.readAloudStop")}
+                  voiceBadgeLabel={t("workspaceDock.assistant.voiceReplyBadge")}
+                />
               ))}
 
               {sending ? (

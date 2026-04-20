@@ -29,7 +29,7 @@ const flow = [
   {
     title: "AI Operation",
     text: "Run intelligent workflows and automation in production.",
-    href: "/app/intelligence",
+    href: "/app/ai",
     icon: Bot,
   },
 ];

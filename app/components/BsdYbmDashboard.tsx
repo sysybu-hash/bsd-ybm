@@ -179,7 +179,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
         {[
           { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "teal" },
           { href: "/app/documents", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
-          { href: "/app/insights", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
+          { href: "/app/ai", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
           { href: "/app/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
         ].map((c) => (
           <Link
@@ -265,7 +265,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     {isUploading ? <Loader2 className="animate-spin" size={17} /> : <Upload size={17} />}
                     {isUploading ? t("scanner.processing") : t("erpDash.scannerCta")}
                   </label>
-                  <Link href="/app/insights" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+                  <Link href="/app/ai" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
                     {t("dashboard.aiHub")}
                     <ChevronLeft size={15} />
                   </Link>

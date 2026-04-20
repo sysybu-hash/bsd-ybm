@@ -149,20 +149,27 @@ export const INDUSTRY_CONFIGS: Record<IndustryType, IndustryConfig> = {
     features: { hasCrm: true, hasErp: true, hasInventory: true, hasFleet: true, hasConstructionPlan: true },
     scanner: {
       title: "מפקח בנייה דיגיטלי (AI Scanner)",
-      subtitle: "ניהול יומני עבודה, הזמנות חומרים ואישורי מהנדס",
-      dropzoneTitle: "גרור תכניות או הזמנות ציוד",
-      dropzoneSub: "מעקב אחר התקדמות באתר הבנייה",
+      subtitle: "פענוח חשבוניות ספקים, חוזים, יומני עבודה ואישורי מהנדס לקבלנים",
+      dropzoneTitle: "גרור מסמכים, תכניות, הזמנות, או תעודות משלוח",
+      dropzoneSub: "AI מפענח נתונים אוטומטית בהתאם לסוג המסמך",
       analysisTypes: [
-        { id: "SITE_LOG", label: "יומן עבודה", description: "סיכום פעילות יומית וכוח אדם" },
-        { id: "MATERIAL_ORDER", label: "הזמנת חומרים", description: "מעקב אחר הזמנות בטון וברזל" }
+        { id: "VENDOR_INVOICE", label: "חשבונית מס ספק", description: "רכש חומרים, בטון, ברזל - חילוץ כמויות ומחירים" },
+        { id: "DELIVERY_NOTE", label: "תעודת משלוח / שקילה", description: "תעודות בטון, משקל ברזל, חומרי בניין" },
+        { id: "SITE_LOG", label: "יומן עבודה / כוח אדם", description: "סיכום פעילות יומית, קבלני משנה וכוח אדם" },
+        { id: "BOQ_DOCUMENT", label: "כתב כמויות (BOQ)", description: "פירוט שלבים, מחירים ואומדנים לפרויקט" },
+        { id: "ENGINEER_APPROVAL", label: "אישור מהנדס / יועץ", description: "תעודת בדיקת בטיחות, אישור יציקה, קונסטרוקציה" },
+        { id: "SUBCONTRACTOR_BILL", label: "חשבון קבלן משנה", description: "חילוץ סעיפי ביצוע, התחשבנות ומקדמות" },
+        { id: "CONTRACT_AGREEMENT", label: "חוזה ביצוע", description: "עיקרי חוזה מול יזם או מזמין עבודה" }
       ],
       resultColumns: [
-        { key: "project_site", label: "אתר בנייה" },
-        { key: "material_type", label: "סוג חומר" },
-        { key: "approval_status", label: "סטטוס פיקוח" }
+        { key: "project_site", label: "אתר עבודה / פרויקט" },
+        { key: "doc_type", label: "סוג מסמך" },
+        { key: "material_or_service", label: "חומר / שירות" },
+        { key: "total_amount", label: "סכום / כמות" },
+        { key: "approval_status", label: "סטטוס אישור" }
       ]
     },
-    aiInstructions: "Analyze for materials and site management data."
+    aiInstructions: "Analyze for materials, quantities, billing amounts, contractor names, and site management data in Israeli construction contexts."
   },
   MEDICAL: {
     id: "MEDICAL",

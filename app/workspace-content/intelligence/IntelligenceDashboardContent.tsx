@@ -15,14 +15,20 @@ import { isRtlLocale } from "@/lib/i18n/config";
 
 export async function IntelligenceDashboardContent({
   fallbackHref = "/app",
+  skipRedirect = false,
 }: {
   fallbackHref?: string;
+  /** כשמוטמע ב־`/app/ai` — בלי הפניה; מחזיר null אם אין הרשאה */
+  skipRedirect?: boolean;
 } = {}) {
   const session = await getServerSession(authOptions);
   const role = session?.user?.role;
   const email = session?.user?.email;
 
   if (!canAccessIntelligenceDashboard(role)) {
+    if (skipRedirect) {
+      return null;
+    }
     redirect(fallbackHref);
   }
 
@@ -51,7 +57,7 @@ export async function IntelligenceDashboardContent({
       </header>
 
       {/* 🚀 Autonomous Negotiation Agent - WORLD FIRST */}
-      <section className="card-avenue rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl shadow-blue-900/5 relative overflow-hidden border border-slate-200">
+      <section className="card-avenue rounded-[2rem] p-6 lg:p-8 shadow-xl shadow-blue-900/5 relative overflow-hidden border border-slate-200">
          <div className="absolute top-0 end-0 h-32 w-32 bg-teal-500/5 blur-3xl rounded-full" />
          <AutonomousNegotiationCenter />
       </section>

@@ -7,6 +7,7 @@
     "signOut": "יציאה",
     "signOutAria": "יציאה",
     "advancedShort": "מתקדם",
+    "primaryNavAria": "ניווט ראשי במרחב העבודה",
     "items": {
       "home": {
         "label": "בית",
@@ -16,6 +17,10 @@
         "label": "תיבת עבודה",
         "summary": "מה דורש טיפול עכשיו, אילו אישורים פתוחים, ומה מחכה לצוות."
       },
+      "projects": {
+        "label": "פרויקטים",
+        "summary": "כל הפרויקטים הפעילים, סטטוס וקישור ללקוחות."
+      },
       "clients": {
         "label": "לקוחות",
         "summary": "ניהול {clients} וחיבור ישיר אל {documents}."
@@ -24,17 +29,17 @@
         "label": "מסמכים",
         "summary": "סריקה, בקרה והפקה של {records} עבור {industry}."
       },
-      "billing": {
-        "label": "חיוב",
-        "summary": "תזרים, חשבוניות, גבייה ומעקב תשלומים שוטף."
+      "finance": {
+        "label": "כספים",
+        "summary": "תזרים, חשבוניות, גבייה, ERP ומעקב תשלומים."
+      },
+      "ai": {
+        "label": "AI",
+        "summary": "תובנות, מודיעין תפעולי והמלצות חכמות במקום אחד."
       },
       "operations": {
         "label": "תפעול",
         "summary": "תהליכים, משימות, אוטומציות וכלי צוות."
-      },
-      "insights": {
-        "label": "תובנות",
-        "summary": "AI, המלצות חכמות ותמונה ניהולית לפי ההקשר העסקי."
       },
       "settings": {
         "label": "הגדרות",
@@ -94,7 +99,7 @@
         "title": "CRM מתקדם",
         "body": "כלי CRM מלאים למצבים שבהם צריך שליטה עמוקה יותר, דוחות וכלי עומק."
       },
-      "insights": {
+      "ai": {
         "title": "AI Hub מתקדם",
         "body": "לשוניות AI, סורקים וכלי עומק אנליטיים שמיועדים לעבודה מתקדמת יותר."
       },
@@ -113,12 +118,42 @@
     }
   },
   "workspaceHome": {
+    "greeting": "שלום, {name}",
+    "subtitle": "מרחב עבודה אישי",
+    "dailyWorkTitle": "עבודה יומית",
+    "recentActivity": {
+      "title": "מסמכים ופעילות אחרונה",
+      "subtitle": "עדכונים מהמסמכים המונפקים בארגון.",
+      "empty": "עדיין אין מסמכים מונפקים — התחילו ממסך המסמכים.",
+      "linkAll": "לכל המסמכים",
+      "colClient": "לקוח",
+      "colType": "סוג",
+      "colStatus": "סטטוס",
+      "colDate": "תאריך",
+      "colTotal": "סכום"
+    },
+    "docType": {
+      "INVOICE": "חשבונית",
+      "RECEIPT": "קבלה",
+      "INVOICE_RECEIPT": "חשבונית מס קבלה",
+      "CREDIT_NOTE": "זיכוי"
+    },
+    "docStatus": {
+      "PENDING": "ממתין",
+      "PAID": "שולם",
+      "CANCELLED": "בוטל"
+    },
     "eyebrow": "בית",
     "startHere": {
       "eyebrow": "מתחילים כאן",
       "title": "שלושה קישורים",
       "subtitle": "שאר האזורים בתפריט מימין.",
       "navHint": "עוד אזורים בתפריט העבודה.",
+      "actions": {
+        "documents": "צור מסמך",
+        "clients": "הוסף לקוח",
+        "projects": "צור פרויקט"
+      },
       "cards": {
         "documents": {
           "title": "מסמכים",
@@ -132,17 +167,21 @@
           "title": "תיבת עבודה",
           "body": "מה ממתין להחלטה."
         },
-        "billing": {
-          "title": "חיוב",
-          "body": "חשבוניות ותזרים."
+        "projects": {
+          "title": "פרויקטים",
+          "body": "רשימה ושיוך ללקוחות."
+        },
+        "finance": {
+          "title": "כספים",
+          "body": "תזרים, גבייה ו-ERP."
         },
         "operations": {
           "title": "תפעול",
           "body": "תהליכים ושטח."
         },
-        "insights": {
-          "title": "תובנות",
-          "body": "תמונה ניהולית."
+        "ai": {
+          "title": "AI",
+          "body": "תובנות ומודיעין."
         },
         "settings": {
           "title": "הגדרות",
@@ -151,6 +190,19 @@
       }
     },
     "advancedCta": "מתקדם",
+    "metricLinks": {
+      "documents": "צפה במסמכים",
+      "clients": "ניהול לקוחות",
+      "projects": "ראה פרויקטים",
+      "finance": "ראה כספים"
+    },
+    "metricTrends": {
+      "noneYet": "אין עדיין",
+      "documentsTotal": "{count} סה\"כ",
+      "clientsMonthly": "+{count} מחודש",
+      "projectsActive": "{count} פעילים",
+      "financeFresh": "+8.5% חדש"
+    },
     "stats": {
       "activeProjects": "פרויקטים פעילים",
       "billingVolume": "מחזור חיוב (חשבוניות)"
@@ -165,6 +217,11 @@
     }
   },
   "workspaceShell": {
-    "refreshingOverlay": "מעדכן את מרחב העבודה…"
+    "refreshingOverlay": "מעדכן את מרחב העבודה…",
+    "topBar": {
+      "searchAria": "חיפוש",
+      "notificationsAria": "התראות",
+      "profileAria": "פרופיל"
+    }
   }
 }
