@@ -1,9 +1,6 @@
-import { IntelligenceDashboardContent } from "@/app/workspace-content/intelligence/IntelligenceDashboardContent";
+import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Intelligence | BSD-YBM",
-};
-
-export default async function AppIntelligencePage() {
-  return <IntelligenceDashboardContent fallbackHref="/app" />;
+/** הפניה ל־`/app/ai` — תוכן המודיעין משולב במסך AI */
+export default function AppIntelligenceLegacyRedirect() {
+  redirect("/app/ai");
 }

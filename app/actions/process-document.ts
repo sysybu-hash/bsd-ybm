@@ -34,6 +34,7 @@ import {
   inferMimeFromFileName,
   isOpenAiAnthropicVisionMime,
   isTextLikeMime,
+  isDocxMime,
 } from "@/lib/scan-mime";
 
 function getGeminiKey(): string | undefined {
@@ -113,7 +114,7 @@ function resolveScanProvider(
   requested: AiProviderId,
   mimeType: string,
 ): AiProviderId {
-  if (isTextLikeMime(mimeType)) {
+  if (isTextLikeMime(mimeType) || isDocxMime(mimeType)) {
     return "gemini";
   }
   if (requested === "groq") {
@@ -169,7 +170,14 @@ export async function processDocumentAction(
     const analysisMode = industryConfig.scanner.analysisTypes.find((a: { id: string }) => a.id === analysisId);
     
     // Merge standard instructions with industry + mode specific tweaks
+    const extraColumns = industryConfig.scanner.resultColumns
+      .map((c: { key: string; label: string }) => `- "${c.key}": string | null (infer from context based on column label: '${c.label}')`)
+      .join("\n");
+
     const documentInstruction = `${getDocumentJsonInstruction(uiLocale)}\n\n` +
+      `### DYNAMIC EXTRA FIELDS\n` +
+      `In addition to the exact shape above, you MUST ALSO include these fields at the root of the JSON object. Do not nest them. Use null if not found:\n` +
+      `${extraColumns}\n\n` +
       `### PROFESSIONAL CONTEXT\n` +
       `**Industry**: ${industryConfig.label}\n` +
       `**Analysis Mode**: ${analysisMode?.label || analysisId}\n` +
@@ -238,6 +246,11 @@ export async function processDocumentAction(
         const decoder = new TextDecoder("utf-8");
         const plain = decoder.decode(bytes);
         aiData = await extractWithGeminiText(plain, file.name, documentInstruction);
+      } else if (isDocxMime(mimeType)) {
+        const mammoth = await import("mammoth");
+        const buffer = Buffer.from(bytes);
+        const result = await mammoth.extractRawText({ buffer });
+        aiData = await extractWithGeminiText(result.value, file.name, documentInstruction);
       } else {
         const base64Data = Buffer.from(bytes).toString("base64");
         switch (effectiveProvider) {

@@ -151,7 +151,7 @@ export default async function AppHelpPage() {
           description="אחרי שהבסיס מוכן, עוברים לתיבת העבודה, CRM, מסמכים, חיוב ותובנות."
           primaryHref="/app/inbox"
           primaryLabel="פתיחת תיבת עבודה"
-          secondaryHref="/app/insights"
+          secondaryHref="/app/ai"
           secondaryLabel="פתיחת תובנות"
           icon={<Workflow className="h-5 w-5" aria-hidden />}
         />

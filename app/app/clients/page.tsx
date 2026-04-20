@@ -8,13 +8,19 @@ import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
 
-export default async function AppClientsPage() {
+export default async function AppClientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ projectId?: string }>;
+}) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
 
   if (!organizationId) {
     redirect("/login");
   }
+
+  const sp = await searchParams;
 
   const [organization, contactsRaw, projectsRaw] = await Promise.all([
     prisma.organization.findUnique({
@@ -125,5 +131,16 @@ export default async function AppClientsPage() {
     messages,
   );
 
-  return <ClientsWorkspaceV2 contacts={contacts} projects={projects} industryProfile={industryProfile} />;
+  const projectIdParam = sp.projectId?.trim();
+  const initialProjectFilter =
+    projectIdParam && projects.some((p) => p.id === projectIdParam) ? projectIdParam : undefined;
+
+  return (
+    <ClientsWorkspaceV2
+      contacts={contacts}
+      projects={projects}
+      industryProfile={industryProfile}
+      initialProjectFilter={initialProjectFilter}
+    />
+  );
 }

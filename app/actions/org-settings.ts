@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { MECKANO_ACCESS_ERROR, canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { type CompanyType, type CustomerType, Prisma, UserRole } from "@prisma/client";
+import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-super-admin";
 import { defaultScanBalancesForTier, parseSubscriptionTier } from "@/lib/subscription-tier-config";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { normalizeConstructionTrade } from "@/lib/construction-trades";
@@ -22,9 +23,10 @@ function revalidateWorkspace() {
   revalidatePath("/app/documents");
   revalidatePath("/app/documents/erp");
   revalidatePath("/app/documents/issue");
-  revalidatePath("/app/insights");
-  revalidatePath("/app/billing");
+  revalidatePath("/app/ai");
+  revalidatePath("/app/finance");
   revalidatePath("/app/settings");
+  revalidatePath("/app/settings/billing");
 }
 
 function normalizeLabel(value: FormDataEntryValue | null) {
@@ -302,6 +304,16 @@ export async function updateCurrentSubscriptionAction(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return { ok: false as const, error: "נדרשת התחברות" };
+  }
+
+  const actorEmail = session.user.email?.trim().toLowerCase() ?? "";
+  /** מנוי בתשלום לא נקבע ידנית ממסך הגדרות — רק בעל הפלטפורמה (או תשלום / הזמנה / אדמין מרכז) */
+  if (!isExecutiveSubscriptionSuperAdmin(actorEmail)) {
+    return {
+      ok: false as const,
+      error:
+        "מסלול וסטטוס המנוי נקבעים אוטומטית לאחר תשלום או הזמנה מוסמכת. לשדרוג יש לעבור לעמוד החיוב או לפנות לתמיכה.",
+    };
   }
 
   const orgId = session.user.organizationId ?? null;

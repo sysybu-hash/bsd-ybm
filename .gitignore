@@ -1,4 +1,3 @@
-.vercel
 .env.vercel.pull
 
 # תלות ובנייה
@@ -42,4 +41,3 @@ tsconfig.tsbuildinfo
 /Gemini_Generated_Image_*.png
 
 .vercel
-.env*.local
