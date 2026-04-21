@@ -3,8 +3,9 @@
 import { type FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Building2 } from "lucide-react";
+import { Building2, MailPlus } from "lucide-react";
 import { updateOrganizationAction } from "@/app/actions/org-settings";
+import { createOrganizationInviteAction } from "@/app/actions/organization-invite";
 import { useWorkspaceShellTransition } from "@/components/app-shell/WorkspaceShellTransition";
 import type { SettingsHubOrganizationRecord, SettingsHubViewer } from "@/lib/settings-hub-server";
 import {
@@ -13,7 +14,7 @@ import {
   SubmitButton,
 } from "@/components/settings/settings-form-primitives";
 
-type Busy = "organization" | null;
+type Busy = "organization" | "invite" | null;
 type ActionResult = { ok: boolean; error?: string };
 
 type Props = Readonly<{
@@ -97,6 +98,32 @@ export default function OrganizationSettingsPanel({ organization, viewer }: Prop
             </label>
             <div className="flex justify-end md:col-span-2">
               <SubmitButton busy={busySection === "organization"} disabled={!canManage} label={canManage ? "שמור" : "צפייה בלבד"} />
+            </div>
+          </fieldset>
+        </form>
+      </SectionCard>
+
+      <SectionCard
+        title="הזמנת חבר צוות"
+        body="שליחת קישור הרשמה לארגון הקיים עם תפקיד מוגדר ותוקף מוגבל בזמן."
+        icon={<MailPlus className="h-5 w-5" aria-hidden />}
+      >
+        <form onSubmit={submitWith("invite", createOrganizationInviteAction)} className="grid gap-4 md:grid-cols-[1.2fr_0.8fr_0.6fr]">
+          <fieldset disabled={!canManage} className="contents">
+            <input name="email" className={inputClass} dir="ltr" placeholder="team@example.com" required />
+            <select name="role" className={inputClass} defaultValue="EMPLOYEE">
+              <option value="EMPLOYEE">עובד / צוות</option>
+              <option value="PROJECT_MGR">מנהל פרויקטים</option>
+              <option value="CLIENT">לקוח / צופה</option>
+              <option value="ORG_ADMIN">מנהל ארגון</option>
+            </select>
+            <select name="validDays" className={inputClass} defaultValue="14">
+              <option value="7">7 ימים</option>
+              <option value="14">14 ימים</option>
+              <option value="30">30 ימים</option>
+            </select>
+            <div className="md:col-span-3 flex justify-end">
+              <SubmitButton busy={busySection === "invite"} disabled={!canManage} label={canManage ? "שלח הזמנה" : "צפייה בלבד"} />
             </div>
           </fieldset>
         </form>

@@ -100,22 +100,32 @@ function AccessibilityPanel({
     [],
   );
 
+  const activeCount = [
+    settings.highContrast,
+    settings.focusRing,
+    settings.reducedMotion,
+    settings.lineSpacing,
+    settings.bigCursor,
+    settings.grayscale,
+    settings.fontScale !== "default",
+  ].filter(Boolean).length;
+
   return (
     <section
-      className="w-[min(100vw-2rem,24rem)] rounded-[30px] border border-[color:var(--v2-line)] bg-white/96 p-5 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.38)] backdrop-blur-xl"
+      className="w-[min(100vw-1rem,28rem)] rounded-[28px] border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--tile-shadow-raised)]"
       dir="rtl"
       aria-label="סרגל נגישות"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--axis-ai-soft)] text-[color:var(--axis-ai)]">
               <Accessibility className="h-5 w-5" aria-hidden />
             </span>
             <div>
-              <h2 className="text-base font-black text-slate-900">סרגל גישות</h2>
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                שליטה אחת קבועה על קריאות, צבעים ומיקוד בכל האתר.
+              <h2 className="text-base font-black text-[color:var(--ink-900)]">נגישות חכמה</h2>
+              <p className="mt-1 text-[12px] text-[color:var(--ink-500)]">
+                התאמות קריאה, צבעים, פוקוס ותנועה לכל האתר.
               </p>
             </div>
           </div>
@@ -125,21 +135,43 @@ function AccessibilityPanel({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
-            aria-label="סגירת סרגל הגישות"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--line)] bg-white text-[color:var(--ink-500)] transition hover:border-[color:var(--line-strong)] hover:text-[color:var(--ink-900)]"
+            aria-label="סגירת סרגל הנגישות"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
         ) : null}
       </div>
 
-      <div className="mt-6 space-y-6">
+      <div className="mt-4 rounded-2xl border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--axis-ai)]">Live Preview</p>
+            <p className="mt-1 text-sm font-black text-[color:var(--ink-900)]">כך הקריאה תיראה</p>
+            <p className="mt-1 text-[12px] leading-6 text-[color:var(--ink-600)]">
+              טקסט מדגים ניגודיות, ריווח, פוקוס ותנועת מסך.
+            </p>
+          </div>
+          <div className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-[color:var(--axis-ai)]">
+            {activeCount}/7 מותאם
+          </div>
+        </div>
+        <div className="mt-4">
+          <div className="h-2 rounded-full bg-white/60 overflow-hidden">
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${Math.round((activeCount / 7) * 100)}%`, background: "var(--progress-fill-ai)" }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-5">
         <div>
-          <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-slate-400">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-400)]">
             <Type className="h-4 w-4" aria-hidden />
             גודל טקסט
           </div>
-
           <div className="grid grid-cols-3 gap-2">
             {fontOptions.map((option) => {
               const active = settings.fontScale === option.id;
@@ -148,16 +180,10 @@ function AccessibilityPanel({
                   key={option.id}
                   type="button"
                   onClick={() => setSettings((current) => ({ ...current, fontScale: option.id }))}
-                  className={`rounded-2xl border px-3 py-3 text-right transition ${
-                    active
-                      ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]"
-                      : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
-                  }`}
+                  className={`tile px-3 py-3 text-right transition ${active ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)]" : ""}`}
                 >
-                  <span className="block text-sm font-black">{option.label}</span>
-                  <span className="mt-1 block text-[11px] leading-5 text-slate-500">
-                    {option.summary}
-                  </span>
+                  <span className="block text-sm font-black text-[color:var(--ink-900)]">{option.label}</span>
+                  <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">{option.summary}</span>
                 </button>
               );
             })}
@@ -165,16 +191,14 @@ function AccessibilityPanel({
         </div>
 
         <div>
-          <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-slate-400">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-400)]">
             <Accessibility className="h-4 w-4" aria-hidden />
             התאמות קריאה
           </div>
-
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {TOGGLE_CARDS.map((card) => {
               const active = Boolean(settings[card.id]);
               const Icon = card.icon;
-
               return (
                 <button
                   key={card.id}
@@ -185,27 +209,21 @@ function AccessibilityPanel({
                       [card.id]: !current[card.id],
                     }))
                   }
-                  className={`rounded-2xl border px-3 py-3 text-right transition ${
-                    active
-                      ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                  }`}
+                  className={`tile px-3 py-3 text-right transition ${active ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : ""}`}
                 >
                   <div className="flex items-start gap-3">
                     <span
-                      className={`mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl ${
-                        active
-                          ? "bg-[color:var(--v2-accent)] text-white"
-                          : "bg-slate-100 text-slate-500"
-                      }`}
+                      className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg"
+                      style={{
+                        background: active ? "var(--axis-clients)" : "var(--canvas-sunken)",
+                        color: active ? "#fff" : "var(--ink-500)",
+                      }}
                     >
                       <Icon className="h-4 w-4" aria-hidden />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-black text-slate-900">{card.label}</span>
-                      <span className="mt-1 block text-[11px] leading-5 text-slate-500">
-                        {card.summary}
-                      </span>
+                      <span className="block text-sm font-black text-[color:var(--ink-900)]">{card.label}</span>
+                      <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">{card.summary}</span>
                     </span>
                   </div>
                 </button>
@@ -215,11 +233,10 @@ function AccessibilityPanel({
         </div>
 
         <div>
-          <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-slate-400">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-400)]">
             <Palette className="h-4 w-4" aria-hidden />
             צבע מוביל
           </div>
-
           <div className="grid grid-cols-6 gap-2">
             {ACCESSIBILITY_THEME_OPTIONS.map((theme) => {
               const active = settings.themeColor === theme.id;
@@ -229,9 +246,7 @@ function AccessibilityPanel({
                   type="button"
                   onClick={() => setSettings((current) => ({ ...current, themeColor: theme.id }))}
                   title={theme.label}
-                  className={`h-10 rounded-2xl border-2 transition ${
-                    active ? "scale-[1.04] border-slate-900 shadow-lg" : "border-white"
-                  }`}
+                  className={`h-11 rounded-xl border-2 transition ${active ? "scale-[1.04] border-[color:var(--ink-900)] shadow-[var(--shadow-sm)]" : "border-white"}`}
                   style={{ backgroundColor: theme.color }}
                   aria-label={`בחירת צבע ${theme.label}`}
                 />
@@ -240,18 +255,15 @@ function AccessibilityPanel({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3">
           <div>
-            <p className="text-sm font-black text-slate-900">ההגדרות נשמרות לכל האתר</p>
-            <p className="mt-1 text-[11px] text-slate-500">
-              השינויים נשמרים מקומית וממשיכים גם בין דפים ומסכים.
-            </p>
+            <p className="text-sm font-black text-[color:var(--ink-900)]">ההגדרות נשמרות לכל האתר</p>
+            <p className="mt-1 text-[11px] text-[color:var(--ink-500)]">שמירה מקומית מיידית והחלה על כל המסכים.</p>
           </div>
-
           <button
             type="button"
             onClick={() => setSettings({ ...DEFAULT_ACCESSIBILITY_SETTINGS })}
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-black text-[color:var(--ink-700)] transition hover:border-[color:var(--ink-900)] hover:text-[color:var(--ink-900)]"
           >
             <RotateCcw className="h-4 w-4" aria-hidden />
             איפוס
@@ -303,12 +315,12 @@ export default function AccessibilityMenu({
         <button
           type="button"
           onClick={() => setIsOpen((value) => !value)}
-          className={`group flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition ${
+          className={`group flex h-12 w-12 items-center justify-center rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-600)] shadow-[var(--shadow-xs)] transition ${
             isOpen
-              ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent)] text-white"
-              : "hover:border-slate-300 hover:text-slate-900"
+              ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai)] text-white"
+              : "hover:border-[color:var(--line-strong)] hover:text-[color:var(--ink-900)]"
           }`}
-          aria-label="פתיחת סרגל גישות"
+          aria-label="פתיחת סרגל נגישות"
         >
           <Accessibility className="h-5 w-5 transition group-hover:scale-110" aria-hidden />
         </button>
@@ -332,14 +344,14 @@ export default function AccessibilityMenu({
         onClick={() => setIsOpen((value) => !value)}
         className={
           compactFab
-            ? `inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-2xl border-2 border-white text-white shadow-lg transition ${
-                isOpen ? "bg-slate-900" : "bg-[color:var(--primary-brand)]"
+            ? `inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl border border-white/70 text-white shadow-[var(--tile-shadow-raised)] transition ${
+                isOpen ? "bg-[color:var(--ink-900)]" : "bg-[color:var(--axis-ai)]"
               }`
-            : `inline-flex h-14 w-14 touch-manipulation items-center justify-center rounded-full border-4 border-white text-white shadow-2xl transition ${
-                isOpen ? "bg-slate-900" : "bg-[color:var(--primary-brand)]"
+            : `inline-flex h-14 w-14 touch-manipulation items-center justify-center rounded-2xl border border-white/70 text-white shadow-[0_20px_50px_-20px_rgba(109,81,209,0.65)] transition ${
+                isOpen ? "bg-[color:var(--ink-900)]" : "bg-[color:var(--axis-ai)]"
               }`
         }
-        aria-label="פתיחת סרגל גישות"
+        aria-label="פתיחת סרגל נגישות"
       >
         {isOpen ? (
           <X className={compactFab ? "h-5 w-5" : "h-6 w-6"} aria-hidden />

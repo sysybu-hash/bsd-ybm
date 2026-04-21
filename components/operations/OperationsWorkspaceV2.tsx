@@ -92,14 +92,14 @@ export default function OperationsWorkspaceV2({
 
   return (
     <div className="grid gap-6" dir={dir}>
-      <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
+      <section className="tile overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
             <span className="v2-eyebrow">{t("workspaceOperations.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               {t("workspaceOperations.heroTitle")}
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
               {t("workspaceOperations.heroSubtitle", { org: organizationName })}
             </p>
 
@@ -124,12 +124,12 @@ export default function OperationsWorkspaceV2({
               { label: t("workspaceOperations.statFieldCoverage"), value: stats.fieldCoverage, icon: MapPinned },
               { label: t("workspaceOperations.statReviewLoad"), value: stats.reviewLoad, icon: ClipboardList },
             ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="v2-panel p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+              <div key={label} className="tile p-5">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--v2-muted)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
+                <p className="mt-4 text-sm font-bold text-[color:var(--ink-500)]">{label}</p>
+                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
               </div>
             ))}
           </div>
@@ -138,14 +138,14 @@ export default function OperationsWorkspaceV2({
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
-          <div className="v2-panel p-6">
+          <div className="tile p-6">
             <div className="flex items-center gap-2">
-              <Workflow className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.workflowsTitle")}</h2>
+              <Workflow className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+              <h2 className="text-xl font-black text-[color:var(--ink-900)]">{t("workspaceOperations.workflowsTitle")}</h2>
             </div>
             <div className="mt-5 grid gap-4">
               {workflows.map((workflow) => (
-                <article key={workflow.id} className="rounded-[24px] border border-[color:var(--v2-line)] bg-white/82 px-5 py-5">
+                <article key={workflow.id} className="rounded-[24px] border border-[color:var(--line)] bg-white/82 px-5 py-5">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
@@ -153,11 +153,11 @@ export default function OperationsWorkspaceV2({
                           {workflowStatusLabel(workflow.status)}
                         </span>
                       </div>
-                      <h3 className="mt-4 text-lg font-black text-[color:var(--v2-ink)]">{workflow.title}</h3>
-                      <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{workflow.summary}</p>
+                      <h3 className="mt-4 text-lg font-black text-[color:var(--ink-900)]">{workflow.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{workflow.summary}</p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         {workflow.metrics.map((metric) => (
-                          <span key={metric} className="rounded-full bg-[color:var(--v2-canvas)] px-3 py-1 text-xs font-black text-[color:var(--v2-muted)]">
+                          <span key={metric} className="rounded-full bg-[color:var(--canvas-sunken)] px-3 py-1 text-xs font-black text-[color:var(--ink-500)]">
                             {metric}
                           </span>
                         ))}
@@ -173,23 +173,23 @@ export default function OperationsWorkspaceV2({
           </div>
 
           {meckanoEnabled ? (
-            <div className="v2-panel p-6">
+            <div className="tile p-6">
               <div className="flex items-center gap-2">
-                <MapPinned className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.zonesTitle")}</h2>
+                <MapPinned className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+                <h2 className="text-xl font-black text-[color:var(--ink-900)]">{t("workspaceOperations.zonesTitle")}</h2>
               </div>
               <div className="mt-4 grid gap-3">
                 {zones.length === 0 ? (
-                  <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                  <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                     {operationsContextLabel
                       ? t("workspaceOperations.zonesEmptyWithTrade", { trade: operationsContextLabel })
                       : t("workspaceOperations.zonesEmpty")}
                   </div>
                 ) : null}
                 {zones.map((zone) => (
-                  <div key={zone.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
+                  <div key={zone.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="font-black text-[color:var(--v2-ink)]">{zone.name}</p>
+                      <p className="font-black text-[color:var(--ink-900)]">{zone.name}</p>
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-black ${
                           zone.synced ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
@@ -198,7 +198,7 @@ export default function OperationsWorkspaceV2({
                         {zone.synced ? t("workspaceOperations.zoneSynced") : t("workspaceOperations.zoneNotSynced")}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+                    <p className="mt-2 text-sm text-[color:var(--ink-500)]">
                       {t("workspaceOperations.zoneManagerLabel")}: {zone.managerName || t("workspaceOperations.zoneManagerUnset")} ·{" "}
                       {t("workspaceOperations.zoneAssigneesLabel")}: {zone.assigneeCount}
                     </p>
@@ -210,16 +210,16 @@ export default function OperationsWorkspaceV2({
         </div>
 
         <aside className="grid gap-4">
-          <div className="v2-panel v2-panel-highlight p-6">
+          <div className="tile tile--lavender p-6">
             <div className="flex items-center gap-2">
-              <Link2 className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.integrationsTitle")}</p>
+              <Link2 className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+              <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceOperations.integrationsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               {integrations.map((integration) => (
                 <div key={integration.label} className="rounded-2xl bg-white/78 px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-[color:var(--v2-ink)]">{integration.label}</p>
+                    <p className="font-black text-[color:var(--ink-900)]">{integration.label}</p>
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-black ${
                         integration.connected ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
@@ -230,54 +230,54 @@ export default function OperationsWorkspaceV2({
                         : t("workspaceOperations.integrationNeedsSetup")}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{integration.details}</p>
+                  <p className="mt-2 text-sm text-[color:var(--ink-500)]">{integration.details}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="v2-panel p-6">
+          <div className="tile p-6">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.recentTitle")}</p>
+              <AlertTriangle className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+              <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceOperations.recentTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
               {recentActivity.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                   {operationsContextLabel
                     ? t("workspaceOperations.recentEmptyWithTrade", { trade: operationsContextLabel })
                     : t("workspaceOperations.recentEmpty")}
                 </div>
               ) : null}
               {recentActivity.map((activity, index) => (
-                <div key={`${activity.action}-${index}`} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                  <p className="font-black text-[color:var(--v2-ink)]">{activity.action}</p>
-                  {activity.details ? <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{activity.details}</p> : null}
-                  <p className="mt-2 text-xs font-semibold text-[color:var(--v2-muted)]">{formatDateTime(activity.createdAt)}</p>
+                <div key={`${activity.action}-${index}`} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                  <p className="font-black text-[color:var(--ink-900)]">{activity.action}</p>
+                  {activity.details ? <p className="mt-2 text-sm text-[color:var(--ink-500)]">{activity.details}</p> : null}
+                  <p className="mt-2 text-xs font-semibold text-[color:var(--ink-500)]">{formatDateTime(activity.createdAt)}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="v2-panel p-6">
+          <div className="tile p-6">
             <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceOperations.shortcutsTitle")}</p>
+              <CreditCard className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+              <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceOperations.shortcutsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
-              <Link href="/app/settings/billing" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/settings/billing" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutBilling")}
               </Link>
-              <Link href="/app/documents" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/documents" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutDocuments")}
               </Link>
-              <Link href="/app/automations" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/automations" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutAutomation")}
               </Link>
-              <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutOnboarding")}
               </Link>
-              <Link href={advancedOperationsHref} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-black text-[color:var(--v2-ink)]">
+              <Link href={advancedOperationsHref} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutAdvanced")}
               </Link>
             </div>

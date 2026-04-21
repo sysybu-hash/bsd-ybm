@@ -28,10 +28,10 @@ export default function AssistantMessageBubble({
   return (
     <div className={`flex ${role === "user" ? "justify-start" : "justify-end"}`}>
       <div
-        className={`max-w-[88%] rounded-[22px] px-4 py-3 text-sm leading-6 ${
+        className={`max-w-[88%] rounded-[22px] px-4 py-3 text-sm leading-6 shadow-[var(--shadow-xs)] ${
           role === "user"
-            ? "bg-[color:var(--v2-accent)] text-white"
-            : "border border-slate-200 bg-slate-50 text-slate-700"
+            ? "bg-[color:var(--ink-900)] text-white"
+            : "border border-[color:var(--axis-ai-border)] bg-[color:var(--tile-lavender-bg)] text-[color:var(--ink-700)]"
         }`}
       >
         <p>{content}</p>
@@ -41,14 +41,14 @@ export default function AssistantMessageBubble({
               <button
                 type="button"
                 onClick={onSpeakToggle}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-[11px] font-black text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+                className="inline-flex items-center gap-1 rounded-full border border-[color:var(--axis-ai-border)] bg-white px-2 py-1 text-[11px] font-black text-[color:var(--axis-ai-ink)] transition hover:border-[color:var(--axis-ai)] hover:text-[color:var(--axis-ai)]"
               >
                 {isSpeaking ? <VolumeX className="h-3.5 w-3.5" aria-hidden /> : <Volume2 className="h-3.5 w-3.5" aria-hidden />}
                 {isSpeaking ? stopLabel : readLabel}
               </button>
             ) : null}
             {source === "voice" && voiceBadgeLabel ? (
-              <span className="rounded-full bg-[color:var(--v2-accent-soft)] px-2 py-1 text-[11px] font-black text-[color:var(--v2-accent)]">
+              <span className="rounded-full bg-[color:var(--axis-ai-soft)] px-2 py-1 text-[11px] font-black text-[color:var(--axis-ai)]">
                 {voiceBadgeLabel}
               </span>
             ) : null}

@@ -185,11 +185,11 @@ function ScannedCard({
   );
 
   return (
-    <article className="v2-panel overflow-hidden p-5" dir={dir}>
+    <article className="tile overflow-hidden p-5" dir={dir}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="truncate text-lg font-black text-[color:var(--v2-ink)]">{vendorDisplay}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--v2-muted)]">{document.fileName}</p>
+          <p className="truncate text-lg font-black text-[color:var(--ink-900)]">{vendorDisplay}</p>
+          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--ink-500)]">{document.fileName}</p>
         </div>
         <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${badgeClassName}`}>
           {statusLabel(t, "scanned", document.status)}
@@ -197,27 +197,27 @@ function ScannedCard({
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.detectedAmount")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.detectedAmount")}</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">
             {document.total > 0 ? formatCurrencyILS(document.total) : t("workspaceDocuments.noAmountDetected")}
           </p>
         </div>
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.lineItemsDetected")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{document.lineItemCount}</p>
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.lineItemsDetected")}</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{document.lineItemCount}</p>
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-[color:var(--v2-line)] bg-white/76 px-4 py-3">
-        <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.labelDecipher")}</p>
-        <p className="mt-2 text-sm font-semibold text-[color:var(--v2-ink)]">
+      <div className="mt-4 rounded-2xl border border-[color:var(--line)] bg-white/76 px-4 py-3">
+        <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.labelDecipher")}</p>
+        <p className="mt-2 text-sm font-semibold text-[color:var(--ink-900)]">
           {t("workspaceDocuments.scannedMetaLine", {
             type: typeDisplay,
             date: formatShortDate(document.createdAt),
           })}
         </p>
-        <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{summaryDisplay}</p>
+        <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{summaryDisplay}</p>
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">
@@ -248,11 +248,11 @@ function IssuedCard({
   const typeLabel = issuedTypeLabel(t, document.type);
 
   return (
-    <article className="v2-panel overflow-hidden p-5" dir={dir}>
+    <article className="tile overflow-hidden p-5" dir={dir}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="truncate text-lg font-black text-[color:var(--v2-ink)]">{document.clientName}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--v2-muted)]">
+          <p className="truncate text-lg font-black text-[color:var(--ink-900)]">{document.clientName}</p>
+          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--ink-500)]">
             {typeLabel} #{document.number}
           </p>
         </div>
@@ -262,22 +262,22 @@ function IssuedCard({
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.totalAmount")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{formatCurrencyILS(document.total)}</p>
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.totalAmount")}</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatCurrencyILS(document.total)}</p>
         </div>
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.dateLabel")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{formatShortDate(document.date)}</p>
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.dateLabel")}</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatShortDate(document.date)}</p>
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-[color:var(--v2-line)] bg-white/76 px-4 py-3">
-        <p className="text-xs font-bold text-[color:var(--v2-muted)]">{t("workspaceDocuments.lineItemsInDoc")}</p>
-        <p className="mt-2 text-sm font-semibold text-[color:var(--v2-ink)]">
+      <div className="mt-4 rounded-2xl border border-[color:var(--line)] bg-white/76 px-4 py-3">
+        <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.lineItemsInDoc")}</p>
+        <p className="mt-2 text-sm font-semibold text-[color:var(--ink-900)]">
           {t("workspaceDocuments.itemCount", { count: String(document.items.length) })}
         </p>
-        <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">
+        <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">
           {document.dueDate
             ? t("workspaceDocuments.dueDateLine", { date: formatShortDate(document.dueDate) })
             : t("workspaceDocuments.noDueDate")}
@@ -530,14 +530,14 @@ export default function DocumentsWorkspaceV2({
 
   return (
     <div className="grid gap-6" dir={dir}>
-      <section className="glass-2026-panel relative z-0 overflow-hidden p-6 sm:p-8">
+      <section className="tile relative z-0 overflow-hidden p-6 sm:p-8">
         <div className="relative z-[1] grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
             <span className="v2-eyebrow">{t("workspaceDocuments.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               {t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
               {t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
             </p>
 
@@ -564,12 +564,12 @@ export default function DocumentsWorkspaceV2({
               { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
               { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
             ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="v2-panel p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+              <div key={label} className="tile p-5">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--v2-muted)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
+                <p className="mt-4 text-sm font-bold text-[color:var(--ink-500)]">{label}</p>
+                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
               </div>
             ))}
           </div>
@@ -592,35 +592,35 @@ export default function DocumentsWorkspaceV2({
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
-          <div className="v2-panel p-5">
+          <div className="tile p-5">
             <div className="grid gap-3 lg:grid-cols-[1.5fr_0.8fr_auto]">
               <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
                   {t("workspaceDocuments.searchLabel")}
                 </span>
-                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3">
-                  <Filter className="h-4 w-4 text-[color:var(--v2-muted)]" aria-hidden />
+                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3">
+                  <Filter className="h-4 w-4 text-[color:var(--ink-500)]" aria-hidden />
                   <input
                     value={search}
                     onChange={(event) => {
                       const nextValue = event.target.value;
                       startFilterTransition(() => setSearch(nextValue));
                     }}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--v2-muted)]"
+                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-500)]"
                     placeholder={t("workspaceDocuments.searchPlaceholder")}
                   />
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--v2-accent)]" aria-hidden /> : null}
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
                 </div>
               </label>
 
               <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
                   {t("workspaceDocuments.statusLabel")}
                 </span>
                 <select
                   value={statusFilter}
                   onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                  className="rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                 >
                   <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
                   <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
@@ -633,15 +633,15 @@ export default function DocumentsWorkspaceV2({
               </label>
 
               <div className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
                   {t("workspaceDocuments.viewLabel")}
                 </span>
-                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--v2-canvas)] p-1">
+                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--canvas-sunken)] p-1">
                   <button
                     type="button"
                     onClick={() => startTransition(() => setActiveTab("scanned"))}
                     className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      activeTab === "scanned" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                      activeTab === "scanned" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
                     }`}
                   >
                     <LayoutGrid className="h-4 w-4" aria-hidden />
@@ -651,7 +651,7 @@ export default function DocumentsWorkspaceV2({
                     type="button"
                     onClick={() => startTransition(() => setActiveTab("issued"))}
                     className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      activeTab === "issued" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                      activeTab === "issued" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
                     }`}
                   >
                     <ListFilter className="h-4 w-4" aria-hidden />
@@ -665,9 +665,9 @@ export default function DocumentsWorkspaceV2({
           {activeTab === "scanned" ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {filteredScanned.length === 0 ? (
-                <div className="v2-panel col-span-full p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--v2-ink)]">{t("workspaceDocuments.emptyScannedTitle")}</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{t("workspaceDocuments.emptyScannedBody")}</p>
+                <div className="tile col-span-full p-8 text-center">
+                  <p className="text-2xl font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.emptyScannedTitle")}</p>
+                  <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyScannedBody")}</p>
                 </div>
               ) : null}
               {filteredScanned.map((document) => (
@@ -682,9 +682,9 @@ export default function DocumentsWorkspaceV2({
           ) : (
             <div className="grid gap-4 xl:grid-cols-2">
               {filteredIssued.length === 0 ? (
-                <div className="v2-panel col-span-full p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--v2-ink)]">{t("workspaceDocuments.emptyIssuedTitle")}</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{t("workspaceDocuments.emptyIssuedBody")}</p>
+                <div className="tile col-span-full p-8 text-center">
+                  <p className="text-2xl font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.emptyIssuedTitle")}</p>
+                  <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyIssuedBody")}</p>
                 </div>
               ) : null}
               {filteredIssued.map((document) => (
@@ -700,35 +700,35 @@ export default function DocumentsWorkspaceV2({
         </div>
 
         <aside className="grid gap-4">
-          <div className="v2-panel v2-panel-highlight p-6">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceDocuments.sidebarTemplatesTitle")}</p>
+          <div className="tile tile--lavender p-6">
+            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarTemplatesTitle")}</p>
             <div className="mt-4 grid gap-3">
               {industryProfile.templates.map((template) => (
                 <div key={template.id} className="rounded-2xl bg-white/78 px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-[color:var(--v2-ink)]">{template.label}</p>
-                    <span className="rounded-full bg-[color:var(--v2-canvas)] px-3 py-1 text-[11px] font-black text-[color:var(--v2-muted)]">
+                    <p className="font-black text-[color:var(--ink-900)]">{template.label}</p>
+                    <span className="rounded-full bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-500)]">
                       {template.kind}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{template.description}</p>
+                  <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{template.description}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="v2-panel p-6">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceDocuments.sidebarVendorsTitle")}</p>
+          <div className="tile p-6">
+            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarVendorsTitle")}</p>
             <div className="mt-4 grid gap-3">
               {vendors.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                   {t("workspaceDocuments.sidebarVendorsEmpty")}
                 </div>
               ) : null}
               {vendors.map((vendor) => (
                 <div
                   key={vendor}
-                  className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)]"
+                  className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)]"
                 >
                   {translateFallback(vendor, DOC_UI_FALLBACK.unknownVendor, "workspaceDocuments.fallbacks.unknownVendor", t)}
                 </div>
@@ -736,16 +736,16 @@ export default function DocumentsWorkspaceV2({
             </div>
           </div>
 
-          <div className="v2-panel p-6">
-            <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceDocuments.sidebarSnapshotTitle")}</p>
+          <div className="tile p-6">
+            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarSnapshotTitle")}</p>
             <div className="mt-4 grid gap-3">
               {[
                 t("workspaceDocuments.snapshotLine1", { count: String(scannedReviewCount) }),
                 t("workspaceDocuments.snapshotLine2", { count: String(issuedPendingCount) }),
                 t("workspaceDocuments.snapshotLine3", { count: String(filteredIssued.length) }),
               ].map((item) => (
-                <div key={item} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                  <p className="text-sm leading-7 text-[color:var(--v2-ink)]">{item}</p>
+                <div key={item} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                  <p className="text-sm leading-7 text-[color:var(--ink-900)]">{item}</p>
                 </div>
               ))}
             </div>
@@ -755,11 +755,11 @@ export default function DocumentsWorkspaceV2({
 
       {scannedDraft || issuedDraft ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-6">
-          <div className="v2-panel max-h-[92vh] w-full max-w-3xl overflow-y-auto p-6 sm:p-7" dir={dir}>
+          <div className="tile max-h-[92vh] w-full max-w-3xl overflow-y-auto p-6 sm:p-7" dir={dir}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="v2-eyebrow">{t("workspaceDocuments.modalEyebrow")}</p>
-                <h2 className="mt-3 text-2xl font-black text-[color:var(--v2-ink)]">
+                <h2 className="mt-3 text-2xl font-black text-[color:var(--ink-900)]">
                   {scannedDraft ? t("workspaceDocuments.modalTitleScanned") : t("workspaceDocuments.modalTitleIssued")}
                 </h2>
               </div>
@@ -770,7 +770,7 @@ export default function DocumentsWorkspaceV2({
                   setIssuedDraft(null);
                   setActionMessage(null);
                 }}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--v2-line)] bg-white/90 text-[color:var(--v2-ink)]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--line)] bg-white/90 text-[color:var(--ink-900)]"
                 aria-label={t("workspaceDocuments.closeAria")}
               >
                 <X className="h-4 w-4" aria-hidden />
@@ -783,13 +783,13 @@ export default function DocumentsWorkspaceV2({
                   <input
                     value={scannedDraft.fileName}
                     onChange={(event) => setScannedDraft((current) => (current ? { ...current, fileName: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     placeholder={t("workspaceDocuments.placeholderFileName")}
                   />
                   <input
                     value={scannedDraft.vendor}
                     onChange={(event) => setScannedDraft((current) => (current ? { ...current, vendor: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     placeholder={t("workspaceDocuments.placeholderVendor")}
                   />
                   <input
@@ -797,13 +797,13 @@ export default function DocumentsWorkspaceV2({
                     onChange={(event) =>
                       setScannedDraft((current) => (current ? { ...current, extractedType: event.target.value } : current))
                     }
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     placeholder={t("workspaceDocuments.placeholderExtractedType")}
                   />
                   <select
                     value={scannedDraft.status}
                     onChange={(event) => setScannedDraft((current) => (current ? { ...current, status: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                   >
                     <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
                     <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
@@ -812,13 +812,13 @@ export default function DocumentsWorkspaceV2({
                   <input
                     value={scannedDraft.type}
                     onChange={(event) => setScannedDraft((current) => (current ? { ...current, type: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     placeholder={t("workspaceDocuments.placeholderSystemType")}
                   />
                   <input
                     value={scannedDraft.total}
                     onChange={(event) => setScannedDraft((current) => (current ? { ...current, total: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     dir="ltr"
                     placeholder={t("workspaceDocuments.placeholderAmount")}
                   />
@@ -827,7 +827,7 @@ export default function DocumentsWorkspaceV2({
                 <textarea
                   value={scannedDraft.summary}
                   onChange={(event) => setScannedDraft((current) => (current ? { ...current, summary: event.target.value } : current))}
-                  className="min-h-[140px] rounded-3xl border border-[color:var(--v2-line)] bg-white px-4 py-4 text-sm leading-7 text-[color:var(--v2-ink)] outline-none"
+                  className="min-h-[140px] rounded-3xl border border-[color:var(--line)] bg-white px-4 py-4 text-sm leading-7 text-[color:var(--ink-900)] outline-none"
                   placeholder={t("workspaceDocuments.placeholderSummary")}
                 />
               </div>
@@ -839,13 +839,13 @@ export default function DocumentsWorkspaceV2({
                   <input
                     value={issuedDraft.clientName}
                     onChange={(event) => setIssuedDraft((current) => (current ? { ...current, clientName: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                     placeholder={t("workspaceDocuments.placeholderClientName")}
                   />
                   <select
                     value={issuedDraft.type}
                     onChange={(event) => setIssuedDraft((current) => (current ? { ...current, type: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                   >
                     {(["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT_NOTE"] as const).map((value) => (
                       <option key={value} value={value}>
@@ -857,26 +857,26 @@ export default function DocumentsWorkspaceV2({
                     type="date"
                     value={issuedDraft.date}
                     onChange={(event) => setIssuedDraft((current) => (current ? { ...current, date: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                   />
                   <input
                     type="date"
                     value={issuedDraft.dueDate}
                     onChange={(event) => setIssuedDraft((current) => (current ? { ...current, dueDate: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                   />
                   <select
                     value={issuedDraft.status}
                     onChange={(event) => setIssuedDraft((current) => (current ? { ...current, status: event.target.value } : current))}
-                    className="rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                    className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                   >
                     <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
                     <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
                     <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
                   </select>
-                  <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)]">
+                  <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)]">
                     {issuedTypeLabel(t, issuedDraft.type)} #{issuedDraft.number}
-                    <p className="mt-2 text-xs font-bold text-[color:var(--v2-muted)]">
+                    <p className="mt-2 text-xs font-bold text-[color:var(--ink-500)]">
                       {t("workspaceDocuments.currentTotal")} {formatCurrencyILS(issuedDraft.total)}
                     </p>
                   </div>
@@ -885,7 +885,7 @@ export default function DocumentsWorkspaceV2({
                 <textarea
                   value={issuedDraft.itemsText}
                   onChange={(event) => setIssuedDraft((current) => (current ? { ...current, itemsText: event.target.value } : current))}
-                  className="min-h-[180px] rounded-3xl border border-[color:var(--v2-line)] bg-white px-4 py-4 text-sm leading-7 text-[color:var(--v2-ink)] outline-none"
+                  className="min-h-[180px] rounded-3xl border border-[color:var(--line)] bg-white px-4 py-4 text-sm leading-7 text-[color:var(--ink-900)] outline-none"
                   placeholder={t("workspaceDocuments.itemsFormatPlaceholder")}
                 />
               </div>

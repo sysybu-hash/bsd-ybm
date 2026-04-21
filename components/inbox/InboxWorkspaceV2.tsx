@@ -120,14 +120,14 @@ export default function InboxWorkspaceV2({
 
   return (
     <div className="grid gap-5" dir={dir}>
-      <section className="v2-panel v2-panel-soft p-6 sm:p-7">
+      <section className="tile p-6 sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <span className="v2-eyebrow">{t("workspaceInbox.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-4xl">
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-4xl">
               {t("workspaceInbox.heroTitle")}
             </h1>
-            <p className="mt-3 text-base leading-7 text-[color:var(--v2-muted)]">{t("workspaceInbox.heroSubtitle")}</p>
+            <p className="mt-3 text-base leading-7 text-[color:var(--ink-500)]">{t("workspaceInbox.heroSubtitle")}</p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -144,14 +144,14 @@ export default function InboxWorkspaceV2({
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {summaryItems.map(({ label, value, icon: Icon }) => (
-            <div key={label} className="rounded-2xl border border-[color:var(--v2-line)] bg-white/92 px-4 py-4">
+            <div key={label} className="rounded-2xl border border-[color:var(--line)] bg-white/92 px-4 py-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                   <Icon className="h-4 w-4" aria-hidden />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-[color:var(--v2-muted)]">{label}</p>
-                  <p className="mt-1 text-xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
+                  <p className="text-xs font-bold text-[color:var(--ink-500)]">{label}</p>
+                  <p className="mt-1 text-xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
                 </div>
               </div>
             </div>
@@ -161,30 +161,30 @@ export default function InboxWorkspaceV2({
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
-          <div className="v2-panel p-5 sm:p-6">
+          <div className="tile p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.priorityTitle")}</p>
-                <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{t("workspaceInbox.prioritySubtitle")}</p>
+                <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceInbox.priorityTitle")}</p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{t("workspaceInbox.prioritySubtitle")}</p>
               </div>
             </div>
 
             <div className="mt-5 grid gap-3">
               {priorityItems.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-5 text-sm text-[color:var(--v2-muted)]">
+                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-5 text-sm text-[color:var(--ink-500)]">
                   {t("workspaceInbox.priorityEmpty")}
                 </div>
               ) : null}
 
               {priorityItems.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
+                <div key={item.id} className="rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${severityClasses(item.severity)}`}>
                         {item.category}
                       </span>
-                      <p className="mt-3 text-base font-black text-[color:var(--v2-ink)]">{item.title}</p>
-                      <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{item.body}</p>
+                      <p className="mt-3 text-base font-black text-[color:var(--ink-900)]">{item.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{item.body}</p>
                     </div>
                     <Link href={item.href} className="v2-button v2-button-secondary shrink-0">
                       {item.cta}
@@ -195,30 +195,30 @@ export default function InboxWorkspaceV2({
             </div>
           </div>
 
-          <div className="v2-panel p-5 sm:p-6">
+          <div className="tile p-5 sm:p-6">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.dueSoonTitle")}</p>
+              <AlertTriangle className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+              <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceInbox.dueSoonTitle")}</p>
             </div>
 
             <div className="mt-4 grid gap-3">
               {dueSoon.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                   {t("workspaceInbox.dueSoonEmpty")}
                 </div>
               ) : null}
 
               {dueSoon.map((item) => (
-                <div key={item.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
+                <div key={item.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-[color:var(--v2-ink)]">{item.clientName}</p>
-                    <p className="text-sm font-black text-[color:var(--v2-ink)]">{formatCurrencyILS(item.total)}</p>
+                    <p className="font-black text-[color:var(--ink-900)]">{item.clientName}</p>
+                    <p className="text-sm font-black text-[color:var(--ink-900)]">{formatCurrencyILS(item.total)}</p>
                   </div>
-                  <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+                  <p className="mt-2 text-sm text-[color:var(--ink-500)]">
                     {t("workspaceInbox.paymentDuePrefix")}{" "}
                     {item.dueDate ? new Date(item.dueDate).toLocaleDateString(dateLocale) : t("workspaceInbox.paymentDueUnset")}
                   </p>
-                  <Link href={item.href} className="mt-3 inline-flex text-sm font-black text-[color:var(--v2-accent)]">
+                  <Link href={item.href} className="mt-3 inline-flex text-sm font-black text-[color:var(--axis-clients)]">
                     {t("workspaceInbox.openBillingArea")}
                   </Link>
                 </div>
@@ -227,18 +227,18 @@ export default function InboxWorkspaceV2({
           </div>
         </div>
 
-        <aside className="v2-panel v2-panel-highlight p-5 sm:p-6">
+        <aside className="tile tile--lavender p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("workspaceInbox.notificationsTitle")}</p>
-              <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{t("workspaceInbox.notificationsSubtitle")}</p>
+              <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceInbox.notificationsTitle")}</p>
+              <p className="mt-2 text-sm text-[color:var(--ink-500)]">{t("workspaceInbox.notificationsSubtitle")}</p>
             </div>
             {unread > 0 ? (
               <button
                 type="button"
                 onClick={() => void markAllRead()}
                 disabled={markingAll}
-                className="inline-flex items-center gap-2 text-sm font-black text-[color:var(--v2-accent)] disabled:opacity-50"
+                className="inline-flex items-center gap-2 text-sm font-black text-[color:var(--axis-clients)] disabled:opacity-50"
               >
                 {markingAll ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -252,7 +252,7 @@ export default function InboxWorkspaceV2({
 
           <div className="mt-4 grid gap-3">
             {notifications.length === 0 ? (
-              <div className="rounded-2xl bg-white/84 px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+              <div className="rounded-2xl bg-white/84 px-4 py-4 text-sm text-[color:var(--ink-500)]">
                 {t("workspaceInbox.notificationsEmpty")}
               </div>
             ) : null}
@@ -265,20 +265,20 @@ export default function InboxWorkspaceV2({
                   if (!notification.read) void markOneRead(notification.id);
                 }}
                 className={`rounded-2xl px-4 py-4 text-end transition ${
-                  notification.read ? "bg-white/64" : "bg-white text-[color:var(--v2-ink)] shadow-sm"
+                  notification.read ? "bg-white/64" : "bg-white text-[color:var(--ink-900)] shadow-sm"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-black text-[color:var(--v2-ink)]">{notification.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{notification.body}</p>
-                    <p className="mt-2 text-xs font-semibold text-[color:var(--v2-muted)]">
+                    <p className="font-black text-[color:var(--ink-900)]">{notification.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{notification.body}</p>
+                    <p className="mt-2 text-xs font-semibold text-[color:var(--ink-500)]">
                       {formatDateTime(notification.createdAt)}
                     </p>
                   </div>
                   {!notification.read ? (
                     markingIds.includes(notification.id) ? (
-                      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--v2-accent)]" aria-hidden />
+                      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--axis-clients)]" aria-hidden />
                     ) : (
                       <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--v2-accent)]" />
                     )
