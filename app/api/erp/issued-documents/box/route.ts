@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import type { DocStatus, DocType } from "@prisma/client";
 
@@ -12,14 +13,14 @@ import type { DocStatus, DocType } from "@prisma/client";
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
-  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!orgId) return jsonUnauthorized();
 
   const { searchParams } = req.nextUrl;
   const contactId = searchParams.get("contactId");
   const projectId = searchParams.get("projectId");
 
   if (!contactId && !projectId) {
-    return NextResponse.json({ error: "contactId or projectId required" }, { status: 400 });
+    return jsonBadRequest("נדרש contactId או projectId", "missing_filter");
   }
 
   /* If projectId is given, resolve all contactIds in that project */

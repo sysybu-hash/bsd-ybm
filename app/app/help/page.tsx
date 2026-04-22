@@ -73,7 +73,7 @@ export default async function AppHelpPage() {
   const platformAdmin = isAdmin(session?.user?.email);
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir="rtl">
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
           Workspace Guide
@@ -151,7 +151,7 @@ export default async function AppHelpPage() {
           description="אחרי שהבסיס מוכן, עוברים לתיבת העבודה, CRM, מסמכים, חיוב ותובנות."
           primaryHref="/app/inbox"
           primaryLabel="פתיחת תיבת עבודה"
-          secondaryHref="/app/ai"
+          secondaryHref="/app/ai#assistant"
           secondaryLabel="פתיחת תובנות"
           icon={<Workflow className="h-5 w-5" aria-hidden />}
         />

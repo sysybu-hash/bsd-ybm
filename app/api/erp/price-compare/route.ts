@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import type { PriceCompareRow } from "@/lib/price-compare-types";
 
@@ -8,7 +9,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
   if (!session?.user?.id || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const observations = await prisma.productPriceObservation.findMany({

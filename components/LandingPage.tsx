@@ -199,9 +199,9 @@ export default function LandingPage() {
             {featureCards.map((feat) => (
               <article
                 key={feat.title}
-                className="group rounded-2xl border border-slate-200/80 bg-slate-50/50 p-7 shadow-sm transition hover:-translate-y-0.5 hover:border-[color:var(--v2-accent)]/35 hover:shadow-md"
+                className="group rounded-2xl border border-slate-200/80 bg-slate-50/50 p-7 shadow-sm transition hover:-translate-y-0.5 hover:border-[color:var(--axis-clients)]/35 hover:shadow-md"
               >
-                <div className="mb-4 inline-flex rounded-2xl border border-[color:var(--v2-accent)]/25 bg-[color:var(--v2-accent-soft)] p-3.5 text-[color:var(--v2-accent-strong)]">
+                <div className="mb-4 inline-flex rounded-2xl border border-[color:var(--axis-clients)]/25 bg-[color:var(--axis-clients-soft)] p-3.5 text-[color:var(--axis-clients-strong)]">
                   <feat.icon size={24} strokeWidth={2} aria-hidden />
                 </div>
                 <p className="text-[11px] font-black uppercase tracking-wider text-slate-400">{feat.title}</p>

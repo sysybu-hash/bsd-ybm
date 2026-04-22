@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { renderToBuffer } from "@react-pdf/renderer";
 import FinanceReportDocument from "@/lib/pdf/FinanceReportDocument";
 import { authOptions } from "@/lib/auth";
+import { jsonUnauthorized } from "@/lib/api-json";
 import { loadFinanceForecast } from "@/lib/finance-forecast";
 import { prisma } from "@/lib/prisma";
 
@@ -12,7 +13,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
   if (!organizationId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const [org, pendingAgg, paidAgg, forecast] = await Promise.all([

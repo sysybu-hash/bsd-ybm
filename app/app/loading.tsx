@@ -9,7 +9,7 @@ export default function AppWorkspaceLoading() {
       aria-live="polite"
     >
       <div className="flex items-center gap-3 rounded-2xl border border-slate-200/90 bg-white px-5 py-4 text-sm font-bold text-slate-700 shadow-sm">
-        <Loader2 className="h-5 w-5 animate-spin text-[color:var(--v2-accent)]" aria-hidden />
+        <Loader2 className="h-5 w-5 animate-spin text-[color:var(--axis-clients)]" aria-hidden />
         <span className="text-slate-600">טוען…</span>
       </div>
     </div>

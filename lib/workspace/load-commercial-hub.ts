@@ -44,6 +44,8 @@ export type CommercialHubSnapshot = {
   contacts: CommercialClientSnapshot[];
   projects: CommercialProjectSnapshot[];
   recentIssued: CommercialIssuedDocumentSnapshot[];
+  /** אחוז שינוי בסכום מסמכים מונפקים (לפי שדה date) בין החודש הנוכחי לקודם */
+  issuedMonthOverMonthPct: number;
   totals: {
     clientsCount: number;
     activeProjects: number;
@@ -59,7 +61,22 @@ export type CommercialHubSnapshot = {
 export async function loadCommercialHubSnapshot(
   organizationId: string,
 ): Promise<CommercialHubSnapshot> {
-  const [contactsRaw, projectsRaw, recentIssuedRaw, forecast] = await Promise.all([
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const prevMonthStart = new Date(monthStart);
+  prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+
+  const [
+    contactsRaw,
+    projectsRaw,
+    recentIssuedRaw,
+    forecast,
+    issuedThisMonth,
+    issuedPrevMonth,
+    pendingIssuedAgg,
+    paidIssuedAgg,
+  ] = await Promise.all([
     prisma.contact.findMany({
       where: { organizationId },
       orderBy: { createdAt: "desc" },
@@ -117,6 +134,24 @@ export async function loadCommercialHubSnapshot(
       },
     }),
     loadFinanceForecast(organizationId),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, date: { gte: monthStart } },
+      _sum: { total: true },
+    }),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, date: { gte: prevMonthStart, lt: monthStart } },
+      _sum: { total: true },
+    }),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, status: "PENDING" },
+      _sum: { total: true },
+      _count: { _all: true },
+    }),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, status: "PAID" },
+      _sum: { total: true },
+      _count: { _all: true },
+    }),
   ]);
 
   const projectMetrics = new Map<
@@ -194,23 +229,30 @@ export async function loadCommercialHubSnapshot(
     contactId: document.contactId,
   }));
 
-  const pendingIssued = recentIssuedRaw.filter((document) => document.status === "PENDING");
-  const paidIssued = recentIssuedRaw.filter((document) => document.status === "PAID");
+  const issuedThisSum = issuedThisMonth._sum.total ?? 0;
+  const issuedPrevSum = issuedPrevMonth._sum.total ?? 0;
+  const issuedMonthOverMonthPct =
+    issuedPrevSum > 0
+      ? Math.round(((issuedThisSum - issuedPrevSum) / issuedPrevSum) * 100)
+      : issuedThisSum > 0
+        ? 100
+        : 0;
 
   return {
     forecast,
     contacts,
     projects,
     recentIssued,
+    issuedMonthOverMonthPct,
     totals: {
       clientsCount: contacts.length,
       activeProjects: projects.filter((project) => project.isActive).length,
       pipelineValue: contacts.reduce((sum, contact) => sum + (contact.value ?? 0), 0),
       pendingCollection: contacts.reduce((sum, contact) => sum + contact.totalPending, 0),
-      pendingIssuedTotal: pendingIssued.reduce((sum, document) => sum + document.total, 0),
-      pendingIssuedCount: pendingIssued.length,
-      paidIssuedTotal: paidIssued.reduce((sum, document) => sum + document.total, 0),
-      paidIssuedCount: paidIssued.length,
+      pendingIssuedTotal: pendingIssuedAgg._sum.total ?? 0,
+      pendingIssuedCount: pendingIssuedAgg._count._all,
+      paidIssuedTotal: paidIssuedAgg._sum.total ?? 0,
+      paidIssuedCount: paidIssuedAgg._count._all,
     },
   };
 }

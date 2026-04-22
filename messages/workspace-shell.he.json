@@ -10,7 +10,7 @@
     "primaryNavAria": "ניווט ראשי במרחב העבודה",
     "items": {
       "home": {
-        "label": "בית",
+        "label": "דשבורד",
         "summary": "תמונת מצב, קיצורי דרך וכניסה מסודרת לכל אזורי העבודה."
       },
       "inbox": {
@@ -155,12 +155,14 @@
       "settings": {
         "title": "הגדרות",
         "hint": "מקצוע, ארגון, חיוב",
-        "progress": "הושלם"
+        "progress": "הושלם",
+        "percentLabel": "{pct}% פרופיל ארגון"
       },
       "automations": {
         "title": "אוטומציות",
         "hint": "כללים שה-AI מפעיל",
-        "active": "פעילות"
+        "active": "פעילות",
+        "integrationsCount": "{count} חיבורי ענן"
       },
       "inbox": {
         "title": "תיבת עבודה",
@@ -203,7 +205,9 @@
       "pending": "ממתין",
       "collectionRate": "שיעור גבייה",
       "issue": "הנפק מסמך",
-      "target": "Target {amount}"
+      "target": "Target {amount}",
+      "trendVsPrev": "מול חודש קודם {sign}{pct}%",
+      "trendNeutral": "אין השוואת חודש"
     },
     "stats": {
       "activeProjects": "פרויקטים פעילים",
@@ -232,7 +236,7 @@
       "PAID": "שולם",
       "CANCELLED": "בוטל"
     },
-    "eyebrow": "בית",
+    "eyebrow": "דשבורד",
     "startHere": {
       "eyebrow": "מתחילים כאן",
       "title": "שלושה קישורים",
@@ -305,8 +309,13 @@
     "refreshingOverlay": "מעדכן את מרחב העבודה…",
     "topBar": {
       "searchAria": "חיפוש",
+      "localeAria": "שפת ממשק",
       "notificationsAria": "התראות",
       "profileAria": "פרופיל"
     }
+  },
+  "settingsHub": {
+    "sidebarEyebrow": "הגדרות",
+    "sidebarTitle": "ארגון, מנויים ותפעול"
   }
 }

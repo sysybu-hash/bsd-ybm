@@ -222,7 +222,7 @@ export default function GlobalBillingPageClient({
       : `מע"מ מחושב באופן דינמי כ-${Math.round(VAT_RATE * 100)}%`;
 
   return (
-    <div className="space-y-6 text-start pb-20 max-w-[1500px] mx-auto" dir={dir}>
+    <div className="w-full min-w-0 space-y-8 text-start pb-16" dir={dir}>
 
       {/* ── Page header (Enterprise Bento Style) ── */}
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-surface-white px-6 py-6 md:px-8 shadow-sm">

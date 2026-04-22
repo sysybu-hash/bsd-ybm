@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonForbidden, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 import type { UserRole } from "@prisma/client";
@@ -8,7 +9,7 @@ import type { UserRole } from "@prisma/client";
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "נדרשת התחברות" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const isPlatformOwner = isAdmin(session.user.email);
@@ -26,25 +27,19 @@ export async function POST(req: Request) {
   const organizationId = typeof body.organizationId === "string" ? body.organizationId : "";
 
   if (!email || !organizationId) {
-    return NextResponse.json({ error: "חסר אימייל או מזהה ארגון" }, { status: 400 });
+    return jsonBadRequest("חסר אימייל או מזהה ארגון", "missing_email_or_org");
   }
 
   if (!isOrgLead) {
-    return NextResponse.json(
-      { error: "רק מנהל ארגון רשאי לשייך משתמשים לצוות" },
-      { status: 403 },
-    );
+    return jsonForbidden("רק מנהל ארגון רשאי לשייך משתמשים לצוות");
   }
 
   if (!isPlatformOwner && sessionOrgId !== organizationId) {
-    return NextResponse.json({ error: "אסור לשייך מחוץ לארגון שלך" }, { status: 403 });
+    return jsonForbidden("אסור לשייך מחוץ לארגון שלך");
   }
 
   if (isAdmin(email)) {
-    return NextResponse.json(
-      { error: "לא ניתן לשנות שיוך ארגון למשתמשי מפתח פלטפורמה." },
-      { status: 403 },
-    );
+    return jsonForbidden("לא ניתן לשנות שיוך ארגון למשתמשי מפתח פלטפורמה.");
   }
 
   let newRole: UserRole = "EMPLOYEE";
@@ -67,9 +62,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, user: updatedUser.name, role: updatedUser.role });
   } catch {
-    return NextResponse.json(
-      { error: "המשתמש חייב להתחבר למערכת לפחות פעם אחת לפני השיוך" },
-      { status: 400 },
+    return jsonBadRequest(
+      "המשתמש חייב להתחבר למערכת לפחות פעם אחת לפני השיוך",
+      "user_not_ready",
     );
   }
 }

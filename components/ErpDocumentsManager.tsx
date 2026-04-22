@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Calendar, Eye, FileText, Pencil, Save, Trash2, Upload, X } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 
 type Doc = {
   id: string;
@@ -99,7 +100,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
   }
 
   return (
-    <div className="col-span-full space-y-6" dir={dir}>
+    <div className="col-span-full min-w-0 space-y-6" dir={dir}>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h2 className="text-xl font-black italic text-slate-900 flex items-center gap-2">
@@ -162,16 +163,24 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
       </div>
 
       {/* דסקטופ — טבלה */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 bg-surface-white shadow-sm ring-1 ring-slate-100">
-        <table className="min-w-full border-collapse text-sm">
+      <div className="hidden w-full min-w-0 overflow-x-auto rounded-2xl border border-slate-200/10 bg-surface-white shadow-xl ring-1 ring-slate-100/80 md:block">
+        <table className="w-full min-w-[640px] table-fixed border-collapse text-sm">
+          <colgroup>
+            <col className="workspace-table-col-1" />
+            <col className="w-[24%]" />
+            <col className="w-[22%]" />
+            <col className="w-[11%]" />
+            <col className="w-[11%]" />
+            <col className="w-[10%]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-blue-200 bg-blue-50 text-start">
-              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50 w-32">תאריך סריקה</th>
+              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">תאריך סריקה</th>
               <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">קובץ</th>
               <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">ספק / ישות</th>
-              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50 w-32">סכום השובר</th>
-              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50 w-28">סטטוס</th>
-              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 w-44">פעולות מערכת</th>
+              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">סכום השובר</th>
+              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">סטטוס</th>
+              <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900">פעולות מערכת</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -234,8 +243,9 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
 
       {/* מודלים */}
       {previewDoc ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm`}
           onClick={() => setPreviewDoc(null)}
           role="presentation"
         >
@@ -285,11 +295,13 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             </div>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
 
       {editDoc ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-[220] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm`}
           onClick={() => setEditDoc(null)}
           role="presentation"
         >
@@ -413,6 +425,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             </div>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
     </div>
   );

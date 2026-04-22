@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { jsonNotFound } from "@/lib/api-json";
 import { withWorkspacesAuthDynamic } from "@/lib/api-handler";
 import { DocumentSchema } from "@/lib/schemas/document";
 
@@ -20,7 +21,7 @@ export const PATCH = withWorkspacesAuthDynamic<{ id: string }, typeof DocumentSc
     });
 
     if (!row) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return jsonNotFound("מסמך לא נמצא");
     }
 
     const currentAi = parseAiData(row.aiData) ?? {};
@@ -50,7 +51,7 @@ export const DELETE = withWorkspacesAuthDynamic<{ id: string }>(
     });
 
     if (!row) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return jsonNotFound("מסמך לא נמצא");
     }
 
     await prisma.document.delete({ where: { id } });

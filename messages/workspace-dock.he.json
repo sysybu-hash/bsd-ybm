@@ -51,6 +51,7 @@
     "dock": {
       "accessibility": "סרגל גישות",
       "assistant": "עוזר AI",
+      "assistantUnified": "AI — עוזר וסריקה",
       "voice": "פקודות קוליות",
       "scanner": "לוח סריקה מתקדם"
     },
@@ -64,12 +65,15 @@
       "readAloud": "הקרא",
       "voiceReplyBadge": "תגובת קול",
       "thinking": "ה-AI עובד על תשובה...",
-      "goVoiceAria": "מעבר לפקודות קוליות",
+      "goVoiceAria": "הקלטה קולית",
       "openScannerAria": "פתיחת לוח הסריקה",
       "messageLabel": "הודעה לעוזר ה-AI",
       "placeholder": "כתוב כאן מה צריך: ניתוח, ניסוח, תשובה, סדר עבודה או פתיחת תהליך...",
       "footerHint": "מבוסס על מסך נוכחי, מקצוע ונתוני הארגון שלך.",
-      "send": "שלח ל-AI"
+      "send": "שלח ל-AI",
+      "tabChat": "צ'אט",
+      "tabVoice": "קול",
+      "voiceInlineHint": "הקלטה או עריכה — ואז שליחה ל-AI כמו בצ'אט."
     },
     "voice": {
       "panelAria": "חוויית דיבור מלאה",
@@ -102,6 +106,7 @@
       "title": "לוח סריקה מתקדם",
       "subtitle": "מסונכרן עם {industry}, זמין מכל `/app`, וממשיך ישר למסמכים ולגבייה.",
       "toDocuments": "למסמכים",
+      "toFullScanBoard": "לוח סריקה מלא (ERP)",
       "closeAria": "סגירת לוח הסריקה",
       "needOrgTitle": "לוח הסריקה זמין אחרי חיבור לארגון",
       "needOrgBody": "צריך מזהה ארגון פעיל כדי לחבר את הסריקה ל-AI, למסמכים ולהפקה."

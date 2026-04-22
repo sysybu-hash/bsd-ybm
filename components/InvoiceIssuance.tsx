@@ -15,7 +15,24 @@ import {
   Loader2,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import { FieldError } from "@/components/forms/FormWrapper";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
 import { trackWizardEvent } from "@/lib/client-telemetry";
+import {
+  invoiceIssuanceItemsOnlySchema,
+  invoiceIssuancePayloadSchema,
+  invoiceIssuanceStep1Schema,
+} from "@/lib/validation/schemas/invoice";
+import type { ZodIssue } from "zod";
+
+function issuesToRecord(issues: ZodIssue[]): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const iss of issues) {
+    const key = iss.path.map(String).join(".") || "_form";
+    if (out[key] == null) out[key] = iss.message;
+  }
+  return out;
+}
 
 /* ───── סוגי מסמכים ───── */
 const DOC_TYPES = [
@@ -74,9 +91,11 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
   const [dueDate, setDueDate] = useState("");
   const typeLabel = DOC_TYPES_LOCAL.find((t) => t.value === docType)?.label ?? "";
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 4>(1);
-  const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState<IssuedDoc | null>(null);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const { pending: issuing, run: runIssue } = useAsyncAction();
+  const { pending: historyBusy, run: runHistory } = useAsyncAction();
 
   /* ---------- CRM autocomplete ---------- */
   const [crmSuggestions, setCrmSuggestions] = useState<{ id: string; name: string; value: number | null }[]>([]);
@@ -187,60 +206,58 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
       setShowHistory((v) => !v);
       return;
     }
-    try {
+    await runHistory(async () => {
       const res = await fetch("/api/erp/issued-documents");
-      if (!res.ok) throw new Error("failed");
+      if (!res.ok) {
+        return { ok: false as const, error: "שגיאה בטעינת היסטוריית מסמכים" };
+      }
       const data = await res.json();
       setHistory(data.documents ?? []);
       setHistoryLoaded(true);
       setShowHistory(true);
-    } catch {
-      setError("שגיאה בטעינת היסטוריית מסמכים");
-    }
-  }, [historyLoaded]);
+      return { ok: true as const };
+    });
+  }, [historyLoaded, runHistory]);
 
   /* ---------- submit ---------- */
   const submit = async () => {
-    if (!clientName.trim()) {
-      setError("נא להזין שם לקוח");
-      return;
-    }
-    if (items.some((i) => !i.desc.trim() || i.qty <= 0 || i.price <= 0)) {
-      setError("נא למלא את כל שדות הפריטים (תיאור, כמות > 0, מחיר > 0)");
-      return;
-    }
     setError("");
-    setSaving(true);
-    try {
+    const payload = {
+      type: docType,
+      clientName: clientName.trim(),
+      items,
+      dueDate: dueDate || undefined,
+      contactId: contactId || undefined,
+    };
+    const parsed = invoiceIssuancePayloadSchema.safeParse(payload);
+    if (!parsed.success) {
+      const rec = issuesToRecord(parsed.error.issues);
+      setFieldErrors(rec);
+      const first = parsed.error.issues[0]?.message;
+      if (first) setError(first);
+      return;
+    }
+    setFieldErrors({});
+    await runIssue(async () => {
       const res = await fetch("/api/erp/issued-documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: docType,
-          clientName: clientName.trim(),
-          items,
-          dueDate: dueDate || undefined,
-          contactId: contactId || undefined,
-        }),
+        body: JSON.stringify(parsed.data),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => null);
-        throw new Error(d?.error || "שגיאה בהנפקה");
+        return { ok: false as const, error: String(d?.error ?? "שגיאה בהנפקה") };
       }
       const data = await res.json();
       setSuccess(data.document);
       setHistory((prev) => [data.document, ...prev]);
-      // reset
       setClientName("");
       setItems([emptyItem()]);
       setDueDate("");
       setWizardStep(4);
       window.localStorage.removeItem(INVOICE_DRAFT_KEY);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "שגיאה בהנפקה");
-    } finally {
-      setSaving(false);
-    }
+      return { ok: true as const };
+    }, { successToast: "המסמך הונפק בהצלחה", errorToast: "הנפקה נכשלה" });
   };
 
   /* ═══════════════════════════════════════════════════════════ */
@@ -256,8 +273,10 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <p className="mt-2 text-sm leading-6 text-gray-500">{t("landing.featureInvDesc")}</p>
             </div>
             <button
-              onClick={loadHistory}
-              className="flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
+              type="button"
+              disabled={historyBusy}
+              onClick={() => void loadHistory()}
+              className="flex items-center justify-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-60"
             >
               {t("erp.history")}
               <ChevronDown
@@ -385,6 +404,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                   placeholder={t("crm.search")}
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                 />
+                <FieldError message={fieldErrors.clientName} />
                 {contactId && (
                   <span className="absolute end-3 top-10 text-[10px] font-black text-emerald-400 bg-emerald-500/15 rounded-full px-2 py-0.5">CRM ✓</span>
                 )}
@@ -417,7 +437,21 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
             </div>
             <button
               type="button"
-              onClick={() => setWizardStep(2)}
+              onClick={() => {
+                const s1 = invoiceIssuanceStep1Schema.safeParse({
+                  type: docType,
+                  clientName: clientName.trim(),
+                  dueDate: dueDate || "",
+                });
+                if (!s1.success) {
+                  setFieldErrors(issuesToRecord(s1.error.issues));
+                  setError(s1.error.issues[0]?.message ?? "");
+                  return;
+                }
+                setFieldErrors({});
+                setError("");
+                setWizardStep(2);
+              }}
               className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700"
             >
               {t("auth.register.next")}
@@ -444,6 +478,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       placeholder="תיאור הפריט"
                       className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
+                    <FieldError message={fieldErrors[`items.${idx}.desc`]} />
                   </div>
                   <div className="w-20">
                     <label className="mb-1 block text-xs font-semibold text-gray-400">כמות</label>
@@ -454,6 +489,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       onChange={(e) => updateItem(idx, "qty", Math.max(1, +e.target.value))}
                       className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
+                    <FieldError message={fieldErrors[`items.${idx}.qty`]} />
                   </div>
                   <div className="w-28">
                     <label className="mb-1 block text-xs font-semibold text-gray-400">מחיר ליח׳ ₪</label>
@@ -465,6 +501,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                       onChange={(e) => updateItem(idx, "price", Math.max(0, +e.target.value))}
                       className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     />
+                    <FieldError message={fieldErrors[`items.${idx}.price`]} />
                   </div>
                   <div className="w-24 text-left">
                     <label className="mb-1 block text-xs font-semibold text-gray-400">{t("erp.total")}</label>
@@ -501,7 +538,17 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               </button>
               <button
                 type="button"
-                onClick={() => setWizardStep(3)}
+                onClick={() => {
+                  const it = invoiceIssuanceItemsOnlySchema.safeParse({ items });
+                  if (!it.success) {
+                    setFieldErrors(issuesToRecord(it.error.issues));
+                    setError(it.error.issues[0]?.message ?? "");
+                    return;
+                  }
+                  setFieldErrors({});
+                  setError("");
+                  setWizardStep(3);
+                }}
                 className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700"
               >
                 {t("auth.register.next")}
@@ -544,12 +591,13 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
-                disabled={saving}
-                onClick={submit}
+                type="button"
+                disabled={issuing}
+                onClick={() => void submit()}
                 className="flex items-center justify-center gap-2 rounded-2xl bg-teal-600 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-teal-600/25 transition-colors hover:bg-teal-700 disabled:opacity-60"
               >
-                {saving ? <Loader2 size={20} className="animate-spin" /> : <Send size={18} />}
-                {saving ? t("scanner.processing") : t("erp.generate")}
+                {issuing ? <Loader2 size={20} className="animate-spin" /> : <Send size={18} />}
+                {issuing ? t("scanner.processing") : t("erp.generate")}
               </motion.button>
             </div>
           </>

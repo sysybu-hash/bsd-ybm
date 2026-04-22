@@ -10,12 +10,15 @@ import {
   UsersRound,
   Workflow,
 } from "lucide-react";
+import AppAiHubInlineAssistant from "@/components/ai/AppAiHubInlineAssistant";
 import InsightsWorkspaceV2 from "@/components/insights/InsightsWorkspaceV2";
 import { IntelligenceDashboardContent } from "@/app/workspace-content/intelligence/IntelligenceDashboardContent";
 import { authOptions } from "@/lib/auth";
 import { loadInsightsWorkspaceProps } from "@/lib/load-insights-workspace";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { createTranslator } from "@/lib/i18n/translate";
+import { getIndustryProfile } from "@/lib/professions/runtime";
+import { prisma } from "@/lib/prisma";
 import { BentoGrid, ProgressRing, Tile, TileHeader } from "@/components/ui/bento";
 
 export const metadata = {
@@ -29,11 +32,30 @@ export default async function AppAiHubPage() {
   const organizationId = session?.user?.organizationId;
   if (!organizationId) redirect("/login");
 
-  const insightsProps = await loadInsightsWorkspaceProps(organizationId);
-  const t = createTranslator(await readRequestMessages());
+  const [insightsProps, organization] = await Promise.all([
+    loadInsightsWorkspaceProps(organizationId),
+    prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: { industry: true, constructionTrade: true, industryConfigJson: true },
+    }),
+  ]);
+
+  const messages = await readRequestMessages();
+  const t = createTranslator(messages);
+  const industryProfile = getIndustryProfile(
+    organization?.industry ?? "CONSTRUCTION",
+    organization?.industryConfigJson,
+    organization?.constructionTrade,
+    messages,
+  );
+
+  const userFirstName =
+    (session.user?.name ?? "").trim().split(" ")[0] ||
+    session.user?.email?.split("@")[0] ||
+    "";
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir="rtl">
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
           {t("workspaceAiHub.eyebrow")}
@@ -91,8 +113,8 @@ export default async function AppAiHubPage() {
           </div>
         </Tile>
 
-        {/* Assistant */}
-        <Tile tone="lavender" span={4} href="/app/ai#insights" ariaLabel={t("workspaceAiHub.tabAssistant")}>
+        {/* Assistant — מקומי */}
+        <Tile tone="lavender" span={4}>
           <div className="flex items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: "var(--axis-ai-soft)", color: "var(--axis-ai)" }}>
               <BrainCircuit className="h-5 w-5" aria-hidden />
@@ -101,6 +123,13 @@ export default async function AppAiHubPage() {
               <p className="text-[13px] font-black text-[color:var(--axis-ai-ink)]">{t("workspaceAiHub.tabAssistant")}</p>
               <p className="mt-1 text-[12px] text-[color:var(--axis-ai-ink)]/80">{t("workspaceAiHub.assistantBody")}</p>
             </div>
+          </div>
+          <div className="mt-4 max-h-[420px] overflow-y-auto">
+            <AppAiHubInlineAssistant
+              orgId={organizationId}
+              industryProfile={industryProfile}
+              userFirstName={userFirstName}
+            />
           </div>
         </Tile>
 

@@ -13,13 +13,15 @@ import {
   ListFilter,
   Loader2,
   PencilLine,
-  ScanSearch,
   Sparkles,
   Tags,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
+import WorkspacePageHeader, { HeaderResponsiveLabel } from "@/components/layout/WorkspacePageHeader";
 import DocumentGeneratorsStrip from "@/components/documents/DocumentGeneratorsStrip";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import type { IndustryProfile } from "@/lib/professions/runtime";
@@ -221,11 +223,11 @@ function ScannedCard({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <button type="button" onClick={() => onOpen(document)} className="v2-button v2-button-primary">
+        <button type="button" onClick={() => onOpen(document)} className="bento-btn bento-btn--primary">
           {t("workspaceDocuments.buttonViewEdit")}
           <Eye className="h-4 w-4" aria-hidden />
         </button>
-        <button type="button" onClick={() => onDelete(document)} className="v2-button v2-button-secondary">
+        <button type="button" onClick={() => onDelete(document)} className="bento-btn bento-btn--secondary">
           {t("workspaceDocuments.buttonDelete")}
           <Trash2 className="h-4 w-4" aria-hidden />
         </button>
@@ -285,11 +287,11 @@ function IssuedCard({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <button type="button" onClick={() => onOpen(document)} className="v2-button v2-button-primary">
+        <button type="button" onClick={() => onOpen(document)} className="bento-btn bento-btn--primary">
           {t("workspaceDocuments.buttonViewEdit")}
           <PencilLine className="h-4 w-4" aria-hidden />
         </button>
-        <button type="button" onClick={() => onDelete(document)} className="v2-button v2-button-secondary">
+        <button type="button" onClick={() => onDelete(document)} className="bento-btn bento-btn--secondary">
           {t("workspaceDocuments.buttonDelete")}
           <Trash2 className="h-4 w-4" aria-hidden />
         </button>
@@ -529,50 +531,95 @@ export default function DocumentsWorkspaceV2({
   const industryLabel = industryProfile.industryLabel;
 
   return (
-    <div className="grid gap-6" dir={dir}>
-      <section className="tile relative z-0 overflow-hidden p-6 sm:p-8">
-        <div className="relative z-[1] grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div>
-            <span className="v2-eyebrow">{t("workspaceDocuments.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
-              {t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
-              {t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
-            </p>
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/documents/issue" className="v2-button v2-button-primary">
-                {t("workspaceDocuments.ctaIssue")}
-                <Sparkles className="h-4 w-4" aria-hidden />
+    <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
+      <WorkspacePageHeader
+        eyebrow={t("workspaceDocuments.eyebrow")}
+        title={t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
+        subtitle={t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
+        actions={
+          <>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <Link
+                href="/app/documents/issue"
+                className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-2xl bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-clients-strong)]"
+              >
+                <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaIssueShort")} long={t("workspaceDocuments.ctaIssue")} />
               </Link>
-              <Link href="/app/documents/erp" className="v2-button v2-button-secondary">
-                {t("workspaceDocuments.ctaErp")}
-                <ArrowLeft className="h-4 w-4" aria-hidden />
+              <Link
+                href="/app/documents/erp"
+                className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-2xl border border-slate-200/10 bg-white/80 px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] shadow-sm backdrop-blur-sm hover:bg-[color:var(--canvas-sunken)]"
+              >
+                <span className="truncate sm:whitespace-normal">{t("workspaceDocuments.ctaErp")}</span>
+                <ArrowLeft className="h-4 w-4 shrink-0 opacity-70" strokeWidth={2} aria-hidden />
               </Link>
-              <Link href="/app/documents/erp#erp-multi-scanner" className="v2-button v2-button-secondary">
-                {t("workspaceDocuments.ctaScan")}
-                <ScanSearch className="h-4 w-4" aria-hidden />
+              <Link
+                href="/app/documents/erp#erp-multi-scanner"
+                className="inline-flex items-center gap-1.5 rounded-2xl border border-slate-200/10 bg-white/80 px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] shadow-sm backdrop-blur-sm hover:bg-[color:var(--canvas-sunken)]"
+                title={t("workspaceDocuments.ctaScan")}
+              >
+                <Upload className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaScanShort")} long={t("workspaceDocuments.ctaScan")} />
               </Link>
             </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[
-              { label: t("workspaceDocuments.statScanned"), value: scannedState.length.toString(), icon: FileSearch },
-              { label: t("workspaceDocuments.statIssued"), value: issuedState.length.toString(), icon: FolderArchive },
-              { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
-              { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="tile p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--ink-500)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
+            <div
+              id="documents-filters"
+              role="search"
+              aria-label={t("workspaceDocuments.searchLabel")}
+              className="flex min-w-0 flex-col gap-2 rounded-2xl border border-slate-200/10 bg-white/70 p-2 backdrop-blur-md sm:flex-row sm:items-center sm:justify-end"
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white/95 px-3 py-2 sm:max-w-[220px] md:max-w-xs">
+                <Filter className="h-4 w-4 shrink-0 text-[color:var(--ink-500)]" strokeWidth={2} aria-hidden />
+                <input
+                  id="documents-search"
+                  value={search}
+                  onChange={(event) => {
+                    const nextValue = event.target.value;
+                    startFilterTransition(() => setSearch(nextValue));
+                  }}
+                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-500)]"
+                  placeholder={t("workspaceDocuments.searchPlaceholder")}
+                />
+                {isPending ? <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
               </div>
-            ))}
-          </div>
+              <label className="sr-only" htmlFor="documents-status-filter">
+                {t("workspaceDocuments.statusLabel")}
+              </label>
+              <select
+                id="documents-status-filter"
+                value={statusFilter}
+                onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
+                className="w-full rounded-xl border border-[color:var(--line)] bg-white/95 px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none sm:w-44"
+              >
+                <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
+                <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
+                <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
+                <option value="FAILED">{statusLabel(t, "scanned", "FAILED")}</option>
+                <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
+                <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
+                <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
+              </select>
+            </div>
+          </>
+        }
+      />
+
+      <section className="tile relative z-0 overflow-hidden p-6 shadow-xl sm:p-8">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: t("workspaceDocuments.statScanned"), value: scannedState.length.toString(), icon: FileSearch },
+            { label: t("workspaceDocuments.statIssued"), value: issuedState.length.toString(), icon: FolderArchive },
+            { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
+            { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
+          ].map(({ label, value, icon: Icon }) => (
+            <div key={label} className="rounded-2xl border border-slate-200/10 bg-[color:var(--canvas-sunken)]/80 p-5 shadow-sm backdrop-blur-sm">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
+                <Icon className="h-5 w-5" strokeWidth={2} aria-hidden />
+              </span>
+              <p className="mt-4 text-xs font-bold uppercase tracking-wide text-[color:var(--ink-500)]">{label}</p>
+              <p className="mt-2 text-2xl font-black tracking-tight text-[color:var(--ink-900)]">{value}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -590,74 +637,34 @@ export default function DocumentsWorkspaceV2({
         </div>
       ) : null}
 
-      <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="grid gap-6 xl:grid-cols-2">
         <div className="grid gap-4">
           <div className="tile p-5">
-            <div className="grid gap-3 lg:grid-cols-[1.5fr_0.8fr_auto]">
-              <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
-                  {t("workspaceDocuments.searchLabel")}
-                </span>
-                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3">
-                  <Filter className="h-4 w-4 text-[color:var(--ink-500)]" aria-hidden />
-                  <input
-                    value={search}
-                    onChange={(event) => {
-                      const nextValue = event.target.value;
-                      startFilterTransition(() => setSearch(nextValue));
-                    }}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-500)]"
-                    placeholder={t("workspaceDocuments.searchPlaceholder")}
-                  />
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
-                </div>
-              </label>
-
-              <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
-                  {t("workspaceDocuments.statusLabel")}
-                </span>
-                <select
-                  value={statusFilter}
-                  onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
+            <div className="grid gap-2">
+              <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
+                {t("workspaceDocuments.viewLabel")}
+              </span>
+              <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/10 bg-[color:var(--canvas-sunken)] p-1">
+                <button
+                  type="button"
+                  onClick={() => startTransition(() => setActiveTab("scanned"))}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition sm:flex-none ${
+                    activeTab === "scanned" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
+                  }`}
                 >
-                  <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
-                  <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
-                  <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
-                  <option value="FAILED">{statusLabel(t, "scanned", "FAILED")}</option>
-                  <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
-                  <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
-                  <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
-                </select>
-              </label>
-
-              <div className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
-                  {t("workspaceDocuments.viewLabel")}
-                </span>
-                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--canvas-sunken)] p-1">
-                  <button
-                    type="button"
-                    onClick={() => startTransition(() => setActiveTab("scanned"))}
-                    className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      activeTab === "scanned" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
-                    }`}
-                  >
-                    <LayoutGrid className="h-4 w-4" aria-hidden />
-                    {t("workspaceDocuments.tabScanned")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => startTransition(() => setActiveTab("issued"))}
-                    className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      activeTab === "issued" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
-                    }`}
-                  >
-                    <ListFilter className="h-4 w-4" aria-hidden />
-                    {t("workspaceDocuments.tabIssued")}
-                  </button>
-                </div>
+                  <LayoutGrid className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                  {t("workspaceDocuments.tabScanned")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startTransition(() => setActiveTab("issued"))}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition sm:flex-none ${
+                    activeTab === "issued" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
+                  }`}
+                >
+                  <ListFilter className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+                  {t("workspaceDocuments.tabIssued")}
+                </button>
               </div>
             </div>
           </div>
@@ -665,9 +672,9 @@ export default function DocumentsWorkspaceV2({
           {activeTab === "scanned" ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {filteredScanned.length === 0 ? (
-                <div className="tile col-span-full p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.emptyScannedTitle")}</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyScannedBody")}</p>
+                <div className="tile col-span-full flex min-h-[14rem] flex-col items-center justify-center p-8 text-center shadow-xl">
+                  <p className="text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">{t("workspaceDocuments.emptyScannedTitle")}</p>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyScannedBody")}</p>
                 </div>
               ) : null}
               {filteredScanned.map((document) => (
@@ -682,9 +689,9 @@ export default function DocumentsWorkspaceV2({
           ) : (
             <div className="grid gap-4 xl:grid-cols-2">
               {filteredIssued.length === 0 ? (
-                <div className="tile col-span-full p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.emptyIssuedTitle")}</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyIssuedBody")}</p>
+                <div className="tile col-span-full flex min-h-[14rem] flex-col items-center justify-center p-8 text-center shadow-xl">
+                  <p className="text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">{t("workspaceDocuments.emptyIssuedTitle")}</p>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyIssuedBody")}</p>
                 </div>
               ) : null}
               {filteredIssued.map((document) => (
@@ -754,11 +761,12 @@ export default function DocumentsWorkspaceV2({
       </section>
 
       {scannedDraft || issuedDraft ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-6">
+        <PortalToBody>
+        <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-slate-950/35 px-4 py-6`}>
           <div className="tile max-h-[92vh] w-full max-w-3xl overflow-y-auto p-6 sm:p-7" dir={dir}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="v2-eyebrow">{t("workspaceDocuments.modalEyebrow")}</p>
+                <p className="bento-eyebrow">{t("workspaceDocuments.modalEyebrow")}</p>
                 <h2 className="mt-3 text-2xl font-black text-[color:var(--ink-900)]">
                   {scannedDraft ? t("workspaceDocuments.modalTitleScanned") : t("workspaceDocuments.modalTitleIssued")}
                 </h2>
@@ -898,7 +906,7 @@ export default function DocumentsWorkspaceV2({
                   setScannedDraft(null);
                   setIssuedDraft(null);
                 }}
-                className="v2-button v2-button-secondary"
+                className="bento-btn bento-btn--secondary"
               >
                 {t("workspaceDocuments.close")}
               </button>
@@ -912,7 +920,7 @@ export default function DocumentsWorkspaceV2({
                     void saveIssuedDraft();
                   }
                 }}
-                className="v2-button v2-button-primary disabled:opacity-60"
+                className="bento-btn bento-btn--primary"
               >
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <PencilLine className="h-4 w-4" aria-hidden />}
                 {t("workspaceDocuments.saveChanges")}
@@ -920,6 +928,7 @@ export default function DocumentsWorkspaceV2({
             </div>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
     </div>
   );

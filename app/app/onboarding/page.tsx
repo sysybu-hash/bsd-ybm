@@ -97,43 +97,43 @@ export default async function AppOnboardingPage() {
   const progress = Math.round((completed / steps.length) * 100);
 
   return (
-    <div className="grid gap-6" dir="rtl">
-      <section className="v2-panel v2-panel-soft p-6 sm:p-8">
-        <span className="v2-eyebrow">Smart Onboarding</span>
-        <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+    <div className="flex w-full min-w-0 flex-col gap-8" dir="rtl">
+      <section className="tile tile--soft p-6 sm:p-8">
+        <span className="bento-eyebrow">Smart Onboarding</span>
+        <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
           מסלול התארגנות ברור עבור {organization.name}
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
+        <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
           במקום לנחש מה צריך להגדיר קודם, המסך הזה מסדר את הצעדים הנכונים לפי מצב הארגון, המקצוע וההטמעה בפועל.
         </p>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <div className="v2-panel p-5">
-            <p className="text-sm font-bold text-[color:var(--v2-muted)]">התקדמות הקמה</p>
-            <p className="mt-2 text-3xl font-black text-[color:var(--v2-ink)]">{progress}%</p>
+          <div className="tile p-5">
+            <p className="text-sm font-bold text-[color:var(--ink-500)]">התקדמות הקמה</p>
+            <p className="mt-2 text-3xl font-black text-[color:var(--ink-900)]">{progress}%</p>
           </div>
-          <div className="v2-panel p-5">
-            <p className="text-sm font-bold text-[color:var(--v2-muted)]">חיבורים פעילים</p>
-            <p className="mt-2 text-3xl font-black text-[color:var(--v2-ink)]">{integrationCount}</p>
+          <div className="tile p-5">
+            <p className="text-sm font-bold text-[color:var(--ink-500)]">חיבורים פעילים</p>
+            <p className="mt-2 text-3xl font-black text-[color:var(--ink-900)]">{integrationCount}</p>
           </div>
-          <div className="v2-panel p-5">
-            <p className="text-sm font-bold text-[color:var(--v2-muted)]">מסמכים שכבר עובדים</p>
-            <p className="mt-2 text-3xl font-black text-[color:var(--v2-ink)]">{documentCount + issuedCount}</p>
+          <div className="tile p-5">
+            <p className="text-sm font-bold text-[color:var(--ink-500)]">מסמכים שכבר עובדים</p>
+            <p className="mt-2 text-3xl font-black text-[color:var(--ink-900)]">{documentCount + issuedCount}</p>
           </div>
         </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2">
         {steps.map((step) => (
-          <article key={step.title} className="v2-panel p-6">
+          <article key={step.title} className="tile p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                   <step.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <div>
-                  <h2 className="text-xl font-black text-[color:var(--v2-ink)]">{step.title}</h2>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--v2-muted)]">{step.body}</p>
+                  <h2 className="text-xl font-black text-[color:var(--ink-900)]">{step.title}</h2>
+                  <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{step.body}</p>
                 </div>
               </div>
               <span
@@ -145,11 +145,11 @@ export default async function AppOnboardingPage() {
               </span>
             </div>
             <div className="mt-5 flex items-center justify-between gap-3">
-              <div className="inline-flex items-center gap-2 text-sm font-bold text-[color:var(--v2-muted)]">
+              <div className="inline-flex items-center gap-2 text-sm font-bold text-[color:var(--ink-500)]">
                 <BadgeCheck className="h-4 w-4" aria-hidden />
                 {step.done ? "השלב הזה כבר הוגדר" : "מומלץ לטפל בזה עכשיו"}
               </div>
-              <Link href={step.href} className="v2-button v2-button-secondary">
+              <Link href={step.href} className="bento-btn bento-btn--secondary">
                 {step.cta}
               </Link>
             </div>

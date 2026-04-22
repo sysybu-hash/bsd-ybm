@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const items = await prisma.inAppNotification.findMany({
@@ -27,7 +28,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const body = (await req.json().catch(() => ({}))) as {
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
 
   const ids = Array.isArray(body.ids) ? body.ids.filter((x) => typeof x === "string") : [];
   if (ids.length === 0) {
-    return NextResponse.json({ error: "חסר ids או all" }, { status: 400 });
+    return jsonBadRequest("חסר ids או all", "missing_ids_or_all");
   }
 
   await prisma.inAppNotification.updateMany({

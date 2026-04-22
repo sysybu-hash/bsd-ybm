@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { renderToBuffer } from "@react-pdf/renderer";
 import ProfessionalTemplatePdfDocument from "@/lib/pdf/ProfessionalTemplatePdfDocument";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonNotFound, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
@@ -29,13 +30,13 @@ export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
   if (!organizationId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const { searchParams } = new URL(request.url);
   const templateId = searchParams.get("templateId")?.trim();
   if (!templateId) {
-    return NextResponse.json({ error: "חסר templateId" }, { status: 400 });
+    return jsonBadRequest("חסר templateId", "missing_template_id");
   }
 
   const organization = await prisma.organization.findUnique({
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
 
   const template = profile.templates.find((t) => t.id === templateId);
   if (!template) {
-    return NextResponse.json({ error: "תבנית לא נמצאה" }, { status: 404 });
+    return jsonNotFound("תבנית לא נמצאה");
   }
 
   const generatedAt = new Date().toLocaleString("he-IL");

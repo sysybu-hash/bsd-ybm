@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   ArrowUpRight,
-  BrainCircuit,
   CreditCard,
   Download,
   FileSpreadsheet,
@@ -11,8 +10,11 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
+import FinanceHubAiAssist from "@/components/finance/FinanceHubAiAssist";
+import WorkspacePageHeader, { HeaderResponsiveLabel } from "@/components/layout/WorkspacePageHeader";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { createTranslator } from "@/lib/i18n/translate";
+import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 import type { CommercialHubSnapshot } from "@/lib/workspace/load-commercial-hub";
 import {
@@ -27,12 +29,20 @@ import {
 
 type Props = {
   snapshot: CommercialHubSnapshot;
+  organizationId: string;
+  industryProfile: IndustryProfile;
+  userFirstName: string;
 };
 
-export default async function FinanceHubContent({ snapshot }: Props) {
+export default async function FinanceHubContent({
+  snapshot,
+  organizationId,
+  industryProfile,
+  userFirstName,
+}: Props) {
   const messages = await readRequestMessages();
   const t = createTranslator(messages);
-  const { forecast, totals, contacts, projects } = snapshot;
+  const { forecast, totals, contacts, projects, issuedMonthOverMonthPct } = snapshot;
   const totalInvoiced = totals.pendingIssuedTotal + totals.paidIssuedTotal;
   const collectionRate = totalInvoiced > 0 ? Math.round((totals.paidIssuedTotal / totalInvoiced) * 100) : 0;
   const target = Math.max(60_000, Math.ceil((totalInvoiced * 1.3) / 1000) * 1000);
@@ -71,19 +81,21 @@ export default async function FinanceHubContent({ snapshot }: Props) {
   const insightText = insightParts.join(" · ");
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir="rtl">
-      {/* Header */}
-      <header className="flex flex-col gap-1 px-1">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
-          {t("workspaceFinance.eyebrow")}
-        </p>
-        <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">
-          {t("workspaceFinance.heroTitle")}
-        </h1>
-        <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">
-          {t("workspaceFinance.heroSubtitle")}
-        </p>
-      </header>
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
+      <WorkspacePageHeader
+        eyebrow={t("workspaceFinance.eyebrow")}
+        title={t("workspaceFinance.heroTitle")}
+        subtitle={t("workspaceFinance.heroSubtitle")}
+        actions={
+          <Link
+            href="/app/documents/issue"
+            className="inline-flex items-center gap-1.5 rounded-2xl bg-[color:var(--axis-finance)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-finance-strong)]"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2} aria-hidden />
+            <HeaderResponsiveLabel short={t("workspaceFinance.issueCtaShort")} long={t("workspaceFinance.issueCta")} />
+          </Link>
+        }
+      />
 
       <BentoGrid>
         {/* AI Insight (dark, hero) */}
@@ -101,31 +113,24 @@ export default async function FinanceHubContent({ snapshot }: Props) {
             </ProgressRing>
           </div>
           <div className="mt-5 flex justify-center">
-            <Link href="/app/ai" className="tile-cta">
-              {t("workspaceHome.aiNarrative.open")}
-              <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
+            <FinanceHubAiAssist
+              orgId={organizationId}
+              industryProfile={industryProfile}
+              userFirstName={userFirstName}
+              insightText={insightText}
+              sectionLabel={t("workspaceFinance.eyebrow")}
+              variant="hero"
+            />
           </div>
         </Tile>
 
         {/* Finance Hero */}
         <Tile tone="finance" span={8}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="tile-eyebrow">{t("workspaceFinance.totalInvoicedLabel")}</p>
-              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[color:var(--axis-finance-ink)]/80">
-                {t("workspaceFinance.heroKpiSub")}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Link
-                href="/app/documents/issue"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[color:var(--axis-finance)] px-3 py-1.5 text-[12px] font-bold text-white hover:bg-[color:var(--axis-finance-strong)]"
-              >
-                <Plus className="h-3.5 w-3.5" aria-hidden />
-                {t("workspaceFinance.issueCta")}
-              </Link>
-            </div>
+          <div>
+            <p className="tile-eyebrow">{t("workspaceFinance.totalInvoicedLabel")}</p>
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--axis-finance-ink)]/80">
+              {t("workspaceFinance.heroKpiSub")}
+            </p>
           </div>
           <div className="mt-3 flex items-end justify-between gap-4">
             <p className="tile-hero-value text-[color:var(--axis-finance-ink)]">
@@ -139,7 +144,17 @@ export default async function FinanceHubContent({ snapshot }: Props) {
             <div className="mb-1 flex items-center justify-between text-[11px] font-bold text-[color:var(--ink-600)]">
               <span>{t("workspaceHome.axisFinance.target", { amount: formatCurrencyILS(target) })}</span>
               <span className="tabular-nums">
-                {targetProgress}% · <span className="text-[color:var(--state-success)]">+12%</span>
+                {targetProgress}% ·{" "}
+                <span
+                  className={
+                    issuedMonthOverMonthPct >= 0
+                      ? "text-[color:var(--state-success)]"
+                      : "text-[color:var(--state-warning)]"
+                  }
+                >
+                  {issuedMonthOverMonthPct > 0 ? "+" : ""}
+                  {issuedMonthOverMonthPct}%
+                </span>
               </span>
             </div>
             <ProgressBar value={targetProgress} target={100} axis="finance" glow />
@@ -326,13 +341,14 @@ export default async function FinanceHubContent({ snapshot }: Props) {
                 <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden />
                 {t("workspaceFinance.reportCsv")}
               </a>
-              <Link
-                href="/app/ai"
-                className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] px-3 py-2 text-[12px] font-bold text-[color:var(--axis-ai-ink)] transition hover:bg-[color:var(--axis-ai)] hover:text-white"
-              >
-                <BrainCircuit className="h-3.5 w-3.5" aria-hidden />
-                {t("workspaceFinance.aiCta")}
-              </Link>
+              <FinanceHubAiAssist
+                orgId={organizationId}
+                industryProfile={industryProfile}
+                userFirstName={userFirstName}
+                insightText={insightText}
+                sectionLabel={t("workspaceFinance.eyebrow")}
+                variant="compact"
+              />
             </div>
           </div>
         </Tile>

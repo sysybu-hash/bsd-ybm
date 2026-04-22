@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden, jsonUnauthorized } from "@/lib/api-json";
 import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
@@ -9,12 +10,11 @@ import { prisma } from "@/lib/prisma";
 // Handles existing manually-created Projects/Contacts with matching names.
 export async function POST(_req: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.organizationId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.organizationId) return jsonUnauthorized();
 
   const orgId = await getAuthorizedMeckanoOrganizationId(session);
   if (!orgId) {
-    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+    return jsonForbidden(MECKANO_ACCESS_ERROR);
   }
 
   const zones = await prisma.meckanoZone.findMany({

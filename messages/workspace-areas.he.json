@@ -12,6 +12,7 @@
     "priorityTitle": "לטיפול עכשיו",
     "prioritySubtitle": "פריטים מסודרים לפי השפעה על עבודה, כסף ואיכות נתונים.",
     "priorityEmpty": "אין כרגע פריטים דחופים. אפשר להמשיך לעבודה שוטפת.",
+    "priorityDismiss": "סומן כטופל",
     "dueSoonTitle": "קרוב למועד",
     "dueSoonEmpty": "אין כרגע פריטי גבייה קרובים.",
     "paymentDuePrefix": "יעד תשלום:",
@@ -97,6 +98,11 @@
     "viewList": "רשימה",
     "pipelineTitle": "צנרת לקוחות",
     "listTitle": "רשימת לקוחות",
+    "listColClient": "לקוח",
+    "listColStatus": "סטטוס",
+    "listColProject": "פרויקט",
+    "listColContact": "פרטי קשר",
+    "listColAmount": "סכום",
     "addCta": "לקוח חדש",
     "issueCta": "הפקת חשבונית",
     "statActiveClients": "לקוחות",
@@ -143,6 +149,16 @@
       "noProject": "ללא פרויקט",
       "noValue": "ללא שווי",
       "openAdvanced": "פתיחה מתקדמת"
+    },
+    "editModal": {
+      "eyebrow": "עריכה מהירה",
+      "title": "פרטי לקוח",
+      "save": "שמור",
+      "delete": "מחק",
+      "deleteConfirm": "למחוק את {name} מהמערכת?",
+      "valuePlaceholder": "שווי (₪)",
+      "notesPlaceholder": "הערות",
+      "closeAria": "סגור"
     }
   },
   "workspaceFinance": {
@@ -189,6 +205,7 @@
     "issueCardTitle": "הפקת מסמך",
     "issueCardBody": "חשבונית, הצעה ומסמכים מונפקים מתוך ההקשר המסחרי.",
     "issueCta": "הפק מסמך",
+    "issueCtaShort": "הנפקה",
     "monthTitle": "תמונת חודש",
     "totalInvoicedLabel": "חויב החודש · FINANCE",
     "heroKpiSub": "סיכום פיננסי בזמן אמת",
@@ -258,12 +275,14 @@
     "pendingEmpty": "אין כרגע לקוחות בולטים עם גבייה פתוחה."
   },
   "workspaceDocuments": {
-    "eyebrow": "Documents Workspace",
+    "eyebrow": "מרחב מסמכים",
     "heroTitle": "{documents} בניהול מלא, כולל צפייה, עריכה ומחיקה.",
     "heroSubtitle": "המסך הזה מתאים את עצמו ל-{industry}, מציג את סוגי המסמכים והאישורים הרלוונטיים למקצוע, ונותן שליטה מלאה גם על מסמכים שנסרקו וגם על מסמכים שהונפקו.",
     "ctaIssue": "הפקה לפי תבניות מקצועיות",
+    "ctaIssueShort": "הנפקה",
     "ctaErp": "פתיחת ERP מלא",
     "ctaScan": "סריקה חדשה",
+    "ctaScanShort": "סריקה",
     "generatorsTitle": "מחוללים לפי מקצוע",
     "generatorsSubtitle": "תבניות מהפרופיל המקצועי — הפקה רשמית או טיוטה ברשימת המסמכים שהונפקו.",
     "generatorsKindOfficial": "מסמכים רשמיים",

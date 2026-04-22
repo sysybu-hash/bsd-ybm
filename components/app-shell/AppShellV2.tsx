@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { BellRing, Grid2X2, LogOut, Settings, Sparkles } from "lucide-react";
+import { BellRing, Grid2X2, LogOut, ScanSearch, Settings, Sparkles } from "lucide-react";
 import AppCommandPalette from "@/components/app-shell/AppCommandPalette";
 import WorkspaceUtilityDock from "@/components/app-shell/WorkspaceUtilityDock";
 import WorkspaceGlassTopNav from "@/components/app-shell/WorkspaceGlassTopNav";
+import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
 import { buildAppNavCollection, type AppNavItem } from "@/components/app-shell/app-nav";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
 import type { IndustryProfile } from "@/lib/professions/runtime";
@@ -163,7 +164,7 @@ export default function AppShellV2({ children, user }: Props) {
   return (
     <WorkspaceShellTransitionProvider>
       <div
-        className={`${marketingSans.className} v2-site-shell min-h-screen text-[color:var(--ink-900)]`}
+        className={`${marketingSans.className} bento-site-shell min-h-screen text-[color:var(--ink-900)]`}
         dir={dir}
       >
         <a
@@ -174,17 +175,18 @@ export default function AppShellV2({ children, user }: Props) {
         </a>
 
         {/* Desktop layout: narrow dark sidebar (visual LEFT in RTL) + content (RIGHT) */}
-        <div className="relative z-10 flex min-h-screen w-full lg:grid lg:grid-cols-[1fr_3.5rem]">
+        <div className="relative z-10 flex min-h-screen w-full lg:grid lg:grid-cols-[1fr_4.5rem]">
           {/* Content column */}
           <div className="flex min-w-0 flex-col">
             {/* Desktop Top Bar — bordered bottom, no floating */}
             <header className="sticky top-0 z-40 hidden border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 backdrop-blur-sm lg:block">
-              <div className="mx-auto flex w-full max-w-[1600px] items-center gap-4 px-6 py-3">
+              <div className="mx-auto flex w-full min-w-0 max-w-[1600px] items-center gap-4 px-6 py-3">
                 <WorkspaceGlassTopNav
                   items={nav.primary}
                   pathname={pathname}
                   navLabel={t("workspaceNav.primaryNavAria")}
                   userInitials={initials}
+                  commandItems={commandItems}
                 />
               </div>
             </header>
@@ -192,13 +194,13 @@ export default function AppShellV2({ children, user }: Props) {
             {/* Mobile Header */}
             <header className="sticky top-0 z-40 border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 backdrop-blur-sm lg:hidden">
               <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--ink-900)] text-xs font-bold text-white">
-                    {initials}
+                <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+                  <BsdYbmLogo href="/" variant="marketing-light" size="sm" className="shrink-0" />
+                  <div className="min-w-0">
+                    <h1 className="truncate text-base font-bold tracking-tight text-[color:var(--ink-900)]">
+                      {currentSection.label}
+                    </h1>
                   </div>
-                  <h1 className="truncate text-base font-bold tracking-tight text-[color:var(--ink-900)]">
-                    {currentSection.label}
-                  </h1>
                 </div>
 
                 <AppCommandPalette items={commandItems} />
@@ -250,17 +252,18 @@ export default function AppShellV2({ children, user }: Props) {
 
             <main
               id="app-main-content"
-              className="relative flex-1 px-4 py-6 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-10 lg:pb-8"
+              className="relative flex-1 py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] pl-4 pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.75rem+3.5rem))] sm:pl-6 sm:pr-[max(1.25rem,calc(env(safe-area-inset-right,0px)+1rem+3.5rem))] lg:pb-8 lg:pl-10 lg:pr-[max(2.5rem,calc(env(safe-area-inset-right,0px)+1.25rem+3.5rem))]"
             >
-              {children}
+              <div className="mx-auto w-full min-w-0">{children}</div>
             </main>
           </div>
 
           {/* Narrow dark sidebar (visual LEFT in RTL) */}
           <aside className="hidden border-s border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-bg)] lg:flex lg:flex-col">
-            <div className="flex min-h-screen flex-col items-center py-4">
+            <div className="flex min-h-screen flex-col items-center px-1 py-4">
+              <BsdYbmLogo href="/" iconOnly variant="sidebar" size="sm" className="mb-3" />
               <nav
-                className="mt-2 flex w-full flex-1 flex-col items-center gap-1.5"
+                className="flex w-full flex-1 flex-col items-center gap-1.5"
                 aria-label={t("workspaceNav.sectionDailyWork")}
               >
                 <SidebarIconLink
@@ -269,6 +272,12 @@ export default function AppShellV2({ children, user }: Props) {
                   icon={BellRing}
                   active={isAppNavPathActive(pathname, "/app/inbox")}
                   routeId="inbox"
+                />
+                <SidebarIconLink
+                  href="/app/documents/erp"
+                  label={t("workspaceDock.dock.scanner")}
+                  icon={ScanSearch}
+                  active={isAppNavPathActive(pathname, "/app/documents/erp")}
                 />
                 <SidebarIconLink
                   href="/app/advanced"

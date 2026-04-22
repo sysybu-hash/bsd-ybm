@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { COOKIE_LOCALE, normalizeLocale } from "@/lib/i18n/config";
+import { jsonBadRequest } from "@/lib/api-json";
 
 export async function POST(req: Request) {
   try {
@@ -13,6 +14,6 @@ export async function POST(req: Request) {
     });
     return res;
   } catch {
-    return NextResponse.json({ error: "bad_request" }, { status: 400 });
+    return jsonBadRequest("בקשה לא תקינה", "bad_request");
   }
 }

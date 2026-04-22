@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-log";
 
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
   const orgId = session?.user?.organizationId;
 
   if (!userId || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const body = (await req.json().catch(() => ({}))) as Body;

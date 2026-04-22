@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { ArrowUpRight, Command, CornerDownLeft, Search } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 
 export type AppCommandItem = {
   href: string;
@@ -104,12 +105,12 @@ export default function AppCommandPalette({ items }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hidden min-w-[280px] max-w-full items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/82 px-4 py-3 text-start transition hover:bg-white lg:flex xl:min-w-[320px]"
+        className="hidden min-w-[280px] max-w-full items-center gap-3 rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)]/95 px-4 py-3 text-start transition hover:bg-[color:var(--canvas-sunken)] lg:flex xl:min-w-[320px]"
         aria-label={t("commandPalette.openSearchAria")}
       >
-        <Search className="h-4 w-4 shrink-0 text-[color:var(--v2-muted)]" aria-hidden />
-        <span className="min-w-0 flex-1 text-sm text-[color:var(--v2-muted)]">{t("commandPalette.searchHintDesktop")}</span>
-        <span className="rounded-lg bg-[color:var(--v2-canvas)] px-2 py-1 text-[11px] font-black text-[color:var(--v2-muted)]">
+        <Search className="h-4 w-4 shrink-0 text-[color:var(--ink-400)]" aria-hidden />
+        <span className="min-w-0 flex-1 text-sm text-[color:var(--ink-500)]">{t("commandPalette.searchHintDesktop")}</span>
+        <span className="rounded-lg bg-[color:var(--canvas-sunken)] px-2 py-1 text-[11px] font-black text-[color:var(--ink-500)]">
           {shortcut}
         </span>
       </button>
@@ -117,16 +118,17 @@ export default function AppCommandPalette({ items }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-[44px] min-w-[44px] items-center gap-2 rounded-full border border-[color:var(--v2-line)] bg-white/86 px-3 py-2 text-xs font-bold text-[color:var(--v2-muted)] touch-manipulation lg:hidden"
+        className="inline-flex min-h-[44px] min-w-[44px] items-center gap-2 rounded-full border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-xs font-bold text-[color:var(--ink-600)] touch-manipulation lg:hidden"
         aria-label={t("commandPalette.openSearchAria")}
       >
-        <Search className="h-4 w-4 text-[color:var(--v2-accent)]" aria-hidden />
+        <Search className="h-4 w-4 text-[color:var(--axis-clients)]" aria-hidden />
         {t("commandPalette.searchShort")}
       </button>
 
       {open ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-50 bg-slate-950/35 px-3 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-[max(1.5rem,env(safe-area-inset-top,0px))] backdrop-blur-sm sm:px-4 sm:py-8"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} bg-slate-950/35 px-3 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-[max(1.5rem,env(safe-area-inset-top,0px))] backdrop-blur-sm sm:px-4 sm:py-8`}
           role="presentation"
         >
           <button
@@ -140,22 +142,22 @@ export default function AppCommandPalette({ items }: Props) {
             aria-modal="true"
             aria-label={t("commandPalette.dialogAria")}
             dir={dir}
-            className="relative mx-auto flex max-h-[min(100dvh,100vh)] max-w-2xl flex-col overflow-hidden rounded-[28px] border border-white/60 bg-[color:var(--v2-surface)] shadow-[0_35px_90px_-30px_rgba(15,23,42,0.45)] sm:rounded-[32px]"
+            className="relative mx-auto flex max-h-[min(100dvh,100vh)] max-w-2xl flex-col overflow-hidden rounded-[28px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] shadow-[0_35px_90px_-30px_rgba(15,23,42,0.45)] sm:rounded-[32px]"
           >
-            <div className="border-b border-[color:var(--v2-line)] px-5 py-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white px-4 py-3">
-                <Search className="h-4 w-4 text-[color:var(--v2-muted)]" aria-hidden />
+            <div className="border-b border-[color:var(--line)] px-5 py-4">
+              <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] px-4 py-3">
+                <Search className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
                 <input
                   ref={inputRef}
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  className="w-full bg-transparent text-sm text-[color:var(--v2-ink)] outline-none placeholder:text-[color:var(--v2-muted)]"
+                  className="w-full bg-transparent text-sm text-[color:var(--ink-900)] outline-none placeholder:text-[color:var(--ink-400)]"
                   placeholder={t("commandPalette.placeholder")}
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
                 />
-                <span className="hidden items-center gap-1 rounded-lg bg-[color:var(--v2-canvas)] px-2 py-1 text-[11px] font-black text-[color:var(--v2-muted)] sm:inline-flex">
+                <span className="hidden items-center gap-1 rounded-lg bg-[color:var(--canvas-raised)] px-2 py-1 text-[11px] font-black text-[color:var(--ink-500)] sm:inline-flex">
                   <Command className="h-3 w-3" aria-hidden />
                   {shortcut}
                 </span>
@@ -164,9 +166,9 @@ export default function AppCommandPalette({ items }: Props) {
 
             <div className="max-h-[min(65vh,calc(100dvh-12rem))] overflow-y-auto overscroll-contain p-3">
               {filteredItems.length === 0 ? (
-                <div className="rounded-2xl bg-white/78 px-4 py-8 text-center">
-                  <p className="text-lg font-black text-[color:var(--v2-ink)]">{t("commandPalette.emptyTitle")}</p>
-                  <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{t("commandPalette.emptyHint")}</p>
+                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-8 text-center">
+                  <p className="text-lg font-black text-[color:var(--ink-900)]">{t("commandPalette.emptyTitle")}</p>
+                  <p className="mt-2 text-sm text-[color:var(--ink-500)]">{t("commandPalette.emptyHint")}</p>
                 </div>
               ) : null}
 
@@ -186,28 +188,28 @@ export default function AppCommandPalette({ items }: Props) {
                         router.push(item.href);
                       }}
                       className={`flex items-start gap-3 rounded-[24px] px-4 py-4 text-start transition touch-manipulation ${
-                        active ? "bg-[color:var(--v2-accent-soft)]" : "bg-white/82 hover:bg-white"
+                        active ? "bg-[color:var(--axis-clients-soft)]" : "bg-[color:var(--canvas-raised)] hover:bg-[color:var(--canvas-sunken)]"
                       }`}
                     >
                       <span
                         className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
-                          active ? "bg-[color:var(--v2-accent)] text-white" : "bg-[color:var(--v2-canvas)] text-[color:var(--v2-accent)]"
+                          active ? "bg-[color:var(--axis-clients)] text-white" : "bg-[color:var(--canvas-sunken)] text-[color:var(--axis-clients)]"
                         }`}
                       >
                         <item.icon className="h-4 w-4" aria-hidden />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2">
-                          <span className="truncate text-sm font-black text-[color:var(--v2-ink)]">{item.label}</span>
+                          <span className="truncate text-sm font-black text-[color:var(--ink-900)]">{item.label}</span>
                           {current ? (
-                            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-[color:var(--v2-accent)]">
+                            <span className="rounded-full bg-[color:var(--canvas-raised)] px-2 py-1 text-[10px] font-black text-[color:var(--axis-clients)]">
                               {t("commandPalette.badgeHere")}
                             </span>
                           ) : null}
                         </span>
-                        <span className="mt-1 block text-sm leading-6 text-[color:var(--v2-muted)]">{item.summary}</span>
+                        <span className="mt-1 block text-sm leading-6 text-[color:var(--ink-500)]">{item.summary}</span>
                       </span>
-                      <span className="mt-1 hidden items-center gap-1 text-[11px] font-black text-[color:var(--v2-muted)] sm:inline-flex">
+                      <span className="mt-1 hidden items-center gap-1 text-[11px] font-black text-[color:var(--ink-500)] sm:inline-flex">
                         <CornerDownLeft className="h-3.5 w-3.5" aria-hidden />
                         {t("commandPalette.openAction")}
                       </span>
@@ -217,7 +219,7 @@ export default function AppCommandPalette({ items }: Props) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 border-t border-[color:var(--v2-line)] px-4 py-3 text-xs text-[color:var(--v2-muted)] sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-5">
+            <div className="flex flex-col gap-2 border-t border-[color:var(--line)] px-4 py-3 text-xs text-[color:var(--ink-500)] sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-5">
               <span className="min-w-0 leading-snug">{t("commandPalette.footerHint")}</span>
               <span className="inline-flex shrink-0 items-center gap-2 font-black">
                 <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
@@ -226,6 +228,7 @@ export default function AppCommandPalette({ items }: Props) {
             </div>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
     </>
   );

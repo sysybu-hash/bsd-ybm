@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden, jsonNotFound, jsonUnauthorized } from "@/lib/api-json";
 import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
@@ -19,16 +20,16 @@ async function getOrgKey(organizationId: string): Promise<string | null> {
 async function proxyRequest(req: Request, segments: string[]) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
   const orgId = await getAuthorizedMeckanoOrganizationId(session);
   if (!orgId) {
-    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+    return jsonForbidden(MECKANO_ACCESS_ERROR);
   }
 
   const apiKey = await getOrgKey(orgId);
   if (!apiKey) {
-    return NextResponse.json({ error: "מקאנו לא מוגדר — הוסף API key בהגדרות" }, { status: 404 });
+    return jsonNotFound("מקאנו לא מוגדר — הוסף API key בהגדרות", "meckano_not_configured");
   }
 
   const url = new URL(req.url);

@@ -80,7 +80,7 @@ export async function IntelligenceDashboardContent({
             </h2>
             <span className="h-px flex-1 bg-gradient-to-r from-transparent via-teal-500/20 to-teal-400/60" />
           </div>
-          <ExecutiveDashboardSection embedded userEmail={email} />
+          <ExecutiveDashboardSection userEmail={email} />
         </section>
       ) : null}
     </div>

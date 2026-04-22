@@ -1,150 +1,152 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  AlertCircle,
-  ArrowUpRight,
+  AlertTriangle,
   Brain,
+  Building2,
   CheckCircle2,
-  ChevronRight,
   FileSearch,
-  FolderKanban,
+  FileText,
+  Layers,
+  LayoutPanelLeft,
   Loader2,
-  Save,
-  Settings2,
+  ScanLine,
+  Search,
   Sparkles,
   UploadCloud,
-  UsersRound,
+  UserRound,
   XCircle,
-  Zap,
 } from "lucide-react";
+import { toast } from "sonner";
 import * as LucideIcons from "lucide-react";
-import { DROPZONE_ACCEPT, SCAN_ACCEPT_SUMMARY } from "@/lib/scan-mime";
-import { pickBestEngineIndex, scoreExtractedDocument } from "@/lib/score-scan-result";
+import { DROPZONE_ACCEPT } from "@/lib/scan-mime";
 import { useI18n } from "@/components/I18nProvider";
 import { saveScannedDocumentAction } from "@/app/actions/save-scanned-document";
 import { type IndustryType } from "@/lib/professions/config";
 import { getMergedIndustryConfig } from "@/lib/construction-trades";
-import {
-  BentoGrid,
-  ProgressBar,
-  ProgressRing,
-  Tile,
-  TileHeader,
-} from "@/components/ui/bento";
-
-type ProviderRow = {
-  id: string;
-  label: string;
-  description: string;
-  configured: boolean;
-  supportsDocumentScan: boolean;
-  allowedByPlan?: boolean;
-};
-
-type EngineRunStatus = "idle" | "queued" | "uploading" | "processing" | "scoring" | "done" | "error";
-
-export type PerEngineScan = {
-  providerId: string;
-  label: string;
-  ok: boolean;
-  aiData?: Record<string, unknown>;
-  error?: string;
-  notice?: string;
-  score: number;
-  status: EngineRunStatus;
-  elapsedMs?: number;
-};
-
-export type FileCompareResult = {
-  fileName: string;
-  previewUrl: string | null;
-  isPdf: boolean;
-  isImage: boolean;
-  mimeType: string;
-  engines: PerEngineScan[];
-  recommendedIndex: number;
-  analysisType: string;
-};
+import type { ScanExtractionV5, ScanModeV5 } from "@/lib/scan-schema-v5";
 
 type ScannerProps = {
   industry?: IndustryType;
   compactHeader?: boolean;
 };
 
-type OcrLanguage = "auto" | "he" | "en";
-type BatchPriority = "files" | "engines";
-type SaveTarget = "ERP" | "CRM";
+type EnginePhase = "idle" | "running" | "ok" | "error" | "skipped";
 
-const SCANNER_PREFS_KEY = "bsd-erp:scanner:selected-engines";
-const SCANNER_MODELS_KEY = "bsd-erp:scanner:selected-models";
-const SCANNER_SETTINGS_KEY = "bsd-erp:scanner:settings";
-
-const MODEL_OPTIONS: Record<string, Array<{ id: string; label: string }>> = {
-  gemini: [
-    { id: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
-    { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-  ],
-  openai: [
-    { id: "gpt-5-vision-ultra", label: "GPT-5 Vision Ultra" },
-    { id: "gpt-5o", label: "GPT-5o" },
-  ],
-  anthropic: [
-    { id: "claude-4-opus-2026", label: "Claude 4 Opus" },
-    { id: "claude-4-sonnet-2026", label: "Claude 4 Sonnet" },
-  ],
-  docai: [
-    { id: "docai-default", label: "DocAI OCR" },
-  ],
+type TriTelemetry = {
+  documentAI: { phase: EnginePhase; ms?: number; detail?: string };
+  gemini: { phase: EnginePhase; ms?: number; detail?: string };
+  gpt: { phase: EnginePhase; ms?: number; detail?: string };
 };
 
-function canRunEngine(provider: ProviderRow) {
-  return provider.configured && provider.allowedByPlan !== false;
+type EngineMetaResponse = {
+  configured: { documentAI: boolean; gemini: boolean; openai: boolean };
+  gemini: { flagshipModelId: string; primaryModelId: string; primaryLabel: string };
+  openai: { defaultModelId: string; modelOptions: { id: string; label: string }[] };
+};
+
+const SCAN_MODES: {
+  id: ScanModeV5;
+  label: string;
+  hintShort: string;
+  hintDetail: string;
+}[] = [
+  {
+    id: "INVOICE_FINANCIAL",
+    label: "חשבונית / פיננסי",
+    hintShort: "Document AI (חשבונית) ואז GPT לפי הצורך",
+    hintDetail:
+      "מומלץ כשיש מעבד Document AI מוגדר ב־Vercel / .env. בלעדיו הסריקה תשתמש בשרשראות Gemini ו־OpenAI.",
+  },
+  {
+    id: "DRAWING_BOQ",
+    label: "גירושקא / שרטוט",
+    hintShort: "Gemini לשרטוטים + GPT למיזוג ודיוק",
+    hintDetail: "מתאים לתוכניות, טבלאות כמויות ומקרא. דגם Gemini הפעיל נטען מהגדרות הסביבה (GEMINI_MODEL וכו׳).",
+  },
+  {
+    id: "GENERAL_DOCUMENT",
+    label: "מסמך כללי",
+    hintShort: "סיכום וישויות — דגם Gemini מהיר מהשרשרת",
+    hintDetail: "מסלול קצר יותר; השרת בוחר דגם לפי המפתחות והשלכות הזמינות.",
+  },
+];
+
+const FALLBACK_OPENAI_MODEL_OPTIONS: { id: string; label: string }[] = [
+  { id: "gpt-5.4-turbo-2026-03", label: "GPT-5.4 Turbo" },
+  { id: "gpt-4o-mini", label: "GPT-4o mini" },
+  { id: "gpt-4o", label: "GPT-4o" },
+];
+
+function truncateText(s: string, max: number) {
+  const t = s.trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, max)}…`;
 }
 
-function statusLabel(status: EngineRunStatus) {
-  switch (status) {
-    case "queued":
-      return "בתור";
-    case "uploading":
-      return "מעלה";
-    case "processing":
-      return "מפענח";
-    case "scoring":
-      return "מדרג";
-    case "done":
-      return "הושלם";
-    case "error":
-      return "שגיאה";
-    default:
-      return "מוכן";
-  }
+const IDLE_TELEMETRY: TriTelemetry = {
+  documentAI: { phase: "idle" },
+  gemini: { phase: "idle" },
+  gpt: { phase: "idle" },
+};
+
+const RUNNING_TELEMETRY: TriTelemetry = {
+  documentAI: { phase: "running" },
+  gemini: { phase: "running" },
+  gpt: { phase: "running" },
+};
+
+function isPdfFile(file: File) {
+  return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 }
 
-function statusAxis(status: EngineRunStatus): "warning" | "ai" | "success" {
-  if (status === "done") return "success";
-  if (status === "error") return "warning";
-  return "ai";
+function isImageFile(file: File) {
+  return file.type.startsWith("image/");
 }
 
-function safeJsonParse<T>(raw: string | null, fallback: T): T {
-  try {
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
+function readV5FromAiData(ai: Record<string, unknown> | null): ScanExtractionV5 | null {
+  if (!ai) return null;
+  const raw = ai._v5;
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  if (o.schemaVersion !== 5) return null;
+  return raw as ScanExtractionV5;
+}
+
+type ScanLookupProject = { id: string; name: string; isActive: boolean };
+type ScanLookupContact = { id: string; name: string; projectId: string | null };
+
+const STREAM_STAGE_LABELS: Record<string, string> = {
+  document_ai: "Document AI",
+  openai: "GPT",
+  gemini: "Gemini (שרטוט)",
+  merged_gemini_openai: "מיזוג Gemini + GPT",
+  gemini_flash: "Gemini Flash",
+};
+
+function streamStageHebrew(stage: string) {
+  if (stage === "gemini_fallback") return "Gemini fallback";
+  return STREAM_STAGE_LABELS[stage] ?? stage;
+}
+
+function enginePillClass(phase: EnginePhase, scanning: boolean): string {
+  if (phase === "ok") return "border-emerald-400/45 bg-emerald-500/15 text-emerald-100";
+  if (phase === "error") return "border-amber-400/50 bg-amber-500/20 text-amber-100" + (scanning ? "" : " animate-pulse");
+  if (phase === "skipped") return "border-slate-600/80 bg-slate-800/50 text-slate-500";
+  if (phase === "running") return "border-sky-400/50 bg-sky-500/20 text-sky-50 animate-pulse";
+  return "border-white/10 bg-white/5 text-slate-400";
 }
 
 export default function MultiEngineScanner({
   industry: industryOverride,
   compactHeader = false,
 }: ScannerProps) {
-  const { t, messages } = useI18n();
+  const { messages } = useI18n();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
 
@@ -154,110 +156,206 @@ export default function MultiEngineScanner({
   const iconMap = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
   const ActiveIcon = iconMap[config.iconName] ?? LucideIcons.Bot;
 
-  const [providers, setProviders] = useState<ProviderRow[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectedModels, setSelectedModels] = useState<Record<string, string>>({});
-  const [activeAnalysisId, setActiveAnalysisId] = useState<string>(config.scanner.analysisTypes[0]?.id || "INVOICE");
-  const [ocrLanguage, setOcrLanguage] = useState<OcrLanguage>("auto");
-  const [persistToErp, setPersistToErp] = useState(false);
-  const [autoCreateClient, setAutoCreateClient] = useState(false);
-  const [batchPriority, setBatchPriority] = useState<BatchPriority>("files");
   const [files, setFiles] = useState<File[]>([]);
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [previewUrls, setPreviewUrls] = useState<(string | null)[]>([]);
-  const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [overallEta, setOverallEta] = useState<string>("—");
-  const [compareResults, setCompareResults] = useState<FileCompareResult[]>([]);
-  const [savingId, setSavingId] = useState<string | null>(null);
-  const [globalError, setGlobalError] = useState<string | null>(null);
 
-  const scanEngineRows = useMemo(() => providers.filter((provider) => provider.supportsDocumentScan), [providers]);
-  const eligibleProviders = useMemo(() => scanEngineRows.filter(canRunEngine), [scanEngineRows]);
+  const [scanMode, setScanMode] = useState<ScanModeV5>("GENERAL_DOCUMENT");
+  const [projects, setProjects] = useState<ScanLookupProject[]>([]);
+  const [contacts, setContacts] = useState<ScanLookupContact[]>([]);
+  const [lookupsLoading, setLookupsLoading] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [selectedContactId, setSelectedContactId] = useState("");
+  const [lookupSearch, setLookupSearch] = useState("");
+  const [debouncedLookup, setDebouncedLookup] = useState("");
+  const [openAiModel, setOpenAiModel] = useState("");
+  const [engineMeta, setEngineMeta] = useState<EngineMetaResponse | null>(null);
+  const [engineMetaLoading, setEngineMetaLoading] = useState(false);
+
+  const [scanning, setScanning] = useState(false);
+  const [telemetry, setTelemetry] = useState<TriTelemetry>(IDLE_TELEMETRY);
+  const [aiData, setAiData] = useState<Record<string, unknown> | null>(null);
+  const [streamPartialV5, setStreamPartialV5] = useState<ScanExtractionV5 | null>(null);
+  const [streamStage, setStreamStage] = useState<string | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [savingTarget, setSavingTarget] = useState<"ERP" | "CRM" | null>(null);
+
+  const activeFile = files[activeFileIndex] ?? null;
+  const activePreviewUrl = previewUrls[activeFileIndex] ?? null;
 
   useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedLookup(lookupSearch), 380);
+    return () => window.clearTimeout(id);
+  }, [lookupSearch]);
+
+  useEffect(() => {
+    const urls = files.map((file) => {
+      if (isImageFile(file) || isPdfFile(file)) return URL.createObjectURL(file);
+      return null;
+    });
+    setPreviewUrls(urls);
+    return () => {
+      urls.forEach((u) => {
+        if (u) URL.revokeObjectURL(u);
+      });
+    };
+  }, [files]);
+
+  useEffect(() => {
+    setActiveFileIndex((i) => (files.length === 0 ? 0 : Math.min(i, files.length - 1)));
+  }, [files.length]);
+
+  const projectLabel = useMemo(() => {
+    if (!selectedProjectId) return "";
+    return projects.find((p) => p.id === selectedProjectId)?.name ?? "";
+  }, [projects, selectedProjectId]);
+
+  const clientLabel = useMemo(() => {
+    if (!selectedContactId) return "";
+    return contacts.find((c) => c.id === selectedContactId)?.name ?? "";
+  }, [contacts, selectedContactId]);
+
+  const v5 = useMemo(() => {
+    const fromAi = readV5FromAiData(aiData);
+    if (fromAi) return fromAi;
+    return streamPartialV5;
+  }, [aiData, streamPartialV5]);
+
+  useEffect(() => {
+    if (authStatus !== "authenticated") return;
     let cancelled = false;
     (async () => {
+      setLookupsLoading(true);
       try {
-        const res = await fetch("/api/ai/providers");
-        const data = await res.json();
-        if (!cancelled && Array.isArray(data.providers)) {
-          setProviders(data.providers as ProviderRow[]);
+        const params = new URLSearchParams();
+        if (debouncedLookup.trim()) params.set("q", debouncedLookup.trim());
+        if (selectedProjectId) params.set("contactProjectId", selectedProjectId);
+        const qs = params.toString();
+        const res = await fetch(qs ? `/api/org/scan-lookups?${qs}` : "/api/org/scan-lookups");
+        const data = (await res.json()) as {
+          projects?: ScanLookupProject[];
+          contacts?: ScanLookupContact[];
+        };
+        if (!cancelled && res.ok) {
+          setProjects(Array.isArray(data.projects) ? data.projects : []);
+          setContacts(Array.isArray(data.contacts) ? data.contacts : []);
         }
       } catch {
-        if (!cancelled) setProviders([]);
+        if (!cancelled) {
+          setProjects([]);
+          setContacts([]);
+        }
+      } finally {
+        if (!cancelled) setLookupsLoading(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authStatus, debouncedLookup, selectedProjectId]);
 
   useEffect(() => {
-    if (!scanEngineRows.length) return;
-    const storedIds = safeJsonParse<string[]>(window.localStorage.getItem(SCANNER_PREFS_KEY), []);
-    const storedModels = safeJsonParse<Record<string, string>>(window.localStorage.getItem(SCANNER_MODELS_KEY), {});
-    const storedSettings = safeJsonParse<{
-      analysisType?: string;
-      ocrLanguage?: OcrLanguage;
-      persistToErp?: boolean;
-      autoCreateClient?: boolean;
-      batchPriority?: BatchPriority;
-    }>(window.localStorage.getItem(SCANNER_SETTINGS_KEY), {});
-
-    const restoredIds = storedIds.filter((id) => scanEngineRows.some((provider) => provider.id === id && canRunEngine(provider)));
-    setSelectedIds(restoredIds.length > 0 ? restoredIds : eligibleProviders.slice(0, 2).map((provider) => provider.id));
-    setSelectedModels(storedModels);
-    if (storedSettings.analysisType) setActiveAnalysisId(storedSettings.analysisType);
-    if (storedSettings.ocrLanguage) setOcrLanguage(storedSettings.ocrLanguage);
-    if (typeof storedSettings.persistToErp === "boolean") setPersistToErp(storedSettings.persistToErp);
-    if (typeof storedSettings.autoCreateClient === "boolean") setAutoCreateClient(storedSettings.autoCreateClient);
-    if (storedSettings.batchPriority) setBatchPriority(storedSettings.batchPriority);
-  }, [scanEngineRows, eligibleProviders]);
-
-  useEffect(() => {
-    if (selectedIds.length > 0) {
-      window.localStorage.setItem(SCANNER_PREFS_KEY, JSON.stringify(selectedIds));
+    if (authStatus !== "authenticated") {
+      setEngineMeta(null);
+      setEngineMetaLoading(false);
+      return;
     }
-  }, [selectedIds]);
-
-  useEffect(() => {
-    window.localStorage.setItem(SCANNER_MODELS_KEY, JSON.stringify(selectedModels));
-  }, [selectedModels]);
-
-  useEffect(() => {
-    window.localStorage.setItem(
-      SCANNER_SETTINGS_KEY,
-      JSON.stringify({
-        analysisType: activeAnalysisId,
-        ocrLanguage,
-        persistToErp,
-        autoCreateClient,
-        batchPriority,
-      }),
-    );
-  }, [activeAnalysisId, ocrLanguage, persistToErp, autoCreateClient, batchPriority]);
-
-  useEffect(() => {
-    const urls = files.map((file) => {
-      if (file.type.startsWith("image/") || file.type === "application/pdf") return URL.createObjectURL(file);
-      return null;
-    });
-    setPreviewUrls(urls);
+    let cancelled = false;
+    (async () => {
+      setEngineMetaLoading(true);
+      try {
+        const res = await fetch("/api/scan/engine-meta");
+        const data = (await res.json()) as EngineMetaResponse & { error?: string };
+        if (!cancelled && res.ok && data.configured && data.gemini && data.openai) {
+          setEngineMeta(data);
+        } else if (!cancelled) {
+          setEngineMeta(null);
+        }
+      } catch {
+        if (!cancelled) setEngineMeta(null);
+      } finally {
+        if (!cancelled) setEngineMetaLoading(false);
+      }
+    })();
     return () => {
-      urls.forEach((url) => {
-        if (url) URL.revokeObjectURL(url);
-      });
+      cancelled = true;
     };
-  }, [files]);
+  }, [authStatus]);
 
-  const toggleProvider = (providerId: string) => {
-    const provider = scanEngineRows.find((row) => row.id === providerId);
-    if (!provider || !canRunEngine(provider)) return;
-    setSelectedIds((prev) => (prev.includes(providerId) ? prev.filter((id) => id !== providerId) : [...prev, providerId]));
-  };
+  useEffect(() => {
+    if (!engineMeta) return;
+    setOpenAiModel((prev) => {
+      const opts = engineMeta.openai.modelOptions;
+      if (prev && opts.some((o) => o.id === prev)) return prev;
+      const def = engineMeta.openai.defaultModelId;
+      if (opts.some((o) => o.id === def)) return def;
+      return opts[0]?.id ?? def;
+    });
+  }, [engineMeta]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles((prev) => [...prev, ...acceptedFiles]);
+  const openAiModelOptions = useMemo(
+    () =>
+      engineMeta?.openai.modelOptions?.length
+        ? engineMeta.openai.modelOptions
+        : FALLBACK_OPENAI_MODEL_OPTIONS,
+    [engineMeta],
+  );
+
+  const resolvedOpenAiModel = useMemo(() => {
+    if (openAiModel && openAiModelOptions.some((o) => o.id === openAiModel)) return openAiModel;
+    return engineMeta?.openai.defaultModelId ?? openAiModelOptions[0]?.id ?? "";
+  }, [openAiModel, openAiModelOptions, engineMeta]);
+
+  const telemetryEngineLabels = useMemo(() => {
+    const gem = engineMeta
+      ? `Gemini · ${truncateText(engineMeta.gemini.primaryLabel, 32)}`
+      : "Gemini";
+    const gptOpt = openAiModelOptions.find((o) => o.id === resolvedOpenAiModel);
+    const gpt = gptOpt ? `GPT · ${gptOpt.label}` : `GPT · ${truncateText(resolvedOpenAiModel, 24)}`;
+    return { gemini: gem, gpt } as const;
+  }, [engineMeta, openAiModelOptions, resolvedOpenAiModel]);
+
+  const engineSubtitle = useMemo(() => {
+    if (!engineMeta) {
+      return engineMetaLoading ? "טוען הגדרות מנועים מהשרת…" : "Document AI · Gemini · GPT (הגדרות סביבה)";
+    }
+    const { configured: c } = engineMeta;
+    const parts = [
+      c.documentAI ? "Document AI" : "Document AI (לא מוגדר)",
+      c.gemini ? `Gemini ${truncateText(engineMeta.gemini.primaryLabel, 36)}` : "Gemini (לא מוגדר)",
+      c.openai
+        ? `OpenAI ${truncateText(engineMeta.openai.defaultModelId.replace(/^gpt-/, ""), 28)}`
+        : "OpenAI (לא מוגדר)",
+    ];
+    return parts.join(" · ");
+  }, [engineMeta, engineMetaLoading]);
+
+  const visibleProjects = useMemo(() => {
+    let rows = projects;
+    const q = lookupSearch.trim().toLowerCase();
+    if (q) rows = rows.filter((p) => p.name.toLowerCase().includes(q));
+    if (selectedProjectId && !rows.some((p) => p.id === selectedProjectId)) {
+      const sel = projects.find((p) => p.id === selectedProjectId);
+      if (sel) rows = [sel, ...rows];
+    }
+    return rows;
+  }, [projects, lookupSearch, selectedProjectId]);
+
+  useEffect(() => {
+    if (!selectedContactId) return;
+    if (!contacts.some((c) => c.id === selectedContactId)) {
+      setSelectedContactId("");
+    }
+  }, [contacts, selectedContactId]);
+
+  const onDrop = useCallback((accepted: File[]) => {
+    if (!accepted.length) return;
+    setFiles((prev) => [...prev, ...accepted]);
+    setAiData(null);
+    setStreamPartialV5(null);
+    setStreamStage(null);
+    setScanError(null);
+    setTelemetry(IDLE_TELEMETRY);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -266,626 +364,655 @@ export default function MultiEngineScanner({
     accept: DROPZONE_ACCEPT,
   });
 
-  const selectedAnalysis = config.scanner.analysisTypes.find((mode) => mode.id === activeAnalysisId);
-  const totalOps = files.length * Math.max(1, selectedIds.length);
-
-  const executeMultiScan = async () => {
-    if (files.length === 0 || authStatus !== "authenticated") return null;
-    const runIds = selectedIds.filter((id) => eligibleProviders.some((provider) => provider.id === id));
-    if (runIds.length === 0) {
-      setGlobalError("יש לבחור לפחות מנוע זמין אחד.");
-      return null;
-    }
-
-    setGlobalError(null);
-    setProcessing(true);
-    setProgress(0);
-    setOverallEta("—");
-
-    const startedAt = Date.now();
-    const out: FileCompareResult[] = files.map((file, index) => ({
-      fileName: file.name,
-      previewUrl: previewUrls[index],
-      isPdf: file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"),
-      isImage: file.type.startsWith("image/"),
-      mimeType: file.type || "application/octet-stream",
-      engines: runIds.map((providerId) => ({
-        providerId,
-        label: scanEngineRows.find((provider) => provider.id === providerId)?.label ?? providerId,
-        ok: false,
-        score: 0,
-        status: "queued",
-      })),
-      recommendedIndex: -1,
-      analysisType: activeAnalysisId,
-    }));
-    setCompareResults(out);
-
-    const ops =
-      batchPriority === "engines"
-        ? runIds.flatMap((providerId) => files.map((file, fileIndex) => ({ file, fileIndex, providerId })))
-        : files.flatMap((file, fileIndex) => runIds.map((providerId) => ({ file, fileIndex, providerId })));
-
-    let doneOps = 0;
-    const nextResults = [...out];
-
-    for (const operation of ops) {
-      const providerIndex = runIds.indexOf(operation.providerId);
-      const engineLabel = scanEngineRows.find((provider) => provider.id === operation.providerId)?.label ?? operation.providerId;
-      nextResults[operation.fileIndex].engines[providerIndex] = {
-        ...nextResults[operation.fileIndex].engines[providerIndex],
-        status: "uploading",
-        label: engineLabel,
-      };
-      setCompareResults([...nextResults]);
-
-      const oneStartedAt = Date.now();
-      const formData = new FormData();
-      formData.append("file", operation.file);
-      formData.append("provider", operation.providerId);
-      formData.append("persist", persistToErp ? "true" : "false");
-      formData.append("industry", userIndustry);
-      formData.append("analysisType", activeAnalysisId);
-      formData.append("language", ocrLanguage);
-      formData.append("model", selectedModels[operation.providerId] || MODEL_OPTIONS[operation.providerId]?.[0]?.id || "");
-      formData.append("autoCreateClient", autoCreateClient ? "true" : "false");
-
-      nextResults[operation.fileIndex].engines[providerIndex] = {
-        ...nextResults[operation.fileIndex].engines[providerIndex],
-        status: "processing",
-      };
-      setCompareResults([...nextResults]);
-
-      try {
-        const res = await fetch("/api/ai", { method: "POST", body: formData });
-        const data = await res.json();
-        if (!res.ok) {
-          nextResults[operation.fileIndex].engines[providerIndex] = {
-            ...nextResults[operation.fileIndex].engines[providerIndex],
-            ok: false,
-            error: data.error || "שגיאה בעיבוד",
-            score: 0,
-            status: "error",
-            elapsedMs: Date.now() - oneStartedAt,
-          };
-        } else {
-          const ai = (data.aiData || data) as Record<string, unknown>;
-          nextResults[operation.fileIndex].engines[providerIndex] = {
-            ...nextResults[operation.fileIndex].engines[providerIndex],
-            ok: true,
-            aiData: ai,
-            notice: typeof data.notice === "string" ? data.notice : undefined,
-            score: scoreExtractedDocument(ai),
-            status: "done",
-            elapsedMs: Date.now() - oneStartedAt,
-          };
-        }
-      } catch {
-        nextResults[operation.fileIndex].engines[providerIndex] = {
-          ...nextResults[operation.fileIndex].engines[providerIndex],
-          ok: false,
-          error: "שגיאת רשת",
-          score: 0,
-          status: "error",
-          elapsedMs: Date.now() - oneStartedAt,
-        };
-      }
-
-      nextResults[operation.fileIndex].recommendedIndex = pickBestEngineIndex(nextResults[operation.fileIndex].engines);
-      doneOps += 1;
-      const pct = Math.round((doneOps / ops.length) * 100);
-      setProgress(pct);
-      const elapsed = Date.now() - startedAt;
-      const avg = elapsed / Math.max(1, doneOps);
-      const remainingMs = Math.max(0, Math.round(avg * (ops.length - doneOps)));
-      setOverallEta(
-        remainingMs < 60_000
-          ? `${Math.max(1, Math.round(remainingMs / 1000))} שנ׳`
-          : `${Math.max(1, Math.round(remainingMs / 60_000))} דק׳`,
-      );
-      setCompareResults([...nextResults]);
-    }
-
-    setProcessing(false);
-    setOverallEta("הושלם");
-    return nextResults;
+  const clearWorkspace = () => {
+    setFiles([]);
+    setPreviewUrls([]);
+    setAiData(null);
+    setStreamPartialV5(null);
+    setStreamStage(null);
+    setScanError(null);
+    setTelemetry(IDLE_TELEMETRY);
   };
 
-  const handleSave = async (row: FileCompareResult, targetModule: SaveTarget) => {
-    const best = row.engines[row.recommendedIndex];
-    if (!best?.ok || !best.aiData) return;
-    setSavingId(`${row.fileName}-${targetModule}`);
+  const runTriScan = async () => {
+    if (!activeFile || authStatus !== "authenticated") {
+      toast.error("יש להתחבר ולבחור קובץ.");
+      return;
+    }
+    setScanning(true);
+    setScanError(null);
+    setAiData(null);
+    setStreamPartialV5(null);
+    setStreamStage(null);
+    setTelemetry(RUNNING_TELEMETRY);
+
+    const fd = new FormData();
+    fd.append("file", activeFile);
+    fd.append("scanMode", scanMode);
+    fd.append("persist", "false");
+    if (projectLabel.trim()) fd.append("project", projectLabel.trim());
+    if (clientLabel.trim()) fd.append("client", clientLabel.trim());
+    fd.append("openAiModel", resolvedOpenAiModel);
+
     try {
-      const saved = await saveScannedDocumentAction(row.fileName, best.aiData, targetModule);
-      if (!saved.success) {
-        setGlobalError(saved.error || "השמירה נכשלה.");
+      const res = await fetch("/api/scan/tri-engine/stream", { method: "POST", body: fd });
+
+      if (!res.ok) {
+        const text = await res.text();
+        let msg = "הסריקה נכשלה";
+        const firstLine = text.split("\n").find((l) => l.trim());
+        if (firstLine) {
+          try {
+            const j = JSON.parse(firstLine) as { error?: string };
+            if (typeof j.error === "string") msg = j.error;
+          } catch {
+            msg = text.slice(0, 300) || msg;
+          }
+        }
+        setScanError(msg);
+        setTelemetry(IDLE_TELEMETRY);
+        toast.error(msg);
         return;
       }
-      if (targetModule === "ERP") {
-        router.push("/app/documents/erp");
-      } else {
-        router.push("/app/clients");
+
+      if (!res.body) {
+        setScanError("תשובת שרת ללא גוף");
+        setTelemetry(IDLE_TELEMETRY);
+        toast.error("תשובת שרת ללא גוף");
+        return;
       }
+
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      let finishedOk = false;
+      let streamErr: string | null = null;
+
+      const handleNdjsonEvent = (ev: Record<string, unknown>) => {
+        if (ev.type === "start") {
+          const w = ev.usageWarnings;
+          if (Array.isArray(w) && w.length > 0) {
+            toast.message("סריקה", { description: String(w[0]).slice(0, 160) });
+          }
+          return;
+        }
+        if (ev.type === "telemetry" && ev.telemetry && typeof ev.telemetry === "object") {
+          setTelemetry(ev.telemetry as TriTelemetry);
+        }
+        if (ev.type === "partial_v5" && ev.v5 && typeof ev.v5 === "object") {
+          setStreamPartialV5(ev.v5 as ScanExtractionV5);
+          setStreamStage(typeof ev.stage === "string" ? ev.stage : null);
+        }
+        if (ev.type === "done" && ev.ok === true && ev.aiData && typeof ev.aiData === "object") {
+          streamErr = null;
+          setScanError(null);
+          setAiData(ev.aiData as Record<string, unknown>);
+          if (ev.telemetry && typeof ev.telemetry === "object") {
+            setTelemetry(ev.telemetry as TriTelemetry);
+          }
+          setStreamPartialV5(null);
+          setStreamStage(null);
+          finishedOk = true;
+          const warns = ev.usageWarnings;
+          if (Array.isArray(warns) && warns.length > 0) {
+            toast.message("הסריקה הושלמה", { description: String(warns[0]).slice(0, 120) });
+          } else {
+            toast.success("הפענוח הושלם");
+          }
+          return;
+        }
+        if (ev.type === "error" && typeof ev.error === "string") {
+          if (finishedOk) return;
+          streamErr = ev.error;
+          setStreamStage(null);
+          setStreamPartialV5(null);
+          setScanError(ev.error);
+          toast.error(ev.error);
+        }
+      };
+
+      const consumeLine = (rawLine: string) => {
+        const t = rawLine.trim();
+        if (!t) return;
+        let ev: Record<string, unknown>;
+        try {
+          ev = JSON.parse(t) as Record<string, unknown>;
+        } catch {
+          return;
+        }
+        handleNdjsonEvent(ev);
+      };
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (value) buf += dec.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop() ?? "";
+          for (const line of lines) consumeLine(line);
+          if (done) break;
+        }
+
+        consumeLine(buf);
+
+        if (!finishedOk && !streamErr) {
+          setScanError("הזרם נסגר ללא תוצאה");
+          toast.error("הזרם נסגר ללא תוצאה");
+        }
+      } finally {
+        reader.releaseLock();
+      }
+    } catch {
+      setScanError("שגיאת רשת");
+      setTelemetry(IDLE_TELEMETRY);
+      toast.error("שגיאת רשת");
     } finally {
-      setSavingId(null);
+      setScanning(false);
     }
   };
 
-  const providerCards = (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      {scanEngineRows.map((provider) => {
-        const on = selectedIds.includes(provider.id);
-        const allowed = canRunEngine(provider);
-        const modelOptions = MODEL_OPTIONS[provider.id] ?? [{ id: "default", label: "Default" }];
-        const selectedModel = selectedModels[provider.id] || modelOptions[0].id;
-        return (
-          <div
-            key={provider.id}
-            className={`tile ${on && allowed ? "border-[color:var(--axis-ai)] shadow-[var(--tile-shadow-raised)]" : ""} ${!allowed ? "opacity-55" : ""}`}
-          >
-            <div className="tile-body">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="tile-eyebrow">{provider.label}</p>
-                  <p className="mt-1 text-[13px] font-semibold text-[color:var(--ink-600)]">{provider.description}</p>
+  const handleSave = async (target: "ERP" | "CRM") => {
+    if (!activeFile || !aiData) return;
+    setSavingTarget(target);
+    try {
+      const saved = await saveScannedDocumentAction(
+        activeFile.name,
+        aiData,
+        target,
+        target === "CRM" && selectedContactId ? selectedContactId : undefined,
+      );
+      if (!saved.success) {
+        const msg = saved.error || "השמירה נכשלה";
+        toast.error(msg);
+        return;
+      }
+      toast.success(target === "ERP" ? "אושר ל-ERP" : "יוצא ל-CRM");
+      if (target === "ERP") router.push("/app/documents/erp");
+      else router.push("/app/clients");
+    } finally {
+      setSavingTarget(null);
+    }
+  };
+
+  const shellClass = compactHeader
+    ? "flex h-[min(78vh,820px)] max-h-[90vh] min-h-[480px] flex-col overflow-hidden rounded-2xl border border-cyan-500/15 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-100 shadow-2xl shadow-cyan-950/20"
+    : "flex h-screen max-h-screen min-h-[640px] flex-col overflow-hidden bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-100";
+
+  const pad = compactHeader ? "p-3 gap-3 sm:p-4 sm:gap-4" : "p-4 gap-4 sm:p-6 lg:p-8 lg:gap-6";
+  const paneBase =
+    "flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-slate-900/40 shadow-[0_12px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl";
+
+  const feedPrimary = scanMode === "DRAWING_BOQ" ? "boq" : scanMode === "INVOICE_FINANCIAL" ? "invoice" : "general";
+
+  return (
+    <div dir="rtl" lang="he" className={shellClass}>
+      <header
+        className={`shrink-0 border-b border-white/[0.06] bg-slate-950/80 backdrop-blur-xl ${
+          compactHeader ? "px-4 py-3" : "px-5 py-4 sm:px-8"
+        }`}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-500/25 bg-gradient-to-br from-cyan-500/15 to-indigo-500/10">
+              <ActiveIcon className="h-5 w-5 text-cyan-200" aria-hidden />
+            </div>
+            <div className="min-w-0">
+              <h1 className={`font-bold tracking-tight text-white ${compactHeader ? "text-sm" : "text-lg"}`}>
+                לוח בקרת סריקה — Tri-Engine
+              </h1>
+              <p className="mt-0.5 text-[11px] font-medium leading-snug text-slate-400">{engineSubtitle}</p>
+              {engineMeta ? (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(
+                    [
+                      ["Document AI", engineMeta.configured.documentAI],
+                      ["Gemini", engineMeta.configured.gemini],
+                      ["OpenAI", engineMeta.configured.openai],
+                    ] as const
+                  ).map(([label, ok]) => (
+                    <span
+                      key={label}
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${
+                        ok
+                          ? "border-emerald-500/35 bg-emerald-500/10 text-emerald-100"
+                          : "border-amber-500/30 bg-amber-500/10 text-amber-100/95"
+                      }`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-emerald-400 shadow-[0_0_6px_rgb(52,211,153)]" : "bg-amber-400"}`}
+                        aria-hidden
+                      />
+                      {label}
+                      {!ok ? " — חסר מפתח" : null}
+                    </span>
+                  ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => toggleProvider(provider.id)}
-                  disabled={!allowed}
-                  className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-[11px] font-bold transition ${
-                    on && allowed
-                      ? "bg-[color:var(--axis-ai)] text-white"
-                      : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-600)]"
-                  }`}
-                >
-                  {on ? "פעיל" : allowed ? "בחר" : "נעול"}
-                </button>
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold">
-                <span className={`timeline-dot ${allowed ? "timeline-dot--success" : "timeline-dot--warning"}`} aria-hidden />
-                <span className="text-[color:var(--ink-500)]">{allowed ? "זמין לסריקה" : "לא זמין לפי מפתחות/תוכנית"}</span>
-              </div>
-              <label className="mt-3 block text-[11px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink-500)]">
-                מודל
+              ) : engineMetaLoading ? (
+                <p className="mt-2 flex items-center gap-1.5 text-[10px] text-slate-500">
+                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                  בודק מפתחות סביבה…
+                </p>
+              ) : (
+                <p className="mt-2 text-[10px] text-amber-200/90">
+                  לא נטענו מטא-נתוני מנוע — בדקו התחברות או הגדרות Vercel / .env.
+                </p>
+              )}
+            </div>
+          </div>
+          {files.length > 0 ? (
+            <button
+              type="button"
+              onClick={clearWorkspace}
+              className="shrink-0 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-[11px] font-bold text-slate-200 transition hover:bg-white/[0.08]"
+            >
+              נקה סביבת עבודה
+            </button>
+          ) : null}
+        </div>
+      </header>
+
+      <div className={`grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-12 ${pad}`}>
+        {/* ימין קריאה: קודם הגדרות */}
+        <section className={`${paneBase} lg:col-span-4`}>
+          <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-3">
+            <Layers className="h-4 w-4 shrink-0 text-cyan-400/90" aria-hidden />
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">הגדרות</p>
+              <p className="truncate text-xs font-semibold text-slate-200">קלט, מצב וקשר לפרויקט</p>
+            </div>
+          </div>
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
+            <div
+              {...getRootProps()}
+              className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-7 transition ${
+                isDragActive
+                  ? "border-cyan-400/80 bg-cyan-500/10"
+                  : "border-white/12 bg-slate-950/40 hover:border-cyan-500/35"
+              }`}
+            >
+              <input {...getInputProps()} />
+              <UploadCloud className="mb-2 h-9 w-9 text-cyan-500/50" aria-hidden />
+              <p className="text-center text-xs font-bold text-slate-200">גרירה לכאן או לחיצה לבחירה</p>
+              <p className="mt-1 text-center text-[10px] text-slate-500">PDF ותמונות — עד כמה קבצים במקביל</p>
+            </div>
+
+            <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+              מצב סריקה
+              <select
+                value={scanMode}
+                onChange={(e) => setScanMode(e.target.value as ScanModeV5)}
+                disabled={scanning}
+                className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2.5 text-xs font-semibold text-slate-100 outline-none focus:ring-2 focus:ring-cyan-500/35"
+              >
+                {SCAN_MODES.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {(() => {
+              const modeDef = SCAN_MODES.find((m) => m.id === scanMode);
+              return (
+                <>
+                  <p className="text-[11px] font-medium leading-snug text-cyan-100/75">{modeDef?.hintShort}</p>
+                  <details className="rounded-xl border border-white/[0.06] bg-slate-950/35 px-3 py-2 text-start">
+                    <summary className="cursor-pointer text-[10px] font-bold text-slate-400">מידע נוסף על המצב</summary>
+                    <p className="mt-2 text-[10px] leading-relaxed text-slate-500">{modeDef?.hintDetail}</p>
+                  </details>
+                </>
+              );
+            })()}
+
+            <div className="grid gap-3">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+                <span className="mb-1 flex items-center gap-2">
+                  <Search className="h-3.5 w-3.5 text-slate-600" aria-hidden />
+                  חיפוש (מסנן פרויקטים + שאילתת לקוחות לשרת)
+                </span>
+                <input
+                  type="search"
+                  value={lookupSearch}
+                  onChange={(e) => setLookupSearch(e.target.value)}
+                  placeholder="שם פרויקט או לקוח…"
+                  disabled={scanning}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-xs font-semibold text-slate-100 outline-none focus:ring-2 focus:ring-cyan-500/35"
+                />
+                <p className="mt-1 text-[10px] font-medium text-slate-600">השהייה קצרה לפני שליחת החיפוש לשרת.</p>
+              </label>
+
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+                <span className="mb-1 flex items-center gap-2">
+                  <Building2 className="h-3.5 w-3.5 text-slate-600" aria-hidden />
+                  פרויקט
+                  {lookupsLoading ? (
+                    <Loader2 className="h-3 w-3 animate-spin text-slate-500" aria-hidden />
+                  ) : null}
+                </span>
                 <select
-                  className="mt-1 w-full rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
-                  value={selectedModel}
-                  onChange={(event) =>
-                    setSelectedModels((current) => ({ ...current, [provider.id]: event.target.value }))
-                  }
-                  disabled={!allowed}
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                  disabled={scanning || lookupsLoading}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-xs font-semibold text-slate-100 outline-none focus:ring-2 focus:ring-sky-500/40"
                 >
-                  {modelOptions.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.label}
+                  <option value="">— ללא —</option>
+                  {visibleProjects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                      {!p.isActive ? " (ארכיון)" : ""}
                     </option>
                   ))}
                 </select>
               </label>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+                <span className="mb-1 flex items-center gap-2">
+                  <UserRound className="h-3.5 w-3.5 text-slate-600" aria-hidden />
+                  לקוח (CRM)
+                </span>
+                <select
+                  value={selectedContactId}
+                  onChange={(e) => setSelectedContactId(e.target.value)}
+                  disabled={scanning || lookupsLoading}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-xs font-semibold text-slate-100 outline-none focus:ring-2 focus:ring-sky-500/40"
+                >
+                  <option value="">— ללא —</option>
+                  {contacts.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-[10px] font-medium text-slate-600">
+                  בפרויקט נבחר: לקוחות של הפרויקט וגם ללא פרויקט. השם נשלח לסריקה; מזהה הלקוח ל־CRM בייצוא.
+                </p>
+              </label>
+            </div>
+
+            <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+              מודל GPT (מהשרת + env)
+              <select
+                value={openAiModel || resolvedOpenAiModel}
+                onChange={(e) => setOpenAiModel(e.target.value)}
+                disabled={scanning || openAiModelOptions.length === 0}
+                className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2.5 text-xs font-semibold text-slate-100 outline-none focus:ring-2 focus:ring-cyan-500/35"
+              >
+                {openAiModelOptions.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div>
+              <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500">סטטוס ריצה (מנועים)</p>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    ["Document AI", telemetry.documentAI],
+                    [telemetryEngineLabels.gemini, telemetry.gemini],
+                    [telemetryEngineLabels.gpt, telemetry.gpt],
+                  ] as const
+                ).map(([label, t]) => (
+                  <span
+                    key={label}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold ${enginePillClass(t.phase, scanning)}`}
+                  >
+                    {t.phase === "running" ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : null}
+                    {t.phase === "ok" ? <CheckCircle2 className="h-3 w-3" aria-hidden /> : null}
+                    {t.phase === "error" ? <XCircle className="h-3 w-3" aria-hidden /> : null}
+                    {t.phase === "skipped" ? <Brain className="h-3 w-3 opacity-50" aria-hidden /> : null}
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={runTriScan}
+              disabled={scanning || !activeFile || authStatus !== "authenticated" || !resolvedOpenAiModel}
+              className="mt-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 py-3.5 text-sm font-black text-white shadow-lg shadow-cyan-950/40 transition hover:brightness-110 disabled:opacity-45"
+            >
+              {scanning ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <ScanLine className="h-4 w-4" aria-hidden />}
+              {scanning ? "מפענח…" : "הרץ סריקת Tri-Engine"}
+            </button>
+            {authStatus !== "authenticated" ? (
+              <p className="text-center text-[10px] text-amber-200/90">נדרשת התחברות להרצת הסריקה.</p>
+            ) : null}
+          </div>
+        </section>
+
+        <section className={`${paneBase} min-h-[280px] lg:col-span-4`}>
+          <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-3">
+            <LayoutPanelLeft className="h-4 w-4 shrink-0 text-cyan-400/90" aria-hidden />
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">תצוגה</p>
+              <p className="truncate text-xs font-semibold text-slate-200">רשימת קבצים ותצוגה מקדימה</p>
             </div>
           </div>
-        );
-      })}
-    </div>
-  );
-
-  const filesList = (
-    <div className="space-y-3">
-      <div
-        {...getRootProps()}
-        className={`tile tile-interactive ${isDragActive ? "border-[color:var(--axis-ai)] shadow-[var(--tile-shadow-raised)]" : ""}`}
-      >
-        <input {...getInputProps()} />
-        <div className="tile-body-lg flex flex-col items-center justify-center text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-[24px] bg-[color:var(--axis-ai-soft)] text-[color:var(--axis-ai)]">
-            <UploadCloud className="h-8 w-8" aria-hidden />
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="max-h-[32%] shrink-0 overflow-y-auto border-b border-white/[0.04] px-2 py-2">
+              {files.length === 0 ? (
+                <p className="px-2 py-6 text-center text-xs text-slate-500">העלו קבצים מעמודת ההגדרות</p>
+              ) : (
+                <ul className="space-y-1">
+                  {files.map((f, i) => (
+                    <li key={`${f.name}-${i}`}>
+                      <button
+                        type="button"
+                        onClick={() => setActiveFileIndex(i)}
+                        className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-start text-xs font-semibold transition ${
+                          i === activeFileIndex
+                            ? "bg-cyan-500/20 text-cyan-50 ring-1 ring-cyan-400/40"
+                            : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                        }`}
+                      >
+                        <FileSearch className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
+                        <span className="min-w-0 truncate">{f.name}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              {!activeFile || !activePreviewUrl ? (
+                <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-2 text-center text-xs text-slate-500">
+                  <FileText className="h-8 w-8 opacity-35" aria-hidden />
+                  בחרו קובץ מהרשימה
+                </div>
+              ) : isImageFile(activeFile) ? (
+                <div className="flex justify-center">
+                  <Image
+                    src={activePreviewUrl}
+                    alt={activeFile.name}
+                    width={960}
+                    height={720}
+                    unoptimized
+                    className="max-h-full w-auto max-w-full rounded-xl border border-white/10 object-contain"
+                  />
+                </div>
+              ) : isPdfFile(activeFile) ? (
+                <div className="flex h-full min-h-[280px] flex-col gap-2">
+                  <p className="text-[10px] font-bold text-slate-500">PDF — גלילה פנימית</p>
+                  <iframe
+                    title={activeFile.name}
+                    src={activePreviewUrl}
+                    className="min-h-0 flex-1 w-full rounded-xl border border-white/10 bg-slate-950/80"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs text-slate-500">תצוגה לא זמינה לסוג קובץ</div>
+              )}
+            </div>
           </div>
-          <h3 className="mt-4 text-xl font-black tracking-tight text-[color:var(--ink-900)]">
-            {config.scanner.dropzoneTitle}
-          </h3>
-          <p className="mt-2 max-w-xl text-sm leading-7 text-[color:var(--ink-500)]">
-            {config.scanner.dropzoneSub} · {SCAN_ACCEPT_SUMMARY}
-          </p>
-        </div>
-      </div>
+        </section>
 
-      {files.length > 0 ? (
-        <div className="grid gap-2">
-          {files.map((file, index) => (
-            <div
-              key={`${file.name}-${index}`}
-              className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--line)] bg-white px-3 py-2.5"
-            >
-              <div className="flex min-w-0 items-center gap-2">
-                <FileSearch className="h-4 w-4 shrink-0 text-[color:var(--axis-ai)]" aria-hidden />
-                <span className="truncate text-sm font-semibold text-[color:var(--ink-900)]">{file.name}</span>
-              </div>
+        <section className={`${paneBase} lg:col-span-4`}>
+          <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-3">
+            <Sparkles className="h-4 w-4 shrink-0 text-amber-200/90" aria-hidden />
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">פלט מיידי</p>
+              <p className="truncate text-xs font-semibold text-slate-200">BOQ, פריטי שורה ומטא</p>
+            </div>
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              {scanError ? (
+                <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-100">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <span className="min-w-0 break-words">{truncateText(scanError, 2400)}</span>
+                </div>
+              ) : null}
+
+              {streamStage ? (
+                <div className="mb-3 flex items-center gap-2 rounded-xl border border-sky-400/35 bg-sky-500/10 px-3 py-2 text-[11px] font-bold text-sky-100">
+                  {scanning ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden /> : null}
+                  <span>
+                    פיד חי — {streamStageHebrew(streamStage)}
+                    {scanning ? "…" : ""}
+                  </span>
+                </div>
+              ) : null}
+
+              {v5?.priceAlertPending ? (
+                <div className="mb-3 flex items-center gap-2 rounded-xl border border-amber-400/35 bg-amber-500/15 px-3 py-2 text-[11px] font-bold text-amber-100">
+                  <AlertTriangle className="h-4 w-4" aria-hidden />
+                  priceAlertPending — נדרש אימות מחירים ב-ERP
+                </div>
+              ) : null}
+
+              {v5 ? (
+                <div className="mb-4 grid grid-cols-2 gap-2 text-[10px]">
+                  <div className="rounded-lg border border-white/10 bg-slate-950/50 px-2 py-1.5">
+                    <span className="text-slate-500">ספק</span>
+                    <p className="truncate font-semibold text-slate-200">{v5.vendor}</p>
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-slate-950/50 px-2 py-1.5">
+                    <span className="text-slate-500">סה״כ</span>
+                    <p className="font-semibold text-slate-200">{v5.total}</p>
+                  </div>
+                  <div className="col-span-2 rounded-lg border border-white/10 bg-slate-950/50 px-2 py-1.5">
+                    <span className="text-slate-500">סיכום</span>
+                    <p className="text-xs font-medium leading-snug text-slate-300">{v5.summary || "—"}</p>
+                  </div>
+                </div>
+              ) : null}
+
+              {!v5 && !scanError ? (
+                <div className="flex h-48 flex-col items-center justify-center gap-2 text-center text-xs text-slate-500">
+                  <Brain className="h-10 w-10 opacity-30" aria-hidden />
+                  הפעלו סריקה כדי לראות נתונים כאן
+                </div>
+              ) : null}
+
+              {v5 && feedPrimary === "boq" && v5.billOfQuantities.length > 0 ? (
+                <div className="mb-6">
+                  <p className="mb-2 text-[10px] font-black uppercase text-sky-300/90">כמויות (BOQ)</p>
+                  <div className="overflow-x-auto rounded-xl border border-white/10">
+                    <table className="table-fixed text-xs w-full">
+                      <colgroup>
+                        <col className="w-[22%]" />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                      </colgroup>
+                      <thead className="bg-white/[0.04] text-[10px] font-black uppercase tracking-wide text-slate-500">
+                        <tr>
+                          <th className="px-2 py-2 text-start">סימון</th>
+                          <th className="px-2 py-2 text-start">תיאור</th>
+                          <th className="px-2 py-2 text-end">כמות</th>
+                          <th className="px-2 py-2 text-start">יח׳</th>
+                          <th className="px-2 py-2 text-start">חומר</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5 text-slate-300">
+                        {v5.billOfQuantities.map((row, i) => (
+                          <tr key={i} className="hover:bg-white/[0.02]">
+                            <td className="px-2 py-1.5 align-top font-mono text-[10px] text-slate-400">{row.itemRef ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top">{row.description}</td>
+                            <td className="px-2 py-1.5 align-top text-end tabular-nums">{row.quantity ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top">{row.unit ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top text-[10px] text-slate-400">{row.material ?? "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : null}
+
+              {v5 && (feedPrimary === "invoice" || (feedPrimary === "boq" && v5.lineItems.length > 0)) ? (
+                <div>
+                  <p className="mb-2 text-[10px] font-black uppercase text-emerald-300/90">פריטי שורה</p>
+                  <div className="overflow-x-auto rounded-xl border border-white/10">
+                    <table className="table-fixed text-xs w-full">
+                      <colgroup>
+                        <col className="w-[22%]" />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                      </colgroup>
+                      <thead className="bg-white/[0.04] text-[10px] font-black uppercase tracking-wide text-slate-500">
+                        <tr>
+                          <th className="px-2 py-2 text-start">מק״ט</th>
+                          <th className="px-2 py-2 text-start">תיאור</th>
+                          <th className="px-2 py-2 text-end">כמות</th>
+                          <th className="px-2 py-2 text-end">מחיר יח׳</th>
+                          <th className="px-2 py-2 text-end">סכום</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5 text-slate-300">
+                        {v5.lineItems.map((row, i) => (
+                          <tr key={i} className="hover:bg-white/[0.02]">
+                            <td className="px-2 py-1.5 align-top font-mono text-[10px] text-slate-400">{row.sku ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top">{row.description}</td>
+                            <td className="px-2 py-1.5 align-top text-end tabular-nums">{row.quantity ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top text-end tabular-nums">{row.unitPrice ?? "—"}</td>
+                            <td className="px-2 py-1.5 align-top text-end tabular-nums">{row.lineTotal ?? "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : null}
+
+              {v5 && feedPrimary === "general" && v5.billOfQuantities.length === 0 && v5.lineItems.length === 0 ? (
+                <div className="rounded-xl border border-white/10 bg-slate-950/40 p-3 text-xs text-slate-400">
+                  <p className="font-bold text-slate-300">מצב כללי</p>
+                  <p className="mt-1 leading-relaxed">{v5.summary || "אין שורות מפורטות — השתמשו במטא-דאטה למעלה."}</p>
+                </div>
+              ) : null}
+            </div>
+
+            <footer className="flex shrink-0 gap-4 border-t border-white/10 bg-white/[0.02] p-4 backdrop-blur-md">
               <button
                 type="button"
-                onClick={() => setFiles((prev) => prev.filter((_, fileIndex) => fileIndex !== index))}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)] hover:text-[color:var(--state-danger)]"
-                aria-label={`הסר ${file.name}`}
+                onClick={() => handleSave("ERP")}
+                disabled={!aiData || !activeFile || savingTarget !== null}
+                className="flex flex-1 items-center justify-center rounded-xl border border-emerald-400/40 bg-emerald-500/15 py-3 text-xs font-black text-emerald-100 transition hover:bg-emerald-500/25 disabled:opacity-40"
               >
-                <XCircle className="h-4 w-4" aria-hidden />
+                {savingTarget === "ERP" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+                אשר ל-ERP
               </button>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-
-  return (
-    <div className={compactHeader ? "space-y-4" : "space-y-6"} dir="rtl">
-      {/* Header */}
-      <div className={compactHeader ? "px-1" : "text-center"}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] px-4 py-1.5 text-[color:var(--axis-ai-ink)]">
-          <Settings2 className="h-4 w-4" aria-hidden />
-          <span className="text-[10px] font-black uppercase tracking-[0.12em]">סקטור: {config.label}</span>
-        </div>
-        <div className={compactHeader ? "mt-3" : "mt-4"}>
-          <div className={`flex ${compactHeader ? "items-start gap-3" : "flex-col items-center"}`}>
-            <span
-              className={`flex shrink-0 items-center justify-center rounded-[24px] bg-[color:var(--axis-ai-soft)] text-[color:var(--axis-ai)] ${
-                compactHeader ? "h-12 w-12" : "h-16 w-16"
-              }`}
-            >
-              <ActiveIcon className={compactHeader ? "h-6 w-6" : "h-8 w-8"} aria-hidden />
-            </span>
-            <div className={compactHeader ? "" : "mt-3"}>
-              <h1 className={`${compactHeader ? "text-xl" : "text-3xl sm:text-4xl"} font-black tracking-tight text-[color:var(--ink-900)]`}>
-                {config.scanner.title}
-              </h1>
-              <p className={`mt-1 max-w-3xl ${compactHeader ? "text-sm" : "text-base"} leading-7 text-[color:var(--ink-500)]`}>
-                {config.scanner.subtitle}
-              </p>
-            </div>
+              <button
+                type="button"
+                onClick={() => handleSave("CRM")}
+                disabled={!aiData || !activeFile || savingTarget !== null}
+                className="flex flex-1 items-center justify-center rounded-xl border border-violet-400/40 bg-violet-500/15 py-3 text-xs font-black text-violet-100 transition hover:bg-violet-500/25 disabled:opacity-40"
+              >
+                {savingTarget === "CRM" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+                ייצוא ל-CRM
+              </button>
+            </footer>
           </div>
-        </div>
+        </section>
       </div>
-
-      {globalError ? (
-        <div className="rounded-lg border border-[color:var(--state-danger-soft)] bg-[color:var(--state-danger-soft)] px-4 py-3 text-sm font-semibold text-[color:var(--state-danger)]">
-          {globalError}
-        </div>
-      ) : null}
-
-      <BentoGrid>
-        {/* Settings tile */}
-        <Tile tone="neutral" span={8} rows={2}>
-          <TileHeader eyebrow="Scanner Settings" />
-          <div className="mt-4 space-y-5">
-            <div>
-              <p className="tile-eyebrow">סוג פענוח</p>
-              <div className="mt-2 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                {config.scanner.analysisTypes.map((mode) => {
-                  const active = activeAnalysisId === mode.id;
-                  return (
-                    <button
-                      key={mode.id}
-                      type="button"
-                      onClick={() => setActiveAnalysisId(mode.id)}
-                      className={`rounded-xl border px-4 py-3 text-start transition ${
-                        active
-                          ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)] shadow-[var(--shadow-xs)]"
-                          : "border-[color:var(--line)] bg-white hover:border-[color:var(--axis-ai-border)]"
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${active ? "bg-[color:var(--axis-ai)] text-white" : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)]"}`}>
-                          <Zap className="h-4 w-4" aria-hidden />
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block font-black text-[color:var(--ink-900)]">{mode.label}</span>
-                          <span className="mt-1 block text-[12px] leading-5 text-[color:var(--ink-500)]">{mode.description}</span>
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <p className="tile-eyebrow">מנועי סריקה</p>
-              <div className="mt-2">{providerCards}</div>
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <label className="block">
-                <span className="tile-eyebrow">שפת OCR</span>
-                <select
-                  className="mt-1 w-full rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
-                  value={ocrLanguage}
-                  onChange={(event) => setOcrLanguage(event.target.value as OcrLanguage)}
-                >
-                  <option value="auto">אוטומטי</option>
-                  <option value="he">עברית</option>
-                  <option value="en">אנגלית</option>
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="tile-eyebrow">עדיפות Batch</span>
-                <select
-                  className="mt-1 w-full rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
-                  value={batchPriority}
-                  onChange={(event) => setBatchPriority(event.target.value as BatchPriority)}
-                >
-                  <option value="files">קודם קבצים</option>
-                  <option value="engines">קודם מנועים</option>
-                </select>
-              </label>
-
-              <label className="flex items-center gap-3 rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3">
-                <input
-                  type="checkbox"
-                  checked={persistToErp}
-                  onChange={(event) => setPersistToErp(event.target.checked)}
-                  className="h-4 w-4"
-                />
-                <span>
-                  <span className="block text-sm font-black text-[color:var(--ink-900)]">שמירה אוטומטית ל-ERP</span>
-                  <span className="mt-0.5 block text-[11px] text-[color:var(--ink-500)]">שומר מסמך אחרי הפענוח</span>
-                </span>
-              </label>
-
-              <label className="flex items-center gap-3 rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3">
-                <input
-                  type="checkbox"
-                  checked={autoCreateClient}
-                  onChange={(event) => setAutoCreateClient(event.target.checked)}
-                  className="h-4 w-4"
-                />
-                <span>
-                  <span className="block text-sm font-black text-[color:var(--ink-900)]">צור לקוח אוטומטית</span>
-                  <span className="mt-0.5 block text-[11px] text-[color:var(--ink-500)]">כאשר לא נמצא לקוח קיים</span>
-                </span>
-              </label>
-            </div>
-          </div>
-        </Tile>
-
-        {/* Live processing tile */}
-        <Tile tone="ai" span={4} rows={2}>
-          <TileHeader eyebrow="Live Processing" liveDot />
-          <div className="mt-4 flex items-center justify-center">
-            <ProgressRing value={progress} axis="ai" size={148} strokeWidth={12}>
-              <span className="text-3xl font-black text-white tabular-nums">{progress}%</span>
-              <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-violet-200/80">
-                התקדמות כוללת
-              </span>
-            </ProgressRing>
-          </div>
-          <div className="mt-5 space-y-3">
-            <div className="flex items-center justify-between text-[12px] font-semibold text-white/85">
-              <span>פעולות</span>
-              <span className="tabular-nums">{processing ? `${Math.round((progress / 100) * totalOps)}/${Math.max(totalOps, 1)}` : totalOps}</span>
-            </div>
-            <ProgressBar value={progress} axis="ai" glow />
-            <div className="grid gap-2">
-              {selectedIds.map((providerId) => {
-                const provider = scanEngineRows.find((row) => row.id === providerId);
-                const statuses = compareResults.flatMap((row) => row.engines.filter((engine) => engine.providerId === providerId));
-                const doneCount = statuses.filter((engine) => engine.status === "done").length;
-                const errorCount = statuses.filter((engine) => engine.status === "error").length;
-                const status: EngineRunStatus =
-                  errorCount > 0 ? "error" : doneCount === files.length && files.length > 0 ? "done" : processing ? "processing" : "idle";
-                const providerPct = files.length > 0 ? Math.round(((doneCount + errorCount) / files.length) * 100) : 0;
-                return (
-                  <div key={providerId} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-                    <div className="flex items-center justify-between gap-2 text-[12px]">
-                      <span className="font-black text-white">{provider?.label ?? providerId}</span>
-                      <span className="font-semibold text-white/75">{statusLabel(status)}</span>
-                    </div>
-                    <div className="mt-2">
-                      <ProgressBar value={providerPct} axis={statusAxis(status)} height={6} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-[12px] text-white/85">
-              <div className="flex items-center justify-between">
-                <span className="font-bold">ETA</span>
-                <span className="font-black tabular-nums">{overallEta}</span>
-              </div>
-            </div>
-          </div>
-        </Tile>
-
-        {/* Dropzone/files */}
-        <Tile tone="neutral" span={12}>
-          {filesList}
-          <div className="mt-5 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => void executeMultiScan()}
-              disabled={processing || files.length === 0 || selectedIds.length === 0}
-              className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--axis-ai)] px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {processing ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Brain className="h-4 w-4" aria-hidden />}
-              {processing ? "מפענח..." : "התחל סריקה"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setFiles([]);
-                setCompareResults([]);
-                setProgress(0);
-                setOverallEta("—");
-                setGlobalError(null);
-              }}
-              className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-bold text-[color:var(--ink-700)]"
-            >
-              <XCircle className="h-4 w-4" aria-hidden />
-              נקה הכל
-            </button>
-          </div>
-        </Tile>
-
-        {/* Results */}
-        {compareResults.map((row, rowIndex) => {
-          const recommended = row.recommendedIndex >= 0 ? row.engines[row.recommendedIndex] : null;
-          return (
-            <Tile key={`${row.fileName}-${rowIndex}`} tone="neutral" span={12}>
-              <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="tile-eyebrow">{selectedAnalysis?.label ?? row.analysisType}</p>
-                      <h3 className="mt-1 text-lg font-black tracking-tight text-[color:var(--ink-900)]">{row.fileName}</h3>
-                    </div>
-                    {recommended?.ok ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--state-success-soft)] px-3 py-1 text-[11px] font-black text-[color:var(--state-success)]">
-                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-                        מומלץ
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)]">
-                    {row.previewUrl ? (
-                      row.isImage ? (
-                        <Image src={row.previewUrl} alt={row.fileName} width={900} height={1200} className="h-auto w-full" unoptimized />
-                      ) : row.isPdf ? (
-                        <iframe src={row.previewUrl} className="h-[420px] w-full bg-white" title={row.fileName} />
-                      ) : (
-                        <div className="flex h-[220px] items-center justify-center text-sm font-semibold text-[color:var(--ink-500)]">
-                          לא זמינה תצוגה מקדימה עבור {row.mimeType}
-                        </div>
-                      )
-                    ) : (
-                      <div className="flex h-[220px] items-center justify-center text-sm font-semibold text-[color:var(--ink-500)]">
-                        אין תצוגה מקדימה
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="grid gap-2 sm:grid-cols-3">
-                    <button
-                      type="button"
-                      disabled={!recommended?.ok || savingId === `${row.fileName}-ERP`}
-                      onClick={() => void handleSave(row, "ERP")}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--axis-finance)] px-3 py-2 text-[12px] font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {savingId === `${row.fileName}-ERP` ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
-                      שמור ל-ERP
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!recommended?.ok || savingId === `${row.fileName}-CRM`}
-                      onClick={() => void handleSave(row, "CRM")}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--axis-clients-border)] bg-[color:var(--axis-clients-soft)] px-3 py-2 text-[12px] font-black text-[color:var(--axis-clients-ink)] disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {savingId === `${row.fileName}-CRM` ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <UsersRound className="h-4 w-4" aria-hidden />}
-                      פתח ב-CRM
-                    </button>
-                    <Link
-                      href="/app/documents"
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-[12px] font-black text-[color:var(--ink-700)]"
-                    >
-                      <FolderKanban className="h-4 w-4" aria-hidden />
-                      פתח מסמכים
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <p className="tile-eyebrow">השוואת מנועים</p>
-                    <span className="text-[11px] font-bold text-[color:var(--ink-500)]">ציון, שדות, שגיאות, זמן</span>
-                  </div>
-                  <div className="grid gap-4">
-                    {row.engines.map((engine, engineIndex) => {
-                      const isBest = engineIndex === row.recommendedIndex && engine.ok;
-                      const ai = engine.aiData ?? {};
-                      return (
-                        <div
-                          key={`${row.fileName}-${engine.providerId}`}
-                          className={`rounded-2xl border p-4 transition ${
-                            isBest
-                              ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)]/50 shadow-[var(--shadow-xs)]"
-                              : engine.status === "error"
-                                ? "border-[color:var(--state-danger-soft)] bg-[color:var(--state-danger-soft)]/50"
-                                : "border-[color:var(--line)] bg-white"
-                          }`}
-                        >
-                          <div className="flex flex-wrap items-start justify-between gap-3">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="font-black text-[color:var(--ink-900)]">{engine.label}</p>
-                                {isBest ? (
-                                  <span className="rounded-full bg-[color:var(--axis-ai)] px-2 py-0.5 text-[10px] font-black text-white">
-                                    מומלץ
-                                  </span>
-                                ) : null}
-                              </div>
-                              <p className="mt-1 text-[12px] text-[color:var(--ink-500)]">
-                                {statusLabel(engine.status)}{engine.elapsedMs ? ` · ${Math.max(1, Math.round(engine.elapsedMs / 1000))} שנ׳` : ""}
-                              </p>
-                            </div>
-                            <div className="text-start">
-                              <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink-400)]">Score</p>
-                              <p className="text-lg font-black tabular-nums text-[color:var(--ink-900)]">{engine.score}</p>
-                            </div>
-                          </div>
-
-                          <div className="mt-3">
-                            <ProgressBar
-                              value={
-                                engine.status === "done"
-                                  ? 100
-                                  : engine.status === "scoring"
-                                    ? 90
-                                    : engine.status === "processing"
-                                      ? 65
-                                      : engine.status === "uploading"
-                                        ? 30
-                                        : engine.status === "queued"
-                                          ? 10
-                                          : 100
-                              }
-                              axis={engine.ok ? (isBest ? "ai" : "success") : "warning"}
-                              height={6}
-                            />
-                          </div>
-
-                          {engine.ok ? (
-                            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                              {config.scanner.resultColumns.map((column) => {
-                                const value = (ai as Record<string, unknown>)[column.key];
-                                return (
-                                  <div key={column.key} className="rounded-xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-sunken)] px-3 py-2.5">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink-400)]">{column.label}</p>
-                                    <p className="mt-1 text-[12px] font-semibold leading-5 text-[color:var(--ink-900)] break-words">
-                                      {value == null || value === "" ? "—" : String(value)}
-                                    </p>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <div className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[color:var(--state-danger-soft)] px-3 py-2 text-sm font-semibold text-[color:var(--state-danger)]">
-                              <AlertCircle className="h-4 w-4" aria-hidden />
-                              {engine.error || "התרחשה שגיאה בעיבוד"}
-                            </div>
-                          )}
-
-                          {engine.notice ? (
-                            <p className="mt-3 text-[11px] font-semibold text-[color:var(--ink-500)]">{engine.notice}</p>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </Tile>
-          );
-        })}
-      </BentoGrid>
     </div>
   );
 }

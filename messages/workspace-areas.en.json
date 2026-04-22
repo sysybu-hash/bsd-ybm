@@ -12,6 +12,7 @@
     "priorityTitle": "Handle now",
     "prioritySubtitle": "Items ordered by impact on work, cash, and data quality.",
     "priorityEmpty": "No urgent items right now. You can continue routine work.",
+    "priorityDismiss": "Mark done",
     "dueSoonTitle": "Due soon",
     "dueSoonEmpty": "No upcoming billing items right now.",
     "paymentDuePrefix": "Payment due:",
@@ -97,6 +98,11 @@
     "viewList": "List",
     "pipelineTitle": "Clients pipeline",
     "listTitle": "Clients list",
+    "listColClient": "Client",
+    "listColStatus": "Status",
+    "listColProject": "Project",
+    "listColContact": "Contact",
+    "listColAmount": "Amount",
     "addCta": "New client",
     "issueCta": "Issue invoice",
     "statActiveClients": "Clients",
@@ -143,6 +149,16 @@
       "noProject": "No project",
       "noValue": "No value",
       "openAdvanced": "Open advanced"
+    },
+    "editModal": {
+      "eyebrow": "Quick edit",
+      "title": "Client details",
+      "save": "Save",
+      "delete": "Delete",
+      "deleteConfirm": "Delete {name} from the system?",
+      "valuePlaceholder": "Value (₪)",
+      "notesPlaceholder": "Notes",
+      "closeAria": "Close"
     }
   },
   "workspaceFinance": {
@@ -189,6 +205,7 @@
     "issueCardTitle": "Issue document",
     "issueCardBody": "Create invoices, proposals, and issued documents from the commercial context.",
     "issueCta": "Issue document",
+    "issueCtaShort": "Issue",
     "monthTitle": "Month at a glance",
     "totalInvoicedLabel": "Invoiced this month · FINANCE",
     "heroKpiSub": "Live financial summary",
@@ -258,12 +275,14 @@
     "pendingEmpty": "No standout clients with open billing right now."
   },
   "workspaceDocuments": {
-    "eyebrow": "Documents Workspace",
+    "eyebrow": "Documents hub",
     "heroTitle": "Full control of {documents} — view, edit, and delete.",
     "heroSubtitle": "This screen adapts to {industry}, shows the document types and approvals relevant to the trade, and gives full control over both scanned and issued documents.",
     "ctaIssue": "Issue from professional templates",
+    "ctaIssueShort": "Issue",
     "ctaErp": "Open full ERP",
     "ctaScan": "New scan",
+    "ctaScanShort": "Scan",
     "generatorsTitle": "Generators by trade",
     "generatorsSubtitle": "Templates from your industry profile — official issue flow or a draft in issued documents.",
     "generatorsKindOfficial": "Official documents",

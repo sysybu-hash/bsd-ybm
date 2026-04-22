@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import type { Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonForbidden } from "@/lib/api-json";
 import { AccountStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
@@ -18,7 +19,7 @@ function canBroadcast(session: Session | null): boolean {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!canBroadcast(session)) {
-    return NextResponse.json({ error: "אין הרשאה" }, { status: 403 });
+    return jsonForbidden("אין הרשאה לשידור הודעות.");
   }
 
   const raw = (await req.json().catch(() => null)) as { title?: unknown; body?: unknown } | null;
@@ -26,10 +27,10 @@ export async function POST(req: Request) {
   const body = typeof raw?.body === "string" ? raw.body.trim() : "";
 
   if (!title || !body) {
-    return NextResponse.json({ error: "חובה כותרת ותוכן" }, { status: 400 });
+    return jsonBadRequest("חובה כותרת ותוכן", "missing_title_or_body");
   }
   if (title.length > TITLE_MAX || body.length > BODY_MAX) {
-    return NextResponse.json({ error: "הטקסט ארוך מדי" }, { status: 400 });
+    return jsonBadRequest("הטקסט ארוך מדי", "text_too_long");
   }
 
   const users = await prisma.user.findMany({

@@ -68,9 +68,14 @@ export function isDocxMime(mime: string): boolean {
   return mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 }
 
-/** OpenAI / Anthropic במסלול תמונה — רק תמונות (לא PDF) */
+/** OpenAI / Anthropic במסלול תמונה — תמונות בלבד */
 export function isOpenAiAnthropicVisionMime(mime: string): boolean {
   return IMAGE.test(mime);
+}
+
+/** תמונות + PDF — מסלול סריקה ישיר ל-OpenAI / Anthropic (לא ניתוב ל-Gemini) */
+export function isOpenAiAnthropicScanMime(mime: string): boolean {
+  return IMAGE.test(mime) || mime === PDF;
 }
 
 /** אם נדרש פענוח ויזואלי/קובץ כבד — מועדף Gemini */

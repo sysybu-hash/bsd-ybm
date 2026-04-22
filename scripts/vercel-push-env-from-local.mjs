@@ -8,6 +8,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { platform } from "node:os";
 import { performance } from "node:perf_hooks";
+import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
@@ -39,24 +40,14 @@ function sleepSync(ms) {
 const shouldUseSensitiveFlag = (key) =>
   !key.startsWith("NEXT_PUBLIC_") && !NEVER_SENSITIVE.has(key);
 
+/** פירוש תקני של .env (כולל JSON / \\n בשורה אחת) */
 function parseDotenv(content) {
+  const parsed = dotenv.parse(Buffer.from(content, "utf8"));
   const out = [];
-  for (const line of content.split(/\r?\n/)) {
-    const t = line.trim();
-    if (!t || t.startsWith("#")) continue;
-    const eq = t.indexOf("=");
-    if (eq === -1) continue;
-    const key = t.slice(0, eq).trim();
-    let val = t.slice(eq + 1).trim();
-    if (
-      (val.startsWith('"') && val.endsWith('"')) ||
-      (val.startsWith("'") && val.endsWith("'"))
-    ) {
-      val = val.slice(1, -1);
-    }
+  for (const [key, val] of Object.entries(parsed)) {
     if (!key || SKIP_KEYS.has(key)) continue;
-    if (val === "") continue;
-    out.push({ key, val });
+    if (val == null || String(val) === "") continue;
+    out.push({ key, val: String(val) });
   }
   return out;
 }
@@ -64,10 +55,10 @@ function parseDotenv(content) {
 function pushOne(key, val, environment) {
   const args = ["vercel", "env", "add", key, environment, "--yes", "--force"];
   if (shouldUseSensitiveFlag(key)) args.push("--sensitive");
+  args.push("--value", val);
 
   const r = spawnSync("npx", args, {
     cwd: root,
-    input: val,
     encoding: "utf8",
     maxBuffer: 50 * 1024 * 1024,
     shell: platform() === "win32",

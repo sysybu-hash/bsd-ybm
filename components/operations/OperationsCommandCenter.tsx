@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
+import OperationsAiAssistCta from "@/components/operations/OperationsAiAssistCta";
 import {
   Bell,
   Bot,
@@ -112,9 +113,7 @@ export default function OperationsCommandCenter({
               <Link href="/app" className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
                 חזרה למסך הבית
               </Link>
-              <Link href="/app/ai" className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-teal-700">
-                פתח עוזר תפעולי
-              </Link>
+              <OperationsAiAssistCta organizationName={data.organizationName} />
             </div>
           </div>
 

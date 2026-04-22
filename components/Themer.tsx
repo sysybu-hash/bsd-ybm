@@ -37,14 +37,18 @@ function darkenHex(hex: string, ratio: number) {
   return rgbToHex(p.r * k, p.g * k, p.b * k);
 }
 
-/** מסנכרן גם טוקני v2 (סרגל / כרטיסים) כדי שלא יישארו כחול/סגול מקומי בעוד שהמערכת כבר ממותגת בנייה */
-function applyV2AccentFromBrand(hex: string) {
+/** מסנכרן טוקני מותג (מיפוי ישן v2 + ציר לקוחות ב־Pro Bento) */
+function applyBrandAccentFromHex(hex: string) {
   const p = parseHex(hex);
   if (!p) return;
   const soft = `rgba(${p.r}, ${p.g}, ${p.b}, 0.1)`;
+  const strong = darkenHex(hex, 0.18);
   document.documentElement.style.setProperty("--v2-accent", hex);
   document.documentElement.style.setProperty("--v2-accent-soft", soft);
-  document.documentElement.style.setProperty("--v2-accent-strong", darkenHex(hex, 0.18));
+  document.documentElement.style.setProperty("--v2-accent-strong", strong);
+  document.documentElement.style.setProperty("--axis-clients", hex);
+  document.documentElement.style.setProperty("--axis-clients-soft", soft);
+  document.documentElement.style.setProperty("--axis-clients-strong", strong);
 }
 
 /** מסנכרן --primary-color מ-localStorage (דפי נחיתה ללא תפריט נגישות) */
@@ -55,7 +59,7 @@ export default function Themer() {
       document.documentElement.style.setProperty("--primary-color", color);
       document.documentElement.style.setProperty("--header-color", color);
       document.documentElement.style.setProperty("--heading-color", color);
-      applyV2AccentFromBrand(color);
+      applyBrandAccentFromHex(color);
     };
 
     const readAndApply = () => {

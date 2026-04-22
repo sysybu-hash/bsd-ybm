@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import {
+  jsonBadGateway,
+  jsonBadRequest,
+  jsonServiceUnavailable,
+  jsonUnauthorized,
+} from "@/lib/api-json";
 import { isPayPalServerConfigured, paypalCreateOrderBody } from "@/lib/paypal-server";
 import {
   parseSubscriptionTier,
@@ -11,23 +17,23 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   if (!isPayPalServerConfigured()) {
-    return NextResponse.json(
-      { error: "PayPal לא מוגדר בשרת (חסר מפתח סודי או מזהה לקוח)" },
-      { status: 503 },
+    return jsonServiceUnavailable(
+      "PayPal לא מוגדר בשרת (חסר מפתח סודי או מזהה לקוח)",
+      "paypal_not_configured",
     );
   }
 
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
   if (!session?.user?.id || !orgId) {
-    return NextResponse.json({ error: "נדרשת התחברות וארגון" }, { status: 401 });
+    return jsonUnauthorized("נדרשת התחברות וארגון.");
   }
 
   let body: { tier?: string; bundleId?: string };
   try {
     body = (await req.json()) as { tier?: string; bundleId?: string };
   } catch {
-    return NextResponse.json({ error: "גוף בקשה לא תקין" }, { status: 400 });
+    return jsonBadRequest("גוף בקשה לא תקין", "invalid_json");
   }
 
   const tierRaw = String(body.tier ?? "").trim().toUpperCase();
@@ -38,7 +44,7 @@ export async function POST(req: Request) {
       where: { id: bundleId, isActive: true },
     });
     if (!bundle) {
-      return NextResponse.json({ error: "חבילה לא נמצאה או לא פעילה" }, { status: 400 });
+      return jsonBadRequest("חבילה לא נמצאה או לא פעילה", "bundle_not_found");
     }
     const value = bundle.priceIls.toFixed(2);
     const customId = `${orgId}|BUNDLE|${bundle.id}`.slice(0, 127);
@@ -51,21 +57,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ id });
     } catch (e) {
       console.error("[create-order bundle]", e);
-      return NextResponse.json(
-        { error: e instanceof Error ? e.message : "יצירת הזמנה נכשלה" },
-        { status: 502 },
-      );
+      return jsonBadGateway(e instanceof Error ? e.message : "יצירת הזמנה נכשלה");
     }
   }
 
   const tier = parseSubscriptionTier(tierRaw);
   if (!tier || tier === "FREE") {
-    return NextResponse.json({ error: "רמת מנוי לא זמינה לתשלום" }, { status: 400 });
+    return jsonBadRequest("רמת מנוי לא זמינה לתשלום", "invalid_tier");
   }
 
   const price = await getEffectiveTierMonthlyPriceIls(tier);
   if (price == null) {
-    return NextResponse.json({ error: "אין מחיר לרמה זו — פנו לתמיכה" }, { status: 400 });
+    return jsonBadRequest("אין מחיר לרמה זו — פנו לתמיכה", "no_price");
   }
 
   const value = price.toFixed(2);
@@ -80,9 +83,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ id });
   } catch (e) {
     console.error("[create-order tier]", e);
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "יצירת הזמנה נכשלה" },
-      { status: 502 },
-    );
+    return jsonBadGateway(e instanceof Error ? e.message : "יצירת הזמנה נכשלה");
   }
 }

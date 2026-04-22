@@ -10,12 +10,31 @@ const describeAuth = hasE2ECreds ? test.describe : test.describe.skip;
  * בלי משתנים אלה כל הסוויטה מדולגת.
  */
 describeAuth("אחרי התחברות (E2E)", () => {
+  test.setTimeout(90_000);
+
   test.beforeEach(async ({ context, page }) => {
     await context.clearCookies();
-    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        "bsd-ybm-cookie-consent-v1",
+        JSON.stringify({
+          version: 1,
+          necessary: true,
+          analytics: false,
+          marketing: false,
+          updatedAt: new Date().toISOString(),
+        }),
+      );
+    });
+    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.waitForFunction(() => document.readyState === "complete");
     await page.locator('input[name="email"]').fill(process.env.E2E_EMAIL!.trim());
     await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
     await page.locator('form:has(input[name="password"]) button[type="submit"]').click();
+    const continueButton = page.getByRole("button", { name: /Continue to Dashboard|המשך/i });
+    if (await continueButton.isVisible({ timeout: 10_000 }).catch(() => false)) {
+      await continueButton.click();
+    }
     await page.waitForURL(/\/app/, { timeout: 45_000 });
   });
 
@@ -27,7 +46,7 @@ describeAuth("אחרי התחברות (E2E)", () => {
   test("מרכז הגדרות — סקירה", async ({ page }) => {
     await page.goto("/app/settings/overview", { waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(/\/app\/settings\/overview/);
-    await expect(page.getByText("מרכז ההגדרות", { exact: false })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "מרכז ההגדרות", exact: true })).toBeVisible({ timeout: 15_000 });
   });
 
   test("מנויים וחיוב בהגדרות", async ({ page }) => {

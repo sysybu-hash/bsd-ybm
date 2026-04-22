@@ -1,10 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
-import { getGeminiModelId } from "@/lib/gemini-model";
-
-const genAI = new GoogleGenerativeAI(
-  process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || "",
-);
+import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 
 export async function generateAndStoreInsightForOrganization(
   organizationId: string,
@@ -45,7 +41,6 @@ export async function generateAndStoreInsightForOrganization(
     })),
   };
 
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
   const prompt = `
 אתה יועץ פיננסי של BSD-YBM. לפי הנתונים הבאים (JSON), כתוב 3–6 משפטים קצרים בעברית:
 - מגמות הוצאות (השוואה לממוצע אם אפשר להסיק מהנתונים)
@@ -57,8 +52,27 @@ export async function generateAndStoreInsightForOrganization(
 ${JSON.stringify(payload).slice(0, 120000)}
 `;
 
-  const result = await model.generateContent(prompt);
-  const content = result.response.text().trim();
+  const genAI = new GoogleGenerativeAI(apiKey);
+  let content = "";
+  let lastErr: unknown = null;
+  for (const modelName of getGeminiModelFallbackChain()) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      const text = result.response.text().trim();
+      if (text) {
+        content = text;
+        break;
+      }
+    } catch (e) {
+      lastErr = e;
+      if (isLikelyGeminiModelUnavailable(e)) continue;
+      throw e;
+    }
+  }
+  if (!content.trim()) {
+    throw lastErr instanceof Error ? lastErr : new Error("Gemini: כל המודלים נכשלו");
+  }
 
   await prisma.financialInsight.upsert({
     where: { organizationId },

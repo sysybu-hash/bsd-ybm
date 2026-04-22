@@ -38,7 +38,7 @@ export function WorkspacePageHero({
 }) {
   return (
     <section className="relative pb-4">
-      <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
+      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={axis === "neutral" ? { color: "var(--ink-400)" } : { color: axisColorVar[axis] }}>
             {eyebrow}

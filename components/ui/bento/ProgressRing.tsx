@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 export type RingAxis = "finance" | "clients" | "ai" | "success" | "warning";
 
@@ -28,11 +28,12 @@ export function ProgressRing({
   trackColor?: string;
   children?: ReactNode;
 }) {
+  const reactId = useId().replace(/:/g, "");
   const clamped = Math.max(0, Math.min(100, value));
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (clamped / 100) * circumference;
-  const gradientId = `ring-${axis}-${Math.random().toString(36).slice(2, 8)}`;
+  const gradientId = `ring-${axis}-${reactId}`;
   const [c1, c2] = gradientByAxis[axis];
 
   return (

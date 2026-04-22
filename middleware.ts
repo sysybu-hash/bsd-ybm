@@ -8,6 +8,23 @@ import {
   shouldBlockWorkspacePrimaryPath,
   workspaceFeatureInputFromJwtClaims,
 } from "@/lib/workspace-features";
+import { mapDashboardPathToApp } from "@/lib/dashboard-to-app-redirect";
+import { API_MSG_UNAUTHORIZED } from "@/lib/api-json";
+
+function hasAuthenticatedToken(token: NextRequestWithAuth["nextauth"]["token"]): boolean {
+  if (!token) return false;
+  const id = typeof token.id === "string" ? token.id.trim() : "";
+  const sub = typeof token.sub === "string" ? token.sub.trim() : "";
+  const email = typeof token.email === "string" ? token.email.trim() : "";
+  return id.length > 0 || sub.length > 0 || email.length > 0;
+}
+
+function hasNextAuthSessionCookie(request: NextRequest): boolean {
+  return (
+    Boolean(request.cookies.get("next-auth.session-token")?.value) ||
+    Boolean(request.cookies.get("__Secure-next-auth.session-token")?.value)
+  );
+}
 
 function patchLocaleCookie(request: NextRequest, response: NextResponse) {
   if (!request.cookies.get(COOKIE_LOCALE)?.value) {
@@ -25,16 +42,30 @@ const authMiddleware = withAuth(
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
-    const protectedApi =
-      pathname.startsWith("/api/ai") ||
-      pathname.startsWith("/api/crm") ||
-      pathname.startsWith("/api/erp") ||
-      pathname.startsWith("/api/assign-user") ||
-      pathname.startsWith("/api/integrations");
+    /** נתיבים שדורשים סשן — הגנה לפני ה-handler (בנוסף לאימות בתוך ה-route) */
+    const protectedApiPrefixes = [
+      "/api/ai",
+      "/api/crm",
+      "/api/erp",
+      "/api/assign-user",
+      "/api/integrations",
+      "/api/scan",
+      "/api/org/",
+      "/api/admin",
+      "/api/meckano",
+      "/api/paypal",
+      "/api/quotes",
+      "/api/user",
+      "/api/analyze-queue",
+      "/api/reports",
+      "/api/telemetry",
+      "/api/debug-session",
+    ] as const;
+    const protectedApi = protectedApiPrefixes.some((p) => pathname.startsWith(p));
 
-    if (protectedApi && (!token || !token.id)) {
+    if (protectedApi && !hasAuthenticatedToken(token) && !hasNextAuthSessionCookie(req)) {
       return new NextResponse(
-        JSON.stringify({ error: "Unauthorized access - נא להתחבר" }),
+        JSON.stringify({ error: API_MSG_UNAUTHORIZED, code: "unauthorized" }),
         { status: 401, headers: { "Content-Type": "application/json" } },
       );
     }
@@ -50,13 +81,14 @@ const authMiddleware = withAuth(
     return NextResponse.next();
   },
   {
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
     pages: {
       signIn: "/login",
     },
     callbacks: {
       authorized: ({ token, req }) => {
         const pathname = req.nextUrl.pathname;
-        const hasUser = !!(token?.id && String(token.id).length > 0);
+        const hasUser = hasAuthenticatedToken(token) || hasNextAuthSessionCookie(req);
 
         if (
           pathname === "/" ||
@@ -90,6 +122,46 @@ const authMiddleware = withAuth(
 );
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  const appTarget = mapDashboardPathToApp(request.nextUrl.pathname);
+  if (appTarget) {
+    const url = request.nextUrl.clone();
+    url.pathname = appTarget;
+    const redirectResponse = NextResponse.redirect(url);
+    patchLocaleCookie(request, redirectResponse);
+    return redirectResponse;
+  }
+
+  const pathname = request.nextUrl.pathname;
+  const hasSessionCookie = hasNextAuthSessionCookie(request);
+  const cookieProtectedApiPrefixes = [
+    "/api/ai",
+    "/api/crm",
+    "/api/erp",
+    "/api/assign-user",
+    "/api/integrations",
+    "/api/scan",
+    "/api/org/",
+    "/api/admin",
+    "/api/meckano",
+    "/api/paypal",
+    "/api/quotes",
+    "/api/user",
+    "/api/analyze-queue",
+    "/api/reports",
+    "/api/telemetry",
+    "/api/debug-session",
+  ] as const;
+  if (
+    hasSessionCookie &&
+    (pathname.startsWith("/app") ||
+      pathname.startsWith("/dashboard") ||
+      cookieProtectedApiPrefixes.some((p) => pathname.startsWith(p)))
+  ) {
+    const response = NextResponse.next();
+    patchLocaleCookie(request, response);
+    return response;
+  }
+
   const result = authMiddleware(request as NextRequestWithAuth, event);
   if (result instanceof Promise) {
     return result.then((res) => {

@@ -1,15 +1,28 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import dotenv from "dotenv";
 
 const workspaceRoot = process.cwd();
 const prismaClientDir = path.join(workspaceRoot, "node_modules", ".prisma", "client");
 const clientEntry = path.join(prismaClientDir, "index.js");
 const windowsEngine = path.join(prismaClientDir, "query_engine-windows.dll.node");
 
-const result = spawnSync("npx", ["prisma", "generate"], {
+for (const file of [".env", ".env.local", ".env.vercel.pull"]) {
+  const envPath = path.join(workspaceRoot, file);
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: false, quiet: true });
+  }
+}
+
+if (!process.env.DIRECT_URL && process.env.DATABASE_URL) {
+  process.env.DIRECT_URL = process.env.DATABASE_URL;
+}
+
+const prismaCli = path.join(workspaceRoot, "node_modules", "prisma", "build", "index.js");
+
+const result = spawnSync(process.execPath, [prismaCli, "generate"], {
   cwd: workspaceRoot,
-  shell: process.platform === "win32",
   env: process.env,
   encoding: "utf8",
 });

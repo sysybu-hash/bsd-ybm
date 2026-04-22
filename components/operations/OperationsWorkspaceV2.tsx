@@ -91,11 +91,11 @@ export default function OperationsWorkspaceV2({
   };
 
   return (
-    <div className="grid gap-6" dir={dir}>
+    <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
       <section className="tile overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">{t("workspaceOperations.eyebrow")}</span>
+            <span className="bento-eyebrow">{t("workspaceOperations.eyebrow")}</span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               {t("workspaceOperations.heroTitle")}
             </h1>
@@ -105,12 +105,12 @@ export default function OperationsWorkspaceV2({
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {meckanoEnabled ? (
-                <Link href="/app/operations/meckano" className="v2-button v2-button-primary">
+                <Link href="/app/operations/meckano" className="bento-btn bento-btn--primary">
                   {t("workspaceOperations.meckanoCta")}
                   <ArrowLeft className="h-4 w-4" aria-hidden />
                 </Link>
               ) : null}
-              <Link href="/app/inbox" className="v2-button v2-button-secondary">
+              <Link href="/app/inbox" className="bento-btn bento-btn--secondary">
                 {t("workspaceOperations.inboxCta")}
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
@@ -163,7 +163,7 @@ export default function OperationsWorkspaceV2({
                         ))}
                       </div>
                     </div>
-                    <Link href={workflow.href} className="v2-button v2-button-secondary shrink-0">
+                    <Link href={workflow.href} className="bento-btn bento-btn--secondary shrink-0">
                       {workflow.cta}
                     </Link>
                   </div>

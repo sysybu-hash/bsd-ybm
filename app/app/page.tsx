@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   BellRing,
-  BrainCircuit,
   CircleDollarSign,
   CreditCard,
   FileSpreadsheet,
@@ -29,6 +28,7 @@ import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { createTranslator } from "@/lib/i18n/translate";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
+import HomeAiAssistTile, { HomeQuickAiAssistButton } from "@/components/ai/HomeAiAssistTile";
 import {
   ActivityTimeline,
   BentoGrid,
@@ -54,6 +54,12 @@ function docStatusLabel(t: ReturnType<typeof createTranslator>, status: DocStatu
   return t(`workspaceHome.docStatus.${status}` as const);
 }
 
+function issuedActivityStatusBadgeClass(status: DocStatus): string {
+  if (status === "PAID") return "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]";
+  if (status === "PENDING") return "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]";
+  return "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)]";
+}
+
 export default async function AppHomePage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId) redirect("/login");
@@ -63,6 +69,12 @@ export default async function AppHomePage() {
     (session.user.name ?? "").trim().split(" ")[0] ||
     session.user.email?.split("@")[0] ||
     "";
+
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const prevMonthStart = new Date(monthStart);
+  prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
 
   const [
     organization,
@@ -79,15 +91,23 @@ export default async function AppHomePage() {
     recentIssued,
     recentContacts,
     byTypeScannedRaw,
+    integrationsCount,
+    issuedThisMonth,
+    issuedPrevMonth,
   ] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: organizationId },
       select: {
+        name: true,
         industry: true,
         constructionTrade: true,
         industryConfigJson: true,
         subscriptionTier: true,
         subscriptionStatus: true,
+        taxId: true,
+        address: true,
+        paypalMerchantEmail: true,
+        tenantPublicDomain: true,
       },
     }),
     prisma.contact.count({ where: { organizationId } }),
@@ -113,7 +133,11 @@ export default async function AppHomePage() {
       where: { organizationId, isActive: true },
       orderBy: { createdAt: "desc" },
       take: 4,
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        _count: { select: { contacts: true } },
+      },
     }),
     canAccessMeckano(session),
     prisma.issuedDocument.findMany({
@@ -132,6 +156,15 @@ export default async function AppHomePage() {
       where: { organizationId },
       by: ["type"],
       _count: { _all: true },
+    }),
+    prisma.cloudIntegration.count({ where: { organizationId } }),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, date: { gte: monthStart } },
+      _sum: { total: true },
+    }),
+    prisma.issuedDocument.aggregate({
+      where: { organizationId, date: { gte: prevMonthStart, lt: monthStart } },
+      _sum: { total: true },
     }),
   ]);
 
@@ -155,6 +188,27 @@ export default async function AppHomePage() {
   const financeTarget = Math.max(60_000, Math.ceil((totalInvoiced * 1.3) / 1000) * 1000);
   const financeProgress = financeTarget > 0 ? Math.min(100, Math.round((totalInvoiced / financeTarget) * 100)) : 0;
 
+  const issuedThisSum = issuedThisMonth._sum.total ?? 0;
+  const issuedPrevSum = issuedPrevMonth._sum.total ?? 0;
+  const financeTrendPct =
+    issuedPrevSum > 0
+      ? Math.round(((issuedThisSum - issuedPrevSum) / issuedPrevSum) * 100)
+      : issuedThisSum > 0
+        ? 100
+        : 0;
+
+  const orgProfile = organization;
+  const profileFields = [
+    orgProfile?.name?.trim(),
+    orgProfile?.taxId?.trim(),
+    orgProfile?.address?.trim(),
+    orgProfile?.paypalMerchantEmail?.trim(),
+    orgProfile?.tenantPublicDomain?.trim(),
+  ];
+  const profileFilled = profileFields.filter(Boolean).length;
+  const profileCompletionPct = Math.round((profileFilled / profileFields.length) * 100);
+  const automationsProgress = Math.min(100, integrationsCount * 34);
+
   // Activity timeline from recent issued docs
   const activityEvents: ActivityEvent[] = recentIssued.slice(0, 5).map((row, i) => ({
     id: row.id,
@@ -166,10 +220,10 @@ export default async function AppHomePage() {
   // Cash sparkline — derive from recent issued by date groups (fallback flat)
   const cashSpark = [4, 6, 5, 8, 7, 10, 9, 12, 10, 14].map((v) => v * Math.max(1, totalInvoiced / 1000));
 
-  // Projects stacked bars
-  const projectBars = activeProjects.slice(0, 4).map((p, i) => ({
+  const maxProjectContacts = Math.max(1, ...activeProjects.map((p) => p._count.contacts));
+  const projectBars = activeProjects.slice(0, 4).map((p) => ({
     label: p.name.slice(0, 12),
-    value: [45, 67, 82, 38][i] ?? 50,
+    value: Math.min(100, Math.round((p._count.contacts / maxProjectContacts) * 100)),
     color: "var(--axis-clients)",
   }));
   while (projectBars.length < 3) {
@@ -210,10 +264,9 @@ export default async function AppHomePage() {
 
   const isPlatformAdmin = isAdmin(session.user.email);
   void hasMeckanoAccess;
-  void industryProfile;
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir={dirRtl ? "rtl" : "ltr"}>
+    <div className="w-full min-w-0 space-y-8" dir={dirRtl ? "rtl" : "ltr"}>
       {/* Greeting */}
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
@@ -252,10 +305,12 @@ export default async function AppHomePage() {
             </ProgressRing>
           </div>
           <div className="mt-5 flex justify-center">
-            <Link href="/app/ai" className="tile-cta">
-              {t("workspaceHome.aiNarrative.open")}
-              <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
+            <HomeAiAssistTile
+              orgId={organizationId}
+              industryProfile={industryProfile}
+              sectionSummary={insightText}
+              userFirstName={firstName}
+            />
           </div>
         </Tile>
 
@@ -287,7 +342,23 @@ export default async function AppHomePage() {
                 {t("workspaceHome.axisFinance.target", { amount: formatCurrencyILS(financeTarget) })}
               </span>
               <span className="tabular-nums">
-                {financeProgress}% · <span className="text-[color:var(--state-success)]">+12%</span>
+                {financeProgress}% ·{" "}
+                <span
+                  className={
+                    financeTrendPct > 0
+                      ? "text-[color:var(--state-success)]"
+                      : financeTrendPct < 0
+                        ? "text-[color:var(--state-warning)]"
+                        : "text-[color:var(--ink-500)]"
+                  }
+                >
+                  {issuedPrevSum > 0 || issuedThisSum > 0
+                    ? t("workspaceHome.axisFinance.trendVsPrev", {
+                        sign: financeTrendPct > 0 ? "+" : "",
+                        pct: String(Math.abs(financeTrendPct)),
+                      })
+                    : t("workspaceHome.axisFinance.trendNeutral")}
+                </span>
               </span>
             </div>
             <ProgressBar value={financeProgress} target={100} axis="finance" glow />
@@ -401,8 +472,51 @@ export default async function AppHomePage() {
             ) : (
               <>
                 <ActivityTimeline events={activityEvents} />
-                <div className="mt-6 overflow-x-auto">
-                  <table className="v2-table">
+                <ul
+                  className="mt-6 space-y-2 md:hidden"
+                  aria-label={t("workspaceHome.recentActivity.title")}
+                >
+                  {recentIssued.map((row) => {
+                    const statusClass = issuedActivityStatusBadgeClass(row.status);
+                    const rowDate = new Intl.DateTimeFormat(uiLocale, { day: "numeric", month: "short" }).format(row.date);
+                    return (
+                      <li
+                        key={row.id}
+                        className="rounded-xl border border-slate-200/10 bg-[color:var(--canvas-raised)] p-4 shadow-sm"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-black text-[color:var(--ink-900)]">{row.clientName}</p>
+                            <p className="mt-1 text-xs leading-relaxed text-[color:var(--ink-500)]">
+                              <span className="tabular-nums">{rowDate}</span>
+                              <span className="mx-1.5 text-[color:var(--ink-400)]" aria-hidden>
+                                ·
+                              </span>
+                              <span>{docTypeLabel(t, row.type)}</span>
+                            </p>
+                          </div>
+                          <div className="flex min-w-0 shrink-0 flex-col items-end gap-2">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold ${statusClass}`}>
+                              {docStatusLabel(t, row.status)}
+                            </span>
+                            <p className="text-end text-sm font-black tabular-nums text-[color:var(--ink-900)]">
+                              {formatCurrencyILS(row.total)}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="mt-6 hidden w-full min-w-0 overflow-x-auto rounded-xl border border-slate-200/10 md:block">
+                  <table className="bento-table w-full">
+                    <colgroup>
+                      <col className="workspace-table-col-1" />
+                      <col className="w-[26%]" />
+                      <col className="w-[18%]" />
+                      <col className="w-[16%]" />
+                      <col className="w-[18%]" />
+                    </colgroup>
                     <thead>
                       <tr>
                         <th>{t("workspaceHome.recentActivity.colDate")}</th>
@@ -414,12 +528,7 @@ export default async function AppHomePage() {
                     </thead>
                     <tbody>
                       {recentIssued.map((row) => {
-                        const statusClass =
-                          row.status === "PAID"
-                            ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]"
-                            : row.status === "PENDING"
-                              ? "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]"
-                              : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)]";
+                        const statusClass = issuedActivityStatusBadgeClass(row.status);
                         return (
                           <tr key={row.id}>
                             <td className="tabular-nums text-[color:var(--ink-500)]">
@@ -506,10 +615,10 @@ export default async function AppHomePage() {
             {t("workspaceHome.utility.settings.hint")}
           </p>
           <div className="mt-3">
-            <ProgressBar value={78} axis="finance" />
+            <ProgressBar value={profileCompletionPct} axis="finance" />
           </div>
           <p className="mt-2 text-[10px] font-bold uppercase text-[color:var(--ink-500)]">
-            78% {t("workspaceHome.utility.settings.progress")}
+            {t("workspaceHome.utility.settings.percentLabel", { pct: String(profileCompletionPct) })}
           </p>
         </Tile>
 
@@ -524,10 +633,10 @@ export default async function AppHomePage() {
             {t("workspaceHome.utility.automations.hint")}
           </p>
           <div className="mt-3">
-            <ProgressBar value={60} axis="ai" />
+            <ProgressBar value={automationsProgress} axis="ai" />
           </div>
           <p className="mt-2 text-[10px] font-bold uppercase text-[color:var(--ink-500)]">
-            4 {t("workspaceHome.utility.automations.active")}
+            {t("workspaceHome.utility.automations.integrationsCount", { count: String(integrationsCount) })}
           </p>
         </Tile>
 
@@ -567,17 +676,28 @@ export default async function AppHomePage() {
 
         {/* ═════ Quick actions strip (span 12) ═════ */}
         <Tile tone="neutral" span={12} padded={false}>
-          <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">
+          <div className="flex flex-col gap-4 px-5 py-5 sm:px-6">
+            <p className="text-center text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ink-500)] sm:text-start">
               {t("workspaceHome.startHere.eyebrow")}
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
               <QuickLink href="/app/documents/issue" icon={FileText} label={t("workspaceHome.quickActions.issue")} tone="finance" />
               <QuickLink href="/app/advanced" icon={UsersRound} label={t("workspaceHome.quickActions.addClient")} tone="clients" />
               <QuickLink href="/app/projects" icon={FolderKanban} label={t("workspaceHome.quickActions.addProject")} tone="neutral" />
-              <QuickLink href="/app/ai" icon={BrainCircuit} label={t("workspaceHome.quickActions.askAi")} tone="ai" />
+              <HomeQuickAiAssistButton
+                orgId={organizationId}
+                industryProfile={industryProfile}
+                sectionSummary={insightText}
+                userFirstName={firstName}
+                label={t("workspaceHome.quickActions.askAi")}
+              />
               <QuickLink href="/app/documents/erp" icon={FileSpreadsheet} label={t("workspaceHome.quickActions.erp")} tone="neutral" />
-              <QuickLink href="/app/inbox" icon={ScanSearch} label={t("workspaceHome.quickActions.scan")} tone="ai" />
+              <QuickLink
+                href="/app/documents/erp#erp-multi-scanner"
+                icon={ScanSearch}
+                label={t("workspaceHome.quickActions.scan")}
+                tone="ai"
+              />
               <QuickLink href="/app/settings/billing" icon={CreditCard} label={t("workspaceHome.quickActions.billing")} tone="neutral" />
               {isPlatformAdmin ? (
                 <QuickLink href="/app/admin" icon={Settings} label={t("workspaceHome.quickActions.admin")} tone="neutral" />
@@ -612,7 +732,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-bold transition ${toneClass}`}
+      className={`inline-flex min-h-[2.5rem] w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-center text-[12px] font-bold transition ${toneClass}`}
     >
       <Icon className="h-3.5 w-3.5" aria-hidden />
       {label}

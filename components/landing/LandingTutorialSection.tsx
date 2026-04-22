@@ -161,7 +161,7 @@ function AnimRegistration({ step }: { step: number }) {
           <div className="space-y-2.5">
             {[
               { label: "שם מלא", placeholder: "דוד כהן", filled: true },
-              { label: "אימייל", placeholder: "david@example.com", filled: true },
+              { label: "אימייל", placeholder: "name@example.com", filled: true },
               { label: "שם החברה", placeholder: "כהן אנד קו בע״מ", filled: true },
             ].map(({ label, placeholder, filled }) => (
               <div key={label}>

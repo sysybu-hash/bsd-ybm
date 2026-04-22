@@ -1,23 +1,55 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-  Plus, Search, Filter, Download, FileText, TrendingUp, 
-  ShieldCheck, AlertCircle, ReceiptText, Settings2, Loader2
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  Plus,
+  Search,
+  Filter,
+  Download,
+  TrendingUp,
+  TrendingDown,
+  ShieldCheck,
+  ReceiptText,
+  Settings2,
+  Loader2,
 } from "lucide-react";
 import { getIssuedDocumentsAction } from "@/app/actions/get-issued-documents";
+import { formatCurrencyILS } from "@/lib/ui-formatters";
+import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
 
-export default function InvoicesPage() {
+type IssuedRow = {
+  id: string;
+  displayId: string;
+  client: string;
+  date: string;
+  dateIso: string;
+  statusKey: string;
+  status: string;
+  amount: string;
+  total: number;
+  vat: number;
+  allocation: string;
+  type: string;
+  docType: string;
+};
+
+function startOfMonth(d: Date) {
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+export default function IssuedDocumentsPageClient() {
   const [activeTab, setActiveTab] = useState("invoices");
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<IssuedRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     async function load() {
       try {
         const res = await getIssuedDocumentsAction();
         if (res.success && res.documents) {
-          setDocuments(res.documents);
+          setDocuments(res.documents as IssuedRow[]);
         }
       } catch (err) {
         console.error("Failed to load documents", err);
@@ -28,187 +60,319 @@ export default function InvoicesPage() {
     void load();
   }, []);
 
+  const metrics = useMemo(() => {
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const thisMonthStart = startOfMonth(now);
+
+    let monthTotal = 0;
+    let prevMonthTotal = 0;
+    let pendingCount = 0;
+    let paidCount = 0;
+    let vatPending = 0;
+
+    for (const d of documents) {
+      const t = new Date(d.dateIso);
+      if (t >= thisMonthStart) monthTotal += d.total;
+      if (t >= prevMonth && t < thisMonthStart) prevMonthTotal += d.total;
+      if (d.statusKey === "PENDING") {
+        pendingCount += 1;
+        vatPending += d.vat;
+      }
+      if (d.statusKey === "PAID") paidCount += 1;
+    }
+
+    const trendPct =
+      prevMonthTotal > 0 ? Math.round(((monthTotal - prevMonthTotal) / prevMonthTotal) * 100) : monthTotal > 0 ? 100 : 0;
+
+    const paidRatio = documents.length > 0 ? Math.round((paidCount / documents.length) * 100) : 0;
+
+    return {
+      monthTotal,
+      prevMonthTotal,
+      trendPct,
+      trendUp: trendPct >= 0,
+      pendingCount,
+      paidRatio,
+      vatPending,
+      allocCount: documents.filter((d) => d.allocation !== "-").length,
+    };
+  }, [documents]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return documents;
+    return documents.filter(
+      (d) =>
+        d.displayId.toLowerCase().includes(q) ||
+        d.client.toLowerCase().includes(q) ||
+        d.type.toLowerCase().includes(q),
+    );
+  }, [documents, query]);
+
+  const listForTab = activeTab === "invoices" ? filtered : [];
+
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" dir="rtl">
-      
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="mx-auto flex max-w-[1500px] flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" dir="rtl">
+      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">ניהול כספים וחשבוניות</h1>
-          <p className="text-gray-500 mt-1 font-medium">ניהול מסמכים חשבונאיים וחיבור ישיר לרשות המסים (מערכת הקצאות 2026)</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">Finance</p>
+          <h1 className="text-3xl font-black tracking-tight text-[color:var(--ink-900)]">ניהול כספים וחשבוניות</h1>
+          <p className="mt-1 font-medium text-[color:var(--ink-500)]">
+            מסמכים מונפקים, סטטוס תשלום והקצאות — לפי הנתונים בארגון שלך.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-all">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-700)] shadow-[var(--shadow-xs)] transition hover:bg-[color:var(--canvas-sunken)]"
+          >
             <Download size={18} />
             <span>ייצוא דוחות</span>
           </button>
-          <button className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-teal-200 hover:scale-105 active:scale-95 transition-all">
+          <Link
+            href="/app/documents/issue"
+            className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-6 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
+          >
             <Plus size={18} />
             <span>מסמך חדש</span>
-          </button>
+          </Link>
         </div>
-      </div>
+      </header>
 
-      {/* QUICK STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: "הכנסות החודש", value: documents.length > 0 ? `₪${documents.reduce((acc, d) => acc + (parseFloat(d.amount.replace('₪','').replace(',','')) || 0), 0).toLocaleString()}` : "₪0", trend: "+0%", isUp: true, icon: <TrendingUp className="text-emerald-500" /> },
-          { label: "ממתינות להקצאה", value: documents.filter(d => d.status === "בתהליך").length.toString(), trend: "טיפול דחוף", isUp: false, icon: <AlertCircle className="text-amber-500" /> },
-          { label: "מסמכים במערכת", value: documents.length.toString(), trend: "100% תקין", isUp: true, icon: <ShieldCheck className="text-teal-500" /> },
-          { label: "יתרת מע״מ משוערת", value: "₪0", trend: "צפי תשלום", isUp: false, icon: <ReceiptText className="text-slate-500" /> },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2.5 bg-gray-50 rounded-2xl">{stat.icon}</div>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${stat.isUp ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                {stat.trend}
-              </span>
-            </div>
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
-            <h3 className="text-2xl font-black text-gray-900 mt-1">{stat.value}</h3>
-          </div>
-        ))}
-      </div>
-
-      {/* ISRAEL INVOICES REFORM - MINISTRY OF FINANCE CONNECTION */}
-      <div className="bg-gradient-to-br from-teal-900 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-white/10 transition-colors" />
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="max-w-xl text-start">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 mb-4">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">סטטוס רגולטורי 2026 מופעל</span>
-            </div>
-            <h2 className="text-3xl font-black mb-3">תאימות מלאה — רף ₪10,000 (ינואר 2026)</h2>
-            <p className="text-teal-100/80 font-medium leading-relaxed">
-              המערכת מעודכנת לרף הדיווח החדש של שנת 2026. כל חשבונית מעל ₪10,000 (ומעל ₪5,000 החל מיוני) נשלחת אוטומטית לקבלת מספר הקצאה בזמן אמת כדי להבטיח ניכוי מע״מ תשומות מלא.
+      <BentoGrid>
+        <Tile tone="finance" span={3}>
+          <TileHeader eyebrow="החודש" />
+          <div className="mt-2 flex items-start justify-between gap-2">
+            <p className="text-2xl font-black tabular-nums text-[color:var(--axis-finance-ink)]">
+              {documents.length === 0 ? "—" : formatCurrencyILS(metrics.monthTotal)}
             </p>
+            <span
+              className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-black ${
+                documents.length === 0
+                  ? "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)]"
+                  : metrics.trendUp
+                    ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]"
+                    : "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]"
+              }`}
+            >
+              {documents.length === 0 ? (
+                "—"
+              ) : metrics.prevMonthTotal > 0 ? (
+                <>
+                  {metrics.trendUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                  {metrics.trendPct > 0 ? "+" : ""}
+                  {metrics.trendPct}%
+                </>
+              ) : (
+                "חודש ראשון"
+              )}
+            </span>
           </div>
-          <div className="flex flex-col gap-3 shrink-0 w-full md:w-auto">
-            <button className="flex items-center justify-center gap-2 bg-white text-teal-900 px-8 py-4 rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all text-sm uppercase">
+          <p className="mt-2 text-[11px] font-bold text-[color:var(--ink-500)]">סה״כ מסמכים בתקופה הנוכחית</p>
+        </Tile>
+
+        <Tile tone="rose" span={3}>
+          <TileHeader eyebrow="ממתינים" />
+          <p className="mt-2 text-2xl font-black tabular-nums text-[color:var(--ink-900)]">{metrics.pendingCount}</p>
+          <p className="mt-2 text-[11px] font-bold text-[color:var(--ink-500)]">מסמכים ללא סימון שולם</p>
+          <div className="mt-3">
+            <ProgressBar
+              value={documents.length ? Math.round((metrics.pendingCount / documents.length) * 100) : 0}
+              axis="warning"
+            />
+          </div>
+        </Tile>
+
+        <Tile tone="clients" span={3}>
+          <TileHeader eyebrow="שיעור שילום" />
+          <div className="mt-2 flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-[color:var(--axis-clients)]" />
+            <p className="text-2xl font-black tabular-nums text-[color:var(--ink-900)]">{documents.length ? `${metrics.paidRatio}%` : "—"}</p>
+          </div>
+          <p className="mt-2 text-[11px] font-bold text-[color:var(--ink-500)]">לפי מסמכים במערכת (מצטבר)</p>
+        </Tile>
+
+        <Tile tone="neutral" span={3}>
+          <TileHeader eyebrow="מע״מ תשומות (ממתין)" />
+          <p className="mt-2 text-2xl font-black tabular-nums text-[color:var(--ink-900)]">
+            {metrics.vatPending > 0 ? formatCurrencyILS(metrics.vatPending) : "—"}
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-[color:var(--ink-500)]">הערכה מסכומי מע״מ במסמכים פתוחים</p>
+        </Tile>
+      </BentoGrid>
+
+      <div className="tile overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--shadow-xs)]">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[color:var(--axis-clients-strong)] to-[#0f172a] p-6 text-white sm:p-8">
+          <div className="absolute end-0 top-0 h-48 w-48 -translate-y-1/2 translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+          <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-xl text-start">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-emerald-200">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                רגולציה 2026
+              </div>
+              <h2 className="text-2xl font-black sm:text-3xl">דיווח והקצאות — מעקב אחרי הסטטוס</h2>
+              <p className="mt-2 text-sm font-medium leading-relaxed text-teal-100/90">
+                מסמכים עם הקצאה: {metrics.allocCount} מתוך {documents.length}. השלימו חיבור והגדרות במסך ההגדרות לפי הצורך.
+              </p>
+            </div>
+            <Link
+              href="/app/settings"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-teal-950 shadow-xl transition hover:scale-[1.02] active:scale-[0.98]"
+            >
               <Settings2 size={18} />
-              <span>הגדרות חיבור אישיות</span>
-            </button>
+              <span>הגדרות ארגון</span>
+            </Link>
           </div>
         </div>
-      </div>
 
-      {/* MAIN CONTENT AREA */}
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-        
-        {/* TABS */}
-        <div className="flex items-center gap-8 px-8 border-b border-gray-100">
-          {[
-            { id: "invoices", label: "חשבוניות", count: documents.length },
-            { id: "proforma", label: "חשבון עסקה", count: 0 },
-            { id: "allocations", label: "הקצאות (MOF)", count: documents.filter(d => d.allocation !== '-').length },
-            { id: "clients", label: "לקוחות לחיוב", count: 0 }
-          ].map((tab) => (
-            <button 
+        <div className="flex flex-wrap items-center gap-6 border-b border-[color:var(--line)] px-4 sm:px-8">
+          {(
+            [
+              { id: "invoices", label: "חשבוניות", count: documents.length },
+              { id: "proforma", label: "חשבון עסקה", count: 0 },
+              { id: "allocations", label: "הקצאות", count: metrics.allocCount },
+              { id: "clients", label: "לקוחות", count: new Set(documents.map((d) => d.client)).size },
+            ] as const
+          ).map((tab) => (
+            <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`py-5 text-sm font-black transition-all relative ${
-                activeTab === tab.id ? "text-teal-600" : "text-gray-400 hover:text-gray-600"
+              className={`relative py-4 text-sm font-black transition ${
+                activeTab === tab.id ? "text-[color:var(--axis-clients)]" : "text-[color:var(--ink-400)] hover:text-[color:var(--ink-700)]"
               }`}
             >
               {tab.label}
-              <span className="ms-2 px-1.5 py-0.5 rounded-md bg-gray-50 text-[10px] text-gray-500 border border-gray-200/50">{tab.count}</span>
-              {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-teal-600 rounded-full" />}
+              <span className="ms-2 rounded-md border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-1.5 py-0.5 text-[10px] text-[color:var(--ink-500)]">
+                {tab.count}
+              </span>
+              {activeTab === tab.id ? (
+                <div className="absolute bottom-0 start-0 end-0 h-1 rounded-full bg-[color:var(--axis-clients)]" />
+              ) : null}
             </button>
           ))}
         </div>
 
-        {/* SEARCH & FILTERS */}
-        <div className="p-6 flex flex-col md:flex-row items-center gap-4 bg-gray-50/30">
-          <div className="relative flex-1 w-full">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="חיפוש לפי מספר חשבונית, שם לקוח או ח״פ..."
-              className="w-full bg-white border border-gray-200 rounded-2xl pr-12 pl-4 py-3 text-sm focus:ring-4 focus:ring-teal-100 focus:border-teal-400 outline-none transition-all shadow-sm"
+        <div className="flex flex-col gap-4 bg-[color:var(--canvas-sunken)]/40 p-4 sm:flex-row sm:items-center sm:px-8">
+          <div className="relative w-full flex-1">
+            <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--ink-400)]" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              type="search"
+              placeholder="חיפוש לפי מספר, לקוח או סוג..."
+              className="w-full rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-3 pe-10 ps-4 text-sm outline-none transition focus:border-[color:var(--axis-clients)]"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-all">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-3 text-sm font-bold text-[color:var(--ink-600)]"
+          >
             <Filter size={18} />
-            <span>סינון מתקדם</span>
+            סינון
           </button>
         </div>
 
-        {/* DATA TABLE */}
-        <div className="overflow-x-auto min-h-[300px] flex flex-col">
+        <div className="min-h-[280px]">
           {loading ? (
-             <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-400 gap-4">
-               <Loader2 className="animate-spin text-teal-500" size={32} />
-               <p className="font-bold text-sm">מעדכן נתונים חיים...</p>
-             </div>
+            <div className="flex flex-col items-center justify-center gap-3 p-12 text-[color:var(--ink-500)]">
+              <Loader2 className="h-8 w-8 animate-spin text-[color:var(--axis-clients)]" />
+              <p className="text-sm font-bold">טוען מסמכים…</p>
+            </div>
+          ) : activeTab !== "invoices" ? (
+            <div className="p-10 text-center text-sm font-semibold text-[color:var(--ink-500)]">בקרוב: תוכן מפורט ללשונית זו.</div>
           ) : documents.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-400 gap-4 text-center">
-              <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200/50">
-                <ReceiptText size={32} className="text-gray-300" />
+            <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)]">
+                <ReceiptText className="h-8 w-8 text-[color:var(--ink-300)]" />
               </div>
-              <div>
-                <p className="font-black text-gray-600">אין מסמכים עדיין</p>
-                <p className="text-xs font-medium">המערכת נקייה ומוכנה להטמעת המסמך הראשון שלך.</p>
-              </div>
-              <button className="mt-2 text-teal-600 font-bold text-xs hover:underline">הפק חשבונית חדשה</button>
+              <p className="font-black text-[color:var(--ink-900)]">אין מסמכים עדיין</p>
+              <p className="max-w-sm text-sm text-[color:var(--ink-500)]">התחילו מהנפקה או סנכרון מסמכים כדי לראות נתונים כאן.</p>
+              <Link href="/app/documents/issue" className="mt-2 text-sm font-black text-[color:var(--axis-clients)] hover:underline">
+                הפק מסמך ראשון
+              </Link>
             </div>
           ) : (
-            <table className="w-full text-start">
-              <thead className="bg-gray-50/50 border-b border-gray-100">
-                <tr>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-wider">מספר / סוג</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-wider">לקוח / ח״פ</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-wider">תאריך</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-wider">סטטוס הקצאה</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-wider text-end">סה״כ לתשלום</th>
-                  <th className="px-6 py-4 w-20"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50 text-gray-900">
-                {documents.map((row, i) => (
-                  <tr key={i} className="hover:bg-gray-50/80 transition-colors group">
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-black text-gray-900 tracking-tight">{row.id}</span>
-                        <span className="text-[10px] text-gray-400 font-bold uppercase">{row.type}</span>
+            <>
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full text-start">
+                  <thead className="border-b border-[color:var(--line)] bg-[color:var(--canvas-sunken)]/60">
+                    <tr>
+                      <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-[color:var(--ink-400)] sm:px-6">
+                        מספר / סוג
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-[color:var(--ink-400)] sm:px-6">
+                        לקוח
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-[color:var(--ink-400)] sm:px-6">
+                        תאריך
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-[color:var(--ink-400)] sm:px-6">
+                        סטטוס
+                      </th>
+                      <th className="px-4 py-3 text-end text-[10px] font-black uppercase tracking-wider text-[color:var(--ink-400)] sm:px-6">
+                        סכום
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[color:var(--line)]">
+                    {listForTab.map((row) => (
+                      <tr key={row.id} className="group hover:bg-[color:var(--canvas-sunken)]/50">
+                        <td className="px-4 py-4 sm:px-6">
+                          <span className="text-sm font-black text-[color:var(--ink-900)]">{row.displayId}</span>
+                          <span className="mt-0.5 block text-[10px] font-bold uppercase text-[color:var(--ink-400)]">{row.type}</span>
+                        </td>
+                        <td className="px-4 py-4 text-sm font-semibold text-[color:var(--ink-800)] sm:px-6">{row.client}</td>
+                        <td className="px-4 py-4 text-sm text-[color:var(--ink-500)] sm:px-6">{row.date}</td>
+                        <td className="px-4 py-4 sm:px-6">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`h-2 w-2 rounded-full ${
+                                row.statusKey === "PAID" ? "bg-emerald-500" : "bg-amber-500"
+                              }`}
+                            />
+                            <span className="text-xs font-black">{row.status}</span>
+                            {row.allocation !== "-" ? (
+                              <span className="rounded bg-[color:var(--canvas-sunken)] px-1.5 py-0.5 font-mono text-[9px] text-[color:var(--ink-500)]">
+                                #{row.allocation}
+                              </span>
+                            ) : null}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-end text-sm font-black tabular-nums text-[color:var(--ink-900)] sm:px-6">{row.amount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="grid gap-3 p-4 md:hidden">
+                {listForTab.map((row) => (
+                  <div
+                    key={row.id}
+                    className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--shadow-xs)]"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-black text-[color:var(--ink-900)]">{row.displayId}</p>
+                        <p className="text-[11px] text-[color:var(--ink-500)]">{row.client}</p>
                       </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-gray-800">{row.client}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-sm text-gray-500 font-medium">{row.date}</td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2">
-                        <div className={`h-2 w-2 rounded-full ${
-                          row.status === "הוקצה" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : 
-                          row.status === "בתהליך" ? "bg-amber-500 animate-pulse" : "bg-gray-300"
-                        }`} />
-                        <span className="text-xs font-black">{row.status}</span>
-                        {row.allocation !== "-" && (
-                          <span className="text-[9px] bg-slate-100 px-1.5 py-0.5 rounded font-mono text-slate-500">#{row.allocation}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-sm font-black text-gray-900 text-end tracking-tighter">{row.amount}</td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all">
-                          <FileText size={18} />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all">
-                          <Download size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      <p className="text-sm font-black tabular-nums text-[color:var(--ink-900)]">{row.amount}</p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-bold text-[color:var(--ink-500)]">
+                      <span>{row.date}</span>
+                      <span>·</span>
+                      <span>{row.status}</span>
+                      {row.allocation !== "-" ? <span className="font-mono">#{row.allocation}</span> : null}
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
       </div>

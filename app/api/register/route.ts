@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  jsonBadRequest,
+  jsonConflict,
+  jsonServerError,
+} from "@/lib/api-json";
 import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { sendRegistrationWelcomeEmail } from "@/lib/mail";
@@ -31,7 +36,7 @@ export async function POST(req: Request) {
     const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 
     if (!EMAIL_RE.test(emailRaw)) {
-      return NextResponse.json({ error: "אימייל לא תקין" }, { status: 400 });
+      return jsonBadRequest("אימייל לא תקין", "invalid_email");
     }
 
     const normalized = emailRaw.toLowerCase();
@@ -42,18 +47,18 @@ export async function POST(req: Request) {
         where: { token: orgInviteToken },
       });
       if (!inv) {
-        return NextResponse.json({ error: "קישור הזמנה לא תקף" }, { status: 400 });
+        return jsonBadRequest("קישור הזמנה לא תקף", "invalid_org_invite");
       }
       if (inv.usedAt) {
-        return NextResponse.json({ error: "ההזמנה כבר נוצלה" }, { status: 409 });
+        return jsonConflict("ההזמנה כבר נוצלה", "invite_used");
       }
       if (inv.expiresAt.getTime() < Date.now()) {
-        return NextResponse.json({ error: "תוקף ההזמנה פג" }, { status: 400 });
+        return jsonBadRequest("תוקף ההזמנה פג", "invite_expired");
       }
       if (inv.email.toLowerCase() !== normalized) {
-        return NextResponse.json(
-          { error: "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה" },
-          { status: 400 },
+        return jsonBadRequest(
+          "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה",
+          "invite_email_mismatch",
         );
       }
 
@@ -62,12 +67,9 @@ export async function POST(req: Request) {
       });
 
       if (existing?.organizationId && existing.organizationId !== inv.organizationId) {
-        return NextResponse.json(
-          {
-            error:
-              "האימייל כבר משויך לארגון אחר. יש לפנות למנהל או להשתמש באימייל אחר.",
-          },
-          { status: 409 },
+        return jsonConflict(
+          "האימייל כבר משויך לארגון אחר. יש לפנות למנהל או להשתמש באימייל אחר.",
+          "email_org_mismatch",
         );
       }
 
@@ -101,7 +103,7 @@ export async function POST(req: Request) {
         });
       } catch (e) {
         console.error("register orgInvite", e);
-        return NextResponse.json({ error: "שגיאה בשמירת המשתמש" }, { status: 500 });
+        return jsonServerError("שגיאה בשמירת המשתמש");
       }
 
       const joinedOrg = await prisma.organization.findUnique({
@@ -125,17 +127,14 @@ export async function POST(req: Request) {
     }
 
     if (organizationName.length < 2) {
-      return NextResponse.json({ error: "נא למלא שם ארגון או עסק" }, { status: 400 });
+      return jsonBadRequest("נא למלא שם ארגון או עסק", "missing_org_name");
     }
 
     const existingUser = await prisma.user.findFirst({
       where: { email: { equals: normalized, mode: "insensitive" } },
     });
     if (existingUser) {
-      return NextResponse.json(
-        { error: "כתובת האימייל כבר רשומה במערכת" },
-        { status: 409 },
-      );
+      return jsonConflict("כתובת האימייל כבר רשומה במערכת", "email_taken");
     }
 
     const orgType = Object.values(CustomerType).includes(typeRaw as CustomerType)
@@ -148,18 +147,18 @@ export async function POST(req: Request) {
         where: { token: inviteToken },
       });
       if (!inv) {
-        return NextResponse.json({ error: "קישור הזמנה לא תקף" }, { status: 400 });
+        return jsonBadRequest("קישור הזמנה לא תקף", "invalid_sub_invite");
       }
       if (inv.usedAt) {
-        return NextResponse.json({ error: "ההזמנה כבר נוצלה" }, { status: 409 });
+        return jsonConflict("ההזמנה כבר נוצלה", "sub_invite_used");
       }
       if (inv.expiresAt.getTime() < Date.now()) {
-        return NextResponse.json({ error: "תוקף ההזמנה פג" }, { status: 400 });
+        return jsonBadRequest("תוקף ההזמנה פג", "sub_invite_expired");
       }
       if (inv.email.toLowerCase() !== normalized) {
-        return NextResponse.json(
-          { error: "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה" },
-          { status: 400 },
+        return jsonBadRequest(
+          "יש להירשם עם אותו אימייל שאליו נשלחה ההזמנה",
+          "sub_invite_email_mismatch",
         );
       }
 
@@ -267,6 +266,6 @@ export async function POST(req: Request) {
     });
   } catch (e) {
     console.error("register", e);
-    return NextResponse.json({ error: "שגיאת שרת" }, { status: 500 });
+    return jsonServerError("שגיאת שרת");
   }
 }

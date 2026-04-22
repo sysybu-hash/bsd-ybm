@@ -18,7 +18,7 @@ describe("workspace-features", () => {
     expect(hidden.size).toBe(0);
   });
 
-  it("מסתיר תפעול כשלא CONSTRUCTION", () => {
+  it("מציג תפעול גם מחוץ לבנייה (מודול ארגון-רוחבי)", () => {
     const hidden = getHiddenPrimaryRouteIds({
       role: "ORG_ADMIN",
       industryId: "LEGAL",
@@ -27,7 +27,7 @@ describe("workspace-features", () => {
       subscriptionTier: "FREE",
       subscriptionStatus: "ACTIVE",
     });
-    expect(hidden.has("operations")).toBe(true);
+    expect(hidden.has("operations")).toBe(false);
   });
 
   it("pathnameToWorkspacePrimaryRoute מזהה מקטע ראשי", () => {

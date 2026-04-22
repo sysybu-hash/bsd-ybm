@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import {
   ACCESSIBILITY_THEME_OPTIONS,
   applyAccessibilitySettings,
@@ -112,7 +113,7 @@ function AccessibilityPanel({
 
   return (
     <section
-      className="w-[min(100vw-1rem,28rem)] rounded-[28px] border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--tile-shadow-raised)]"
+      className="w-full max-w-[min(100vw-1.5rem,28rem)] rounded-[28px] border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 pb-6 shadow-[var(--tile-shadow-raised)] sm:p-5"
       dir="rtl"
       aria-label="סרגל נגישות"
     >
@@ -361,12 +362,14 @@ export default function AccessibilityMenu({
       </button>
 
       {isOpen ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-[340] flex items-end justify-start bg-slate-950/30 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:items-center sm:justify-center sm:pb-4"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end justify-start bg-slate-950/30 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:items-center sm:justify-center sm:pb-4`}
           onClick={() => setIsOpen(false)}
         >
           <div onClick={(event) => event.stopPropagation()}>{panel}</div>
         </div>
+        </PortalToBody>
       ) : null}
     </div>
   );

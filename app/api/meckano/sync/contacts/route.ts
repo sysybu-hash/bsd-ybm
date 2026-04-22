@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden, jsonUnauthorized } from "@/lib/api-json";
 import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
@@ -19,11 +20,11 @@ type MeckanoEmployee = {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
   const orgId = await getAuthorizedMeckanoOrganizationId(session);
   if (!orgId) {
-    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+    return jsonForbidden(MECKANO_ACCESS_ERROR);
   }
 
   const body = (await req.json()) as { employees?: MeckanoEmployee[] };

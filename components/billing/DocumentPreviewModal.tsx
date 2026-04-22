@@ -8,6 +8,10 @@ import DocumentPrintTemplate, {
   type OrganizationPrintModel,
 } from "@/components/billing/DocumentPrintTemplate";
 import type { IssuedDocRow } from "@/components/billing/GlobalBillingPageClient";
+import PortalToBody, {
+  WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS,
+  WORKSPACE_OVERLAY_Z_CLASS,
+} from "@/components/portal/PortalToBody";
 
 type Props = {
   doc: IssuedDocRow;
@@ -68,14 +72,15 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
   };
 
   return (
+    <PortalToBody>
     <div
-      className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-gray-900/50 p-4 pt-8"
+      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-start justify-center overflow-y-auto bg-gray-900/50 p-4 pt-8`}
       dir="rtl"
       role="dialog"
       aria-modal="true"
     >
       {/* Floating toolbar */}
-      <div className="pointer-events-none fixed top-4 inset-x-0 z-[201] flex justify-center">
+      <div className={`pointer-events-none fixed top-4 inset-x-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} flex justify-center`}>
         <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-gray-100 bg-white px-3 py-2 shadow-lg shadow-gray-200/60">
           <span className="px-2 text-sm font-black text-gray-600">
             תצוגה מקדימה — מסמך #{doc.number}
@@ -103,5 +108,6 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
         <DocumentPrintTemplate doc={printModel} org={org} />
       </div>
     </div>
+    </PortalToBody>
   );
 }

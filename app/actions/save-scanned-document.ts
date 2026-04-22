@@ -5,6 +5,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { extractAiDataFromScanJobResult } from "@/lib/scan-job-result";
+import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
+import { saveScannedDocumentSchema } from "@/lib/validation/save-scanned-document";
 
 export type SaveScanResult = {
   success: boolean;
@@ -12,14 +15,57 @@ export type SaveScanResult = {
   documentId?: string;
 };
 
+async function resolveCrmContactId(
+  orgId: string,
+  aiData: Record<string, unknown>,
+  explicitContactId?: string,
+): Promise<string | undefined> {
+  if (explicitContactId?.trim()) {
+    const found = await prisma.contact.findFirst({
+      where: { id: explicitContactId.trim(), organizationId: orgId },
+      select: { id: true },
+    });
+    return found?.id;
+  }
+
+  const meta = aiData.metadata;
+  const clientFromMeta =
+    meta && typeof meta === "object" && !Array.isArray(meta)
+      ? (meta as Record<string, unknown>).client
+      : null;
+  const nameRaw =
+    (typeof clientFromMeta === "string" && clientFromMeta.trim()) ||
+    (typeof aiData.vendor === "string" && aiData.vendor.trim()) ||
+    "";
+  if (!nameRaw) return undefined;
+
+  const existing = await prisma.contact.findFirst({
+    where: { organizationId: orgId, name: nameRaw },
+    select: { id: true },
+  });
+  if (existing) return existing.id;
+
+  const created = await prisma.contact.create({
+    data: {
+      organizationId: orgId,
+      name: nameRaw,
+      status: "LEAD",
+      notes: "נוצר אוטומטית מייצוא סריקה ל-CRM",
+    },
+    select: { id: true },
+  });
+  return created.id;
+}
+
 /**
- * שומר מסמך שנסרק לאחר שהמשתמש בחר את התוצאה המועדפת או המומלצת.
+ * שומר מסמך סריקה ל-ERP/CRM. אפשר למסור scanJobId (תור) כדי למשוך תוצאה מה-DB.
  */
 export async function saveScannedDocumentAction(
   fileName: string,
-  aiData: Record<string, any>,
+  aiData: Record<string, unknown>,
   targetModule: "ERP" | "CRM",
-  contactId?: string // אופציונלי לשיוך CRM
+  contactId?: string,
+  scanJobId?: string,
 ): Promise<SaveScanResult> {
   try {
     const session = await getServerSession(authOptions);
@@ -29,70 +75,164 @@ export async function saveScannedDocumentAction(
     const orgId = session.user.organizationId;
     if (!orgId) return { success: false, error: "No organization found" };
 
-    // יצירת המסמך הסופי
+    const parsed = saveScannedDocumentSchema.safeParse({
+      fileName,
+      targetModule,
+      contactId,
+      scanJobId,
+      aiData: Object.keys(aiData).length ? aiData : undefined,
+    });
+    if (!parsed.success) {
+      const msg = parsed.error.issues.map((i) => i.message).join("; ");
+      return { success: false, error: msg || "נתונים לא תקינים" };
+    }
+
+    let effectiveFileName = parsed.data.fileName;
+    let effectiveAi: Record<string, unknown> = { ...aiData };
+
+    if (parsed.data.scanJobId) {
+      const job = await prisma.documentScanJob.findFirst({
+        where: {
+          id: parsed.data.scanJobId,
+          userId,
+          organizationId: orgId,
+          status: "COMPLETED",
+        },
+        select: { result: true, fileData: true },
+      });
+      if (!job?.result) {
+        return { success: false, error: "משימת סריקה לא נמצאה או לא הושלמה" };
+      }
+
+      const extracted = extractAiDataFromScanJobResult(job.result);
+      if (!extracted) {
+        return { success: false, error: "לא ניתן לפענח תוצאת סריקה" };
+      }
+      if (extracted.alreadyExportedDocumentId) {
+        return { success: true, documentId: extracted.alreadyExportedDocumentId };
+      }
+      if (!Object.keys(extracted.aiData).length) {
+        return { success: false, error: "תוצאת סריקה ריקה" };
+      }
+      effectiveAi = extracted.aiData;
+      if (!effectiveFileName?.trim()) {
+        effectiveFileName = fileName || "scan-export";
+      }
+    }
+
+    const crmContactId =
+      targetModule === "CRM"
+        ? await resolveCrmContactId(orgId, effectiveAi, parsed.data.contactId)
+        : undefined;
+
+    let crmNotesBaseline = "";
+    if (crmContactId) {
+      const row = await prisma.contact.findUnique({
+        where: { id: crmContactId },
+        select: { notes: true },
+      });
+      crmNotesBaseline = row?.notes?.trim() ?? "";
+    }
+
     const doc = await prisma.document.create({
       data: {
-        fileName,
-        type: String(aiData.docType || "UNKNOWN"),
+        fileName: effectiveFileName,
+        type: String(effectiveAi.docType || "UNKNOWN"),
         status: "PROCESSED",
-        aiData: aiData as Prisma.InputJsonValue,
+        aiData: effectiveAi as Prisma.InputJsonValue,
         userId,
         organizationId: orgId,
-        ...(targetModule === "CRM" && contactId ? {
-          contact: { connect: { id: contactId } }
-        } : {})
-      }
+      },
     });
 
-    // Anomaly Detection: Compare with historical prices
-    const lineItems = (aiData.lineItems || []) as any[];
-    const supplier = String(aiData.vendor || "ספק כללי");
-    
+    if (crmContactId) {
+      const stamp = `\n[סריקה] ${effectiveFileName} · מזהה מסמך ${doc.id}`;
+      await prisma.contact.update({
+        where: { id: crmContactId },
+        data: {
+          notes: `${crmNotesBaseline}${stamp}`.trim().slice(0, 65000),
+        },
+      });
+    }
+
+    await persistDocumentLineItemsFromAiData(
+      doc.id,
+      orgId,
+      typeof effectiveAi.vendor === "string" ? effectiveAi.vendor : null,
+      effectiveAi,
+      {
+        skipPriceObservations: false,
+        notifyUserId: userId,
+        fileLabel: effectiveFileName,
+        skipNotification: false,
+      },
+    );
+
+    const lineItems = (effectiveAi.lineItems || []) as Array<Record<string, unknown>>;
+    const supplier = String(effectiveAi.vendor || "ספק כללי");
+
     for (const item of lineItems) {
-      if (item.desc && item.price) {
-        const hist = await prisma.productPriceObservation.findFirst({
-          where: { 
-            organizationId: orgId,
-            supplierName: supplier,
-            description: item.desc
-          },
-          orderBy: { observedAt: "desc" }
-        });
+      const desc =
+        (typeof item.description === "string" && item.description) ||
+        (typeof item.desc === "string" && item.desc) ||
+        "";
+      const price =
+        (typeof item.unitPrice === "number" && item.unitPrice) ||
+        (typeof item.price === "number" && item.price) ||
+        (typeof item.lineTotal === "number" && item.lineTotal ? item.lineTotal : null);
+      if (!desc || price == null || !(price > 0)) continue;
 
-        if (hist && item.price > hist.unitPrice * 1.2) {
-          // חריגה של מעל 20% - צור התראה
-          await prisma.inAppNotification.create({
-            data: {
-              userId,
-              title: "חריגת מחיר זוהתה!",
-              body: `המוצר "${item.desc}" של "${supplier}" התייקר ב-${Math.round((item.price/hist.unitPrice - 1)*100)}% לעומת קנייה קודמת.`
-            }
-          });
-        }
+      const hist = await prisma.productPriceObservation.findFirst({
+        where: {
+          organizationId: orgId,
+          supplierName: supplier,
+          description: desc,
+        },
+        orderBy: { observedAt: "desc" },
+      });
 
-        // שמירת מחיר היסטורי חדש
-        await prisma.productPriceObservation.create({
+      if (hist && price > hist.unitPrice * 1.2) {
+        await prisma.inAppNotification.create({
           data: {
-            organizationId: orgId,
-            documentId: doc.id,
-            description: item.desc,
-            supplierName: supplier,
-            unitPrice: item.price,
-            normalizedKey: item.desc.toLowerCase().slice(0, 50)
-          }
+            userId,
+            title: "חריגת מחיר זוהתה!",
+            body: `המוצר "${desc}" של "${supplier}" התייקר ב-${Math.round((price / hist.unitPrice - 1) * 100)}% לעומת קנייה קודמת.`,
+          },
         });
       }
     }
 
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/clients");
-    revalidatePath("/app/documents");
+    if (parsed.data.scanJobId) {
+      const prev = await prisma.documentScanJob.findFirst({
+        where: { id: parsed.data.scanJobId },
+        select: { result: true },
+      });
+      const base =
+        prev?.result && typeof prev.result === "object" && !Array.isArray(prev.result)
+          ? (prev.result as Record<string, unknown>)
+          : {};
+      await prisma.documentScanJob.update({
+        where: { id: parsed.data.scanJobId },
+        data: {
+          result: {
+            ...base,
+            _exportedToDocumentId: doc.id,
+            _exportedAt: new Date().toISOString(),
+            _exportedTarget: targetModule,
+          } as Prisma.InputJsonValue,
+        },
+      });
+    }
+
+    revalidatePath("/app/documents/erp");
     revalidatePath("/app/clients");
+    revalidatePath("/app/documents");
     revalidatePath("/app/inbox");
 
     return { success: true, documentId: doc.id };
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Failed to save scanned document:", e);
-    return { success: false, error: e.message || "Failed to save" };
+    const msg = e instanceof Error ? e.message : "Failed to save";
+    return { success: false, error: msg };
   }
 }

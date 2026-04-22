@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 import { hasPlatformPayPalConfigured } from "@/lib/platform-paypal";
@@ -14,7 +15,7 @@ type ServiceStatus = {
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!isAdmin(session?.user?.email)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
   }
 
   const statuses: ServiceStatus[] = [];

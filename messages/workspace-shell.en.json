@@ -10,7 +10,7 @@
     "primaryNavAria": "Primary workspace navigation",
     "items": {
       "home": {
-        "label": "Home",
+        "label": "Dashboard",
         "summary": "Status, shortcuts, and a clear entry point to every workspace area."
       },
       "inbox": {
@@ -155,12 +155,14 @@
       "settings": {
         "title": "Settings",
         "hint": "Profession, org, billing",
-        "progress": "completed"
+        "progress": "completed",
+        "percentLabel": "{pct}% org profile"
       },
       "automations": {
         "title": "Automations",
         "hint": "AI-powered rules",
-        "active": "active"
+        "active": "active",
+        "integrationsCount": "{count} cloud links"
       },
       "inbox": {
         "title": "Inbox",
@@ -203,7 +205,9 @@
       "pending": "Pending",
       "collectionRate": "Collection rate",
       "issue": "Issue document",
-      "target": "Target {amount}"
+      "target": "Target {amount}",
+      "trendVsPrev": "vs last month {sign}{pct}%",
+      "trendNeutral": "No month-over-month"
     },
     "stats": {
       "activeProjects": "Active projects",
@@ -232,7 +236,7 @@
       "PAID": "Paid",
       "CANCELLED": "Cancelled"
     },
-    "eyebrow": "Home",
+    "eyebrow": "Dashboard",
     "startHere": {
       "eyebrow": "Start here",
       "title": "Three links",
@@ -305,8 +309,13 @@
     "refreshingOverlay": "Refreshing workspace…",
     "topBar": {
       "searchAria": "Search",
+      "localeAria": "Interface language",
       "notificationsAria": "Notifications",
       "profileAria": "Profile"
     }
+  },
+  "settingsHub": {
+    "sidebarEyebrow": "Settings",
+    "sidebarTitle": "Organization, billing & operations"
   }
 }

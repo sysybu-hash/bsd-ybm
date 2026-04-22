@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 
@@ -36,8 +37,14 @@ export default function DashboardSidebarUserCard({
           />
           <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-teal-400/70 ring-offset-2 ring-offset-white">
             {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={image} alt="" className="h-full w-full object-cover" />
+              <Image
+                src={image}
+                alt=""
+                width={40}
+                height={40}
+                unoptimized
+                className="h-full w-full object-cover"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-teal-100 to-teal-50 text-sm font-black text-teal-300">
                 {(loading ? "…" : email || "?").charAt(0).toUpperCase()}

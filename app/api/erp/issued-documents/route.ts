@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withWorkspacesAuth } from "@/lib/api-handler";
+import { jsonBadRequest } from "@/lib/api-json";
 
 /* ───── GET  — רשימת מסמכים שהונפקו ───── */
 export const GET = withWorkspacesAuth(async (_req, { orgId }) => {
@@ -29,10 +30,7 @@ export const POST = withWorkspacesAuth(async (req, { orgId }) => {
   };
 
   if (!type || !clientName || !Array.isArray(items) || items.length === 0) {
-    return NextResponse.json(
-      { error: "type, clientName, and at least one item are required" },
-      { status: 400 },
-    );
+    return jsonBadRequest("נדרשים type, clientName ולפחות פריט אחד.", "invalid_issued_payload");
   }
 
   /* חישוב סכומים */

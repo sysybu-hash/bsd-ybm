@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BSD-YBM White Sidebar Vision</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --ink: #08111f;
+        --muted: #64748b;
+        --line: #e3e9f2;
+        --line2: #edf1f7;
+        --crm: #0891a5;
+        --erp: #b97813;
+        --ai: #6658f6;
+        --build: #248256;
+        --blue: #2763e6;
+        --rose: #d9465f;
+        --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: #dfe7f1;
+        color: var(--ink);
+        font-family: Heebo, Assistant, Arial, sans-serif;
+      }
+
+      .catalog {
+        display: grid;
+        gap: 34px;
+        padding: 34px;
+      }
+
+      .shot {
+        width: 1440px;
+        height: 1000px;
+        overflow: hidden;
+        border: 1px solid #d4deeb;
+        background: var(--bg);
+        box-shadow: 0 36px 100px rgba(2, 8, 23, .16);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 292px;
+        min-height: 100%;
+      }
+
+      aside {
+        border-inline-start: 1px solid var(--line);
+        background: #fff;
+        padding: 24px 18px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 8px 20px;
+        border-bottom: 1px solid var(--line2);
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        background: #08111f;
+        color: white;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .logo b {
+        display: block;
+        font-size: 19px;
+        font-weight: 1000;
+      }
+
+      .logo span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 850;
+      }
+
+      .side-title {
+        margin: 22px 10px 10px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 1000;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+      }
+
+      .side-nav {
+        display: grid;
+        gap: 6px;
+      }
+
+      .side-item {
+        display: grid;
+        grid-template-columns: 34px 1fr auto;
+        align-items: center;
+        min-height: 46px;
+        border-radius: 14px;
+        padding: 0 10px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .side-item i {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        color: #64748b;
+        font-style: normal;
+      }
+
+      .side-item small {
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .side-item.active {
+        background: #08111f;
+        color: white;
+      }
+
+      .side-item.active i {
+        background: rgba(255,255,255,.13);
+        color: white;
+      }
+
+      .side-card {
+        margin-top: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: linear-gradient(180deg, #fff, #f7fbff);
+        padding: 16px;
+      }
+
+      .side-card b {
+        display: block;
+        font-size: 13px;
+        font-weight: 1000;
+      }
+
+      .side-card p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+        font-weight: 750;
+      }
+
+      main {
+        min-width: 0;
+        padding: 24px 32px 34px;
+      }
+
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        height: 62px;
+      }
+
+      .quick {
+        display: flex;
+        gap: 8px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.86);
+        box-shadow: 0 10px 28px rgba(15,23,42,.05);
+      }
+
+      .quick span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 94px;
+        min-height: 38px;
+        border-radius: 13px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .quick span.active {
+        background: #08111f;
+        color: white;
+      }
+
+      .search {
+        width: 330px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: white;
+        padding: 13px 16px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .account {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: white;
+        padding: 10px 13px;
+        min-width: 228px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--build);
+        box-shadow: 0 0 16px rgba(36,130,86,.35);
+      }
+
+      .account b {
+        display: block;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .account small {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 850;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 330px;
+        gap: 18px;
+        align-items: end;
+        margin-top: 28px;
+      }
+
+      h1, h2, h3, p { margin: 0; }
+
+      .label {
+        display: inline-flex;
+        gap: 9px;
+        align-items: center;
+        min-height: 34px;
+        border-radius: 999px;
+        background: white;
+        border: 1px solid var(--line);
+        padding: 0 13px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .label strong { color: var(--blue); }
+
+      .title {
+        margin-top: 12px;
+        max-width: 780px;
+        font-size: 48px;
+        line-height: 1.05;
+        letter-spacing: 0;
+        font-weight: 1000;
+      }
+
+      .copy {
+        margin-top: 12px;
+        max-width: 700px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+        font-weight: 750;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: white;
+        padding: 0 15px;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 1000;
+      }
+
+      .btn.primary {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: white;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .tile {
+        min-height: 144px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: white;
+        box-shadow: var(--shadow);
+      }
+
+      .pad { padding: 20px; }
+      .s3 { grid-column: span 3; }
+      .s4 { grid-column: span 4; }
+      .s5 { grid-column: span 5; }
+      .s6 { grid-column: span 6; }
+      .s7 { grid-column: span 7; }
+      .s8 { grid-column: span 8; }
+      .s9 { grid-column: span 9; }
+      .s12 { grid-column: span 12; }
+
+      .head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .mini {
+        color: var(--muted);
+        font-size: 10.5px;
+        font-weight: 1000;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 74px;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 1000;
+      }
+
+      .crm { color: var(--crm); background: rgba(8,145,165,.11); }
+      .erp { color: var(--erp); background: rgba(185,120,19,.13); }
+      .ai { color: var(--ai); background: rgba(102,88,246,.12); }
+      .build { color: var(--build); background: rgba(36,130,86,.12); }
+      .blue { color: var(--blue); background: rgba(39,99,230,.11); }
+      .rose { color: var(--rose); background: rgba(217,70,95,.11); }
+
+      .value {
+        margin-top: 12px;
+        font-size: 42px;
+        line-height: 1;
+        font-weight: 1000;
+        letter-spacing: 0;
+      }
+
+      .hint {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+        font-weight: 760;
+      }
+
+      .subgrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .sub {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fbfdff;
+        padding: 14px;
+      }
+
+      .flow {
+        display: grid;
+        gap: 9px;
+        margin-top: 14px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 86px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        min-height: 46px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: #fbfdff;
+        padding: 0 11px;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .matrix div {
+        min-height: 86px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fbfdff;
+        padding: 13px;
+      }
+
+      .matrix span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 950;
+      }
+
+      .matrix b {
+        display: block;
+        margin-top: 8px;
+        font-size: 20px;
+        font-weight: 1000;
+      }
+
+      .table {
+        width: 100%;
+        margin-top: 14px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 12px;
+      }
+
+      .table th, .table td {
+        border-bottom: 1px solid var(--line2);
+        padding: 11px 10px;
+        text-align: start;
+        font-weight: 850;
+      }
+
+      .table th {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 1000;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .blueprint {
+        min-height: 380px;
+        background:
+          linear-gradient(#eef4fb 1px, transparent 1px),
+          linear-gradient(90deg, #eef4fb 1px, transparent 1px),
+          #ffffff;
+        background-size: 28px 28px;
+      }
+
+      .module {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 124px;
+        height: 94px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255,255,255,.92);
+        box-shadow: 0 16px 40px rgba(15,23,42,.10);
+        text-align: center;
+        font-size: 15px;
+        font-weight: 1000;
+      }
+
+      .module small {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 850;
+      }
+
+      .core {
+        width: 170px;
+        height: 132px;
+        border-radius: 30px;
+        background: #08111f;
+        color: white;
+      }
+
+      .line {
+        position: absolute;
+        height: 2px;
+        transform-origin: right center;
+        background: linear-gradient(90deg, transparent, rgba(102,88,246,.45), transparent);
+      }
+
+      .phone {
+        width: 258px;
+        height: 500px;
+        overflow: hidden;
+        border: 9px solid #08111f;
+        border-radius: 34px;
+        background: #f8fbff;
+        box-shadow: 0 25px 66px rgba(15,23,42,.18);
+      }
+
+      .phone-top {
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+        background: white;
+      }
+
+      .phone-body { padding: 13px; }
+
+      .phone-card {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        background: white;
+        padding: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="catalog">
+      <section id="concept-1" class="shot">
+        <div class="layout">
+          <main>
+            <div class="top">
+              <div class="quick"><span class="active">סקירה</span><span>לקוח חדש</span><span>חשבונית</span><span>סריקה</span><span>דוח</span></div>
+              <div class="search">חפש לקוח, פרויקט, חשבונית או מסמך</div>
+              <div class="account"><i class="dot"></i><div><b>קבלן ביצוע · COMPANY</b><small>CRM + ERP + פיענוח פרימיום</small></div></div>
+            </div>
+            <section class="hero">
+              <div>
+                <div class="label"><strong>01</strong> Construction Executive Workspace</div>
+                <h1 class="title">CRM לקוחות ו־ERP כספים בדשבורד לבן, נקי ומהיר.</h1>
+                <p class="copy">תמונה אחת של לקוחות, פרויקטים, חשבוניות, תזרים ופיענוח רב־מנועי למסמכי בנייה.</p>
+                <div class="actions"><button class="btn primary">פעולה מומלצת</button><button class="btn">סריקה חדשה</button></div>
+              </div>
+              <div class="tile pad"><div class="mini">התאמה למערכת</div><div class="value" style="color:var(--build)">98%</div><p class="hint">ענף בנייה + מנוי Company + מנועי AI זמינים.</p></div>
+            </section>
+            <section class="grid">
+              <article class="tile pad s4"><div class="head"><div class="mini">CRM</div><span class="tag crm">לקוחות</span></div><div class="value" style="color:var(--crm)">42</div><p class="hint">לידים, הצעות, פרויקטים, חתימות ושיחות.</p></article>
+              <article class="tile pad s4"><div class="head"><div class="mini">ERP</div><span class="tag erp">כספים</span></div><div class="value" style="color:var(--erp)">₪128K</div><p class="hint">חשבוניות, גבייה, תזרים וספקים.</p></article>
+              <article class="tile pad s4"><div class="head"><div class="mini">Multi-engine</div><span class="tag ai">AI</span></div><div class="value" style="color:var(--ai)">97%</div><p class="hint">הסכמה בין Gemini, OpenAI ו־Document AI.</p></article>
+              <article class="tile pad s8"><div class="head"><div class="mini">פעולות עסקיות</div><button class="btn">פתח הכל</button></div><div class="flow"><div class="row"><span class="tag crm">CRM</span><b>הדקל 18 מחכה להצעת המשך</b><span>היום</span></div><div class="row"><span class="tag erp">ERP</span><b>שלח תזכורת גבייה אוטומטית</b><span>₪42,900</span></div><div class="row"><span class="tag ai">AI</span><b>חשבונית ספק פוענחה ושויכה לפרויקט</b><span>97%</span></div></div></article>
+              <article class="tile pad s4"><div class="mini">ענף בנייה</div><div class="matrix" style="grid-template-columns:1fr 1fr"><div><span>תחום</span><b>קבלן</b></div><div><span>מנוי</span><b>Company</b></div><div><span>מסמכים</span><b>186</b></div><div><span>צוות</span><b>8</b></div></div></article>
+            </section>
+          </main>
+          <aside>
+            <div class="logo"><div class="mark">BSD</div><div><b>BSD-YBM</b><span>Business OS לבנייה</span></div></div>
+            <div class="side-title">מרכז עבודה</div>
+            <div class="side-nav"><div class="side-item active"><i>⌂</i><span>דשבורד</span><small>Live</small></div><div class="side-item"><i>👥</i><span>לקוחות CRM</span><small>42</small></div><div class="side-item"><i>₪</i><span>כספים ERP</span><small>128K</small></div><div class="side-item"><i>AI</i><span>פיענוח רב מנועי</span><small>97%</small></div><div class="side-item"><i>▦</i><span>פרויקטים</span><small>12</small></div><div class="side-item"><i>⚙</i><span>הגדרות מנוי</span><small>Company</small></div></div>
+            <div class="side-card"><b>המערכת מותאמת לענף</b><p>קבלן ביצוע, שדות בנייה, מסמכים, תזרים ויכולות לפי מנוי.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="concept-2" class="shot">
+        <div class="layout">
+          <main>
+            <div class="top"><div class="quick"><span>סקירה</span><span class="active">CRM/ERP</span><span>פיענוח</span><span>פרויקטים</span><span>מנוי</span></div><div class="search">נווט מהר בין לקוח, פרויקט וסכום</div><div class="account"><i class="dot"></i><div><b>עבודות גמר · DEALER</b><small>ממשק מותאם לתחום</small></div></div></div>
+            <section class="hero"><div><div class="label"><strong>02</strong> Split CRM x ERP Workspace</div><h1 class="title">צד לקוחות וצד כספים, מחוברים דרך פרויקט בנייה.</h1><p class="copy">כל לקוח ב־CRM מחובר לחשבוניות, ספקים, הצעות מחיר ופיענוח מסמכים ב־ERP.</p><div class="actions"><button class="btn primary">פתח לקוח 360</button><button class="btn">צור חשבונית</button></div></div><div class="tile pad"><div class="mini">Client-to-cash</div><div class="value" style="color:var(--blue)">12</div><p class="hint">פרויקטים עם לקוח, הצעה, מסמכים ותזרים.</p></div></section>
+            <section class="grid">
+              <article class="tile pad s6"><div class="head"><div class="mini">CRM לקוחות</div><span class="tag crm">Front office</span></div><div class="subgrid"><div class="sub"><div class="mini">לקוחות פעילים</div><div class="value" style="color:var(--crm)">42</div></div><div class="sub"><div class="mini">הצעות פתוחות</div><div class="value">8</div></div></div><div class="flow"><div class="row"><span class="tag crm">Lead</span><b>לקוח חדש מבקש הצעת שיפוץ</b><span>חם</span></div><div class="row"><span class="tag build">פרויקט</span><b>בחירת תבנית עבודות גמר</b><span>מוכן</span></div></div></article>
+              <article class="tile pad s6"><div class="head"><div class="mini">ERP כספים</div><span class="tag erp">Back office</span></div><div class="subgrid"><div class="sub"><div class="mini">גבייה צפויה</div><div class="value" style="color:var(--erp)">₪74K</div></div><div class="sub"><div class="mini">חריגות ספק</div><div class="value" style="color:var(--rose)">3</div></div></div><div class="flow"><div class="row"><span class="tag erp">Invoice</span><b>חשבונית ממתינה אחרי חתימה</b><span>₪18K</span></div><div class="row"><span class="tag ai">AI</span><b>פיענוח מחיר ספק והשוואת סעיפים</b><span>96%</span></div></div></article>
+              <article class="tile pad s12"><div class="head"><div><div class="mini">חיבור מלא</div><p class="hint">המשתמש לא מרגיש שהוא עובר בין מערכות. CRM ו־ERP נראים כמו תהליך עבודה אחד.</p></div><button class="btn primary">הפעל זרימה</button></div><div class="matrix"><div><span>לקוח</span><b style="color:var(--crm)">הדקל</b></div><div><span>פרויקט</span><b>שיפוץ</b></div><div><span>הצעה</span><b>מוכנה</b></div><div><span>מסמך</span><b style="color:var(--ai)">פוענח</b></div><div><span>כסף</span><b style="color:var(--erp)">₪18K</b></div></div></article>
+            </section>
+          </main>
+          <aside><div class="logo"><div class="mark">BSD</div><div><b>BSD-YBM</b><span>CRM x ERP</span></div></div><div class="side-title">תפריט</div><div class="side-nav"><div class="side-item"><i>⌂</i><span>דשבורד</span><small></small></div><div class="side-item active"><i>↔</i><span>CRM + ERP</span><small>Flow</small></div><div class="side-item"><i>👥</i><span>לקוחות</span><small>42</small></div><div class="side-item"><i>₪</i><span>כספים</span><small>74K</small></div><div class="side-item"><i>▦</i><span>פרויקטים</span><small>12</small></div><div class="side-item"><i>AI</i><span>מנועי פיענוח</span><small>3</small></div></div><div class="side-card"><b>מטרת המסך</b><p>להראות שהלקוח, הפרויקט והכסף הם אובייקט אחד.</p></div></aside>
+        </div>
+      </section>
+
+      <section id="concept-3" class="shot">
+        <div class="layout">
+          <main>
+            <div class="top"><div class="quick"><span>סקירה</span><span>CRM</span><span>ERP</span><span class="active">פיענוח</span><span>בקרה</span></div><div class="search">העלה מסמך או בדוק התאמת מנועים</div><div class="account"><i class="dot"></i><div><b>CORPORATE · 4 engines</b><small>כל המנועים פעילים</small></div></div></div>
+            <section class="hero"><div><div class="label"><strong>03</strong> Multi-engine Decode Center</div><h1 class="title">חדר פיענוח לבן ומקצועי למסמכי בנייה וכספים.</h1><p class="copy">כל מנוע מפענח, המערכת משווה תוצאות, מזהה כפילויות ומעדכנת את ה־ERP וה־CRM.</p><div class="actions"><button class="btn primary">אשר פיענוח</button><button class="btn">השווה מנועים</button></div></div><div class="tile pad"><div class="mini">Consensus</div><div class="value" style="color:var(--ai)">97%</div><p class="hint">הסכמה על ספק, סכום, מע״מ ופרויקט.</p></div></section>
+            <section class="grid">
+              <article class="tile pad s8"><div class="head"><div class="mini">השוואת מנועים</div><span class="tag ai">Multi-engine</span></div><table class="table"><tr><th>מנוע</th><th>ספק</th><th>סכום</th><th>פרויקט</th><th>אמון</th></tr><tr><td>Gemini Vision</td><td>בטון הצפון</td><td>₪14,900</td><td>הדקל 18</td><td><span class="tag ai">97%</span></td></tr><tr><td>OpenAI</td><td>בטון הצפון</td><td>₪14,900</td><td>הדקל 18</td><td><span class="tag blue">96%</span></td></tr><tr><td>Document AI</td><td>בטון הצפון</td><td>₪14,890</td><td>הדקל 18</td><td><span class="tag crm">93%</span></td></tr></table><div class="flow"><div class="row"><span class="tag build">Guard</span><b>אין כפילות מול מסמכים קיימים</b><span>תקין</span></div><div class="row"><span class="tag erp">ERP</span><b>עדכון הוצאה ותזרים בפרויקט</b><span>מוכן</span></div></div></article>
+              <article class="tile pad s4"><div class="mini">תצוגת מסמך</div><div class="sub" style="margin-top:14px;background:#08111f;color:white;min-height:178px"><div class="mini" style="color:#94a3b8">חשבונית ספק</div><div class="value" style="color:white">₪14,900</div><p class="hint" style="color:#cbd5e1">בטון הצפון · הדקל 18 · חומרי גלם</p></div><div class="matrix" style="grid-template-columns:1fr 1fr"><div><span>OCR</span><b style="color:var(--ai)">נקי</b></div><div><span>ERP</span><b style="color:var(--erp)">מוכן</b></div></div></article>
+              <article class="tile pad s12"><div class="head"><div class="mini">מה קורה אחרי הפיענוח</div><button class="btn primary">הפעל שרשרת עסקית</button></div><div class="matrix"><div><span>שיוך לקוח</span><b>הדקל</b></div><div><span>פרויקט</span><b>18</b></div><div><span>חשבונאות</span><b>מע״מ</b></div><div><span>ספק</span><b>בדיקה</b></div><div><span>פעולה</span><b>תשלום</b></div></div></article>
+            </section>
+          </main>
+          <aside><div class="logo"><div class="mark">BSD</div><div><b>BSD-YBM</b><span>Decode Center</span></div></div><div class="side-title">מנועים</div><div class="side-nav"><div class="side-item"><i>⌂</i><span>דשבורד</span><small></small></div><div class="side-item active"><i>AI</i><span>פיענוח</span><small>97%</small></div><div class="side-item"><i>G</i><span>Gemini</span><small>On</small></div><div class="side-item"><i>O</i><span>OpenAI</span><small>On</small></div><div class="side-item"><i>D</i><span>Document AI</span><small>On</small></div><div class="side-item"><i>✓</i><span>Guard</span><small>Clean</small></div></div><div class="side-card"><b>רמת מנוי</b><p>Corporate פותח את כל מנועי הפיענוח והבקרה.</p></div></aside>
+        </div>
+      </section>
+
+      <section id="concept-4" class="shot">
+        <div class="layout">
+          <main>
+            <div class="top"><div class="quick"><span>סקירה</span><span>ענף</span><span class="active">מנוי</span><span>יכולות</span><span>שדרוג</span></div><div class="search">בדוק מה פתוח לפי חבילה</div><div class="account"><i class="dot"></i><div><b>Plan-aware UI</b><small>המסך משתנה לפי המנוי</small></div></div></div>
+            <section class="hero"><div><div class="label"><strong>04</strong> Subscription Adaptive Workspace</div><h1 class="title">אותו אתר, יכולות שונות וברורות לפי רמת המנוי.</h1><p class="copy">המערכת משנה ניווט, אריחים, מנועי פיענוח, הרשאות, קרדיטים ופעולות AI לפי החבילה.</p><div class="actions"><button class="btn primary">הצג שדרוג חכם</button><button class="btn">נהל מנויים</button></div></div><div class="tile pad"><div class="mini">Current plan</div><div class="value" style="color:var(--blue)">COMPANY</div><p class="hint">CRM + ERP + Premium OCR + ענף בנייה.</p></div></section>
+            <section class="grid">
+              <article class="tile pad s7"><div class="head"><div class="mini">מפת יכולות לפי מנוי</div><span class="tag blue">Dynamic</span></div><div class="flow"><div class="row"><span class="tag">Free</span><b>CRM בסיסי וסריקה מוגבלת</b><span>20%</span></div><div class="row"><span class="tag crm">Household</span><b>לקוחות וחשבוניות פשוטות</b><span>36%</span></div><div class="row"><span class="tag erp">Dealer</span><b>ERP מסחרי ומחירונים</b><span>54%</span></div><div class="row"><span class="tag ai">Company</span><b>פיענוח פרימיום והתאמת בנייה</b><span>78%</span></div><div class="row"><span class="tag build">Corporate</span><b>צוותים, כל המנועים ואוטומציות</b><span>100%</span></div></div></article>
+              <article class="tile pad s5"><div class="mini">מה משתנה בפועל</div><div class="matrix" style="grid-template-columns:1fr 1fr"><div><span>תפריט</span><b>דינמי</b></div><div><span>מנועים</span><b>1→4</b></div><div><span>קרדיטים</span><b>לפי Tier</b></div><div><span>צוות</span><b>פתוח</b></div><div><span>ענף</span><b>מותאם</b></div><div><span>AI</span><b>אוטומטי</b></div></div></article>
+              <article class="tile pad s12"><div class="head"><div><div class="mini">רגע שדרוג מקצועי</div><p class="hint">כשהמשתמש מגיע לפיצ'ר חסום, המערכת מסבירה מה הערך העסקי: עוד מנוע פיענוח, יותר משתמשים, התאמה לענף או אוטומציה.</p></div><button class="btn primary">פתח הצעת שדרוג</button></div></article>
+            </section>
+          </main>
+          <aside><div class="logo"><div class="mark">BSD</div><div><b>BSD-YBM</b><span>Plan-aware SaaS</span></div></div><div class="side-title">מנויים</div><div class="side-nav"><div class="side-item"><i>F</i><span>Free</span><small>Basic</small></div><div class="side-item"><i>H</i><span>Household</span><small>Lite</small></div><div class="side-item"><i>D</i><span>Dealer</span><small>Trade</small></div><div class="side-item active"><i>C</i><span>Company</span><small>Active</small></div><div class="side-item"><i>★</i><span>Corporate</span><small>Full</small></div></div><div class="side-card"><b>התאמה אמיתית</b><p>לא רק חסימת מסכים, אלא מוצר שמחליף עומק ויכולות לפי מנוי.</p></div></aside>
+        </div>
+      </section>
+
+      <section id="concept-5" class="shot">
+        <div class="layout">
+          <main>
+            <div class="top"><div class="quick"><span class="active">בית</span><span>תחום</span><span>לקוחות</span><span>כספים</span><span>סריקה</span></div><div class="search">בחר תחום בנייה או לקוח</div><div class="account"><i class="dot"></i><div><b>חשמל / שיפוץ / קבלן</b><small>פרופיל מקצוע משנה את המערכת</small></div></div></div>
+            <section class="hero"><div><div class="label"><strong>05</strong> Construction Industry Adaptive Tiles</div><h1 class="title">אריחים לבנים שמשתנים לפי תחום הבנייה של העסק.</h1><p class="copy">קבלן ביצוע, חשמל, אינסטלציה, עבודות גמר או ספקים. כל תחום מקבל מילון, מסמכים, KPI וזרימות עבודה שונות.</p><div class="actions"><button class="btn primary">החל תחום</button><button class="btn">התאם תבניות</button></div></div><div class="phone"><div class="phone-top"><b>BSD-YBM</b><span class="tag build">בנייה</span></div><div class="phone-body"><div class="phone-card"><div class="mini">תחום</div><div class="value" style="font-size:28px;color:var(--build)">קבלן</div></div><div class="phone-card"><div class="mini">CRM</div><p class="hint">לקוחות, פרויקטים והצעות.</p></div><div class="phone-card"><div class="mini">ERP</div><p class="hint">חשבוניות, ספקים ותזרים.</p></div></div></div></section>
+            <section class="grid">
+              <article class="tile s8 blueprint">
+                <div class="line" style="right:430px;top:190px;width:245px;transform:rotate(18deg)"></div><div class="line" style="right:430px;top:190px;width:255px;transform:rotate(-26deg)"></div><div class="line" style="right:430px;top:190px;width:250px;transform:rotate(154deg)"></div><div class="line" style="right:430px;top:190px;width:240px;transform:rotate(210deg)"></div>
+                <div class="module core" style="right:390px;top:130px">תחום בנייה<small>Adaptive Engine</small></div><div class="module" style="right:90px;top:56px;color:var(--crm)">CRM<small>שדות לקוח</small></div><div class="module" style="left:100px;top:70px;color:var(--erp)">ERP<small>סעיפים ומחירון</small></div><div class="module" style="right:110px;bottom:70px;color:var(--ai)">מסמכים<small>תבניות פיענוח</small></div><div class="module" style="left:130px;bottom:84px;color:var(--build)">KPI<small>רווחיות ענפית</small></div>
+              </article>
+              <article class="tile pad s4"><div class="mini">תחומים מוכנים</div><div class="flow"><div class="row" style="grid-template-columns:84px 1fr"><span class="tag build">קבלן</span><b>פרויקטים, ספקים, תזרים</b></div><div class="row" style="grid-template-columns:84px 1fr"><span class="tag blue">חשמל</span><b>קריאות, חומרים, אישורים</b></div><div class="row" style="grid-template-columns:84px 1fr"><span class="tag crm">שיפוץ</span><b>לקוחות, הצעות, חתימות</b></div><div class="row" style="grid-template-columns:84px 1fr"><span class="tag erp">ספק</span><b>מחירונים, גבייה ומלאי</b></div></div></article>
+              <article class="tile pad s12"><div class="matrix"><div><span>מילון</span><b>מותאם</b></div><div><span>מסמכים</span><b>ענפיים</b></div><div><span>CRM</span><b>לפי תחום</b></div><div><span>ERP</span><b>סעיפים</b></div><div><span>מנוי</span><b>יכולות</b></div></div></article>
+            </section>
+          </main>
+          <aside><div class="logo"><div class="mark">BSD</div><div><b>BSD-YBM</b><span>Adaptive Construction</span></div></div><div class="side-title">ענפי בנייה</div><div class="side-nav"><div class="side-item active"><i>🏗</i><span>קבלן ביצוע</span><small>Active</small></div><div class="side-item"><i>⚡</i><span>חשמל</span><small></small></div><div class="side-item"><i>🔧</i><span>אינסטלציה</span><small></small></div><div class="side-item"><i>▤</i><span>עבודות גמר</span><small></small></div><div class="side-item"><i>₪</i><span>ספקים</span><small></small></div><div class="side-item"><i>⚙</i><span>הגדרות תחום</span><small></small></div></div><div class="side-card"><b>החזון</b><p>מוצר אחד שמרגיש כאילו נבנה במיוחד לכל מקצוע בנייה.</p></div></aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

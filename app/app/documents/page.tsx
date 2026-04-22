@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import DocumentsWorkspaceV2 from "@/components/documents/DocumentsWorkspaceV2";
+import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
@@ -129,10 +130,12 @@ export default async function AppDocumentsPage() {
     }));
 
   return (
-    <DocumentsWorkspaceV2
-      industryProfile={industryProfile}
-      scannedDocuments={scannedDocuments}
-      issuedDocuments={issuedDocuments}
-    />
+    <WorkspaceEngineeringShell>
+      <DocumentsWorkspaceV2
+        industryProfile={industryProfile}
+        scannedDocuments={scannedDocuments}
+        issuedDocuments={issuedDocuments}
+      />
+    </WorkspaceEngineeringShell>
   );
 }

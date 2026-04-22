@@ -74,7 +74,7 @@ export default async function AppPortalPage() {
       .filter(Boolean).length * 25;
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir="rtl">
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
           {t("workspacePortal.eyebrow")}

@@ -4,14 +4,13 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { LucideIcon } from "lucide-react";
 import {
   Accessibility,
-  AudioLines,
   BrainCircuit,
   Loader2,
   Mic,
-  MicOff,
   Play,
   ScanSearch,
   Sparkles,
@@ -43,7 +42,7 @@ function readStringArray(messages: MessageTree, path: string): string[] {
 function ScannerLoadingFallback() {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-[color:var(--v2-line)] bg-white/80">
+    <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-slate-200/10 bg-white/80">
       <div className="flex items-center gap-3 text-sm font-black text-slate-600">
         <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
         {t("workspaceDock.loadingScanner")}
@@ -57,7 +56,7 @@ const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner
   loading: () => <ScannerLoadingFallback />,
 });
 
-type DockPanel = "accessibility" | "assistant" | "voice" | "scanner" | null;
+type DockPanel = "accessibility" | "assistant" | "scanner" | null;
 type AssistantSource = "system" | "text" | "voice";
 type AssistantMessage = {
   id: string;
@@ -190,7 +189,7 @@ function DockButton({
       aria-label={label}
       title={label}
     >
-      <Icon className="h-4 w-4 transition group-hover:scale-105" aria-hidden />
+      <Icon className="h-4 w-4 transition group-hover:scale-105" strokeWidth={2} aria-hidden />
     </button>
   );
 }
@@ -201,6 +200,10 @@ export default function WorkspaceUtilityDock({
   userName,
   hiddenPrimaryRouteIds,
 }: WorkspaceUtilityDockProps) {
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
   const { t, messages: localeMessages, locale, dir } = useI18n();
   const pathname = usePathname() ?? "/app";
   const currentSection = useMemo(
@@ -247,6 +250,8 @@ export default function WorkspaceUtilityDock({
   }, [currentSection.href, currentSection.label, industryProfile, localeMessages, t]);
 
   const [openPanel, setOpenPanel] = useState<DockPanel>(null);
+  const prevPanelRef = useRef<DockPanel | null>(null);
+  const [assistantMode, setAssistantMode] = useState<"chat" | "voice">("chat");
   const [chatMessages, setChatMessages] = useState<AssistantMessage[]>([
     createMessage("assistant", welcomeMessage, "system"),
   ]);
@@ -433,6 +438,13 @@ export default function WorkspaceUtilityDock({
   }, [autoSendVoice, sendAssistantMessage]);
 
   useEffect(() => {
+    if (openPanel === "assistant" && prevPanelRef.current !== "assistant") {
+      setAssistantMode("chat");
+    }
+    prevPanelRef.current = openPanel;
+  }, [openPanel]);
+
+  useEffect(() => {
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
   }, [chatMessages, openPanel, sending]);
@@ -450,11 +462,12 @@ export default function WorkspaceUtilityDock({
   }, [openPanel]);
 
   useEffect(() => {
-    if (openPanel !== "voice" && isListening) {
+    const allowVoice = openPanel === "assistant" && assistantMode === "voice";
+    if (!allowVoice && isListening) {
       recognitionRef.current?.stop();
       setIsListening(false);
     }
-  }, [isListening, openPanel]);
+  }, [isListening, openPanel, assistantMode]);
 
   const toggleVoiceCapture = useCallback(() => {
     if (!voiceSupported) return;
@@ -493,12 +506,20 @@ export default function WorkspaceUtilityDock({
 
   const scannerButtonDisabled = !orgId;
 
+  /**
+   * בועות: תמיד צמודות לדופן הימני **הפיזי** של ה-viewport (לא לוגי start),
+   * כדי שלא יזוזו עם מיכלי תוכן ולא יישארו “באמצע” המסך. אינן גוללות — position: fixed על document.body.
+   */
+  const workspaceDockFabPosition =
+    "fixed z-[9900] top-1/2 -translate-y-1/2 right-[max(0.75rem,env(safe-area-inset-right,0px))] lg:right-[max(1rem,env(safe-area-inset-right,0px))]";
+
+  /** פאנלים קומפקטיים: ממוקמים משמאל לעמודת הבועות (~3.5rem) */
   const compactPanelClassName =
-    "fixed z-[255] flex max-h-[min(calc(100dvh-7rem),calc(100vh-7rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-[30px] border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/98 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.55)] backdrop-blur-xl bottom-[max(6rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))] lg:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] lg:left-[max(6rem,env(safe-area-inset-left,0px))] lg:max-h-[min(calc(100dvh-3rem),calc(100vh-3rem))]";
+    "fixed z-[9800] flex max-h-[min(calc(100dvh-2rem),calc(100vh-2rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/88 shadow-xl backdrop-blur-xl backdrop-saturate-150 top-1/2 -translate-y-1/2 right-[max(0.75rem,calc(env(safe-area-inset-right,0px)+0.75rem+3.5rem))] lg:right-[max(1rem,calc(env(safe-area-inset-right,0px)+1rem+3.5rem))]";
 
   const desktopDock = (
-    <div className="fixed z-[260] hidden flex-col gap-2 lg:flex bottom-[max(1rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))]">
-      <div className="rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/95 p-1.5 shadow-md backdrop-blur-md">
+    <div className={`${workspaceDockFabPosition} hidden flex-col gap-2 lg:flex`}>
+      <div className="rounded-2xl border border-slate-200/10 bg-white/88 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <div className="flex flex-col gap-1">
           <DockButton
             active={openPanel === "accessibility"}
@@ -507,22 +528,16 @@ export default function WorkspaceUtilityDock({
             onClick={() => setOpenPanel((current) => (current === "accessibility" ? null : "accessibility"))}
           />
           <DockButton
-            active={openPanel === "assistant"}
-            icon={Sparkles}
-            label={t("workspaceDock.dock.assistant")}
-            onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
-          />
-          <DockButton
-            active={openPanel === "voice"}
-            icon={isListening ? MicOff : Mic}
-            label={t("workspaceDock.dock.voice")}
-            onClick={() => setOpenPanel((current) => (current === "voice" ? null : "voice"))}
-          />
-          <DockButton
             active={openPanel === "scanner"}
             icon={ScanSearch}
             label={t("workspaceDock.dock.scanner")}
             onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
+          />
+          <DockButton
+            active={openPanel === "assistant"}
+            icon={Sparkles}
+            label={t("workspaceDock.dock.assistant")}
+            onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
           />
         </div>
       </div>
@@ -530,8 +545,8 @@ export default function WorkspaceUtilityDock({
   );
 
   const mobileDock = (
-    <div className="fixed z-[260] lg:hidden left-[max(0.75rem,env(safe-area-inset-left,0px))] right-[max(0.75rem,env(safe-area-inset-right,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
-      <div className="grid grid-cols-4 gap-1 rounded-2xl border border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]/95 p-1.5 shadow-md backdrop-blur-md">
+    <div className="fixed z-[9900] lg:hidden top-1/2 -translate-y-1/2 right-[max(0.75rem,env(safe-area-inset-right,0px))]">
+      <div className="flex flex-col gap-1 rounded-2xl border border-slate-200/10 bg-white/88 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <DockButton
           active={openPanel === "accessibility"}
           icon={Accessibility}
@@ -539,34 +554,31 @@ export default function WorkspaceUtilityDock({
           onClick={() => setOpenPanel((current) => (current === "accessibility" ? null : "accessibility"))}
         />
         <DockButton
-          active={openPanel === "assistant"}
-          icon={Sparkles}
-          label={t("workspaceDock.dock.assistant")}
-          onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
-        />
-        <DockButton
-          active={openPanel === "voice"}
-          icon={isListening ? MicOff : Mic}
-          label={t("workspaceDock.dock.voice")}
-          onClick={() => setOpenPanel((current) => (current === "voice" ? null : "voice"))}
-        />
-        <DockButton
           active={openPanel === "scanner"}
           icon={ScanSearch}
           label={t("workspaceDock.dock.scanner")}
           onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
         />
+        <DockButton
+          active={openPanel === "assistant"}
+          icon={Sparkles}
+          label={t("workspaceDock.dock.assistant")}
+          onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
+        />
       </div>
     </div>
   );
 
-  return (
+  const dockLayer = (
     <>
       {desktopDock}
       {mobileDock}
 
       {openPanel && openPanel !== "scanner" ? (
-        <div className="fixed inset-0 z-[250] bg-slate-950/20 backdrop-blur-[2px]" onClick={() => setOpenPanel(null)} />
+        <div
+          className="fixed inset-0 z-[9700] bg-slate-950/20 backdrop-blur-[2px]"
+          onClick={() => setOpenPanel(null)}
+        />
       ) : null}
 
       {openPanel === "accessibility" ? (
@@ -577,7 +589,7 @@ export default function WorkspaceUtilityDock({
 
       {openPanel === "assistant" ? (
         <section className={compactPanelClassName} dir={dir} aria-label={t("workspaceDock.assistant.panelAria")}>
-          <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4">
+          <div className="flex items-start justify-between gap-4 border-b border-slate-200/10 px-5 py-4">
             <div className="min-w-0">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
@@ -605,7 +617,154 @@ export default function WorkspaceUtilityDock({
             </button>
           </div>
 
+          <div
+            className="flex gap-1 border-b border-slate-200/10 px-5 pb-3"
+            role="tablist"
+            aria-label={t("workspaceDock.assistant.panelAria")}
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={assistantMode === "chat"}
+              onClick={() => setAssistantMode("chat")}
+              className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
+                assistantMode === "chat"
+                  ? "bg-[color:var(--v2-accent)] text-white shadow-sm"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {t("workspaceDock.assistant.tabChat")}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={assistantMode === "voice"}
+              onClick={() => setAssistantMode("voice")}
+              className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
+                assistantMode === "voice"
+                  ? "bg-[color:var(--v2-accent)] text-white shadow-sm"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {t("workspaceDock.assistant.tabVoice")}
+            </button>
+          </div>
+
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            {assistantMode === "voice" ? (
+              <div className="space-y-4">
+                <p className="text-[11px] leading-relaxed text-slate-500">{t("workspaceDock.assistant.voiceInlineHint")}</p>
+                <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-black text-slate-900">
+                        {voiceSupported ? t("workspaceDock.voice.micReady") : t("workspaceDock.voice.micUnsupported")}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {voiceSupported ? t("workspaceDock.voice.micReadyHint") : t("workspaceDock.voice.micFallbackHint")}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={toggleVoiceCapture}
+                      disabled={!voiceSupported}
+                      className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-xl transition ${
+                        isListening
+                          ? "bg-rose-500 shadow-rose-500/30"
+                          : "bg-[color:var(--v2-accent)] shadow-[0_20px_40px_-18px_rgba(14,124,134,0.42)]"
+                      } disabled:cursor-not-allowed disabled:bg-slate-300`}
+                      aria-label={
+                        isListening ? t("workspaceDock.voice.recordStopAria") : t("workspaceDock.voice.recordStartAria")
+                      }
+                    >
+                      {isListening ? <Square className="h-5 w-5" aria-hidden /> : <Mic className="h-5 w-5" aria-hidden />}
+                    </button>
+                  </div>
+                  <textarea
+                    value={voiceDraft}
+                    onChange={(event) => setVoiceDraft(event.target.value)}
+                    rows={4}
+                    placeholder={t("workspaceDock.voice.voicePlaceholder")}
+                    className="mt-4 min-h-[100px] w-full resize-none rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
+                  />
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {quickPrompts.map((prompt) => (
+                      <button
+                        key={`assist-voice-${prompt}`}
+                        type="button"
+                        onClick={() => setVoiceDraft(prompt)}
+                        className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition hover:border-[color:var(--v2-accent)] hover:text-[color:var(--v2-accent)]"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={submitVoiceDraft}
+                      disabled={sending || voiceDraft.trim().length === 0}
+                      className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <Play className="h-4 w-4" aria-hidden />
+                      {t("workspaceDock.voice.sendAsVoice")}
+                    </button>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-3 border-t border-slate-100 pt-4">
+                    <label className="inline-flex items-center gap-2 text-[11px] text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={autoSendVoice}
+                        onChange={(event) => setAutoSendVoice(event.target.checked)}
+                        className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
+                      />
+                      <span>
+                        <span className="font-bold">{t("workspaceDock.voice.autoSendTitle")}</span>
+                        <span className="text-slate-500"> — {t("workspaceDock.voice.autoSendHint")}</span>
+                      </span>
+                    </label>
+                    <label className="inline-flex items-center gap-2 text-[11px] text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={autoSpeak}
+                        onChange={(event) => setAutoSpeak(event.target.checked)}
+                        className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
+                      />
+                      {t("workspaceDock.voice.autoSpeakHint")}
+                    </label>
+                  </div>
+                  {lastAssistantReply ? (
+                    <div className="mt-4 rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.lastReplyTitle")}</p>
+                          <p className="mt-2 text-sm leading-6 text-slate-600">{lastAssistantReply}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            speakingMessageId === "last-reply"
+                              ? stopSpeaking()
+                              : speakMessage(lastAssistantReply, "last-reply")
+                          }
+                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+                          aria-label={t("workspaceDock.voice.readLastAria")}
+                        >
+                          {speakingMessageId === "last-reply" ? (
+                            <VolumeX className="h-4 w-4" aria-hidden />
+                          ) : (
+                            <Volume2 className="h-4 w-4" aria-hidden />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
+            {assistantMode === "chat" ? (
+              <>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">
                 {t("workspaceDock.assistant.contextLabel")}
@@ -663,7 +822,7 @@ export default function WorkspaceUtilityDock({
               <div className="flex items-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setOpenPanel("voice")}
+                  onClick={() => setAssistantMode("voice")}
                   className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900"
                   aria-label={t("workspaceDock.assistant.goVoiceAria")}
                 >
@@ -703,205 +862,7 @@ export default function WorkspaceUtilityDock({
                 </button>
               </div>
             </div>
-          </div>
-        </section>
-      ) : null}
-
-      {openPanel === "voice" ? (
-        <section className={compactPanelClassName} dir={dir} aria-label={t("workspaceDock.voice.panelAria")}>
-          <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
-                  <AudioLines className="h-5 w-5" aria-hidden />
-                </span>
-                <div>
-                  <h2 className="text-base font-black text-slate-900">{t("workspaceDock.voice.title")}</h2>
-                  <p className="mt-1 text-xs text-slate-500">{t("workspaceDock.voice.subtitle")}</p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setOpenPanel(null)}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
-              aria-label={t("workspaceDock.voice.closeAria")}
-            >
-              <X className="h-4 w-4" aria-hidden />
-            </button>
-          </div>
-
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-black text-slate-900">
-                    {voiceSupported ? t("workspaceDock.voice.micReady") : t("workspaceDock.voice.micUnsupported")}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {voiceSupported ? t("workspaceDock.voice.micReadyHint") : t("workspaceDock.voice.micFallbackHint")}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={toggleVoiceCapture}
-                  disabled={!voiceSupported}
-                  className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-xl transition ${
-                    isListening
-                      ? "bg-rose-500 shadow-rose-500/30"
-                      : "bg-[color:var(--v2-accent)] shadow-[0_20px_40px_-18px_rgba(193,89,47,0.48)]"
-                  } disabled:cursor-not-allowed disabled:bg-slate-300`}
-                  aria-label={
-                    isListening ? t("workspaceDock.voice.recordStopAria") : t("workspaceDock.voice.recordStartAria")
-                  }
-                >
-                  {isListening ? <Square className="h-5 w-5" aria-hidden /> : <Mic className="h-5 w-5" aria-hidden />}
-                </button>
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAutoSendVoice((current) => !current)}
-                  className={`rounded-2xl border px-3 py-3 text-right transition ${
-                    autoSendVoice
-                      ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]"
-                      : "border-slate-200 bg-slate-50 text-slate-600"
-                  }`}
-                >
-                  <span className="block text-sm font-black">{t("workspaceDock.voice.autoSendTitle")}</span>
-                  <span className="mt-1 block text-[11px] text-slate-500">
-                    {t("workspaceDock.voice.autoSendHint")}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (speakingMessageId) {
-                      stopSpeaking();
-                      return;
-                    }
-                    if (lastAssistantReply) {
-                      speakMessage(lastAssistantReply, "last-reply");
-                    }
-                  }}
-                  className={`rounded-2xl border px-3 py-3 text-right transition ${
-                    autoSpeak
-                      ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]"
-                      : "border-slate-200 bg-slate-50 text-slate-600"
-                  }`}
-                >
-                  <span className="block text-sm font-black">{t("workspaceDock.voice.readRepliesTitle")}</span>
-                  <span className="mt-1 block text-[11px] text-slate-500">
-                    {t("workspaceDock.voice.readRepliesHint")}
-                  </span>
-                </button>
-              </div>
-
-              <div className="mt-3 flex items-center gap-2">
-                <label className="inline-flex items-center gap-2 text-xs text-slate-500">
-                  <input
-                    type="checkbox"
-                    checked={autoSpeak}
-                    onChange={(event) => setAutoSpeak(event.target.checked)}
-                    className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
-                  />
-                  {t("workspaceDock.voice.autoSpeakHint")}
-                </label>
-              </div>
-            </div>
-
-            <div className="rounded-[24px] border border-slate-200 bg-white p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.liveTitle")}</p>
-                  <p className="mt-1 text-xs text-slate-500">{t("workspaceDock.voice.liveHint")}</p>
-                </div>
-                {isListening ? (
-                  <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-black text-rose-600">
-                    {t("workspaceDock.voice.recordingNow")}
-                  </span>
-                ) : null}
-              </div>
-
-              <textarea
-                value={voiceDraft}
-                onChange={(event) => setVoiceDraft(event.target.value)}
-                rows={5}
-                placeholder={t("workspaceDock.voice.voicePlaceholder")}
-                className="mt-4 min-h-[140px] w-full resize-none rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
-              />
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {quickPrompts.map((prompt) => (
-                  <button
-                    key={`voice-${prompt}`}
-                    type="button"
-                    onClick={() => setVoiceDraft(prompt)}
-                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition hover:border-[color:var(--v2-accent)] hover:text-[color:var(--v2-accent)]"
-                  >
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => setVoiceDraft("")}
-                  className="v2-button v2-button-secondary"
-                >
-                  {t("workspaceDock.voice.clear")}
-                </button>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setOpenPanel("assistant")}
-                    className="v2-button v2-button-secondary"
-                  >
-                    {t("workspaceDock.voice.goBubble")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={submitVoiceDraft}
-                    disabled={sending || voiceDraft.trim().length === 0}
-                    className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Play className="h-4 w-4" aria-hidden />
-                    {t("workspaceDock.voice.sendAsVoice")}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {lastAssistantReply ? (
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.lastReplyTitle")}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{lastAssistantReply}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      speakingMessageId === "last-reply"
-                        ? stopSpeaking()
-                        : speakMessage(lastAssistantReply, "last-reply")
-                    }
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                    aria-label={t("workspaceDock.voice.readLastAria")}
-                  >
-                    {speakingMessageId === "last-reply" ? (
-                      <VolumeX className="h-4 w-4" aria-hidden />
-                    ) : (
-                      <Volume2 className="h-4 w-4" aria-hidden />
-                    )}
-                  </button>
-                </div>
-              </div>
+              </>
             ) : null}
           </div>
         </section>
@@ -909,12 +870,12 @@ export default function WorkspaceUtilityDock({
 
       {openPanel === "scanner" ? (
         <section
-          className="fixed inset-0 z-[270] bg-slate-950/35 p-3 backdrop-blur-sm sm:p-5"
+          className="fixed inset-0 z-[9950] bg-slate-950/35 p-3 backdrop-blur-sm sm:p-5"
           dir={dir}
           aria-label={t("workspaceDock.scanner.panelAria")}
         >
           <div className="flex h-full flex-col rounded-[32px] border border-white/40 bg-[color:var(--v2-surface)]/98 shadow-[0_40px_120px_-48px_rgba(15,23,42,0.7)]">
-            <div className="flex items-start justify-between gap-4 border-b border-[color:var(--v2-line)] px-5 py-4 sm:px-6">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-200/10 px-5 py-4 sm:px-6">
               <div className="min-w-0">
                 <div className="flex items-center gap-3">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
@@ -946,7 +907,14 @@ export default function WorkspaceUtilityDock({
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+                <Link
+                  href="/app/documents/erp#erp-multi-scanner"
+                  onClick={() => setOpenPanel(null)}
+                  className="v2-button v2-button-primary"
+                >
+                  {t("workspaceDock.scanner.toFullScanBoard")}
+                </Link>
                 <Link
                   href="/app/documents"
                   onClick={() => setOpenPanel(null)}
@@ -982,4 +950,9 @@ export default function WorkspaceUtilityDock({
       ) : null}
     </>
   );
+
+  if (typeof document === "undefined" || !portalReady) {
+    return null;
+  }
+  return createPortal(dockLayer, document.body);
 }

@@ -15,7 +15,7 @@ interface StatusIndicator {
 
 export default function AdminSystemHealth() {
   const [indicators] = useState<StatusIndicator[]>([
-    { id: "engines", label: "מנועי AI", status: "online", description: "מערכת תקינה", actionUrl: "/app/ai" },
+    { id: "engines", label: "מנועי AI", status: "online", description: "מערכת תקינה", actionUrl: "/app/ai#assistant" },
     { id: "approvals", label: "ממתינים", status: "online", description: "אין ממתינים", actionUrl: "/app/settings/billing?tab=control" },
     { id: "billing", label: "סליקה", status: "online", description: "מערכת תקינה", actionUrl: "/app/settings/billing" },
     { id: "security", label: "אבטחה", status: "online", description: "מוגן", actionUrl: "/app/admin" }

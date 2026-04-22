@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import {
   analyzeClientAI,
   deleteOrganization,
@@ -257,7 +258,8 @@ export default function CrmOrganizationsAdminTable({
       </div>
 
       {aiModal ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <PortalToBody>
+        <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-black/60 p-4`}>
           <div
             className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-black/60"
             dir={dir}
@@ -477,6 +479,7 @@ export default function CrmOrganizationsAdminTable({
             </div>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
     </div>
   );

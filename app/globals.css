@@ -7,6 +7,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -123,14 +124,14 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --tile-rose-bg:            #FCE7EF;
   --tile-sky-bg:             #E0EEF7;
 
-  /* רדיוסים לאריחים */
-  --tile-radius:       22px;
-  --tile-radius-lg:    28px;
-  --tile-radius-sm:    16px;
+  /* רדיוסים לאריחים — rounded-2xl אחיד */
+  --tile-radius:       1rem;
+  --tile-radius-lg:    1.25rem;
+  --tile-radius-sm:    0.75rem;
 
-  /* צללים מדודים */
-  --tile-shadow:       0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
-  --tile-shadow-raised: 0 2px 4px rgba(15, 23, 42, 0.06), 0 12px 32px rgba(15, 23, 42, 0.09);
+  /* צללים מדודים — קרוב ל־shadow-xl */
+  --tile-shadow:       0 20px 25px -5px rgba(15, 23, 42, 0.07), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+  --tile-shadow-raised: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
   --tile-shadow-ai:    0 20px 60px -20px rgba(45, 25, 150, 0.5), 0 0 40px -10px var(--tile-ai-glow);
 
   /* חוקי פרוגרס */
@@ -382,15 +383,20 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   }
 
   body {
+    margin: 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: var(--axis-clients-glow);
+  }
+
+  /* רקע וצבע טקסט על העטיפה הפנימית — כך ש-portals ישירים ל-body לא יושפעו מ-filter של נגישות */
+  .app-visual-effects-root {
     color: var(--ink-900);
     background-color: var(--canvas);
     min-height: 100vh;
     min-height: -webkit-fill-available;
     min-height: 100dvh;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: var(--axis-clients-glow);
   }
 
   img, video, canvas {
@@ -437,9 +443,10 @@ html[data-accessibility-font-scale="default"] { font-size: 100%; }
 html[data-accessibility-font-scale="large"] { font-size: 110%; }
 html[data-accessibility-font-scale="xlarge"] { font-size: 118%; }
 
-html.high-contrast body { filter: contrast(1.15) saturate(1.08); }
-html.grayscale body { filter: grayscale(1); }
-html.high-contrast.grayscale body { filter: contrast(1.15) saturate(1.08) grayscale(1); }
+/* לא על body — שובר position:fixed (למשל WorkspaceUtilityDock ב-portal ל-body) */
+html.high-contrast .app-visual-effects-root { filter: contrast(1.15) saturate(1.08); }
+html.grayscale .app-visual-effects-root { filter: grayscale(1); }
+html.high-contrast.grayscale .app-visual-effects-root { filter: contrast(1.15) saturate(1.08) grayscale(1); }
 
 html.big-cursor,
 html.big-cursor * {
@@ -515,6 +522,9 @@ html.reduce-motion *::after {
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out forwards;
   }
+  .animate-workspace-page-enter {
+    animation: workspace-page-enter 0.2s ease-out forwards;
+  }
   .animate-slide-up {
     animation: slideUp 0.5s ease-out forwards;
   }
@@ -534,6 +544,12 @@ html.reduce-motion *::after {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* מעבר עמוד /app — רק אטימות, בלי transform (transform על אב שובר position:fixed במודאלים) */
+@keyframes workspace-page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -722,13 +738,15 @@ html.reduce-motion *::after {
      COMMAND CENTER — Shell + Panels
      ═══════════════════════════════════════════════════════════ */
 
-  .v2-site-shell {
+  .v2-site-shell,
+  .bento-site-shell {
     position: relative;
     color: var(--ink-900);
     background: var(--canvas);
   }
 
-  .v2-site-shell::before {
+  .v2-site-shell::before,
+  .bento-site-shell::before {
     content: "";
     position: fixed;
     inset: 0;
@@ -852,6 +870,7 @@ html.reduce-motion *::after {
   }
 
   /* ── Eyebrow label ── */
+  .bento-eyebrow,
   .v2-eyebrow {
     @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.16em] uppercase;
     background: var(--canvas-sunken);
@@ -877,24 +896,28 @@ html.reduce-motion *::after {
   }
 
   /* ══════════════ Top Nav (inline bar, no glass) ══════════════ */
-  .glass-2026-topnav {
+  .glass-2026-topnav,
+  .bento-topnav {
     border-radius: var(--radius-md);
     border: 1px solid var(--line);
     background: var(--canvas-raised);
     box-shadow: var(--shadow-xs);
   }
 
-  .glass-2026-topnav-link {
+  .glass-2026-topnav-link,
+  .bento-topnav-link {
     @apply inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition;
     color: var(--ink-500);
   }
 
-  .glass-2026-topnav-link:hover {
+  .glass-2026-topnav-link:hover,
+  .bento-topnav-link:hover {
     color: var(--ink-900);
     background: var(--canvas-sunken);
   }
 
-  .glass-2026-topnav-link--active {
+  .glass-2026-topnav-link--active,
+  .bento-topnav-link--active {
     color: var(--ink-900);
     background: var(--canvas-sunken);
     box-shadow: inset 0 -2px 0 var(--axis-clients);
@@ -952,7 +975,7 @@ html.reduce-motion *::after {
   .bento-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 14px;
+    gap: 1.5rem; /* gap-6 — ריווח בנטו אחיד */
   }
 
   /* ── Tile — האריח הבסיסי ── */
@@ -1001,6 +1024,62 @@ html.reduce-motion *::after {
   .tile--rose     { background: var(--tile-rose-bg); }
   .tile--sky      { background: var(--tile-sky-bg); }
   .tile--dark     { background: #161821; color: #F5F6F8; border-color: #2A2E38; }
+
+  /** רכות / הדגשה — מחליפים את v2-panel-soft / v2-panel-highlight */
+  .tile--soft {
+    background: var(--canvas-sunken);
+    border-color: var(--line-subtle);
+    box-shadow: none;
+  }
+  .tile--soft:hover {
+    border-color: var(--line);
+    box-shadow: var(--tile-shadow);
+  }
+  .tile--highlight {
+    border-color: var(--axis-clients-border);
+    box-shadow: var(--shadow-md), 0 0 0 1px var(--axis-clients-border);
+  }
+
+  /* כפתורי פעולה — שפת Pro Bento (במקום מחלקות v2-button) */
+  .bento-btn {
+    @apply inline-flex touch-manipulation items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition;
+  }
+  .bento-btn--primary {
+    border: 1px solid var(--ink-900);
+    background: var(--ink-900);
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .bento-btn--primary:hover:not(:disabled) {
+    background: var(--ink-800);
+    box-shadow: var(--shadow-md);
+  }
+  .bento-btn--primary:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-xs);
+  }
+  .bento-btn--primary:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+  .bento-btn--secondary {
+    border: 1px solid var(--line-strong);
+    background: var(--canvas-raised);
+    color: var(--ink-800);
+    box-shadow: var(--shadow-xs);
+  }
+  .bento-btn--secondary:hover {
+    background: var(--canvas-sunken);
+    border-color: var(--ink-400);
+  }
+  .bento-btn--ghost {
+    color: var(--ink-700);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .bento-btn--ghost:hover {
+    background: var(--canvas-sunken);
+    color: var(--ink-900);
+  }
 
   /* ── גדלי אריחים בתוך ה-grid (12 טורים) ── */
   .tile-span-3  { grid-column: span 3; }
@@ -1398,12 +1477,15 @@ html.reduce-motion *::after {
   .sd-hero-value--finance { color: var(--axis-finance-strong); }
 
   /* ══════════════ Data tables ══════════════ */
-  .v2-table {
+  .v2-table,
+  .bento-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 0.875rem;
   }
-  .v2-table thead th {
+  .v2-table thead th,
+  .bento-table thead th {
     text-align: start;
     padding: 0.625rem 1rem;
     font-size: 11px;
@@ -1414,16 +1496,24 @@ html.reduce-motion *::after {
     border-bottom: 1px solid var(--line);
     background: var(--canvas-sunken);
   }
-  .v2-table tbody td {
+  .v2-table tbody td,
+  .bento-table tbody td {
     padding: 0.75rem 1rem;
     color: var(--ink-700);
     border-bottom: 1px solid var(--line-subtle);
   }
-  .v2-table tbody tr:last-child td {
+  .v2-table tbody tr:last-child td,
+  .bento-table tbody tr:last-child td {
     border-bottom: 0;
   }
-  .v2-table tbody tr:hover td {
+  .v2-table tbody tr:hover td,
+  .bento-table tbody tr:hover td {
     background: var(--canvas-sunken);
+  }
+
+  /** עמודה ראשונה אחידה בטבלאות ה־workspace — קו אנכי עקבי בין מסכים */
+  col.workspace-table-col-1 {
+    width: 22%;
   }
 }
 
@@ -1438,14 +1528,16 @@ html.reduce-motion *::after {
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 82%);
   }
 
-  .v2-orb {
+  .v2-orb,
+  .bento-orb {
     position: absolute;
     border-radius: 9999px;
     filter: blur(56px);
     opacity: 0.48;
   }
 
-  .v2-orb-primary {
+  .v2-orb-primary,
+  .bento-orb-primary {
     top: -4rem;
     right: 8%;
     height: 14rem;
@@ -1453,7 +1545,8 @@ html.reduce-motion *::after {
     background: rgba(13, 148, 136, 0.11);
   }
 
-  .v2-orb-secondary {
+  .v2-orb-secondary,
+  .bento-orb-secondary {
     left: 6%;
     top: 20rem;
     height: 16rem;
@@ -1493,11 +1586,11 @@ html.reduce-motion *::after {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--v2-muted) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-500) 30%, transparent);
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: color-mix(in srgb, var(--v2-muted) 50%, transparent);
+  background-color: color-mix(in srgb, var(--ink-500) 50%, transparent);
 }

@@ -3,6 +3,12 @@ const path = require("path");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname),
+  allowedDevOrigins: [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "127.0.0.1:3000",
+    "localhost:3000",
+  ],
   /** כותרות אבטחה ופרטיות (תאימות מומלצת לאיחוד האירופי / מצב best-practice) */
   async headers() {
     const isProd = process.env.NODE_ENV === "production";

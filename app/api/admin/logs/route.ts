@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonForbidden, jsonServerError, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 
@@ -8,12 +9,12 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return jsonUnauthorized();
     }
 
     const orgId = session.user.organizationId;
     if (!orgId) {
-      return NextResponse.json({ error: "No organization context" }, { status: 400 });
+      return jsonBadRequest("אין הקשר ארגון בסשן", "no_org_context");
     }
 
     // רק מנהל הארגון או סופר אדמין יכולים לראות את היומן
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (user?.role !== "ORG_ADMIN" && !isPlatformAdmin) {
-      return NextResponse.json({ error: "Access Denied - For Admins only" }, { status: 403 });
+      return jsonForbidden("הגישה מוגבלת למנהלי ארגון או מנהל פלטפורמה.");
     }
 
     const logs = await prisma.activityLog.findMany({
@@ -45,6 +46,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ logs });
   } catch (error) {
     console.error("Audit LOG API Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return jsonServerError("שגיאת שרת פנימית");
   }
 }

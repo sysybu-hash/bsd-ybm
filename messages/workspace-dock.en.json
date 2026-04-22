@@ -51,6 +51,7 @@
     "dock": {
       "accessibility": "Accessibility bar",
       "assistant": "AI assistant",
+      "assistantUnified": "AI — assistant & scan",
       "voice": "Voice commands",
       "scanner": "Advanced scan panel"
     },
@@ -64,12 +65,15 @@
       "readAloud": "Read aloud",
       "voiceReplyBadge": "Voice reply",
       "thinking": "AI is working on a reply...",
-      "goVoiceAria": "Switch to voice commands",
+      "goVoiceAria": "Voice input",
       "openScannerAria": "Open scan panel",
       "messageLabel": "Message to the AI assistant",
       "placeholder": "Write what you need: analysis, drafting, answer, workflow, or starting a process...",
       "footerHint": "Based on the current screen, trade, and your organization data.",
-      "send": "Send to AI"
+      "send": "Send to AI",
+      "tabChat": "Chat",
+      "tabVoice": "Voice",
+      "voiceInlineHint": "Record or edit — then send to the AI like in chat."
     },
     "voice": {
       "panelAria": "Full voice experience",
@@ -102,6 +106,7 @@
       "title": "Advanced scan panel",
       "subtitle": "Synced with {industry}, available from every `/app`, and flows straight to documents and billing.",
       "toDocuments": "To documents",
+      "toFullScanBoard": "Full scan board (ERP)",
       "closeAria": "Close scan panel",
       "needOrgTitle": "Scan panel is available after connecting an organization",
       "needOrgBody": "An active organization ID is required to connect scanning to AI, documents, and issuance."

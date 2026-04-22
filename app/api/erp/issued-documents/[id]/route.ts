@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { DocStatus, DocType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { jsonNotFound } from "@/lib/api-json";
 import { withWorkspacesAuthDynamic } from "@/lib/api-handler";
 
 type ItemInput = {
@@ -71,7 +72,7 @@ export const PATCH = withWorkspacesAuthDynamic<{ id: string }>(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return jsonNotFound("מסמך לא נמצא");
     }
 
     const type = typeof body.type === "string" && Object.values(DocType).includes(body.type as DocType)
@@ -93,7 +94,7 @@ export const PATCH = withWorkspacesAuthDynamic<{ id: string }>(
         select: { id: true },
       });
       if (!contact) {
-        return NextResponse.json({ error: "Contact not found" }, { status: 404 });
+        return jsonNotFound("איש קשר לא נמצא");
       }
       contactId = contact.id;
     }
@@ -127,7 +128,7 @@ export const DELETE = withWorkspacesAuthDynamic<{ id: string }>(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return jsonNotFound("מסמך לא נמצא");
     }
 
     await prisma.issuedDocument.delete({ where: { id } });

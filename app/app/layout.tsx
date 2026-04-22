@@ -8,6 +8,8 @@ import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
+import WorkspacePageMotion from "@/components/workspace/WorkspacePageMotion";
+import MainContainer from "@/components/layout/MainContainer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -59,7 +61,9 @@ export default async function AppWorkspaceLayout({ children }: { children: React
         industryProfile,
       }}
     >
-      {children}
+      <WorkspacePageMotion>
+        <MainContainer>{children}</MainContainer>
+      </WorkspacePageMotion>
     </AppShellV2>
   );
 }

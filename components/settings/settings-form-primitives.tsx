@@ -34,7 +34,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={busy || disabled}
-      className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-60"
+      className="bento-btn bento-btn--primary"
     >
       {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <CheckCircle2 className="h-4 w-4" aria-hidden />}
       {label}

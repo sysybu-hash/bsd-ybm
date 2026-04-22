@@ -28,6 +28,7 @@ import CrmClient from "../crm/CrmClient";
 import type { CrmAdminOrganizationRow } from "../crm/CrmOrganizationsAdminTable";
 import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "../crm/CrmClient";
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
+import type { PriceChartRow } from "@/lib/erp-price-comparison-data";
 import { useIndustryConfig } from "@/hooks/use-industry-config";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
@@ -59,7 +60,7 @@ type ErpDocRow = {
   type: string;
   status: string;
   createdAt: string;
-  aiData: any;
+  aiData: unknown;
 };
 
 type Props = {
@@ -70,7 +71,7 @@ type Props = {
   flowSummary: ErpFlowSummary | null;
   priceSpikes: PriceSpikeAlert[];
   docs: ErpDocRow[];
-  priceComparison: { data: any; productName: string } | null;
+  priceComparison: { data: PriceChartRow[]; productName: string } | null;
   contacts: ContactRow[];
   projects: ProjectRow[];
   hasOrganization: boolean;
@@ -320,7 +321,7 @@ function HubContent(props: Props) {
                   productName={priceComparison.productName}
                 />
               )}
-              <FinancialCharts data={docs as unknown as any[]} variant="light" />
+            <FinancialCharts data={docs} variant="light" />
               <ErpDocumentsManager initialDocs={docs} />
             </div>
           )}

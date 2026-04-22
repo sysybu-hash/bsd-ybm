@@ -1,6 +1,7 @@
 import { getServerLocale } from "@/lib/i18n/server";
 import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { loadCommercialHubSnapshot } from "@/lib/workspace/load-commercial-hub";
+import { loadRecentBillOfQuantitiesContext } from "@/lib/load-recent-bill-of-quantities-context";
 
 type WorkspaceAssistantArgs = {
   provider?: string;
@@ -25,7 +26,10 @@ export async function runWorkspaceAssistant({
 }: WorkspaceAssistantArgs): Promise<{ answer: string; provider: string }> {
   const locale = await getServerLocale();
 
-  const snapshot = orgId ? await loadCommercialHubSnapshot(orgId) : null;
+  const [snapshot, boqContext] = await Promise.all([
+    orgId ? loadCommercialHubSnapshot(orgId) : Promise.resolve(null),
+    orgId ? loadRecentBillOfQuantitiesContext(orgId, 6, 12_000) : Promise.resolve(null),
+  ]);
   const contextJson = JSON.stringify({
     audience: orgId ? "workspace_member" : "signed_in_user",
     userName,
@@ -69,6 +73,7 @@ export async function runWorkspaceAssistant({
             total: document.total,
             date: document.date,
           })),
+    billOfQuantitiesScanContext: boqContext,
   });
 
   const { text, provider: resolvedProvider } = await runAiChat(provider, message, contextJson, locale);

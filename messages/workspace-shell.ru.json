@@ -10,7 +10,7 @@
     "primaryNavAria": "Основная навигация рабочей среды",
     "items": {
       "home": {
-        "label": "Главная",
+        "label": "Дашборд",
         "summary": "Статус, ярлыки и понятный вход во все зоны работы."
       },
       "inbox": {
@@ -155,12 +155,14 @@
       "settings": {
         "title": "Настройки",
         "hint": "Профессия, организация, оплата",
-        "progress": "завершено"
+        "progress": "завершено",
+        "percentLabel": "{pct}% профиль орг."
       },
       "automations": {
         "title": "Автоматизации",
         "hint": "Правила AI",
-        "active": "активных"
+        "active": "активных",
+        "integrationsCount": "{count} облачных связей"
       },
       "inbox": {
         "title": "Входящие",
@@ -203,7 +205,9 @@
       "pending": "Ожидает",
       "collectionRate": "Уровень сбора",
       "issue": "Выставить",
-      "target": "Цель {amount}"
+      "target": "Цель {amount}",
+      "trendVsPrev": "к прошлому мес. {sign}{pct}%",
+      "trendNeutral": "Нет сравнения"
     },
     "stats": {
       "activeProjects": "Активные проекты",
@@ -232,7 +236,7 @@
       "PAID": "Оплачен",
       "CANCELLED": "Отменён"
     },
-    "eyebrow": "Главная",
+    "eyebrow": "Дашборд",
     "startHere": {
       "eyebrow": "Начните здесь",
       "title": "Три ссылки",
@@ -305,8 +309,13 @@
     "refreshingOverlay": "Обновление рабочей области…",
     "topBar": {
       "searchAria": "Поиск",
+      "localeAria": "Язык интерфейса",
       "notificationsAria": "Уведомления",
       "profileAria": "Профиль"
     }
+  },
+  "settingsHub": {
+    "sidebarEyebrow": "Настройки",
+    "sidebarTitle": "Организация, оплата и операции"
   }
 }

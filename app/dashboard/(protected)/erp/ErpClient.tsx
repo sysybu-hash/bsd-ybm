@@ -1,22 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Plus, 
+import {
   Brain, 
-  Search, 
   BarChart3, 
   FileText, 
-  ArrowUpRight, 
   AlertCircle,
   Zap,
-  Filter
+  BookOpen,
 } from "lucide-react";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
+import ErpProjectNotebook from "@/components/erp/ErpProjectNotebook";
 import ERPDashboard, { ErpStatCard, ErpFlowSummary } from "@/components/ERPDashboard";
 import ErpDocumentsManager from "@/components/ErpDocumentsManager";
 import PriceComparisonChart from "@/components/PriceComparisonChart";
+import PriceAlertResolveModal, {
+  type PendingPriceAlertLine,
+} from "@/components/erp/PriceAlertResolveModal";
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
+import type { PriceChartRow } from "@/lib/erp-price-comparison-data";
 import { useI18n } from "@/components/I18nProvider";
 
 type ErpDocRow = {
@@ -33,8 +35,11 @@ interface ErpClientProps {
   chartData: { name: string; value: number }[];
   flowSummary: ErpFlowSummary | null;
   priceSpikes: PriceSpikeAlert[];
+  /** שורות DocumentLineItem עם priceAlertPending — חומר ללא מחיר מהסריקה */
+  pendingPriceAlertCount: number;
+  pendingPriceAlertLines: PendingPriceAlertLine[];
   docs: ErpDocRow[];
-  priceComparison: { data: any; productName: string } | null;
+  priceComparison: { data: PriceChartRow[]; productName: string } | null;
   geminiConfigured: boolean;
   scanQuotaSummary: string | null;
 }
@@ -44,17 +49,21 @@ export default function ErpClient({
   chartData,
   flowSummary,
   priceSpikes,
+  pendingPriceAlertCount,
+  pendingPriceAlertLines,
   docs,
   priceComparison,
   geminiConfigured,
-  scanQuotaSummary
+  scanQuotaSummary,
 }: ErpClientProps) {
   const { t, dir } = useI18n();
-  const [activeTab, setActiveTab] = useState<"overview" | "scan" | "docs">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "scan" | "notebook" | "docs">("overview");
+  const [priceAlertModalOpen, setPriceAlertModalOpen] = useState(false);
 
   const TABS = [
     { id: "overview", label: t("dashboard.overview"), icon: <BarChart3 size={18} /> },
     { id: "scan", label: t("dashboard.aiHub"), icon: <Brain size={18} /> },
+    { id: "notebook", label: t("erpDash.notebook.tabLabel"), icon: <BookOpen size={18} /> },
     { id: "docs", label: t("erp.history"), icon: <FileText size={18} /> },
   ] as const;
 
@@ -106,6 +115,39 @@ export default function ErpClient({
                 scanQuotaSummary={scanQuotaSummary} 
                 priceSpikes={priceSpikes}
               />
+
+              {pendingPriceAlertCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setPriceAlertModalOpen(true)}
+                  className="group w-full rounded-[2rem] border border-amber-200 bg-amber-50/90 p-6 text-start shadow-sm transition hover:border-amber-300 hover:bg-amber-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+                  aria-live="polite"
+                  aria-haspopup="dialog"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-amber-900">
+                      <AlertCircle size={18} className="shrink-0" aria-hidden />
+                      {t("erpDash.priceAlertTitle")}
+                    </h2>
+                    <span className="rounded-lg bg-amber-600 px-2.5 py-1 text-[10px] font-black text-white shadow-sm group-hover:bg-amber-700">
+                      {pendingPriceAlertCount}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm font-semibold leading-relaxed text-amber-950/90">
+                    {t("erpDash.priceAlertBody", { count: String(pendingPriceAlertCount) })}
+                  </p>
+                  <p className="mt-2 text-xs font-bold text-amber-800/90 underline decoration-amber-400 decoration-2 underline-offset-2">
+                    {t("erpDash.priceAlertBannerCta")}
+                  </p>
+                </button>
+              )}
+
+              <PriceAlertResolveModal
+                open={priceAlertModalOpen}
+                onDismiss={() => setPriceAlertModalOpen(false)}
+                lines={pendingPriceAlertLines}
+                totalPendingCount={pendingPriceAlertCount}
+              />
               
               {priceSpikes.length > 0 && (
                 <section className="bg-rose-50 border border-rose-100 rounded-[2rem] p-6 text-start">
@@ -143,6 +185,10 @@ export default function ErpClient({
             <div className="bg-white rounded-[2.5rem] p-1 border-0 shadow-2xl shadow-blue-900/5">
               <MultiEngineScanner />
             </div>
+          )}
+
+          {activeTab === "notebook" && (
+            <ErpProjectNotebook geminiConfigured={geminiConfigured} />
           )}
 
           {activeTab === "docs" && (

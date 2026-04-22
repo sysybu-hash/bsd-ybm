@@ -66,17 +66,17 @@ export default function DocumentGeneratorsStrip({ industryProfile, onDraftIssued
   const templates = industryProfile.templates;
 
   return (
-    <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8" aria-labelledby="doc-generators-heading">
+    <section className="tile tile--soft overflow-hidden p-6 sm:p-8" aria-labelledby="doc-generators-heading">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <span className="v2-eyebrow inline-flex items-center gap-2">
-            <FileStack className="h-4 w-4 text-[color:var(--v2-accent)]" aria-hidden />
+          <span className="bento-eyebrow inline-flex items-center gap-2">
+            <FileStack className="h-4 w-4 text-[color:var(--axis-clients)]" aria-hidden />
             {industryProfile.documentsLabel}
           </span>
-          <h2 id="doc-generators-heading" className="mt-3 text-xl font-black text-[color:var(--v2-ink)] sm:text-2xl">
+          <h2 id="doc-generators-heading" className="mt-3 text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">
             {t("workspaceDocuments.generatorsTitle")}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-7 text-[color:var(--v2-muted)]">{t("workspaceDocuments.generatorsSubtitle")}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.generatorsSubtitle")}</p>
         </div>
       </div>
 
@@ -85,27 +85,27 @@ export default function DocumentGeneratorsStrip({ industryProfile, onDraftIssued
           const issueMode = templateDraftMode(template) === "issue";
           const busy = isPending && pendingId === template.id;
           return (
-            <div key={template.id} className="rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--v2-muted)]">
+            <div key={template.id} className="rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-500)]">
                 {kindGroup(template.kind, t)}
               </p>
-              <p className="mt-2 font-black text-[color:var(--v2-ink)]">{template.label}</p>
-              <p className="mt-2 text-sm leading-6 text-[color:var(--v2-muted)]">{template.description}</p>
+              <p className="mt-2 font-black text-[color:var(--ink-900)]">{template.label}</p>
+              <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{template.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a
                   href={`/api/professional-template/pdf?templateId=${encodeURIComponent(template.id)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-2xl border border-[color:var(--v2-line)] bg-white/90 px-4 py-2 text-sm font-black text-[color:var(--v2-ink)] transition hover:border-[color:var(--v2-accent)]"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-[color:var(--line)] bg-white/90 px-4 py-2 text-sm font-black text-[color:var(--ink-900)] transition hover:border-[color:var(--axis-clients)]"
                 >
-                  <Download className="h-4 w-4 text-[color:var(--v2-accent)]" aria-hidden />
+                  <Download className="h-4 w-4 text-[color:var(--axis-clients)]" aria-hidden />
                   {t("workspaceDocuments.generatorsCtaPdf")}
                 </a>
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => handleTemplate(template.id)}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--v2-accent-soft)] px-4 py-2 text-sm font-black text-[color:var(--v2-accent-strong)] transition hover:bg-[color:var(--v2-accent)]/20 disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--axis-clients-soft)] px-4 py-2 text-sm font-black text-[color:var(--axis-clients-strong)] transition hover:bg-[color:var(--axis-clients)]/20 disabled:opacity-60"
                 >
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <PenLine className="h-4 w-4" aria-hidden />}
                   {issueMode ? t("workspaceDocuments.generatorsCtaIssue") : t("workspaceDocuments.generatorsCtaDraft")}

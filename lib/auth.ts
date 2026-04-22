@@ -140,8 +140,9 @@ export const authOptions: NextAuthOptions = {
         if (typeof token.picture === "string" && token.picture.length > 0) {
           session.user.image = token.picture;
         }
-        (session.user as any).organizationIndustry = (token.organizationIndustry as string | null) ?? "CONSTRUCTION";
-        (session.user as any).organizationConstructionTrade =
+        session.user.organizationIndustry =
+          (token.organizationIndustry as string | null) ?? "CONSTRUCTION";
+        session.user.organizationConstructionTrade =
           (token.organizationConstructionTrade as string | null) ?? "GENERAL_CONTRACTOR";
         /** הגנה כפולה: SUPER_ADMIN ב-UI/API רק ל־steelPlatformOwnerEmail() — לא דרך באג ב-JWT */
         const em = typeof session.user.email === "string" ? session.user.email : "";

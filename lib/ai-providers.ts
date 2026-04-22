@@ -42,14 +42,17 @@ export function isMindStudioConfigured(): boolean {
 }
 
 export function isDocAiConfigured(): boolean {
-  return has(process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID) && has(process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS);
+  const creds =
+    has(process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS) ||
+    has(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+  return has(process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID) && creds;
 }
 
 export function getAiProvidersPublic(): AiProviderPublic[] {
   return [
     {
       id: "gemini",
-      label: "Google Gemini 2.5",
+      label: "Google Gemini 3.1",
       description: "סריקת מסמכים רב-ממדית, ניתוח נתונים משולב ו-vision",
       configured: isGeminiConfigured(),
       supportsDocumentScan: true,
@@ -100,6 +103,16 @@ export function normalizeAiProviderId(raw: string | null | undefined): AiProvide
   return "gemini";
 }
 
+/** לפחות מנוע צ'אט אחד — Gemini / OpenAI / Anthropic / Groq */
+export function isAnyAiChatProviderConfigured(): boolean {
+  return (
+    isGeminiConfigured() ||
+    isOpenAiConfigured() ||
+    isAnthropicConfigured() ||
+    isGroqConfigured()
+  );
+}
+
 export function assertProviderConfigured(id: AiProviderId): string | null {
   switch (id) {
     case "gemini":
@@ -113,18 +126,123 @@ export function assertProviderConfigured(id: AiProviderId): string | null {
     case "mindstudio":
       return "MindStudio עדיין לא מחובר ב-runtime בפרויקט הזה";
     case "docai":
-      return isDocAiConfigured() ? null : "חסר GOOGLE_DOCUMENT_AI_PROCESSOR_ID או GOOGLE_DOCUMENT_AI_CREDENTIALS";
+      return isDocAiConfigured()
+        ? null
+        : "חסר GOOGLE_DOCUMENT_AI_PROCESSOR_ID ו־אחד מ: GOOGLE_DOCUMENT_AI_CREDENTIALS או GOOGLE_APPLICATION_CREDENTIALS_JSON";
     default:
       return "ספק לא ידוע";
   }
 }
 
+/** April 2026 — flagship ויזואלי/הנדסי */
+export const OPENAI_FLAGSHIP_MODEL = "gpt-5.4-turbo-2026-03";
+
+export const OPENAI_VISION_FALLBACK_CHAIN: readonly string[] = [
+  "gpt-5.4-turbo-2026-03",
+  "gpt-4o-mini",
+  "gpt-4o",
+] as const;
+
+export const ANTHROPIC_FLAGSHIP_MODEL = "claude-4.6-sonnet-latest";
+
+export const ANTHROPIC_FALLBACK_CHAIN: readonly string[] = [
+  "claude-4.6-sonnet-latest",
+  "claude-3-5-sonnet-20241022",
+  "claude-3-5-haiku-20241022",
+] as const;
+
+function dedupeStrings(parts: Array<string | undefined>): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of parts) {
+    const s = p?.trim();
+    if (!s || seen.has(s)) continue;
+    seen.add(s);
+    out.push(s);
+  }
+  return out;
+}
+
 export function getOpenAiVisionModel(): string {
-  return process.env.OPENAI_VISION_MODEL?.trim() || "gpt-5-vision-ultra";
+  return process.env.OPENAI_VISION_MODEL?.trim() || OPENAI_FLAGSHIP_MODEL;
+}
+
+/** סדר ניסיונות ל־Chat Completions (תמונה / קובץ שאינו PDF בנתיב הישן) */
+export function getOpenAiChatVisionModelCandidates(uiOverride?: string): string[] {
+  return dedupeStrings([
+    uiOverride,
+    process.env.OPENAI_VISION_MODEL?.trim(),
+    OPENAI_FLAGSHIP_MODEL,
+    ...OPENAI_VISION_FALLBACK_CHAIN.filter((m) => m !== OPENAI_FLAGSHIP_MODEL),
+  ]);
+}
+
+/** סדר ניסיונות ל־Responses API (PDF) */
+export function getOpenAiResponsesModelCandidates(uiOverride?: string): string[] {
+  return dedupeStrings([
+    uiOverride,
+    process.env.OPENAI_RESPONSES_MODEL?.trim(),
+    process.env.OPENAI_VISION_MODEL?.trim(),
+    OPENAI_FLAGSHIP_MODEL,
+    ...OPENAI_VISION_FALLBACK_CHAIN.filter((m) => m !== OPENAI_FLAGSHIP_MODEL),
+  ]);
+}
+
+export function isOpenAiModelNotFound(status: number, body: string): boolean {
+  if (status === 404) return true;
+  const b = body.toLowerCase();
+  return (
+    b.includes("model_not_found") ||
+    b.includes("does not exist") ||
+    b.includes("invalid_model") ||
+    (b.includes("the model") && b.includes("not found"))
+  );
+}
+
+/** 404 / דגם לא קיים / מגבלת קצב — מעבר למודל הבא */
+export function isOpenAiEligibleForModelFallback(status: number, body: string): boolean {
+  if (isOpenAiModelNotFound(status, body)) return true;
+  if (status === 429) return true;
+  const b = body.toLowerCase();
+  return b.includes("rate_limit") || b.includes("too many requests");
+}
+
+/** צ'אט טקסט בלבד (ללא vision) — fallback דומה לסריקה */
+export function getOpenAiChatTextModelCandidates(): string[] {
+  return dedupeStrings([
+    process.env.OPENAI_CHAT_MODEL?.trim(),
+    OPENAI_FLAGSHIP_MODEL,
+    ...OPENAI_VISION_FALLBACK_CHAIN.filter((m) => m !== OPENAI_FLAGSHIP_MODEL),
+  ]);
 }
 
 export function getAnthropicModel(): string {
-  return process.env.ANTHROPIC_MODEL?.trim() || "claude-4-opus-2026";
+  return process.env.ANTHROPIC_MODEL?.trim() || ANTHROPIC_FLAGSHIP_MODEL;
+}
+
+export function getAnthropicModelCandidates(uiOverride?: string): string[] {
+  return dedupeStrings([
+    uiOverride,
+    process.env.ANTHROPIC_MODEL?.trim(),
+    ...ANTHROPIC_FALLBACK_CHAIN,
+  ]);
+}
+
+export function isAnthropicModelNotFound(status: number, body: string): boolean {
+  if (status === 404) return true;
+  const b = body.toLowerCase();
+  return (
+    (b.includes("invalid_request_error") && b.includes("model")) ||
+    b.includes("model_not_found") ||
+    (b.includes("model") && b.includes("not found"))
+  );
+}
+
+export function isAnthropicEligibleForModelFallback(status: number, body: string): boolean {
+  if (isAnthropicModelNotFound(status, body)) return true;
+  if (status === 429) return true;
+  const b = body.toLowerCase();
+  return b.includes("rate_limit") || b.includes("too many requests");
 }
 
 export function getGroqModel(): string {

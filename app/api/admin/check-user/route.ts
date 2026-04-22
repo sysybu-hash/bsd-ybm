@@ -1,19 +1,20 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonForbidden } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/is-admin";
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!isAdmin(session?.user?.email)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
   }
 
   const { searchParams } = new URL(req.url);
   const email = searchParams.get("email")?.trim().toLowerCase();
   if (!email) {
-    return NextResponse.json({ error: "missing email param" }, { status: 400 });
+    return jsonBadRequest("חסר פרמטר email", "missing_email");
   }
 
   const user = await prisma.user.findFirst({

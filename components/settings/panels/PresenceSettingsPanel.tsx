@@ -90,7 +90,7 @@ export default function PresenceSettingsPanel({ organization, viewer }: Props) {
               dir="ltr"
               placeholder="portal.example.co.il"
             />
-            <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)]">
+            <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)]">
               <input type="checkbox" name="calendarGoogleEnabled" defaultChecked={organization.calendarGoogleEnabled} />
               הפעל חיבור יומן Google
             </label>
@@ -114,20 +114,20 @@ export default function PresenceSettingsPanel({ organization, viewer }: Props) {
         icon={<CreditCard className="h-5 w-5" aria-hidden />}
       >
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
-            <p className="font-black text-[color:var(--v2-ink)]">
+          <div className="rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
+            <p className="font-black text-[color:var(--ink-900)]">
               {tierLabelHe(organization.subscriptionTier)} · {organization.subscriptionStatus}
             </p>
-            <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+            <p className="mt-2 text-sm text-[color:var(--ink-500)]">
               מכסה: {allowance.cheapScans} זולות · {allowance.premiumScans} פרימיום ·{" "}
               {allowance.unlimitedCompanies ? "ללא הגבלת חברות" : `עד ${allowance.maxCompanies}`}
             </p>
-            <Link href={settingsHubPath("billing")} className="v2-button v2-button-primary mt-4 inline-flex w-fit">
+            <Link href={settingsHubPath("billing")} className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white mt-4 inline-flex w-fit">
               מעבר למנויים וחיוב
             </Link>
           </div>
-          <div className="rounded-2xl border border-dashed border-[color:var(--v2-line)] bg-[color:var(--v2-canvas)]/80 px-4 py-4 text-sm leading-7 text-[color:var(--v2-muted)]">
-            <p className="font-bold text-[color:var(--v2-ink)]">הפרדה</p>
+          <div className="rounded-2xl border border-dashed border-[color:var(--line)] bg-[color:var(--canvas-sunken)]/80 px-4 py-4 text-sm leading-7 text-[color:var(--ink-500)]">
+            <p className="font-bold text-[color:var(--ink-900)]">הפרדה</p>
             <p className="mt-2">
               מנוי BSD-YBM (למעלה) אינו אותו דבר כמו פרטי PayPal בהמשך — אלה ל<strong>גבייה מהלקוחות שלך</strong>.
             </p>
@@ -145,7 +145,7 @@ export default function PresenceSettingsPanel({ organization, viewer }: Props) {
             <input name="paypalMerchantEmail" defaultValue={organization.paypalMerchantEmail ?? ""} className={inputClass} dir="ltr" placeholder="billing@example.com" />
             <input name="paypalMeSlug" defaultValue={organization.paypalMeSlug ?? ""} className={inputClass} dir="ltr" placeholder="paypal.me/..." />
             <label className="grid gap-2">
-              <span className="text-xs font-black text-[color:var(--v2-muted)]">נתונים חיים (רמת עומק)</span>
+              <span className="text-xs font-black text-[color:var(--ink-500)]">נתונים חיים (רמת עומק)</span>
               <select name="liveDataTier" defaultValue={organization.liveDataTier} className={inputClass}>
                 <option value="basic">basic</option>
                 <option value="standard">standard</option>

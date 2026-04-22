@@ -32,7 +32,7 @@ export default async function AppTrialExpiredPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[980px] py-10 space-y-6" dir="rtl">
+    <div className="mx-auto w-full min-w-0 max-w-[980px] space-y-8 py-10" dir="rtl">
       <header className="flex flex-col items-center text-center gap-3 px-2">
         <div className="flex h-18 w-18 items-center justify-center rounded-[22px] bg-[color:var(--state-danger-soft)] text-[color:var(--state-danger)] shadow-[var(--tile-shadow)]">
           <Lock size={34} />

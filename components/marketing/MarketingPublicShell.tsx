@@ -43,7 +43,7 @@ export default function MarketingPublicShell({
   const eyebrowText = eyebrow ?? t("publicShell.eyebrowSector");
 
   return (
-    <div className={`${marketingSans.className} v2-site-shell min-h-screen`} dir={dir}>
+    <div className={`${marketingSans.className} bento-site-shell min-h-screen`} dir={dir}>
       <header className="border-b border-slate-200/90 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
           <BsdYbmLogo href="/" variant="marketing-light" size="md" />
@@ -53,7 +53,7 @@ export default function MarketingPublicShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-semibold text-[color:var(--v2-muted)] transition hover:text-[color:var(--v2-ink)]"
+                className="text-sm font-semibold text-[color:var(--ink-500)] transition hover:text-[color:var(--ink-900)]"
               >
                 {item.label}
               </Link>
@@ -62,10 +62,10 @@ export default function MarketingPublicShell({
 
           <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <LanguageSwitcher className="max-sm:[&_select]:min-w-[7.5rem] max-sm:[&_select]:px-2 max-sm:[&_select]:text-xs" />
-            <Link href="/login" className="v2-button v2-button-ghost hidden sm:inline-flex">
+            <Link href="/login" className="bento-btn bento-btn--ghost hidden sm:inline-flex">
               {t("publicShell.ctaLogin")}
             </Link>
-            <Link href="/register" className="v2-button v2-button-primary">
+            <Link href="/register" className="bento-btn bento-btn--primary">
               {t("publicShell.ctaStart")}
             </Link>
           </div>
@@ -74,18 +74,18 @@ export default function MarketingPublicShell({
 
       <main className="relative">
         <div className="pointer-events-none absolute inset-0">
-          <div className="v2-orb v2-orb-primary" />
-          <div className="v2-grid-overlay" />
+          <div className="bento-orb bento-orb-primary" />
+          <div className="bento-grid-overlay" />
         </div>
 
         <div className="relative mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <section className="v2-panel v2-panel-soft overflow-hidden px-6 py-8 sm:px-10 sm:py-10">
-            <span className="v2-eyebrow">{eyebrowText}</span>
-            <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+          <section className="tile tile--soft overflow-hidden px-6 py-8 sm:px-10 sm:py-10">
+            <span className="bento-eyebrow">{eyebrowText}</span>
+            <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               {title}
             </h1>
             {description ? (
-              <p className="mt-4 max-w-3xl text-lg leading-8 text-[color:var(--v2-muted)]">{description}</p>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-[color:var(--ink-500)]">{description}</p>
             ) : null}
           </section>
 
@@ -93,12 +93,12 @@ export default function MarketingPublicShell({
         </div>
       </main>
 
-      <footer className="border-t border-[color:var(--v2-line)] bg-[color:var(--v2-surface)]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-[color:var(--v2-muted)] sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <footer className="border-t border-[color:var(--line)] bg-[color:var(--canvas-raised)]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-[color:var(--ink-500)] sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <p>{t("publicShell.footerLead")}</p>
           <div className="flex flex-wrap gap-4">
             {navItems.map((item) => (
-              <Link key={item.href} href={item.href} className="font-semibold transition hover:text-[color:var(--v2-ink)]">
+              <Link key={item.href} href={item.href} className="font-semibold transition hover:text-[color:var(--ink-900)]">
                 {item.label}
               </Link>
             ))}

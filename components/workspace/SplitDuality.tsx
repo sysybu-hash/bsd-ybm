@@ -50,7 +50,7 @@ export function SplitDualityHeadline({
   return (
     <div className="relative z-10 text-center">
       {eyebrow ? (
-        <span className="v2-eyebrow mx-auto" style={{ background: "rgba(255,255,255,0.78)", borderColor: "transparent" }}>
+        <span className="bento-eyebrow mx-auto" style={{ background: "rgba(255,255,255,0.78)", borderColor: "transparent" }}>
           {eyebrow}
         </span>
       ) : null}
@@ -74,7 +74,7 @@ export function SplitDualityBridge({
   eyebrow,
   insight,
   ctaLabel,
-  ctaHref = "/app/ai",
+  ctaHref = "/app/ai#assistant",
 }: {
   eyebrow: string;
   insight: string;

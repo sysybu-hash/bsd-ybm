@@ -144,7 +144,11 @@ export function applyAccessibilitySettings(
   root.style.setProperty("--primary-hover", strongColor);
   root.style.setProperty("--heading-color", theme.color);
   root.style.setProperty("--primary-rgb", rgb);
+  const soft = `rgba(${rgb}, 0.1)`;
   root.style.setProperty("--v2-accent", theme.color);
   root.style.setProperty("--v2-accent-strong", strongColor);
-  root.style.setProperty("--v2-accent-soft", `rgba(${rgb}, 0.1)`);
+  root.style.setProperty("--v2-accent-soft", soft);
+  root.style.setProperty("--axis-clients", theme.color);
+  root.style.setProperty("--axis-clients-strong", strongColor);
+  root.style.setProperty("--axis-clients-soft", soft);
 }

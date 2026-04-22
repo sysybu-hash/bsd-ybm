@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
+import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,11 @@ export default async function AppClientsPage({
   if (!organizationId) {
     redirect("/login");
   }
+
+  const userFirstName =
+    (session.user?.name ?? "").trim().split(" ")[0] ||
+    session.user?.email?.split("@")[0] ||
+    "";
 
   const sp = await searchParams;
 
@@ -136,11 +142,15 @@ export default async function AppClientsPage({
     projectIdParam && projects.some((p) => p.id === projectIdParam) ? projectIdParam : undefined;
 
   return (
-    <ClientsWorkspaceV2
-      contacts={contacts}
-      projects={projects}
-      industryProfile={industryProfile}
-      initialProjectFilter={initialProjectFilter}
-    />
+    <WorkspaceEngineeringShell>
+      <ClientsWorkspaceV2
+        contacts={contacts}
+        projects={projects}
+        industryProfile={industryProfile}
+        organizationId={organizationId}
+        userFirstName={userFirstName}
+        initialProjectFilter={initialProjectFilter}
+      />
+    </WorkspaceEngineeringShell>
   );
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonBadRequest, jsonNotFound } from "@/lib/api-json";
 
 export async function POST(
   req: Request,
@@ -10,7 +11,7 @@ export async function POST(
   const signatureBase64 = body.signatureBase64 as string | undefined;
 
   if (!signatureBase64 || typeof signatureBase64 !== "string") {
-    return NextResponse.json({ error: "חסרה חתימה" }, { status: 400 });
+    return jsonBadRequest("חסרה חתימה", "missing_signature");
   }
 
   const quote = await prisma.quote.findUnique({
@@ -19,7 +20,7 @@ export async function POST(
   });
 
   if (!quote) {
-    return NextResponse.json({ error: "הצעה לא נמצאה" }, { status: 404 });
+    return jsonNotFound("הצעה לא נמצאה");
   }
 
   if (quote.status === "CLOSED_WON") {

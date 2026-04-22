@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { LogOut, Wifi, WifiOff } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 
 const STORAGE_KEY = "bsd_welcome_sheet_done";
 
@@ -39,8 +40,9 @@ export default function PostRegisterWelcomeSheet() {
   const email = session.user.email ?? "";
 
   return (
+    <PortalToBody>
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-gray-900/40 p-4"
+      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-gray-900/40 p-4`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="bsd-welcome-title"
@@ -94,5 +96,6 @@ export default function PostRegisterWelcomeSheet() {
         </div>
       </div>
     </div>
+    </PortalToBody>
   );
 }

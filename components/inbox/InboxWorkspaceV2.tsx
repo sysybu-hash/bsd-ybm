@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   BellRing,
   CheckCheck,
+  CheckCircle2,
   CreditCard,
   ExternalLink,
   FileWarning,
@@ -74,8 +75,11 @@ export default function InboxWorkspaceV2({
   const [notifications, setNotifications] = useState(initialNotifications);
   const [markingAll, setMarkingAll] = useState(false);
   const [markingIds, setMarkingIds] = useState<string[]>([]);
+  const [dismissedPriorityIds, setDismissedPriorityIds] = useState<string[]>([]);
 
   const unread = notifications.filter((item) => !item.read).length;
+
+  const visiblePriority = priorityItems.filter((item) => !dismissedPriorityIds.includes(item.id));
 
   async function markAllRead() {
     setMarkingAll(true);
@@ -119,11 +123,13 @@ export default function InboxWorkspaceV2({
   ];
 
   return (
-    <div className="grid gap-5" dir={dir}>
+    <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
       <section className="tile p-6 sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <span className="v2-eyebrow">{t("workspaceInbox.eyebrow")}</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
+              {t("workspaceInbox.eyebrow")}
+            </span>
             <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-4xl">
               {t("workspaceInbox.heroTitle")}
             </h1>
@@ -131,11 +137,17 @@ export default function InboxWorkspaceV2({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href={advancedInboxHref} className="v2-button v2-button-primary">
+            <Link
+              href={advancedInboxHref}
+              className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--axis-clients)] bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
+            >
               {t("workspaceInbox.advancedCta")}
               <ExternalLink className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/app/clients" className="v2-button v2-button-secondary">
+            <Link
+              href="/app/clients"
+              className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]"
+            >
               {t("workspaceInbox.clientsCta")}
               <Sparkles className="h-4 w-4" aria-hidden />
             </Link>
@@ -170,15 +182,15 @@ export default function InboxWorkspaceV2({
             </div>
 
             <div className="mt-5 grid gap-3">
-              {priorityItems.length === 0 ? (
+              {visiblePriority.length === 0 ? (
                 <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-5 text-sm text-[color:var(--ink-500)]">
                   {t("workspaceInbox.priorityEmpty")}
                 </div>
               ) : null}
 
-              {priorityItems.map((item) => (
+              {visiblePriority.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${severityClasses(item.severity)}`}>
                         {item.category}
@@ -186,9 +198,22 @@ export default function InboxWorkspaceV2({
                       <p className="mt-3 text-base font-black text-[color:var(--ink-900)]">{item.title}</p>
                       <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{item.body}</p>
                     </div>
-                    <Link href={item.href} className="v2-button v2-button-secondary shrink-0">
-                      {item.cta}
-                    </Link>
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setDismissedPriorityIds((prev) => [...prev, item.id])}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-xs font-black text-[color:var(--ink-700)] hover:bg-[color:var(--canvas-sunken)]"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                        {t("workspaceInbox.priorityDismiss")}
+                      </button>
+                      <Link
+                        href={item.href}
+                        className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-xs font-black text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]"
+                      >
+                        {item.cta}
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -280,7 +305,7 @@ export default function InboxWorkspaceV2({
                     markingIds.includes(notification.id) ? (
                       <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--axis-clients)]" aria-hidden />
                     ) : (
-                      <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--v2-accent)]" />
+                      <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--axis-clients)]" />
                     )
                   ) : null}
                 </div>

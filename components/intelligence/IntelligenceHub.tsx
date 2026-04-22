@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import { motion } from "framer-motion";
 import {
   BrainCircuit,
@@ -64,7 +65,7 @@ export default function IntelligenceHub() {
   const primaryColor = "var(--primary-color, #4f46e5)";
 
   return (
-    <div className="space-y-6 p-4 font-sans text-gray-900 md:p-6" dir={dir}>
+    <div className="w-full min-w-0 space-y-8 font-sans text-gray-900" dir={dir}>
       {/* ── Premium header ── */}
       <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white px-6 py-7 md:px-8">
         <div className="absolute inset-y-0 start-0 w-1.5 bg-teal-500" />
@@ -301,8 +302,9 @@ export default function IntelligenceHub() {
       </div>
 
       {vaultOpen ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-black/60 p-4`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="vault-title"
@@ -343,11 +345,13 @@ export default function IntelligenceHub() {
             </button>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
 
       {dailyOpen ? (
+        <PortalToBody>
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4"
+          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-black/60 p-4`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="daily-title"
@@ -391,6 +395,7 @@ export default function IntelligenceHub() {
             </button>
           </div>
         </div>
+        </PortalToBody>
       ) : null}
     </div>
   );

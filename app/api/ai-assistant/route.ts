@@ -2,17 +2,24 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import {
+  jsonBadRequest,
+  jsonForbidden,
+  jsonServerError,
+  jsonServiceUnavailable,
+  jsonUnauthorized,
+} from "@/lib/api-json";
+import {
   getUserFacingAiErrorMessage,
   runWorkspaceAssistant,
 } from "@/lib/ai/workspace-assistant";
-import { assertProviderConfigured, normalizeAiProviderId } from "@/lib/ai-providers";
+import { isAnyAiChatProviderConfigured } from "@/lib/ai-providers";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "נדרשת התחברות." }, { status: 401 });
+      return jsonUnauthorized();
     }
 
     const body = await req.json();
@@ -25,19 +32,20 @@ export async function POST(req: NextRequest) {
     };
 
     if (!message) {
-      return NextResponse.json({ error: "חסר message בבקשה" }, { status: 400 });
+      return jsonBadRequest("חסר message בבקשה", "missing_message");
     }
 
     const effectiveOrgId = orgId ?? session.user.organizationId ?? undefined;
 
     if (effectiveOrgId && effectiveOrgId !== session.user.organizationId) {
-      return NextResponse.json({ error: "אין גישה לארגון זה." }, { status: 403 });
+      return jsonForbidden("אין גישה לארגון זה.");
     }
 
-    const provider = normalizeAiProviderId(providerBody);
-    const missing = assertProviderConfigured(provider);
-    if (missing) {
-      return NextResponse.json({ error: missing }, { status: 400 });
+    if (!isAnyAiChatProviderConfigured()) {
+      return jsonServiceUnavailable(
+        "לא הוגדרו מפתחות AI בשרת. ב-Vercel הוסיפו לפחות אחד: GOOGLE_GENERATIVE_AI_API_KEY, OPENAI_API_KEY, GROQ_API_KEY או ANTHROPIC_API_KEY.",
+        "ai_not_configured",
+      );
     }
 
     const org = effectiveOrgId
@@ -61,6 +69,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ answer, provider: resolvedProvider });
   } catch (error) {
     console.error("AI assistant error:", error);
-    return NextResponse.json({ error: getUserFacingAiErrorMessage(error) }, { status: 500 });
+    return jsonServerError(getUserFacingAiErrorMessage(error));
   }
 }

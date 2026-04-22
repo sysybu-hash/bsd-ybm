@@ -24,7 +24,7 @@ function TransitionOverlay() {
       aria-live="polite"
     >
       <div className="flex items-center gap-3 rounded-2xl border border-slate-200/90 bg-white px-5 py-4 text-sm font-bold text-slate-800 shadow-xl">
-        <Loader2 className="h-5 w-5 shrink-0 animate-spin text-[color:var(--v2-accent)]" aria-hidden />
+        <Loader2 className="h-5 w-5 shrink-0 animate-spin text-[color:var(--axis-clients)]" aria-hidden />
         <span>{t("workspaceShell.refreshingOverlay")}</span>
       </div>
     </div>

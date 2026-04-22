@@ -13,6 +13,10 @@ import {
   X,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, {
+  WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS,
+  WORKSPACE_OVERLAY_Z_CLASS,
+} from "@/components/portal/PortalToBody";
 import type { ExecutiveOrgRow } from "@/app/actions/executive-subscriptions";
 import {
   executiveApplyManualSubscriptionAction,
@@ -717,15 +721,16 @@ export default function AdminSubscriptionControlCenter({
       </div>
 
       {sheetOpen && selected ? (
+        <PortalToBody>
         <>
           <button
             type="button"
             aria-label="סגור"
-            className="fixed inset-0 z-[300] bg-black/55 transition-opacity"
+            className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} bg-black/55 transition-opacity`}
             onClick={closeSheet}
           />
           <aside
-            className="fixed start-0 top-0 z-[310] flex h-full w-full max-w-xl flex-col border-s border-gray-200 bg-white shadow-2xl"
+            className={`fixed start-0 top-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} flex h-full w-full max-w-xl flex-col border-s border-gray-200 bg-white shadow-2xl`}
             dir={dir}
           >
             <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
@@ -1004,6 +1009,7 @@ export default function AdminSubscriptionControlCenter({
             </div>
           </aside>
         </>
+        </PortalToBody>
       ) : null}
     </div>
   );

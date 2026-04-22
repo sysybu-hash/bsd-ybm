@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { CloudProvider } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonServerError, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 
 /** רשימת חיבורים לגיבוי/סריקה — OAuth מלא יתווסף בהמשך (משתני סביבה לכל ספק). */
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const items = await prisma.cloudIntegration.findMany({
@@ -38,13 +39,13 @@ type Body = {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.organizationId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const body = (await req.json()) as Body;
   const provider = body.provider;
   if (!provider || !Object.values(CloudProvider).includes(provider)) {
-    return NextResponse.json({ error: "provider לא חוקי" }, { status: 400 });
+    return jsonBadRequest("provider לא חוקי", "invalid_provider");
   }
 
   try {
@@ -71,6 +72,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, item: row });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "שמירה נכשלה" }, { status: 500 });
+    return jsonServerError("שמירה נכשלה");
   }
 }

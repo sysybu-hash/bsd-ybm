@@ -75,9 +75,6 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
       session.user.role,
       platformOwner,
     );
-    console.log(
-      `[BSD-YBM AI] CRM analyze | Org: ${org.name} | Tier: ${org.subscriptionTier} | Model: ${modelToUse} | Caller: ${session.user.role}`,
-    );
 
     const tableData = buildTableDataFromInvoices(org.invoices);
 

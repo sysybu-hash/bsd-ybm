@@ -12,8 +12,8 @@ export default function ProfessionalPageClient() {
       eyebrow={t("publicShell.navProfessional")}
       description={t("professionalPage.shellDescription")}
     >
-      <div className="v2-panel p-8">
-        <div className="space-y-6 text-lg leading-8 text-[color:var(--v2-muted)]">
+      <div className="tile p-8">
+        <div className="space-y-6 text-lg leading-8 text-[color:var(--ink-500)]">
           <p>{t("professionalPage.body")}</p>
         </div>
       </div>

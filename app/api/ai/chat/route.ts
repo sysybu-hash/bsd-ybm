@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonServerError } from "@/lib/api-json";
 import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { getServerLocale } from "@/lib/i18n/server";
 import { subscriptionTiersPromptBlockHe } from "@/lib/subscription-tier-config";
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     const prompt = buildPromptFromMessages(messages);
 
     if (!prompt) {
-      return NextResponse.json({ error: "חסרה הודעה." }, { status: 400 });
+      return jsonBadRequest("חסרה הודעה.", "missing_message");
     }
 
     const session = await getServerSession(authOptions);
@@ -90,6 +91,6 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("api/ai/chat", error);
-    return NextResponse.json({ error: getUserFacingAiErrorMessage(error) }, { status: 500 });
+    return jsonServerError(getUserFacingAiErrorMessage(error));
   }
 }

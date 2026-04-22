@@ -1,25 +1,51 @@
 "use client";
 
-import { useState } from "react";
-import { BrainCircuit, ScanSearch, Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ScanSearch, Sparkles } from "lucide-react";
+import InlineWorkspaceAssistant from "@/components/ai/InlineWorkspaceAssistant";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
 import { useI18n } from "@/components/I18nProvider";
+import type { IndustryProfile } from "@/lib/professions/runtime";
 import { WorkspaceSurface } from "@/components/workspace/WorkspacePageScaffold";
 
 type DashboardAiHubProps = {
   orgId: string;
+  industryProfile: IndustryProfile;
+  userFirstName: string;
 };
 
-export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
+export default function DashboardAiHub({ orgId, industryProfile, userFirstName }: DashboardAiHubProps) {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<"scanner" | "assistant">("scanner");
 
+  const sectionLabel = t("workspaceAiHub.tabAssistant");
+  const sectionSummary = t("workspaceAiHub.assistantBody");
+
+  const welcomeMessage = useMemo(() => {
+    const first = userFirstName.split(" ")[0] || t("workspaceDock.guestName");
+    return t("workspaceDock.welcome", {
+      name: first,
+      section: sectionLabel,
+      industry: industryProfile.industryLabel,
+      documents: industryProfile.documentsLabel.toLowerCase(),
+    });
+  }, [industryProfile.documentsLabel, industryProfile.industryLabel, sectionLabel, t, userFirstName]);
+
+  const quickPrompts = useMemo(
+    () => [
+      t("workspaceDock.quickPrompts.default.0"),
+      t("workspaceDock.quickPrompts.default.1", { section: sectionLabel }),
+      t("workspaceDock.quickPrompts.default.2"),
+    ],
+    [sectionLabel, t],
+  );
+
   return (
-    <div className="w-full space-y-6" dir="rtl">
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <span
-            className="v2-eyebrow"
+            className="bento-eyebrow"
             style={{ color: "var(--axis-ai)", background: "var(--axis-ai-soft)", borderColor: "transparent" }}
           >
             <Sparkles className="me-1 h-3 w-3" aria-hidden />
@@ -80,33 +106,15 @@ export default function DashboardAiHub({ orgId }: DashboardAiHubProps) {
           title={t("workspaceAiHub.tabAssistant")}
           description={t("workspaceAiHub.assistantBody")}
         >
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5">
-              <span
-                className="flex h-10 w-10 items-center justify-center rounded-lg"
-                style={{ background: "var(--axis-ai-soft)", color: "var(--axis-ai)" }}
-              >
-                <BrainCircuit className="h-5 w-5" aria-hidden />
-              </span>
-              <p className="mt-4 text-base font-bold text-[color:var(--ink-900)]">
-                {t("workspaceAiHub.assistantHint")}
-              </p>
-              <p className="mt-2 text-[13px] leading-6 text-[color:var(--ink-500)]">
-                Org ID: {orgId || "N/A"}
-              </p>
-            </div>
-            <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5">
-              <span
-                className="flex h-10 w-10 items-center justify-center rounded-lg"
-                style={{ background: "var(--axis-ai-soft)", color: "var(--axis-ai)" }}
-              >
-                <ScanSearch className="h-5 w-5" aria-hidden />
-              </span>
-              <p className="mt-4 text-base font-bold text-[color:var(--ink-900)]">
-                {t("workspaceAiHub.scannerBody")}
-              </p>
-            </div>
-          </div>
+          <InlineWorkspaceAssistant
+            orgId={orgId}
+            industryProfile={industryProfile}
+            sectionLabel={sectionLabel}
+            sectionSummary={sectionSummary}
+            quickPrompts={quickPrompts}
+            welcomeMessage={welcomeMessage}
+            variant="embed"
+          />
         </WorkspaceSurface>
       )}
     </div>

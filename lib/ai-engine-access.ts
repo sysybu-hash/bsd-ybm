@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getGeminiModelId } from "@/lib/gemini-model";
+import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 import type { AiProviderId } from "@/lib/ai-providers";
 
 /** ספקים שתומכים בסריקת מסמך (כולל Google Document AI כספק פרימיום) */
@@ -38,14 +38,22 @@ export async function generateAiResponse(prompt: string): Promise<string> {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
-    const result = await model.generateContent(
-      `ענה בעברית בלבד, בפסקה אחת קצרה (עד 4 משפטים), בלי כותרות:\n\n${prompt}`,
-    );
-    const text = result.response.text()?.trim();
-    return text && text.length > 0
-      ? text
-      : "לא התקבלה תשובה מהמודל — נסו שוב מאוחר יותר.";
+    const wrapped = `ענה בעברית בלבד, בפסקה אחת קצרה (עד 4 משפטים), בלי כותרות:\n\n${prompt}`;
+    let lastErr: unknown = null;
+    for (const modelName of getGeminiModelFallbackChain()) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(wrapped);
+        const text = result.response.text()?.trim();
+        if (text && text.length > 0) return text;
+      } catch (e) {
+        lastErr = e;
+        if (isLikelyGeminiModelUnavailable(e)) continue;
+        break;
+      }
+    }
+    void lastErr;
+    return "לא התקבלה תשובה מהמודל — נסו שוב מאוחר יותר.";
   } catch {
     return "ניתוח AI זמנית לא זמין. השוו מחירים ידנית מול היסטוריית הרכישות.";
   }

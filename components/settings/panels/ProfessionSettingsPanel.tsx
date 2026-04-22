@@ -107,17 +107,17 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
       >
         <form onSubmit={submitWith("profession", updateIndustryProfileAction)} className="grid gap-4">
           <fieldset disabled={!canManage} className="grid gap-4">
-            <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/70 px-4 py-3 text-sm leading-7 text-[color:var(--v2-ink)]">
+            <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/70 px-4 py-3 text-sm leading-7 text-[color:var(--ink-900)]">
               <p>{t("settings.tradeAdaptHint")}</p>
-              <p className="mt-2 text-xs text-[color:var(--v2-muted)]">{t("settings.tradeSaveRefreshHint")}</p>
+              <p className="mt-2 text-xs text-[color:var(--ink-500)]">{t("settings.tradeSaveRefreshHint")}</p>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-[color:var(--v2-line)] bg-white/90 px-4 py-4">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">ענף</p>
-                <p className="mt-2 font-black text-[color:var(--v2-ink)]">בנייה ומקצועות נלווים</p>
+              <div className="rounded-2xl border border-[color:var(--line)] bg-white/90 px-4 py-4">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">ענף</p>
+                <p className="mt-2 font-black text-[color:var(--ink-900)]">בנייה ומקצועות נלווים</p>
               </div>
               <label className="grid gap-2">
-                <span className="text-xs font-black text-[color:var(--v2-muted)]">התמחות</span>
+                <span className="text-xs font-black text-[color:var(--ink-500)]">התמחות</span>
                 <select name="constructionTrade" defaultValue={organization.constructionTrade} className={inputClass} required>
                   {tradeSelectOptions.map(({ id, label: optLabel }) => (
                     <option key={id} value={id}>
@@ -126,10 +126,10 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
                   ))}
                 </select>
               </label>
-              <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 md:col-span-2">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">פרופיל</p>
-                <p className="mt-2 font-black text-[color:var(--v2-ink)]">{profile.industryLabel}</p>
-                <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{profile.homeDescription}</p>
+              <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 md:col-span-2">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">פרופיל</p>
+                <p className="mt-2 font-black text-[color:var(--ink-900)]">{profile.industryLabel}</p>
+                <p className="mt-2 text-sm text-[color:var(--ink-500)]">{profile.homeDescription}</p>
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
@@ -141,24 +141,24 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
               <input name="customDocumentWord" defaultValue={asString(customLabels.document, profile.vocabulary.document)} className={inputClass} placeholder="מילה למסמך" />
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-4">
-                <p className="text-sm font-black text-[color:var(--v2-ink)]">פענוחי AI</p>
+              <div className="rounded-3xl border border-[color:var(--line)] bg-white/88 p-4">
+                <p className="text-sm font-black text-[color:var(--ink-900)]">פענוחי AI</p>
                 <div className="mt-4 grid gap-3">
                   {profile.analysisTypes.map((analysis) => (
-                    <div key={analysis.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                      <p className="font-black text-[color:var(--v2-ink)]">{analysis.label}</p>
-                      <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{analysis.description}</p>
+                    <div key={analysis.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                      <p className="font-black text-[color:var(--ink-900)]">{analysis.label}</p>
+                      <p className="mt-2 text-sm text-[color:var(--ink-500)]">{analysis.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-4">
-                <p className="text-sm font-black text-[color:var(--v2-ink)]">תבניות</p>
+              <div className="rounded-3xl border border-[color:var(--line)] bg-white/88 p-4">
+                <p className="text-sm font-black text-[color:var(--ink-900)]">תבניות</p>
                 <div className="mt-4 grid gap-3">
                   {profile.templates.map((template) => (
-                    <div key={template.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                      <p className="font-black text-[color:var(--v2-ink)]">{template.label}</p>
-                      <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{template.description}</p>
+                    <div key={template.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                      <p className="font-black text-[color:var(--ink-900)]">{template.label}</p>
+                      <p className="mt-2 text-sm text-[color:var(--ink-500)]">{template.description}</p>
                     </div>
                   ))}
                 </div>

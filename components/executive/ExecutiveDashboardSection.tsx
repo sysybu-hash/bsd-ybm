@@ -13,12 +13,10 @@ import { isExecutiveSubscriptionSuperAdmin } from "@/lib/executive-subscription-
 import { ArrowRight, Building2, TrendingDown, TrendingUp, Users } from "lucide-react";
 
 type Props = {
-  /** כאשר מוטמע בדף Intelligence — ללא קישור חזרה כפול */
-  embedded?: boolean;
   userEmail: string | null | undefined;
 };
 
-export default async function ExecutiveDashboardSection({ embedded, userEmail }: Props) {
+export default async function ExecutiveDashboardSection({ userEmail }: Props) {
   const showSuperManage = isExecutiveSubscriptionSuperAdmin(userEmail);
 
   const { t, locale } = await getServerTranslator();
@@ -58,15 +56,6 @@ export default async function ExecutiveDashboardSection({ embedded, userEmail }:
             >
               <ArrowRight size={18} />
               מרכז שליטה במנויים
-            </Link>
-          ) : null}
-          {!embedded ? (
-            <Link
-              href="/app/ai"
-              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 shadow-sm transition-colors hover:border-teal-500/30 hover:text-teal-300"
-            >
-              <ArrowRight size={18} />
-              {t("executive.linkIntelligence")}
             </Link>
           ) : null}
         </div>

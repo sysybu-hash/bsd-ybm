@@ -91,13 +91,13 @@ export default function StackSettingsPanel({ organization, integrations, meckano
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
               </select>
-              <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm leading-7 text-[color:var(--v2-muted)]">
+              <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm leading-7 text-[color:var(--ink-500)]">
                 המנוע הראשי משפיע על סריקה, פענוח ועוזר.
               </div>
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
               <input name="model_gemini" defaultValue={asString(asRecord(aiControl.gemini).model, "flash")} className={inputClass} placeholder="Gemini model" />
-              <input name="model_openai" defaultValue={asString(asRecord(aiControl.openai).model, "gpt-4o-mini")} className={inputClass} placeholder="OpenAI model" />
+              <input name="model_openai" defaultValue={asString(asRecord(aiControl.openai).model, "gpt-5.4-turbo")} className={inputClass} placeholder="OpenAI model" />
               <input name="model_anthropic" defaultValue={asString(asRecord(aiControl.anthropic).model, "sonnet")} className={inputClass} placeholder="Anthropic model" />
               <input name="gemini_key" defaultValue={asString(asRecord(aiControl.gemini).key)} className={inputClass} dir="ltr" placeholder="Gemini API key" />
               <input name="openai_key" defaultValue={asString(asRecord(aiControl.openai).key)} className={inputClass} dir="ltr" placeholder="OpenAI API key" />
@@ -113,14 +113,14 @@ export default function StackSettingsPanel({ organization, integrations, meckano
       <SectionCard title="חיבורי ענן" body="ספקים מחוברים — ניהול מלא ממסכי מסמכים ותפעול." icon={<Cloud className="h-5 w-5" aria-hidden />}>
         <div className="grid gap-3">
           {integrations.length === 0 ? (
-            <p className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+            <p className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
               אין חיבורי ענן פעילים. ניתן להוסיף ממסמכים או מתפעול.
             </p>
           ) : null}
           {integrations.map((integration) => (
-            <div key={integration.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-              <p className="font-black text-[color:var(--v2-ink)]">{integration.displayName ?? integration.provider}</p>
-              <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+            <div key={integration.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+              <p className="font-black text-[color:var(--ink-900)]">{integration.displayName ?? integration.provider}</p>
+              <p className="mt-2 text-sm text-[color:var(--ink-500)]">
                 {integration.autoScan ? "סריקה אוטומטית" : "ללא סריקה אוטומטית"} · {integration.backupExports ? "גיבוי יצוא" : "ללא גיבוי יצוא"}
               </p>
             </div>

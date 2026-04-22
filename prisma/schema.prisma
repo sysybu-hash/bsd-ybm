@@ -103,6 +103,7 @@ model Organization {
   projects         Project[]
   cloudIntegrations   CloudIntegration[]
   documentScanCaches  DocumentScanCache[]
+  documentScanJobs    DocumentScanJob[]
   documentLineItems   DocumentLineItem[]
   productPriceObservations ProductPriceObservation[]
   invoices         Invoice[]
@@ -262,6 +263,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   documents      Document[]
+  documentScanJobs DocumentScanJob[]
   activityLogs   ActivityLog[]
   createdAt      DateTime        @default(now())
   /// התחברות אחרונה (מעודכן ב־NextAuth signIn)
@@ -443,6 +445,33 @@ model Quote {
   updatedAt        DateTime     @updatedAt
 }
 
+/// סריקת מסמך אסינכרונית — תור רקע מול Vercel timeout / מגבלות Google
+enum DocumentScanJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model DocumentScanJob {
+  id             String                @id @default(uuid())
+  status         DocumentScanJobStatus @default(PENDING)
+  /// JSON או base64/URL — מטא־דאטה + תוכן (ראו קוד ה־API)
+  fileData       String                @db.Text
+  result         Json?
+  error          String?               @db.Text
+  userId         String
+  user           User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([status, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([userId, createdAt])
+}
+
 model Document {
   id             String       @id @default(cuid())
   fileName       String
@@ -490,10 +519,13 @@ model DocumentLineItem {
   lineTotal        Float?
   currency         String       @default("ILS")
   sku              String?
+  /// true כשה-AI זיהה שורת חומר/שירות ללא מחיר תקף — להשלמה ידנית בלוח ERP
+  priceAlertPending Boolean     @default(false)
   createdAt        DateTime     @default(now())
 
   @@index([organizationId, normalizedKey])
   @@index([documentId])
+  @@index([organizationId, priceAlertPending])
 }
 
 /// צילום מחיר היסטורי לשורה — לאיתור ספק זול יותר

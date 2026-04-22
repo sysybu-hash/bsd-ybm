@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import {
+  jsonBadRequest,
+  jsonServerError,
+  jsonTooManyRequests,
+  jsonUnauthorized,
+} from "@/lib/api-json";
 import type { ProcessDocumentResult } from "@/app/actions/process-document";
 import { processDocumentAction } from "@/app/actions/process-document";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +21,7 @@ export async function POST(req: NextRequest) {
     // 1. הגנה על ה-API: בדיקת סשן
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized - כניסה אסורה" }, { status: 401 });
+      return jsonUnauthorized();
     }
 
     const orgId = session.user.organizationId ?? "";
@@ -25,12 +31,10 @@ export async function POST(req: NextRequest) {
     const rl = await checkRateLimit(rateKey, limit, 60 * 60 * 1000); // limit per hour
 
     if (!rl.success) {
-      return NextResponse.json(
-        {
-          error: `חרגת ממכסת השימוש המותרת לשעה זו. נסה שוב לאחר ${rl.resetAt.toLocaleTimeString()}.`,
-          resetAt: rl.resetAt,
-        },
-        { status: 429 },
+      return jsonTooManyRequests(
+        `חרגת ממכסת השימוש המותרת לשעה זו. נסה שוב לאחר ${rl.resetAt.toLocaleTimeString()}.`,
+        "rate_limited",
+        { resetAt: rl.resetAt.toISOString() },
       );
     }
 
@@ -39,7 +43,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file");
 
     if (!(file instanceof File)) {
-      return NextResponse.json({ error: "לא נמצא קובץ" }, { status: 400 });
+      return jsonBadRequest("לא נמצא קובץ", "missing_file");
     }
 
     const persist = formData.get("persist") !== "false";
@@ -67,6 +71,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result.data);
   } catch (error) {
     console.error("API Route Error:", error);
-    return NextResponse.json({ error: "שגיאה פנימית בשרת" }, { status: 500 });
+    return jsonServerError("שגיאה פנימית בשרת");
   }
 }

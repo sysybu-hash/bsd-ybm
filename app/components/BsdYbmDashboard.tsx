@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import {
   Upload,
@@ -27,7 +27,9 @@ import type { OrgDashboardHomeData } from "@/lib/dashboard-home-data";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import { useI18n } from "@/components/I18nProvider";
 import { intlLocaleForApp } from "@/lib/i18n/intl-locale";
+import AiAssistInlineLauncher from "@/components/ai/AiAssistInlineLauncher";
 import { useIndustryConfig } from "@/hooks/use-industry-config";
+import { getIndustryProfile } from "@/lib/professions/runtime";
 import { motion } from "framer-motion";
 import { Loader2, Users as UsersIcon } from "lucide-react";
 
@@ -74,7 +76,7 @@ function useAnimatedNumber(target: number, duration = 1200) {
 type Props = { homeData: OrgDashboardHomeData };
 
 export default function BsdYbmDashboard({ homeData }: Props) {
-  const { dir, t, locale } = useI18n();
+  const { dir, t, locale, messages } = useI18n();
   const industry = useIndustryConfig();
   const { data: session, status } = useSession();
   const [isUploading, setIsUploading] = useState(false);
@@ -98,6 +100,19 @@ export default function BsdYbmDashboard({ homeData }: Props) {
   } = homeData;
 
   const userName = session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "שלום";
+
+  const orgId = session?.user?.organizationId ?? null;
+
+  const workspaceIndustryProfile = useMemo(
+    () =>
+      getIndustryProfile(
+        (session?.user as { organizationIndustry?: string | null })?.organizationIndustry ?? "CONSTRUCTION",
+        null,
+        (session?.user as { organizationConstructionTrade?: string | null })?.organizationConstructionTrade ?? null,
+        messages,
+      ),
+    [session, messages],
+  );
   const firstName = userName.split(/\s+/)[0];
 
   const hour = new Date().getHours();
@@ -179,7 +194,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
         {[
           { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "teal" },
           { href: "/app/documents", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
-          { href: "/app/ai", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
+          { href: "/app/ai#assistant", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
           { href: "/app/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
         ].map((c) => (
           <Link
@@ -265,10 +280,23 @@ export default function BsdYbmDashboard({ homeData }: Props) {
                     {isUploading ? <Loader2 className="animate-spin" size={17} /> : <Upload size={17} />}
                     {isUploading ? t("scanner.processing") : t("erpDash.scannerCta")}
                   </label>
-                  <Link href="/app/ai" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
-                    {t("dashboard.aiHub")}
-                    <ChevronLeft size={15} />
-                  </Link>
+                  {orgId ? (
+                    <AiAssistInlineLauncher
+                      orgId={orgId}
+                      industryProfile={workspaceIndustryProfile}
+                      sectionLabel={t("scanner.title")}
+                      sectionSummary={t("erpDash.scannerDesc")}
+                      userFirstName={firstName}
+                      triggerLabel={t("dashboard.aiHub")}
+                      triggerClassName="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50"
+                      triggerShowArrow={false}
+                    />
+                  ) : (
+                    <Link href="/app/ai#assistant" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+                      {t("dashboard.aiHub")}
+                      <ChevronLeft size={15} />
+                    </Link>
+                  )}
                 </div>
               </div>
 

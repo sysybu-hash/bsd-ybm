@@ -27,12 +27,12 @@ export default function ProductPageClient() {
         {MODULE_ORDER.map(({ key, icon: Icon }) => {
           const mod = mp.modules[key];
           return (
-            <article key={key} className="v2-panel p-6">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+            <article key={key} className="tile p-6">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                 <Icon className="h-5 w-5" aria-hidden />
               </span>
-              <h2 className="mt-5 text-xl font-black text-[color:var(--v2-ink)]">{mod.title}</h2>
-              <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{mod.body}</p>
+              <h2 className="mt-5 text-xl font-black text-[color:var(--ink-900)]">{mod.title}</h2>
+              <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{mod.body}</p>
             </article>
           );
         })}

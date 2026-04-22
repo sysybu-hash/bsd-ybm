@@ -16,9 +16,9 @@ export default function SolutionsPageClient() {
     <MarketingPublicShell title={ms.title} eyebrow={ms.eyebrow} description={ms.description}>
       <div className="grid gap-4 lg:grid-cols-2">
         {ms.items.map((solution) => (
-          <article key={solution.title} className="v2-panel p-6">
-            <h2 className="text-2xl font-black text-[color:var(--v2-ink)]">{solution.title}</h2>
-            <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">{solution.body}</p>
+          <article key={solution.title} className="tile p-6">
+            <h2 className="text-2xl font-black text-[color:var(--ink-900)]">{solution.title}</h2>
+            <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{solution.body}</p>
           </article>
         ))}
       </div>

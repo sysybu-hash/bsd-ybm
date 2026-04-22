@@ -98,11 +98,7 @@ export function resolveWorkspaceFeatures(input: WorkspaceFeatureInput): Readonly
     }
   }
 
-  if (input.industryId !== "CONSTRUCTION") {
-    // דוגמה: מודול "תפעול שטח" מכוון לבנייה — אפשר לכבות מחוץ ל-CONSTRUCTION
-    set.delete("module_operations");
-  }
-
+  /** תפעול זמין לכל התעשיות — לוח הפיקוח, מסמכים וזרימות צוות רלוונטיות גם מחוץ לבנייה */
   return set;
 }
 

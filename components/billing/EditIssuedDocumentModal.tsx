@@ -20,6 +20,7 @@ import {
 } from "@/app/dashboard/billing/actions";
 import { calculateIssuedDocumentTotals, VAT_RATE } from "@/lib/billing-calculations";
 import type { IssuedDocRow } from "@/components/billing/GlobalBillingPageClient";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 
 type LineItem = { desc: string; qty: number; price: number };
 
@@ -109,8 +110,9 @@ export default function EditIssuedDocumentModal({
   const inputCls = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/15";
 
   return (
+    <PortalToBody>
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-gray-900/40 p-4"
+      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center overflow-y-auto bg-gray-900/40 p-4`}
       dir="rtl"
       role="dialog"
       aria-modal="true"
@@ -345,5 +347,6 @@ export default function EditIssuedDocumentModal({
         </div>
       </div>
     </div>
+    </PortalToBody>
   );
 }

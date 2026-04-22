@@ -5,7 +5,7 @@ import { parseSubscriptionTier } from "@/lib/subscription-tier-config";
  * ניתן לעקוף ב־CRM_ANALYSIS_GEMINI_MODEL / PREMIUM_GEMINI_MODEL.
  */
 export const CRM_FLASH_MODEL_DEFAULT = "gemini-2.5-flash";
-export const CRM_PREMIUM_MODEL_DEFAULT = "gemini-2.5-pro";
+export const CRM_PREMIUM_MODEL_DEFAULT = "gemini-3.1-pro-stable";
 
 export function resolveCrmGeminiModel(
   orgTier: string,

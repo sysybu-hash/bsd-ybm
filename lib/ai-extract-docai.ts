@@ -1,9 +1,131 @@
 import { v1 } from "@google-cloud/documentai";
 import { parseModelJsonText } from "@/lib/ai-document-json";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getGeminiModelId } from "@/lib/gemini-model";
+import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 
 const { DocumentProcessorServiceClient } = v1;
+
+type ServiceAccountCredentials = {
+  project_id?: string;
+};
+
+/**
+ * שם משאב מלא: projects/PROJECT/locations/REGION/processors/PROCESSOR_ID
+ * אם הוגדר רק מזהה המעבד (למשל hex) — בונים מהפרויקט והאזור.
+ */
+function resolveDocAiProcessorResourceName(
+  raw: string,
+  credentials: ServiceAccountCredentials,
+): string {
+  const t = raw.trim();
+  if (t.startsWith("projects/") && t.includes("/processors/")) {
+    return t;
+  }
+
+  const projectId =
+    process.env.GOOGLE_DOCUMENT_AI_PROJECT_ID?.trim() ||
+    credentials.project_id?.trim() ||
+    process.env.GOOGLE_CLOUD_PROJECT?.trim() ||
+    process.env.GCLOUD_PROJECT?.trim() ||
+    process.env.GOOGLE_CLOUD_PROJECT_ID?.trim();
+
+  const location =
+    process.env.GOOGLE_DOCUMENT_AI_LOCATION?.trim() ||
+    process.env.GOOGLE_CLOUD_LOCATION?.trim() ||
+    "us";
+
+  if (!projectId) {
+    throw new Error(
+      "Document AI: הגדירו GOOGLE_DOCUMENT_AI_PROCESSOR_ID כשם משאב מלא (projects/.../processors/...), או מזהה מעבד קצר יחד עם project_id ב-JSON של חשבון השירות / GOOGLE_DOCUMENT_AI_PROJECT_ID.",
+    );
+  }
+
+  const idOnly = t.replace(/^processors\//, "");
+  return `projects/${projectId}/locations/${location}/processors/${idOnly}`;
+}
+
+function simplifyDocAiProperties(props: unknown): Record<string, unknown> {
+  if (!props || typeof props !== "object") return {};
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(props as Record<string, unknown>)) {
+    if (v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      const nv = o.normalizedValue;
+      const text =
+        nv && typeof nv === "object" && nv !== null && "text" in nv
+          ? String((nv as { text?: string }).text ?? "")
+          : "";
+      out[k] = text.trim() || o.mentionText || null;
+    }
+  }
+  return out;
+}
+
+export type DocAiRawEntity = {
+  type?: string | null;
+  mentionText?: string | null;
+  confidence?: number | null;
+  normalizedValue?: string | null;
+  properties?: Record<string, unknown>;
+};
+
+/**
+ * הרצת Document AI בלבד — טקסט + ישויות (למיפוי פיננסי ישיר ול-Tri-Engine).
+ */
+export async function processDocumentAiRaw(
+  base64: string,
+  mimeType: string,
+): Promise<{ fullText: string; entities: DocAiRawEntity[] }> {
+  const processorRaw = process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID?.trim();
+  const credentialsJson =
+    process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS?.trim() ||
+    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON?.trim();
+
+  if (!processorRaw) throw new Error("Missing GOOGLE_DOCUMENT_AI_PROCESSOR_ID");
+  if (!credentialsJson) {
+    throw new Error(
+      "Missing GOOGLE_DOCUMENT_AI_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON",
+    );
+  }
+
+  let credentials: ServiceAccountCredentials;
+  try {
+    credentials = JSON.parse(credentialsJson) as ServiceAccountCredentials;
+  } catch {
+    throw new Error(
+      "Failed to parse Document AI credentials JSON (GOOGLE_DOCUMENT_AI_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON)",
+    );
+  }
+
+  const processorId = resolveDocAiProcessorResourceName(processorRaw, credentials);
+  const locationMatch = processorId.match(/locations\/([^/]+)/);
+  const apiEndpoint = locationMatch ? `${locationMatch[1]}-documentai.googleapis.com` : "us-documentai.googleapis.com";
+
+  const client = new DocumentProcessorServiceClient({
+    credentials,
+    apiEndpoint,
+  });
+
+  const [result] = await client.processDocument({
+    name: processorId,
+    rawDocument: { content: base64, mimeType },
+  });
+
+  const doc = result.document;
+  if (!doc) throw new Error("Document AI returned no document data");
+
+  const fullText = doc.text || "";
+  const entities: DocAiRawEntity[] =
+    doc.entities?.map((e) => ({
+      type: e.type,
+      mentionText: e.mentionText,
+      confidence: e.confidence ?? undefined,
+      normalizedValue: e.normalizedValue?.text || e.mentionText || null,
+      properties: simplifyDocAiProperties(e.properties as unknown),
+    })) ?? [];
+
+  return { fullText, entities };
+}
 
 /**
  * 🚀 BSD-YBM Active: PREMIUM GOOGLE DOCUMENT AI EXTRACTOR
@@ -15,57 +137,7 @@ export async function extractDocumentWithDocAI(
   fileName: string,
   documentInstruction: string,
 ): Promise<Record<string, unknown>> {
-  const processorId = process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID?.trim();
-  const credentialsJson = process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS?.trim();
-
-  if (!processorId) throw new Error("Missing GOOGLE_DOCUMENT_AI_PROCESSOR_ID");
-  if (!credentialsJson) throw new Error("Missing GOOGLE_DOCUMENT_AI_CREDENTIALS");
-
-  let credentials;
-  try {
-    credentials = JSON.parse(credentialsJson);
-  } catch (err) {
-    throw new Error("Failed to parse GOOGLE_DOCUMENT_AI_CREDENTIALS JSON");
-  }
-
-  // Processor ID is in format: projects/PROJECT_ID/locations/LOCATION/processors/PROCESSOR_ID
-  // We extract the location if possible, otherwise default to "us"
-  const locationMatch = processorId.match(/locations\/([^\/]+)/);
-  const apiEndpoint = locationMatch ? `${locationMatch[1]}-documentai.googleapis.com` : "us-documentai.googleapis.com";
-
-  const client = new DocumentProcessorServiceClient({
-    credentials,
-    apiEndpoint,
-  });
-
-  const request = {
-    name: processorId,
-    rawDocument: {
-      content: base64,
-      mimeType,
-    },
-  };
-
-  const [result] = await client.processDocument(request);
-  const { document } = result;
-
-  if (!document) {
-    throw new Error("Document AI returned no document data");
-  }
-
-  // If it's a specialized processor (like Expense), it has entities.
-  // However, Document AI output is complex. To maintain 100% consistency with our schema,
-  // we take the full text and any extracted entities, then use Gemini to normalize it
-  // to our exact JSON schema defined in documentInstruction. 
-  // This gives us the precision of DocAI OCR + the flexibility of Gemini.
-
-  const fullText = document.text || "";
-  const entities = document.entities?.map(e => ({
-    type: e.type,
-    mentionText: e.mentionText,
-    confidence: e.confidence,
-    normalizedValue: e.normalizedValue?.text || e.mentionText,
-  })) || [];
+  const { fullText, entities } = await processDocumentAiRaw(base64, mimeType);
 
   const aiSummary = `
 DOCUMENT AI OCR TEXT:
@@ -83,8 +155,7 @@ ${JSON.stringify(entities, null, 2)}
   }
 
   const genAI = new GoogleGenerativeAI(geminiKey);
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
-  
+
   const prompt = `
 ${documentInstruction}
 File: ${fileName}
@@ -96,8 +167,24 @@ Please convert this into the required JSON format.
 ${aiSummary}
   `;
 
-  const geminiResult = await model.generateContent(prompt);
-  const text = geminiResult.response.text();
-  
-  return parseModelJsonText(text);
+  let lastErr: unknown = null;
+  for (const modelName of getGeminiModelFallbackChain()) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const geminiResult = await model.generateContent(prompt);
+      const text = geminiResult.response.text();
+      return parseModelJsonText(text);
+    } catch (err: unknown) {
+      lastErr = err;
+      if (isLikelyGeminiModelUnavailable(err)) continue;
+      const inner = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Document AI (OCR הושלם) — נכשל שלב נורמליזציה עם Gemini: ${inner}`,
+      );
+    }
+  }
+  const inner = lastErr instanceof Error ? lastErr.message : String(lastErr);
+  throw new Error(
+    `Document AI (OCR הושלם) — נכשל שלב נורמליזציה עם Gemini (כל המודלים): ${inner}`,
+  );
 }

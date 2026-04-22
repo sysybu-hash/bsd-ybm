@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonNotFound, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -13,7 +14,7 @@ export async function GET(
 ) {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
-  if (!orgId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!orgId) return jsonUnauthorized();
 
   const { id } = await params;
 
@@ -48,7 +49,7 @@ export async function GET(
     },
   });
 
-  if (!contact) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!contact) return jsonNotFound("לא נמצא");
 
   const totalBilled = contact.issuedDocuments.reduce((s, d) => s + d.total, 0);
   const totalPaid = contact.issuedDocuments

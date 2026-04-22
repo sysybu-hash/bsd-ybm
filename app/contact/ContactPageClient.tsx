@@ -17,38 +17,38 @@ export default function ContactPageClient() {
       eyebrow={t("publicShell.navContact")}
       description={t("contactPage.shellDescription")}
     >
-      <p className="mb-8 text-lg leading-8 text-[color:var(--v2-muted)]">{t("contactPage.intro")}</p>
+      <p className="mb-8 text-lg leading-8 text-[color:var(--ink-500)]">{t("contactPage.intro")}</p>
 
       <ul
-        className="v2-panel space-y-5 p-6 text-[color:var(--v2-ink)]"
+        className="tile space-y-5 p-6 text-[color:var(--ink-900)]"
         dir={dir}
       >
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--ink-500)]">
             {t("contactPage.addressLabel")}
           </span>
-          <span className="mt-1 block text-base font-medium text-[color:var(--v2-ink)]">
+          <span className="mt-1 block text-base font-medium text-[color:var(--ink-900)]">
             {t("marketingDrawer.contactAddress")}
           </span>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--ink-500)]">
             {t("contactPage.phoneLabel")}
           </span>
           <a
             href="tel:+972525640021"
-            className="mt-1 block text-lg font-semibold text-[color:var(--v2-accent)] underline-offset-2 transition hover:underline"
+            className="mt-1 block text-lg font-semibold text-[color:var(--axis-clients)] underline-offset-2 transition hover:underline"
           >
             {t("marketingDrawer.contactPhone")}
           </a>
         </li>
         <li>
-          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--v2-muted)]">
+          <span className="block text-xs font-bold uppercase tracking-wide text-[color:var(--ink-500)]">
             {t("contactPage.emailLabel")}
           </span>
           <a
             href="mailto:sysybu@gmail.com"
-            className="mt-1 block text-lg font-semibold text-[color:var(--v2-accent)] underline-offset-2 transition hover:underline"
+            className="mt-1 block text-lg font-semibold text-[color:var(--axis-clients)] underline-offset-2 transition hover:underline"
           >
             {t("marketingDrawer.contactEmail")}
           </a>

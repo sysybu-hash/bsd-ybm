@@ -11,6 +11,10 @@ import {
   parseStoredConsent,
 } from "@/lib/cookie-consent";
 import { useI18n } from "@/components/I18nProvider";
+import PortalToBody, {
+  WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS,
+  WORKSPACE_OVERLAY_Z_CLASS,
+} from "@/components/portal/PortalToBody";
 
 function defaultState(): CookieConsentState {
   return {
@@ -96,13 +100,14 @@ export default function CookieConsentWall() {
   };
 
   return (
+    <PortalToBody>
     <>
       <div
-        className="fixed inset-0 z-[240] bg-gray-100/60"
+        className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} bg-gray-100/60`}
         aria-hidden="true"
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-[250] border-t border-gray-200 bg-white shadow-[0_-12px_40px_rgba(15,23,42,0.12)]"
+        className={`fixed inset-x-0 bottom-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} border-t border-gray-200 bg-white shadow-[0_-12px_40px_rgba(15,23,42,0.12)]`}
         dir={dir}
         role="dialog"
         aria-modal="true"
@@ -213,5 +218,6 @@ export default function CookieConsentWall() {
         </div>
       </div>
     </>
+    </PortalToBody>
   );
 }

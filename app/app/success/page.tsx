@@ -17,7 +17,7 @@ export default function AppSuccessPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[1200px] py-8 space-y-6" dir="rtl">
+    <div className="mx-auto w-full min-w-0 max-w-[1200px] space-y-8 py-8" dir="rtl">
       <header className="flex flex-col items-center text-center gap-2 px-2">
         <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-[color:var(--axis-clients-soft)] text-[color:var(--state-success)] shadow-[var(--tile-shadow-raised)]">
           <CheckCircle2 className="h-10 w-10" aria-hidden />

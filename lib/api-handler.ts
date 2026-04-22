@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import type { z } from "zod";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonForbidden, jsonUnauthorized, jsonValidationFailed } from "@/lib/api-json";
 
 export type WorkspaceAuthContext = {
   orgId: string;
@@ -67,19 +68,9 @@ async function parseRawForValidation(
   } catch {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Invalid JSON" }, { status: 400 }),
+      response: jsonBadRequest("גוף הבקשה אינו JSON תקין", "invalid_json"),
     };
   }
-}
-
-function validationErrorResponse(error: z.ZodError) {
-  return NextResponse.json(
-    {
-      error: "Validation failed",
-      issues: error.issues,
-    },
-    { status: 400 },
-  );
 }
 
 /**
@@ -93,11 +84,11 @@ export async function requireWorkspaceAuth(
   const userId = session?.user?.id;
   const orgId = session?.user?.organizationId ?? null;
   if (!userId || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
   const role = session.user.role as UserRole;
   if (options?.allowedRoles?.length && !options.allowedRoles.includes(role)) {
-    return NextResponse.json({ error: "Forbidden: Insufficient permissions" }, { status: 403 });
+    return jsonForbidden("אין הרשאת תפקיד לפעולה זו.");
   }
   return { orgId, userId, role };
 }
@@ -134,7 +125,7 @@ export function withWorkspacesAuth(
 
       const result = options.schema.safeParse(parsed.raw);
       if (!result.success) {
-        return validationErrorResponse(result.error);
+        return jsonValidationFailed(result.error.issues);
       }
 
       return (handler as (req: Request, ctx: WorkspaceAuthContext, data: unknown) => Promise<NextResponse>)(
@@ -197,7 +188,7 @@ export function withWorkspacesAuthDynamic<P extends Record<string, string>>(
 
       const result = options.schema.safeParse(parsed.raw);
       if (!result.success) {
-        return validationErrorResponse(result.error);
+        return jsonValidationFailed(result.error.issues);
       }
 
       return (

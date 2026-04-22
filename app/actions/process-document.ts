@@ -4,7 +4,7 @@ import { createHash } from "crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getGeminiModelId } from "@/lib/gemini-model";
+import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 import {
   assertProviderConfigured,
   normalizeAiProviderId,
@@ -32,7 +32,7 @@ import { sendDocNotification } from "./send-doc-notification";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
 import {
   inferMimeFromFileName,
-  isOpenAiAnthropicVisionMime,
+  isOpenAiAnthropicScanMime,
   isTextLikeMime,
   isDocxMime,
 } from "@/lib/scan-mime";
@@ -45,6 +45,10 @@ export type ProcessDocumentResult =
   | { success: true; data: unknown }
   | { success: false; error: string; code?: "QUOTA_EXCEEDED" };
 
+/**
+ * חילוץ מול Gemini עם קובץ בינארי אחד (למשל PDF שלם ב־base64).
+ * אין פיצול לעמוד בודד בשרת — המודל מקבל את כל ה־PDF; ההנחיה ב־getDocumentJsonInstruction דורשת סריקת כל העמודים.
+ */
 async function extractWithGemini(
   base64Data: string,
   mimeType: string,
@@ -56,16 +60,9 @@ async function extractWithGemini(
   }
   const genAI = new GoogleGenerativeAI(apiKey);
 
-  const fallbackModels = [
-    getGeminiModelId(),
-    "gemini-1.5-flash-8b",
-    "gemini-1.5-pro-002",
-    "gemini-1.5-flash-002",
-    "gemini-1.5-pro",
-    "gemini-2.0-flash-exp",
-  ];
+  const fallbackModels = getGeminiModelFallbackChain();
 
-  let lastError: any = null;
+  let lastError: unknown = null;
   for (const modelId of fallbackModels) {
     try {
       const model = genAI.getGenerativeModel({ model: modelId });
@@ -75,12 +72,9 @@ async function extractWithGemini(
       ]);
       const text = result.response.text();
       return parseModelJsonText(text);
-    } catch (err: any) {
+    } catch (err: unknown) {
       lastError = err;
-      const msg = String(err?.message || err);
-      if (msg.includes("404") || msg.includes("not found") || msg.includes("503")) {
-        continue;
-      }
+      if (isLikelyGeminiModelUnavailable(err)) continue;
       throw err;
     }
   }
@@ -97,16 +91,26 @@ async function extractWithGeminiText(
     throw new Error("חסר מפתח Gemini");
   }
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
   const capped =
     plainText.length > 500_000
       ? `${plainText.slice(0, 500_000)}\n\n[…truncated for scan]`
       : plainText;
-  const result = await model.generateContent([
-    `${documentInstruction}\nFile name: ${fileName}\n\nDocument text:\n${capped}`,
-  ]);
-  const text = result.response.text();
-  return parseModelJsonText(text);
+  const prompt = `${documentInstruction}\nFile name: ${fileName}\n\nDocument text:\n${capped}`;
+
+  let lastError: unknown = null;
+  for (const modelId of getGeminiModelFallbackChain()) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelId });
+      const result = await model.generateContent([prompt]);
+      const text = result.response.text();
+      return parseModelJsonText(text);
+    } catch (err: unknown) {
+      lastError = err;
+      if (isLikelyGeminiModelUnavailable(err)) continue;
+      throw err;
+    }
+  }
+  throw lastError;
 }
 
 /** בוחר ספק בפועל: טקסט → Gemini טקסט; OpenAI/Claude רק לתמונות; אחרת Gemini קבצים */
@@ -121,7 +125,7 @@ function resolveScanProvider(
     return "gemini";
   }
   if (requested === "openai" || requested === "anthropic") {
-    if (isOpenAiAnthropicVisionMime(mimeType)) {
+    if (isOpenAiAnthropicScanMime(mimeType)) {
       return requested;
     }
     return "gemini";
@@ -133,12 +137,58 @@ function sha256Hex(buffer: ArrayBuffer): string {
   return createHash("sha256").update(Buffer.from(buffer)).digest("hex");
 }
 
+function looksLikeAuthFailure(msg: string): boolean {
+  const m = msg.toLowerCase();
+  return (
+    m.includes("api key") ||
+    m.includes("401") ||
+    m.includes("403") ||
+    m.includes("permission_denied") ||
+    m.includes("api_key_invalid") ||
+    m.includes("invalid api key") ||
+    m.includes("incorrect api key")
+  );
+}
+
+function labelForScanProvider(id: AiProviderId): string {
+  switch (id) {
+    case "gemini":
+      return "Google Gemini";
+    case "openai":
+      return "OpenAI";
+    case "anthropic":
+      return "Anthropic Claude";
+    case "docai":
+      return "Google Document AI";
+    default:
+      return id;
+  }
+}
+
+function authEnvHintForProvider(id: AiProviderId): string {
+  switch (id) {
+    case "gemini":
+      return "ב-Vercel: GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY. ב-Google Cloud: חיוב פעיל והפעלת Gemini/Generative Language API.";
+    case "openai":
+      return "ב-Vercel: OPENAI_API_KEY (מפתח תקף, מכסה/ארגון). PDF דרך Responses — ברירת מחדל gpt-5.4-turbo; ניתן OPENAI_RESPONSES_MODEL / OPENAI_VISION_MODEL.";
+    case "anthropic":
+      return "ב-Vercel: ANTHROPIC_API_KEY.";
+    case "docai":
+      return "במסלול DocAI יש שני שלבים: OCR ב-Document AI ואז נורמליזציה ל-JSON דרך Gemini. ב-Vercel: GOOGLE_DOCUMENT_AI_PROCESSOR_ID, JSON של חשבון שירות ב-GOOGLE_DOCUMENT_AI_CREDENTIALS או ב-GOOGLE_APPLICATION_CREDENTIALS_JSON, וכן GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY. אם מופיע generativelanguage או Gemini בשגיאה — תקנו גישה ל-Generative Language API / מפתח / פרויקט.";
+    default:
+      return "בדקו מפתחות ב-Vercel וב-Google Cloud.";
+  }
+}
+
 export async function processDocumentAction(
   formData: FormData,
   userId: string,
   orgId: string,
   persist: boolean = true,
 ): Promise<ProcessDocumentResult> {
+  let effectiveProviderForError: AiProviderId | undefined;
+  let requestedProviderForError: AiProviderId | undefined;
+
   try {
     const file = formData.get("file") as File | null;
     if (!file) {
@@ -164,6 +214,13 @@ export async function processDocumentAction(
     const userIndustry = accessUser?.organization?.industry ?? "CONSTRUCTION";
     const orgTrade = accessUser?.organization?.constructionTrade ?? null;
     const analysisId = formData.get("analysisType") as string || "INVOICE";
+    const rawScanModel = (formData.get("model") as string | null)?.trim();
+    const scanModel =
+      rawScanModel &&
+      rawScanModel !== "docai-default" &&
+      rawScanModel !== "default"
+        ? rawScanModel
+        : undefined;
 
     // Industry adaptation for AI instructions (בנייה + התמחות נלווית) — כולל תרגום UI כשיש
     const industryConfig = getMergedIndustryConfig(userIndustry, orgTrade, uiMessages);
@@ -199,6 +256,9 @@ export async function processDocumentAction(
     if (missingEff) {
       return { success: false, error: missingEff };
     }
+
+    requestedProviderForError = requested;
+    effectiveProviderForError = effectiveProvider;
 
     const resolvedOrg = await resolveOrganizationForUser(orgId, userId);
     if (!resolvedOrg) {
@@ -260,6 +320,7 @@ export async function processDocumentAction(
               mimeType,
               file.name,
               documentInstruction,
+              scanModel,
             );
             break;
           case "anthropic":
@@ -268,6 +329,7 @@ export async function processDocumentAction(
               mimeType,
               file.name,
               documentInstruction,
+              scanModel,
             );
             break;
           case "docai":
@@ -340,7 +402,12 @@ export async function processDocumentAction(
       effectiveOrgId,
       typeof aiData.vendor === "string" ? aiData.vendor : null,
       aiData,
-      { skipPriceObservations: fromCache },
+      {
+        skipPriceObservations: fromCache,
+        notifyUserId: userId,
+        fileLabel: file.name,
+        skipNotification: fromCache,
+      },
     );
 
     const user = await prisma.user.findUnique({
@@ -370,10 +437,23 @@ export async function processDocumentAction(
   } catch (error) {
     console.error("processDocumentAction error:", error);
     const msg = error instanceof Error ? error.message : String(error);
-    if (msg.includes("API key") || msg.includes("401") || msg.includes("403")) {
+    if (looksLikeAuthFailure(msg)) {
+      const prov = effectiveProviderForError ?? "gemini";
+      const req = requestedProviderForError ?? prov;
+      const docAiGeminiNote =
+        prov === "docai" &&
+        (msg.includes("נורמליזציה עם Gemini") ||
+          msg.toLowerCase().includes("generativelanguage") ||
+          msg.includes("GoogleGenerativeAI"))
+          ? "השגיאה בשלב Gemini (אחרי OCR של Document AI), לא בהכרח ב-Document AI עצמו. "
+          : "";
+      const routing =
+        req !== prov
+          ? `נשלח: ${labelForScanProvider(req)} · רץ בפועל: ${labelForScanProvider(prov)}. `
+          : `מנוע: ${labelForScanProvider(prov)}. `;
       return {
         success: false,
-        error: "בעיית הרשאה לספק ה-AI — בדקו מפתח ב-.env / Vercel.",
+        error: `בעיית הרשאה לספק ה-AI — ${routing}${docAiGeminiNote}${authEnvHintForProvider(prov)} פירוט טכני: ${msg.replace(/\s+/g, " ").slice(0, 220)}`,
       };
     }
     return {

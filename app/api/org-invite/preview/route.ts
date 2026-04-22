@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonBadRequest, jsonGone, jsonNotFound } from "@/lib/api-json";
 
 /** תצוגה בלבד לטופס הרשמה — ללא מידע רגיש מעבר לשם הארגון */
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const token = String(url.searchParams.get("token") ?? "").trim();
   if (!token) {
-    return NextResponse.json({ error: "חסר טוקן" }, { status: 400 });
+    return jsonBadRequest("חסר טוקן", "missing_token");
   }
 
   const inv = await prisma.organizationInvite.findUnique({
@@ -21,13 +22,13 @@ export async function GET(req: Request) {
   });
 
   if (!inv) {
-    return NextResponse.json({ error: "הזמנה לא נמצאה" }, { status: 404 });
+    return jsonNotFound("הזמנה לא נמצאה");
   }
   if (inv.usedAt) {
-    return NextResponse.json({ error: "ההזמנה כבר נוצלה" }, { status: 410 });
+    return jsonGone("ההזמנה כבר נוצלה", "invite_used");
   }
   if (inv.expiresAt.getTime() < Date.now()) {
-    return NextResponse.json({ error: "תוקף ההזמנה פג" }, { status: 410 });
+    return jsonGone("תוקף ההזמנה פג", "invite_expired");
   }
 
   return NextResponse.json({

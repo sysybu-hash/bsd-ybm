@@ -23,7 +23,7 @@ export default async function AppAdvancedPage() {
   const visibleItems = hasMeckanoAccess ? allItems : allItems.filter((item) => !item.requiresMeckano);
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-6" dir={pageDir}>
+    <div className="w-full min-w-0 space-y-8" dir={pageDir}>
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
           {t("workspaceNav.advancedPage.kicker")}

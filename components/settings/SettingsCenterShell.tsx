@@ -20,7 +20,7 @@ export default function SettingsCenterShell({ children, includePlatformNav }: Pr
   const { t, dir } = useI18n();
 
   return (
-    <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start" dir={dir}>
+    <div className="flex min-w-0 flex-col gap-8 lg:flex-row lg:items-start" dir={dir}>
       <nav
         className="tile w-full shrink-0 p-3 lg:sticky lg:top-4 lg:w-72"
         aria-label="Settings hub"
@@ -81,7 +81,7 @@ export default function SettingsCenterShell({ children, includePlatformNav }: Pr
           })}
         </div>
       </nav>
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1 space-y-8">{children}</div>
     </div>
   );
 }

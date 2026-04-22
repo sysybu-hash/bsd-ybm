@@ -87,7 +87,7 @@ const SectionCard = WorkspaceSectionCard;
 const SubmitButton = WorkspaceSubmitButton;
 
 const inputClass =
-  "w-full rounded-2xl border border-[color:var(--v2-line)] bg-white/90 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none transition placeholder:text-[color:var(--v2-muted)] focus:border-[color:var(--v2-accent)]";
+  "w-full rounded-2xl border border-[color:var(--line)] bg-white/90 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition placeholder:text-[color:var(--ink-500)] focus:border-[color:var(--axis-clients)]";
 
 export default function SubscriptionManagementWorkspace({
   currentOrganization,
@@ -146,28 +146,28 @@ export default function SubscriptionManagementWorkspace({
 
   return (
     <div className="grid gap-6" dir="rtl">
-      <section className="v2-panel v2-panel-soft p-6 sm:p-8">
+      <section className="tile tile--soft p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">{t("workspaceSubscription.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+            <span className="bento-eyebrow">{t("workspaceSubscription.eyebrow")}</span>
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               ניהול מנויים ברור, עם שליטה אמיתית על ארגונים קיימים.
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
               המסך הזה מסודר עכשיו לפי משימות: מה המסלול הפעיל, איך מנהלים את הארגון שלך, ואיך מנהל פלטפורמה שולט על ארגונים,
               דומיינים, הזמנות ומחיקות — מנויים לענף הבנייה והמקצועות הנלווים. פרופיל: {industryProfile.industryLabel}.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-ink)]">{viewer.roleLabel}</span>
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-muted)]">{tierLabelHe(currentOrganization.subscriptionTier)}</span>
-              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--v2-muted)]">{currentOrganization.subscriptionStatus}</span>
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--ink-900)]">{viewer.roleLabel}</span>
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--ink-500)]">{tierLabelHe(currentOrganization.subscriptionTier)}</span>
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[color:var(--ink-500)]">{currentOrganization.subscriptionStatus}</span>
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/register" className="v2-button v2-button-primary">
+              <Link href="/register" className="bento-btn bento-btn--primary">
                 עמוד ההצטרפות
                 <MailPlus className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/app/settings/overview" className="v2-button v2-button-secondary">
+              <Link href="/app/settings/overview" className="bento-btn bento-btn--secondary">
                 הגדרות ארגון ומקצוע
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
@@ -195,8 +195,8 @@ export default function SubscriptionManagementWorkspace({
               onClick={() => setActiveSection(item.id as "overview" | "control")}
               className={`rounded-full px-5 py-2 text-sm font-black transition ${
                 activeSection === item.id
-                  ? "bg-[color:var(--v2-accent)] text-white"
-                  : "border border-[color:var(--v2-line)] bg-white/88 text-[color:var(--v2-muted)]"
+                  ? "bg-[color:var(--axis-clients)] text-white"
+                  : "border border-[color:var(--line)] bg-white/88 text-[color:var(--ink-500)]"
               }`}
             >
               {item.label}
@@ -248,13 +248,13 @@ export default function SubscriptionManagementWorkspace({
                   </fieldset>
                 </ActionForm>
               ) : (
-                <div className="grid gap-4 rounded-2xl border border-[color:var(--v2-line)] bg-white/88 px-4 py-4">
-                  <p className="text-sm font-semibold text-[color:var(--v2-ink)]">מסלול וסטטוס נוכחיים</p>
-                  <p className="text-sm text-[color:var(--v2-muted)]">
+                <div className="grid gap-4 rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
+                  <p className="text-sm font-semibold text-[color:var(--ink-900)]">מסלול וסטטוס נוכחיים</p>
+                  <p className="text-sm text-[color:var(--ink-500)]">
                     {tierLabelHe(currentOrganization.subscriptionTier)} · {currentOrganization.subscriptionStatus}
                   </p>
                   {viewer.canManageCurrentOrganization ? (
-                    <Link href="/app/settings/billing" className="v2-button v2-button-secondary w-fit">
+                    <Link href="/app/settings/billing" className="bento-btn bento-btn--secondary w-fit">
                       שדרוג ותשלום (עמוד חיוב)
                     </Link>
                   ) : null}
@@ -274,16 +274,16 @@ export default function SubscriptionManagementWorkspace({
                     <article
                       key={tier}
                       className={`rounded-3xl border px-5 py-5 ${
-                        currentOrganization.subscriptionTier === tier ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]" : "border-[color:var(--v2-line)] bg-white/88"
+                        currentOrganization.subscriptionTier === tier ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : "border-[color:var(--line)] bg-white/88"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-lg font-black text-[color:var(--v2-ink)]">{tierLabelHe(tier)}</p>
-                        <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-black text-[color:var(--v2-muted)]">
+                        <p className="text-lg font-black text-[color:var(--ink-900)]">{tierLabelHe(tier)}</p>
+                        <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-black text-[color:var(--ink-500)]">
                           {allowance.monthlyPriceIls == null ? "בתיאום" : `₪${allowance.monthlyPriceIls}`}
                         </span>
                       </div>
-                      <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">
+                      <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">
                         {allowance.cheapScans} סריקות זולות, {allowance.premiumScans} סריקות פרימיום,{" "}
                         {allowance.unlimitedCompanies ? "ללא הגבלת חברות" : `עד ${allowance.maxCompanies} ישויות`}
                       </p>
@@ -303,7 +303,7 @@ export default function SubscriptionManagementWorkspace({
                   `מכסת ישויות: ${currentAllowance.unlimitedCompanies ? "ללא הגבלה" : currentAllowance.maxCompanies}`,
                   `יתרה נוכחית: ${currentOrganization.cheapScansRemaining}/${currentOrganization.premiumScansRemaining}`,
                 ].map((item) => (
-                  <div key={item} className="rounded-2xl bg-white/78 px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)]">
+                  <div key={item} className="rounded-2xl bg-white/78 px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)]">
                     {item}
                   </div>
                 ))}
@@ -313,7 +313,7 @@ export default function SubscriptionManagementWorkspace({
             <SectionCard title="קישורי הצטרפות" description="מעבר מהיר לכל מסלולי ההצטרפות הציבוריים." icon={<MailPlus className="h-5 w-5" aria-hidden />}>
               <div className="grid gap-3">
                 {ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((tier) => (
-                  <Link key={tier} href={`/register?plan=${encodeURIComponent(tier)}`} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
+                  <Link key={tier} href={`/register?plan=${encodeURIComponent(tier)}`} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)] transition hover:bg-white">
                     הצטרפות ל-{tierLabelHe(tier)}
                   </Link>
                 ))}
@@ -332,8 +332,8 @@ export default function SubscriptionManagementWorkspace({
               icon={<Users className="h-5 w-5" aria-hidden />}
             >
               <div className="grid gap-4 xl:grid-cols-2">
-                <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-5">
-                  <p className="font-black text-[color:var(--v2-ink)]">שליחת הזמנה למסלול</p>
+                <div className="rounded-3xl border border-[color:var(--line)] bg-white/88 p-5">
+                  <p className="font-black text-[color:var(--ink-900)]">שליחת הזמנה למסלול</p>
                   <ActionForm onSubmit={submitWith("invite", manageSubsSendTierInviteAction)}>
                     <input name="email" className={inputClass} dir="ltr" placeholder="client@example.com" />
                     <div className="grid gap-3 md:grid-cols-2">
@@ -352,8 +352,8 @@ export default function SubscriptionManagementWorkspace({
                   </ActionForm>
                 </div>
 
-                <div className="rounded-3xl border border-[color:var(--v2-line)] bg-white/88 p-5">
-                  <p className="font-black text-[color:var(--v2-ink)]">יצירת ארגון ידנית</p>
+                <div className="rounded-3xl border border-[color:var(--line)] bg-white/88 p-5">
+                  <p className="font-black text-[color:var(--ink-900)]">יצירת ארגון ידנית</p>
                   <ActionForm onSubmit={submitWith("manual-org", manageSubsCreateManualUserAction)}>
                     <input name="organizationName" className={inputClass} placeholder="שם ארגון" />
                     <input name="name" className={inputClass} placeholder="שם מנהל" />
@@ -406,15 +406,15 @@ export default function SubscriptionManagementWorkspace({
                       key={organization.id}
                       id={`platform-org-${organization.id}`}
                       className={`rounded-3xl border p-5 transition ${
-                        focused ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]" : "border-[color:var(--v2-line)] bg-white/88"
+                        focused ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : "border-[color:var(--line)] bg-white/88"
                       }`}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
-                          <p className="text-lg font-black text-[color:var(--v2-ink)]">{organization.name}</p>
-                          <p className="mt-1 text-sm text-[color:var(--v2-muted)]">{organization.primaryEmail ?? "ללא אימייל ראשי"}</p>
+                          <p className="text-lg font-black text-[color:var(--ink-900)]">{organization.name}</p>
+                          <p className="mt-1 text-sm text-[color:var(--ink-500)]">{organization.primaryEmail ?? "ללא אימייל ראשי"}</p>
                         </div>
-                        <div className="text-sm font-semibold text-[color:var(--v2-muted)]">
+                        <div className="text-sm font-semibold text-[color:var(--ink-500)]">
                           {organization.cheapScansRemaining} זולות · {organization.premiumScansRemaining} פרימיום
                         </div>
                       </div>
@@ -485,7 +485,7 @@ export default function SubscriptionManagementWorkspace({
                   `מנוי מחובר: ${tierLabelHe(currentOrganization.subscriptionTier)}`,
                   `מיקוד מסך: ${focusedOrganizationId ? "ארגון מסומן" : "כל הארגונים"}`,
                 ].map((item) => (
-                  <div key={item} className="rounded-2xl bg-white/78 px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)]">
+                  <div key={item} className="rounded-2xl bg-white/78 px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)]">
                     {item}
                   </div>
                 ))}
@@ -494,10 +494,10 @@ export default function SubscriptionManagementWorkspace({
 
             <SectionCard title="קישורי עבודה" description="מעבר מהיר למסכים הקרובים ביותר לניהול מנויים." icon={<Users className="h-5 w-5" aria-hidden />}>
               <div className="grid gap-3">
-                <Link href="/app/admin" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
+                <Link href="/app/admin" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)] transition hover:bg-white">
                   חזרה למסך Admin
                 </Link>
-                <Link href="/app/settings/overview" className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm font-semibold text-[color:var(--v2-ink)] transition hover:bg-white">
+                <Link href="/app/settings/overview" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)] transition hover:bg-white">
                   הגדרות הארגון המחובר
                 </Link>
               </div>

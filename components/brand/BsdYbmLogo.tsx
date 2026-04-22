@@ -27,10 +27,11 @@ function Mark({ className, gid }: { className?: string; gid: string }) {
       <rect x="0.5" y="0.5" width="39" height="39" rx="11.5" stroke={`url(#${gid}-border)`} strokeWidth="1" />
       <path d="M0 12C0 5.373 5.373 0 12 0h16c6.627 0 12 5.373 12 12v6C28 14 12 14 0 18v-6z" fill={`url(#${gid}-reflection)`} opacity="0.4" />
       
-      {/* 3D abstract shape (Building/Rocket hybrid) */}
+      {/* Beam + structure — זרימת עבודה דיגיטלית */}
       <path d="M11 26c4-9 8-13 14-13 3.5 0 6 1.5 8 4" stroke={`url(#${gid}-stroke)`} strokeWidth="3" strokeLinecap="round" filter={`url(#${gid}-glow)`} />
       <path d="M13 15h14v3H13z" fill={`url(#${gid}-accent)`} filter={`url(#${gid}-shadow)`} />
       <path d="M15 19h10v1.5H15z" fill="white" opacity="0.75" />
+      <path d="M22 10v4M18 12h8" stroke="#5eead4" strokeWidth="1.25" strokeLinecap="round" opacity="0.85" />
 
       <defs>
         <linearGradient id={`${gid}-bg`} x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
@@ -78,6 +79,7 @@ function MarkLight({ className, gid }: { className?: string; gid: string }) {
       <path d="M11 26c4-9 8-13 14-13 3.5 0 6 1.5 8 4" stroke={`url(#${gid}-stroke-l)`} strokeWidth="3" strokeLinecap="round" filter={`url(#${gid}-glow-l)`} />
       <path d="M13 15h14v3H13z" fill={`url(#${gid}-accent-l)`} filter={`url(#${gid}-shadow-l)`} />
       <path d="M15 19h10v1.5H15z" fill="white" opacity="0.9" />
+      <path d="M22 10v4M18 12h8" stroke="#0d9488" strokeWidth="1.25" strokeLinecap="round" opacity="0.9" />
 
       <defs>
         <linearGradient id={`${gid}-bg-l`} x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
@@ -142,7 +144,7 @@ export default function BsdYbmLogo({
         <Link
           href={href}
           className={`${wrapClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a8] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--app-sidebar-bg,#0f172a)]`}
-          aria-label="BSD-YBM — בית"
+          aria-label="BSD-YBM — דף הבית"
         >
           {markInner}
         </Link>
@@ -190,7 +192,10 @@ export default function BsdYbmLogo({
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a8] focus-visible:ring-offset-2 rounded-xl">
+      <Link
+        href={href}
+        className={`inline-flex min-w-0 max-w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a8] focus-visible:ring-offset-2 rounded-xl ${className}`.trim()}
+      >
         {inner}
       </Link>
     );

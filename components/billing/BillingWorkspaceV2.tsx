@@ -64,31 +64,31 @@ function DocumentCard({ document }: { document: BillingDocumentRecord }) {
   const dueInDays = daysUntil(document.dueDate);
 
   return (
-    <article className="v2-panel overflow-hidden p-5">
+    <article className="tile overflow-hidden p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-black text-[color:var(--v2-ink)]">
+          <p className="text-sm font-black text-[color:var(--ink-900)]">
             {typeMeta[document.type as keyof typeof typeMeta] ?? document.type} #{document.number}
           </p>
-          <p className="mt-2 text-lg font-black text-[color:var(--v2-ink)]">{document.clientName}</p>
+          <p className="mt-2 text-lg font-black text-[color:var(--ink-900)]">{document.clientName}</p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-black ${badge.className}`}>{badge.label}</span>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">סכום כולל</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{formatCurrencyILS(document.total)}</p>
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">סכום כולל</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatCurrencyILS(document.total)}</p>
         </div>
-        <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--v2-muted)]">תאריך</p>
-          <p className="mt-2 text-base font-black text-[color:var(--v2-ink)]">{formatShortDate(document.date)}</p>
+        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
+          <p className="text-xs font-bold text-[color:var(--ink-500)]">תאריך</p>
+          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatShortDate(document.date)}</p>
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-[color:var(--v2-line)] bg-white/76 px-4 py-3">
-        <p className="text-xs font-bold text-[color:var(--v2-muted)]">סטטוס גבייה</p>
-        <p className="mt-2 text-sm font-semibold text-[color:var(--v2-ink)]">
+      <div className="mt-4 rounded-2xl border border-[color:var(--line)] bg-white/76 px-4 py-3">
+        <p className="text-xs font-bold text-[color:var(--ink-500)]">סטטוס גבייה</p>
+        <p className="mt-2 text-sm font-semibold text-[color:var(--ink-900)]">
           {document.status === "PAID"
             ? "המסמך שולם ומסומן כסגור."
             : dueInDays == null
@@ -102,7 +102,7 @@ function DocumentCard({ document }: { document: BillingDocumentRecord }) {
       </div>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href="/app/documents/erp" className="v2-button v2-button-primary">
+        <Link href="/app/documents/erp" className="bento-btn bento-btn--primary">
           ניהול מלא ב-ERP
           <ArrowLeft className="h-4 w-4" aria-hidden />
         </Link>
@@ -112,7 +112,7 @@ function DocumentCard({ document }: { document: BillingDocumentRecord }) {
               ? `/app/documents/issue?client=${encodeURIComponent(document.clientName)}&contactId=${document.contactId}`
               : "/app/documents/issue"
           }
-          className="v2-button v2-button-secondary"
+          className="bento-btn bento-btn--secondary"
         >
           שכפול / הפקת מסמך
           <ReceiptText className="h-4 w-4" aria-hidden />
@@ -159,24 +159,24 @@ export default function BillingWorkspaceV2({ documents }: Props) {
 
   return (
     <div className="grid gap-6" dir="rtl">
-      <section className="v2-panel v2-panel-soft overflow-hidden p-6 sm:p-8">
+      <section className="tile tile--soft overflow-hidden p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <span className="v2-eyebrow">{t("workspaceBilling.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--v2-ink)] sm:text-5xl">
+            <span className="bento-eyebrow">{t("workspaceBilling.eyebrow")}</span>
+            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
               חלון חיוב רגוע, ברור ומדויק שמרכז תזרים, גבייה ומסמכים פיננסיים.
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--v2-muted)] sm:text-lg">
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
               רואים קודם מה פתוח, מה דורש גבייה, ומה כבר נסגר. כל המידע הפיננסי החשוב נגיש בלי עומס מיותר ובלי
               מעבר מתיש בין מסכים.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/documents/erp" className="v2-button v2-button-primary">
+              <Link href="/app/documents/erp" className="bento-btn bento-btn--primary">
                 פתיחת ERP מלא
                 <ArrowLeft className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/app/documents/issue" className="v2-button v2-button-secondary">
+              <Link href="/app/documents/issue" className="bento-btn bento-btn--secondary">
                 הפקת מסמך חדש
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>
@@ -190,12 +190,12 @@ export default function BillingWorkspaceV2({ documents }: Props) {
               { label: "שולם", value: formatCurrencyILS(paidAmount), icon: CheckCircle2 },
               { label: "ממתין לתשלום", value: formatCurrencyILS(pendingAmount), icon: CreditCard },
             ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="v2-panel p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+              <div key={label} className="tile p-5">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--v2-muted)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--v2-ink)]">{value}</p>
+                <p className="mt-4 text-sm font-bold text-[color:var(--ink-500)]">{label}</p>
+                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
               </div>
             ))}
           </div>
@@ -204,31 +204,31 @@ export default function BillingWorkspaceV2({ documents }: Props) {
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
-          <div className="v2-panel p-5">
+          <div className="tile p-5">
             <div className="grid gap-3 lg:grid-cols-[1.5fr_0.8fr_0.8fr_auto]">
               <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">חיפוש</span>
-                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3">
-                  <Filter className="h-4 w-4 text-[color:var(--v2-muted)]" aria-hidden />
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">חיפוש</span>
+                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3">
+                  <Filter className="h-4 w-4 text-[color:var(--ink-500)]" aria-hidden />
                   <input
                     value={search}
                     onChange={(event) => {
                       const nextValue = event.target.value;
                       startFilterTransition(() => setSearch(nextValue));
                     }}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--v2-muted)]"
+                    className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-500)]"
                     placeholder="חיפוש לפי לקוח או מספר מסמך"
                   />
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--v2-accent)]" aria-hidden /> : null}
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
                 </div>
               </label>
 
               <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">סטטוס</span>
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">סטטוס</span>
                 <select
                   value={statusFilter}
                   onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                  className="rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                 >
                   <option value="ALL">כל הסטטוסים</option>
                   <option value="PENDING">ממתין לתשלום</option>
@@ -238,11 +238,11 @@ export default function BillingWorkspaceV2({ documents }: Props) {
               </label>
 
               <label className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">סוג מסמך</span>
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">סוג מסמך</span>
                 <select
                   value={typeFilter}
                   onChange={(event) => startFilterTransition(() => setTypeFilter(event.target.value))}
-                  className="rounded-2xl border border-[color:var(--v2-line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--v2-ink)] outline-none"
+                  className="rounded-2xl border border-[color:var(--line)] bg-white/86 px-4 py-3 text-sm font-semibold text-[color:var(--ink-900)] outline-none"
                 >
                   <option value="ALL">כל הסוגים</option>
                   {Object.entries(typeMeta).map(([key, label]) => (
@@ -254,13 +254,13 @@ export default function BillingWorkspaceV2({ documents }: Props) {
               </label>
 
               <div className="grid gap-2">
-                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--v2-muted)]">תצוגה</span>
-                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--v2-canvas)] p-1">
+                <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">תצוגה</span>
+                <div className="flex items-center gap-2 rounded-2xl bg-[color:var(--canvas-sunken)] p-1">
                   <button
                     type="button"
                     onClick={() => startTransition(() => setView("overview"))}
                     className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      view === "overview" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                      view === "overview" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
                     }`}
                   >
                     <LayoutGrid className="h-4 w-4" aria-hidden />
@@ -270,7 +270,7 @@ export default function BillingWorkspaceV2({ documents }: Props) {
                     type="button"
                     onClick={() => startTransition(() => setView("collections"))}
                     className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-black transition ${
-                      view === "collections" ? "bg-white text-[color:var(--v2-ink)] shadow-sm" : "text-[color:var(--v2-muted)]"
+                      view === "collections" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
                     }`}
                   >
                     <ListFilter className="h-4 w-4" aria-hidden />
@@ -284,9 +284,9 @@ export default function BillingWorkspaceV2({ documents }: Props) {
           {view === "overview" ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {filteredDocuments.length === 0 ? (
-                <div className="v2-panel col-span-full p-8 text-center">
-                  <p className="text-2xl font-black text-[color:var(--v2-ink)]">אין מסמכים שמתאימים לסינון הנוכחי.</p>
-                  <p className="mt-3 text-sm leading-7 text-[color:var(--v2-muted)]">
+                <div className="tile col-span-full p-8 text-center">
+                  <p className="text-2xl font-black text-[color:var(--ink-900)]">אין מסמכים שמתאימים לסינון הנוכחי.</p>
+                  <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">
                     אפשר לשנות את הסינון או להפיק מסמך חדש מתוך ה-ERP.
                   </p>
                 </div>
@@ -297,41 +297,41 @@ export default function BillingWorkspaceV2({ documents }: Props) {
             </div>
           ) : (
             <div className="grid gap-4 xl:grid-cols-2">
-              <div className="v2-panel p-6">
+              <div className="tile p-6">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                  <h2 className="text-xl font-black text-[color:var(--v2-ink)]">באיחור</h2>
+                  <AlertTriangle className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+                  <h2 className="text-xl font-black text-[color:var(--ink-900)]">באיחור</h2>
                 </div>
                 <div className="mt-4 grid gap-3">
                   {overdueDocuments.length === 0 ? (
-                    <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                    <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                       אין כרגע מסמכים באיחור בתצוגה המסוננת.
                     </div>
                   ) : null}
                   {overdueDocuments.map((document) => (
-                    <div key={document.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                      <p className="font-black text-[color:var(--v2-ink)]">{document.clientName}</p>
-                      <p className="mt-2 text-sm text-[color:var(--v2-muted)]">{formatCurrencyILS(document.total)}</p>
+                    <div key={document.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                      <p className="font-black text-[color:var(--ink-900)]">{document.clientName}</p>
+                      <p className="mt-2 text-sm text-[color:var(--ink-500)]">{formatCurrencyILS(document.total)}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="v2-panel p-6">
+              <div className="tile p-6">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-[color:var(--v2-accent)]" aria-hidden />
-                  <h2 className="text-xl font-black text-[color:var(--v2-ink)]">יעד תשלום קרוב</h2>
+                  <CreditCard className="h-5 w-5 text-[color:var(--axis-clients)]" aria-hidden />
+                  <h2 className="text-xl font-black text-[color:var(--ink-900)]">יעד תשלום קרוב</h2>
                 </div>
                 <div className="mt-4 grid gap-3">
                   {dueSoonDocuments.length === 0 ? (
-                    <div className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4 text-sm text-[color:var(--v2-muted)]">
+                    <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
                       אין כרגע מסמכים שמועד התשלום שלהם קרוב.
                     </div>
                   ) : null}
                   {dueSoonDocuments.map((document) => (
-                    <div key={document.id} className="rounded-2xl bg-[color:var(--v2-canvas)] px-4 py-4">
-                      <p className="font-black text-[color:var(--v2-ink)]">{document.clientName}</p>
-                      <p className="mt-2 text-sm text-[color:var(--v2-muted)]">
+                    <div key={document.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
+                      <p className="font-black text-[color:var(--ink-900)]">{document.clientName}</p>
+                      <p className="mt-2 text-sm text-[color:var(--ink-500)]">
                         {document.dueDate ? formatShortDate(document.dueDate) : "ללא תאריך יעד"}
                       </p>
                     </div>

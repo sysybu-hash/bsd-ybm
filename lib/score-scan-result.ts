@@ -19,6 +19,11 @@ export function scoreExtractedDocument(ai: Record<string, unknown> | undefined):
     }
   }
 
+  const meta = ai.metadata;
+  if (meta && typeof meta === "object") s += 2;
+  const boq = ai.billOfQuantities;
+  if (Array.isArray(boq)) s += Math.min(8, boq.length);
+
   const lineItems = ai.lineItems;
   if (Array.isArray(lineItems)) {
     s += Math.min(6, lineItems.length * 2);

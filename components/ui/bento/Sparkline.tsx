@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 export type SparkAxis = "finance" | "clients" | "ai" | "success" | "neutral";
 
 const colorByAxis: Record<SparkAxis, string> = {
@@ -25,6 +27,7 @@ export function Sparkline({
   filled?: boolean;
   className?: string;
 }) {
+  const reactId = useId().replace(/:/g, "");
   if (values.length < 2) {
     return <svg className={className} height={height} />;
   }
@@ -44,7 +47,7 @@ export function Sparkline({
   );
   const fillD = `${lineD} L ${w} ${h} L 0 ${h} Z`;
   const color = colorByAxis[axis];
-  const gradientId = `spark-${axis}-${Math.random().toString(36).slice(2, 8)}`;
+  const gradientId = `spark-${axis}-${reactId}`;
 
   return (
     <svg

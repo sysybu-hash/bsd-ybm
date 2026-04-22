@@ -1,19 +1,23 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getGeminiModelId } from "@/lib/gemini-model";
+import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 import {
-  getAnthropicModel,
+  getAnthropicModelCandidates,
   getGroqModel,
+  getOpenAiChatTextModelCandidates,
   isAnthropicConfigured,
+  isAnthropicEligibleForModelFallback,
   isGeminiConfigured,
   isGroqConfigured,
   isOpenAiConfigured,
+  isOpenAiEligibleForModelFallback,
   normalizeAiProviderId,
   type AiProviderId,
 } from "@/lib/ai-providers";
 import { getAiChatSystemPrefix } from "@/lib/i18n/ai-prompts";
 
 const RETRYABLE_STATUS_CODES = [429, 500, 503, 504];
-const FALLBACK_PROVIDER_ORDER: AiProviderId[] = ["groq", "openai", "anthropic"];
+/** אחרי Gemini (ברירת מחדל): OpenAI → Anthropic → Groq — תואם שרשראות fallback מרכזיות */
+const FALLBACK_PROVIDER_ORDER: AiProviderId[] = ["openai", "anthropic", "groq"];
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -83,47 +87,66 @@ async function runWithRetry<T>(task: () => Promise<T>, retries = 2, baseDelayMs 
 async function runOpenAiPrompt(prompt: string) {
   if (!isOpenAiConfigured()) throw new Error("חסר OPENAI_API_KEY");
   const key = process.env.OPENAI_API_KEY!.trim();
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini",
-      max_tokens: 2048,
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
-  if (!res.ok) throw new Error((await res.text()).slice(0, 400));
-  const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  return data.choices?.[0]?.message?.content ?? "";
+  const models = getOpenAiChatTextModelCandidates();
+  let lastErr: Error | null = null;
+  for (const model of models) {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 2048,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const raw = await res.text();
+    if (!res.ok) {
+      lastErr = new Error(raw.slice(0, 400));
+      if (isOpenAiEligibleForModelFallback(res.status, raw)) continue;
+      throw lastErr;
+    }
+    const data = JSON.parse(raw) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    return data.choices?.[0]?.message?.content ?? "";
+  }
+  throw lastErr ?? new Error("OpenAI chat: כל המודלים נכשלו");
 }
 
 async function runAnthropicPrompt(prompt: string) {
   if (!isAnthropicConfigured()) throw new Error("חסר ANTHROPIC_API_KEY");
   const key = process.env.ANTHROPIC_API_KEY!.trim();
-  const model = getAnthropicModel();
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 2048,
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
-  if (!res.ok) throw new Error((await res.text()).slice(0, 400));
-  const data = (await res.json()) as {
-    content?: Array<{ type?: string; text?: string }>;
-  };
-  return data.content?.find((block) => block.type === "text")?.text ?? "";
+  const models = getAnthropicModelCandidates();
+  let lastErr: Error | null = null;
+  for (const model of models) {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 2048,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const raw = await res.text();
+    if (!res.ok) {
+      lastErr = new Error(raw.slice(0, 400));
+      if (isAnthropicEligibleForModelFallback(res.status, raw)) continue;
+      throw lastErr;
+    }
+    const data = JSON.parse(raw) as {
+      content?: Array<{ type?: string; text?: string }>;
+    };
+    return data.content?.find((block) => block.type === "text")?.text ?? "";
+  }
+  throw lastErr ?? new Error("Anthropic chat: כל המודלים נכשלו");
 }
 
 async function runGroqPrompt(prompt: string) {
@@ -154,9 +177,19 @@ async function runGeminiPrompt(prompt: string) {
   const genAI = new GoogleGenerativeAI(
     process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY || "",
   );
-  const model = genAI.getGenerativeModel({ model: getGeminiModelId() });
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  let lastErr: unknown = null;
+  for (const modelName of getGeminiModelFallbackChain()) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      lastErr = e;
+      if (isLikelyGeminiModelUnavailable(e)) continue;
+      throw e;
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("Gemini chat: כל המודלים נכשלו");
 }
 
 async function executeProvider(provider: AiProviderId, prompt: string) {
@@ -202,6 +235,12 @@ export async function runAiChat(
     requestedProvider,
     ...FALLBACK_PROVIDER_ORDER.filter((provider) => provider !== requestedProvider),
   ].filter(canUseProvider);
+
+  if (providersToTry.length === 0) {
+    throw new Error(
+      "לא הוגדרו מפתחות AI בשרת. ב-Vercel הוסיפו לפחות אחד: GOOGLE_GENERATIVE_AI_API_KEY, OPENAI_API_KEY, GROQ_API_KEY או ANTHROPIC_API_KEY.",
+    );
+  }
 
   let lastError: unknown;
 

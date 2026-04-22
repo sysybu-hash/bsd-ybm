@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden, jsonNotFound, jsonUnauthorized } from "@/lib/api-json";
 import { getAuthorizedMeckanoOrganizationId, MECKANO_ACCESS_ERROR } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 
@@ -10,11 +11,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.organizationId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.organizationId) return jsonUnauthorized();
   const organizationId = await getAuthorizedMeckanoOrganizationId(session);
   if (!organizationId) {
-    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+    return jsonForbidden(MECKANO_ACCESS_ERROR);
   }
 
   const { id } = await params;
@@ -28,7 +28,7 @@ export async function PUT(
 
   const existing = await prisma.meckanoZone.findUnique({ where: { id } });
   if (!existing || existing.organizationId !== organizationId)
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return jsonNotFound("לא נמצא");
 
   const zone = await prisma.meckanoZone.update({
     where: { id },
@@ -58,17 +58,16 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.organizationId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.organizationId) return jsonUnauthorized();
   const organizationId = await getAuthorizedMeckanoOrganizationId(session);
   if (!organizationId) {
-    return NextResponse.json({ error: MECKANO_ACCESS_ERROR }, { status: 403 });
+    return jsonForbidden(MECKANO_ACCESS_ERROR);
   }
 
   const { id } = await params;
   const existing = await prisma.meckanoZone.findUnique({ where: { id } });
   if (!existing || existing.organizationId !== organizationId)
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return jsonNotFound("לא נמצא");
 
   await prisma.meckanoZone.delete({ where: { id } });
   return NextResponse.json({ status: true });

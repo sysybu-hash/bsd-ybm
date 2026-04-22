@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonForbidden, jsonNotFound } from "@/lib/api-json";
 import { getToken } from "next-auth/jwt";
 import { isAdmin } from "@/lib/is-admin";
 
@@ -9,15 +11,15 @@ import { isAdmin } from "@/lib/is-admin";
  * מחזיר את מצב הסשן הנוכחי — לצורך דיבאג בלבד.
  * לא חושף סיסמאות או מפתחות — רק email, role, id, orgId.
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!isAdmin(session?.user?.email)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonForbidden("נדרשת הרשאת מנהל.");
   }
 
   // In production, debug endpoint is disabled unless explicitly enabled.
   if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEBUG_SESSION !== "true") {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return jsonNotFound("לא זמין", "debug_disabled");
   }
 
   /* Read JWT directly for comparison */
@@ -26,7 +28,7 @@ export async function GET(req: Request) {
   let jwtId: string | null = null;
   try {
     const token = await getToken({
-      req: req as any,
+      req,
       secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
     });
     jwtEmail = typeof token?.email === "string" ? token.email : null;

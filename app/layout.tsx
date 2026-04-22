@@ -16,6 +16,7 @@ import { getMessages } from "@/lib/i18n/load-messages";
 import { buildRootMetadata } from "@/lib/site-metadata";
 import GlobalFloatingChrome from "@/components/GlobalFloatingChrome";
 import SiteWizardChrome from "@/components/wizard/SiteWizardChrome";
+import AppToaster from "@/components/AppToaster";
 
 const heebo = Heebo({
   subsets: ["hebrew", "latin"],
@@ -81,12 +82,19 @@ export default async function RootLayout({
       <body className={`${heebo.className} antialiased font-sans`}>
         <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
-            <Themer />
-            <AccessibilitySettingsBootstrap />
-            <SiteWizardChrome>{children}</SiteWizardChrome>
-            <GlobalFloatingChrome />
-            <CookieConsentWall />
-            <ConsentAwareAnalytics />
+            {/*
+              עטיפת אפקטים ויזואליים (ניגודיות/אפור) — לא על body:
+              filter על body יוצר containing block ל-fixed וגורם לדוק הצף "לגלול" עם העמוד.
+            */}
+            <div className="app-visual-effects-root min-h-app">
+              <Themer />
+              <AccessibilitySettingsBootstrap />
+              <SiteWizardChrome>{children}</SiteWizardChrome>
+              <GlobalFloatingChrome />
+              <CookieConsentWall />
+              <ConsentAwareAnalytics />
+              <AppToaster />
+            </div>
           </I18nProvider>
         </SessionProvider>
       </body>

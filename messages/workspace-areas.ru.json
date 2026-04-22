@@ -12,6 +12,7 @@
     "priorityTitle": "Срочно",
     "prioritySubtitle": "Сортировка по влиянию на работу, деньги и качество данных.",
     "priorityEmpty": "Срочных задач нет. Можно продолжать обычную работу.",
+    "priorityDismiss": "Готово",
     "dueSoonTitle": "Скоро срок",
     "dueSoonEmpty": "Нет ближайших платежей.",
     "paymentDuePrefix": "Срок оплаты:",
@@ -97,6 +98,11 @@
     "viewList": "Список",
     "pipelineTitle": "Воронка клиентов",
     "listTitle": "Список клиентов",
+    "listColClient": "Клиент",
+    "listColStatus": "Статус",
+    "listColProject": "Проект",
+    "listColContact": "Контакты",
+    "listColAmount": "Сумма",
     "addCta": "Новый клиент",
     "issueCta": "Выставить счёт",
     "statActiveClients": "Клиенты",
@@ -143,6 +149,16 @@
       "noProject": "Без проекта",
       "noValue": "Без суммы",
       "openAdvanced": "Расширенно"
+    },
+    "editModal": {
+      "eyebrow": "Быстрое редактирование",
+      "title": "Данные клиента",
+      "save": "Сохранить",
+      "delete": "Удалить",
+      "deleteConfirm": "Удалить {name} из системы?",
+      "valuePlaceholder": "Сумма (₪)",
+      "notesPlaceholder": "Заметки",
+      "closeAria": "Закрыть"
     }
   },
   "workspaceFinance": {
@@ -189,6 +205,7 @@
     "issueCardTitle": "Выставить документ",
     "issueCardBody": "Создавайте счета, предложения и документы прямо из коммерческого контекста.",
     "issueCta": "Выставить документ",
+    "issueCtaShort": "Выпуск",
     "monthTitle": "Месяц одним взглядом",
     "totalInvoicedLabel": "Выставлено в месяце · FINANCE",
     "heroKpiSub": "Финансовая сводка в реальном времени",
@@ -258,12 +275,14 @@
     "pendingEmpty": "Сейчас нет выделяющихся клиентов с долгом."
   },
   "workspaceDocuments": {
-    "eyebrow": "Documents Workspace",
+    "eyebrow": "Рабочее пространство документов",
     "heroTitle": "Полный контроль над {documents}: просмотр, правка и удаление.",
     "heroSubtitle": "Экран подстраивается под {industry}, показывает нужные типы документов и согласований и даёт полный контроль над отсканированными и выставленными документами.",
     "ctaIssue": "Выставить по профессиональным шаблонам",
+    "ctaIssueShort": "Выпуск",
     "ctaErp": "Открыть полный ERP",
     "ctaScan": "Новое сканирование",
+    "ctaScanShort": "Скан",
     "generatorsTitle": "Генераторы по отрасли",
     "generatorsSubtitle": "Шаблоны профиля — официальная выпускная форма или черновик в списке выданных.",
     "generatorsKindOfficial": "Официальные документы",

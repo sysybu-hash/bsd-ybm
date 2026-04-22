@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { jsonBadRequest, jsonNotFound, jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 
@@ -8,7 +9,7 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizationId;
   if (!orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonUnauthorized();
   }
 
   const body = await req.json();
@@ -16,14 +17,14 @@ export async function POST(req: Request) {
   const amount = Number(body.amount) || 0;
 
   if (!contactId) {
-    return NextResponse.json({ error: "חסר contactId" }, { status: 400 });
+    return jsonBadRequest("חסר contactId", "missing_contact_id");
   }
 
   const contact = await prisma.contact.findFirst({
     where: { id: contactId, organizationId: orgId },
   });
   if (!contact) {
-    return NextResponse.json({ error: "איש קשר לא נמצא" }, { status: 404 });
+    return jsonNotFound("איש קשר לא נמצא");
   }
 
   const token = randomBytes(24).toString("hex");

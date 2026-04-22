@@ -257,7 +257,7 @@ export default function MarketingHome() {
   ];
 
   return (
-    <div className={`${marketingSans.className} v2-site-shell bg-white`} dir={dir}>
+    <div className={`${marketingSans.className} bento-site-shell bg-white`} dir={dir}>
       <header className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -272,7 +272,7 @@ export default function MarketingHome() {
               <Link
                 key={`${item.href}-${item.label}`}
                 href={item.href}
-                className="whitespace-nowrap text-[13px] font-bold text-slate-600 transition hover:text-[color:var(--v2-ink)]"
+                className="whitespace-nowrap text-[13px] font-bold text-slate-600 transition hover:text-[color:var(--ink-900)]"
               >
                 {item.label}
               </Link>
@@ -283,13 +283,13 @@ export default function MarketingHome() {
             <LanguageSwitcher className="max-sm:[&_select]:min-w-[7rem] max-sm:[&_select]:px-2 max-sm:[&_select]:text-xs" />
             <Link
               href="/login"
-              className="hidden text-[13px] font-bold text-slate-600 hover:text-[color:var(--v2-ink)] md:inline"
+              className="hidden text-[13px] font-bold text-slate-600 hover:text-[color:var(--ink-900)] md:inline"
             >
               {t("publicShell.ctaLogin")}
             </Link>
             <Link
               href="/register"
-              className="hidden items-center rounded-lg bg-[color:var(--v2-accent)] px-3 py-2 text-[13px] font-black text-white shadow-sm transition hover:bg-[color:var(--v2-accent-strong)] sm:inline-flex"
+              className="hidden items-center rounded-lg bg-[color:var(--axis-clients)] px-3 py-2 text-[13px] font-black text-white shadow-sm transition hover:bg-[color:var(--axis-clients-strong)] sm:inline-flex"
             >
               {t("publicShell.ctaStart")}
             </Link>
@@ -352,7 +352,7 @@ export default function MarketingHome() {
               </Link>
               <Link
                 href="/register"
-                className="mt-2 inline-flex items-center justify-center rounded-xl bg-[color:var(--v2-accent)] px-3 py-3 text-base font-black text-white"
+                className="mt-2 inline-flex items-center justify-center rounded-xl bg-[color:var(--axis-clients)] px-3 py-3 text-base font-black text-white"
                 onClick={() => setMobileNavOpen(false)}
               >
                 {t("publicShell.ctaStart")}
@@ -400,7 +400,7 @@ export default function MarketingHome() {
               className="flex flex-col justify-center px-5 py-12 sm:px-10 lg:min-h-[min(90vh,820px)] lg:px-14 lg:py-16"
               dir={dir}
             >
-              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[color:var(--v2-accent)]">
+              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[color:var(--axis-clients)]">
                 {ed.heroEyebrow}
               </p>
               <h1
@@ -413,14 +413,14 @@ export default function MarketingHome() {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--v2-accent)] px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-[color:var(--v2-accent-strong)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--axis-clients)] px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-[color:var(--axis-clients-strong)]"
                 >
                   {ed.heroCta}
                   <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
                 </Link>
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-6 py-3.5 text-sm font-black text-slate-800 transition hover:border-[color:var(--v2-accent)] hover:text-[color:var(--v2-accent-strong)]"
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-slate-200 px-6 py-3.5 text-sm font-black text-slate-800 transition hover:border-[color:var(--axis-clients)] hover:text-[color:var(--axis-clients-strong)]"
                 >
                   {ed.heroSecondaryCta}
                 </Link>
@@ -440,7 +440,7 @@ export default function MarketingHome() {
                     key={f.title}
                     className="rounded-2xl border border-slate-100 bg-slate-50/60 p-5 shadow-sm sm:p-6"
                   >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
                     <h2 className="mt-4 text-lg font-black text-slate-900">{f.title}</h2>
@@ -462,7 +462,7 @@ export default function MarketingHome() {
                 return (
                   <article
                     key={card.title}
-                    className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition hover:border-[color:var(--v2-accent)]/50 hover:shadow-lg"
+                    className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition hover:border-[color:var(--axis-clients)]/50 hover:shadow-lg"
                   >
                     <div
                       className={`relative flex aspect-[16/10] items-center justify-center overflow-hidden ${visual.panel}`}
@@ -476,7 +476,7 @@ export default function MarketingHome() {
                       <h3 className="text-lg font-black text-slate-900">{card.title}</h3>
                       <Link
                         href="/product#projects"
-                        className="mt-4 inline-flex w-fit items-center gap-1 text-sm font-black text-[color:var(--v2-accent)] hover:underline"
+                        className="mt-4 inline-flex w-fit items-center gap-1 text-sm font-black text-[color:var(--axis-clients)] hover:underline"
                       >
                         {ed.projectCardCta}
                         <ArrowUpRight className="h-4 w-4" aria-hidden />
@@ -501,7 +501,7 @@ export default function MarketingHome() {
                   className="relative rounded-2xl border border-slate-100 bg-slate-50/90 p-6 pt-10 shadow-sm"
                 >
                   <Quote
-                    className="absolute start-5 top-4 h-10 w-10 text-[color:var(--v2-accent)] opacity-90"
+                    className="absolute start-5 top-4 h-10 w-10 text-[color:var(--axis-clients)] opacity-90"
                     aria-hidden
                   />
                   <p className="text-sm font-semibold leading-7 text-slate-700">{q.body}</p>
@@ -525,14 +525,14 @@ export default function MarketingHome() {
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-[color:var(--v2-accent)]/10 mix-blend-multiply" aria-hidden />
+              <div className="absolute inset-0 bg-[color:var(--axis-clients)]/10 mix-blend-multiply" aria-hidden />
             </div>
             <div className="lg:order-2">
               <h2 className="text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">{ed.featuredTitle}</h2>
               <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">{ed.featuredLead}</p>
               <Link
                 href="/product"
-                className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[color:var(--v2-accent)] px-5 py-3 text-sm font-black text-white transition hover:bg-[color:var(--v2-accent-strong)]"
+                className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[color:var(--axis-clients)] px-5 py-3 text-sm font-black text-white transition hover:bg-[color:var(--axis-clients-strong)]"
               >
                 {ed.featuredCta}
                 <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -543,7 +543,7 @@ export default function MarketingHome() {
 
         <section id="plans" className="border-t border-slate-100 bg-slate-50/80 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-[color:var(--v2-accent)]">{mh.plans.label}</p>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[color:var(--axis-clients)]">{mh.plans.label}</p>
             <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-slate-900 sm:text-4xl">{mh.plans.title}</h2>
             <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{mh.plans.body}</p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -551,13 +551,13 @@ export default function MarketingHome() {
                 <article
                   key={plan.tier}
                   className={`rounded-2xl border px-5 py-6 ${
-                    plan.featured ? "border-[color:var(--v2-accent)] bg-[color:var(--v2-accent-soft)]" : "border-slate-200 bg-white"
+                    plan.featured ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : "border-slate-200 bg-white"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-lg font-black text-slate-900">{plan.label}</p>
                     {plan.featured ? (
-                      <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-black text-[color:var(--v2-accent)]">
+                      <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-black text-[color:var(--axis-clients)]">
                         {mh.plans.featured}
                       </span>
                     ) : null}
@@ -579,7 +579,7 @@ export default function MarketingHome() {
         </section>
 
         <section className="mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-gradient-to-br from-[color:var(--v2-accent-strong)] to-[color:var(--v2-accent)] px-6 py-12 text-center sm:px-12 sm:py-14">
+          <div className="rounded-3xl bg-gradient-to-br from-[color:var(--axis-clients-strong)] to-[color:var(--axis-clients)] px-6 py-12 text-center sm:px-12 sm:py-14">
             <p className="text-[11px] font-black uppercase tracking-[0.28em] text-white/85">{mh.cta.label}</p>
             <h2 className="mt-4 text-2xl font-black tracking-[-0.04em] text-white sm:text-4xl">{mh.cta.title}</h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base">{mh.cta.body}</p>
@@ -611,7 +611,7 @@ export default function MarketingHome() {
               <div className="mt-6 flex gap-3">
                 <Link
                   href="/contact"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--v2-accent)] hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--axis-clients)] hover:text-white"
                   aria-label={t("publicShell.navContact")}
                 >
                   <Mail className="h-4 w-4" />
@@ -620,7 +620,7 @@ export default function MarketingHome() {
                   href="https://www.linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--v2-accent)] hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-[color:var(--axis-clients)] hover:text-white"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-4 w-4" />

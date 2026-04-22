@@ -23,7 +23,7 @@ export default function FinancialCharts({
   data,
   variant: _variant = "light",
 }: {
-  data: Array<{ aiData?: { docType?: string; total?: number } | null }>;
+  data: Array<{ aiData?: unknown }>;
   variant?: Variant;
 }) {
   void _variant;
@@ -31,8 +31,12 @@ export default function FinancialCharts({
   const intlTag = intlLocaleForApp(locale);
 
   const categoryData = data.reduce<{ name: string; value: number }[]>((acc, doc) => {
-    const category = doc.aiData?.docType || "אחר";
-    const amount = doc.aiData?.total || 0;
+    const aiData =
+      doc.aiData && typeof doc.aiData === "object" && !Array.isArray(doc.aiData)
+        ? (doc.aiData as { docType?: unknown; total?: unknown })
+        : null;
+    const category = typeof aiData?.docType === "string" ? aiData.docType : "אחר";
+    const amount = typeof aiData?.total === "number" ? aiData.total : 0;
     const found = acc.find((item) => item.name === category);
     if (found) {
       found.value += amount;

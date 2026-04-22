@@ -15,6 +15,7 @@ import {
 import { CompanyType, DocType } from "@prisma/client";
 import { createIssuedDocument } from "@/app/dashboard/billing/actions";
 import { calculateIssuedDocumentTotals, VAT_RATE } from "@/lib/billing-calculations";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 
 export type CrmContactOption = { id: string; name: string };
 
@@ -94,8 +95,9 @@ export default function CreateIssuedDocumentModal({
     companyType === CompanyType.EXEMPT_DEALER ? "0%" : `${Math.round(VAT_RATE * 100)}%`;
 
   return (
+    <PortalToBody>
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-gray-900/35 p-4"
+      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center overflow-y-auto bg-gray-900/35 p-4`}
       dir="rtl"
       role="dialog"
       aria-modal="true"
@@ -281,5 +283,6 @@ export default function CreateIssuedDocumentModal({
         </div>
       </div>
     </div>
+    </PortalToBody>
   );
 }

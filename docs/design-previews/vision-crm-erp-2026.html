@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BSD-YBM Vision CRM ERP 2026</title>
+    <style>
+      :root {
+        --ink: #08111f;
+        --ink-2: #132033;
+        --muted: #607086;
+        --soft: #f5f7fb;
+        --card: rgba(255, 255, 255, 0.88);
+        --line: rgba(95, 113, 139, 0.18);
+        --crm: #0799a8;
+        --erp: #c4821b;
+        --ai: #6d5dfc;
+        --build: #2f7d5b;
+        --steel: #2e5f90;
+        --danger: #e24b61;
+        --radius: 20px;
+        --shadow: 0 22px 70px rgba(15, 23, 42, 0.11);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: #e0e6ef;
+        color: var(--ink);
+        font-family: Heebo, Assistant, Arial, sans-serif;
+      }
+
+      .catalog {
+        display: grid;
+        gap: 36px;
+        padding: 34px;
+      }
+
+      .concept {
+        width: 1440px;
+        height: 1000px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(71, 85, 105, 0.2);
+        background: var(--soft);
+        box-shadow: 0 36px 100px rgba(2, 8, 23, 0.18);
+      }
+
+      .concept::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(46, 95, 144, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(46, 95, 144, 0.045) 1px, transparent 1px);
+        background-size: 36px 36px;
+        mask-image: linear-gradient(180deg, rgba(0,0,0,.7), transparent 78%);
+      }
+
+      .dark {
+        background:
+          linear-gradient(130deg, rgba(7,153,168,.16), transparent 34%),
+          linear-gradient(24deg, rgba(109,93,252,.18), transparent 48%),
+          #07111f;
+        color: white;
+      }
+
+      .dark::before {
+        background:
+          linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+        background-size: 38px 38px;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        padding: 28px 42px 36px;
+      }
+
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        height: 62px;
+      }
+
+      .brand {
+        font-size: 20px;
+        font-weight: 1000;
+        letter-spacing: 0;
+      }
+
+      .brand small {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .dark .brand small { color: #94a3b8; }
+
+      .tabs {
+        display: flex;
+        gap: 7px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255,255,255,.68);
+        padding: 5px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+      }
+
+      .dark .tabs {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(255,255,255,.13);
+      }
+
+      .tabs span {
+        min-width: 86px;
+        border-radius: 12px;
+        padding: 10px 13px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .dark .tabs span { color: #b6c3d4; }
+
+      .tabs span.active {
+        background: var(--ink);
+        color: white;
+      }
+
+      .dark .tabs span.active {
+        background: white;
+        color: var(--ink);
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 250px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.72);
+        padding: 10px 14px;
+      }
+
+      .dark .profile {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(255,255,255,.13);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--build);
+        box-shadow: 0 0 20px rgba(47,125,91,.45);
+      }
+
+      .profile b {
+        display: block;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .profile small {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 850;
+      }
+
+      .dark .profile small { color: #94a3b8; }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: 24px;
+        align-items: end;
+        margin-top: 28px;
+      }
+
+      .badge-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        border-radius: 999px;
+        background: var(--ink);
+        padding: 0 14px;
+        color: white;
+        font-size: 12px;
+        font-weight: 1000;
+      }
+
+      .dark .badge-line {
+        background: rgba(255,255,255,.94);
+        color: var(--ink);
+      }
+
+      .badge-line span {
+        color: rgba(255,255,255,.62);
+        font-weight: 850;
+      }
+
+      .dark .badge-line span { color: #64748b; }
+
+      h1, h2, h3, p { margin: 0; }
+
+      .title {
+        margin-top: 14px;
+        max-width: 850px;
+        font-size: 56px;
+        line-height: 1.02;
+        font-weight: 1000;
+        letter-spacing: 0;
+      }
+
+      .copy {
+        margin-top: 13px;
+        max-width: 740px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.7;
+        font-weight: 750;
+      }
+
+      .dark .copy { color: #b6c3d4; }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 43px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: white;
+        padding: 0 16px;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 1000;
+      }
+
+      .btn.primary {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: white;
+      }
+
+      .dark .btn {
+        background: rgba(255,255,255,.07);
+        border-color: rgba(255,255,255,.14);
+        color: white;
+      }
+
+      .dark .btn.primary {
+        background: white;
+        color: var(--ink);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        min-height: 146px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .dark .panel {
+        background: rgba(255,255,255,.065);
+        border-color: rgba(255,255,255,.12);
+      }
+
+      .pad { padding: 21px; }
+      .s3 { grid-column: span 3; }
+      .s4 { grid-column: span 4; }
+      .s5 { grid-column: span 5; }
+      .s6 { grid-column: span 6; }
+      .s7 { grid-column: span 7; }
+      .s8 { grid-column: span 8; }
+      .s9 { grid-column: span 9; }
+      .s12 { grid-column: span 12; }
+
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .mini {
+        color: var(--muted);
+        font-size: 10.5px;
+        font-weight: 1000;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      .dark .mini { color: #94a3b8; }
+
+      .value {
+        margin-top: 12px;
+        font-size: 46px;
+        line-height: 1;
+        font-weight: 1000;
+        letter-spacing: 0;
+      }
+
+      .hint {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+        font-weight: 760;
+      }
+
+      .dark .hint { color: #b6c3d4; }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 78px;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 1000;
+      }
+
+      .crm { background: rgba(7,153,168,.12); color: var(--crm); }
+      .erp { background: rgba(196,130,27,.14); color: var(--erp); }
+      .ai { background: rgba(109,93,252,.14); color: var(--ai); }
+      .build { background: rgba(47,125,91,.13); color: var(--build); }
+      .steel { background: rgba(46,95,144,.13); color: var(--steel); }
+      .danger { background: rgba(226,75,97,.13); color: var(--danger); }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .subcard {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.72);
+        padding: 16px;
+      }
+
+      .dark .subcard {
+        background: rgba(255,255,255,.06);
+        border-color: rgba(255,255,255,.1);
+      }
+
+      .flow {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .flow-row {
+        display: grid;
+        grid-template-columns: 92px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        min-height: 50px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255,255,255,.76);
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .dark .flow-row {
+        background: rgba(255,255,255,.055);
+        border-color: rgba(255,255,255,.1);
+      }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 11px;
+        margin-top: 16px;
+      }
+
+      .matrix > div {
+        min-height: 102px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.72);
+        padding: 14px;
+      }
+
+      .dark .matrix > div {
+        background: rgba(255,255,255,.06);
+        border-color: rgba(255,255,255,.1);
+      }
+
+      .matrix span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 1000;
+      }
+
+      .dark .matrix span { color: #94a3b8; }
+
+      .matrix b {
+        display: block;
+        margin-top: 10px;
+        font-size: 22px;
+        font-weight: 1000;
+      }
+
+      .blueprint {
+        position: relative;
+        min-height: 430px;
+        border-radius: 24px;
+        background:
+          linear-gradient(rgba(46,95,144,.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(46,95,144,.07) 1px, transparent 1px),
+          rgba(255,255,255,.66);
+        background-size: 34px 34px;
+      }
+
+      .dark .blueprint {
+        background:
+          linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+          rgba(255,255,255,.035);
+        background-size: 34px 34px;
+      }
+
+      .module {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 142px;
+        height: 112px;
+        border: 1px solid rgba(255,255,255,.62);
+        border-radius: 26px;
+        background: rgba(255,255,255,.82);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+        text-align: center;
+        font-size: 16px;
+        font-weight: 1000;
+      }
+
+      .dark .module {
+        background: rgba(255,255,255,.09);
+        border-color: rgba(255,255,255,.12);
+      }
+
+      .module small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 850;
+      }
+
+      .dark .module small { color: #94a3b8; }
+
+      .core {
+        width: 188px;
+        height: 160px;
+        border-radius: 36px;
+        background: linear-gradient(145deg, var(--ink), #243b68);
+        color: white;
+      }
+
+      .line {
+        position: absolute;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(109,93,252,.55), transparent);
+        transform-origin: right center;
+      }
+
+      .table {
+        width: 100%;
+        margin-top: 14px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 12px;
+      }
+
+      .table th,
+      .table td {
+        border-bottom: 1px solid var(--line);
+        padding: 11px 10px;
+        text-align: start;
+        font-weight: 850;
+      }
+
+      .dark .table th,
+      .dark .table td {
+        border-bottom-color: rgba(255,255,255,.09);
+      }
+
+      .table th {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 1000;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .dark .table th { color: #94a3b8; }
+
+      .tier {
+        display: grid;
+        grid-template-columns: 128px 1fr 92px;
+        align-items: center;
+        gap: 10px;
+        min-height: 58px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.74);
+        padding: 0 14px;
+      }
+
+      .dark .tier {
+        background: rgba(255,255,255,.06);
+        border-color: rgba(255,255,255,.1);
+      }
+
+      .bar {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(95,113,139,.18);
+      }
+
+      .bar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+      }
+
+      .phone {
+        width: 290px;
+        height: 584px;
+        border: 10px solid var(--ink);
+        border-radius: 38px;
+        overflow: hidden;
+        background: #f7f9fc;
+        box-shadow: 0 28px 74px rgba(15,23,42,.22);
+      }
+
+      .phone-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 58px;
+        border-bottom: 1px solid var(--line);
+        padding: 0 16px;
+        background: rgba(255,255,255,.92);
+      }
+
+      .phone-body { padding: 14px; }
+
+      .phone-card {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: white;
+        padding: 14px;
+        box-shadow: 0 14px 35px rgba(15,23,42,.08);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="catalog">
+      <section id="concept-1" class="concept">
+        <div class="page">
+          <header class="top">
+            <div class="brand">BSD-YBM<small>Construction CRM + ERP Intelligence</small></div>
+            <nav class="tabs"><span class="active">פיקוד</span><span>CRM</span><span>ERP</span><span>מסמכים</span><span>ענף</span><span>מנוי</span></nav>
+            <div class="profile"><i class="dot"></i><div><b>קבלן ביצוע · COMPANY</b><small>האתר התאים מודולים, הרשאות ומנועי AI</small></div></div>
+          </header>
+
+          <section class="hero">
+            <div>
+              <div class="badge-line">01 · Construction Command Cockpit <span>CRM + ERP + פיענוח רב מנועי</span></div>
+              <h1 class="title">מרכז מקצועי שמחבר לקוחות, כסף ומסמכי בנייה לתמונה אחת.</h1>
+              <p class="copy">כל לקוח, פרויקט, חשבונית, הצעת מחיר וספק מקושרים. ה-AI מפענח מסמכים בכמה מנועים ומחליט לאן לשייך אותם.</p>
+              <div class="actions"><button class="btn primary">צור פעולה חכמה</button><button class="btn">סרוק מסמך</button></div>
+            </div>
+            <div class="panel pad">
+              <div class="head"><div class="mini">Business fit</div><span class="tag build">בניה</span></div>
+              <div class="value" style="color:var(--build)">96%</div>
+              <p class="hint">התאמת מערכת לענף, רמת מנוי והרשאות פעילות.</p>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="panel pad s6">
+              <div class="head"><div class="mini">CRM לקוחות ופרויקטים</div><span class="tag crm">CRM</span></div>
+              <div class="split">
+                <div class="subcard"><div class="mini">לקוחות פעילים</div><div class="value" style="color:var(--crm)">42</div><p class="hint">לידים, הצעות, חתימות ושיחות.</p></div>
+                <div class="subcard"><div class="mini">פרויקטים פתוחים</div><div class="value">12</div><p class="hint">כל לקוח מחובר לתיק פרויקט.</p></div>
+              </div>
+              <div class="flow">
+                <div class="flow-row"><span class="tag crm">לקוח</span><b>הדקל 18 מחכה להצעת המשך</b><span>חם</span></div>
+                <div class="flow-row"><span class="tag build">פרויקט</span><b>חריגת ספק משפיעה על הצעת מחיר</b><span>+9%</span></div>
+              </div>
+            </article>
+            <article class="panel pad s6">
+              <div class="head"><div class="mini">ERP כספים ותזרים</div><span class="tag erp">ERP</span></div>
+              <div class="split">
+                <div class="subcard"><div class="mini">גבייה צפויה</div><div class="value" style="color:var(--erp)">₪128K</div><p class="hint">חשבוניות, קבלות ותשלומים.</p></div>
+                <div class="subcard"><div class="mini">סיכון תזרים</div><div class="value" style="color:var(--danger)">3</div><p class="hint">לקוחות עם חוב או חריגה.</p></div>
+              </div>
+              <div class="flow">
+                <div class="flow-row"><span class="tag erp">חשבונית</span><b>שלח תזכורת גבייה אוטומטית</b><span>₪42,900</span></div>
+                <div class="flow-row"><span class="tag erp">ספק</span><b>השוואת מחיר מול מחירון קודם</b><span>חיסכון</span></div>
+              </div>
+            </article>
+            <article class="panel pad s12">
+              <div class="head"><div><div class="mini">Multi-engine document intelligence</div><p class="hint">כל מסמך עובר כמה מנועים: OCR, מודל שפה, התאמת פרויקט, בקרת כפילויות והפקת פעולה.</p></div><button class="btn primary">פתח תור פיענוח</button></div>
+              <div class="matrix">
+                <div><span>Gemini</span><b style="color:var(--ai)">96%</b></div>
+                <div><span>OpenAI</span><b style="color:var(--steel)">94%</b></div>
+                <div><span>Document AI</span><b style="color:var(--crm)">92%</b></div>
+                <div><span>Duplicate Guard</span><b style="color:var(--build)">0 כפול</b></div>
+                <div><span>ERP Post</span><b style="color:var(--erp)">מוכן</b></div>
+              </div>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="concept-2" class="concept dark">
+        <div class="page">
+          <header class="top">
+            <div class="brand">BSD-YBM<small>Adaptive Construction Workspace</small></div>
+            <nav class="tabs"><span>כללי</span><span class="active">ענף</span><span>לקוחות</span><span>כספים</span><span>מסמכים</span><span>מנוי</span></nav>
+            <div class="profile"><i class="dot"></i><div><b>תחום: עבודות גמר</b><small>הממשק משנה שדות, מסמכים ומדדים</small></div></div>
+          </header>
+
+          <section class="hero">
+            <div>
+              <div class="badge-line">02 · Adaptive Construction OS <span>אתר שמתאים עצמו לכל תחום בנייה</span></div>
+              <h1 class="title">אותו מוצר, חוויה אחרת לכל מקצוע בענף הבנייה.</h1>
+              <p class="copy">קבלן, חשמלאי, אינסטלטור, עבודות גמר, יזם או ספק. המערכת מחליפה מילון, מסמכים, מדדי רווחיות ותהליכי עבודה.</p>
+              <div class="actions"><button class="btn primary">החל פרופיל מקצוע</button><button class="btn">השווה תצורות</button></div>
+            </div>
+            <div class="panel pad">
+              <div class="mini">Current profile</div>
+              <div class="value" style="color:#22d3ee">גמר</div>
+              <p class="hint">הצעות מחיר לפי סעיפים, ספקים, יומני עבודה, חתימות וגבייה.</p>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="panel s8 blueprint">
+              <div class="line" style="right:560px;top:220px;width:280px;transform:rotate(12deg)"></div>
+              <div class="line" style="right:560px;top:220px;width:300px;transform:rotate(-26deg)"></div>
+              <div class="line" style="right:560px;top:220px;width:300px;transform:rotate(152deg)"></div>
+              <div class="line" style="right:560px;top:220px;width:260px;transform:rotate(214deg)"></div>
+              <div class="module core" style="right:500px;top:138px">ענף בנייה<small>Adaptive Brain</small></div>
+              <div class="module" style="right:120px;top:60px;color:var(--crm)">CRM<small>שדות לקוח לפי תחום</small></div>
+              <div class="module" style="left:130px;top:72px;color:var(--erp)">ERP<small>מחירונים וסעיפים</small></div>
+              <div class="module" style="right:145px;bottom:72px;color:var(--ai)">מסמכים<small>חשבונית / כתב כמויות</small></div>
+              <div class="module" style="left:150px;bottom:82px;color:var(--build)">תפעול<small>יומן עבודה וצוותים</small></div>
+            </article>
+            <article class="panel pad s4">
+              <div class="mini">Profession presets</div>
+              <div class="flow">
+                <div class="flow-row" style="grid-template-columns:92px 1fr"><span class="tag build">קבלן</span><b>פרויקטים, ספקים, תזרים</b></div>
+                <div class="flow-row" style="grid-template-columns:92px 1fr"><span class="tag steel">חשמל</span><b>קריאות, חומרים, תעודות</b></div>
+                <div class="flow-row" style="grid-template-columns:92px 1fr"><span class="tag crm">שיפוצים</span><b>לקוחות פרטיים, חתימות</b></div>
+                <div class="flow-row" style="grid-template-columns:92px 1fr"><span class="tag erp">ספקים</span><b>מחירון, גבייה, מלאי</b></div>
+              </div>
+            </article>
+            <article class="panel pad s12">
+              <div class="matrix">
+                <div><span>מילון UI</span><b>דינמי</b></div>
+                <div><span>תבניות מסמך</span><b>לפי תחום</b></div>
+                <div><span>מדדי KPI</span><b>מותאמים</b></div>
+                <div><span>הרשאות</span><b>לפי מנוי</b></div>
+                <div><span>AI Prompting</span><b>מקצועי</b></div>
+              </div>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="concept-3" class="concept">
+        <div class="page">
+          <header class="top">
+            <div class="brand">BSD-YBM<small>Multi Engine Decode Room</small></div>
+            <nav class="tabs"><span>CRM</span><span>ERP</span><span class="active">פיענוח</span><span>בקרה</span><span>מנוי</span></nav>
+            <div class="profile"><i class="dot"></i><div><b>Premium engines active</b><small>מנועים נפתחים לפי חבילת מנוי</small></div></div>
+          </header>
+
+          <section class="hero">
+            <div>
+              <div class="badge-line">03 · Multi-engine Financial Decoder <span>פיענוח רב מנועי שמעדכן CRM ו-ERP</span></div>
+              <h1 class="title">כל מסמך בנייה הופך לנתון, החלטה ופעולה כספית.</h1>
+              <p class="copy">חשבונית ספק, קבלה, הצעת מחיר או כתב כמויות: כמה מנועים בודקים, משווים ומחליטים אם לשייך ללקוח, פרויקט, חשבונית או תזרים.</p>
+              <div class="actions"><button class="btn primary">השווה מנועים</button><button class="btn">אשר ל-ERP</button></div>
+            </div>
+            <div class="panel pad">
+              <div class="mini">Consensus confidence</div>
+              <div class="value" style="color:var(--ai)">97%</div>
+              <p class="hint">שלושה מנועים מסכימים על ספק, סכום, מע״מ ופרויקט.</p>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="panel pad s8">
+              <div class="head"><div class="mini">Engine comparison</div><span class="tag ai">Tri-engine</span></div>
+              <table class="table">
+                <tr><th>מנוע</th><th>ספק</th><th>סכום</th><th>מע״מ</th><th>שיוך</th><th>ביטחון</th></tr>
+                <tr><td>Gemini Vision</td><td>בטון הצפון</td><td>₪14,900</td><td>17%</td><td>הדקל 18</td><td><span class="tag ai">97%</span></td></tr>
+                <tr><td>OpenAI Reasoning</td><td>בטון הצפון</td><td>₪14,900</td><td>17%</td><td>הדקל 18</td><td><span class="tag steel">96%</span></td></tr>
+                <tr><td>Document AI</td><td>בטון הצפון</td><td>₪14,890</td><td>17%</td><td>הדקל 18</td><td><span class="tag crm">93%</span></td></tr>
+              </table>
+              <div class="flow">
+                <div class="flow-row"><span class="tag build">Guard</span><b>אין כפילות במסמכים קיימים</b><span>תקין</span></div>
+                <div class="flow-row"><span class="tag erp">ERP</span><b>נרשמה הוצאה בפרויקט + עדכון תזרים</b><span>ממתין אישור</span></div>
+              </div>
+            </article>
+            <article class="panel pad s4">
+              <div class="mini">Document preview intelligence</div>
+              <div class="subcard" style="margin-top:14px;min-height:190px;background:#111827;color:white">
+                <div class="mini" style="color:#94a3b8">חשבונית ספק</div>
+                <div class="value" style="font-size:34px;color:white">₪14,900</div>
+                <p class="hint" style="color:#cbd5e1">בטון הצפון · הדקל 18 · חומרים</p>
+              </div>
+              <div class="matrix" style="grid-template-columns:1fr 1fr">
+                <div><span>OCR</span><b style="color:var(--ai)">נקי</b></div>
+                <div><span>ERP</span><b style="color:var(--erp)">מוכן</b></div>
+              </div>
+            </article>
+            <article class="panel pad s12">
+              <div class="head"><div><div class="mini">From file to business action</div><p class="hint">המסמך לא נעצר בפיענוח: הוא יוצר משימה ללקוח, מעדכן תזרים, בודק מחיר ספק ומציע פעולה.</p></div><button class="btn primary">בצע שרשרת</button></div>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="concept-4" class="concept dark">
+        <div class="page">
+          <header class="top">
+            <div class="brand">BSD-YBM<small>Subscription Adaptive SaaS</small></div>
+            <nav class="tabs"><span>Free</span><span>Dealer</span><span class="active">Company</span><span>Corporate</span><span>Admin</span></nav>
+            <div class="profile"><i class="dot"></i><div><b>Plan-aware workspace</b><small>UI, מנועים, אשראי והרשאות לפי מנוי</small></div></div>
+          </header>
+
+          <section class="hero">
+            <div>
+              <div class="badge-line">04 · Plan-aware Product Layer <span>האתר מתאים עצמו לרמת המנוי</span></div>
+              <h1 class="title">כל משתמש רואה מערכת אחרת לפי החבילה שלו.</h1>
+              <p class="copy">מספר מנועי פיענוח, קרדיטים, מודולי CRM/ERP, אוטומציות, ניהול צוותים ויכולות בנייה מתקדמות נפתחים לפי רמת מנוי.</p>
+              <div class="actions"><button class="btn primary">שדרג יכולת</button><button class="btn">נהל הרשאות</button></div>
+            </div>
+            <div class="panel pad">
+              <div class="mini">Current tier</div>
+              <div class="value" style="color:#22d3ee">COMPANY</div>
+              <p class="hint">CRM + ERP + Premium OCR + תבניות בנייה.</p>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="panel pad s7">
+              <div class="head"><div class="mini">Tier capability map</div><span class="tag ai">Dynamic UI</span></div>
+              <div class="flow">
+                <div class="tier"><b>FREE</b><div class="bar"><i style="width:20%;background:var(--muted)"></i></div><span>בסיס</span></div>
+                <div class="tier"><b>HOUSEHOLD</b><div class="bar"><i style="width:36%;background:var(--crm)"></i></div><span>CRM קל</span></div>
+                <div class="tier"><b>DEALER</b><div class="bar"><i style="width:54%;background:var(--erp)"></i></div><span>מסחר</span></div>
+                <div class="tier"><b>COMPANY</b><div class="bar"><i style="width:78%;background:var(--ai)"></i></div><span>מתקדם</span></div>
+                <div class="tier"><b>CORPORATE</b><div class="bar"><i style="width:100%;background:var(--build)"></i></div><span>מלא</span></div>
+              </div>
+            </article>
+            <article class="panel pad s5">
+              <div class="mini">What changes by plan</div>
+              <div class="matrix" style="grid-template-columns:1fr 1fr">
+                <div><span>מנועי OCR</span><b>1 → 4</b></div>
+                <div><span>משתמשים</span><b>1 → צוות</b></div>
+                <div><span>CRM</span><b>בסיס → מלא</b></div>
+                <div><span>ERP</span><b>חשבונית → תזרים</b></div>
+                <div><span>ענף בנייה</span><b>כללי → מותאם</b></div>
+                <div><span>AI Actions</span><b>ידני → אוטונומי</b></div>
+              </div>
+            </article>
+            <article class="panel pad s12">
+              <div class="head"><div class="mini">Upgrade moment</div><p class="hint">כאשר משתמש מנסה פיצ'ר חסום, הוא לא רואה “אין הרשאה”, אלא הצעה מקצועית שמסבירה את הערך העסקי: עוד מנוע פיענוח, עוד משתמש, עוד אוטומציה או התאמה לענף.</p><button class="btn primary">הצג מסלול שדרוג</button></div>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="concept-5" class="concept">
+        <div class="page">
+          <header class="top">
+            <div class="brand">BSD-YBM<small>Project Lifecycle CRM x ERP</small></div>
+            <nav class="tabs"><span class="active">מחזור חיים</span><span>לקוח</span><span>הצעה</span><span>חשבונית</span><span>תשלום</span></nav>
+            <div class="profile"><i class="dot"></i><div><b>From lead to cash</b><small>מסלול אחד מהלקוח עד הכסף</small></div></div>
+          </header>
+
+          <section class="hero">
+            <div>
+              <div class="badge-line">05 · Client-to-Cash Construction Flow <span>הגשמת החיבור בין CRM ל-ERP</span></div>
+              <h1 class="title">כל לקוח הופך לפרויקט, הצעה, חשבונית ותזרים.</h1>
+              <p class="copy">המערכת לא מפרידה בין “מכירות” ל“כספים”. בבנייה, כל שיחה עם לקוח משפיעה על כתב כמויות, ספקים, גבייה ורווחיות.</p>
+              <div class="actions"><button class="btn primary">פתח לקוח 360</button><button class="btn">צור הצעה</button></div>
+            </div>
+            <div style="display:grid;place-items:end">
+              <div class="phone">
+                <div class="phone-top"><b>לקוח 360</b><span class="tag crm">CRM</span></div>
+                <div class="phone-body">
+                  <div class="phone-card"><div class="mini">לקוח</div><div class="value" style="font-size:30px;color:var(--crm)">הדקל 18</div><p class="hint">שיחה, הצעה, מסמכים וגבייה</p></div>
+                  <div class="phone-card"><div class="mini">תזרים</div><div class="value" style="font-size:30px;color:var(--erp)">₪42K</div><p class="hint">פתוח לגבייה</p></div>
+                  <div class="phone-card"><div class="mini">AI</div><p class="hint">שלח הצעת המשך עם עדכון מחיר ספקים.</p></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid">
+            <article class="panel pad s8">
+              <div class="head"><div class="mini">Lifecycle pipeline</div><span class="tag build">בניה</span></div>
+              <div class="flow">
+                <div class="flow-row"><span class="tag crm">Lead</span><b>לקוח חדש נכנס מהאתר או מטלפון</b><span>CRM</span></div>
+                <div class="flow-row"><span class="tag build">Scope</span><b>בחירת תחום בנייה ותבנית כתב כמויות</b><span>ענף</span></div>
+                <div class="flow-row"><span class="tag ai">Decode</span><b>פיענוח מסמכי ספקים ומחירונים בכמה מנועים</b><span>AI</span></div>
+                <div class="flow-row"><span class="tag erp">Quote</span><b>הצעת מחיר הופכת לחשבונית ותזרים</b><span>ERP</span></div>
+                <div class="flow-row"><span class="tag build">Collect</span><b>גבייה, חתימה, תשלום ותזכורת אוטומטית</b><span>Cash</span></div>
+              </div>
+            </article>
+            <article class="panel pad s4">
+              <div class="mini">360 summary</div>
+              <div class="matrix" style="grid-template-columns:1fr 1fr">
+                <div><span>לקוח</span><b style="color:var(--crm)">חם</b></div>
+                <div><span>רווחיות</span><b style="color:var(--build)">28%</b></div>
+                <div><span>פתוח</span><b style="color:var(--erp)">₪42K</b></div>
+                <div><span>מסמכים</span><b style="color:var(--ai)">12</b></div>
+              </div>
+              <div class="subcard" style="margin-top:14px">
+                <div class="mini">Next best action</div>
+                <p class="hint">שלח הצעת המשך עם מחיר ספק מעודכן ותזכורת גבייה.</p>
+              </div>
+            </article>
+            <article class="panel pad s12">
+              <table class="table">
+                <tr><th>שלב</th><th>CRM</th><th>ERP</th><th>AI רב מנועי</th><th>התאמה לענף/מנוי</th></tr>
+                <tr><td>לקוח חדש</td><td>כרטיס לקוח</td><td>אין עדיין חיוב</td><td>ניתוח שיחה</td><td>שדות לפי תחום בנייה</td></tr>
+                <tr><td>הצעת מחיר</td><td>Pipeline</td><td>סעיפים ומחירון</td><td>בדיקת מסמכי ספק</td><td>תבנית לפי מנוי</td></tr>
+                <tr><td>ביצוע</td><td>משימות ועדכונים</td><td>הוצאות ותזרים</td><td>זיהוי חריגות</td><td>מודולים פתוחים</td></tr>
+                <tr><td>גבייה</td><td>תזכורות לקוח</td><td>חשבונית/קבלה</td><td>המלצת פעולה</td><td>אוטומציה לפי Tier</td></tr>
+              </table>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

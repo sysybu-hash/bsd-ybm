@@ -21,17 +21,23 @@ export async function getIssuedDocumentsAction() {
       take: 50,
     });
 
-    return { 
-      success: true, 
-      documents: documents.map(doc => ({
-        id: `INV-${doc.number}`,
+    return {
+      success: true,
+      documents: documents.map((doc) => ({
+        id: doc.id,
+        displayId: `INV-${doc.number}`,
         client: doc.clientName,
         date: doc.date.toLocaleDateString("he-IL"),
+        dateIso: doc.date.toISOString(),
+        statusKey: doc.status,
         status: doc.status === "PAID" ? "הוקצה" : "בתהליך",
         amount: `₪${doc.total.toLocaleString()}`,
-        allocation: (doc as any).allocationNumber ?? "-",
+        total: doc.total,
+        vat: doc.vat,
+        allocation: (doc as { allocationNumber?: string }).allocationNumber ?? "-",
         type: doc.type === "INVOICE" ? "חשבונית מס" : doc.type === "RECEIPT" ? "קבלה" : "מסמך",
-      }))
+        docType: doc.type,
+      })),
     };
   } catch (error) {
     console.error("Error fetching issued documents:", error);

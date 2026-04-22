@@ -10,6 +10,7 @@ import {
   deleteProjectAction,
 } from "@/app/actions/crm";
 import Link from "next/link";
+import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import {
   Plus,
   Trash2,
@@ -258,7 +259,8 @@ function ContactModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4" dir="rtl">
+    <PortalToBody>
+    <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end sm:items-center justify-center p-4`} dir="rtl">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={onClose} />
       <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-blue-900/10">
         <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6">
@@ -442,6 +444,7 @@ function ContactModal({
         </div>
       </div>
     </div>
+    </PortalToBody>
   );
 }
 

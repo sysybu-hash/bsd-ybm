@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BSD-YBM Dashboard Design Concepts</title>
+    <style>
+      :root {
+        --ink-900: #0b0f14;
+        --ink-800: #111827;
+        --ink-700: #1f2937;
+        --ink-600: #334155;
+        --ink-500: #64748b;
+        --ink-400: #94a3b8;
+        --canvas: #f7f8fa;
+        --canvas-raised: #ffffff;
+        --canvas-sunken: #eff1f5;
+        --line: #e5e7eb;
+        --line-strong: #d1d5db;
+        --line-subtle: #f1f3f6;
+        --finance: #b8811a;
+        --finance-strong: #8f6414;
+        --finance-ink: #6b4a0e;
+        --finance-soft: #fbf3e0;
+        --clients: #0e7c86;
+        --clients-strong: #0a5d64;
+        --clients-ink: #074247;
+        --clients-soft: #e1f4f5;
+        --ai: #6d51d1;
+        --ai-strong: #5538b5;
+        --ai-ink: #3e2b8a;
+        --ai-soft: #efe9fb;
+        --success: #1f7a4c;
+        --success-soft: #e4f4eb;
+        --warning: #b87a1c;
+        --warning-soft: #fdf2dc;
+        --danger: #b03a3a;
+        --danger-soft: #fbe5e5;
+        --shadow: 0 20px 25px -5px rgb(15 23 42 / 0.07), 0 8px 10px -6px rgb(15 23 42 / 0.06);
+        --shadow-raised: 0 25px 50px -12px rgb(15 23 42 / 0.12);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #e9edf3;
+        color: var(--ink-900);
+        font-family: Heebo, Assistant, Arial, sans-serif;
+      }
+
+      .catalog {
+        display: grid;
+        gap: 32px;
+        padding: 32px;
+      }
+
+      .concept {
+        width: 1440px;
+        height: 1000px;
+        overflow: hidden;
+        border: 1px solid #d8dde6;
+        background: var(--canvas);
+        box-shadow: 0 30px 80px rgb(15 23 42 / 0.16);
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: 1fr 72px;
+        height: 100%;
+        background: var(--canvas);
+      }
+
+      .rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 10px;
+        border-inline-start: 1px solid rgb(255 255 255 / 0.06);
+        background: #0b0f14;
+      }
+
+      .logo-mark,
+      .avatar,
+      .rail-icon,
+      .icon-button,
+      .mini-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+      }
+
+      .logo-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #ffffff, #dce7ea);
+        color: var(--clients-ink);
+        font-weight: 950;
+        font-size: 12px;
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.65);
+      }
+
+      .rail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        color: #94a3b8;
+        font-size: 17px;
+      }
+
+      .rail-icon.active {
+        background: rgb(255 255 255 / 0.08);
+        color: #ffffff;
+        box-shadow: inset -2px 0 0 var(--clients);
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        margin-top: auto;
+        border-radius: 999px;
+        background: rgb(255 255 255 / 0.09);
+        color: white;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .main {
+        min-width: 0;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 72px;
+        padding: 0 36px;
+        border-bottom: 1px solid var(--line);
+        background: rgb(255 255 255 / 0.93);
+        backdrop-filter: blur(10px);
+      }
+
+      .wordmark {
+        min-width: 128px;
+        font-weight: 950;
+        letter-spacing: 0;
+      }
+
+      .nav {
+        display: flex;
+        gap: 4px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .nav span {
+        border-radius: 10px;
+        padding: 9px 13px;
+        color: var(--ink-600);
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .nav span.active {
+        background: var(--ink-900);
+        color: white;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .command {
+        width: 250px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--canvas-sunken);
+        padding: 10px 14px;
+        color: var(--ink-500);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .icon-button {
+        width: 38px;
+        height: 38px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--ink-500);
+        font-weight: 900;
+      }
+
+      .workspace {
+        padding: 30px 42px 36px;
+      }
+
+      .kicker {
+        color: var(--ink-400);
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .hero-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .title {
+        margin-top: 7px;
+        font-size: 42px;
+        line-height: 1.08;
+        font-weight: 950;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 660px;
+        margin-top: 12px;
+        color: var(--ink-500);
+        font-size: 15px;
+        line-height: 1.7;
+        font-weight: 600;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        border-radius: 10px;
+        border: 1px solid var(--line-strong);
+        padding: 0 16px;
+        background: white;
+        color: var(--ink-800);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .btn.primary {
+        border-color: var(--ink-900);
+        background: var(--ink-900);
+        color: white;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 18px;
+      }
+
+      .tile {
+        position: relative;
+        overflow: hidden;
+        min-height: 150px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: white;
+        box-shadow: var(--shadow);
+      }
+
+      .tile.pad {
+        padding: 22px 24px;
+      }
+
+      .tile:hover {
+        box-shadow: var(--shadow-raised);
+      }
+
+      .span-3 { grid-column: span 3; }
+      .span-4 { grid-column: span 4; }
+      .span-5 { grid-column: span 5; }
+      .span-6 { grid-column: span 6; }
+      .span-7 { grid-column: span 7; }
+      .span-8 { grid-column: span 8; }
+      .span-12 { grid-column: span 12; }
+
+      .tile.finance {
+        border-color: rgb(184 129 26 / 0.16);
+        background: linear-gradient(165deg, #fbf0d8, #f4ddb0);
+      }
+
+      .tile.clients {
+        border-color: rgb(14 124 134 / 0.16);
+        background: linear-gradient(165deg, #e4f3f4, #c8e9ec);
+      }
+
+      .tile.ai {
+        border-color: rgb(167 139 250 / 0.25);
+        background: linear-gradient(160deg, #332089, #1a0f3f);
+        color: #f8f5ff;
+        box-shadow: 0 20px 60px -20px rgb(45 25 150 / 0.5), 0 0 40px -10px rgb(167 139 250 / 0.45);
+      }
+
+      .tile.mint { background: #e3f4ea; }
+      .tile.lavender { background: #ede5fa; }
+      .tile.sky { background: #e0eef7; }
+      .tile.rose { background: #fce7ef; }
+      .tile.dark {
+        border-color: #2a2e38;
+        background: #161821;
+        color: white;
+      }
+
+      .tile-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--ink-500);
+        font-size: 10.5px;
+        font-weight: 950;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .ai .eyebrow,
+      .dark .eyebrow {
+        color: rgb(228 221 255 / 0.82);
+      }
+
+      .link {
+        color: var(--ink-700);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .value {
+        margin-top: 13px;
+        color: var(--ink-900);
+        font-size: 46px;
+        line-height: 1;
+        font-weight: 950;
+        letter-spacing: 0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .ai .value,
+      .dark .value {
+        color: white;
+      }
+
+      .value.finance-ink { color: var(--finance-ink); }
+      .value.clients-ink { color: var(--clients-ink); }
+      .hint {
+        margin-top: 8px;
+        color: var(--ink-500);
+        font-size: 12px;
+        line-height: 1.6;
+        font-weight: 700;
+      }
+
+      .ai .hint,
+      .dark .hint {
+        color: rgb(255 255 255 / 0.72);
+      }
+
+      .sparkline {
+        height: 54px;
+        margin-top: 14px;
+        border-radius: 12px;
+        background:
+          linear-gradient(135deg, transparent 20%, rgb(255 255 255 / 0.35) 20% 22%, transparent 22%),
+          linear-gradient(90deg, rgb(184 129 26 / 0.13), transparent);
+        clip-path: polygon(0 76%, 10% 58%, 20% 64%, 32% 40%, 45% 49%, 58% 22%, 72% 37%, 86% 16%, 100% 26%, 100% 100%, 0 100%);
+      }
+
+      .bar {
+        height: 8px;
+        margin-top: 16px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgb(15 23 42 / 0.12);
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #d9a13e, #b8811a);
+      }
+
+      .bar.clients span { background: linear-gradient(90deg, #14a4ae, #0e7c86); }
+      .bar.ai span { background: linear-gradient(90deg, #9b7dff, #6d51d1); }
+
+      .donut {
+        width: 104px;
+        height: 104px;
+        border-radius: 999px;
+        background: conic-gradient(var(--ai) 0 42%, var(--clients) 42% 72%, var(--finance) 72% 100%);
+        box-shadow: inset 0 0 0 15px rgb(255 255 255 / 0.7);
+      }
+
+      .rows {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 76px 1fr 96px 92px;
+        align-items: center;
+        gap: 12px;
+        min-height: 44px;
+        border-radius: 12px;
+        background: rgb(255 255 255 / 0.58);
+        padding: 0 12px;
+        color: var(--ink-700);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .status {
+        display: inline-flex;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .paid { background: var(--success-soft); color: var(--success); }
+      .open { background: var(--warning-soft); color: var(--warning); }
+
+      .micro-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .micro {
+        min-height: 76px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: white;
+        padding: 13px;
+      }
+
+      .micro b {
+        display: block;
+        margin-top: 7px;
+        font-size: 18px;
+        font-weight: 950;
+      }
+
+      .micro span {
+        color: var(--ink-500);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .pill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .pill {
+        border-radius: 999px;
+        background: rgb(255 255 255 / 0.72);
+        padding: 8px 11px;
+        color: var(--ink-700);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .mini-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: var(--canvas-sunken);
+        color: var(--ink-700);
+        font-size: 14px;
+        font-weight: 950;
+      }
+
+      .concept-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        border-radius: 999px;
+        background: var(--ink-900);
+        padding: 9px 13px;
+        color: white;
+        font-size: 13px;
+        font-weight: 950;
+      }
+
+      .concept-label span {
+        color: rgb(255 255 255 / 0.66);
+        font-weight: 800;
+      }
+
+      .split-bg {
+        background:
+          linear-gradient(180deg, #e4f3f4, #c8e9ec) right / 52% 100% no-repeat,
+          linear-gradient(180deg, #fbf0d8, #f4ddb0) left / 48% 100% no-repeat;
+      }
+
+      .spine {
+        position: absolute;
+        inset-block: 0;
+        right: 52%;
+        width: 4px;
+        background: linear-gradient(180deg, transparent, var(--ai), transparent);
+        box-shadow: 0 0 32px rgb(109 81 209 / 0.55);
+      }
+
+      .large-card {
+        min-height: 380px;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .column {
+        min-height: 330px;
+        border-radius: 14px;
+        background: rgb(255 255 255 / 0.66);
+        padding: 14px;
+      }
+
+      .column-title {
+        color: var(--ink-500);
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .task {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: white;
+        padding: 12px;
+        box-shadow: 0 10px 18px rgb(15 23 42 / 0.05);
+      }
+
+      .task b {
+        display: block;
+        font-size: 13px;
+        font-weight: 950;
+      }
+
+      .task p {
+        margin-top: 6px;
+        color: var(--ink-500);
+        font-size: 11px;
+        line-height: 1.5;
+        font-weight: 700;
+      }
+
+      .terminal {
+        min-height: 226px;
+        border-radius: 14px;
+        background: #0b0f14;
+        padding: 18px;
+        color: #d8e1ed;
+        font-family: Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+
+      .insight-line {
+        margin-top: 16px;
+        border: 1px solid rgb(255 255 255 / 0.14);
+        border-radius: 12px;
+        background: rgb(255 255 255 / 0.08);
+        padding: 14px;
+      }
+
+      .dense-table {
+        width: 100%;
+        margin-top: 16px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        overflow: hidden;
+        border-radius: 14px;
+        font-size: 12px;
+      }
+
+      .dense-table th,
+      .dense-table td {
+        border-bottom: 1px solid var(--line-subtle);
+        padding: 11px 12px;
+        text-align: start;
+      }
+
+      .dense-table th {
+        background: var(--canvas-sunken);
+        color: var(--ink-400);
+        font-size: 10px;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .dense-table td {
+        color: var(--ink-700);
+        font-weight: 800;
+      }
+
+      .mobile-preview {
+        width: 310px;
+        height: 620px;
+        overflow: hidden;
+        border: 10px solid #111827;
+        border-radius: 34px;
+        background: var(--canvas);
+        box-shadow: 0 28px 56px rgb(15 23 42 / 0.22);
+      }
+
+      .mobile-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 58px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+        background: rgb(255 255 255 / 0.94);
+      }
+
+      .mobile-content {
+        padding: 16px;
+      }
+
+      .mobile-card {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: white;
+        padding: 14px;
+        box-shadow: var(--shadow);
+      }
+
+      .mobile-tabs {
+        display: flex;
+        gap: 7px;
+        overflow: hidden;
+        padding: 10px 16px;
+      }
+
+      .mobile-tabs span {
+        white-space: nowrap;
+        border-radius: 10px;
+        background: var(--canvas-sunken);
+        padding: 8px 11px;
+        color: var(--ink-600);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .mobile-tabs span.active {
+        background: var(--ink-900);
+        color: white;
+      }
+
+      .desktop-plus-mobile {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 22px;
+        align-items: start;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="catalog">
+      <section id="concept-1" class="concept">
+        <div class="shell">
+          <div class="main">
+            <div class="topbar">
+              <div class="wordmark">BSD-YBM<br /><small style="color: var(--ink-500)">Workspace</small></div>
+              <nav class="nav">
+                <span class="active">בית</span><span>לקוחות</span><span>פרויקטים</span><span>כספים</span><span>AI</span><span>מסמכים</span><span>הגדרות</span>
+              </nav>
+              <div class="top-actions"><div class="command">חיפוש / פקודה מהירה</div><div class="icon-button">?</div><div class="icon-button">•</div><div class="avatar" style="margin:0;background:var(--ink-900)">י</div></div>
+            </div>
+            <div class="workspace">
+              <div class="concept-label">01 · Pro Bento Executive <span>המשך ישיר למערכת הקיימת</span></div>
+              <div class="hero-row">
+                <div>
+                  <div class="kicker">לוח בקרה יומי</div>
+                  <h1 class="title">בוקר טוב, יעקב. הנה תמונת העסק.</h1>
+                  <p class="subtitle">תצוגת הנהלה מרוכזת עם אותם צירים שכבר קיימים באתר: כספים בזהב, לקוחות בציאן, ו-AI בסגול.</p>
+                </div>
+                <div class="actions"><button class="btn primary">+ מסמך חדש</button><button class="btn">סריקה חכמה</button></div>
+              </div>
+              <div class="grid">
+                <article class="tile ai pad span-4" style="min-height: 342px">
+                  <div class="tile-head"><div class="eyebrow">AI Insight · Live</div><div class="link" style="color:white">פתח</div></div>
+                  <p class="hint" style="margin-top: 20px">שלוש חשבוניות פתוחות עלולות להשפיע על תזרים השבוע. מומלץ ליצור תזכורת אוטומטית.</p>
+                  <div class="value">87%</div>
+                  <div class="hint">אחוז גבייה משוער</div>
+                  <div class="bar ai"><span style="width:87%"></span></div>
+                  <div class="insight-line">המערכת זיהתה חריגה בעלות חומרי גלם בפרויקט “הדקל”.</div>
+                </article>
+                <article class="tile finance pad span-8">
+                  <div class="tile-head"><div class="eyebrow">Finance</div><div class="link">לכל הכספים</div></div>
+                  <div class="value finance-ink">₪128,420</div>
+                  <p class="hint">הכנסות החודש · +14% מול החודש הקודם</p>
+                  <div class="sparkline"></div>
+                  <div class="bar"><span style="width:71%"></span></div>
+                </article>
+                <article class="tile clients pad span-5">
+                  <div class="tile-head"><div class="eyebrow">Clients</div><div class="link">לקוחות</div></div>
+                  <div class="value clients-ink">42</div>
+                  <p class="hint">לקוחות פעילים, 8 לידים ו-5 הצעות ממתינות</p>
+                  <div class="bar clients"><span style="width:68%"></span></div>
+                </article>
+                <article class="tile pad span-3">
+                  <div class="eyebrow">Projects</div><div class="value">7</div><p class="hint">פרויקטים פעילים</p>
+                </article>
+                <article class="tile lavender pad span-4">
+                  <div class="tile-head"><div class="eyebrow">Documents</div><div class="donut"></div></div>
+                  <div class="value">186</div><p class="hint">מסמכים שעברו עיבוד</p>
+                </article>
+                <article class="tile pad span-12">
+                  <div class="tile-head"><div class="eyebrow">פעילות אחרונה</div><div class="link">הצג הכל</div></div>
+                  <div class="rows">
+                    <div class="row"><span>22 אפר׳</span><b>רמי עבודות גמר</b><span class="status paid">שולם</span><span>₪8,200</span></div>
+                    <div class="row"><span>21 אפר׳</span><b>הדקל 18</b><span class="status open">פתוח</span><span>₪14,900</span></div>
+                    <div class="row"><span>20 אפר׳</span><b>מגדלי נוף</b><span class="status paid">שולם</span><span>₪31,500</span></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+          <aside class="rail"><div class="logo-mark">BSD</div><div class="rail-icon active">⌂</div><div class="rail-icon">◇</div><div class="rail-icon">□</div><div class="rail-icon">⚙</div><div class="avatar">י</div></aside>
+        </div>
+      </section>
+
+      <section id="concept-2" class="concept">
+        <div class="shell split-bg" style="position:relative">
+          <div class="spine"></div>
+          <div class="main">
+            <div class="topbar" style="background:rgb(255 255 255 / 0.78)">
+              <div class="wordmark">BSD-YBM<br /><small style="color: var(--ink-500)">Command Center</small></div>
+              <nav class="nav"><span class="active">בית</span><span>לקוחות</span><span>כספים</span><span>AI</span><span>מסמכים</span><span>תפעול</span></nav>
+              <div class="top-actions"><div class="command">מצא לקוח, חשבונית או פעולה</div><div class="avatar" style="margin:0;background:var(--ink-900)">י</div></div>
+            </div>
+            <div class="workspace">
+              <div class="concept-label">02 · Split Duality <span>לקוחות מול כספים, AI מחבר באמצע</span></div>
+              <div class="hero-row">
+                <div>
+                  <div class="kicker" style="color:var(--ai)">AI Bridge</div>
+                  <h1 class="title">העסק מחולק לשני צירים ברורים.</h1>
+                  <p class="subtitle">מתאים אם רוצים להפוך את השפה הקיימת של Clients / Finance / AI לחוויה מאוד מזוהה בכל האתר.</p>
+                </div>
+                <div class="actions"><button class="btn primary">הפעל תובנה</button><button class="btn">השוואת ספקים</button></div>
+              </div>
+              <div class="grid">
+                <article class="tile clients pad span-6 large-card">
+                  <div class="eyebrow">צד לקוחות</div>
+                  <div class="value clients-ink">42</div>
+                  <p class="hint">לקוחות פעילים · 12 שיחות פתוחות · 5 הצעות להמשך טיפול</p>
+                  <div class="micro-grid">
+                    <div class="micro"><span>לידים</span><b>8</b></div><div class="micro"><span>פגישות</span><b>14</b></div><div class="micro"><span>הצעות</span><b>5</b></div><div class="micro"><span>סגירות</span><b>3</b></div>
+                  </div>
+                  <div class="rows"><div class="row" style="grid-template-columns:1fr 90px"><b>יוסי כהן</b><span class="status open">להתקשר</span></div><div class="row" style="grid-template-columns:1fr 90px"><b>פרויקט השקד</b><span class="status paid">מאושר</span></div></div>
+                </article>
+                <article class="tile finance pad span-6 large-card">
+                  <div class="eyebrow">צד כספים</div>
+                  <div class="value finance-ink">₪128K</div>
+                  <p class="hint">גבייה, תזרים, הצעות מחיר וחשבוניות באותו אזור עבודה.</p>
+                  <div class="sparkline" style="height:94px"></div>
+                  <div class="micro-grid">
+                    <div class="micro"><span>פתוח</span><b>₪22K</b></div><div class="micro"><span>שולם</span><b>₪94K</b></div><div class="micro"><span>מס</span><b>17%</b></div><div class="micro"><span>יעד</span><b>71%</b></div>
+                  </div>
+                </article>
+                <article class="tile ai pad span-12" style="min-height:150px">
+                  <div class="tile-head"><div><div class="eyebrow">AI Summary</div><p class="hint">לקוח “הדקל 18” מחכה להצעת המשך, ובמקביל נותרה חשבונית פתוחה. פעולה מומלצת: שליחת מסמך עם תזכורת גבייה.</p></div><button class="btn" style="background:rgb(255 255 255 / .12);color:white;border-color:rgb(255 255 255 / .2)">בנה פעולה</button></div>
+                </article>
+              </div>
+            </div>
+          </div>
+          <aside class="rail"><div class="logo-mark">BSD</div><div class="rail-icon active">⌂</div><div class="rail-icon">◐</div><div class="rail-icon">◆</div><div class="rail-icon">⚙</div><div class="avatar">י</div></aside>
+        </div>
+      </section>
+
+      <section id="concept-3" class="concept">
+        <div class="shell" style="background:#f4f6f9">
+          <div class="main">
+            <div class="topbar">
+              <div class="wordmark">BSD-YBM<br /><small style="color: var(--ink-500)">Operations</small></div>
+              <nav class="nav"><span>בית</span><span class="active">פרויקטים</span><span>לקוחות</span><span>מסמכים</span><span>כספים</span><span>AI</span></nav>
+              <div class="top-actions"><div class="command">פקודה או משימה</div><div class="avatar" style="margin:0;background:var(--ink-900)">י</div></div>
+            </div>
+            <div class="workspace">
+              <div class="concept-label">03 · Operations Board <span>מתאים לעסקי שטח, פרויקטים ומשימות</span></div>
+              <div class="hero-row">
+                <div>
+                  <div class="kicker">פרויקטים ותפעול</div>
+                  <h1 class="title">הדשבורד נראה כמו חדר עבודה.</h1>
+                  <p class="subtitle">פחות “סטטיסטיקה בלבד”, יותר משימות, תקיעויות, מסמכים, לקוחות ותזרים לפי פרויקט.</p>
+                </div>
+                <div class="actions"><button class="btn primary">+ משימה</button><button class="btn">ייבוא מסמך</button></div>
+              </div>
+              <div class="grid">
+                <article class="tile pad span-8 large-card">
+                  <div class="tile-head"><div class="eyebrow">Kanban עבודה</div><div class="link">ניהול מלא</div></div>
+                  <div class="board">
+                    <div class="column"><div class="column-title">לטיפול היום</div><div class="task"><b>אישור חשבונית ספק</b><p>פרויקט הדקל · חריגה של 9%</p></div><div class="task"><b>שיחה עם לקוח</b><p>הצעת מחיר ממתינה</p></div></div>
+                    <div class="column"><div class="column-title">בתהליך</div><div class="task"><b>סריקת מסמכים</b><p>12 קבצים ממתינים ל-AI</p></div><div class="task"><b>בדיקת נוכחות</b><p>סנכרון Meckano</p></div></div>
+                    <div class="column"><div class="column-title">חסום</div><div class="task"><b>גבייה מאוחרת</b><p>₪14,900 · 8 ימים</p></div></div>
+                  </div>
+                </article>
+                <article class="tile ai pad span-4 large-card">
+                  <div class="eyebrow">Operator AI</div>
+                  <div class="value">4</div><p class="hint">פעולות מומלצות כרגע</p>
+                  <div class="insight-line">לשלוח תזכורת גבייה</div>
+                  <div class="insight-line">להשוות מחיר בטון</div>
+                  <div class="insight-line">ליצור חשבונית מהצעת מחיר</div>
+                </article>
+                <article class="tile clients pad span-4"><div class="eyebrow">לקוחות</div><div class="value clients-ink">12</div><p class="hint">נגיעות פתוחות</p></article>
+                <article class="tile finance pad span-4"><div class="eyebrow">תזרים</div><div class="value finance-ink">₪64K</div><p class="hint">צפוי השבוע</p></article>
+                <article class="tile lavender pad span-4"><div class="eyebrow">מסמכים</div><div class="value">31</div><p class="hint">מחכים לעיבוד</p></article>
+              </div>
+            </div>
+          </div>
+          <aside class="rail"><div class="logo-mark">BSD</div><div class="rail-icon">⌂</div><div class="rail-icon active">▦</div><div class="rail-icon">◇</div><div class="rail-icon">⚙</div><div class="avatar">י</div></aside>
+        </div>
+      </section>
+
+      <section id="concept-4" class="concept">
+        <div class="shell" style="background:#111827">
+          <div class="main">
+            <div class="topbar" style="border-color:#273142;background:rgb(17 24 39 / .95);color:white">
+              <div class="wordmark">BSD-YBM<br /><small style="color:#94a3b8">Executive Dark</small></div>
+              <nav class="nav"><span style="color:#cbd5e1">בית</span><span style="color:#cbd5e1">לקוחות</span><span class="active" style="background:white;color:#111827">מנהלים</span><span style="color:#cbd5e1">AI</span><span style="color:#cbd5e1">דוחות</span></nav>
+              <div class="top-actions"><div class="command" style="background:#0b0f14;border-color:#273142;color:#94a3b8">חיפוש מנהלים</div><div class="avatar" style="margin:0;background:white;color:#111827">י</div></div>
+            </div>
+            <div class="workspace">
+              <div class="concept-label" style="background:white;color:#111827">04 · Dark Executive <span style="color:#64748b">יוקרתי, דחוס, C-level</span></div>
+              <div class="hero-row" style="color:white">
+                <div>
+                  <div class="kicker" style="color:#a78bfa">Executive cockpit</div>
+                  <h1 class="title" style="color:white">תמונת ביצועים כהה ומרוכזת.</h1>
+                  <p class="subtitle" style="color:#cbd5e1">מתאים לעמודי intelligence/admin או למצב “מנהל” שמרגיש מתקדם יותר מהמסכים היומיומיים.</p>
+                </div>
+                <div class="actions"><button class="btn primary" style="background:white;color:#111827;border-color:white">הפק דוח</button><button class="btn" style="background:#1f2937;color:white;border-color:#334155">סימולציה</button></div>
+              </div>
+              <div class="grid">
+                <article class="tile dark pad span-8 large-card">
+                  <div class="tile-head"><div class="eyebrow">Revenue intelligence</div><div class="link" style="color:white">דוח מלא</div></div>
+                  <div class="value">₪1.42M</div><p class="hint">תחזית רבעונית · סיכון נמוך</p>
+                  <div class="sparkline" style="height:132px;background:linear-gradient(90deg,rgb(109 81 209 / .45),transparent);"></div>
+                  <div class="micro-grid"><div class="micro" style="background:#0b0f14;border-color:#273142;color:white"><span>Margin</span><b>28%</b></div><div class="micro" style="background:#0b0f14;border-color:#273142;color:white"><span>Risk</span><b>Low</b></div><div class="micro" style="background:#0b0f14;border-color:#273142;color:white"><span>MRR</span><b>₪118K</b></div><div class="micro" style="background:#0b0f14;border-color:#273142;color:white"><span>AI</span><b>92</b></div></div>
+                </article>
+                <article class="tile ai pad span-4 large-card">
+                  <div class="eyebrow">Board brief</div>
+                  <p class="hint" style="margin-top:18px">הוצאות ספקים עלו, אך קצב גבייה מפצה. מומלץ להעלות מחירון בפרויקטים חדשים.</p>
+                  <div class="terminal" style="margin-top:18px;min-height:190px">> analyze margin<br />> forecast cashflow<br />> recommend action<br /><br />ready: price update</div>
+                </article>
+                <article class="tile dark pad span-4"><div class="eyebrow">לקוחות אסטרטגיים</div><div class="value">9</div><p class="hint">דורשים תשומת לב</p></article>
+                <article class="tile dark pad span-4"><div class="eyebrow">מסמכי הנהלה</div><div class="value">24</div><p class="hint">חתימה או אישור</p></article>
+                <article class="tile dark pad span-4"><div class="eyebrow">אוטומציות</div><div class="value">16</div><p class="hint">עובדות כרגע</p></article>
+              </div>
+            </div>
+          </div>
+          <aside class="rail" style="background:#070a0f"><div class="logo-mark">BSD</div><div class="rail-icon">⌂</div><div class="rail-icon active">◈</div><div class="rail-icon">□</div><div class="rail-icon">⚙</div><div class="avatar">י</div></aside>
+        </div>
+      </section>
+
+      <section id="concept-5" class="concept">
+        <div class="shell">
+          <div class="main">
+            <div class="topbar">
+              <div class="wordmark">BSD-YBM<br /><small style="color: var(--ink-500)">Responsive System</small></div>
+              <nav class="nav"><span class="active">בית</span><span>לקוחות</span><span>כספים</span><span>AI</span><span>מסמכים</span></nav>
+              <div class="top-actions"><div class="command">חיפוש</div><div class="avatar" style="margin:0;background:var(--ink-900)">י</div></div>
+            </div>
+            <div class="workspace">
+              <div class="concept-label">05 · Responsive Workspace <span>אותה שפה בדסקטופ ובמובייל</span></div>
+              <div class="desktop-plus-mobile">
+                <div>
+                  <div class="hero-row">
+                    <div>
+                      <div class="kicker">מערכת אחידה</div>
+                      <h1 class="title">עיצוב שמתורגם לכל האתר בלי לשבור מסכים.</h1>
+                      <p class="subtitle">כיוון שמגדיר תבניות חוזרות לעמודים: Hero, stats, list/table, AI assistant, ופעולות מהירות.</p>
+                    </div>
+                  </div>
+                  <div class="grid">
+                    <article class="tile finance pad span-6"><div class="eyebrow">כספים</div><div class="value finance-ink">₪128K</div><div class="sparkline"></div></article>
+                    <article class="tile clients pad span-6"><div class="eyebrow">לקוחות</div><div class="value clients-ink">42</div><div class="bar clients"><span style="width:68%"></span></div></article>
+                    <article class="tile ai pad span-12"><div class="tile-head"><div><div class="eyebrow">AI</div><p class="hint">תבנית קבועה לרכיבי AI בכל עמוד: סיכום, פעולה מומלצת, וכפתור ביצוע.</p></div><button class="btn" style="background:rgb(255 255 255 / .12);color:white;border-color:rgb(255 255 255 / .2)">פתח</button></div></article>
+                    <article class="tile pad span-12">
+                      <div class="eyebrow">טבלת עבודה</div>
+                      <table class="dense-table"><tr><th>תאריך</th><th>לקוח</th><th>סטטוס</th><th>סכום</th></tr><tr><td>22 אפר׳</td><td>רמי עבודות גמר</td><td>שולם</td><td>₪8,200</td></tr><tr><td>21 אפר׳</td><td>הדקל 18</td><td>פתוח</td><td>₪14,900</td></tr><tr><td>20 אפר׳</td><td>מגדלי נוף</td><td>שולם</td><td>₪31,500</td></tr></table>
+                    </article>
+                  </div>
+                </div>
+                <div class="mobile-preview">
+                  <div class="mobile-bar"><b>BSD-YBM</b><span class="avatar" style="width:34px;height:34px;margin:0;background:var(--ink-900)">י</span></div>
+                  <div class="mobile-tabs"><span class="active">בית</span><span>לקוחות</span><span>כספים</span><span>AI</span></div>
+                  <div class="mobile-content">
+                    <div class="kicker">לוח בקרה</div>
+                    <h2 style="font-size:24px;line-height:1.1;margin-top:6px">בוקר טוב, יעקב</h2>
+                    <div class="mobile-card" style="background:linear-gradient(160deg,#332089,#1a0f3f);color:white"><div class="eyebrow">AI</div><p class="hint">3 פעולות מומלצות להיום</p></div>
+                    <div class="mobile-card"><div class="eyebrow">כספים</div><div class="value finance-ink" style="font-size:31px">₪128K</div><div class="bar"><span style="width:71%"></span></div></div>
+                    <div class="mobile-card"><div class="eyebrow">לקוחות</div><div class="value clients-ink" style="font-size:31px">42</div><div class="bar clients"><span style="width:68%"></span></div></div>
+                    <div class="mobile-card"><div class="eyebrow">פעילות</div><p class="hint">הדקל 18 · חשבונית פתוחה · ₪14,900</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside class="rail"><div class="logo-mark">BSD</div><div class="rail-icon active">⌂</div><div class="rail-icon">◇</div><div class="rail-icon">□</div><div class="rail-icon">⚙</div><div class="avatar">י</div></aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

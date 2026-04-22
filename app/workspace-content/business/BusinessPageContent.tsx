@@ -304,7 +304,7 @@ export async function BusinessPageContent() {
       flowSummary={flowSummary}
       priceSpikes={priceSpikes}
       docs={docs}
-      priceComparison={priceComparison as any}
+      priceComparison={priceComparison}
       contacts={contacts}
       projects={projects}
       hasOrganization={Boolean(orgId)}
