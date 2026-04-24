@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, Building, Check, Star, Zap } from "lucide-react";
-import type { BillingWorkspacePlan } from "@/components/billing/BillingWorkspaceUI";
+import type { BillingWorkspacePlan } from "@/lib/billing-workspace-plan";
 import {
   UpgradeCheckoutModal,
   type UpgradeCheckoutPlanDetails,
@@ -111,7 +111,7 @@ export type SubscriptionPlansComparisonProps = {
 };
 
 /**
- * כרטיסי שדרוג (תצוגה שיווקית) — שמות מסלול תואמים ל־{@link mapSubscriptionTierToBillingPlan}.
+ * כרטיסי שדרוג (תצוגה שיווקית) — שמות מסלול תואמים ל־mapSubscriptionTierToBillingPlan ב־lib/billing-workspace-plan.
  * לפעולת ברירת מחדל: ניווט ל־`/register?plan=` עם DEALER / COMPANY / CORPORATE.
  */
 function SubscriptionPlansComparisonInner({

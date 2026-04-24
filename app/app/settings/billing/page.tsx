@@ -1,6 +1,7 @@
 import SubscriptionManagementWorkspace from "@/components/billing/SubscriptionManagementWorkspace";
 import { SubscriptionPlansComparison } from "@/components/billing/SubscriptionPlansComparison";
-import { BillingWorkspaceUI, mapSubscriptionTierToBillingPlan } from "@/components/billing/BillingWorkspaceUI";
+import { BillingWorkspaceUI } from "@/components/billing/BillingWorkspaceUI";
+import { mapSubscriptionTierToBillingPlan } from "@/lib/billing-workspace-plan";
 import { loadSubscriptionManagementWorkspaceProps } from "@/lib/load-billing-workspace-props";
 import { tierAllowance } from "@/lib/subscription-tier-config";
 

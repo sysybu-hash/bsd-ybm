@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { CreditCard, Server, ShieldCheck, Zap } from "lucide-react";
+import type { BillingWorkspacePlan } from "@/lib/billing-workspace-plan";
 
-/** תצוגה ממופה ממסלולי Prisma; לא תואם 1:1 לשמות API */
-export type BillingWorkspacePlan = "FREE" | "CHEAP" | "PREMIUM" | "VIP";
+export type { BillingWorkspacePlan } from "@/lib/billing-workspace-plan";
 
 export type BillingWorkspaceUIProps = {
   organizationName: string;
@@ -136,12 +136,4 @@ export function BillingWorkspaceUI({
       </div>
     </div>
   );
-}
-
-export function mapSubscriptionTierToBillingPlan(tier: string): BillingWorkspacePlan {
-  const u = (tier || "FREE").toUpperCase();
-  if (u === "CORPORATE") return "VIP";
-  if (u === "COMPANY") return "PREMIUM";
-  if (u === "HOUSEHOLD" || u === "DEALER") return "CHEAP";
-  return "FREE";
 }
