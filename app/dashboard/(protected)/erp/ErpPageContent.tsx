@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getServerTranslator } from "@/lib/i18n/server";
-import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
 import {
   buildMonthlyExpenseSeries,
   sumExpensesInCalendarMonth,
@@ -14,6 +13,8 @@ import { getErpPriceComparisonForOrg } from "@/lib/erp-price-comparison-data";
 import { tierAllowance } from "@/lib/subscription-tier-config";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import { isGeminiConfigured } from "@/lib/ai-providers";
+import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
+import { DocumentsWorkspace } from "@/components/erp/DocumentsWorkspace";
 import ErpClient from "./ErpClient";
 
 export const metadata = { title: "Automated ERP — BSD-YBM" };
@@ -55,7 +56,7 @@ export default async function ERPPage() {
   ];
 
   const chartData = buildMonthlyExpenseSeries(rawDocs, 6, locale);
-  const [priceSpikes, priceComparison, pendingPriceAlertCount, pendingPriceAlertLinesRaw] =
+  const [priceSpikes, priceComparison, pendingPriceAlertCount, pendingPriceAlertLinesRaw, docsWithLinePriceAlerts] =
     await Promise.all([
       getPriceSpikeAlerts(orgId, 6),
       getErpPriceComparisonForOrg(orgId),
@@ -74,7 +75,13 @@ export default async function ERPPage() {
           document: { select: { fileName: true } },
         },
       }),
+      prisma.documentLineItem.groupBy({
+        by: ["documentId"],
+        where: { organizationId: orgId, priceAlertPending: true },
+      }),
     ]);
+
+  const alertDocumentIdSet = new Set(docsWithLinePriceAlerts.map((r) => r.documentId));
 
   const pendingPriceAlertLines = pendingPriceAlertLinesRaw.map((row) => ({
     id: row.id,
@@ -101,31 +108,40 @@ export default async function ERPPage() {
 
   const erpHealth = rawDocs.length > 0 ? Math.min(100, 40 + Math.round((priceSpikes.length === 0 ? 30 : 10) + (avgPerDoc > 0 ? 30 : 0))) : 15;
 
+  const yNow = now.getFullYear();
+  const mNow = now.getMonth();
+  const documentsThisMonth = rawDocs.filter(
+    (d) => d.createdAt.getFullYear() === yNow && d.createdAt.getMonth() === mNow,
+  ).length;
+
+  const workspaceTableRows = rawDocs.slice(0, 20).map((d) => {
+    const ai = d.aiData as { vendor?: string; total?: number; date?: string | null } | null;
+    const supplier =
+      (typeof ai?.vendor === "string" && ai.vendor.trim()) || d.fileName;
+    const dateSource =
+      typeof ai?.date === "string" && ai.date.trim() ? new Date(ai.date) : d.createdAt;
+    const totalLabel =
+      typeof ai?.total === "number" && Number.isFinite(ai.total)
+        ? formatCurrencyILS(ai.total, 2)
+        : "—";
+    return {
+      id: d.id,
+      supplier,
+      dateLabel: formatShortDate(dateSource),
+      totalLabel,
+      currency: "ILS",
+      hasPriceAnomaly: alertDocumentIdSet.has(d.id),
+    };
+  });
+
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-6 py-4" dir="rtl">
-      <header className="flex flex-col gap-1 px-1">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">ERP</p>
-        <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">{t("erpPage.title")}</h1>
-        <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">{t("erpPage.subtitle")}</p>
-      </header>
-
-      <BentoGrid>
-        <Tile tone="finance" span={8}>
-          <TileHeader eyebrow="ERP snapshot" />
-          <p className="mt-3 text-[14px] leading-7 text-[color:var(--axis-finance-ink)]">
-            {t("erpPage.statMonthExpenses")}: <span className="font-black">{stats[0]?.value ?? "—"}</span>
-            {" · "}
-            {t("erpPage.statDocsInView")}: <span className="font-black">{rawDocs.length}</span>
-          </p>
-          <div className="mt-4">
-            <ProgressBar value={erpHealth} axis="finance" />
-          </div>
-        </Tile>
-        <Tile tone="lavender" span={4}>
-          <TileHeader eyebrow="Scan credits" />
-          <p className="mt-3 text-sm font-semibold text-[color:var(--ink-700)]">{scanQuotaSummary ?? "—"}</p>
-        </Tile>
-      </BentoGrid>
+      <DocumentsWorkspace
+        documentsThisMonth={documentsThisMonth}
+        anomaliesCount={pendingPriceAlertCount}
+        aiReliabilityPct={erpHealth}
+        tableRows={workspaceTableRows}
+      />
 
       <ErpClient
         stats={stats}

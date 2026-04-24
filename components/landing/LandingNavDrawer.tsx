@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -95,7 +95,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </button>
               </div>
 
-              {/* לוגו */}
+              {/* ׳׳•׳’׳• */}
               <div className="border-b border-gray-100 px-4 py-4">
                 <div className="mx-auto max-h-20 w-full max-w-[14rem]">
                   <Image
@@ -109,7 +109,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </div>
               </div>
 
-              {/* ניווט */}
+              {/* ׳ ׳™׳•׳•׳˜ */}
               <nav
                 className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4 text-start"
                 aria-label={t("marketingDrawer.navAria")}
@@ -118,7 +118,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 <NavRow href="/about" icon={Info} label={t("marketingDrawer.about")} onNavigate={close} />
                 <NavRow href="/contact" icon={Mail} label={t("marketingDrawer.contact")} onNavigate={close} />
 
-                {/* כרטיס פרטי קשר */}
+                {/* ׳›׳¨׳˜׳™׳¡ ׳₪׳¨׳˜׳™ ׳§׳©׳¨ */}
                 <div className="mt-2 rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm leading-relaxed text-gray-600">
                   <p className="mb-2 font-bold text-gray-900">
                     {t("marketingDrawer.contact")}
@@ -150,7 +150,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   </a>
                 </div>
 
-                {/* כפתור מחירים */}
+                {/* ׳›׳₪׳×׳•׳¨ ׳׳—׳™׳¨׳™׳ */}
                 <Link
                   href={pricingHref}
                   scroll={pathname === "/"}
@@ -162,7 +162,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </Link>
 
                 <Link
-                  href="/app/billing"
+                  href="/app/settings/billing"
                   onClick={close}
                   className="text-center text-xs font-semibold text-gray-400 underline-offset-2 hover:text-teal-600 hover:underline"
                 >
@@ -170,7 +170,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                 </Link>
               </nav>
 
-              {/* Footer — כניסה/הרשמה */}
+              {/* Footer ג€” ׳›׳ ׳™׳¡׳”/׳”׳¨׳©׳׳” */}
               <div className="relative border-t border-gray-100 px-4 py-5 space-y-2">
                 <Link
                   href="/login"
@@ -178,14 +178,14 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
                   className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-black text-white transition hover:opacity-90"
                   style={{ backgroundColor: "var(--primary-color, #2563eb)" }}
                 >
-                  <LogIn size={16} /> כניסה למערכת
+                  <LogIn size={16} /> ׳›׳ ׳™׳¡׳” ׳׳׳¢׳¨׳›׳×
                 </Link>
                 <Link
               href="/app"
                   onClick={close}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
                 >
-                  <LayoutDashboard size={15} /> לדשבורד
+                  <LayoutDashboard size={15} /> ׳׳“׳©׳‘׳•׳¨׳“
                 </Link>
                 <p className="text-center text-[0.8rem] font-medium italic leading-snug text-gray-400 pt-1">
                   {t("marketingDrawer.brandQuote")}
@@ -198,3 +198,4 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
     </Dialog>
   );
 }
+

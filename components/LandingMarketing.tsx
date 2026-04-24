@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Zap, Shield, Briefcase, Building2, Brain, CheckCircle2, Star } from "lucide-react";
 import Link from "next/link";
@@ -7,39 +7,39 @@ import EuComplianceStrip from "@/components/EuComplianceStrip";
 import LandingVideoTutorials from "@/components/LandingVideoTutorials";
 
 const sectors = [
-  { title: "משק בית", desc: "סריקת חשבוניות, ניהול הוצאות משפחתי וסדר פיננסי מלא.", icon: Zap, color: "bg-teal-500/15" },
-  { title: "עוסק מורשה", desc: "הנהלת חשבונות חכמה, ניהול לקוחות (CRM) ודיווחים מהירים.", icon: Shield, color: "bg-emerald-500/15" },
-  { title: "חברה", desc: "שליטה במלאי, ניהול צוותים, ERP תפעולי ודוחות רווח והפסד.", icon: Briefcase, color: "bg-teal-500/15" },
-  { title: "תאגיד", desc: "ניהול מרובה ישויות, קונסולידציה של נתונים ובינה עסקית (BI).", icon: Building2, color: "bg-teal-500/15" },
+  { title: "׳׳©׳§ ׳‘׳™׳×", desc: "׳¡׳¨׳™׳§׳× ׳—׳©׳‘׳•׳ ׳™׳•׳×, ׳ ׳™׳”׳•׳ ׳”׳•׳¦׳׳•׳× ׳׳©׳₪׳—׳×׳™ ׳•׳¡׳“׳¨ ׳₪׳™׳ ׳ ׳¡׳™ ׳׳׳.", icon: Zap, color: "bg-teal-500/15" },
+  { title: "׳¢׳•׳¡׳§ ׳׳•׳¨׳©׳”", desc: "׳”׳ ׳”׳׳× ׳—׳©׳‘׳•׳ ׳•׳× ׳—׳›׳׳”, ׳ ׳™׳”׳•׳ ׳׳§׳•׳—׳•׳× (CRM) ׳•׳“׳™׳•׳•׳—׳™׳ ׳׳”׳™׳¨׳™׳.", icon: Shield, color: "bg-emerald-500/15" },
+  { title: "׳—׳‘׳¨׳”", desc: "׳©׳׳™׳˜׳” ׳‘׳׳׳׳™, ׳ ׳™׳”׳•׳ ׳¦׳•׳•׳×׳™׳, ERP ׳×׳₪׳¢׳•׳׳™ ׳•׳“׳•׳—׳•׳× ׳¨׳•׳•׳— ׳•׳”׳₪׳¡׳“.", icon: Briefcase, color: "bg-teal-500/15" },
+  { title: "׳×׳׳’׳™׳“", desc: "׳ ׳™׳”׳•׳ ׳׳¨׳•׳‘׳” ׳™׳©׳•׳™׳•׳×, ׳§׳•׳ ׳¡׳•׳׳™׳“׳¦׳™׳” ׳©׳ ׳ ׳×׳•׳ ׳™׳ ׳•׳‘׳™׳ ׳” ׳¢׳¡׳§׳™׳× (BI).", icon: Building2, color: "bg-teal-500/15" },
 ];
 
 const plans = [
   {
-    name: "חינם (FREE)",
-    price: "₪0",
-    desc: "התנסות בסיסית במערכת",
-    features: ["5 סריקות AI בחודש", "CRM בסיסי", "משתמש 1"],
+    name: "׳—׳™׳ ׳ (FREE)",
+    price: "ג‚×0",
+    desc: "׳”׳×׳ ׳¡׳•׳× ׳‘׳¡׳™׳¡׳™׳× ׳‘׳׳¢׳¨׳›׳×",
+    features: ["5 ׳¡׳¨׳™׳§׳•׳× AI ׳‘׳—׳•׳“׳©", "CRM ׳‘׳¡׳™׳¡׳™", "׳׳©׳×׳׳© 1"],
     level: "Basic" as const,
   },
   {
-    name: "פרו (PRO)",
-    price: "₪99",
-    desc: "לעוסקים וחברות קטנות",
-    features: ["100 סריקות AI בחודש", "CRM מלא", "3 משתמשים", "תמיכה במייל"],
+    name: "׳₪׳¨׳• (PRO)",
+    price: "ג‚×99",
+    desc: "׳׳¢׳•׳¡׳§׳™׳ ׳•׳—׳‘׳¨׳•׳× ׳§׳˜׳ ׳•׳×",
+    features: ["100 ׳¡׳¨׳™׳§׳•׳× AI ׳‘׳—׳•׳“׳©", "CRM ׳׳׳", "3 ׳׳©׳×׳׳©׳™׳", "׳×׳׳™׳›׳” ׳‘׳׳™׳™׳"],
     level: "Premium" as const,
   },
   {
-    name: "עסקי (BUSINESS)",
-    price: "₪249",
-    desc: "לחברות וצוותים",
-    features: ["500 סריקות AI בחודש", "ERP מלא", "10 משתמשים", "תמיכה טלפונית"],
+    name: "׳¢׳¡׳§׳™ (BUSINESS)",
+    price: "ג‚×249",
+    desc: "׳׳—׳‘׳¨׳•׳× ׳•׳¦׳•׳•׳×׳™׳",
+    features: ["500 ׳¡׳¨׳™׳§׳•׳× AI ׳‘׳—׳•׳“׳©", "ERP ׳׳׳", "10 ׳׳©׳×׳׳©׳™׳", "׳×׳׳™׳›׳” ׳˜׳׳₪׳•׳ ׳™׳×"],
     level: "Enterprise" as const,
   },
   {
-    name: "תאגיד (ENTERPRISE)",
-    price: "₪499",
-    desc: "לארגונים מרובי ישויות",
-    features: ["סריקות ללא הגבלה*", "BI מתקדם", "כל המודלים פתוחים", "מנהל לקוח אישי"],
+    name: "׳×׳׳’׳™׳“ (ENTERPRISE)",
+    price: "ג‚×499",
+    desc: "׳׳׳¨׳’׳•׳ ׳™׳ ׳׳¨׳•׳‘׳™ ׳™׳©׳•׳™׳•׳×",
+    features: ["׳¡׳¨׳™׳§׳•׳× ׳׳׳ ׳”׳’׳‘׳׳”*", "BI ׳׳×׳§׳“׳", "׳›׳ ׳”׳׳•׳“׳׳™׳ ׳₪׳×׳•׳—׳™׳", "׳׳ ׳”׳ ׳׳§׳•׳— ׳׳™׳©׳™"],
     level: "Master" as const,
   },
 ];
@@ -64,8 +64,8 @@ export default function LandingMarketing() {
               <span className="text-teal-600">Intelligence.</span>
             </h1>
             <p className="max-w-xl text-gray-400 text-lg sm:text-xl leading-relaxed mb-10 font-medium ms-auto">
-              פלטפורמה אחודה המשלבת AI, CRM ו-ERP מתקדם. פתרון מקיף לניהול חכם של משקי בית, עוסקים
-              וחברות בדומיין אחד.
+              ׳₪׳׳˜׳₪׳•׳¨׳׳” ׳׳—׳•׳“׳” ׳”׳׳©׳׳‘׳× AI, CRM ׳•-ERP ׳׳×׳§׳“׳. ׳₪׳×׳¨׳•׳ ׳׳§׳™׳£ ׳׳ ׳™׳”׳•׳ ׳—׳›׳ ׳©׳ ׳׳©׳§׳™ ׳‘׳™׳×, ׳¢׳•׳¡׳§׳™׳
+              ׳•׳—׳‘׳¨׳•׳× ׳‘׳“׳•׳׳™׳™׳ ׳׳—׳“.
             </p>
             <div className="flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:gap-5">
               <Link
@@ -75,19 +75,19 @@ export default function LandingMarketing() {
                   boxShadow: "0 20px 40px -10px rgba(59, 130, 246, 0.45)",
                 }}
               >
-                התחל עכשיו - חינם
+                ׳”׳×׳—׳ ׳¢׳›׳©׳™׳• - ׳—׳™׳ ׳
               </Link>
               <Link
                 href="/login"
                 className="text-sm font-bold text-gray-500 underline decoration-slate-300 underline-offset-4 hover:text-blue-600"
               >
-                יש לך חשבון? התחברות עם Google
+                ׳™׳© ׳׳ ׳—׳©׳‘׳•׳? ׳”׳×׳—׳‘׳¨׳•׳× ׳¢׳ Google
               </Link>
             </div>
           </div>
           <div id="tutorial" className="scroll-mt-28 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg shadow-teal-500/5 sm:p-10">
             <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-              הדרכה מונפשת
+              ׳”׳“׳¨׳›׳” ׳׳•׳ ׳₪׳©׳×
             </p>
             <SiteTutorialShowcase variant="embedded" />
             <div className="text-center mt-4">
@@ -95,7 +95,7 @@ export default function LandingMarketing() {
                 href="/tutorial"
                 className="text-sm font-bold text-blue-600 hover:underline"
               >
-                מסך מלא להדרכה
+                ׳׳¡׳ ׳׳׳ ׳׳”׳“׳¨׳›׳”
               </Link>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function LandingMarketing() {
 
         <section id="erp" className="scroll-mt-28">
           <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
-            פתרון מותאם לכל סוג ישות
+            ׳₪׳×׳¨׳•׳ ׳׳•׳×׳׳ ׳׳›׳ ׳¡׳•׳’ ׳™׳©׳•׳×
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-32">
             {sectors.map((s) => {
@@ -128,7 +128,7 @@ export default function LandingMarketing() {
 
         <section id="crm" className="scroll-mt-28">
           <h2 className="text-3xl font-black mb-12 italic text-center text-gray-900">
-            בחר את המסלול המתאים לך
+            ׳‘׳—׳¨ ׳׳× ׳”׳׳¡׳׳•׳ ׳”׳׳×׳׳™׳ ׳׳
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {plans.map((plan) => (
@@ -151,7 +151,7 @@ export default function LandingMarketing() {
                   className="text-5xl font-black mb-8 italic text-gray-900"
                 >
                   {plan.price}
-                  <span className="text-sm font-medium text-gray-400 not-italic"> / חודש</span>
+                  <span className="text-sm font-medium text-gray-400 not-italic"> / ׳—׳•׳“׳©</span>
                 </div>
 
                 <ul className="space-y-3 mb-10 text-sm font-medium text-gray-500">
@@ -163,20 +163,20 @@ export default function LandingMarketing() {
                 </ul>
 
                 <Link
-                  href="/app/billing?tab=control"
+                  href="/app/settings/billing?tab=control"
                   className={`block w-full text-center py-4 rounded-2xl font-bold transition-all hover:opacity-90 ${
                     plan.level === "Premium"
                       ? "bg-teal-600 text-white"
                       : "bg-gray-50 text-gray-950"
                   }`}
                 >
-                  בחר מסלול
+                  ׳‘׳—׳¨ ׳׳¡׳׳•׳
                 </Link>
               </div>
             ))}
           </div>
           <p className="text-center text-xs text-gray-400 mt-8">
-            *במסלול תאגיד — בהתאם להסכם שירות. המחירים להמחשה בלבד.
+            *׳‘׳׳¡׳׳•׳ ׳×׳׳’׳™׳“ ג€” ׳‘׳”׳×׳׳ ׳׳”׳¡׳›׳ ׳©׳™׳¨׳•׳×. ׳”׳׳—׳™׳¨׳™׳ ׳׳”׳׳—׳©׳” ׳‘׳׳‘׳“.
           </p>
         </section>
 
@@ -185,3 +185,4 @@ export default function LandingMarketing() {
     </div>
   );
 }
+

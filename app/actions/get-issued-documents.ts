@@ -29,6 +29,7 @@ export async function getIssuedDocumentsAction() {
         client: doc.clientName,
         date: doc.date.toLocaleDateString("he-IL"),
         dateIso: doc.date.toISOString(),
+        dueDateIso: doc.dueDate ? doc.dueDate.toISOString() : null,
         statusKey: doc.status,
         status: doc.status === "PAID" ? "הוקצה" : "בתהליך",
         amount: `₪${doc.total.toLocaleString()}`,

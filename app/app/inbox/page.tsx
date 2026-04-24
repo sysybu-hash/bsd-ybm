@@ -119,7 +119,7 @@ export default async function AppInboxPage() {
       clientName: document.clientName,
       total: document.total,
       dueDate: document.dueDate?.toISOString() ?? null,
-      href: "/app/billing",
+      href: "/app/settings/billing",
     }));
 
   const reviewDocs = recentDocumentsRaw.filter((document) => {
@@ -134,7 +134,7 @@ export default async function AppInboxPage() {
       category: "גבייה",
       title: `מסמך #${document.number} של ${document.clientName} נמצא באיחור`,
       body: `ממתין לתשלום בסך ${formatCurrencyILS(document.total)} ודורש מעקב מיידי.`,
-      href: "/app/billing",
+      href: "/app/settings/billing",
       cta: "לחלון החיוב",
       severity: "high" as const,
     })),

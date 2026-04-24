@@ -4,6 +4,7 @@
 
 const IMAGE = /^image\//;
 const PDF = "application/pdf";
+export const MAX_SCAN_FILE_BYTES = 25 * 1024 * 1024;
 
 /** MIME ש-Gemini מקבל בדרך כלל כ-binary inline (בנוסף לתמונות ו-PDF) */
 const GEMINI_FILE_LIKE = new Set([
@@ -112,3 +113,7 @@ export const DROPZONE_ACCEPT: Record<string, string[]> = {
   "application/vnd.ms-excel": [".xls"],
   "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
 };
+
+export function isSupportedScanMime(mime: string): boolean {
+  return IMAGE.test(mime) || Object.prototype.hasOwnProperty.call(DROPZONE_ACCEPT, mime);
+}

@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { parseModelJsonText } from "@/lib/ai-document-json";
 import { extractDocumentWithOpenAI } from "@/lib/ai-extract-openai";
-import { processDocumentAiRaw } from "@/lib/ai-extract-docai";
+import { normalizeDocAiResultWithGemini, processDocumentAiRawForScanMode } from "@/lib/ai-extract-docai";
 import { assertProviderConfigured, normalizeAiProviderId } from "@/lib/ai-providers";
 import { mapDocAiEntitiesToInvoiceV5 } from "@/lib/docai-invoice-mapper";
 import {
@@ -20,6 +20,7 @@ import {
 import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import { LOCALE_AI_LANGUAGE_NAMES, normalizeLocale, type AppLocale } from "@/lib/i18n/config";
 import type { MessageTree } from "@/lib/i18n/keys";
+import type { TriEngineRunMode } from "@/lib/tri-engine-api-common";
 
 /** מודלי Flash נתמכים ב-Gemini API — ללא 1.5-flash-002 (מחזיר 404 אצל רוב המפתחות) */
 const GEMINI_FLASH_PREFERRED = [
@@ -132,6 +133,52 @@ function mergeDrawingResults(a: ScanExtractionV5, b: ScanExtractionV5, fileName:
   });
 }
 
+function mergeScanResults(
+  primary: ScanExtractionV5,
+  secondary: ScanExtractionV5,
+  fileName: string,
+  scanMode: ScanModeV5,
+): ScanExtractionV5 {
+  if (scanMode === "DRAWING_BOQ") return mergeDrawingResults(primary, secondary, fileName);
+  const lineMap = new Map<string, (typeof primary.lineItems)[0]>();
+  for (const row of [...primary.lineItems, ...secondary.lineItems]) {
+    const key = `${row.description}::${row.quantity ?? ""}::${row.lineTotal ?? ""}`;
+    if (!lineMap.has(key)) lineMap.set(key, row);
+  }
+  const boqMap = new Map<string, (typeof primary.billOfQuantities)[0]>();
+  for (const row of [...primary.billOfQuantities, ...secondary.billOfQuantities]) {
+    const key = `${row.itemRef ?? ""}::${row.description}::${row.quantity ?? ""}`;
+    if (!boqMap.has(key)) boqMap.set(key, row);
+  }
+  return emptyV5Base(fileName, scanMode, {
+    documentMetadata: {
+      ...primary.documentMetadata,
+      project: primary.documentMetadata.project ?? secondary.documentMetadata.project,
+      client: primary.documentMetadata.client ?? secondary.documentMetadata.client,
+      documentDate: primary.documentMetadata.documentDate ?? secondary.documentMetadata.documentDate,
+      drawingRefs: [
+        ...(primary.documentMetadata.drawingRefs ?? []),
+        ...(secondary.documentMetadata.drawingRefs ?? []),
+      ],
+      discipline: primary.documentMetadata.discipline ?? secondary.documentMetadata.discipline,
+      sheetIndex: primary.documentMetadata.sheetIndex ?? secondary.documentMetadata.sheetIndex,
+    },
+    billOfQuantities: [...boqMap.values()],
+    lineItems: [...lineMap.values()],
+    vendor: primary.vendor !== "לא צוין" ? primary.vendor : secondary.vendor,
+    total: Math.max(primary.total, secondary.total),
+    date: primary.date ?? secondary.date,
+    docType: primary.docType !== "UNKNOWN" ? primary.docType : secondary.docType,
+    summary: [primary.summary, secondary.summary].filter(Boolean).join("\n---\n").slice(0, 4000),
+    enginesUsed: [...(primary.enginesUsed ?? []), ...(secondary.enginesUsed ?? [])],
+  });
+}
+
+function compactError(error: unknown, max = 320): string {
+  const msg = error instanceof Error ? error.message : String(error);
+  return msg.slice(0, max);
+}
+
 export async function runTriEngineExtraction(params: {
   base64: string;
   mimeType: string;
@@ -142,6 +189,7 @@ export async function runTriEngineExtraction(params: {
   orgTrade: string | null;
   messages: MessageTree;
   openAiModel?: string;
+  engineRunMode?: TriEngineRunMode;
   /** עדכוני ביניים לסטרימינג (טלמטריה + V5 חלקי) */
   onProgress?: (e: TriEngineProgressEvent) => void | Promise<void>;
 }): Promise<TriEngineResult> {
@@ -155,6 +203,7 @@ export async function runTriEngineExtraction(params: {
     orgTrade,
     messages,
     openAiModel,
+    engineRunMode = "AUTO",
     onProgress,
   } = params;
 
@@ -177,6 +226,161 @@ export async function runTriEngineExtraction(params: {
   };
 
   let v5: ScanExtractionV5;
+  const runMode = engineRunMode === "AUTO" ? "MULTI_SEQUENTIAL" : engineRunMode;
+
+  const runDocAiOnly = async (): Promise<ScanExtractionV5> => {
+    const docErr = assertProviderConfigured("docai");
+    if (docErr) throw new Error(docErr);
+    const raw = await processDocumentAiRawForScanMode(base64, mimeType, scanMode);
+    if (scanMode === "INVOICE_FINANCIAL" && (raw.processorKind === "INVOICE" || raw.processorKind === "EXPENSE")) {
+      const out = mapDocAiEntitiesToInvoiceV5(raw.entities, raw.fullText, fileName, scanMode);
+      out.enginesUsed = [`document_ai_${raw.processorKind.toLowerCase()}`];
+      return out;
+    }
+    const normalized = await normalizeDocAiResultWithGemini(raw, fileName, fullInstruction);
+    const out = coerceLegacyAiToV5(normalized, fileName, scanMode);
+    out.enginesUsed = [`document_ai_${raw.processorKind.toLowerCase()}`, "gemini-normalizer"];
+    return out;
+  };
+
+  const runGeminiOnly = async (): Promise<ScanExtractionV5> => {
+    const gErr = assertProviderConfigured("gemini");
+    if (gErr) throw new Error(gErr);
+    const modelChain =
+      scanMode === "DRAWING_BOQ"
+        ? [GEMINI_FLAGSHIP_MODEL, ...getGeminiModelFallbackChain().filter((m) => m !== GEMINI_FLAGSHIP_MODEL)]
+        : [...GEMINI_FLASH_PREFERRED, ...getGeminiModelFallbackChain()];
+    const raw = await geminiMultimodal(base64, mimeType, fullInstruction, modelChain);
+    const out = coerceLegacyAiToV5(raw, fileName, scanMode);
+    out.enginesUsed = [scanMode === "DRAWING_BOQ" ? "gemini-pro" : "gemini-flash"];
+    return out;
+  };
+
+  const runOpenAiOnly = async (): Promise<ScanExtractionV5> => {
+    const oaErr = assertProviderConfigured(normalizeAiProviderId("openai"));
+    if (oaErr) throw new Error(oaErr);
+    const raw = await extractDocumentWithOpenAI(base64, mimeType, fileName, fullInstruction, openAiModel);
+    const out = coerceLegacyAiToV5(raw, fileName, scanMode);
+    out.enginesUsed = ["openai"];
+    return out;
+  };
+
+  if (runMode === "SINGLE_DOCUMENT_AI") {
+    telemetry.documentAI = { phase: "running" };
+    telemetry.gemini = { phase: "skipped" };
+    telemetry.gpt = { phase: "skipped" };
+    await emitTelemetry();
+    const t0 = Date.now();
+    try {
+      v5 = await runDocAiOnly();
+      telemetry.documentAI = { phase: "ok", ms: Date.now() - t0 };
+      await emitTelemetry();
+      await emitPartial(v5, "document_ai");
+      return { aiData: v5ToPersistableAiData(v5), v5, telemetry };
+    } catch (e) {
+      telemetry.documentAI = { phase: "error", detail: compactError(e, 200) };
+      await emitTelemetry();
+      throw e;
+    }
+  }
+
+  if (runMode === "SINGLE_GEMINI") {
+    telemetry.documentAI = { phase: "skipped" };
+    telemetry.gemini = { phase: "running" };
+    telemetry.gpt = { phase: "skipped" };
+    await emitTelemetry();
+    const t0 = Date.now();
+    try {
+      v5 = await runGeminiOnly();
+      telemetry.gemini = { phase: "ok", ms: Date.now() - t0 };
+      await emitTelemetry();
+      await emitPartial(v5, "gemini_single");
+      return { aiData: v5ToPersistableAiData(v5), v5, telemetry };
+    } catch (e) {
+      telemetry.gemini = { phase: "error", detail: compactError(e, 200) };
+      await emitTelemetry();
+      throw e;
+    }
+  }
+
+  if (runMode === "SINGLE_OPENAI") {
+    telemetry.documentAI = { phase: "skipped" };
+    telemetry.gemini = { phase: "skipped" };
+    telemetry.gpt = { phase: "running" };
+    await emitTelemetry();
+    const t0 = Date.now();
+    try {
+      v5 = await runOpenAiOnly();
+      telemetry.gpt = { phase: "ok", ms: Date.now() - t0 };
+      await emitTelemetry();
+      await emitPartial(v5, "openai_single");
+      return { aiData: v5ToPersistableAiData(v5), v5, telemetry };
+    } catch (e) {
+      telemetry.gpt = { phase: "error", detail: compactError(e, 200) };
+      await emitTelemetry();
+      throw e;
+    }
+  }
+
+  if (runMode === "MULTI_PARALLEL") {
+    const startedAt = Date.now();
+    const includeDocAi = scanMode === "INVOICE_FINANCIAL";
+    telemetry.documentAI = includeDocAi ? { phase: "running" } : { phase: "skipped" };
+    telemetry.gemini = { phase: "running" };
+    telemetry.gpt = { phase: "running" };
+    await emitTelemetry();
+
+    const [docAiResult, geminiResult, openAiResult] = await Promise.allSettled([
+      includeDocAi ? runDocAiOnly() : Promise.reject(new Error("Document AI skipped for this scan mode.")),
+      runGeminiOnly(),
+      runOpenAiOnly(),
+    ]);
+
+    const fulfilled: ScanExtractionV5[] = [];
+    const failures: string[] = [];
+
+    if (includeDocAi && docAiResult.status === "fulfilled") {
+      telemetry.documentAI = { phase: "ok", ms: Date.now() - startedAt };
+      fulfilled.push(docAiResult.value);
+      await emitPartial(docAiResult.value, "document_ai");
+    } else if (includeDocAi) {
+      failures.push(`Document AI: ${compactError(docAiResult.status === "rejected" ? docAiResult.reason : "failed")}`);
+      telemetry.documentAI = {
+        phase: "error",
+        detail: compactError(docAiResult.status === "rejected" ? docAiResult.reason : "failed", 200),
+      };
+    }
+
+    if (geminiResult.status === "fulfilled") {
+      telemetry.gemini = { phase: "ok", ms: Date.now() - startedAt };
+      fulfilled.push(geminiResult.value);
+      await emitPartial(geminiResult.value, "gemini_parallel");
+    } else {
+      failures.push(`Gemini: ${compactError(geminiResult.reason)}`);
+      telemetry.gemini = { phase: "error", detail: compactError(geminiResult.reason, 200) };
+    }
+
+    if (openAiResult.status === "fulfilled") {
+      telemetry.gpt = { phase: "ok", ms: Date.now() - startedAt };
+      fulfilled.push(openAiResult.value);
+      await emitPartial(openAiResult.value, "openai_parallel");
+    } else {
+      failures.push(`OpenAI: ${compactError(openAiResult.reason)}`);
+      telemetry.gpt = { phase: "error", detail: compactError(openAiResult.reason, 200) };
+    }
+    await emitTelemetry();
+
+    if (!fulfilled.length) {
+      throw new Error(`All selected engines failed. ${failures.join(" | ")}`);
+    }
+
+    v5 = fulfilled.reduce((acc, next) => mergeScanResults(acc, next, fileName, scanMode));
+    v5.enginesUsed = fulfilled.flatMap((item) => item.enginesUsed ?? []);
+    await emitPartial(v5, "merged_parallel");
+    const aiData = v5ToPersistableAiData(v5);
+    aiData._triEngineTelemetry = telemetry;
+    return { aiData, v5, telemetry };
+  }
 
   if (scanMode === "INVOICE_FINANCIAL") {
     let docAiV5: ScanExtractionV5 | null = null;
@@ -186,8 +390,15 @@ export async function runTriEngineExtraction(params: {
       const t0 = Date.now();
       telemetry.documentAI = { phase: "running" };
       await emitTelemetry();
-      const raw = await processDocumentAiRaw(base64, mimeType);
-      docAiV5 = mapDocAiEntitiesToInvoiceV5(raw.entities, raw.fullText, fileName, scanMode);
+      const raw = await processDocumentAiRawForScanMode(base64, mimeType, scanMode);
+      if (raw.processorKind === "INVOICE" || raw.processorKind === "EXPENSE") {
+        docAiV5 = mapDocAiEntitiesToInvoiceV5(raw.entities, raw.fullText, fileName, scanMode);
+        docAiV5.enginesUsed = [`document_ai_${raw.processorKind.toLowerCase()}`];
+      } else {
+        const normalized = await normalizeDocAiResultWithGemini(raw, fileName, fullInstruction);
+        docAiV5 = coerceLegacyAiToV5(normalized, fileName, scanMode);
+        docAiV5.enginesUsed = [`document_ai_${raw.processorKind.toLowerCase()}`, "gemini-normalizer"];
+      }
       telemetry.documentAI = { phase: "ok", ms: Date.now() - t0, detail: `${raw.entities.length} entities` };
       await emitTelemetry();
       if (docAiV5) await emitPartial(docAiV5, "document_ai");

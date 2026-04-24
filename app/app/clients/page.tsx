@@ -1,18 +1,44 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import ClientsWorkspaceV2 from "@/components/crm/ClientsWorkspaceV2";
+import { ClientsWorkspaceUI } from "@/components/crm/ClientsWorkspaceUI";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
+import { formatCurrencyILS } from "@/lib/ui-formatters";
+import { isGeminiConfigured } from "@/lib/ai-providers";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
+
+const STATUS_LABEL_HE: Record<string, string> = {
+  LEAD: "ליד",
+  PROPOSAL: "הצעה",
+  ACTIVE: "פעיל",
+  CLOSED_WON: "נסגר (זכייה)",
+  CLOSED_LOST: "נסגר (הפסד)",
+};
+
+function clientInsightLine(c: {
+  notes: string | null;
+  totalBilled: number;
+  totalPending: number;
+  invoiceCount: number;
+}): string {
+  const n = c.notes?.trim();
+  if (n) return n.length > 140 ? `${n.slice(0, 140)}…` : n;
+  if (c.totalPending > 0) return `יתרה לגבייה: ${formatCurrencyILS(c.totalPending)}`;
+  if (c.totalBilled > 0) {
+    return `הופק: ${formatCurrencyILS(c.totalBilled)} · ${c.invoiceCount} מסמכים`;
+  }
+  return "אין היסטוריית הופקה";
+}
 
 export const dynamic = "force-dynamic";
 
 export default async function AppClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ projectId?: string }>;
+  searchParams: Promise<{ projectId?: string; clientId?: string }>;
 }) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
@@ -28,7 +54,7 @@ export default async function AppClientsPage({
 
   const sp = await searchParams;
 
-  const [organization, contactsRaw, projectsRaw] = await Promise.all([
+  const [organization, contactsRaw, projectsRaw, meckanoZonesCount] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: organizationId },
       select: {
@@ -79,6 +105,7 @@ export default async function AppClientsPage({
         },
       },
     }),
+    prisma.meckanoZone.count({ where: { organizationId } }),
   ]);
 
   const projectMetrics = new Map<string, { totalValue: number; activeDeals: number }>();
@@ -140,9 +167,31 @@ export default async function AppClientsPage({
   const projectIdParam = sp.projectId?.trim();
   const initialProjectFilter =
     projectIdParam && projects.some((p) => p.id === projectIdParam) ? projectIdParam : undefined;
+  const clientIdParam = sp.clientId?.trim();
+  const initialClientId =
+    clientIdParam && contacts.some((contact) => contact.id === clientIdParam) ? clientIdParam : undefined;
+
+  const activeProjectsCount = projects.filter((p) => p.isActive).length;
+  const recentClientRows = contacts.slice(0, 12).map((c) => ({
+    id: c.id,
+    name: c.name,
+    email: c.email?.trim() || "—",
+    statusKey: c.status,
+    statusLabel: STATUS_LABEL_HE[c.status] ?? c.status,
+    insight: clientInsightLine(c),
+  }));
+  const contactDirectory = contacts.map((c) => ({ id: c.id, name: c.name }));
 
   return (
     <WorkspaceEngineeringShell>
+      <ClientsWorkspaceUI
+        totalClients={contacts.length}
+        activeProjects={activeProjectsCount}
+        meckanoZonesCount={meckanoZonesCount}
+        aiInsightsEnabled={isGeminiConfigured()}
+        recentClients={recentClientRows}
+        contactDirectory={contactDirectory}
+      />
       <ClientsWorkspaceV2
         contacts={contacts}
         projects={projects}
@@ -150,6 +199,8 @@ export default async function AppClientsPage({
         organizationId={organizationId}
         userFirstName={userFirstName}
         initialProjectFilter={initialProjectFilter}
+        initialClientId={initialClientId}
+        embedBelowSummary
       />
     </WorkspaceEngineeringShell>
   );

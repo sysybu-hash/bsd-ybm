@@ -30,7 +30,6 @@ export type AppRouteId =
   | "settings"
   | "help"
   | "business"
-  | "intelligence"
   | "admin"
   | "success"
   | "advanced";
@@ -65,7 +64,7 @@ export type AppNavCollection = Readonly<{
 type PrimaryNavSpec = {
   id: Extract<
     AppRouteId,
-    "home" | "inbox" | "projects" | "clients" | "documents" | "finance" | "ai" | "operations" | "settings"
+    "home" | "inbox" | "clients" | "documents" | "finance" | "ai" | "settings"
   >;
   href: string;
   icon: LucideIcon;
@@ -73,22 +72,20 @@ type PrimaryNavSpec = {
 };
 
 const PRIMARY_NAV_SPECS: readonly PrimaryNavSpec[] = [
-  { id: "home", href: "/app", icon: Home, legacyHref: "/app/advanced" },
-  { id: "inbox", href: "/app/inbox", icon: BellRing, legacyHref: "/app/inbox/advanced" },
-  { id: "projects", href: "/app/projects", icon: FolderKanban, legacyHref: "/app/projects" },
-  { id: "clients", href: "/app/clients", icon: BriefcaseBusiness, legacyHref: "/app/clients/advanced" },
+  { id: "home", href: "/app", icon: Home, legacyHref: "/app" },
+  { id: "inbox", href: "/app/inbox", icon: BellRing, legacyHref: "/app/inbox" },
+  { id: "clients", href: "/app/clients", icon: BriefcaseBusiness, legacyHref: "/app/clients" },
+  { id: "documents", href: "/app/documents", icon: FileText, legacyHref: "/app/documents/erp" },
   { id: "finance", href: "/app/finance", icon: Wallet, legacyHref: "/app/finance" },
   { id: "ai", href: "/app/ai", icon: BrainCircuit, legacyHref: "/app/ai" },
-  { id: "documents", href: "/app/documents", icon: FileText, legacyHref: "/app/documents/erp" },
-  { id: "operations", href: "/app/operations", icon: FolderCog, legacyHref: "/app/operations/advanced" },
-  { id: "settings", href: "/app/settings", icon: Settings, legacyHref: "/app/settings" },
+  { id: "settings", href: "/app/settings/overview", icon: Settings, legacyHref: "/app/settings" },
 ];
 
 /** מזהי הנתיבים הראשיים — לשימוש במדיניות הרשאות / מקצוע */
 export const PRIMARY_NAV_ROUTE_IDS = PRIMARY_NAV_SPECS.map((s) => s.id) as readonly PrimaryNavSpec["id"][];
 
 type UtilityNavSpec = {
-  id: Extract<AppRouteId, "help" | "business" | "admin" | "success">;
+  id: Extract<AppRouteId, "projects" | "operations" | "help" | "business" | "admin" | "success">;
   href: string;
   icon: LucideIcon;
   legacyHref: string;
@@ -97,6 +94,8 @@ type UtilityNavSpec = {
 };
 
 const UTILITY_NAV_SPECS: readonly UtilityNavSpec[] = [
+  { id: "projects", href: "/app/projects", icon: FolderKanban, legacyHref: "/app/projects" },
+  { id: "operations", href: "/app/operations", icon: FolderCog, legacyHref: "/app/operations" },
   { id: "help", href: "/app/help", icon: CircleHelp, legacyHref: "/app/help" },
   { id: "business", href: "/app/business", icon: BriefcaseBusiness, legacyHref: "/app/business" },
   { id: "admin", href: "/app/admin", icon: ShieldCheck, legacyHref: "/app/admin", adminOnly: true },
@@ -122,13 +121,13 @@ const LEGACY_HREF_BY_ROUTE: Partial<
     string
   >
 > = {
-  inbox: "/app/advanced",
+  inbox: "/app/inbox",
   projects: "/app/projects",
-  clients: "/app/advanced",
+  clients: "/app/clients",
   finance: "/app/finance",
   ai: "/app/ai",
-  operations: "/app/advanced",
-  settings: "/app/settings",
+  operations: "/app/operations",
+  settings: "/app/settings/overview",
 };
 
 const ADVANCED_CARD_SPECS: readonly {
@@ -143,7 +142,7 @@ const ADVANCED_CARD_SPECS: readonly {
   { id: "inbox", href: "/app/inbox", icon: ShieldCheck },
   { id: "clients", href: "/app/clients", icon: BriefcaseBusiness },
   { id: "ai", href: "/app/ai", icon: BrainCircuit },
-  { id: "settings", href: "/app/settings", icon: Settings },
+  { id: "settings", href: "/app/settings/overview", icon: Settings },
   { id: "operations", href: "/app/operations", icon: FolderCog },
   { id: "meckano", href: "/app/operations/meckano", icon: LayoutDashboard, requiresMeckano: true },
 ];
@@ -160,11 +159,12 @@ function primaryNavItemFromSpec(spec: PrimaryNavSpec, t: TFunction): AppNavItem 
 }
 
 function utilityNavItemFromSpec(spec: UtilityNavSpec, t: TFunction): AppNavItem {
+  const isPrimaryStyleItem = spec.id === "projects" || spec.id === "operations";
   return {
     id: spec.id,
     href: spec.href,
-    label: t(`workspaceNav.utility.${spec.id}.label`),
-    summary: t(`workspaceNav.utility.${spec.id}.summary`),
+    label: isPrimaryStyleItem ? t(`workspaceNav.items.${spec.id}.label`) : t(`workspaceNav.utility.${spec.id}.label`),
+    summary: isPrimaryStyleItem ? t(`workspaceNav.items.${spec.id}.summary`) : t(`workspaceNav.utility.${spec.id}.summary`),
     icon: spec.icon,
     legacyHref: spec.legacyHref,
     adminOnly: spec.adminOnly,
@@ -256,7 +256,7 @@ export function buildAppNavCollection(
 export function getAdvancedWorkspaceHref(
   id: Extract<AppRouteId, "inbox" | "projects" | "clients" | "finance" | "ai" | "operations" | "settings">,
 ) {
-  return LEGACY_HREF_BY_ROUTE[id] ?? "/app/advanced";
+  return LEGACY_HREF_BY_ROUTE[id] ?? "/app";
 }
 
 /** כרטיסי `/app/advanced` — כותרות ותיאורים לפי שפת הממשק */

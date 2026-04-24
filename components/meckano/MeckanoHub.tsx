@@ -650,7 +650,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             )}
             <p className="mt-4 text-xs text-gray-400">
               ניתן גם{" "}
-                <Link href="/app/settings?tab=integrations" className="text-teal-400 hover:underline">
+                <Link href="/app/settings/stack" className="text-teal-400 hover:underline">
                 להגדיר בדף ההגדרות
               </Link>
             </p>

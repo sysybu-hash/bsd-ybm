@@ -38,7 +38,7 @@ export default function ErpHistoricalImportCallout() {
               <span>
                 <strong>ענן (Drive, OneDrive…):</strong> לחיבור וגיבוי שוטף —{" "}
                 <Link
-                    href="/app/settings?tab=cloud"
+                  href="/app/settings/stack"
                   className="font-bold text-teal-300 underline underline-offset-2"
                 >
                   הגדרות › גיבוי ענן

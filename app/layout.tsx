@@ -79,7 +79,9 @@ export default async function RootLayout({
       className={`${heebo.variable} ${assistant.variable}`}
       suppressHydrationWarning
     >
-      <body className={`${heebo.className} antialiased font-sans`}>
+      <body
+        className={`${heebo.className} min-h-screen bg-brand-background font-sans text-text-primary antialiased`}
+      >
         <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
             {/*

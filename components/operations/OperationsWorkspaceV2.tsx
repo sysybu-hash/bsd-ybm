@@ -13,7 +13,6 @@ import {
   Workflow,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
-import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatDateTime } from "@/lib/ui-formatters";
 
 type WorkflowStatus = "healthy" | "attention" | "blocked";
@@ -82,7 +81,6 @@ export default function OperationsWorkspaceV2({
   recentActivity,
 }: Props) {
   const { t, dir } = useI18n();
-  const advancedOperationsHref = getAdvancedWorkspaceHref("operations");
 
   const workflowStatusLabel = (status: WorkflowStatus) => {
     if (status === "healthy") return t("workspaceOperations.workflowHealthy");
@@ -277,7 +275,7 @@ export default function OperationsWorkspaceV2({
               <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutOnboarding")}
               </Link>
-              <Link href={advancedOperationsHref} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/settings/operations" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutAdvanced")}
               </Link>
             </div>

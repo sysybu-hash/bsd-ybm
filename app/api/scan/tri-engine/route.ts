@@ -10,6 +10,8 @@ import {
   parseTriEngineFormData,
   persistTriEngineToErp,
   triEngineAuthorizeAndCharge,
+  triEngineCreditKindFor,
+  validateTriEngineRequest,
 } from "@/lib/tri-engine-api-common";
 
 export const dynamic = "force-dynamic";
@@ -19,12 +21,8 @@ export const maxDuration = 300;
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const gate = await triEngineAuthorizeAndCharge(session);
-    if (!gate.ok) {
-      return NextResponse.json(
-        { error: gate.error, code: gate.code, resetAt: gate.resetAt },
-        { status: gate.status },
-      );
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     let formData: FormData;
@@ -39,11 +37,28 @@ export async function POST(req: NextRequest) {
       return jsonBadRequest("לא נמצא קובץ", "missing_file");
     }
 
+    const validation = validateTriEngineRequest(parsed);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error, code: validation.code }, { status: validation.status });
+    }
+
+    const gate = await triEngineAuthorizeAndCharge(
+      session,
+      triEngineCreditKindFor(parsed.scanMode, parsed.engineRunMode),
+    );
+    if (!gate.ok) {
+      return NextResponse.json(
+        { error: gate.error, code: gate.code, resetAt: gate.resetAt },
+        { status: gate.status },
+      );
+    }
+
     const input = await loadTriEngineExtractionInput(
       parsed.file,
       parsed.scanMode,
       gate.userId,
       parsed.openAiModel,
+      parsed.engineRunMode,
     );
 
     const { v5, telemetry } = await runTriEngineExtraction({

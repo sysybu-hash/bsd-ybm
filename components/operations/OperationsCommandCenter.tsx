@@ -140,7 +140,7 @@ export default function OperationsCommandCenter({
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <QuickLink href="/app/inbox" label="מרכז עבודה" tone="primary" />
-                <QuickLink href="/app/billing" label="מנוי ותשלום" />
+                <QuickLink href="/app/settings/billing" label="מנוי ותשלום" />
               </div>
             </Panel>
 
@@ -170,8 +170,8 @@ export default function OperationsCommandCenter({
                 <Health label="Live data tier" ok={data.integrations.liveDataTier !== "FREE"} okLabel={data.integrations.liveDataTier} missingLabel="FREE" />
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <QuickLink href="/app/settings" label="הגדרות" />
-                <QuickLink href="/app/settings" label="משתמשים" />
+                <QuickLink href="/app/settings/overview" label="הגדרות" />
+                <QuickLink href="/app/settings/organization" label="משתמשים" />
                 {ownerMode ? <QuickLink href="/app/admin" label="Admin" tone="warning" /> : null}
               </div>
             </Panel>

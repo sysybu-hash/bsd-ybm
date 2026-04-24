@@ -51,7 +51,7 @@ export default async function ExecutiveDashboardSection({ userEmail }: Props) {
         <div className="flex flex-wrap gap-3 self-start">
           {showSuperManage ? (
             <Link
-              href="/app/billing?tab=control"
+              href="/app/settings/billing?tab=control"
               className="inline-flex items-center gap-2 rounded-2xl border border-teal-500/40/80 bg-gradient-to-br from-teal-50 to-gray-50 px-5 py-3 text-sm font-bold text-white shadow-sm ring-1 ring-teal-200/60 transition-colors hover:border-teal-400"
             >
               <ArrowRight size={18} />
@@ -203,3 +203,4 @@ export default async function ExecutiveDashboardSection({ userEmail }: Props) {
     </div>
   );
 }
+

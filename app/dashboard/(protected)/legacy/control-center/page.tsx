@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function LegacyControlCenterPage() {
-  redirect("/app/inbox/advanced");
+  redirect("/app/inbox");
 }

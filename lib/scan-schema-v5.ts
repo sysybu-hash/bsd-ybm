@@ -30,8 +30,10 @@ export type BillOfQuantityRowV5 = {
 export type LineItemV5 = {
   description: string;
   quantity?: number;
-  unitPrice?: number;
-  lineTotal?: number;
+  unitPrice?: number; // מחיר יחידה (ללא מע"מ)
+  lineTotal?: number; // סך הכל לשורה (ללא מע"מ)
+  vatAmount?: number; // סכום המע"מ לשורה (אם מופיע)
+  currency?: "ILS" | "USD" | "EUR"; // עצירת זיופי מטבעות
   sku?: string;
 };
 
@@ -150,11 +152,18 @@ export function coerceLegacyAiToV5(
         .map((r) => {
           if (!r || typeof r !== "object") return null;
           const o = r as Record<string, unknown>;
+          const currencyRaw = o.currency;
+          const currency =
+            currencyRaw === "ILS" || currencyRaw === "USD" || currencyRaw === "EUR"
+              ? currencyRaw
+              : undefined;
           return {
             description: typeof o.description === "string" ? o.description : "",
             quantity: typeof o.quantity === "number" ? o.quantity : undefined,
             unitPrice: typeof o.unitPrice === "number" ? o.unitPrice : undefined,
             lineTotal: typeof o.lineTotal === "number" ? o.lineTotal : undefined,
+            vatAmount: typeof o.vatAmount === "number" ? o.vatAmount : undefined,
+            currency,
             sku: typeof o.sku === "string" ? o.sku : undefined,
           };
         })
@@ -217,7 +226,7 @@ export function buildV5JsonInstruction(localeLang: string, scanMode: ScanModeV5)
     "scanMode": "${scanMode}"
   },
   "billOfQuantities": Array<{ "itemRef": string | null, "description": string, "material": string | null, "dimensions": string | null, "mepPoints": string[] | null, "quantity": number | null, "unit": string | null, "notes": string | null }>,
-  "lineItems": Array<{ "description": string, "quantity"?: number, "unitPrice"?: number, "lineTotal"?: number, "sku"?: string }>,
+  "lineItems": Array<{ "description": string, "quantity"?: number, "unitPrice"?: number, "lineTotal"?: number, "vatAmount"?: number, "currency"?: "ILS" | "USD" | "EUR", "sku"?: string }>,
   "vendor": string,
   "total": number,
   "date": string | null,

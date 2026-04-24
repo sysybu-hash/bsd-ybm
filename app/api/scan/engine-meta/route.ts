@@ -9,6 +9,7 @@ import {
   isGeminiConfigured,
   isOpenAiConfigured,
 } from "@/lib/ai-providers";
+import { getDocAiProcessorConfigs } from "@/lib/ai-extract-docai";
 import { GEMINI_FLAGSHIP_MODEL, getGeminiModelId } from "@/lib/gemini-model";
 
 export const dynamic = "force-dynamic";
@@ -45,6 +46,9 @@ export async function GET() {
       documentAI: isDocAiConfigured(),
       gemini: isGeminiConfigured(),
       openai: isOpenAiConfigured(),
+    },
+    documentAI: {
+      processors: getDocAiProcessorConfigs(),
     },
     gemini: {
       flagshipModelId: GEMINI_FLAGSHIP_MODEL,

@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
@@ -17,7 +17,7 @@ import {
   parseSubscriptionTier,
 } from "@/lib/subscription-tier-config";
 
-/** אישור מנויים / ניהול לקוחות — רק Steel Admin */
+/** ׳׳™׳©׳•׳¨ ׳׳ ׳•׳™׳™׳ / ׳ ׳™׳”׳•׳ ׳׳§׳•׳—׳•׳× ג€” ׳¨׳§ Steel Admin */
 async function requirePlatformOwner() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || !session.user.email) {
@@ -40,12 +40,12 @@ export async function approveOrganizationAction(
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const session = await requirePlatformOwner();
   if (!session) {
-    return { ok: false, error: "אין הרשאה" };
+    return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
   }
 
   const tier = assertValidTier(plan);
   if (!tier) {
-    return { ok: false, error: "רמת מנוי לא חוקית" };
+    return { ok: false, error: "׳¨׳׳× ׳׳ ׳•׳™ ׳׳ ׳—׳•׳§׳™׳×" };
   }
 
   const balances = defaultScanBalancesForTier(tier);
@@ -69,14 +69,13 @@ export async function approveOrganizationAction(
         data: { accountStatus: AccountStatus.ACTIVE },
       }),
     ]);
-revalidatePath("/app/admin");
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    revalidatePath("/app/admin");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
+    revalidatePath("/app/settings/overview");
     return { ok: true };
   } catch {
-    return { ok: false, error: "עדכון נכשל" };
+    return { ok: false, error: "׳¢׳“׳›׳•׳ ׳ ׳›׳©׳" };
   }
 }
 
@@ -93,15 +92,15 @@ export async function approvePendingRegistrationAction(
   plan: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const session = await requirePlatformOwner();
-  if (!session) return { ok: false, error: "אין הרשאה" };
-  if (!userId) return { ok: false, error: "חסר מזהה משתמש" };
+  if (!session) return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
+  if (!userId) return { ok: false, error: "׳—׳¡׳¨ ׳׳–׳”׳” ׳׳©׳×׳׳©" };
 
   const tier = assertValidTier(plan);
   if (!tier) {
-    return { ok: false, error: "רמת מנוי לא חוקית" };
+    return { ok: false, error: "׳¨׳׳× ׳׳ ׳•׳™ ׳׳ ׳—׳•׳§׳™׳×" };
   }
   if (!PROVISION_ROLES.includes(role as UserRole)) {
-    return { ok: false, error: "תפקיד לא חוקי" };
+    return { ok: false, error: "׳×׳₪׳§׳™׳“ ׳׳ ׳—׳•׳§׳™" };
   }
   const nextRole = role as UserRole;
 
@@ -110,10 +109,10 @@ export async function approvePendingRegistrationAction(
     select: { id: true, organizationId: true, accountStatus: true, email: true, name: true },
   });
   if (!user?.organizationId) {
-    return { ok: false, error: "משתמש/ארגון לא נמצא" };
+    return { ok: false, error: "׳׳©׳×׳׳©/׳׳¨׳’׳•׳ ׳׳ ׳ ׳׳¦׳" };
   }
   if (isAdmin(user.email)) {
-    return { ok: false, error: "לא ניתן לאשר משתמש מנהל פלטפורמה" };
+    return { ok: false, error: "׳׳ ׳ ׳™׳×׳ ׳׳׳©׳¨ ׳׳©׳×׳׳© ׳׳ ׳”׳ ׳₪׳׳˜׳₪׳•׳¨׳׳”" };
   }
 
   const balances = defaultScanBalancesForTier(tier);
@@ -134,11 +133,10 @@ export async function approvePendingRegistrationAction(
         data: { accountStatus: AccountStatus.ACTIVE, role: nextRole },
       }),
     ]);
-revalidatePath("/app/admin");
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    revalidatePath("/app/admin");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
+    revalidatePath("/app/settings/overview");
 
     void Promise.all([
       sendAccessApprovedEmail(user.email),
@@ -147,7 +145,7 @@ revalidatePath("/app/billing");
 
     return { ok: true };
   } catch {
-    return { ok: false, error: "אישור הרשמה נכשל" };
+    return { ok: false, error: "׳׳™׳©׳•׳¨ ׳”׳¨׳©׳׳” ׳ ׳›׳©׳" };
   }
 }
 
@@ -157,7 +155,7 @@ export async function provisionUserAction(formData: FormData): Promise<
 > {
   const session = await requirePlatformOwner();
   if (!session) {
-    return { ok: false, error: "אין הרשאה" };
+    return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
   }
 
   const emailRaw = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -169,10 +167,10 @@ export async function provisionUserAction(formData: FormData): Promise<
   const passwordManual = String(formData.get("passwordManual") ?? "").trim();
 
   if (!emailRaw || !organizationId) {
-    return { ok: false, error: "חסר אימייל או ארגון" };
+    return { ok: false, error: "׳—׳¡׳¨ ׳׳™׳׳™׳™׳ ׳׳• ׳׳¨׳’׳•׳" };
   }
   if (isAdmin(emailRaw)) {
-    return { ok: false, error: "לא ניתן לספק סיסמה למנהל הפלטפורמה" };
+    return { ok: false, error: "׳׳ ׳ ׳™׳×׳ ׳׳¡׳₪׳§ ׳¡׳™׳¡׳׳” ׳׳׳ ׳”׳ ׳”׳₪׳׳˜׳₪׳•׳¨׳׳”" };
   }
 
   const role = PROVISION_ROLES.includes(roleStr as UserRole) ? (roleStr as UserRole) : "EMPLOYEE";
@@ -182,7 +180,7 @@ export async function provisionUserAction(formData: FormData): Promise<
     select: { name: true },
   });
   if (!org) {
-    return { ok: false, error: "ארגון לא נמצא" };
+    return { ok: false, error: "׳׳¨׳’׳•׳ ׳׳ ׳ ׳׳¦׳" };
   }
 
   const plain = useGenerated
@@ -190,7 +188,7 @@ export async function provisionUserAction(formData: FormData): Promise<
     : passwordManual;
 
   if (!plain || plain.length < 8) {
-    return { ok: false, error: "סיסמה קצרה מדי או חסרה (מינ׳ 8 תווים) — או סמנו מחולל אוטומטי" };
+    return { ok: false, error: "׳¡׳™׳¡׳׳” ׳§׳¦׳¨׳” ׳׳“׳™ ׳׳• ׳—׳¡׳¨׳” (׳׳™׳ ׳³ 8 ׳×׳•׳•׳™׳) ג€” ׳׳• ׳¡׳׳ ׳• ׳׳—׳•׳׳ ׳׳•׳˜׳•׳׳˜׳™" };
   }
 
   const passwordHash = await hashPassword(plain);
@@ -200,7 +198,7 @@ export async function provisionUserAction(formData: FormData): Promise<
   });
   if (existing) {
     if (existing.organizationId !== organizationId) {
-      return { ok: false, error: "האימייל משויך לארגון אחר" };
+      return { ok: false, error: "׳”׳׳™׳׳™׳™׳ ׳׳©׳•׳™׳ ׳׳׳¨׳’׳•׳ ׳׳—׳¨" };
     }
     try {
       await prisma.user.update({
@@ -213,7 +211,7 @@ export async function provisionUserAction(formData: FormData): Promise<
         },
       });
     } catch {
-      return { ok: false, error: "עדכון סיסמה נכשל" };
+      return { ok: false, error: "׳¢׳“׳›׳•׳ ׳¡׳™׳¡׳׳” ׳ ׳›׳©׳" };
     }
   } else {
     try {
@@ -228,7 +226,7 @@ export async function provisionUserAction(formData: FormData): Promise<
         },
       });
     } catch {
-      return { ok: false, error: "יצירת משתמש נכשלה" };
+      return { ok: false, error: "׳™׳¦׳™׳¨׳× ׳׳©׳×׳׳© ׳ ׳›׳©׳׳”" };
     }
   }
 
@@ -238,7 +236,8 @@ export async function provisionUserAction(formData: FormData): Promise<
     emailed = r.ok;
   }
 
-revalidatePath("/app/admin");
-  revalidatePath("/app/settings");
+  revalidatePath("/app/admin");
+  revalidatePath("/app/settings/overview");
   return { ok: true, password: sendEmail ? undefined : plain, emailed };
 }
+

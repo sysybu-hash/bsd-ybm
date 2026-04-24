@@ -4,6 +4,7 @@ import {
   Building2,
   CreditCard,
   Megaphone,
+  ShieldAlert,
   ShieldCheck,
   Users2,
 } from "lucide-react";
@@ -135,6 +136,15 @@ export default async function AdminPlatformDashboard({ searchParams, platformBas
                 {activeSection === "broadcast" ? "חזרה לסקירה" : "שידור למשתמשים"}
                 <ArrowUpRight className="h-4 w-4" aria-hidden />
               </Link>
+              {platformBasePath === "/app/admin" ? (
+                <Link
+                  href="/app/admin/steel"
+                  className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-800 hover:bg-red-100"
+                >
+                  <ShieldAlert className="h-4 w-4 shrink-0" aria-hidden />
+                  Steel Lock
+                </Link>
+              ) : null}
             </div>
           </div>
 

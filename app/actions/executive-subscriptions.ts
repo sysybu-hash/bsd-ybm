@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
@@ -41,7 +41,7 @@ export async function executiveListOrganizationsAction(): Promise<
   ExecutiveOrgRow[] | { error: string }
 > {
   const s = await requireExecutive();
-  if (!s) return { error: "אין הרשאה" };
+  if (!s) return { error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
 
   const orgs = await prisma.organization.findMany({
     orderBy: { createdAt: "desc" },
@@ -79,17 +79,17 @@ export async function executiveListOrganizationsAction(): Promise<
 
 export type ManualTierMode = "standard" | "vip" | "trial";
 
-/** עדכון מנוי ידני: רגיל (לפי מכסות רמה), VIP (מכסות גבוהות), או הרצה (FREE + ניסיון) */
+/** ׳¢׳“׳›׳•׳ ׳׳ ׳•׳™ ׳™׳“׳ ׳™: ׳¨׳’׳™׳ (׳׳₪׳™ ׳׳›׳¡׳•׳× ׳¨׳׳”), VIP (׳׳›׳¡׳•׳× ׳’׳‘׳•׳”׳•׳×), ׳׳• ׳”׳¨׳¦׳” (FREE + ׳ ׳™׳¡׳™׳•׳) */
 export async function executiveApplyManualSubscriptionAction(
   organizationId: string,
   tierRaw: string,
   mode: ManualTierMode,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const s = await requireExecutive();
-  if (!s) return { ok: false, error: "אין הרשאה" };
+  if (!s) return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
 
   const tier = parseSubscriptionTier(tierRaw);
-  if (!tier) return { ok: false, error: "רמה לא חוקית" };
+  if (!tier) return { ok: false, error: "׳¨׳׳” ׳׳ ׳—׳•׳§׳™׳×" };
 
   try {
     if (mode === "trial") {
@@ -129,14 +129,12 @@ export async function executiveApplyManualSubscriptionAction(
         },
       });
     }
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-revalidatePath("/app/clients");
-    revalidatePath("/app/billing");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
     revalidatePath("/app/clients");
     return { ok: true };
   } catch {
-    return { ok: false, error: "עדכון נכשל" };
+    return { ok: false, error: "׳¢׳“׳›׳•׳ ׳ ׳›׳©׳" };
   }
 }
 
@@ -144,7 +142,7 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
   { ok: true } | { ok: false; error: string }
 > {
   const s = await requireExecutive();
-  if (!s) return { ok: false, error: "אין הרשאה" };
+  if (!s) return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
 
   const paypalRaw = String(formData.get("paypalClientId") ?? "").trim();
   const pricesRaw = String(formData.get("tierPricesJson") ?? "").trim();
@@ -154,7 +152,7 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
     try {
       tierMonthlyPricesJson = JSON.parse(pricesRaw) as Prisma.InputJsonValue;
     } catch {
-      return { ok: false, error: "JSON מחירים לא תקין" };
+      return { ok: false, error: "JSON ׳׳—׳™׳¨׳™׳ ׳׳ ׳×׳§׳™׳" };
     }
   }
 
@@ -171,12 +169,11 @@ export async function executiveSaveBillingConfigAction(formData: FormData): Prom
         tierMonthlyPricesJson,
       },
     });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
     return { ok: true };
   } catch {
-    return { ok: false, error: "שמירה נכשלה" };
+    return { ok: false, error: "׳©׳׳™׳¨׳” ׳ ׳›׳©׳׳”" };
   }
 }
 
@@ -184,28 +181,28 @@ export async function executiveSendJoinInviteAction(formData: FormData): Promise
   { ok: true } | { ok: false; error: string }
 > {
   const s = await requireExecutive();
-  if (!s) return { ok: false, error: "אין הרשאה" };
+  if (!s) return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const headline = String(formData.get("headline") ?? "").trim() || "הוזמנתם ל-BSD-YBM";
+  const headline = String(formData.get("headline") ?? "").trim() || "׳”׳•׳–׳׳ ׳×׳ ׳-BSD-YBM";
   const bodyText = String(formData.get("bodyText") ?? "").trim();
   const tierHint = String(formData.get("tierHint") ?? "").trim();
 
   if (!email || !email.includes("@")) {
-    return { ok: false, error: "אימייל לא תקין" };
+    return { ok: false, error: "׳׳™׳׳™׳™׳ ׳׳ ׳×׳§׳™׳" };
   }
 
   const tierLine = tierHint
-    ? `\n\nרמת מנוי מוצעת: ${tierLabelHe(tierHint)} (${tierHint}).`
+    ? `\n\n׳¨׳׳× ׳׳ ׳•׳™ ׳׳•׳¦׳¢׳×: ${tierLabelHe(tierHint)} (${tierHint}).`
     : "";
   const fullBody =
     bodyText ||
-    `שלום,
+    `׳©׳׳•׳,
 
-הוזמנתם להצטרף לפלטפורמת BSD-YBM — ניהול ERP, סריקות AI וחיוב בחשבון אחד.${tierLine}
+׳”׳•׳–׳׳ ׳×׳ ׳׳”׳¦׳˜׳¨׳£ ׳׳₪׳׳˜׳₪׳•׳¨׳׳× BSD-YBM ג€” ׳ ׳™׳”׳•׳ ERP, ׳¡׳¨׳™׳§׳•׳× AI ׳•׳—׳™׳•׳‘ ׳‘׳—׳©׳‘׳•׳ ׳׳—׳“.${tierLine}
 
-בברכה,
-צוות BSD-YBM`;
+׳‘׳‘׳¨׳›׳”,
+׳¦׳•׳•׳× BSD-YBM`;
 
   const r = await sendSubscriptionJoinInviteEmail(email, {
     headline,
@@ -221,20 +218,20 @@ export async function executiveUpdateBundlePriceAction(
   priceIls: number,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const s = await requireExecutive();
-  if (!s) return { ok: false, error: "אין הרשאה" };
+  if (!s) return { ok: false, error: "׳׳™׳ ׳”׳¨׳©׳׳”" };
   if (!Number.isFinite(priceIls) || priceIls <= 0) {
-    return { ok: false, error: "מחיר לא חוקי" };
+    return { ok: false, error: "׳׳—׳™׳¨ ׳׳ ׳—׳•׳§׳™" };
   }
   try {
     await prisma.scanBundle.update({
       where: { id: bundleId },
       data: { priceIls },
     });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-    revalidatePath("/app/billing");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
     return { ok: true };
   } catch {
-    return { ok: false, error: "עדכון נכשל" };
+    return { ok: false, error: "׳¢׳“׳›׳•׳ ׳ ׳›׳©׳" };
   }
 }
+

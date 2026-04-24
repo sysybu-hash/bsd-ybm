@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
@@ -18,7 +18,7 @@ const UPLOADS_PER_MINUTE_PLATFORM = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. הגנה על ה-API: בדיקת סשן
+    // 1. ׳”׳’׳ ׳” ׳¢׳ ׳”-API: ׳‘׳“׳™׳§׳× ׳¡׳©׳
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return jsonUnauthorized();
@@ -32,23 +32,23 @@ export async function POST(req: NextRequest) {
 
     if (!rl.success) {
       return jsonTooManyRequests(
-        `חרגת ממכסת השימוש המותרת לשעה זו. נסה שוב לאחר ${rl.resetAt.toLocaleTimeString()}.`,
+        `׳—׳¨׳’׳× ׳׳׳›׳¡׳× ׳”׳©׳™׳׳•׳© ׳”׳׳•׳×׳¨׳× ׳׳©׳¢׳” ׳–׳•. ׳ ׳¡׳” ׳©׳•׳‘ ׳׳׳—׳¨ ${rl.resetAt.toLocaleTimeString()}.`,
         "rate_limited",
         { resetAt: rl.resetAt.toISOString() },
       );
     }
 
-    // 2. קבלת הקובץ מהבקשה
+    // 2. ׳§׳‘׳׳× ׳”׳§׳•׳‘׳¥ ׳׳”׳‘׳§׳©׳”
     const formData = await req.formData();
     const file = formData.get("file");
 
     if (!(file instanceof File)) {
-      return jsonBadRequest("לא נמצא קובץ", "missing_file");
+      return jsonBadRequest("׳׳ ׳ ׳׳¦׳ ׳§׳•׳‘׳¥", "missing_file");
     }
 
     const persist = formData.get("persist") !== "false";
 
-    // 3. הפעלת מנוע ה-AI של BSD-YBM
+    // 3. ׳”׳₪׳¢׳׳× ׳׳ ׳•׳¢ ׳”-AI ׳©׳ BSD-YBM
     const result = await processDocumentAction(
       formData,
       session.user.id,
@@ -60,9 +60,9 @@ export async function POST(req: NextRequest) {
       const status = result.code === "QUOTA_EXCEEDED" ? 403 : 500;
       return NextResponse.json(
         {
-          error: result.error ?? "אירעה שגיאה בפענוח המסמך",
+          error: result.error ?? "׳׳™׳¨׳¢׳” ׳©׳’׳™׳׳” ׳‘׳₪׳¢׳ ׳•׳— ׳”׳׳¡׳׳",
           code: result.code,
-      billingUrl: result.code === "QUOTA_EXCEEDED" ? "/app/billing" : undefined,
+      billingUrl: result.code === "QUOTA_EXCEEDED" ? "/app/settings/billing" : undefined,
         },
         { status },
       );
@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result.data);
   } catch (error) {
     console.error("API Route Error:", error);
-    return jsonServerError("שגיאה פנימית בשרת");
+    return jsonServerError("׳©׳’׳™׳׳” ׳₪׳ ׳™׳׳™׳× ׳‘׳©׳¨׳×");
   }
 }
+

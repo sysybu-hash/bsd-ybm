@@ -37,7 +37,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
   const createOrder = useCallback(async () => {
     setErrorMsg(null);
     if (!selected) throw new Error("אין חבילה זמינה");
-    const res = await fetch("/api/paypal/create-order", {
+    const res = await fetch("/api/billing/paypal/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ bundleId: selected.id }),
@@ -54,7 +54,7 @@ export default function PayPalBundleCheckout({ clientId, bundles }: Props) {
       setErrorMsg(null);
       const orderID = data.orderID;
       if (!orderID) throw new Error("חסר מזהה הזמנה");
-      const res = await fetch("/api/paypal/capture-order", {
+      const res = await fetch("/api/billing/paypal/capture-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderID }),

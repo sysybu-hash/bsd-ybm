@@ -195,7 +195,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           { href: "/app/clients", icon: <Users size={20} />, label: industry.vocabulary.client, desc: t("dashboard.crm"), color: "teal" },
           { href: "/app/documents", icon: <FileText size={20} />, label: industry.vocabulary.document, desc: t("dashboard.erp"), color: "emerald" },
           { href: "/app/ai#assistant", icon: <Brain size={20} />, label: t("nav.solutions"), desc: t("dashboard.aiHub"), color: "teal" },
-          { href: "/app/settings", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
+          { href: "/app/settings/overview", icon: <Settings size={20} />, label: t("dashboard.settings"), desc: t("marketingDrawer.navAria"), color: "gray" },
         ].map((c) => (
           <Link
             key={c.href}
@@ -252,7 +252,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
             <DashboardRevenueChart data={monthlySeries} />
           </div>
 
-          <Link href="/app/billing" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
+          <Link href="/app/settings/billing" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-50 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
             {t("dashboard.quickActions.erp")}
             <ChevronLeft size={14} />
           </Link>
@@ -404,7 +404,7 @@ export default function BsdYbmDashboard({ homeData }: Props) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-rose-800">{uploadError}</p>
             {scanQuotaRedirect && (
-              <Link href="/app/billing" className="mt-1 inline-block text-xs font-bold text-teal-300 hover:underline">שדרוג מנוי</Link>
+                  <Link href="/app/settings/billing" className="mt-1 inline-block text-xs font-bold text-teal-300 hover:underline">שדרוג מנוי</Link>
             )}
           </div>
           <button type="button" onClick={() => setUploadErrorDismissed(true)} className="shrink-0 rounded-lg p-1.5 text-rose-400 hover:bg-rose-100 transition-colors" aria-label="סגור">

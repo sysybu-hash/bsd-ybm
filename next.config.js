@@ -49,7 +49,7 @@ const nextConfig = {
       },
       { source: "/dashboard", destination: "/app", permanent: true },
       { source: "/dashboard/billing", destination: "/app/settings/billing", permanent: true },
-      { source: "/dashboard/settings", destination: "/app/settings", permanent: true },
+      { source: "/dashboard/settings", destination: "/app/settings/overview", permanent: true },
       { source: "/dashboard/crm", destination: "/app/clients", permanent: true },
       { source: "/dashboard/erp", destination: "/app/documents/erp", permanent: true },
       { source: "/dashboard/erp/invoice", destination: "/app/documents/issue", permanent: true },
@@ -71,7 +71,7 @@ const nextConfig = {
       { source: "/dashboard/legacy/crm", destination: "/app/clients", permanent: true },
       { source: "/dashboard/legacy/control-center", destination: "/app/inbox", permanent: true },
       { source: "/dashboard/legacy/operations", destination: "/app/operations", permanent: true },
-      { source: "/dashboard/legacy/settings", destination: "/app/settings", permanent: true },
+      { source: "/dashboard/legacy/settings", destination: "/app/settings/overview", permanent: true },
       { source: "/dashboard/legacy", destination: "/app", permanent: true },
     ];
   },

@@ -1,12 +1,12 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { decrementScan, type ScanUsageWarningId } from "@/lib/decrement-scan";
 import { isAdmin } from "@/lib/is-admin";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import type { ScanCreditKind } from "@/lib/scan-credit-kind";
 
 /**
- * מוודא שיש orgId תקף: אם חסר בטוקן — נטען מהמשתמש במסד.
- * אם אין ארגון בכלל — נוצר ארגון אישי (מכסה מהסכימה).
+ * ׳׳•׳•׳“׳ ׳©׳™׳© orgId ׳×׳§׳£: ׳׳ ׳—׳¡׳¨ ׳‘׳˜׳•׳§׳ ג€” ׳ ׳˜׳¢׳ ׳׳”׳׳©׳×׳׳© ׳‘׳׳¡׳“.
+ * ׳׳ ׳׳™׳ ׳׳¨׳’׳•׳ ׳‘׳›׳׳ ג€” ׳ ׳•׳¦׳¨ ׳׳¨׳’׳•׳ ׳׳™׳©׳™ (׳׳›׳¡׳” ׳׳”׳¡׳›׳™׳׳”).
  */
 export async function resolveOrganizationForUser(
   orgId: string,
@@ -32,12 +32,12 @@ export async function resolveOrganizationForUser(
   const label =
     user?.name?.trim() ||
     user?.email?.split("@")[0]?.trim() ||
-    "ארגון אישי";
+    "׳׳¨׳’׳•׳ ׳׳™׳©׳™";
 
   const created = await prisma.$transaction(async (tx) => {
     const org = await tx.organization.create({
       data: {
-        name: `${label} — BSD-YBM`,
+        name: `${label} ג€” BSD-YBM`,
         trialEndsAt: trialEndsAtFromNow(),
       },
       select: { id: true },
@@ -53,8 +53,8 @@ export async function resolveOrganizationForUser(
 }
 
 /**
- * בודק ומנכה יתרת סריקה לפי סוג מנוע (זול / פרימיום).
- * QUOTA_EXCEEDED → הפניה ל־/app/billing לרכישת בנדל.
+ * ׳‘׳•׳“׳§ ׳•׳׳ ׳›׳” ׳™׳×׳¨׳× ׳¡׳¨׳™׳§׳” ׳׳₪׳™ ׳¡׳•׳’ ׳׳ ׳•׳¢ (׳–׳•׳ / ׳₪׳¨׳™׳׳™׳•׳).
+ * QUOTA_EXCEEDED ג†’ ׳”׳₪׳ ׳™׳” ׳ײ¾/app/settings/billing ׳׳¨׳›׳™׳©׳× ׳‘׳ ׳“׳.
  */
 export async function checkAndDeductScanCredit(
   orgId: string,
@@ -75,14 +75,14 @@ export async function checkAndDeductScanCredit(
   if (userRow?.email && isAdmin(userRow.email)) {
     const resolved = await resolveOrganizationForUser(orgId, userId);
     if (!resolved) {
-      return { allowed: false, error: "משתמש לא נמצא במערכת." };
+      return { allowed: false, error: "׳׳©׳×׳׳© ׳׳ ׳ ׳׳¦׳ ׳‘׳׳¢׳¨׳›׳×." };
     }
     return { allowed: true, organizationId: resolved.id };
   }
 
   const resolved = await resolveOrganizationForUser(orgId, userId);
   if (!resolved) {
-    return { allowed: false, error: "משתמש לא נמצא במערכת." };
+    return { allowed: false, error: "׳׳©׳×׳׳© ׳׳ ׳ ׳׳¦׳ ׳‘׳׳¢׳¨׳›׳×." };
   }
 
   const scanType = kind === "premium" ? "PREMIUM" : "CHEAP";
@@ -101,7 +101,8 @@ export async function checkAndDeductScanCredit(
   };
 }
 
-/** @deprecated השתמשו ב־checkAndDeductScanCredit עם סוג מנוע */
+/** @deprecated ׳”׳©׳×׳׳©׳• ׳‘ײ¾checkAndDeductScanCredit ׳¢׳ ׳¡׳•׳’ ׳׳ ׳•׳¢ */
 export async function checkAndDeductCredit(orgId: string, userId: string) {
   return checkAndDeductScanCredit(orgId, userId, "cheap");
 }
+

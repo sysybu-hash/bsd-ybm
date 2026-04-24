@@ -49,7 +49,7 @@ export default function AppSuccessPage() {
               פתח מסמכים
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/app/billing" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-black text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
+          <Link href="/app/settings/billing" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-black text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
               פתח חיוב
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>

@@ -106,7 +106,7 @@ export default function ProjectDocumentBox({
           </div>
         </div>
         <Link
-          href={`/app/billing?createFor=${encodeURIComponent(clientName ?? "")}`}
+      href={`/app/settings/billing?createFor=${encodeURIComponent(clientName ?? "")}`}
           onClick={() => {}}
           className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-teal-700 transition"
         >
@@ -209,7 +209,7 @@ export default function ProjectDocumentBox({
       {docs.length > 0 && (
         <div className="border-t border-gray-100 px-5 py-3 text-center">
           <Link
-            href="/app/billing"
+      href="/app/settings/billing"
             className="text-xs font-bold text-teal-400 hover:underline"
           >
             פתח מרכז פיננסי מלא ←

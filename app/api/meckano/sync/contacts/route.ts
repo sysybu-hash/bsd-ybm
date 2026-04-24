@@ -40,12 +40,15 @@ export async function POST(req: Request) {
       emp.email ||
       `עובד #${emp.id}`;
 
-    // upsert by email if available, otherwise by meckano id in name field
-    const existing = emp.email
-      ? await prisma.contact.findFirst({
-          where: { organizationId: orgId, email: emp.email },
-        })
-      : null;
+    // זיהוי קיים: אימייל (אם יש) או שם מדויק באותו ארגון
+    const email = typeof emp.email === "string" ? emp.email.trim() : "";
+    const orWhere: Array<{ email: string } | { name: string }> = [];
+    if (email) orWhere.push({ email });
+    orWhere.push({ name });
+
+    const existing = await prisma.contact.findFirst({
+      where: { organizationId: orgId, OR: orWhere },
+    });
 
     if (existing) {
       await prisma.contact.update({

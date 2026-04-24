@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function LegacySettingsPage() {
-  redirect("/app/settings");
+  redirect("/app/settings/overview");
 }

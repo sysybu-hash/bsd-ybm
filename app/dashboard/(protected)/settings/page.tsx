@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function DashboardSettingsRedirectPage() {
-  redirect("/app/settings");
+  redirect("/app/settings/overview");
 }

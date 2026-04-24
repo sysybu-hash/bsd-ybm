@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { BellRing, Grid2X2, LogOut, ScanSearch, Settings, Sparkles } from "lucide-react";
+import { LogOut, PanelRightOpen, Sparkles } from "lucide-react";
 import AppCommandPalette from "@/components/app-shell/AppCommandPalette";
 import WorkspaceUtilityDock from "@/components/app-shell/WorkspaceUtilityDock";
-import WorkspaceGlassTopNav from "@/components/app-shell/WorkspaceGlassTopNav";
+import FloatingVoiceAssistant from "@/components/voice/FloatingVoiceAssistant";
 import BsdYbmLogo from "@/components/brand/BsdYbmLogo";
 import { buildAppNavCollection, type AppNavItem } from "@/components/app-shell/app-nav";
 import { marketingSans } from "@/lib/fonts/marketing-fonts";
@@ -52,35 +52,50 @@ function SidebarIconLink({
   icon: Icon,
   active,
   routeId,
+  expanded,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   active: boolean;
   routeId?: AppNavItem["id"];
+  expanded: boolean;
 }) {
   return (
     <Link
       href={href}
       title={label}
       aria-label={label}
-      className={`group relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition ${
+      className={`group/navitem relative flex h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-sm font-bold transition ${
         active
-          ? "bg-white/[0.08] text-white"
+          ? "bg-white/[0.10] text-white"
           : "text-[color:var(--sidebar-muted)] hover:bg-white/[0.04] hover:text-[color:var(--sidebar-text)]"
       }`}
     >
       {active ? (
         <span
-          className="pointer-events-none absolute inset-y-2 start-0 w-[2px] rounded-e-full bg-[color:var(--sidebar-accent-line)]"
+          className="pointer-events-none absolute inset-y-2 end-0 w-[2px] rounded-s-full bg-[color:var(--sidebar-accent-line)]"
           aria-hidden
         />
       ) : null}
-      <Icon className="h-[18px] w-[18px]" aria-hidden />
-      {routeId === "ai" ? (
-        <Sparkles className="pointer-events-none absolute end-1 top-1 h-2.5 w-2.5 text-[color:var(--axis-ai)]" aria-hidden />
-      ) : null}
+      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.04]">
+        <Icon className="h-[18px] w-[18px]" aria-hidden />
+        {routeId === "ai" ? (
+          <Sparkles className="pointer-events-none absolute end-0.5 top-0.5 h-2.5 w-2.5 text-[color:var(--axis-ai)]" aria-hidden />
+        ) : null}
+      </span>
+      <span className={`min-w-0 truncate transition-opacity duration-150 ${expanded ? "opacity-100" : "opacity-0"}`}>
+        {label}
+      </span>
     </Link>
+  );
+}
+
+function SidebarSectionLabel({ children, expanded }: { children: ReactNode; expanded: boolean }) {
+  return (
+    <p className={`px-3 pb-1 pt-3 text-[10px] font-black uppercase tracking-[0.16em] text-white/35 transition-opacity duration-150 ${expanded ? "opacity-100" : "opacity-0"}`}>
+      {children}
+    </p>
   );
 }
 
@@ -130,6 +145,8 @@ function buildCommandItem(item: AppNavItem) {
 export default function AppShellV2({ children, user }: Props) {
   const { t, dir } = useI18n();
   const pathname = usePathname() ?? "/app";
+  const [desktopMenuPinned, setDesktopMenuPinned] = useState(false);
+  const [desktopMenuHovered, setDesktopMenuHovered] = useState(false);
   const firstName = user.name.trim().split(" ")[0] || user.email.split("@")[0] || "User";
   const initials = firstName.slice(0, 2).toUpperCase();
 
@@ -148,7 +165,7 @@ export default function AppShellV2({ children, user }: Props) {
   const utilityNavItems = nav.utility.filter(
     (item) =>
       item.showInNav !== false &&
-      visibleUtilityIds.includes(item.id as "help" | "business" | "admin"),
+      visibleUtilityIds.includes(item.id as "projects" | "operations" | "help" | "business" | "admin"),
   );
   const currentSection = resolveActiveAppNavItem(pathname, nav);
 
@@ -159,7 +176,8 @@ export default function AppShellV2({ children, user }: Props) {
   void getSubscriptionStatusLabel(user.subscriptionStatus);
   void hasActiveWorkspaceSubscription(user.subscriptionStatus);
 
-  const commandItems = [...nav.primary, ...nav.utility, nav.advanced].map(buildCommandItem);
+  const commandItems = [...nav.primary, ...nav.utility].map(buildCommandItem);
+  const desktopMenuExpanded = desktopMenuPinned || desktopMenuHovered;
 
   return (
     <WorkspaceShellTransitionProvider>
@@ -175,22 +193,10 @@ export default function AppShellV2({ children, user }: Props) {
         </a>
 
         {/* Desktop layout: narrow dark sidebar (visual LEFT in RTL) + content (RIGHT) */}
-        <div className="relative z-10 flex min-h-screen w-full lg:grid lg:grid-cols-[1fr_4.5rem]">
+        <div className="relative z-10 flex min-h-screen w-full">
           {/* Content column */}
           <div className="flex min-w-0 flex-col">
             {/* Desktop Top Bar — bordered bottom, no floating */}
-            <header className="sticky top-0 z-40 hidden border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 backdrop-blur-sm lg:block">
-              <div className="mx-auto flex w-full min-w-0 max-w-[1600px] items-center gap-4 px-6 py-3">
-                <WorkspaceGlassTopNav
-                  items={nav.primary}
-                  pathname={pathname}
-                  navLabel={t("workspaceNav.primaryNavAria")}
-                  userInitials={initials}
-                  commandItems={commandItems}
-                />
-              </div>
-            </header>
-
             {/* Mobile Header */}
             <header className="sticky top-0 z-40 border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 backdrop-blur-sm lg:hidden">
               <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
@@ -252,56 +258,94 @@ export default function AppShellV2({ children, user }: Props) {
 
             <main
               id="app-main-content"
-              className="relative flex-1 py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] pl-4 pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.75rem+3.5rem))] sm:pl-6 sm:pr-[max(1.25rem,calc(env(safe-area-inset-right,0px)+1rem+3.5rem))] lg:pb-8 lg:pl-10 lg:pr-[max(2.5rem,calc(env(safe-area-inset-right,0px)+1.25rem+3.5rem))]"
+              className="relative flex-1 py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] pr-4 pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.75rem+3.5rem))] sm:pr-6 sm:pl-[max(1.25rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))] lg:pb-8 lg:pr-[max(6rem,calc(env(safe-area-inset-right,0px)+6rem))] lg:pl-[max(2.5rem,calc(env(safe-area-inset-left,0px)+1.25rem+3.5rem))]"
             >
               <div className="mx-auto w-full min-w-0">{children}</div>
             </main>
           </div>
 
           {/* Narrow dark sidebar (visual LEFT in RTL) */}
-          <aside className="hidden border-s border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-bg)] lg:flex lg:flex-col">
-            <div className="flex min-h-screen flex-col items-center px-1 py-4">
-              <BsdYbmLogo href="/" iconOnly variant="sidebar" size="sm" className="mb-3" />
+          <aside
+            className={`group/sidebar hidden overflow-hidden border-s border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-bg)] shadow-2xl shadow-slate-950/20 transition-[width] duration-200 ease-out lg:fixed lg:right-0 lg:top-0 lg:z-50 lg:flex lg:h-screen lg:flex-col ${
+              desktopMenuExpanded ? "lg:w-72" : "lg:w-[4.75rem]"
+            }`}
+            onMouseEnter={() => setDesktopMenuHovered(true)}
+            onMouseLeave={() => setDesktopMenuHovered(false)}
+            onFocus={() => setDesktopMenuHovered(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setDesktopMenuHovered(false);
+            }}
+          >
+            <div className="flex h-full w-72 flex-col px-2 py-4">
+              <div className="mb-3 flex items-center gap-3 px-2">
+                <button
+                  type="button"
+                  onClick={() => setDesktopMenuPinned((current) => !current)}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-white ring-1 ring-white/10 transition hover:bg-white/[0.12]"
+                  aria-label={desktopMenuPinned ? "סגור תפריט צד" : "פתח תפריט צד"}
+                  aria-expanded={desktopMenuExpanded}
+                >
+                  <PanelRightOpen className="h-5 w-5" aria-hidden />
+                </button>
+                <BsdYbmLogo href="/" iconOnly variant="sidebar" size="sm" className="shrink-0" />
+                <div className={`min-w-0 transition-opacity duration-150 ${desktopMenuExpanded ? "opacity-100" : "opacity-0"}`}>
+                  <p className="truncate text-sm font-black text-white">BSD-YBM</p>
+                  <p className="truncate text-[11px] font-semibold text-white/45">{currentSection.label}</p>
+                </div>
+              </div>
+              <div className={`mb-3 overflow-hidden px-1 transition-opacity duration-150 ${desktopMenuExpanded ? "opacity-100" : "opacity-0"}`}>
+                <AppCommandPalette items={commandItems} />
+              </div>
               <nav
-                className="flex w-full flex-1 flex-col items-center gap-1.5"
+                className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1"
                 aria-label={t("workspaceNav.sectionDailyWork")}
               >
-                <SidebarIconLink
-                  href="/app/inbox"
-                  label={t("workspaceNav.items.inbox.label")}
-                  icon={BellRing}
-                  active={isAppNavPathActive(pathname, "/app/inbox")}
-                  routeId="inbox"
-                />
-                <SidebarIconLink
-                  href="/app/documents/erp"
-                  label={t("workspaceDock.dock.scanner")}
-                  icon={ScanSearch}
-                  active={isAppNavPathActive(pathname, "/app/documents/erp")}
-                />
-                <SidebarIconLink
-                  href="/app/advanced"
-                  label={t("workspaceNav.advanced.label")}
-                  icon={Grid2X2}
-                  active={isAppNavPathActive(pathname, "/app/advanced")}
-                />
-                <SidebarIconLink
-                  href="/app/settings"
-                  label={t("workspaceNav.items.settings.label")}
-                  icon={Settings}
-                  active={isAppNavPathActive(pathname, "/app/settings")}
-                  routeId="settings"
-                />
+                <SidebarSectionLabel expanded={desktopMenuExpanded}>{t("workspaceNav.primaryNavAria")}</SidebarSectionLabel>
+                {nav.primary.map((item) => (
+                  <SidebarIconLink
+                    key={item.href}
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    active={isAppNavPathActive(pathname, item.href)}
+                    routeId={item.id}
+                    expanded={desktopMenuExpanded}
+                  />
+                ))}
+
+                {utilityNavItems.length > 0 ? (
+                  <>
+                    <SidebarSectionLabel expanded={desktopMenuExpanded}>{t("workspaceNav.sectionMoreNav")}</SidebarSectionLabel>
+                    {utilityNavItems.map((item) => (
+                      <SidebarIconLink
+                        key={item.href}
+                        href={item.href}
+                        label={item.label}
+                        icon={item.icon}
+                        active={isAppNavPathActive(pathname, item.href)}
+                        routeId={item.id}
+                        expanded={desktopMenuExpanded}
+                      />
+                    ))}
+                  </>
+                ) : null}
+
               </nav>
 
-              <div className="mt-auto pb-1">
+              <div className="mt-auto pb-1 pt-3">
                 <Link
                   href="/app/settings/overview"
                   title={`${user.name} · ${user.email}`}
                   aria-label={user.name}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.08] text-[11px] font-bold text-white ring-1 ring-white/10 transition hover:bg-white/[0.12]"
+                  className="flex h-11 w-full items-center gap-3 rounded-xl bg-white/[0.08] px-3 text-white ring-1 ring-white/10 transition hover:bg-white/[0.12]"
                 >
-                  {initials}
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.10] text-[11px] font-bold">
+                    {initials}
+                  </span>
+                  <span className={`min-w-0 transition-opacity duration-150 ${desktopMenuExpanded ? "opacity-100" : "opacity-0"}`}>
+                    <span className="block truncate text-sm font-black">{firstName}</span>
+                    <span className="block truncate text-[11px] font-semibold text-white/45">{user.email}</span>
+                  </span>
                 </Link>
               </div>
             </div>
@@ -314,6 +358,7 @@ export default function AppShellV2({ children, user }: Props) {
           userName={user.name}
           hiddenPrimaryRouteIds={hiddenPrimaryRouteIds}
         />
+        {user.organizationId ? <FloatingVoiceAssistant /> : null}
       </div>
     </WorkspaceShellTransitionProvider>
   );

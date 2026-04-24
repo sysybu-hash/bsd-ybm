@@ -6,7 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { checkAndDeductScanCredit, resolveOrganizationForUser } from "@/lib/quota-check";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getServerLocale } from "@/lib/i18n/server";
-import { inferMimeFromFileName } from "@/lib/scan-mime";
+import { inferMimeFromFileName, isSupportedScanMime, MAX_SCAN_FILE_BYTES } from "@/lib/scan-mime";
 import type { ScanExtractionV5, ScanModeV5 } from "@/lib/scan-schema-v5";
 import { v5ToPersistableAiData } from "@/lib/scan-schema-v5";
 import type { TriEngineTelemetry } from "@/lib/tri-engine-extract";
@@ -15,11 +15,21 @@ import { sendDocNotification } from "@/app/actions/send-doc-notification";
 import type { MessageTree } from "@/lib/i18n/keys";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { API_MSG_UNAUTHORIZED } from "@/lib/api-json";
+import type { ScanCreditKind } from "@/lib/scan-credit-kind";
+import { isDocAiConfigured, isGeminiConfigured, isOpenAiConfigured } from "@/lib/ai-providers";
 
 export const TRI_ENGINE_RATE_PER_HOUR = 40;
 export const TRI_ENGINE_RATE_PER_HOUR_ADMIN = 120;
 /** תיעוד בלבד — בנתיבי App Router חייבים `export const maxDuration = 300` כליטרל (לא ייבוא). */
 export const TRI_ENGINE_MAX_DURATION_SEC = 300;
+
+export type TriEngineRunMode =
+  | "AUTO"
+  | "MULTI_SEQUENTIAL"
+  | "MULTI_PARALLEL"
+  | "SINGLE_DOCUMENT_AI"
+  | "SINGLE_GEMINI"
+  | "SINGLE_OPENAI";
 
 export function parseScanMode(raw: string | null): ScanModeV5 {
   const u = String(raw ?? "").toUpperCase();
@@ -29,6 +39,55 @@ export function parseScanMode(raw: string | null): ScanModeV5 {
   return "GENERAL_DOCUMENT";
 }
 
+export function parseTriEngineRunMode(raw: string | null): TriEngineRunMode {
+  const u = String(raw ?? "").toUpperCase();
+  if (
+    u === "AUTO" ||
+    u === "MULTI_SEQUENTIAL" ||
+    u === "MULTI_PARALLEL" ||
+    u === "SINGLE_DOCUMENT_AI" ||
+    u === "SINGLE_GEMINI" ||
+    u === "SINGLE_OPENAI"
+  ) {
+    return u;
+  }
+  return "AUTO";
+}
+
+type TriEngineProvider = "docai" | "gemini" | "openai";
+
+function selectedProvidersForTriEngine(
+  scanMode: ScanModeV5,
+  engineRunMode: TriEngineRunMode,
+): TriEngineProvider[] {
+  if (engineRunMode === "SINGLE_DOCUMENT_AI") return ["docai"];
+  if (engineRunMode === "SINGLE_GEMINI") return ["gemini"];
+  if (engineRunMode === "SINGLE_OPENAI") return ["openai"];
+  if (engineRunMode === "MULTI_PARALLEL") {
+    return scanMode === "INVOICE_FINANCIAL" ? ["docai", "gemini", "openai"] : ["gemini", "openai"];
+  }
+  if (engineRunMode === "MULTI_SEQUENTIAL") {
+    return scanMode === "INVOICE_FINANCIAL" ? ["docai", "openai", "gemini"] : scanMode === "DRAWING_BOQ" ? ["gemini", "openai"] : ["gemini"];
+  }
+  if (scanMode === "INVOICE_FINANCIAL") return ["docai", "openai", "gemini"];
+  if (scanMode === "DRAWING_BOQ") return ["gemini", "openai"];
+  return ["gemini"];
+}
+
+export function triEngineCreditKindFor(
+  scanMode: ScanModeV5,
+  engineRunMode: TriEngineRunMode,
+): ScanCreditKind {
+  const providers = selectedProvidersForTriEngine(scanMode, engineRunMode);
+  return providers.some((provider) => provider === "docai" || provider === "openai") ? "premium" : "cheap";
+}
+
+function isProviderConfigured(provider: TriEngineProvider): boolean {
+  if (provider === "docai") return isDocAiConfigured();
+  if (provider === "openai") return isOpenAiConfigured();
+  return isGeminiConfigured();
+}
+
 export type ParsedTriEngineForm = {
   file: File;
   scanMode: ScanModeV5;
@@ -36,6 +95,7 @@ export type ParsedTriEngineForm = {
   projectLabel: string | null;
   clientLabel: string | null;
   openAiModel?: string;
+  engineRunMode: TriEngineRunMode;
 };
 
 /** מחזיר null אם חסר קובץ */
@@ -55,8 +115,58 @@ export function parseTriEngineFormData(formData: FormData): ParsedTriEngineForm 
     typeof formData.get("openAiModel") === "string"
       ? (formData.get("openAiModel") as string).trim() || undefined
       : undefined;
+  const engineRunMode = parseTriEngineRunMode(
+    typeof formData.get("engineRunMode") === "string" ? (formData.get("engineRunMode") as string) : null,
+  );
 
-  return { file, scanMode, persist, projectLabel, clientLabel, openAiModel };
+  return { file, scanMode, persist, projectLabel, clientLabel, openAiModel, engineRunMode };
+}
+
+export function validateTriEngineRequest(parsed: ParsedTriEngineForm):
+  | { ok: true }
+  | { ok: false; status: number; error: string; code: string } {
+  if (parsed.file.size <= 0) {
+    return { ok: false, status: 400, error: "הקובץ ריק.", code: "empty_file" };
+  }
+  if (parsed.file.size > MAX_SCAN_FILE_BYTES) {
+    return {
+      ok: false,
+      status: 413,
+      error: "הקובץ גדול מדי. ניתן לסרוק קבצים עד 25MB.",
+      code: "file_too_large",
+    };
+  }
+
+  const mimeType = inferMimeFromFileName(parsed.file.name, parsed.file.type || "application/octet-stream");
+  if (!isSupportedScanMime(mimeType)) {
+    return {
+      ok: false,
+      status: 415,
+      error: "סוג הקובץ אינו נתמך בלוח הסריקה.",
+      code: "unsupported_file_type",
+    };
+  }
+
+  const providers = selectedProvidersForTriEngine(parsed.scanMode, parsed.engineRunMode);
+  const configured = providers.filter(isProviderConfigured);
+  if (parsed.engineRunMode.startsWith("SINGLE_") && configured.length === 0) {
+    return {
+      ok: false,
+      status: 503,
+      error: "המנוע היחיד שנבחר אינו מוגדר בסביבה.",
+      code: "selected_engine_not_configured",
+    };
+  }
+  if (configured.length === 0) {
+    return {
+      ok: false,
+      status: 503,
+      error: "לא הוגדר אף מנוע פעיל למסלול הסריקה שנבחר.",
+      code: "no_engine_configured",
+    };
+  }
+
+  return { ok: true };
 }
 
 export type TriEngineGateOk = {
@@ -70,7 +180,10 @@ export type TriEngineGateResult =
   | ({ ok: true } & TriEngineGateOk)
   | { ok: false; status: number; error: string; resetAt?: Date; code?: string };
 
-export async function triEngineAuthorizeAndCharge(session: Session | null): Promise<TriEngineGateResult> {
+export async function triEngineAuthorizeAndCharge(
+  session: Session | null,
+  scanCreditKind: ScanCreditKind,
+): Promise<TriEngineGateResult> {
   if (!session?.user?.id) {
     return { ok: false, status: 401, error: API_MSG_UNAUTHORIZED };
   }
@@ -100,7 +213,7 @@ export async function triEngineAuthorizeAndCharge(session: Session | null): Prom
     return { ok: false, status: 400, error: "ארגון לא תקין" };
   }
 
-  const quota = await checkAndDeductScanCredit(resolvedOrg.id, session.user.id, "premium");
+  const quota = await checkAndDeductScanCredit(resolvedOrg.id, session.user.id, scanCreditKind);
   if (!quota.allowed) {
     return {
       ok: false,
@@ -129,6 +242,7 @@ export type TriEngineExtractionInput = {
   orgTrade: string | null;
   messages: MessageTree;
   openAiModel?: string;
+  engineRunMode: TriEngineRunMode;
 };
 
 export async function loadTriEngineExtractionInput(
@@ -136,6 +250,7 @@ export async function loadTriEngineExtractionInput(
   scanMode: ScanModeV5,
   userId: string,
   openAiModel?: string,
+  engineRunMode: TriEngineRunMode = "AUTO",
 ): Promise<TriEngineExtractionInput> {
   const bytes = await file.arrayBuffer();
   const base64 = Buffer.from(bytes).toString("base64");
@@ -165,6 +280,7 @@ export async function loadTriEngineExtractionInput(
     orgTrade,
     messages,
     openAiModel,
+    engineRunMode,
   };
 }
 

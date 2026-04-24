@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
-import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
 type NotificationItem = {
@@ -71,7 +70,6 @@ export default function InboxWorkspaceV2({
 }: Props) {
   const { t, dir, locale } = useI18n();
   const dateLocale = locale === "he" ? "he-IL" : locale === "ru" ? "ru-RU" : "en-GB";
-  const advancedInboxHref = getAdvancedWorkspaceHref("inbox");
   const [notifications, setNotifications] = useState(initialNotifications);
   const [markingAll, setMarkingAll] = useState(false);
   const [markingIds, setMarkingIds] = useState<string[]>([]);
@@ -138,7 +136,7 @@ export default function InboxWorkspaceV2({
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
-              href={advancedInboxHref}
+              href="/app/operations"
               className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--axis-clients)] bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
             >
               {t("workspaceInbox.advancedCta")}

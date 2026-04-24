@@ -95,3 +95,63 @@ export async function paypalCaptureOrder(orderId: string): Promise<Record<string
   }
   return j;
 }
+
+export async function paypalFetchOrder(orderId: string): Promise<Record<string, unknown>> {
+  const token = await paypalGetAccessToken();
+  const res = await fetch(`${paypalBaseUrl()}/v2/checkout/orders/${orderId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const j = (await res.json()) as Record<string, unknown>;
+  if (!res.ok) {
+    console.error("[PayPal get order]", j);
+    throw new Error(typeof j.message === "string" ? j.message : `PayPal get order ${res.status}`);
+  }
+  return j;
+}
+
+/**
+ * אימות חתימת webhook לפי PayPal — דורש PAYPAL_WEBHOOK_ID (ממסך הפיתוח של Webhooks).
+ * https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
+ */
+export async function verifyPayPalWebhookSignature(params: {
+  transmissionId: string;
+  transmissionTime: string;
+  certUrl: string;
+  authAlgo: string;
+  transmissionSig: string;
+  body: string;
+}): Promise<boolean> {
+  const webhookId = process.env.PAYPAL_WEBHOOK_ID?.trim();
+  if (!webhookId) {
+    console.error("[PayPal webhook] חסר PAYPAL_WEBHOOK_ID — דוחים אירוע");
+    return false;
+  }
+  try {
+    const token = await paypalGetAccessToken();
+    const res = await fetch(`${paypalBaseUrl()}/v1/notifications/verify-webhook-signature`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        transmission_id: params.transmissionId,
+        transmission_time: params.transmissionTime,
+        cert_url: params.certUrl,
+        auth_algo: params.authAlgo,
+        transmission_sig: params.transmissionSig,
+        webhook_id: webhookId,
+        webhook_event_body: params.body,
+      }),
+    });
+    const j = (await res.json()) as { verification_status?: string };
+    return res.ok && j.verification_status === "SUCCESS";
+  } catch (e) {
+    console.error("[PayPal webhook] verify", e);
+    return false;
+  }
+}

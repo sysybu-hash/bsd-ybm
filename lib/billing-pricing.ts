@@ -31,6 +31,17 @@ export async function getEffectiveTierMonthlyPriceIls(
   return base;
 }
 
+/** סכום לחיוב PayPal לפי מחזור: חודשי = מחיר חודשי, שנתי = 12×חודש −20% */
+export async function getExpectedTierOrderAmountIls(
+  tier: SubscriptionTier,
+  cycle: "monthly" | "annual",
+): Promise<number | null> {
+  const monthly = await getEffectiveTierMonthlyPriceIls(tier);
+  if (monthly == null) return null;
+  if (cycle === "monthly") return monthly;
+  return Math.round(monthly * 12 * 0.8 * 100) / 100;
+}
+
 export async function getPayPalClientIdPublic(): Promise<string> {
   const row = await prisma.platformBillingConfig.findUnique({
     where: { id: "default" },

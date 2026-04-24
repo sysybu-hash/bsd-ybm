@@ -54,7 +54,7 @@ export default function DashboardRevenueChart({ data }: Props) {
       </RechartsBounded>
       <p className="mt-4 text-center">
         <a
-          href="/app/billing"
+      href="/app/settings/billing"
           className="text-sm font-bold text-teal-300 hover:text-teal-800 underline underline-offset-2"
         >
           ניהול מסמכים ב־ERP

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Brain, 
   BarChart3, 
@@ -10,6 +10,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import MultiEngineScanner from "@/components/MultiEngineScanner";
+import { GarmoshkaScannerUI } from "@/components/garmoshka/GarmoshkaScannerUI";
 import ErpProjectNotebook from "@/components/erp/ErpProjectNotebook";
 import ERPDashboard, { ErpStatCard, ErpFlowSummary } from "@/components/ERPDashboard";
 import ErpDocumentsManager from "@/components/ErpDocumentsManager";
@@ -59,6 +60,14 @@ export default function ErpClient({
   const { t, dir } = useI18n();
   const [activeTab, setActiveTab] = useState<"overview" | "scan" | "notebook" | "docs">("overview");
   const [priceAlertModalOpen, setPriceAlertModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab === "scan" || tab === "notebook" || tab === "docs" || tab === "overview") {
+      setActiveTab(tab);
+    }
+  }, []);
 
   const TABS = [
     { id: "overview", label: t("dashboard.overview"), icon: <BarChart3 size={18} /> },
@@ -182,8 +191,18 @@ export default function ErpClient({
           )}
 
           {activeTab === "scan" && (
-            <div className="bg-white rounded-[2.5rem] p-1 border-0 shadow-2xl shadow-blue-900/5">
-              <MultiEngineScanner />
+            <div className="space-y-6">
+              <GarmoshkaScannerUI
+                isScanning={false}
+                recentScans={[]}
+                onUpload={() => {
+                  const el = document.querySelector<HTMLInputElement>("#erp-multi-scanner input[type=file]");
+                  el?.click();
+                }}
+              />
+              <div className="rounded-[2.5rem] border-0 bg-white p-1 shadow-2xl shadow-blue-900/5">
+                <MultiEngineScanner />
+              </div>
             </div>
           )}
 

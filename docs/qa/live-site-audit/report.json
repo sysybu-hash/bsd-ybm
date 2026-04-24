@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-04-22T19:48:12.437Z",
+  "checkedAt": "2026-04-23T14:03:01.021Z",
   "baseURL": "http://127.0.0.1:3000",
   "email": "owner@bsd-demo.test",
   "routeCount": 39,
@@ -3762,10 +3762,10 @@
       "status": 200,
       "finalUrl": "http://127.0.0.1:3000/app/insights/advanced",
       "title": "AI Hub Advanced - BSD-YBM | BSD-YBM",
-      "bodyTextLength": 1468,
+      "bodyTextLength": 2154,
       "blankish": false,
       "hasHorizontalOverflow": false,
-      "buttonCount": 11,
+      "buttonCount": 22,
       "linkCount": 18,
       "visibleButtons": [
         {
@@ -3799,19 +3799,85 @@
           "type": "button"
         },
         {
-          "text": "הרץ סריקת Tri-Engine",
+          "text": "איפוס תוצאה",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "ניקוי לוח",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "ERP",
           "aria": null,
           "disabled": true,
           "type": "button"
         },
         {
-          "text": "אשר ל-ERP",
+          "text": "CRM",
           "aria": null,
           "disabled": true,
           "type": "button"
         },
         {
-          "text": "ייצוא ל-CRM",
+          "text": "חשבונית / כספיםפענוח חשבוניות, ספקים, שורות מחיר, מעמ וסיכום ERP.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "תכנית / כתב כמויותקריאת תכניות בניה, מקרא, מידות, יחידות ו-BOQ.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "מסמך כלליסיכום מהיר, ישויות, מטא-דאטה והבנת מסמך.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "חכם לפי סוג מסמךAuto",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "כמה מנועים במקבילParallel",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "רב-מנועי מדורגTri-Engine",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "Document AI בלבדDocAI",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "Gemini בלבדGemini",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "GPT בלבדGPT",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "הרץ סריקה מקצועית",
           "aria": null,
           "disabled": true,
           "type": "button"
@@ -10977,10 +11043,10 @@
       "status": 200,
       "finalUrl": "http://127.0.0.1:3000/app/insights/advanced",
       "title": "AI Hub Advanced - BSD-YBM | BSD-YBM",
-      "bodyTextLength": 1413,
+      "bodyTextLength": 2099,
       "blankish": false,
       "hasHorizontalOverflow": false,
-      "buttonCount": 10,
+      "buttonCount": 21,
       "linkCount": 13,
       "visibleButtons": [
         {
@@ -11008,19 +11074,85 @@
           "type": "button"
         },
         {
-          "text": "הרץ סריקת Tri-Engine",
+          "text": "איפוס תוצאה",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "ניקוי לוח",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "ERP",
           "aria": null,
           "disabled": true,
           "type": "button"
         },
         {
-          "text": "אשר ל-ERP",
+          "text": "CRM",
           "aria": null,
           "disabled": true,
           "type": "button"
         },
         {
-          "text": "ייצוא ל-CRM",
+          "text": "חשבונית / כספיםפענוח חשבוניות, ספקים, שורות מחיר, מעמ וסיכום ERP.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "תכנית / כתב כמויותקריאת תכניות בניה, מקרא, מידות, יחידות ו-BOQ.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "מסמך כלליסיכום מהיר, ישויות, מטא-דאטה והבנת מסמך.",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "חכם לפי סוג מסמךAuto",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "כמה מנועים במקבילParallel",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "רב-מנועי מדורגTri-Engine",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "Document AI בלבדDocAI",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "Gemini בלבדGemini",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "GPT בלבדGPT",
+          "aria": null,
+          "disabled": false,
+          "type": "button"
+        },
+        {
+          "text": "הרץ סריקה מקצועית",
           "aria": null,
           "disabled": true,
           "type": "button"

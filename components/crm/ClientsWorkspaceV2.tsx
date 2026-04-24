@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useDeferredValue, useMemo, useState, useTransition } from "react";
+import { startTransition, useDeferredValue, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -74,6 +74,9 @@ type Props = Readonly<{
   organizationId: string;
   userFirstName: string;
   initialProjectFilter?: string;
+  initialClientId?: string;
+  /** כש־true — כותרת ה-Hero (כותרת+CTA) מוסתרת כי מוצגת שכבת סקירה מעל */
+  embedBelowSummary?: boolean;
 }>;
 
 const STATUS_BADGE_CLASS = {
@@ -282,6 +285,8 @@ export default function ClientsWorkspaceV2({
   organizationId,
   userFirstName,
   initialProjectFilter,
+  initialClientId,
+  embedBelowSummary = false,
 }: Props) {
   const { t, dir } = useI18n();
   const [search, setSearch] = useState("");
@@ -338,6 +343,14 @@ export default function ClientsWorkspaceV2({
 
   const clientsLabel = industryProfile.clientsLabel;
 
+  useEffect(() => {
+    if (!initialClientId) return;
+    const target = contacts.find((contact) => contact.id === initialClientId);
+    if (target) {
+      setEditing(target);
+    }
+  }, [contacts, initialClientId]);
+
   // Sparkline for client-created trend
   const clientsSpark = [2, 3, 5, 4, 6, 5, 8, 7, 9, 8, 10, 12].map((v) =>
     Math.max(1, (v * filteredContacts.length) / 12),
@@ -359,20 +372,22 @@ export default function ClientsWorkspaceV2({
 
   return (
     <div className="w-full min-w-0 space-y-8" dir={dir}>
-      <WorkspacePageHeader
-        eyebrow={t("workspaceClients.eyebrow")}
-        title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
-        subtitle={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
-        actions={
-          <Link
-            href="/app/advanced"
-            className="inline-flex items-center gap-1.5 rounded-2xl bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-clients-strong)]"
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-            {t("workspaceClients.addCta")}
-          </Link>
-        }
-      />
+      {!embedBelowSummary && (
+        <WorkspacePageHeader
+          eyebrow={t("workspaceClients.eyebrow")}
+          title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
+          subtitle={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
+          actions={
+            <Link
+              href="/app/clients#quick-client-form"
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-clients-strong)]"
+            >
+              <Plus className="h-4 w-4" aria-hidden />
+              {t("workspaceClients.addCta")}
+            </Link>
+          }
+        />
+      )}
 
       {/* Filters bar */}
       <div className="flex flex-wrap items-center gap-2.5 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 shadow-[var(--shadow-xs)]">
@@ -589,7 +604,7 @@ export default function ClientsWorkspaceV2({
                               className="flex items-stretch gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] transition hover:border-[color:var(--axis-clients)] hover:shadow-[var(--shadow-sm)]"
                             >
                               <Link
-                                href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                                href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                                 className="flex min-w-0 flex-1 items-start gap-2.5 p-2.5"
                               >
                                 <span
@@ -656,7 +671,7 @@ export default function ClientsWorkspaceV2({
                                 className="flex items-stretch gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] transition hover:-translate-y-0.5 hover:border-[color:var(--axis-clients)] hover:shadow-[var(--shadow-sm)]"
                               >
                                 <Link
-                                  href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                                  href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                                   className="flex min-w-0 flex-1 items-start gap-2.5 p-2.5"
                                 >
                                   <span
@@ -729,7 +744,7 @@ export default function ClientsWorkspaceV2({
                         <tr key={c.id} className="align-middle">
                           <td>
                             <Link
-                              href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                              href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                               className="flex items-center gap-2 text-sm font-black text-[color:var(--ink-900)]"
                             >
                               <span
@@ -798,7 +813,7 @@ export default function ClientsWorkspaceV2({
                       className="flex items-center gap-2 rounded-xl border border-slate-200/10 bg-[color:var(--canvas-raised)] shadow-sm transition hover:border-[color:var(--axis-clients)] hover:bg-[color:var(--canvas-sunken)]"
                     >
                       <Link
-                        href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                        href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                         className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5"
                       >
                         <span
@@ -881,7 +896,7 @@ export default function ClientsWorkspaceV2({
                 return (
                   <li key={c.id}>
                     <Link
-                      href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                      href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                       className="block py-2.5 transition hover:bg-white/40 rounded-md px-1"
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -913,7 +928,7 @@ export default function ClientsWorkspaceV2({
               {missingContactDetails.map((c) => (
                 <li key={c.id} className="py-2.5">
                   <Link
-                    href={`/app/advanced?clientId=${encodeURIComponent(c.id)}`}
+                    href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
                     className="flex items-center gap-2 text-[13px] transition hover:text-[color:var(--axis-ai)]"
                   >
                     <Sparkles className="h-3.5 w-3.5 shrink-0 text-[color:var(--axis-ai)]" aria-hidden />
@@ -954,6 +969,7 @@ export default function ClientsWorkspaceV2({
 
         <Tile tone="neutral" span={12}>
           <TileHeader eyebrow="CRM" title="הוספת לקוח מהירה" />
+          <div id="quick-client-form" className="scroll-mt-24" />
           <div className="mt-4 max-w-3xl">
             <QuickClientForm projects={projects.map((p) => ({ id: p.id, name: p.name }))} />
           </div>

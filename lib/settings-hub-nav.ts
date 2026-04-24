@@ -9,12 +9,14 @@ import {
   LayoutDashboard,
   ShieldCheck,
   Sparkles,
+  User,
   Workflow,
 } from "lucide-react";
 
 /** מזהי מקטעים תחת /app/settings/[segment] */
 export const SETTINGS_HUB_SEGMENT_IDS = [
   "overview",
+  "profile",
   "organization",
   "profession",
   "presence",
@@ -67,6 +69,13 @@ export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
         label: "סקירה",
         description: "מפת דרכים וקיצורים",
         icon: LayoutDashboard,
+      },
+      {
+        id: "profile",
+        href: `${BASE}/profile`,
+        label: "פרופיל",
+        description: "פרטים אישיים ואבטחה",
+        icon: User,
       },
       {
         id: "organization",

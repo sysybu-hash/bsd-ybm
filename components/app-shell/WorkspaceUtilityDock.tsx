@@ -10,13 +10,8 @@ import {
   Accessibility,
   BrainCircuit,
   Loader2,
-  Mic,
-  Play,
   ScanSearch,
   Sparkles,
-  Square,
-  Volume2,
-  VolumeX,
   WandSparkles,
   X,
 } from "lucide-react";
@@ -57,7 +52,7 @@ const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner
 });
 
 type DockPanel = "accessibility" | "assistant" | "scanner" | null;
-type AssistantSource = "system" | "text" | "voice";
+type AssistantSource = "system" | "text";
 type AssistantMessage = {
   id: string;
   role: "user" | "assistant";
@@ -70,33 +65,6 @@ type WorkspaceUtilityDockProps = {
   industryProfile: IndustryProfile;
   userName: string;
   hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>;
-};
-
-type SpeechRecognitionResultLike = {
-  isFinal: boolean;
-  0: {
-    transcript: string;
-  };
-};
-
-type SpeechRecognitionEventLike = Event & {
-  results: ArrayLike<SpeechRecognitionResultLike>;
-};
-
-type SpeechRecognitionLike = EventTarget & {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start: () => void;
-  stop: () => void;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  onerror: ((event: Event) => void) | null;
-  onend: (() => void) | null;
-};
-
-type SpeechWindow = Window & {
-  SpeechRecognition?: new () => SpeechRecognitionLike;
-  webkitSpeechRecognition?: new () => SpeechRecognitionLike;
 };
 
 function createMessage(
@@ -204,7 +172,7 @@ export default function WorkspaceUtilityDock({
   useEffect(() => {
     setPortalReady(true);
   }, []);
-  const { t, messages: localeMessages, locale, dir } = useI18n();
+  const { t, messages: localeMessages, dir } = useI18n();
   const pathname = usePathname() ?? "/app";
   const currentSection = useMemo(
     () => resolveSectionMeta(pathname, industryProfile, t, hiddenPrimaryRouteIds),
@@ -238,7 +206,7 @@ export default function WorkspaceUtilityDock({
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.billing");
       case "/app/operations":
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.operations");
-      case "/app/settings":
+      case "/app/settings/overview":
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.settings");
       default:
         return [
@@ -250,22 +218,12 @@ export default function WorkspaceUtilityDock({
   }, [currentSection.href, currentSection.label, industryProfile, localeMessages, t]);
 
   const [openPanel, setOpenPanel] = useState<DockPanel>(null);
-  const prevPanelRef = useRef<DockPanel | null>(null);
-  const [assistantMode, setAssistantMode] = useState<"chat" | "voice">("chat");
   const [chatMessages, setChatMessages] = useState<AssistantMessage[]>([
     createMessage("assistant", welcomeMessage, "system"),
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [voiceDraft, setVoiceDraft] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const [voiceSupported, setVoiceSupported] = useState(false);
-  const [autoSpeak, setAutoSpeak] = useState(true);
-  const [autoSendVoice, setAutoSendVoice] = useState(false);
-  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
-  const [lastAssistantReply, setLastAssistantReply] = useState("");
   const messagesRef = useRef<HTMLDivElement | null>(null);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
     setChatMessages((current) => {
@@ -276,35 +234,8 @@ export default function WorkspaceUtilityDock({
     });
   }, [welcomeMessage]);
 
-  const stopSpeaking = useCallback(() => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    setSpeakingMessageId(null);
-  }, []);
-
-  const speakMessage = useCallback(
-    (text: string, messageId: string) => {
-      if (typeof window === "undefined" || !window.speechSynthesis) return;
-
-      if (speakingMessageId === messageId) {
-        window.speechSynthesis.cancel();
-        setSpeakingMessageId(null);
-        return;
-      }
-
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang =
-        locale === "he" ? "he-IL" : locale === "ru" ? "ru-RU" : "en-US";
-      utterance.onend = () => setSpeakingMessageId(null);
-      window.speechSynthesis.speak(utterance);
-      setSpeakingMessageId(messageId);
-    },
-    [locale, speakingMessageId],
-  );
-
   const sendAssistantMessage = useCallback(
-    async (rawMessage: string, source: Extract<AssistantSource, "text" | "voice"> = "text") => {
+    async (rawMessage: string, source: Extract<AssistantSource, "text"> = "text") => {
       const trimmed = rawMessage.trim();
       if (!trimmed || sending) return;
 
@@ -372,77 +303,15 @@ export default function WorkspaceUtilityDock({
 
         const assistantMessage = createMessage("assistant", reply, source);
         setChatMessages((current) => [...current, assistantMessage]);
-        setLastAssistantReply(reply);
-
-        if (autoSpeak && source === "voice") {
-          speakMessage(reply, assistantMessage.id);
-        }
       } catch (error) {
         const message = error instanceof Error ? error.message : t("workspaceDock.errors.generic");
         setChatMessages((current) => [...current, createMessage("assistant", message, source)]);
-        setLastAssistantReply(message);
       } finally {
         setSending(false);
       }
     },
-    [
-      autoSpeak,
-      currentSection.label,
-      currentSection.summary,
-      industryProfile,
-      orgId,
-      sending,
-      speakMessage,
-      t,
-    ],
+    [currentSection.label, currentSection.summary, industryProfile, orgId, sending, t],
   );
-
-  useEffect(() => {
-    const browserWindow = window as SpeechWindow;
-    const RecognitionCtor =
-      browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition;
-
-    if (!RecognitionCtor) {
-      setVoiceSupported(false);
-      return;
-    }
-
-    const recognition = new RecognitionCtor();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = document.documentElement.lang === "he" ? "he-IL" : "en-US";
-    recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result[0]?.transcript ?? "")
-        .join(" ")
-        .trim();
-
-      setVoiceDraft(transcript);
-
-      const hasFinalResult = Array.from(event.results).some((result) => result.isFinal);
-      if (hasFinalResult && autoSendVoice && transcript) {
-        void sendAssistantMessage(transcript, "voice");
-        setVoiceDraft("");
-      }
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-
-    recognitionRef.current = recognition;
-    setVoiceSupported(true);
-
-    return () => {
-      recognition.stop();
-      recognitionRef.current = null;
-    };
-  }, [autoSendVoice, sendAssistantMessage]);
-
-  useEffect(() => {
-    if (openPanel === "assistant" && prevPanelRef.current !== "assistant") {
-      setAssistantMode("chat");
-    }
-    prevPanelRef.current = openPanel;
-  }, [openPanel]);
 
   useEffect(() => {
     if (!messagesRef.current) return;
@@ -461,48 +330,12 @@ export default function WorkspaceUtilityDock({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openPanel]);
 
-  useEffect(() => {
-    const allowVoice = openPanel === "assistant" && assistantMode === "voice";
-    if (!allowVoice && isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    }
-  }, [isListening, openPanel, assistantMode]);
-
-  const toggleVoiceCapture = useCallback(() => {
-    if (!voiceSupported) return;
-
-    if (isListening) {
-      try {
-        recognitionRef.current?.stop();
-      } finally {
-        setIsListening(false);
-      }
-      return;
-    }
-
-    try {
-      recognitionRef.current?.start();
-      setVoiceDraft("");
-      setIsListening(true);
-    } catch {
-      setIsListening(false);
-    }
-  }, [isListening, voiceSupported]);
-
   const submitInput = useCallback(() => {
     const draft = input.trim();
     if (!draft) return;
     setInput("");
     void sendAssistantMessage(draft, "text");
   }, [input, sendAssistantMessage]);
-
-  const submitVoiceDraft = useCallback(() => {
-    const draft = voiceDraft.trim();
-    if (!draft) return;
-    setVoiceDraft("");
-    void sendAssistantMessage(draft, "voice");
-  }, [sendAssistantMessage, voiceDraft]);
 
   const scannerButtonDisabled = !orgId;
 
@@ -511,11 +344,11 @@ export default function WorkspaceUtilityDock({
    * כדי שלא יזוזו עם מיכלי תוכן ולא יישארו “באמצע” המסך. אינן גוללות — position: fixed על document.body.
    */
   const workspaceDockFabPosition =
-    "fixed z-[9900] top-1/2 -translate-y-1/2 right-[max(0.75rem,env(safe-area-inset-right,0px))] lg:right-[max(1rem,env(safe-area-inset-right,0px))]";
+    "fixed z-[9900] top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))] lg:left-[max(1rem,env(safe-area-inset-left,0px))]";
 
   /** פאנלים קומפקטיים: ממוקמים משמאל לעמודת הבועות (~3.5rem) */
   const compactPanelClassName =
-    "fixed z-[9800] flex max-h-[min(calc(100dvh-2rem),calc(100vh-2rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/88 shadow-xl backdrop-blur-xl backdrop-saturate-150 top-1/2 -translate-y-1/2 right-[max(0.75rem,calc(env(safe-area-inset-right,0px)+0.75rem+3.5rem))] lg:right-[max(1rem,calc(env(safe-area-inset-right,0px)+1rem+3.5rem))]";
+    "fixed z-[9800] flex max-h-[min(calc(100dvh-2rem),calc(100vh-2rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/88 shadow-xl backdrop-blur-xl backdrop-saturate-150 top-1/2 -translate-y-1/2 left-[max(0.75rem,calc(env(safe-area-inset-left,0px)+0.75rem+3.5rem))] lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]";
 
   const desktopDock = (
     <div className={`${workspaceDockFabPosition} hidden flex-col gap-2 lg:flex`}>
@@ -545,7 +378,7 @@ export default function WorkspaceUtilityDock({
   );
 
   const mobileDock = (
-    <div className="fixed z-[9900] lg:hidden top-1/2 -translate-y-1/2 right-[max(0.75rem,env(safe-area-inset-right,0px))]">
+    <div className="fixed z-[9900] lg:hidden top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))]">
       <div className="flex flex-col gap-1 rounded-2xl border border-slate-200/10 bg-white/88 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <DockButton
           active={openPanel === "accessibility"}
@@ -617,154 +450,7 @@ export default function WorkspaceUtilityDock({
             </button>
           </div>
 
-          <div
-            className="flex gap-1 border-b border-slate-200/10 px-5 pb-3"
-            role="tablist"
-            aria-label={t("workspaceDock.assistant.panelAria")}
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={assistantMode === "chat"}
-              onClick={() => setAssistantMode("chat")}
-              className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
-                assistantMode === "chat"
-                  ? "bg-[color:var(--v2-accent)] text-white shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {t("workspaceDock.assistant.tabChat")}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={assistantMode === "voice"}
-              onClick={() => setAssistantMode("voice")}
-              className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
-                assistantMode === "voice"
-                  ? "bg-[color:var(--v2-accent)] text-white shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {t("workspaceDock.assistant.tabVoice")}
-            </button>
-          </div>
-
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            {assistantMode === "voice" ? (
-              <div className="space-y-4">
-                <p className="text-[11px] leading-relaxed text-slate-500">{t("workspaceDock.assistant.voiceInlineHint")}</p>
-                <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-black text-slate-900">
-                        {voiceSupported ? t("workspaceDock.voice.micReady") : t("workspaceDock.voice.micUnsupported")}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {voiceSupported ? t("workspaceDock.voice.micReadyHint") : t("workspaceDock.voice.micFallbackHint")}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={toggleVoiceCapture}
-                      disabled={!voiceSupported}
-                      className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-xl transition ${
-                        isListening
-                          ? "bg-rose-500 shadow-rose-500/30"
-                          : "bg-[color:var(--v2-accent)] shadow-[0_20px_40px_-18px_rgba(14,124,134,0.42)]"
-                      } disabled:cursor-not-allowed disabled:bg-slate-300`}
-                      aria-label={
-                        isListening ? t("workspaceDock.voice.recordStopAria") : t("workspaceDock.voice.recordStartAria")
-                      }
-                    >
-                      {isListening ? <Square className="h-5 w-5" aria-hidden /> : <Mic className="h-5 w-5" aria-hidden />}
-                    </button>
-                  </div>
-                  <textarea
-                    value={voiceDraft}
-                    onChange={(event) => setVoiceDraft(event.target.value)}
-                    rows={4}
-                    placeholder={t("workspaceDock.voice.voicePlaceholder")}
-                    className="mt-4 min-h-[100px] w-full resize-none rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
-                  />
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {quickPrompts.map((prompt) => (
-                      <button
-                        key={`assist-voice-${prompt}`}
-                        type="button"
-                        onClick={() => setVoiceDraft(prompt)}
-                        className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition hover:border-[color:var(--v2-accent)] hover:text-[color:var(--v2-accent)]"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={submitVoiceDraft}
-                      disabled={sending || voiceDraft.trim().length === 0}
-                      className="v2-button v2-button-primary disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <Play className="h-4 w-4" aria-hidden />
-                      {t("workspaceDock.voice.sendAsVoice")}
-                    </button>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-3 border-t border-slate-100 pt-4">
-                    <label className="inline-flex items-center gap-2 text-[11px] text-slate-600">
-                      <input
-                        type="checkbox"
-                        checked={autoSendVoice}
-                        onChange={(event) => setAutoSendVoice(event.target.checked)}
-                        className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
-                      />
-                      <span>
-                        <span className="font-bold">{t("workspaceDock.voice.autoSendTitle")}</span>
-                        <span className="text-slate-500"> — {t("workspaceDock.voice.autoSendHint")}</span>
-                      </span>
-                    </label>
-                    <label className="inline-flex items-center gap-2 text-[11px] text-slate-600">
-                      <input
-                        type="checkbox"
-                        checked={autoSpeak}
-                        onChange={(event) => setAutoSpeak(event.target.checked)}
-                        className="rounded border-slate-300 text-[color:var(--v2-accent)] focus:ring-[color:var(--v2-accent)]"
-                      />
-                      {t("workspaceDock.voice.autoSpeakHint")}
-                    </label>
-                  </div>
-                  {lastAssistantReply ? (
-                    <div className="mt-4 rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-black text-slate-900">{t("workspaceDock.voice.lastReplyTitle")}</p>
-                          <p className="mt-2 text-sm leading-6 text-slate-600">{lastAssistantReply}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            speakingMessageId === "last-reply"
-                              ? stopSpeaking()
-                              : speakMessage(lastAssistantReply, "last-reply")
-                          }
-                          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                          aria-label={t("workspaceDock.voice.readLastAria")}
-                        >
-                          {speakingMessageId === "last-reply" ? (
-                            <VolumeX className="h-4 w-4" aria-hidden />
-                          ) : (
-                            <Volume2 className="h-4 w-4" aria-hidden />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
-
-            {assistantMode === "chat" ? (
-              <>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">
                 {t("workspaceDock.assistant.contextLabel")}
@@ -799,12 +485,6 @@ export default function WorkspaceUtilityDock({
                   role={message.role}
                   content={message.content}
                   source={message.source}
-                  showSpeak={message.role === "assistant"}
-                  isSpeaking={speakingMessageId === message.id}
-                  onSpeakToggle={() => speakMessage(message.content, message.id)}
-                  readLabel={t("workspaceDock.assistant.readAloud")}
-                  stopLabel={t("workspaceDock.assistant.readAloudStop")}
-                  voiceBadgeLabel={t("workspaceDock.assistant.voiceReplyBadge")}
                 />
               ))}
 
@@ -820,14 +500,6 @@ export default function WorkspaceUtilityDock({
 
             <div className="rounded-[24px] border border-slate-200 bg-white p-3">
               <div className="flex items-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAssistantMode("voice")}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900"
-                  aria-label={t("workspaceDock.assistant.goVoiceAria")}
-                >
-                  <Mic className="h-4 w-4" aria-hidden />
-                </button>
                 <button
                   type="button"
                   onClick={() => setOpenPanel("scanner")}
@@ -862,89 +534,37 @@ export default function WorkspaceUtilityDock({
                 </button>
               </div>
             </div>
-              </>
-            ) : null}
           </div>
         </section>
       ) : null}
 
       {openPanel === "scanner" ? (
         <section
-          className="fixed inset-0 z-[9950] bg-slate-950/35 p-3 backdrop-blur-sm sm:p-5"
+          className="fixed inset-0 z-[9950] bg-slate-950/80 backdrop-blur-md"
           dir={dir}
           aria-label={t("workspaceDock.scanner.panelAria")}
         >
-          <div className="flex h-full flex-col rounded-[32px] border border-white/40 bg-[color:var(--v2-surface)]/98 shadow-[0_40px_120px_-48px_rgba(15,23,42,0.7)]">
-            <div className="flex items-start justify-between gap-4 border-b border-slate-200/10 px-5 py-4 sm:px-6">
-              <div className="min-w-0">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--v2-accent-soft)] text-[color:var(--v2-accent)]">
-                    <ScanSearch className="h-5 w-5" aria-hidden />
-                  </span>
-                  <div>
-                    <h2 className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.title")}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {t("workspaceDock.scanner.subtitle", { industry: industryProfile.industryLabel })}
-                    </p>
-                  </div>
-                </div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_10%,rgba(59,130,246,0.28),transparent_34%),radial-gradient(circle_at_20%_85%,rgba(20,184,166,0.22),transparent_30%)]" />
+          <button
+            type="button"
+            onClick={() => setOpenPanel(null)}
+            className="absolute left-4 top-4 z-[2] inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/92 text-slate-700 shadow-2xl shadow-slate-950/20 transition hover:bg-white hover:text-slate-950"
+            aria-label={t("workspaceDock.scanner.closeAria")}
+          >
+            <X className="h-5 w-5" aria-hidden />
+          </button>
 
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[color:var(--v2-accent-soft)] px-3 py-1 text-xs font-black text-[color:var(--v2-accent)]">
-                    {industryProfile.documentsLabel}
-                  </span>
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                    {currentSection.label}
-                  </span>
-                  {industryProfile.templates.slice(0, 2).map((template) => (
-                    <span
-                      key={template.id}
-                      className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600"
-                    >
-                      {template.label}
-                    </span>
-                  ))}
+          <div className="relative h-screen w-screen overflow-hidden p-3 sm:p-4">
+            {scannerButtonDisabled ? (
+              <div className="flex h-full items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/90 p-8 text-center">
+                <div className="max-w-md">
+                  <p className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.needOrgTitle")}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">{t("workspaceDock.scanner.needOrgBody")}</p>
                 </div>
               </div>
-
-              <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-                <Link
-                  href="/app/documents/erp#erp-multi-scanner"
-                  onClick={() => setOpenPanel(null)}
-                  className="v2-button v2-button-primary"
-                >
-                  {t("workspaceDock.scanner.toFullScanBoard")}
-                </Link>
-                <Link
-                  href="/app/documents"
-                  onClick={() => setOpenPanel(null)}
-                  className="v2-button v2-button-secondary"
-                >
-                  {t("workspaceDock.scanner.toDocuments")}
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setOpenPanel(null)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                  aria-label={t("workspaceDock.scanner.closeAria")}
-                >
-                  <X className="h-5 w-5" aria-hidden />
-                </button>
-              </div>
-            </div>
-
-            <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-4 sm:py-4">
-              {scannerButtonDisabled ? (
-                <div className="flex h-full items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/80 p-8 text-center">
-                  <div className="max-w-md">
-                    <p className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.needOrgTitle")}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">{t("workspaceDock.scanner.needOrgBody")}</p>
-                  </div>
-                </div>
-              ) : (
-                <MultiEngineScanner industry={industryProfile.id} compactHeader />
-              )}
-            </div>
+            ) : (
+              <MultiEngineScanner industry={industryProfile.id} compactHeader />
+            )}
           </div>
         </section>
       ) : null}

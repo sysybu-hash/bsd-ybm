@@ -1,6 +1,6 @@
 # Live Site Audit
 
-Checked at: 2026-04-22T19:48:12.437Z
+Checked at: 2026-04-23T14:03:01.021Z
 Base URL: http://127.0.0.1:3000
 User: owner@bsd-demo.test
 Routes: 39
@@ -80,7 +80,7 @@ No blocking visual/runtime findings.
 - desktop /app/inbox: 200, buttons=11, links=23, text=982, overflow=false
 - desktop /app/inbox/advanced: 200, buttons=11, links=23, text=982, overflow=false
 - desktop /app/insights: 200, buttons=25, links=27, text=4911, overflow=false
-- desktop /app/insights/advanced: 200, buttons=11, links=18, text=1468, overflow=false
+- desktop /app/insights/advanced: 200, buttons=22, links=18, text=2154, overflow=false
 - desktop /app/intelligence: 200, buttons=25, links=27, text=4911, overflow=false
 - desktop /app/onboarding: 200, buttons=6, links=23, text=1092, overflow=false
 - desktop /app/operations: 200, buttons=6, links=27, text=1455, overflow=false
@@ -119,7 +119,7 @@ No blocking visual/runtime findings.
 - mobile /app/inbox: 200, buttons=10, links=18, text=934, overflow=false
 - mobile /app/inbox/advanced: 200, buttons=10, links=18, text=934, overflow=false
 - mobile /app/insights: 200, buttons=24, links=22, text=4826, overflow=false
-- mobile /app/insights/advanced: 200, buttons=10, links=13, text=1413, overflow=false
+- mobile /app/insights/advanced: 200, buttons=21, links=13, text=2099, overflow=false
 - mobile /app/intelligence: 200, buttons=24, links=22, text=4826, overflow=false
 - mobile /app/onboarding: 200, buttons=5, links=18, text=1041, overflow=false
 - mobile /app/operations: 200, buttons=5, links=22, text=1403, overflow=false

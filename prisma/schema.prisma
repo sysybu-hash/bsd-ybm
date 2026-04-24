@@ -485,6 +485,8 @@ model Document {
   createdAt      DateTime     @default(now())
   lineItems              DocumentLineItem[]
   productPriceObservations ProductPriceObservation[]
+
+  @@index([organizationId, createdAt])
 }
 
 /// תוצאת סריקת AI לפי גיבוב קובץ — חיסכון במכסה ובעלות API

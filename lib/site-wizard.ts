@@ -1,4 +1,4 @@
-export type WizardStep = {
+﻿export type WizardStep = {
   id: string;
   title: string;
   description: string;
@@ -25,8 +25,8 @@ export const SITE_WIZARD_STEPS: WizardStep[] = [
     id: "setup",
     title: "Setup",
     description: "Configure billing and base preferences.",
-    primaryRoute: "/app/billing",
-    routes: ["/app/billing", "/app/settings", "/app/trial-expired"],
+    primaryRoute: "/app/settings/billing",
+    routes: ["/app/settings/billing", "/app/settings/overview", "/app/trial-expired"],
   },
   {
     id: "operate",
@@ -85,3 +85,4 @@ export function getAdjacentWizardRoute(
   if (target < 0 || target >= SITE_WIZARD_STEPS.length) return null;
   return SITE_WIZARD_STEPS[target].primaryRoute;
 }
+

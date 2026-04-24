@@ -41,7 +41,9 @@
     "tutorials:encode": "node scripts/generate-tutorial-videos.mjs"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.64",
     "@ai-sdk/openai": "^3.0.48",
+    "@ai-sdk/react": "^3.0.170",
     "@google-cloud/documentai": "^9.6.0",
     "@google/generative-ai": "^0.24.1",
     "@headlessui/react": "^2.2.9",

@@ -66,7 +66,7 @@ export default function PayPalSubscriptionCheckout({
     const tier = effectiveTier;
     if (!tier) throw new Error("אין רמה לבחירה");
 
-    const res = await fetch("/api/paypal/create-order", {
+    const res = await fetch("/api/billing/paypal/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tier }),
@@ -84,7 +84,7 @@ export default function PayPalSubscriptionCheckout({
       const orderID = data.orderID;
       if (!orderID) throw new Error("חסר מזהה הזמנה");
 
-      const res = await fetch("/api/paypal/capture-order", {
+      const res = await fetch("/api/billing/paypal/capture-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderID }),

@@ -223,7 +223,7 @@ export default async function FinanceHubContent({
                 return (
                   <li key={client.id}>
                     <Link
-                      href={`/app/advanced?clientId=${encodeURIComponent(client.id)}`}
+                      href={`/app/clients?clientId=${encodeURIComponent(client.id)}`}
                       className="block py-3 transition hover:bg-[color:var(--axis-finance-soft)]"
                     >
                       <div className="flex items-center justify-between gap-3">

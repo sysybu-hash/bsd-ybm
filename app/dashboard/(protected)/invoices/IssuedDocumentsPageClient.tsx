@@ -17,6 +17,11 @@ import {
 import { getIssuedDocumentsAction } from "@/app/actions/get-issued-documents";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
+import {
+  IssuedInvoicesWorkspace,
+  type IssuedInvoice,
+  type IssuedInvoiceUiStatus,
+} from "@/components/invoices/IssuedInvoicesWorkspace";
 
 type IssuedRow = {
   id: string;
@@ -24,6 +29,7 @@ type IssuedRow = {
   client: string;
   date: string;
   dateIso: string;
+  dueDateIso?: string | null;
   statusKey: string;
   status: string;
   amount: string;
@@ -33,6 +39,19 @@ type IssuedRow = {
   type: string;
   docType: string;
 };
+
+function deriveInvoiceUiStatus(d: IssuedRow): IssuedInvoiceUiStatus {
+  if (d.statusKey === "CANCELLED") return "CANCELLED";
+  if (d.statusKey === "PAID") return "PAID";
+  if (d.statusKey === "PENDING") {
+    if (d.dueDateIso) {
+      const due = new Date(d.dueDateIso);
+      if (!Number.isNaN(due.getTime()) && due < new Date()) return "OVERDUE";
+    }
+    return "PENDING";
+  }
+  return "PENDING";
+}
 
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -59,6 +78,36 @@ export default function IssuedDocumentsPageClient() {
     }
     void load();
   }, []);
+
+  const issuedWorkspace = useMemo(() => {
+    const now = new Date();
+    const thisMonthStart = startOfMonth(now);
+    let totalBilledThisMonth = 0;
+    let pendingAmount = 0;
+    let overdueAmount = 0;
+    for (const d of documents) {
+      const docDate = new Date(d.dateIso);
+      if (d.statusKey !== "CANCELLED" && docDate >= thisMonthStart) {
+        totalBilledThisMonth += d.total;
+      }
+      if (d.statusKey === "CANCELLED" || d.statusKey === "PAID") continue;
+      if (d.statusKey === "PENDING") {
+        const due = d.dueDateIso ? new Date(d.dueDateIso) : null;
+        if (due && !Number.isNaN(due.getTime()) && due < now) overdueAmount += d.total;
+        else pendingAmount += d.total;
+      }
+    }
+    const recentInvoices: IssuedInvoice[] = documents.slice(0, 12).map((d) => ({
+      id: d.id,
+      invoiceNumber: d.displayId.replace(/^INV-/, ""),
+      clientName: d.client,
+      issueDate: d.dateIso,
+      amount: d.total,
+      currency: "ILS",
+      status: deriveInvoiceUiStatus(d),
+    }));
+    return { totalBilledThisMonth, pendingAmount, overdueAmount, recentInvoices };
+  }, [documents]);
 
   const metrics = useMemo(() => {
     const now = new Date();
@@ -114,31 +163,29 @@ export default function IssuedDocumentsPageClient() {
 
   return (
     <div className="mx-auto flex max-w-[1500px] flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" dir="rtl">
-      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">Finance</p>
-          <h1 className="text-3xl font-black tracking-tight text-[color:var(--ink-900)]">ניהול כספים וחשבוניות</h1>
-          <p className="mt-1 font-medium text-[color:var(--ink-500)]">
-            מסמכים מונפקים, סטטוס תשלום והקצאות — לפי הנתונים בארגון שלך.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-700)] shadow-[var(--shadow-xs)] transition hover:bg-[color:var(--canvas-sunken)]"
-          >
-            <Download size={18} />
-            <span>ייצוא דוחות</span>
-          </button>
-          <Link
-            href="/app/documents/issue"
-            className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-6 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
-          >
-            <Plus size={18} />
-            <span>מסמך חדש</span>
-          </Link>
-        </div>
-      </header>
+      <IssuedInvoicesWorkspace
+        totalBilledThisMonth={issuedWorkspace.totalBilledThisMonth}
+        pendingAmount={issuedWorkspace.pendingAmount}
+        overdueAmount={issuedWorkspace.overdueAmount}
+        recentInvoices={issuedWorkspace.recentInvoices}
+      />
+
+      <div className="flex flex-wrap items-center justify-end gap-3 border-b border-gray-100 pb-4">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-700)] shadow-[var(--shadow-xs)] transition hover:bg-[color:var(--canvas-sunken)]"
+        >
+          <Download size={18} />
+          <span>ייצוא דוחות</span>
+        </button>
+        <Link
+          href="/app/documents/issue"
+          className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-6 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
+        >
+          <Plus size={18} />
+          <span>מסמך חדש</span>
+        </Link>
+      </div>
 
       <BentoGrid>
         <Tile tone="finance" span={3}>

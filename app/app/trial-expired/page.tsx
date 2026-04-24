@@ -59,7 +59,7 @@ export default async function AppTrialExpiredPage() {
         <Tile tone="neutral" span={4}>
           <TileHeader eyebrow="Next Step" />
           <div className="mt-3 flex flex-col gap-3">
-            <Link href="/app/billing" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
+          <Link href="/app/settings/billing" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
               <Rocket size={18} /> שדרגו מנוי או רכשו בנדל סריקות
             </Link>
             <Link

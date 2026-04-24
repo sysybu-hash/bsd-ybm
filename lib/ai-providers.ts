@@ -1,3 +1,5 @@
+import { isAnyDocAiProcessorConfigured } from "@/lib/ai-extract-docai";
+
 /**
  * ספקי AI נתמכים לפי מפתחות ב-.env / Vercel.
  * שים לב: MindStudio נשאר כסוג שמור לאחור, אבל לא נחשף ב-UI עד שתהיה אינטגרציית runtime אמיתית.
@@ -45,7 +47,7 @@ export function isDocAiConfigured(): boolean {
   const creds =
     has(process.env.GOOGLE_DOCUMENT_AI_CREDENTIALS) ||
     has(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
-  return has(process.env.GOOGLE_DOCUMENT_AI_PROCESSOR_ID) && creds;
+  return isAnyDocAiProcessorConfigured() && creds;
 }
 
 export function getAiProvidersPublic(): AiProviderPublic[] {

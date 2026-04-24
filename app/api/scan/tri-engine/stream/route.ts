@@ -9,7 +9,9 @@ import {
   parseTriEngineFormData,
   persistTriEngineToErp,
   triEngineAuthorizeAndCharge,
+  triEngineCreditKindFor,
   triEngineNdjsonErrorResponse,
+  validateTriEngineRequest,
 } from "@/lib/tri-engine-api-common";
 
 export const dynamic = "force-dynamic";
@@ -18,13 +20,8 @@ export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  const gate = await triEngineAuthorizeAndCharge(session);
-  if (!gate.ok) {
-    return triEngineNdjsonErrorResponse(gate.status, {
-      error: gate.error,
-      code: gate.code,
-      resetAt: gate.resetAt,
-    });
+  if (!session?.user?.id) {
+    return triEngineNdjsonErrorResponse(401, { error: "Unauthorized" });
   }
 
   let formData: FormData;
@@ -39,11 +36,32 @@ export async function POST(req: NextRequest) {
     return triEngineNdjsonErrorResponse(400, { error: "לא נמצא קובץ" });
   }
 
+  const validation = validateTriEngineRequest(parsed);
+  if (!validation.ok) {
+    return triEngineNdjsonErrorResponse(validation.status, {
+      error: validation.error,
+      code: validation.code,
+    });
+  }
+
+  const gate = await triEngineAuthorizeAndCharge(
+    session,
+    triEngineCreditKindFor(parsed.scanMode, parsed.engineRunMode),
+  );
+  if (!gate.ok) {
+    return triEngineNdjsonErrorResponse(gate.status, {
+      error: gate.error,
+      code: gate.code,
+      resetAt: gate.resetAt,
+    });
+  }
+
   const input = await loadTriEngineExtractionInput(
     parsed.file,
     parsed.scanMode,
     gate.userId,
     parsed.openAiModel,
+    parsed.engineRunMode,
   );
 
   const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();

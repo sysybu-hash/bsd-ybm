@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -17,7 +17,7 @@ import { isAdmin } from "@/lib/is-admin";
 
 export type { ClientAiTableRow, ClientAiResult } from "@/lib/crm-client-ai";
 
-/** ניתוח AI ללקוח — Gemini Flash (FREE) / Pro (PRO+ או SUPER_ADMIN) */
+/** ׳ ׳™׳×׳•׳— AI ׳׳׳§׳•׳— ג€” Gemini Flash (FREE) / Pro (PRO+ ׳׳• SUPER_ADMIN) */
 export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
   const apiKey =
     process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
@@ -26,7 +26,7 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
     return {
       ok: false,
       error:
-        "חסר מפתח Gemini בשרת (GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY).",
+        "׳—׳¡׳¨ ׳׳₪׳×׳— Gemini ׳‘׳©׳¨׳× (GOOGLE_GENERATIVE_AI_API_KEY ׳׳• GEMINI_API_KEY).",
     };
   }
 
@@ -35,7 +35,7 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
     if (!session?.user?.id) {
       return {
         ok: false,
-        error: "יש להתחבר למערכת כדי לבצע ניתוח AI.",
+        error: "׳™׳© ׳׳”׳×׳—׳‘׳¨ ׳׳׳¢׳¨׳›׳× ׳›׳“׳™ ׳׳‘׳¦׳¢ ׳ ׳™׳×׳•׳— AI.",
       };
     }
 
@@ -44,7 +44,7 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
     if (userOrgId !== orgId && !platformOwner) {
       return {
         ok: false,
-        error: "אין לך הרשאה לנתח נתונים של ארגון זה.",
+        error: "׳׳™׳ ׳׳ ׳”׳¨׳©׳׳” ׳׳ ׳×׳— ׳ ׳×׳•׳ ׳™׳ ׳©׳ ׳׳¨׳’׳•׳ ׳–׳”.",
       };
     }
 
@@ -67,7 +67,7 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
     });
 
     if (!org) {
-      return { ok: false, error: "לא נמצא נתונים על הארגון." };
+      return { ok: false, error: "׳׳ ׳ ׳׳¦׳ ׳ ׳×׳•׳ ׳™׳ ׳¢׳ ׳”׳׳¨׳’׳•׳." };
     }
 
     const modelToUse = resolveCrmGeminiModel(
@@ -78,23 +78,23 @@ export async function analyzeClientAI(orgId: string): Promise<ClientAiResult> {
 
     const tableData = buildTableDataFromInvoices(org.invoices);
 
-    const prompt = `אתה מנתח לקוח B2B במערכת BSD-YBM.
-להלן נתוני תשלומים (בשקלים). לכל שורה כבר חושבה עמלת PayPlus בדיוק כ־1.2% מהברוטו + 1.2 ש"ח, והנטו — אל תשנה מספרים.
+    const prompt = `׳׳×׳” ׳׳ ׳×׳— ׳׳§׳•׳— B2B ׳‘׳׳¢׳¨׳›׳× BSD-YBM.
+׳׳”׳׳ ׳ ׳×׳•׳ ׳™ ׳×׳©׳׳•׳׳™׳ (׳‘׳©׳§׳׳™׳). ׳׳›׳ ׳©׳•׳¨׳” ׳›׳‘׳¨ ׳—׳•׳©׳‘׳” ׳¢׳׳׳× PayPlus ׳‘׳“׳™׳•׳§ ׳›ײ¾1.2% ׳׳”׳‘׳¨׳•׳˜׳• + 1.2 ׳©"׳—, ׳•׳”׳ ׳˜׳• ג€” ׳׳ ׳×׳©׳ ׳” ׳׳¡׳₪׳¨׳™׳.
 
-שם ארגון: ${org.name}
-אימייל קשר: ${org.users[0]?.email ?? "לא ידוע"}
+׳©׳ ׳׳¨׳’׳•׳: ${org.name}
+׳׳™׳׳™׳™׳ ׳§׳©׳¨: ${org.users[0]?.email ?? "׳׳ ׳™׳“׳•׳¢"}
 
-נתוני טבלה (JSON):
+׳ ׳×׳•׳ ׳™ ׳˜׳‘׳׳” (JSON):
 ${JSON.stringify(tableData, null, 0)}
 
-החזר אך ורק אובייקט JSON תקני (בלי markdown, בלי backticks) במבנה המדויק:
+׳”׳—׳–׳¨ ׳׳ ׳•׳¨׳§ ׳׳•׳‘׳™׳™׳§׳˜ JSON ׳×׳§׳ ׳™ (׳‘׳׳™ markdown, ׳‘׳׳™ backticks) ׳‘׳׳‘׳ ׳” ׳”׳׳“׳•׳™׳§:
 {
-  "summary": "פסקה קצרה בעברית על מצב התשלומים והלקוח",
-  "alerts": ["התראה אופציונלית — למשל לקוח רדום אם אין תשלום 30+ יום", "..."],
-  "recommendation": "המלצה עסקית קצרה לשימור הלקוח"
+  "summary": "׳₪׳¡׳§׳” ׳§׳¦׳¨׳” ׳‘׳¢׳‘׳¨׳™׳× ׳¢׳ ׳׳¦׳‘ ׳”׳×׳©׳׳•׳׳™׳ ׳•׳”׳׳§׳•׳—",
+  "alerts": ["׳”׳×׳¨׳׳” ׳׳•׳₪׳¦׳™׳•׳ ׳׳™׳× ג€” ׳׳׳©׳ ׳׳§׳•׳— ׳¨׳“׳•׳ ׳׳ ׳׳™׳ ׳×׳©׳׳•׳ 30+ ׳™׳•׳", "..."],
+  "recommendation": "׳”׳׳׳¦׳” ׳¢׳¡׳§׳™׳× ׳§׳¦׳¨׳” ׳׳©׳™׳׳•׳¨ ׳”׳׳§׳•׳—"
 }
 
-אם אין התראות — החזר מערך ריק [].`;
+׳׳ ׳׳™׳ ׳”׳×׳¨׳׳•׳× ג€” ׳”׳—׳–׳¨ ׳׳¢׳¨׳ ׳¨׳™׳§ [].`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelToUse)}:generateContent?key=${apiKey}`,
@@ -112,11 +112,11 @@ ${JSON.stringify(tableData, null, 0)}
         typeof (data as { error?: { message?: string } }).error?.message ===
         "string"
           ? (data as { error: { message: string } }).error.message
-          : "שגיאה לא ידועה";
+          : "׳©׳’׳™׳׳” ׳׳ ׳™׳“׳•׳¢׳”";
       console.error("Gemini HTTP:", response.status, data);
       return {
         ok: false,
-        error: `שגיאה מ-Gemini (${response.status}): ${msg}`,
+        error: `׳©׳’׳™׳׳” ׳-Gemini (${response.status}): ${msg}`,
       };
     }
 
@@ -141,15 +141,15 @@ ${JSON.stringify(tableData, null, 0)}
         recommendation?: string;
       };
       summary =
-        typeof parsed.summary === "string" ? parsed.summary : rawText || "—";
+        typeof parsed.summary === "string" ? parsed.summary : rawText || "ג€”";
       recommendation =
-        typeof parsed.recommendation === "string" ? parsed.recommendation : "—";
+        typeof parsed.recommendation === "string" ? parsed.recommendation : "ג€”";
       if (Array.isArray(parsed.alerts)) {
         alerts = parsed.alerts.filter((a): a is string => typeof a === "string");
       }
     } catch {
-      summary = rawText || "לא ניתן לפרסר את תשובת המודל.";
-      recommendation = "—";
+      summary = rawText || "׳׳ ׳ ׳™׳×׳ ׳׳₪׳¨׳¡׳¨ ׳׳× ׳×׳©׳•׳‘׳× ׳”׳׳•׳“׳.";
+      recommendation = "ג€”";
     }
 
     return {
@@ -162,32 +162,32 @@ ${JSON.stringify(tableData, null, 0)}
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("analyzeClientAI:", message);
-    return { ok: false, error: "שגיאת רשת או שרת בניתוח AI." };
+    return { ok: false, error: "׳©׳’׳™׳׳× ׳¨׳©׳× ׳׳• ׳©׳¨׳× ׳‘׳ ׳™׳×׳•׳— AI." };
   }
 }
 
 export async function deleteOrganization(id: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email || !isAdmin(session.user.email)) {
-    return { error: "אין הרשאה למחיקת ארגון" };
+    return { error: "׳׳™׳ ׳”׳¨׳©׳׳” ׳׳׳—׳™׳§׳× ׳׳¨׳’׳•׳" };
   }
   try {
     await prisma.organization.delete({ where: { id } });
 revalidatePath("/app/clients");
     return { success: true as const };
   } catch {
-    return { error: "שגיאה במחיקת הארגון" };
+    return { error: "׳©׳’׳™׳׳” ׳‘׳׳—׳™׳§׳× ׳”׳׳¨׳’׳•׳" };
   }
 }
 
 export async function updateOrgPlan(id: string, tierRaw: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email || !isAdmin(session.user.email)) {
-    return { error: "אין הרשאה לעדכון מסלול ארגון" };
+    return { error: "׳׳™׳ ׳”׳¨׳©׳׳” ׳׳¢׳“׳›׳•׳ ׳׳¡׳׳•׳ ׳׳¨׳’׳•׳" };
   }
   const tier = parseSubscriptionTier(tierRaw);
   if (!tier) {
-    return { error: "רמת מנוי לא חוקית" };
+    return { error: "׳¨׳׳× ׳׳ ׳•׳™ ׳׳ ׳—׳•׳§׳™׳×" };
   }
   const balances = defaultScanBalancesForTier(tier);
   try {
@@ -201,21 +201,21 @@ export async function updateOrgPlan(id: string, tierRaw: string) {
       },
     });
 revalidatePath("/app/clients");
-revalidatePath("/app/billing");
+revalidatePath("/app/settings/billing");
     return { success: true as const };
   } catch {
-    return { error: "שגיאה בעדכון התוכנית" };
+    return { error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳×׳•׳›׳ ׳™׳×" };
   }
 }
 
 export async function updateOrganizationName(id: string, name: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email || !isAdmin(session.user.email)) {
-    return { error: "אין הרשאה לעדכון שם ארגון" };
+    return { error: "׳׳™׳ ׳”׳¨׳©׳׳” ׳׳¢׳“׳›׳•׳ ׳©׳ ׳׳¨׳’׳•׳" };
   }
   const trimmed = name.trim();
   if (trimmed.length < 2) {
-    return { error: "שם קצר מדי" };
+    return { error: "׳©׳ ׳§׳¦׳¨ ׳׳“׳™" };
   }
   try {
     await prisma.organization.update({
@@ -225,6 +225,7 @@ export async function updateOrganizationName(id: string, name: string) {
 revalidatePath("/app/clients");
     return { success: true as const };
   } catch {
-    return { error: "שגיאה בעדכון השם" };
+    return { error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳©׳" };
   }
 }
+

@@ -11,7 +11,6 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
-import { getAdvancedWorkspaceHref } from "@/components/app-shell/app-nav";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
 
 type MetricIcon = "revenue" | "review" | "contacts" | "pipeline";
@@ -88,7 +87,6 @@ export default function InsightsWorkspaceV2({
   pendingClients,
 }: Props) {
   const { t, dir } = useI18n();
-  const advancedInsightsHref = getAdvancedWorkspaceHref("ai");
   const [view, setView] = useState<"summary" | "actions">("summary");
   const insightParagraphs = insightText
     .split(/\n+/)
@@ -121,10 +119,10 @@ export default function InsightsWorkspaceV2({
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href={advancedInsightsHref} className="bento-btn bento-btn--primary">
+              <Link href="/app/inbox" className="bento-btn bento-btn--primary">
                 {t("workspaceInsights.advancedCta")}
               </Link>
-              <Link href="/app/billing" className="bento-btn bento-btn--secondary">
+            <Link href="/app/settings/billing" className="bento-btn bento-btn--secondary">
                 {t("workspaceInsights.billingCta")}
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>

@@ -55,7 +55,7 @@ export default function BillingQuickPayments({ presets }: Props) {
           <p className="text-sm text-gray-500 mt-1 leading-relaxed">
             <strong>בקשות גבייה</strong> נוצרות כשורה בטבלה ומקבלות קישור PayPal.Me אם הגדרתם אותו.{" "}
             <strong>מנוי חודשי אמיתי</strong> — רק דרך כפתורי PayPal ב־&quot;הפעלת מנוי&quot; למטה. לעריכת הכפתורים:{" "}
-            <Link href="/app/settings?tab=billing" className="font-bold text-teal-300 underline">
+            <Link href="/app/settings/billing" className="font-bold text-teal-300 underline">
               הגדרות › מנויים
             </Link>
             .

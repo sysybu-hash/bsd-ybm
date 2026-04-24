@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
@@ -20,15 +20,15 @@ export async function saveBillingWorkspaceAction(
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return { ok: false, error: "נדרשת התחברות" };
+    return { ok: false, error: "׳ ׳“׳¨׳©׳× ׳”׳×׳—׳‘׳¨׳•׳×" };
   }
   const orgId = session.user.organizationId ?? null;
   const role = String(session.user.role ?? "");
   if (!orgId) {
-    return { ok: false, error: "אין ארגון משויך" };
+    return { ok: false, error: "׳׳™׳ ׳׳¨׳’׳•׳ ׳׳©׳•׳™׳" };
   }
   if (!canEdit(role)) {
-    return { ok: false, error: "רק מנהל ארגון רשאי לשמור" };
+    return { ok: false, error: "׳¨׳§ ׳׳ ׳”׳ ׳׳¨׳’׳•׳ ׳¨׳©׳׳™ ׳׳©׳׳•׳¨" };
   }
 
   const cleanLines: InsuranceExpenseLine[] = (workspace.insuranceLines ?? [])
@@ -74,14 +74,13 @@ export async function saveBillingWorkspaceAction(
       where: { id: orgId },
       data: { billingWorkspaceJson: payload as object },
     });
-revalidatePath("/app/documents/erp");
-revalidatePath("/app/billing");
-revalidatePath("/app/settings");
-    revalidatePath("/app/billing");
-    revalidatePath("/app/settings");
+    revalidatePath("/app/documents/erp");
+    revalidatePath("/app/settings/billing");
+    revalidatePath("/app/settings/overview");
     return { ok: true };
   } catch (e) {
     console.error("saveBillingWorkspaceAction", e);
-    return { ok: false, error: "שמירה נכשלה" };
+    return { ok: false, error: "׳©׳׳™׳¨׳” ׳ ׳›׳©׳׳”" };
   }
 }
+

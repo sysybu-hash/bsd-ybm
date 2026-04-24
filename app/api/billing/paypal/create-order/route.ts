@@ -12,7 +12,7 @@ import {
   parseSubscriptionTier,
   tierLabelHe,
 } from "@/lib/subscription-tier-config";
-import { getEffectiveTierMonthlyPriceIls } from "@/lib/billing-pricing";
+import { getExpectedTierOrderAmountIls } from "@/lib/billing-pricing";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
     return jsonUnauthorized("נדרשת התחברות וארגון.");
   }
 
-  let body: { tier?: string; bundleId?: string };
+  let body: { tier?: string; bundleId?: string; billingCycle?: string };
   try {
-    body = (await req.json()) as { tier?: string; bundleId?: string };
+    body = (await req.json()) as { tier?: string; bundleId?: string; billingCycle?: string };
   } catch {
     return jsonBadRequest("גוף בקשה לא תקין", "invalid_json");
   }
@@ -66,18 +66,25 @@ export async function POST(req: Request) {
     return jsonBadRequest("רמת מנוי לא זמינה לתשלום", "invalid_tier");
   }
 
-  const price = await getEffectiveTierMonthlyPriceIls(tier);
+  const cycleRaw = String(body.billingCycle ?? "monthly").trim().toLowerCase();
+  const billingCycle: "monthly" | "annual" = cycleRaw === "annual" ? "annual" : "monthly";
+  const price = await getExpectedTierOrderAmountIls(tier, billingCycle);
   if (price == null) {
     return jsonBadRequest("אין מחיר לרמה זו — פנו לתמיכה", "no_price");
   }
 
   const value = price.toFixed(2);
-  const customId = `${orgId}|TIER|${tier}`.slice(0, 127);
+  const cycleToken = billingCycle === "annual" ? "A" : "M";
+  const customId = `${orgId}|TIER|${tier}|${cycleToken}`.slice(0, 127);
+  const desc =
+    billingCycle === "annual"
+      ? `BSD-YBM — מנוי ${tierLabelHe(tier)} (שנתי)`
+      : `BSD-YBM — מנוי ${tierLabelHe(tier)}`;
 
   try {
     const { id } = await paypalCreateOrderBody({
       amountValue: value,
-      description: `BSD-YBM — מנוי ${tierLabelHe(tier)}`,
+      description: desc,
       customId,
     });
     return NextResponse.json({ id });

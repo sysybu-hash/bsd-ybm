@@ -104,8 +104,13 @@ export function getSubscriptionStatusLabel(status: string | null | undefined): s
 
 export function getVisibleUtilitySectionIds(
   context: WorkspaceAccessContext,
-): Array<"help" | "business" | "admin"> {
-  const visible: Array<"help" | "business" | "admin"> = ["help", "business"];
+): Array<"projects" | "operations" | "help" | "business" | "admin"> {
+  const visible: Array<"projects" | "operations" | "help" | "business" | "admin"> = [
+    "projects",
+    "operations",
+    "help",
+    "business",
+  ];
 
   if (canAccessPlatformAdmin(context)) {
     visible.push("admin");

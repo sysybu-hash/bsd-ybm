@@ -17,7 +17,7 @@ const flow = [
   {
     title: "Billing Setup",
     text: "Choose plan and payment route before activation.",
-    href: "/app/billing",
+    href: "/app/settings/billing",
     icon: CreditCard,
   },
   {

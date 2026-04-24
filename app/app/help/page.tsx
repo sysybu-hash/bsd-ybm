@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
 import {
@@ -16,7 +16,7 @@ import { isAdmin } from "@/lib/is-admin";
 import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
 
 export const metadata = {
-  title: "עזרה | BSD-YBM",
+  title: "׳¢׳–׳¨׳” | BSD-YBM",
 };
 
 function HelpStep({
@@ -79,10 +79,10 @@ export default async function AppHelpPage() {
           Workspace Guide
         </p>
         <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">
-          המסלול הקצר ביותר לעבודה נכונה, בטוחה ומהירה בתוך המערכת.
+          ׳”׳׳¡׳׳•׳ ׳”׳§׳¦׳¨ ׳‘׳™׳•׳×׳¨ ׳׳¢׳‘׳•׳“׳” ׳ ׳›׳•׳ ׳”, ׳‘׳˜׳•׳—׳” ׳•׳׳”׳™׳¨׳” ׳‘׳×׳•׳ ׳”׳׳¢׳¨׳›׳×.
         </h1>
         <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">
-          אם נכנסת לראשונה, אם עובד חדש מצטרף, או אם צריך להתאפס על סדר הפעולות הנכון, זה הדף שמסדר את הצעדים בלי עומס ובלי קפיצות מיותרות.
+          ׳׳ ׳ ׳›׳ ׳¡׳× ׳׳¨׳׳©׳•׳ ׳”, ׳׳ ׳¢׳•׳‘׳“ ׳—׳“׳© ׳׳¦׳˜׳¨׳£, ׳׳• ׳׳ ׳¦׳¨׳™׳ ׳׳”׳×׳׳₪׳¡ ׳¢׳ ׳¡׳“׳¨ ׳”׳₪׳¢׳•׳׳•׳× ׳”׳ ׳›׳•׳, ׳–׳” ׳”׳“׳£ ׳©׳׳¡׳“׳¨ ׳׳× ׳”׳¦׳¢׳“׳™׳ ׳‘׳׳™ ׳¢׳•׳׳¡ ׳•׳‘׳׳™ ׳§׳₪׳™׳¦׳•׳× ׳׳™׳•׳×׳¨׳•׳×.
         </p>
       </header>
 
@@ -90,7 +90,7 @@ export default async function AppHelpPage() {
         <Tile tone="clients" span={8}>
           <TileHeader eyebrow="Workspace Guide" />
           <p className="mt-3 text-[14px] leading-7 text-[color:var(--axis-clients-ink)]">
-            המערכת בנויה למסלול עבודה ברור: מנוי, ארגון, משתמשים, ואז עבודה שוטפת במסמכים, לקוחות וכספים.
+            ׳”׳׳¢׳¨׳›׳× ׳‘׳ ׳•׳™׳” ׳׳׳¡׳׳•׳ ׳¢׳‘׳•׳“׳” ׳‘׳¨׳•׳¨: ׳׳ ׳•׳™, ׳׳¨׳’׳•׳, ׳׳©׳×׳׳©׳™׳, ׳•׳׳– ׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳× ׳‘׳׳¡׳׳›׳™׳, ׳׳§׳•׳—׳•׳× ׳•׳›׳¡׳₪׳™׳.
           </p>
           <div className="mt-4">
             <ProgressBar value={75} axis="clients" />
@@ -98,13 +98,13 @@ export default async function AppHelpPage() {
         </Tile>
 
         <Tile tone="neutral" span={4}>
-          <TileHeader eyebrow="מה בודקים קודם" />
+          <TileHeader eyebrow="׳׳” ׳‘׳•׳“׳§׳™׳ ׳§׳•׳“׳" />
           <div className="mt-3 grid gap-2">
             {[
-              "בדיקת מנוי, חיוב ואמצעי תשלום פעיל.",
-              "השלמת פרטי ארגון, כתובת, AI ואינטגרציות.",
-              "פתיחת משתמשים והרשאות לפי תפקיד.",
-              "מעבר לעבודה שוטפת ב-Inbox, Clients ו-Billing.",
+              "׳‘׳“׳™׳§׳× ׳׳ ׳•׳™, ׳—׳™׳•׳‘ ׳•׳׳׳¦׳¢׳™ ׳×׳©׳׳•׳ ׳₪׳¢׳™׳.",
+              "׳”׳©׳׳׳× ׳₪׳¨׳˜׳™ ׳׳¨׳’׳•׳, ׳›׳×׳•׳‘׳×, AI ׳•׳׳™׳ ׳˜׳’׳¨׳¦׳™׳•׳×.",
+              "׳₪׳×׳™׳—׳× ׳׳©׳×׳׳©׳™׳ ׳•׳”׳¨׳©׳׳•׳× ׳׳₪׳™ ׳×׳₪׳§׳™׳“.",
+              "׳׳¢׳‘׳¨ ׳׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳× ׳‘-Inbox, Clients ׳•-Billing.",
             ].map((item) => (
               <div key={item} className="rounded-lg bg-[color:var(--canvas-sunken)] px-3 py-2">
                 <p className="text-[12px] leading-6 text-[color:var(--ink-700)]">{item}</p>
@@ -117,42 +117,42 @@ export default async function AppHelpPage() {
       <section className="grid gap-4">
         <HelpStep
           step="1"
-          title="בדיקת מנוי וחיוב"
-          description="מוודאים שיש מסלול פעיל, אמצעי תשלום תקין וגישה לכלי העבודה הרלוונטיים."
-          primaryHref="/app/billing"
-          primaryLabel="פתיחת חיוב"
-          secondaryHref="/app/billing?tab=control"
-          secondaryLabel="מרכז מנויים"
+          title="׳‘׳“׳™׳§׳× ׳׳ ׳•׳™ ׳•׳—׳™׳•׳‘"
+          description="׳׳•׳•׳“׳׳™׳ ׳©׳™׳© ׳׳¡׳׳•׳ ׳₪׳¢׳™׳, ׳׳׳¦׳¢׳™ ׳×׳©׳׳•׳ ׳×׳§׳™׳ ׳•׳’׳™׳©׳” ׳׳›׳׳™ ׳”׳¢׳‘׳•׳“׳” ׳”׳¨׳׳•׳•׳ ׳˜׳™׳™׳."
+          primaryHref="/app/settings/billing"
+          primaryLabel="׳₪׳×׳™׳—׳× ׳—׳™׳•׳‘"
+          secondaryHref="/app/settings/billing?tab=control"
+          secondaryLabel="׳׳¨׳›׳– ׳׳ ׳•׳™׳™׳"
           icon={<CreditCard className="h-5 w-5" aria-hidden />}
         />
         <HelpStep
           step="2"
-          title="השלמת הגדרות הארגון"
-          description="מעדכנים פרטי עסק, מס, כתובת, דומיין, AI וחיבורים בסיסיים."
-          primaryHref="/app/settings"
-          primaryLabel="פתיחת הגדרות"
+          title="׳”׳©׳׳׳× ׳”׳’׳“׳¨׳•׳× ׳”׳׳¨׳’׳•׳"
+          description="׳׳¢׳“׳›׳ ׳™׳ ׳₪׳¨׳˜׳™ ׳¢׳¡׳§, ׳׳¡, ׳›׳×׳•׳‘׳×, ׳“׳•׳׳™׳™׳, AI ׳•׳—׳™׳‘׳•׳¨׳™׳ ׳‘׳¡׳™׳¡׳™׳™׳."
+          primaryHref="/app/settings/overview"
+          primaryLabel="׳₪׳×׳™׳—׳× ׳”׳’׳“׳¨׳•׳×"
           secondaryHref="/app/operations"
-          secondaryLabel="בדיקת תפעול"
+          secondaryLabel="׳‘׳“׳™׳§׳× ׳×׳₪׳¢׳•׳"
           icon={<Settings className="h-5 w-5" aria-hidden />}
         />
         <HelpStep
           step="3"
-          title="ניהול משתמשים והרשאות"
-          description="מזמינים משתמשים, בודקים הרשאות, ומוודאים שכל אחד מגיע למסכים שמתאימים לו."
-          primaryHref="/app/settings"
-          primaryLabel="משתמשים והגדרות"
+          title="׳ ׳™׳”׳•׳ ׳׳©׳×׳׳©׳™׳ ׳•׳”׳¨׳©׳׳•׳×"
+          description="׳׳–׳׳™׳ ׳™׳ ׳׳©׳×׳׳©׳™׳, ׳‘׳•׳“׳§׳™׳ ׳”׳¨׳©׳׳•׳×, ׳•׳׳•׳•׳“׳׳™׳ ׳©׳›׳ ׳׳—׳“ ׳׳’׳™׳¢ ׳׳׳¡׳›׳™׳ ׳©׳׳×׳׳™׳׳™׳ ׳׳•."
+          primaryHref="/app/settings/organization"
+          primaryLabel="׳׳©׳×׳׳©׳™׳ ׳•׳”׳’׳“׳¨׳•׳×"
           secondaryHref={platformAdmin ? "/app/admin" : "/app/inbox"}
-          secondaryLabel={platformAdmin ? "Admin" : "מעבר ל-Inbox"}
+          secondaryLabel={platformAdmin ? "Admin" : "׳׳¢׳‘׳¨ ׳-Inbox"}
           icon={<Users className="h-5 w-5" aria-hidden />}
         />
         <HelpStep
           step="4"
-          title="מעבר לעבודה שוטפת"
-          description="אחרי שהבסיס מוכן, עוברים לתיבת העבודה, CRM, מסמכים, חיוב ותובנות."
+          title="׳׳¢׳‘׳¨ ׳׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳×"
+          description="׳׳—׳¨׳™ ׳©׳”׳‘׳¡׳™׳¡ ׳׳•׳›׳, ׳¢׳•׳‘׳¨׳™׳ ׳׳×׳™׳‘׳× ׳”׳¢׳‘׳•׳“׳”, CRM, ׳׳¡׳׳›׳™׳, ׳—׳™׳•׳‘ ׳•׳×׳•׳‘׳ ׳•׳×."
           primaryHref="/app/inbox"
-          primaryLabel="פתיחת תיבת עבודה"
+          primaryLabel="׳₪׳×׳™׳—׳× ׳×׳™׳‘׳× ׳¢׳‘׳•׳“׳”"
           secondaryHref="/app/ai#assistant"
-          secondaryLabel="פתיחת תובנות"
+          secondaryLabel="׳₪׳×׳™׳—׳× ׳×׳•׳‘׳ ׳•׳×"
           icon={<Workflow className="h-5 w-5" aria-hidden />}
         />
       </section>
@@ -162,9 +162,9 @@ export default async function AppHelpPage() {
           <TileHeader eyebrow="Quick Rescue" />
           <div className="mt-4 grid gap-3">
             {[
-              { href: "/app/billing", label: "בדיקת מנוי, חיוב ותשלומים", icon: CreditCard },
-              { href: "/app/settings", label: "בדיקת הגדרות, דומיין ו-AI", icon: Bot },
-              { href: "/app/clients", label: "בדיקת לקוחות, צנרת והקשרים", icon: Shield },
+              { href: "/app/settings/billing", label: "׳‘׳“׳™׳§׳× ׳׳ ׳•׳™, ׳—׳™׳•׳‘ ׳•׳×׳©׳׳•׳׳™׳", icon: CreditCard },
+              { href: "/app/settings/overview", label: "׳‘׳“׳™׳§׳× ׳”׳’׳“׳¨׳•׳×, ׳“׳•׳׳™׳™׳ ׳•-AI", icon: Bot },
+              { href: "/app/clients", label: "׳‘׳“׳™׳§׳× ׳׳§׳•׳—׳•׳×, ׳¦׳ ׳¨׳× ׳•׳”׳§׳©׳¨׳™׳", icon: Shield },
             ].map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
@@ -185,9 +185,9 @@ export default async function AppHelpPage() {
           <TileHeader eyebrow="Notes" />
           <div className="mt-4 grid gap-3">
             {[
-              "העבודה היומיומית מתבצעת תחת /app. אין צורך לחזור למסכי עומק אלא אם יש צורך ספציפי.",
-              "Meckano זמין רק למנוי המורשה שהוגדר במערכת.",
-              "במקרה של ספק, מתחילים מהמסך הרלוונטי ביותר למשימה ולא מהמערכת הוותיקה שמאחוריו.",
+              "׳”׳¢׳‘׳•׳“׳” ׳”׳™׳•׳׳™׳•׳׳™׳× ׳׳×׳‘׳¦׳¢׳× ׳×׳—׳× /app. ׳׳™׳ ׳¦׳•׳¨׳ ׳׳—׳–׳•׳¨ ׳׳׳¡׳›׳™ ׳¢׳•׳׳§ ׳׳׳ ׳׳ ׳™׳© ׳¦׳•׳¨׳ ׳¡׳₪׳¦׳™׳₪׳™.",
+              "Meckano ׳–׳׳™׳ ׳¨׳§ ׳׳׳ ׳•׳™ ׳”׳׳•׳¨׳©׳” ׳©׳”׳•׳’׳“׳¨ ׳‘׳׳¢׳¨׳›׳×.",
+              "׳‘׳׳§׳¨׳” ׳©׳ ׳¡׳₪׳§, ׳׳×׳—׳™׳׳™׳ ׳׳”׳׳¡׳ ׳”׳¨׳׳•׳•׳ ׳˜׳™ ׳‘׳™׳•׳×׳¨ ׳׳׳©׳™׳׳” ׳•׳׳ ׳׳”׳׳¢׳¨׳›׳× ׳”׳•׳•׳×׳™׳§׳” ׳©׳׳׳—׳•׳¨׳™׳•.",
             ].map((item) => (
               <div key={item} className="rounded-lg bg-white/75 px-4 py-3">
                 <p className="text-[13px] leading-6 text-[color:var(--ink-700)]">{item}</p>
@@ -199,3 +199,4 @@ export default async function AppHelpPage() {
     </div>
   );
 }
+
