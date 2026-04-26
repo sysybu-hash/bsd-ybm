@@ -373,66 +373,111 @@ export default function ClientsWorkspaceV2({
   return (
     <div className="w-full min-w-0 space-y-8" dir={dir}>
       {!embedBelowSummary && (
-        <WorkspacePageHeader
-          eyebrow={t("workspaceClients.eyebrow")}
-          title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
-          subtitle={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
-          actions={
-            <Link
-              href="/app/clients#quick-client-form"
-              className="inline-flex items-center gap-1.5 rounded-2xl bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-clients-strong)]"
-            >
-              <Plus className="h-4 w-4" aria-hidden />
-              {t("workspaceClients.addCta")}
-            </Link>
-          }
-        />
+        <Tile tone="clients" span={12}>
+          <div className="flex flex-col gap-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="tile-eyebrow">{t("workspaceClients.eyebrow")}</p>
+                <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
+                  {t("workspaceClients.heroTitle", { clients: clientsLabel })}
+                </h1>
+                <p className="mt-1 text-sm text-[color:var(--ink-500)]">
+                  {t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/app/clients#quick-client-form"
+                  className="bento-btn bento-btn--primary"
+                  style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
+                >
+                  <Plus className="h-4 w-4" aria-hidden />
+                  {t("workspaceClients.addCta")}
+                </Link>
+                <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] sm:flex">
+                  <BriefcaseBusiness className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
+                </div>
+              </div>
+            </div>
+
+            {/* Quick stats in Hero */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">סה"כ לקוחות</p>
+                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{contacts.length}</p>
+              </div>
+              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">פעילים</p>
+                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{activeCount}</p>
+              </div>
+              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">בטיפול (הצעות)</p>
+                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{proposalCount}</p>
+              </div>
+              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">צפי הכנסה</p>
+                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{formatCurrencyILS(totalValue)}</p>
+              </div>
+            </div>
+          </div>
+        </Tile>
       )}
 
-      {/* Filters bar */}
-      <div className="flex flex-wrap items-center gap-2.5 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 shadow-[var(--shadow-xs)]">
-        <div className="flex flex-1 min-w-[220px] items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 focus-within:border-[color:var(--axis-clients)]">
-          <Filter className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
+      {/* ── Filters bar — 2026 clean style ── */}
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
+        <div className="relative flex flex-1 min-w-[280px] items-center">
+          <Filter className="absolute start-3 h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
           <input
             value={search}
             onChange={(e) => {
               const v = e.target.value;
               startFilterTransition(() => setSearch(v));
             }}
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-400)]"
+            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-2.5 pe-4 ps-10 text-sm font-medium outline-none transition focus:border-[color:var(--axis-clients)] focus:ring-2 focus:ring-[color:var(--axis-clients-soft)]"
             placeholder={t("workspaceClients.searchPlaceholder")}
           />
-          {isPending ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
+          {isPending && (
+            <div className="absolute end-3">
+              <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-clients)]" aria-hidden />
+            </div>
+          )}
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => startFilterTransition(() => setStatusFilter(e.target.value))}
-          className="rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none focus:border-[color:var(--axis-clients)]"
-        >
-          <option value="ALL">{t("workspaceClients.statusAll")}</option>
-          {statusOrder.map((s) => (
-            <option key={s} value={s}>{t(`workspaceClients.status.${s}`)}</option>
-          ))}
-          <option value="CLOSED_LOST">{t("workspaceClients.status.CLOSED_LOST")}</option>
-        </select>
-        <select
-          value={projectFilter}
-          onChange={(e) => startFilterTransition(() => setProjectFilter(e.target.value))}
-          className="rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none focus:border-[color:var(--axis-clients)]"
-        >
-          <option value="ALL">{t("workspaceClients.projectAll")}</option>
-          {projects.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-        <div className="flex items-center gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-0.5">
+
+        <div className="flex items-center gap-2">
+          <select
+            value={statusFilter}
+            onChange={(e) => startFilterTransition(() => setStatusFilter(e.target.value))}
+            className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] outline-none transition hover:border-[color:var(--ink-400)] focus:border-[color:var(--axis-clients)]"
+          >
+            <option value="ALL">{t("workspaceClients.statusAll")}</option>
+            {statusOrder.map((s) => (
+              <option key={s} value={s}>{t(`workspaceClients.status.${s}`)}</option>
+            ))}
+            <option value="CLOSED_LOST">{t("workspaceClients.status.CLOSED_LOST")}</option>
+          </select>
+
+          <select
+            value={projectFilter}
+            onChange={(e) => startFilterTransition(() => setProjectFilter(e.target.value))}
+            className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] outline-none transition hover:border-[color:var(--ink-400)] focus:border-[color:var(--axis-clients)]"
+          >
+            <option value="ALL">{t("workspaceClients.projectAll")}</option>
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="h-8 w-px bg-[color:var(--line)] hidden sm:block" />
+
+        <div className="flex items-center gap-1 rounded-xl bg-[color:var(--canvas-sunken)] p-1">
           <button
             type="button"
             onClick={() => startTransition(() => setView("pipeline"))}
-            className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[12px] font-bold transition ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-black transition ${
               view === "pipeline"
-                ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
-                : "text-[color:var(--ink-500)]"
+                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
             }`}
           >
             <LayoutGrid className="h-3.5 w-3.5" aria-hidden />
@@ -441,10 +486,10 @@ export default function ClientsWorkspaceV2({
           <button
             type="button"
             onClick={() => startTransition(() => setView("list"))}
-            className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[12px] font-bold transition ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-black transition ${
               view === "list"
-                ? "bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--shadow-xs)]"
-                : "text-[color:var(--ink-500)]"
+                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
             }`}
           >
             <ListFilter className="h-3.5 w-3.5" aria-hidden />

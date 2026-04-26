@@ -40,13 +40,11 @@ export default async function AppFinancePage() {
     "";
 
   return (
-    <WorkspaceEngineeringShell>
-      <FinanceHubContent
-        snapshot={snapshot}
-        organizationId={organizationId}
-        industryProfile={industryProfile}
-        userFirstName={userFirstName}
-      />
-    </WorkspaceEngineeringShell>
+    <FinanceHubContent
+      snapshot={snapshot}
+      organizationId={organizationId}
+      industryProfile={industryProfile}
+      userFirstName={userFirstName}
+    />
   );
 }

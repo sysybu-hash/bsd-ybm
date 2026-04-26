@@ -23,6 +23,7 @@ import { useI18n } from "@/components/I18nProvider";
 import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import WorkspacePageHeader, { HeaderResponsiveLabel } from "@/components/layout/WorkspacePageHeader";
 import DocumentGeneratorsStrip from "@/components/documents/DocumentGeneratorsStrip";
+import { Tile } from "@/components/ui/bento";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
@@ -532,96 +533,129 @@ export default function DocumentsWorkspaceV2({
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
-      <WorkspacePageHeader
-        eyebrow={t("workspaceDocuments.eyebrow")}
-        title={t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
-        subtitle={t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
-        actions={
-          <>
-            <div className="flex flex-wrap items-center justify-end gap-2">
+      <Tile tone="finance" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">{t("workspaceDocuments.eyebrow")}</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
+                {t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
+              </h1>
+              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
+                {t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-end gap-3">
               <Link
                 href="/app/documents/issue"
-                className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-2xl bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-clients-strong)]"
+                className="bento-btn bento-btn--primary"
+                style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
               >
                 <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
                 <HeaderResponsiveLabel short={t("workspaceDocuments.ctaIssueShort")} long={t("workspaceDocuments.ctaIssue")} />
               </Link>
               <Link
                 href="/app/documents/erp"
-                className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-2xl border border-slate-200/10 bg-white/80 px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] shadow-sm backdrop-blur-sm hover:bg-[color:var(--canvas-sunken)]"
+                className="bento-btn bento-btn--secondary"
               >
-                <span className="truncate sm:whitespace-normal">{t("workspaceDocuments.ctaErp")}</span>
+                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaErp")} long={t("workspaceDocuments.ctaErp")} />
                 <ArrowLeft className="h-4 w-4 shrink-0 opacity-70" strokeWidth={2} aria-hidden />
               </Link>
               <Link
                 href="/app/documents/erp#erp-multi-scanner"
-                className="inline-flex items-center gap-1.5 rounded-2xl border border-slate-200/10 bg-white/80 px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] shadow-sm backdrop-blur-sm hover:bg-[color:var(--canvas-sunken)]"
+                className="bento-btn bento-btn--secondary"
                 title={t("workspaceDocuments.ctaScan")}
               >
                 <Upload className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
                 <HeaderResponsiveLabel short={t("workspaceDocuments.ctaScanShort")} long={t("workspaceDocuments.ctaScan")} />
               </Link>
             </div>
-            <div
-              id="documents-filters"
-              role="search"
-              aria-label={t("workspaceDocuments.searchLabel")}
-              className="flex min-w-0 flex-col gap-2 rounded-2xl border border-slate-200/10 bg-white/70 p-2 backdrop-blur-md sm:flex-row sm:items-center sm:justify-end"
-            >
-              <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white/95 px-3 py-2 sm:max-w-[220px] md:max-w-xs">
-                <Filter className="h-4 w-4 shrink-0 text-[color:var(--ink-500)]" strokeWidth={2} aria-hidden />
-                <input
-                  id="documents-search"
-                  value={search}
-                  onChange={(event) => {
-                    const nextValue = event.target.value;
-                    startFilterTransition(() => setSearch(nextValue));
-                  }}
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[color:var(--ink-500)]"
-                  placeholder={t("workspaceDocuments.searchPlaceholder")}
-                />
-                {isPending ? <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[color:var(--axis-clients)]" aria-hidden /> : null}
-              </div>
-              <label className="sr-only" htmlFor="documents-status-filter">
-                {t("workspaceDocuments.statusLabel")}
-              </label>
-              <select
-                id="documents-status-filter"
-                value={statusFilter}
-                onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-                className="w-full rounded-xl border border-[color:var(--line)] bg-white/95 px-3 py-2 text-sm font-semibold text-[color:var(--ink-900)] outline-none sm:w-44"
-              >
-                <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
-                <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
-                <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
-                <option value="FAILED">{statusLabel(t, "scanned", "FAILED")}</option>
-                <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
-                <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
-                <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
-              </select>
-            </div>
-          </>
-        }
-      />
+          </div>
 
-      <section className="tile relative z-0 overflow-hidden p-6 shadow-xl sm:p-8">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: t("workspaceDocuments.statScanned"), value: scannedState.length.toString(), icon: FileSearch },
-            { label: t("workspaceDocuments.statIssued"), value: issuedState.length.toString(), icon: FolderArchive },
-            { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
-            { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
-          ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="rounded-2xl border border-slate-200/10 bg-[color:var(--canvas-sunken)]/80 p-5 shadow-sm backdrop-blur-sm">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
-                <Icon className="h-5 w-5" strokeWidth={2} aria-hidden />
-              </span>
-              <p className="mt-4 text-xs font-bold uppercase tracking-wide text-[color:var(--ink-500)]">{label}</p>
-              <p className="mt-2 text-2xl font-black tracking-tight text-[color:var(--ink-900)]">{value}</p>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: t("workspaceDocuments.statScanned"), value: scannedState.length.toString(), icon: FileSearch },
+              { label: t("workspaceDocuments.statIssued"), value: issuedState.length.toString(), icon: FolderArchive },
+              { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
+              { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
+            ].map(({ label, value, icon: Icon }) => (
+              <div key={label} className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-[color:var(--axis-finance)]" strokeWidth={2} aria-hidden />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{label}</p>
+                </div>
+                <p className="mt-2 text-xl font-black text-[color:var(--ink-900)] tracking-tight">{value}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      </Tile>
+
+      {/* ── Filters bar — 2026 clean style ── */}
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
+        <div className="relative flex flex-1 min-w-[280px] items-center">
+          <Filter className="absolute start-3 h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
+          <input
+            id="documents-search"
+            value={search}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+              startFilterTransition(() => setSearch(nextValue));
+            }}
+            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-2.5 pe-4 ps-10 text-sm font-medium outline-none transition focus:border-[color:var(--axis-finance)] focus:ring-2 focus:ring-[color:var(--axis-finance-soft)]"
+            placeholder={t("workspaceDocuments.searchPlaceholder")}
+          />
+          {isPending && (
+            <div className="absolute end-3">
+              <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-finance)]" aria-hidden />
+            </div>
+          )}
+        </div>
+
+        <select
+          id="documents-status-filter"
+          value={statusFilter}
+          onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
+          className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] outline-none transition hover:border-[color:var(--ink-400)] focus:border-[color:var(--axis-finance)]"
+        >
+          <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
+          <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
+          <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
+          <option value="FAILED">{statusLabel(t, "scanned", "FAILED")}</option>
+          <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
+          <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
+          <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
+        </select>
+
+        <div className="h-8 w-px bg-[color:var(--line)] hidden sm:block" />
+
+        <div className="flex items-center gap-1 rounded-xl bg-[color:var(--canvas-sunken)] p-1">
+          <button
+            type="button"
+            onClick={() => startTransition(() => setActiveTab("scanned"))}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[12px] font-black transition ${
+              activeTab === "scanned"
+                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
+            }`}
+          >
+            <LayoutGrid className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            {t("workspaceDocuments.tabScanned")}
+          </button>
+          <button
+            type="button"
+            onClick={() => startTransition(() => setActiveTab("issued"))}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[12px] font-black transition ${
+              activeTab === "issued"
+                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
+                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
+            }`}
+          >
+            <ListFilter className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            {t("workspaceDocuments.tabIssued")}
+          </button>
+        </div>
+      </div>
 
       <DocumentGeneratorsStrip industryProfile={industryProfile} onDraftIssued={appendIssuedFromGenerator} />
 
@@ -639,35 +673,7 @@ export default function DocumentsWorkspaceV2({
 
       <section className="grid gap-6 xl:grid-cols-2">
         <div className="grid gap-4">
-          <div className="tile p-5">
-            <div className="grid gap-2">
-              <span className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">
-                {t("workspaceDocuments.viewLabel")}
-              </span>
-              <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/10 bg-[color:var(--canvas-sunken)] p-1">
-                <button
-                  type="button"
-                  onClick={() => startTransition(() => setActiveTab("scanned"))}
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition sm:flex-none ${
-                    activeTab === "scanned" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
-                  }`}
-                >
-                  <LayoutGrid className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-                  {t("workspaceDocuments.tabScanned")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => startTransition(() => setActiveTab("issued"))}
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition sm:flex-none ${
-                    activeTab === "issued" ? "bg-white text-[color:var(--ink-900)] shadow-sm" : "text-[color:var(--ink-500)]"
-                  }`}
-                >
-                  <ListFilter className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-                  {t("workspaceDocuments.tabIssued")}
-                </button>
-              </div>
-            </div>
-          </div>
+
 
           {activeTab === "scanned" ? (
             <div className="grid gap-4 xl:grid-cols-2">

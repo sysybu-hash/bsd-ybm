@@ -10,6 +10,7 @@ import {
   UsersRound,
   Workflow,
 } from "lucide-react";
+import { HeaderResponsiveLabel } from "@/components/layout/WorkspacePageHeader";
 import AppAiHubInlineAssistant from "@/components/ai/AppAiHubInlineAssistant";
 import InsightsWorkspaceV2 from "@/components/insights/InsightsWorkspaceV2";
 import { IntelligenceDashboardContent } from "@/app/workspace-content/intelligence/IntelligenceDashboardContent";
@@ -56,33 +57,66 @@ export default async function AppAiHubPage() {
 
   return (
     <div className="w-full min-w-0 space-y-8" dir="rtl">
-      <header className="flex flex-col gap-1 px-1">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
-          {t("workspaceAiHub.eyebrow")}
-        </p>
-        <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">
-          {t("workspaceAiHub.title")}
-        </h1>
-        <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">
-          {t("workspaceAiHub.subtitle")}
-        </p>
-      </header>
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="ai" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Intelligence · Command Center</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-white">
+                {t("workspaceAiHub.title")}
+              </h1>
+              <p className="mt-1 text-sm text-violet-200">
+                {t("workspaceAiHub.subtitle")}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/app/inbox"
+                className="bento-btn bento-btn--primary"
+                style={{ background: "rgba(255,255,255,0.2)", borderColor: "rgba(255,255,255,0.4)", color: "white" }}
+              >
+                <ScanSearch className="h-4 w-4" strokeWidth={2} aria-hidden />
+                <HeaderResponsiveLabel short={t("workspaceAiHub.scannerTitle")} long={t("workspaceAiHub.scannerTitle")} />
+              </Link>
+              <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-white/10 sm:flex">
+                <BrainCircuit className="h-6 w-6 text-white" aria-hidden />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">רמת מוכנות</p>
+              <p className="mt-1 text-xl font-black text-white">94%</p>
+            </div>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">סריקות היום</p>
+              <p className="mt-1 text-xl font-black text-white">12</p>
+            </div>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">דיוק ממוצע</p>
+              <p className="mt-1 text-xl font-black text-white">98.2%</p>
+            </div>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">חיסכון זמן</p>
+              <p className="mt-1 text-xl font-black text-white">~4.5h</p>
+            </div>
+          </div>
+        </div>
+      </Tile>
 
       <BentoGrid>
-        {/* AI Bridge hero */}
+        {/* AI Insight (dark, hero) */}
         <Tile tone="ai" span={8}>
           <TileHeader eyebrow={t("workspaceAiHub.aiBridgeEyebrow")} liveDot />
           <p className="mt-3 text-[15px] leading-7 text-white/95">
             {t("workspaceAiHub.aiBridgeInsight")}
           </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <Link href="#insights" className="tile-cta">
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link href="#insights" className="bento-btn bg-white/10 border-white/20 text-white hover:bg-white/20">
               {t("workspaceAiHub.aiBridgeCta")}
               <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
-            <Link href="/app/inbox" className="tile-cta">
-              <ScanSearch className="h-4 w-4" aria-hidden />
-              {t("workspaceAiHub.scannerTitle")}
             </Link>
           </div>
         </Tile>

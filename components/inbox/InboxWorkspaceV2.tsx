@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatCurrencyILS, formatDateTime } from "@/lib/ui-formatters";
+import { Tile } from "@/components/ui/bento";
 
 type NotificationItem = {
   id: string;
@@ -122,52 +123,47 @@ export default function InboxWorkspaceV2({
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
-      <section className="tile p-6 sm:p-7">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
-              {t("workspaceInbox.eyebrow")}
-            </span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-4xl">
-              {t("workspaceInbox.heroTitle")}
-            </h1>
-            <p className="mt-3 text-base leading-7 text-[color:var(--ink-500)]">{t("workspaceInbox.heroSubtitle")}</p>
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/app/operations"
-              className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--axis-clients)] bg-[color:var(--axis-clients)] px-4 py-2.5 text-sm font-black text-white shadow-[var(--shadow-sm)] transition hover:bg-[color:var(--axis-clients-strong)]"
-            >
-              {t("workspaceInbox.advancedCta")}
-              <ExternalLink className="h-4 w-4" aria-hidden />
-            </Link>
-            <Link
-              href="/app/clients"
-              className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]"
-            >
-              {t("workspaceInbox.clientsCta")}
-              <Sparkles className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {summaryItems.map(({ label, value, icon: Icon }) => (
-            <div key={label} className="rounded-2xl border border-[color:var(--line)] bg-white/92 px-4 py-4">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
-                  <Icon className="h-4 w-4" aria-hidden />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-[color:var(--ink-500)]">{label}</p>
-                  <p className="mt-1 text-xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
-                </div>
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="clients" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Inbox · Command Center</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
+                {t("workspaceInbox.heroTitle")}
+              </h1>
+              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
+                {t("workspaceInbox.heroSubtitle")}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/app/operations"
+                className="bento-btn bento-btn--primary"
+                style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
+              >
+                {t("workspaceInbox.advancedCta")}
+                <ExternalLink className="h-4 w-4" strokeWidth={2} aria-hidden />
+              </Link>
+              <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] sm:flex">
+                <BellRing className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
               </div>
             </div>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {summaryItems.map(({ label, value, icon: Icon }) => (
+              <div key={label} className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-[color:var(--axis-clients)]" strokeWidth={2} aria-hidden />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{label}</p>
+                </div>
+                <p className="mt-2 text-xl font-black text-[color:var(--ink-900)] tracking-tight">{value}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      </Tile>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">

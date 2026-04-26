@@ -82,20 +82,54 @@ export default async function FinanceHubContent({
 
   return (
     <div className="w-full min-w-0 space-y-8" dir="rtl">
-      <WorkspacePageHeader
-        eyebrow={t("workspaceFinance.eyebrow")}
-        title={t("workspaceFinance.heroTitle")}
-        subtitle={t("workspaceFinance.heroSubtitle")}
-        actions={
-          <Link
-            href="/app/documents/issue"
-            className="inline-flex items-center gap-1.5 rounded-2xl bg-[color:var(--axis-finance)] px-4 py-2.5 text-sm font-black text-white shadow-lg hover:bg-[color:var(--axis-finance-strong)]"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2} aria-hidden />
-            <HeaderResponsiveLabel short={t("workspaceFinance.issueCtaShort")} long={t("workspaceFinance.issueCta")} />
-          </Link>
-        }
-      />
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="finance" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Finance · Command Center</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
+                {t("workspaceFinance.heroTitle")}
+              </h1>
+              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
+                {t("workspaceFinance.heroSubtitle")}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/app/documents/issue"
+                className="bento-btn bento-btn--primary"
+                style={{ background: "var(--axis-finance)", borderColor: "var(--axis-finance)" }}
+              >
+                <Plus className="h-4 w-4" strokeWidth={2} aria-hidden />
+                <HeaderResponsiveLabel short={t("workspaceFinance.issueCtaShort")} long={t("workspaceFinance.issueCta")} />
+              </Link>
+              <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-finance-soft)] sm:flex">
+                <Landmark className="h-6 w-6 text-[color:var(--axis-finance)]" aria-hidden />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">סה"כ הופק</p>
+              <p className="mt-1 text-xl font-black text-[color:var(--ink-900)]">{formatCurrencyILS(totalInvoiced)}</p>
+            </div>
+            <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">שיעור גבייה</p>
+              <p className="mt-1 text-xl font-black text-[color:var(--ink-900)]">{collectionRate}%</p>
+            </div>
+            <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">יתרה לגבייה</p>
+              <p className="mt-1 text-xl font-black text-[color:var(--state-warning)]">{formatCurrencyILS(totals.pendingIssuedTotal)}</p>
+            </div>
+            <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">יעד חודשי</p>
+              <p className="mt-1 text-xl font-black text-[color:var(--ink-900)]">{formatCurrencyILS(target)}</p>
+            </div>
+          </div>
+        </div>
+      </Tile>
 
       <BentoGrid>
         {/* AI Insight (dark, hero) */}
@@ -124,40 +158,26 @@ export default async function FinanceHubContent({
           </div>
         </Tile>
 
-        {/* Finance Hero */}
+        {/* Finance Snapshot Sparkline */}
         <Tile tone="finance" span={8}>
-          <div>
-            <p className="tile-eyebrow">{t("workspaceFinance.totalInvoicedLabel")}</p>
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--axis-finance-ink)]/80">
-              {t("workspaceFinance.heroKpiSub")}
-            </p>
-          </div>
-          <div className="mt-3 flex items-end justify-between gap-4">
-            <p className="tile-hero-value text-[color:var(--axis-finance-ink)]">
-              {formatCurrencyILS(totalInvoiced)}
-            </p>
-            <div className="hidden flex-1 self-stretch sm:block">
-              <Sparkline values={cashSpark} axis="finance" height={60} />
+          <TileHeader eyebrow="מגמת הכנסות" />
+          <div className="mt-5 flex items-end justify-between gap-4">
+            <div className="flex-1">
+              <Sparkline values={cashSpark} axis="finance" height={100} />
+            </div>
+            <div className="shrink-0 text-start">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">צמיחה חודשית</p>
+              <p className={`mt-1 text-2xl font-black tabular-nums ${issuedMonthOverMonthPct >= 0 ? "text-[color:var(--state-success)]" : "text-[color:var(--state-warning)]"}`}>
+                {issuedMonthOverMonthPct > 0 ? "+" : ""}{issuedMonthOverMonthPct}%
+              </p>
             </div>
           </div>
-          <div className="mt-4">
-            <div className="mb-1 flex items-center justify-between text-[11px] font-bold text-[color:var(--ink-600)]">
-              <span>{t("workspaceHome.axisFinance.target", { amount: formatCurrencyILS(target) })}</span>
-              <span className="tabular-nums">
-                {targetProgress}% ·{" "}
-                <span
-                  className={
-                    issuedMonthOverMonthPct >= 0
-                      ? "text-[color:var(--state-success)]"
-                      : "text-[color:var(--state-warning)]"
-                  }
-                >
-                  {issuedMonthOverMonthPct > 0 ? "+" : ""}
-                  {issuedMonthOverMonthPct}%
-                </span>
-              </span>
+          <div className="mt-6 pt-6 border-t border-white/30">
+            <div className="mb-2 flex items-center justify-between text-[11px] font-bold text-[color:var(--ink-600)]">
+              <span>התקדמות ליעד</span>
+              <span>{targetProgress}%</span>
             </div>
-            <ProgressBar value={targetProgress} target={100} axis="finance" glow />
+            <ProgressBar value={targetProgress} axis="finance" glow />
           </div>
         </Tile>
 

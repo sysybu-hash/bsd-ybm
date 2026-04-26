@@ -130,12 +130,10 @@ export default async function AppDocumentsPage() {
     }));
 
   return (
-    <WorkspaceEngineeringShell>
-      <DocumentsWorkspaceV2
-        industryProfile={industryProfile}
-        scannedDocuments={scannedDocuments}
-        issuedDocuments={issuedDocuments}
-      />
-    </WorkspaceEngineeringShell>
+    <DocumentsWorkspaceV2
+      industryProfile={industryProfile}
+      scannedDocuments={scannedDocuments}
+      issuedDocuments={issuedDocuments}
+    />
   );
 }
