@@ -506,7 +506,7 @@ export default function AppShellV2({ children, user }: Props) {
 
             <main
               id="app-main-content"
-              className="relative flex-1 px-3 pt-4 pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))] sm:px-4 lg:py-5 lg:pb-7 lg:pr-[max(6rem,calc(env(safe-area-inset-right,0px)+6rem))] lg:pl-[max(2rem,calc(env(safe-area-inset-left,0px)+1.25rem+3.5rem))]"
+              className="relative flex-1 px-3 pt-4 pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))] sm:px-4 lg:px-8 lg:py-6 lg:pb-8"
             >
               <div className="mx-auto w-full min-w-0">{children}</div>
             </main>
@@ -530,9 +530,9 @@ export default function AppShellV2({ children, user }: Props) {
             </div>
           </nav>
 
-          {/* Narrow dark sidebar (visual LEFT in RTL) */}
+          {/* Narrow dark sidebar — מוצג רק על מובייל/tablet; בדסקטופ מוחלף ע"י Top Nav */}
           <aside
-            className={`group/sidebar hidden overflow-hidden border-s border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-bg)] shadow-[0_16px_44px_rgba(15,23,42,0.06)] transition-[width] duration-200 ease-out lg:fixed lg:right-0 lg:top-0 lg:z-50 lg:flex lg:h-screen lg:flex-col ${
+            className={`group/sidebar hidden overflow-hidden border-s border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-bg)] shadow-[0_16px_44px_rgba(15,23,42,0.06)] transition-[width] duration-200 ease-out ${
               desktopMenuExpanded ? "lg:w-80" : "lg:w-[4.5rem]"
             }`}
             onMouseEnter={() => setDesktopMenuHovered(true)}
