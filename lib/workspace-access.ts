@@ -24,11 +24,7 @@ export function isOrgAdminRole(role: string | null | undefined): boolean {
 
 export function isWorkspaceManagerRole(role: string | null | undefined): boolean {
   const normalized = normalizeRole(role);
-  return (
-    normalized === "SUPER_ADMIN" ||
-    normalized === "ORG_ADMIN" ||
-    normalized === "PROJECT_MGR"
-  );
+  return normalized === "SUPER_ADMIN" || normalized === "ORG_ADMIN" || normalized === "PROJECT_MGR";
 }
 
 export function canManageOrganization(context: WorkspaceAccessContext): boolean {
@@ -49,9 +45,7 @@ export function hasActiveWorkspaceSubscription(status: string | null | undefined
 }
 
 export function getWorkspaceRoleLabel(context: WorkspaceAccessContext): string {
-  if (context.isPlatformAdmin) {
-    return "מנהל פלטפורמה";
-  }
+  if (context.isPlatformAdmin) return "מנהל פלטפורמה";
 
   switch (normalizeRole(context.role)) {
     case "ORG_ADMIN":
@@ -74,17 +68,13 @@ export function getWorkspaceModeLabel(context: WorkspaceAccessContext): string {
 }
 
 export function getWorkspaceTierLabel(context: WorkspaceAccessContext): string {
-  if (!context.subscriptionTier) {
-    return "ללא מנוי";
-  }
+  if (!context.subscriptionTier) return "ללא מנוי";
   return tierLabelHe(context.subscriptionTier);
 }
 
 export function getSubscriptionStatusLabel(status: string | null | undefined): string {
   const normalized = normalizeStatus(status);
-  if (!normalized) {
-    return "ללא סטטוס";
-  }
+  if (!normalized) return "ללא סטטוס";
 
   switch (normalized) {
     case "ACTIVE":
@@ -92,7 +82,7 @@ export function getSubscriptionStatusLabel(status: string | null | undefined): s
     case "PENDING_APPROVAL":
       return "ממתין לאישור";
     case "SUSPENDED":
-      return "מנוי מושעה";
+      return "מנוי מושהה";
     case "INACTIVE":
       return "מנוי לא פעיל";
     case "TRIAL":

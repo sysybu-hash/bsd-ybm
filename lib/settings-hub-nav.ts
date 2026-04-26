@@ -1,19 +1,17 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Bot,
   BriefcaseBusiness,
   Building2,
-  Cpu,
   CreditCard,
-  FolderCog,
   Globe,
   LayoutDashboard,
   ShieldCheck,
-  Sparkles,
   User,
   Workflow,
+  Wrench,
 } from "lucide-react";
 
-/** מזהי מקטעים תחת /app/settings/[segment] */
 export const SETTINGS_HUB_SEGMENT_IDS = [
   "overview",
   "profile",
@@ -29,7 +27,6 @@ export const SETTINGS_HUB_SEGMENT_IDS = [
 
 export type SettingsHubSegmentId = (typeof SETTINGS_HUB_SEGMENT_IDS)[number];
 
-/** מקטעי פאנל ליבה (ללא billing/automations/operations/platform) */
 export const SETTINGS_HUB_CORE_SEGMENT_IDS = [
   "overview",
   "organization",
@@ -46,7 +43,6 @@ export type SettingsHubNavItem = {
   label: string;
   description: string;
   icon: LucideIcon;
-  /** רק בעל פלטפורמה */
   platformAdminOnly?: boolean;
 };
 
@@ -60,95 +56,95 @@ const BASE = "/app/settings";
 
 export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
   {
-    id: "core",
-    title: "ליבת המערכת",
+    id: "foundation",
+    title: "בסיס המערכת",
     items: [
       {
         id: "overview",
         href: `${BASE}/overview`,
         label: "סקירה",
-        description: "מפת דרכים וקיצורים",
+        description: "מצב הגדרות, השלמות וקיצורי דרך",
         icon: LayoutDashboard,
       },
       {
         id: "profile",
         href: `${BASE}/profile`,
-        label: "פרופיל",
-        description: "פרטים אישיים ואבטחה",
+        label: "פרופיל משתמש",
+        description: "זהות, תפקיד והרשאות גישה",
         icon: User,
       },
       {
         id: "organization",
         href: `${BASE}/organization`,
-        label: "ארגון ומס",
-        description: "זהות רשמית ומס",
+        label: "ארגון ומיסוי",
+        description: "שם עסק, ח.פ, כתובת וצוות",
         icon: Building2,
       },
       {
         id: "profession",
         href: `${BASE}/profession`,
-        label: "מקצוע ושפה",
-        description: "תחום ותוויות",
+        label: "תחום בניה",
+        description: "התמחות, שפה מקצועית ותבניות",
         icon: BriefcaseBusiness,
       },
     ],
   },
   {
     id: "digital",
-    title: "נוכחות וטכנולוגיה",
+    title: "מנועים ונוכחות",
     items: [
       {
         id: "presence",
         href: `${BASE}/presence`,
-        label: "נוכחות דיגיטלית",
-        description: "פורטל, מיתוג וגבייה מול לקוחות",
+        label: "פורטל וגבייה",
+        description: "מיתוג, דומיין וחיבורי לקוחות",
         icon: Globe,
       },
       {
         id: "stack",
         href: `${BASE}/stack`,
-        label: "מנועים וחיבורים",
-        description: "AI, ענן, Meckano, גיבוי",
-        icon: Cpu,
+        label: "מנועי AI וחיבורים",
+        description: "Document AI, Gemini, OpenAI, ענן וגיבוי",
+        icon: Bot,
       },
     ],
   },
   {
-    id: "ops",
+    id: "operations",
     title: "תפעול ומסחר",
     items: [
       {
         id: "billing",
         href: `${BASE}/billing`,
-        label: "מנויים וחיוב",
-        description: "מסלול BSD-YBM ומרכז שליטה",
+        label: "מנוי וחיוב",
+        description: "מסלול BSD-YBM, מכסות ותשלום",
         icon: CreditCard,
       },
       {
         id: "automations",
         href: `${BASE}/automations`,
         label: "אוטומציות",
-        description: "בניית זרימות",
+        description: "תהליכים בין CRM, ERP וסריקה",
         icon: Workflow,
       },
       {
         id: "operations",
         href: `${BASE}/operations`,
-        label: "תפעול",
-        description: "תורים, שטח, חיבורים",
-        icon: FolderCog,
+        label: "תפעול שטח",
+        description: "יומנים, צוותים, Meckano ותורים",
+        icon: Wrench,
       },
     ],
   },
   {
     id: "platform",
-    title: "פלטפורמה",
+    title: "ניהול פלטפורמה",
     items: [
       {
         id: "platform",
         href: `${BASE}/platform`,
-        label: "בקרת פלטפורמה",
-        description: "בריאות, מנויים, שידורים",
+        label: "בקרת מערכת",
+        description: "בריאות שירות, מנויים ושידורים",
         icon: ShieldCheck,
         platformAdminOnly: true,
       },
@@ -156,38 +152,39 @@ export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
   },
 ];
 
-/** מיפוי ?tab= ישן (לפני nested routes) */
 const LEGACY_TAB_TO_SEGMENT: Readonly<Record<string, SettingsHubSegmentId>> = {
   overview: "overview",
   organization: "organization",
+  org: "organization",
+  profile: "profile",
   profession: "profession",
+  trade: "profession",
   presence: "presence",
-  stack: "stack",
   portal: "presence",
   billing: "billing",
   subscription: "billing",
   ai: "stack",
+  stack: "stack",
   integrations: "stack",
   meckano: "stack",
+  automations: "automations",
+  operations: "operations",
+  platform: "platform",
 };
 
 export function legacyTabToSegment(tab: string | undefined | null): SettingsHubSegmentId | null {
-  const u = String(tab ?? "")
-    .trim()
-    .toLowerCase();
-  if (!u) return null;
-  return LEGACY_TAB_TO_SEGMENT[u] ?? null;
+  const normalized = String(tab ?? "").trim().toLowerCase();
+  if (!normalized) return null;
+  return LEGACY_TAB_TO_SEGMENT[normalized] ?? null;
 }
 
 export function settingsHubPath(segment: SettingsHubSegmentId): string {
   return `${BASE}/${segment}`;
 }
 
-export function flattenSettingsHubNav(
-  includePlatformItems: boolean,
-): SettingsHubNavItem[] {
-  return SETTINGS_HUB_NAV_GROUPS.flatMap((g) =>
-    g.items.filter((item) => includePlatformItems || !item.platformAdminOnly),
+export function flattenSettingsHubNav(includePlatformItems: boolean): SettingsHubNavItem[] {
+  return SETTINGS_HUB_NAV_GROUPS.flatMap((group) =>
+    group.items.filter((item) => includePlatformItems || !item.platformAdminOnly),
   );
 }
 

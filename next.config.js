@@ -19,7 +19,7 @@ const nextConfig = {
       {
         key: "Permissions-Policy",
         value:
-          "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()",
+          "camera=(), microphone=(self), geolocation=(), interest-cohort=(), browsing-topics=()",
       },
     ];
     if (isProd) {
@@ -73,6 +73,13 @@ const nextConfig = {
       { source: "/dashboard/legacy/operations", destination: "/app/operations", permanent: true },
       { source: "/dashboard/legacy/settings", destination: "/app/settings/overview", permanent: true },
       { source: "/dashboard/legacy", destination: "/app", permanent: true },
+      { source: "/app/billing", destination: "/app/settings/billing", permanent: true },
+      { source: "/app/automations", destination: "/app/settings/automations", permanent: true },
+      { source: "/app/settings/advanced", destination: "/app/settings/overview", permanent: true },
+      { source: "/app/insights", destination: "/app/ai", permanent: true },
+      { source: "/app/insights/advanced", destination: "/app/ai", permanent: true },
+      { source: "/app/intelligence", destination: "/app/ai", permanent: true },
+      { source: "/app/portal", destination: "/app/projects", permanent: true },
     ];
   },
   transpilePackages: ["react-signature-canvas", "signature_pad"],

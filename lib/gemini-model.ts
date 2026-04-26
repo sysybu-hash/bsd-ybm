@@ -2,11 +2,10 @@
  * Gemini — April 2026 (V12-style routing). מפתח AI Studio (לעיתים AQ…) ב־GOOGLE_GENERATIVE_AI_API_KEY / GEMINI_API_KEY.
  */
 
-export const GEMINI_FLAGSHIP_MODEL = "gemini-3.1-pro-stable";
+export const GEMINI_FLAGSHIP_MODEL = "gemini-2.5-flash";
+export const GEMINI_LIVE_NATIVE_AUDIO_MODEL = "gemini-2.5-flash-native-audio-preview-12-2025";
 
 export const GEMINI_MODEL_FALLBACK_TIER: readonly string[] = [
-  "gemini-3.1-pro-stable",
-  "gemini-2.0-pro-stable",
   "gemini-2.5-pro",
   "gemini-2.0-flash",
   "gemini-2.5-flash",
@@ -17,6 +16,8 @@ export const GEMINI_MODEL_FALLBACK_TIER: readonly string[] = [
 
 const LEGACY_MODEL_ALIASES: Record<string, string> = {
   "gemini-3.1-pro": GEMINI_FLAGSHIP_MODEL,
+  "gemini-3.1-pro-stable": GEMINI_FLAGSHIP_MODEL,
+  "gemini-2.0-pro-stable": "gemini-2.5-pro",
   "gemini-2.0-flash-001": "gemini-2.0-flash",
   "gemini-2.0-flash-lite": "gemini-2.5-flash",
   "gemini-2.0-flash-exp": "gemini-2.5-pro",

@@ -130,7 +130,7 @@ export default function BsdYbmLogo({
   const gid = useId().replace(/:/g, "");
   const s = sizeMap[size];
   const isDark =
-    variant === "marketing-dark" || variant === "footer-dark" || variant === "sidebar";
+    variant === "marketing-dark" || variant === "footer-dark";
 
   if (iconOnly) {
     const markInner = !isDark ? (
@@ -138,7 +138,7 @@ export default function BsdYbmLogo({
     ) : (
       <MarkLight gid={gid} className={`shrink-0 ${s.mark}`} />
     );
-    const wrapClass = `flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:bg-white/10 ${className}`.trim();
+    const wrapClass = `flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--line)] bg-white transition hover:bg-[color:var(--canvas-sunken)] ${className}`.trim();
     if (href) {
       return (
         <Link
@@ -156,16 +156,12 @@ export default function BsdYbmLogo({
   const textClass =
     variant === "marketing-dark" || variant === "footer-dark"
       ? "text-white"
-      : variant === "sidebar"
-        ? "text-white"
-        : "text-slate-900";
+      : "text-slate-900";
 
   const accentClass =
     variant === "marketing-dark" || variant === "footer-dark"
       ? "text-[#5eead4]"
-      : variant === "sidebar"
-        ? "text-[#5eead4]"
-        : "text-[#0d9488]";
+      : "text-[color:var(--dash-purple,#7c57ff)]";
 
   const inner = (
     <span className={`flex items-center gap-2.5 ${className}`}>
@@ -177,12 +173,12 @@ export default function BsdYbmLogo({
       <span className="min-w-0 text-right leading-tight">
         <span className={`block font-black tracking-[-0.06em] ${s.text} ${textClass}`}>
           <span className={accentClass}>BSD</span>
-          <span className={variant === "marketing-light" ? "text-slate-800" : "text-white"}>-YBM</span>
+          <span className={variant === "marketing-dark" || variant === "footer-dark" ? "text-white" : "text-slate-800"}>-YBM</span>
         </span>
         {subtitle !== undefined ? (
           subtitle
         ) : (
-          <span className={`mt-0.5 block font-semibold ${s.sub} text-slate-500 ${variant === "marketing-dark" || variant === "footer-dark" || variant === "sidebar" ? "!text-slate-400" : ""}`}>
+          <span className={`mt-0.5 block font-semibold ${s.sub} text-slate-500 ${variant === "marketing-dark" || variant === "footer-dark" ? "!text-slate-400" : ""}`}>
             פלטפורמה לפרויקטי בנייה
           </span>
         )}

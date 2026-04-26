@@ -54,7 +54,7 @@ export function getAiProvidersPublic(): AiProviderPublic[] {
   return [
     {
       id: "gemini",
-      label: "Google Gemini 3.1",
+      label: "Google Gemini",
       description: "סריקת מסמכים רב-ממדית, ניתוח נתונים משולב ו-vision",
       configured: isGeminiConfigured(),
       supportsDocumentScan: true,

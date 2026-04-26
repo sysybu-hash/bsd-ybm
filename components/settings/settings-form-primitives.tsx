@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 export const inputClass =
-  "w-full rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3.5 py-2.5 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition placeholder:text-[color:var(--ink-400)] focus:border-[color:var(--axis-clients)] focus:ring-2 focus:ring-[color:var(--axis-clients-glow)]";
+  "w-full rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-3.5 py-2.5 text-sm font-semibold text-[color:var(--ink-900)] outline-none transition placeholder:text-[color:var(--ink-400)] focus:border-[color:var(--ops-indigo)] focus:ring-2 focus:ring-[color:var(--axis-ai-glow)]";
 
 export const textareaClass = `${inputClass} min-h-[120px] resize-y leading-7`;
 
@@ -54,11 +54,11 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="tile p-5 sm:p-6">
-      <div className="flex items-start gap-3 pb-4 mb-4 border-b border-[color:var(--line-subtle)]">
+    <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
+      <div className="mb-4 flex items-start gap-3 border-b border-[color:var(--line-subtle)] pb-4">
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-          style={{ background: "var(--axis-clients-soft)", color: "var(--axis-clients)" }}
+          style={{ background: "var(--axis-ai-soft)", color: "var(--ops-indigo)" }}
         >
           {icon}
         </span>

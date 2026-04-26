@@ -22,47 +22,15 @@ describe("workspace-access", () => {
   });
 
   test("separates platform admin from org management", () => {
-    expect(
-      canManageOrganization({
-        role: "ORG_ADMIN",
-        isPlatformAdmin: false,
-      }),
-    ).toBe(true);
-
-    expect(
-      canAccessPlatformAdmin({
-        role: "ORG_ADMIN",
-        isPlatformAdmin: false,
-      }),
-    ).toBe(false);
-
-    expect(
-      canAccessPlatformAdmin({
-        role: "CLIENT",
-        isPlatformAdmin: true,
-      }),
-    ).toBe(true);
+    expect(canManageOrganization({ role: "ORG_ADMIN", isPlatformAdmin: false })).toBe(true);
+    expect(canAccessPlatformAdmin({ role: "ORG_ADMIN", isPlatformAdmin: false })).toBe(false);
+    expect(canAccessPlatformAdmin({ role: "CLIENT", isPlatformAdmin: true })).toBe(true);
   });
 
   test("returns readable labels for role, mode, tier and status", () => {
-    expect(
-      getWorkspaceRoleLabel({
-        role: "ORG_ADMIN",
-      }),
-    ).toBe("מנהל ארגון");
-
-    expect(
-      getWorkspaceModeLabel({
-        role: "CLIENT",
-      }),
-    ).toBe("צפייה");
-
-    expect(
-      getWorkspaceTierLabel({
-        subscriptionTier: "COMPANY",
-      }),
-    ).toContain("חברה");
-
+    expect(getWorkspaceRoleLabel({ role: "ORG_ADMIN" })).toBe("מנהל ארגון");
+    expect(getWorkspaceModeLabel({ role: "CLIENT" })).toBe("צפייה");
+    expect(getWorkspaceTierLabel({ subscriptionTier: "COMPANY" })).toContain("חברה");
     expect(getSubscriptionStatusLabel("PENDING_APPROVAL")).toBe("ממתין לאישור");
   });
 
@@ -71,18 +39,19 @@ describe("workspace-access", () => {
     expect(hasActiveWorkspaceSubscription("PENDING_APPROVAL")).toBe(true);
     expect(hasActiveWorkspaceSubscription("INACTIVE")).toBe(false);
 
-    expect(
-      getVisibleUtilitySectionIds({
-        role: "CLIENT",
-        isPlatformAdmin: false,
-      }),
-    ).toEqual(["help", "business"]);
+    expect(getVisibleUtilitySectionIds({ role: "CLIENT", isPlatformAdmin: false })).toEqual([
+      "projects",
+      "operations",
+      "help",
+      "business",
+    ]);
 
-    expect(
-      getVisibleUtilitySectionIds({
-        role: "SUPER_ADMIN",
-        isPlatformAdmin: true,
-      }),
-    ).toEqual(["help", "business", "admin"]);
+    expect(getVisibleUtilitySectionIds({ role: "SUPER_ADMIN", isPlatformAdmin: true })).toEqual([
+      "projects",
+      "operations",
+      "help",
+      "business",
+      "admin",
+    ]);
   });
 });

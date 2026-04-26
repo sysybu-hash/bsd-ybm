@@ -1,67 +1,56 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
 import {
   ArrowUpRight,
-  BookOpenCheck,
   Bot,
+  Building2,
   CreditCard,
+  FileSearch,
   Settings,
-  Shield,
   Users,
   Workflow,
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
-import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
 
 export const metadata = {
-  title: "׳¢׳–׳¨׳” | BSD-YBM",
+  title: "עזרה | BSD-YBM",
 };
 
 function HelpStep({
   step,
   title,
   description,
-  primaryHref,
-  primaryLabel,
-  secondaryHref,
-  secondaryLabel,
+  href,
+  label,
   icon,
 }: {
   step: string;
   title: string;
   description: string;
-  primaryHref: string;
-  primaryLabel: string;
-  secondaryHref: string;
-  secondaryLabel: string;
+  href: string;
+  label: string;
   icon: ReactNode;
 }) {
   return (
-    <article className="tile p-5">
+    <article className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
       <div className="flex items-start gap-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[color:var(--ink-900)] text-sm font-black text-white">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[color:var(--ops-indigo)] text-sm font-black text-white">
           {step}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--axis-ai-soft)] text-[color:var(--ops-indigo)]">
               {icon}
             </span>
             <h2 className="text-lg font-black text-[color:var(--ink-900)]">{title}</h2>
           </div>
           <p className="mt-3 text-sm leading-7 text-[color:var(--ink-500)]">{description}</p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link href={primaryHref} className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
-              {primaryLabel}
-              <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
-            <Link href={secondaryHref} className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
-              {secondaryLabel}
-              <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
+          <Link href={href} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
+            {label}
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </Link>
         </div>
       </div>
     </article>
@@ -73,130 +62,95 @@ export default async function AppHelpPage() {
   const platformAdmin = isAdmin(session?.user?.email);
 
   return (
-    <div className="w-full min-w-0 space-y-8" dir="rtl">
-      <header className="flex flex-col gap-1 px-1">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
-          Workspace Guide
+    <div className="w-full min-w-0 space-y-5" dir="rtl">
+      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
+        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[color:var(--ops-indigo)]">
+          Workspace guide
         </p>
-        <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">
-          ׳”׳׳¡׳׳•׳ ׳”׳§׳¦׳¨ ׳‘׳™׳•׳×׳¨ ׳׳¢׳‘׳•׳“׳” ׳ ׳›׳•׳ ׳”, ׳‘׳˜׳•׳—׳” ׳•׳׳”׳™׳¨׳” ׳‘׳×׳•׳ ׳”׳׳¢׳¨׳›׳×.
+        <h1 className="mt-2 text-3xl font-black tracking-tight text-[color:var(--ink-900)]">
+          איך מפעילים את BSD-YBM בלי ללכת לאיבוד
         </h1>
-        <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">
-          ׳׳ ׳ ׳›׳ ׳¡׳× ׳׳¨׳׳©׳•׳ ׳”, ׳׳ ׳¢׳•׳‘׳“ ׳—׳“׳© ׳׳¦׳˜׳¨׳£, ׳׳• ׳׳ ׳¦׳¨׳™׳ ׳׳”׳×׳׳₪׳¡ ׳¢׳ ׳¡׳“׳¨ ׳”׳₪׳¢׳•׳׳•׳× ׳”׳ ׳›׳•׳, ׳–׳” ׳”׳“׳£ ׳©׳׳¡׳“׳¨ ׳׳× ׳”׳¦׳¢׳“׳™׳ ׳‘׳׳™ ׳¢׳•׳׳¡ ׳•׳‘׳׳™ ׳§׳₪׳™׳¦׳•׳× ׳׳™׳•׳×׳¨׳•׳×.
+        <p className="mt-2 max-w-3xl text-[14px] leading-7 text-[color:var(--ink-500)]">
+          זה מסלול העבודה הרשמי: קודם מסדרים מנוי וזהות עסקית, אחר כך מגדירים תחום בניה ומנועים, ואז עובדים מתוך לקוחות, מסמכים, כספים ותיבת עבודה. אין צורך לקפוץ בין מסכים ישנים.
         </p>
-      </header>
-
-      <BentoGrid>
-        <Tile tone="clients" span={8}>
-          <TileHeader eyebrow="Workspace Guide" />
-          <p className="mt-3 text-[14px] leading-7 text-[color:var(--axis-clients-ink)]">
-            ׳”׳׳¢׳¨׳›׳× ׳‘׳ ׳•׳™׳” ׳׳׳¡׳׳•׳ ׳¢׳‘׳•׳“׳” ׳‘׳¨׳•׳¨: ׳׳ ׳•׳™, ׳׳¨׳’׳•׳, ׳׳©׳×׳׳©׳™׳, ׳•׳׳– ׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳× ׳‘׳׳¡׳׳›׳™׳, ׳׳§׳•׳—׳•׳× ׳•׳›׳¡׳₪׳™׳.
-          </p>
-          <div className="mt-4">
-            <ProgressBar value={75} axis="clients" />
-          </div>
-        </Tile>
-
-        <Tile tone="neutral" span={4}>
-          <TileHeader eyebrow="׳׳” ׳‘׳•׳“׳§׳™׳ ׳§׳•׳“׳" />
-          <div className="mt-3 grid gap-2">
-            {[
-              "׳‘׳“׳™׳§׳× ׳׳ ׳•׳™, ׳—׳™׳•׳‘ ׳•׳׳׳¦׳¢׳™ ׳×׳©׳׳•׳ ׳₪׳¢׳™׳.",
-              "׳”׳©׳׳׳× ׳₪׳¨׳˜׳™ ׳׳¨׳’׳•׳, ׳›׳×׳•׳‘׳×, AI ׳•׳׳™׳ ׳˜׳’׳¨׳¦׳™׳•׳×.",
-              "׳₪׳×׳™׳—׳× ׳׳©׳×׳׳©׳™׳ ׳•׳”׳¨׳©׳׳•׳× ׳׳₪׳™ ׳×׳₪׳§׳™׳“.",
-              "׳׳¢׳‘׳¨ ׳׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳× ׳‘-Inbox, Clients ׳•-Billing.",
-            ].map((item) => (
-              <div key={item} className="rounded-lg bg-[color:var(--canvas-sunken)] px-3 py-2">
-                <p className="text-[12px] leading-6 text-[color:var(--ink-700)]">{item}</p>
-              </div>
-            ))}
-          </div>
-        </Tile>
-      </BentoGrid>
-
-      <section className="grid gap-4">
-        <HelpStep
-          step="1"
-          title="׳‘׳“׳™׳§׳× ׳׳ ׳•׳™ ׳•׳—׳™׳•׳‘"
-          description="׳׳•׳•׳“׳׳™׳ ׳©׳™׳© ׳׳¡׳׳•׳ ׳₪׳¢׳™׳, ׳׳׳¦׳¢׳™ ׳×׳©׳׳•׳ ׳×׳§׳™׳ ׳•׳’׳™׳©׳” ׳׳›׳׳™ ׳”׳¢׳‘׳•׳“׳” ׳”׳¨׳׳•׳•׳ ׳˜׳™׳™׳."
-          primaryHref="/app/settings/billing"
-          primaryLabel="׳₪׳×׳™׳—׳× ׳—׳™׳•׳‘"
-          secondaryHref="/app/settings/billing?tab=control"
-          secondaryLabel="׳׳¨׳›׳– ׳׳ ׳•׳™׳™׳"
-          icon={<CreditCard className="h-5 w-5" aria-hidden />}
-        />
-        <HelpStep
-          step="2"
-          title="׳”׳©׳׳׳× ׳”׳’׳“׳¨׳•׳× ׳”׳׳¨׳’׳•׳"
-          description="׳׳¢׳“׳›׳ ׳™׳ ׳₪׳¨׳˜׳™ ׳¢׳¡׳§, ׳׳¡, ׳›׳×׳•׳‘׳×, ׳“׳•׳׳™׳™׳, AI ׳•׳—׳™׳‘׳•׳¨׳™׳ ׳‘׳¡׳™׳¡׳™׳™׳."
-          primaryHref="/app/settings/overview"
-          primaryLabel="׳₪׳×׳™׳—׳× ׳”׳’׳“׳¨׳•׳×"
-          secondaryHref="/app/operations"
-          secondaryLabel="׳‘׳“׳™׳§׳× ׳×׳₪׳¢׳•׳"
-          icon={<Settings className="h-5 w-5" aria-hidden />}
-        />
-        <HelpStep
-          step="3"
-          title="׳ ׳™׳”׳•׳ ׳׳©׳×׳׳©׳™׳ ׳•׳”׳¨׳©׳׳•׳×"
-          description="׳׳–׳׳™׳ ׳™׳ ׳׳©׳×׳׳©׳™׳, ׳‘׳•׳“׳§׳™׳ ׳”׳¨׳©׳׳•׳×, ׳•׳׳•׳•׳“׳׳™׳ ׳©׳›׳ ׳׳—׳“ ׳׳’׳™׳¢ ׳׳׳¡׳›׳™׳ ׳©׳׳×׳׳™׳׳™׳ ׳׳•."
-          primaryHref="/app/settings/organization"
-          primaryLabel="׳׳©׳×׳׳©׳™׳ ׳•׳”׳’׳“׳¨׳•׳×"
-          secondaryHref={platformAdmin ? "/app/admin" : "/app/inbox"}
-          secondaryLabel={platformAdmin ? "Admin" : "׳׳¢׳‘׳¨ ׳-Inbox"}
-          icon={<Users className="h-5 w-5" aria-hidden />}
-        />
-        <HelpStep
-          step="4"
-          title="׳׳¢׳‘׳¨ ׳׳¢׳‘׳•׳“׳” ׳©׳•׳˜׳₪׳×"
-          description="׳׳—׳¨׳™ ׳©׳”׳‘׳¡׳™׳¡ ׳׳•׳›׳, ׳¢׳•׳‘׳¨׳™׳ ׳׳×׳™׳‘׳× ׳”׳¢׳‘׳•׳“׳”, CRM, ׳׳¡׳׳›׳™׳, ׳—׳™׳•׳‘ ׳•׳×׳•׳‘׳ ׳•׳×."
-          primaryHref="/app/inbox"
-          primaryLabel="׳₪׳×׳™׳—׳× ׳×׳™׳‘׳× ׳¢׳‘׳•׳“׳”"
-          secondaryHref="/app/ai#assistant"
-          secondaryLabel="׳₪׳×׳™׳—׳× ׳×׳•׳‘׳ ׳•׳×"
-          icon={<Workflow className="h-5 w-5" aria-hidden />}
-        />
       </section>
 
-      <BentoGrid>
-        <Tile tone="neutral" span={7}>
-          <TileHeader eyebrow="Quick Rescue" />
-          <div className="mt-4 grid gap-3">
-            {[
-              { href: "/app/settings/billing", label: "׳‘׳“׳™׳§׳× ׳׳ ׳•׳™, ׳—׳™׳•׳‘ ׳•׳×׳©׳׳•׳׳™׳", icon: CreditCard },
-              { href: "/app/settings/overview", label: "׳‘׳“׳™׳§׳× ׳”׳’׳“׳¨׳•׳×, ׳“׳•׳׳™׳™׳ ׳•-AI", icon: Bot },
-              { href: "/app/clients", label: "׳‘׳“׳™׳§׳× ׳׳§׳•׳—׳•׳×, ׳¦׳ ׳¨׳× ׳•׳”׳§׳©׳¨׳™׳", icon: Shield },
-            ].map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex items-center gap-3 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-4 py-3 transition hover:border-[color:var(--axis-clients)] hover:bg-[color:var(--canvas-sunken)]"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--canvas-sunken)] text-[color:var(--axis-clients)]">
-                  <Icon className="h-4 w-4" aria-hidden />
-                </span>
-                <span className="flex-1 text-[13px] font-black text-[color:var(--ink-900)]">{label}</span>
-                <ArrowUpRight className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
-              </Link>
-            ))}
-          </div>
-        </Tile>
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-4">
+          <HelpStep
+            step="1"
+            title="בדיקת מנוי וחיוב"
+            description="ודא שיש מסלול פעיל, מכסות סריקה מתאימות ואמצעי תשלום תקין."
+            href="/app/settings/billing"
+            label="פתח מנוי וחיוב"
+            icon={<CreditCard className="h-5 w-5" aria-hidden />}
+          />
+          <HelpStep
+            step="2"
+            title="השלמת זהות הארגון"
+            description="עדכן שם עסק, ח.פ/ע.מ, כתובת, צוות והרשאות. זה המקור למסמכים ולפעולות ERP."
+            href="/app/settings/organization"
+            label="פתח ארגון ומיסוי"
+            icon={<Building2 className="h-5 w-5" aria-hidden />}
+          />
+          <HelpStep
+            step="3"
+            title="התאמת תחום הבניה והמנועים"
+            description="בחר התמחות, תבניות, מנועי Document AI, Gemini, OpenAI וחיבורי ענן."
+            href="/app/settings/stack"
+            label="פתח מנועים וחיבורים"
+            icon={<Bot className="h-5 w-5" aria-hidden />}
+          />
+          <HelpStep
+            step="4"
+            title="עבודה שוטפת"
+            description="עכשיו עוברים לתיבת העבודה, לקוחות, מסמכים, לוח סריקה וכספים."
+            href="/app/inbox"
+            label="פתח תיבת עבודה"
+            icon={<Workflow className="h-5 w-5" aria-hidden />}
+          />
+        </div>
 
-        <Tile tone="lavender" span={5}>
-          <TileHeader eyebrow="Notes" />
-          <div className="mt-4 grid gap-3">
-            {[
-              "׳”׳¢׳‘׳•׳“׳” ׳”׳™׳•׳׳™׳•׳׳™׳× ׳׳×׳‘׳¦׳¢׳× ׳×׳—׳× /app. ׳׳™׳ ׳¦׳•׳¨׳ ׳׳—׳–׳•׳¨ ׳׳׳¡׳›׳™ ׳¢׳•׳׳§ ׳׳׳ ׳׳ ׳™׳© ׳¦׳•׳¨׳ ׳¡׳₪׳¦׳™׳₪׳™.",
-              "Meckano ׳–׳׳™׳ ׳¨׳§ ׳׳׳ ׳•׳™ ׳”׳׳•׳¨׳©׳” ׳©׳”׳•׳’׳“׳¨ ׳‘׳׳¢׳¨׳›׳×.",
-              "׳‘׳׳§׳¨׳” ׳©׳ ׳¡׳₪׳§, ׳׳×׳—׳™׳׳™׳ ׳׳”׳׳¡׳ ׳”׳¨׳׳•׳•׳ ׳˜׳™ ׳‘׳™׳•׳×׳¨ ׳׳׳©׳™׳׳” ׳•׳׳ ׳׳”׳׳¢׳¨׳›׳× ׳”׳•׳•׳×׳™׳§׳” ׳©׳׳׳—׳•׳¨׳™׳•.",
-            ].map((item) => (
-              <div key={item} className="rounded-lg bg-white/75 px-4 py-3">
-                <p className="text-[13px] leading-6 text-[color:var(--ink-700)]">{item}</p>
-              </div>
-            ))}
+        <aside className="grid gap-4">
+          <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
+            <h2 className="text-lg font-black text-[color:var(--ink-900)]">קיצורי דרך מהירים</h2>
+            <div className="mt-4 grid gap-2">
+              {[
+                { href: "/app/settings/overview", label: "מרכז הגדרות", icon: Settings },
+                { href: "/app/clients", label: "לקוחות CRM", icon: Users },
+                { href: "/app/documents", label: "מסמכים וסריקה", icon: FileSearch },
+                { href: platformAdmin ? "/app/admin" : "/app/ai", label: platformAdmin ? "ניהול מערכת" : "עוזר AI", icon: Bot },
+              ].map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="flex items-center gap-3 rounded-lg border border-[color:var(--line)] bg-white px-4 py-3 text-[13px] font-black text-[color:var(--ink-800)] transition hover:border-[color:var(--ops-indigo)] hover:bg-[color:var(--canvas-sunken)]"
+                >
+                  <Icon className="h-4 w-4 text-[color:var(--ops-indigo)]" aria-hidden />
+                  <span className="flex-1">{label}</span>
+                  <ArrowUpRight className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
+                </Link>
+              ))}
+            </div>
           </div>
-        </Tile>
-      </BentoGrid>
+
+          <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
+            <h2 className="text-lg font-black text-[color:var(--ink-900)]">כללי סדר</h2>
+            <div className="mt-4 grid gap-3">
+              {[
+                "עבודה יומיומית מתבצעת תחת /app בלבד.",
+                "הגדרות מערכת נמצאות במרכז ההגדרות, לא במסכי dashboard ישנים.",
+                "הסריקה והצ'אט זמינים מסרגל הבועות המאוחד.",
+                "אם יש ספק, מתחילים ממרכז ההגדרות ואז עוברים למסך העבודה המתאים.",
+              ].map((item) => (
+                <p key={item} className="rounded-lg bg-[color:var(--canvas-sunken)] px-4 py-3 text-[13px] leading-6 text-[color:var(--ink-700)]">
+                  {item}
+                </p>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
     </div>
   );
 }
-
