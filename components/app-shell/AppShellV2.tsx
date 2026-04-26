@@ -380,6 +380,41 @@ export default function AppShellV2({ children, user }: Props) {
           {/* Content column */}
           <div className="flex min-w-0 flex-1 flex-col">
             {/* Desktop Top Bar — bordered bottom, no floating */}
+            <header className="sticky top-0 z-40 hidden border-b border-[color:var(--line)] bg-white/96 backdrop-blur-xl lg:block">
+              <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-6 px-6">
+                <nav className="flex h-full items-center gap-1" aria-label="תפריט ראשי עליון">
+                  {nav.primary.map((item) => {
+                    const active = isAppNavPathActive(pathname, item.href);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        className={`group relative flex h-full items-center gap-2 px-3 text-sm font-bold transition-colors ${
+                          active
+                            ? "text-[color:var(--ink-900)]"
+                            : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
+                        }`}
+                      >
+                        <Icon className={`h-4 w-4 ${active ? "text-[color:var(--axis-ai)]" : ""}`} aria-hidden />
+                        {item.label}
+                        {active && (
+                          <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-[color:var(--axis-ai)]" aria-hidden />
+                        )}
+                        {item.id === "ai" && !active && (
+                          <Sparkles className="absolute end-0 top-3 h-3 w-3 text-[color:var(--axis-ai)] opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </nav>
+                <div className="flex-1" />
+                <div className="flex w-72 shrink-0 items-center">
+                  <AppCommandPalette items={commandItems} />
+                </div>
+              </div>
+            </header>
+
             {/* Mobile Header */}
             <header className="sticky top-0 z-40 border-b border-[color:var(--line)] bg-white/96 backdrop-blur-xl lg:hidden">
               <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-3 py-2.5 sm:px-4">
