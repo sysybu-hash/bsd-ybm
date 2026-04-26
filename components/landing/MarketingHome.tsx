@@ -24,7 +24,6 @@ const navItems = [
   { href: "/solutions", labelKey: "publicShell.navSolutions" },
   { href: "/pricing", labelKey: "publicShell.navPricing" },
   { href: "/about", labelKey: "publicShell.navAbout" },
-  { href: "/professional", labelKey: "publicShell.navProfessional" },
   { href: "/contact", labelKey: "publicShell.navContact" },
 ] as const;
 
@@ -61,15 +60,15 @@ export default function MarketingHome() {
       dir={dir}
     >
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#05060d]/92 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-6 lg:px-8">
           <BsdYbmLogo href="/" variant="marketing-dark" size="md" />
 
-          <nav className="hidden items-center gap-5 lg:flex">
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-3 lg:flex">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-2 py-1 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white"
+                className="whitespace-nowrap rounded-full px-2.5 py-1 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white"
               >
                 {t(item.labelKey)}
               </Link>
@@ -98,7 +97,7 @@ export default function MarketingHome() {
       </header>
 
       <main className="relative">
-        <section className="relative min-h-[calc(100vh-5rem)] overflow-hidden border-b border-white/10">
+        <section className="relative overflow-hidden border-b border-white/10">
           <Image
             src="/marketing/marketing-bg-industrial-16x9.png"
             alt=""
@@ -110,15 +109,15 @@ export default function MarketingHome() {
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,6,13,0.98)_0%,rgba(5,6,13,0.86)_38%,rgba(5,6,13,0.54)_72%,rgba(5,6,13,0.88)_100%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] opacity-40" />
 
-          <div className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
-            <div className="max-w-3xl">
+          <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:min-h-[720px] lg:grid-cols-[0.96fr_1.04fr] lg:px-8 lg:py-16">
+            <div className="max-w-2xl">
               <span className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
                 {home.hero.kicker}
               </span>
-              <h1 className="mt-5 text-5xl font-black leading-[0.98] text-white sm:text-6xl lg:text-7xl">
+              <h1 className="mt-5 text-4xl font-black leading-[1.04] text-white sm:text-5xl lg:text-6xl">
                 {home.hero.title}
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">{home.hero.subtitle}</p>
+              <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">{home.hero.subtitle}</p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/register"
@@ -136,7 +135,7 @@ export default function MarketingHome() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-[#0b1020]/78 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur">
+            <div className="rounded-xl border border-white/10 bg-[#0b1020]/78 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur lg:max-w-xl">
               <div className="grid gap-3">
                 {home.features.map((feature, index) => {
                   const Icon = featureIcons[index] ?? Layers3;

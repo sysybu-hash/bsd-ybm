@@ -171,14 +171,14 @@ export default function BsdYbmLogo({
         <MarkLight gid={gid} className={`shrink-0 ${s.mark}`} />
       )}
       <span className="min-w-0 text-right leading-tight">
-        <span className={`block font-black tracking-[-0.06em] ${s.text} ${textClass}`}>
+        <span className={`block whitespace-nowrap font-black tracking-[-0.06em] ${s.text} ${textClass}`}>
           <span className={accentClass}>BSD</span>
           <span className={variant === "marketing-dark" || variant === "footer-dark" ? "text-white" : "text-slate-800"}>-YBM</span>
         </span>
         {subtitle !== undefined ? (
           subtitle
         ) : (
-          <span className={`mt-0.5 block font-semibold ${s.sub} text-slate-500 ${variant === "marketing-dark" || variant === "footer-dark" ? "!text-slate-400" : ""}`}>
+          <span className={`mt-0.5 block whitespace-nowrap font-semibold ${s.sub} text-slate-500 ${variant === "marketing-dark" || variant === "footer-dark" ? "!text-slate-400" : ""}`}>
             פלטפורמה לפרויקטי בנייה
           </span>
         )}

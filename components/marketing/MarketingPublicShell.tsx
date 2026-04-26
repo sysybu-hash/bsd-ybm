@@ -31,8 +31,6 @@ export default function MarketingPublicShell({
         { href: "/solutions", key: "navSolutions" as const },
         { href: "/pricing", key: "navPricing" as const },
         { href: "/about", key: "navAbout" as const },
-        { href: "/professional", key: "navProfessional" as const },
-        { href: "/brief", key: "navBrief" as const },
         { href: "/contact", key: "navContact" as const },
       ].map((item) => ({
         href: item.href,
@@ -49,15 +47,15 @@ export default function MarketingPublicShell({
       dir={dir}
     >
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#05060d]/92 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-6 lg:px-8">
           <BsdYbmLogo href="/" variant="marketing-dark" size="md" />
 
-          <nav className="hidden items-center gap-5 lg:flex">
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-3 lg:flex">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-2 py-1 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white"
+                className="whitespace-nowrap rounded-full px-2.5 py-1 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white"
               >
                 {item.label}
               </Link>
