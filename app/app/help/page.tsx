@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
+import { Tile } from "@/components/ui/bento";
 
 export const metadata = {
   title: "עזרה | BSD-YBM",
@@ -62,18 +63,41 @@ export default async function AppHelpPage() {
   const platformAdmin = isAdmin(session?.user?.email);
 
   return (
-    <div className="w-full min-w-0 space-y-5" dir="rtl">
-      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
-        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[color:var(--ops-indigo)]">
-          Workspace guide
-        </p>
-        <h1 className="mt-2 text-3xl font-black tracking-tight text-[color:var(--ink-900)]">
-          איך מפעילים את BSD-YBM בלי ללכת לאיבוד
-        </h1>
-        <p className="mt-2 max-w-3xl text-[14px] leading-7 text-[color:var(--ink-500)]">
-          זה מסלול העבודה הרשמי: קודם מסדרים מנוי וזהות עסקית, אחר כך מגדירים תחום בניה ומנועים, ואז עובדים מתוך לקוחות, מסמכים, כספים ותיבת עבודה. אין צורך לקפוץ בין מסכים ישנים.
-        </p>
-      </section>
+    <div className="w-full min-w-0 space-y-8" dir="rtl">
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="ai" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Support · Knowledge Hub</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-white">
+                איך מפעילים את BSD-YBM בלי ללכת לאיבוד
+              </h1>
+              <p className="mt-1 text-sm text-violet-200">
+                זה מסלול העבודה הרשמי: קודם מסדרים מנוי וזהות עסקית, אחר כך מגדירים תחום בניה ומנועים.
+              </p>
+            </div>
+            <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-white/10 sm:flex">
+              <Bot className="h-6 w-6 text-white" aria-hidden />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מרכז עזרה</p>
+              <p className="mt-1 text-xl font-black text-white">פעיל</p>
+            </div>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מנועי AI</p>
+              <p className="mt-1 text-xl font-black text-white">4 זמינים</p>
+            </div>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">סטטוס מערכת</p>
+              <p className="mt-1 text-xl font-black text-white">תקין</p>
+            </div>
+          </div>
+        </div>
+      </Tile>
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="grid gap-4">

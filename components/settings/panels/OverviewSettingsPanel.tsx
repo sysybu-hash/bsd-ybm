@@ -16,6 +16,7 @@ import { getIndustryProfile } from "@/lib/professions/runtime";
 import { tierLabelHe } from "@/lib/subscription-tier-config";
 import type { SettingsHubOrganizationRecord, SettingsHubViewer } from "@/lib/settings-hub-server";
 import { useI18n } from "@/components/I18nProvider";
+import { Tile } from "@/components/ui/bento";
 
 type Props = Readonly<{
   organization: SettingsHubOrganizationRecord;
@@ -78,47 +79,44 @@ export default function OverviewSettingsPanel({
   const activePct = usersTotal > 0 ? Math.round((activeUsers / usersTotal) * 100) : 0;
 
   return (
-    <div className="space-y-5" dir="rtl">
-      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[color:var(--ops-indigo)]">
-              Settings command center
-            </p>
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-[color:var(--ink-900)]">
-              מרכז ההפעלה של BSD-YBM
-            </h1>
-            <p className="mt-2 max-w-3xl text-[14px] leading-7 text-[color:var(--ink-500)]">
-              כאן מגדירים את הזהות העסקית, תחום הבניה, מנועי הפיענוח, הפורטל, הגבייה, המנוי והאוטומציות. כל אזור מנהל נושא אחד בלבד כדי לא ליצור כפילויות.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link href={settingsHubPath("organization")} className="bento-btn bento-btn--primary">
-                התחל מהארגון
-                <Building2 className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link href={settingsHubPath("stack")} className="bento-btn bento-btn--secondary">
-                בדוק מנועים
-                <Bot className="h-4 w-4" aria-hidden />
-              </Link>
+    <div className="space-y-8" dir="rtl">
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="ai" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Settings · Control Center</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-white">
+                מרכז ההפעלה של BSD-YBM
+              </h1>
+              <p className="mt-1 text-sm text-violet-200">
+                כאן מגדירים את הזהות העסקית, תחום הבניה, מנועי הפיענוח, הפורטל והגבייה.
+              </p>
+            </div>
+            <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-white/10 sm:flex">
+              <Bot className="h-6 w-6 text-white" aria-hidden />
             </div>
           </div>
 
-          <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[12px] font-black text-[color:var(--ink-500)]">מוכנות מערכת</span>
-              <span className="text-2xl font-black tabular-nums text-[color:var(--ops-indigo)]">{completion}%</span>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מוכנות מערכת</p>
+              <p className="mt-1 text-xl font-black text-white">{completion}%</p>
+              <div className="mt-2 h-1.5 rounded-full bg-white/10">
+                <div className="h-full rounded-full bg-white" style={{ width: `${completion}%` }} />
+              </div>
             </div>
-            <div className="mt-3 h-2 rounded-full bg-white">
-              <div className="h-full rounded-full bg-[color:var(--ops-indigo)]" style={{ width: `${completion}%` }} />
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מנוי פעיל</p>
+              <p className="mt-1 text-xl font-black text-white">{tierLabelHe(organization.subscriptionTier)}</p>
             </div>
-            <p className="mt-3 text-[12px] leading-6 text-[color:var(--ink-500)]">
-              {completion < 70
-                ? "יש עוד הגדרות בסיסיות להשלים לפני שימוש מלא."
-                : "המערכת מוכנה לעבודה שוטפת. כדאי לעבור על מנועים ואוטומציות."}
-            </p>
+            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">משתמשים</p>
+              <p className="mt-1 text-xl font-black text-white">{activeUsers}/{usersTotal}</p>
+            </div>
           </div>
         </div>
-      </section>
+      </Tile>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <Metric label="מנוי פעיל" value={tierLabelHe(organization.subscriptionTier)} icon={CreditCard} />

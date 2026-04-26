@@ -6,9 +6,5 @@ export const dynamic = "force-dynamic";
 
 export default async function AppOperationsPage() {
   const props = await loadOperationsWorkspaceProps();
-  return (
-    <WorkspaceEngineeringShell>
-      <OperationsWorkspaceV2 {...props} />
-    </WorkspaceEngineeringShell>
-  );
+  return <OperationsWorkspaceV2 {...props} />;
 }

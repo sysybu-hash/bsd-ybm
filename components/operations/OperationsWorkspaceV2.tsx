@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatDateTime } from "@/lib/ui-formatters";
+import { Tile } from "@/components/ui/bento";
 
 type WorkflowStatus = "healthy" | "attention" | "blocked";
 
@@ -90,49 +91,54 @@ export default function OperationsWorkspaceV2({
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
-      <section className="tile overflow-hidden p-6 sm:p-8">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div>
-            <span className="bento-eyebrow">{t("workspaceOperations.eyebrow")}</span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-5xl">
-              {t("workspaceOperations.heroTitle")}
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--ink-500)] sm:text-lg">
-              {t("workspaceOperations.heroSubtitle", { org: organizationName })}
-            </p>
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {meckanoEnabled ? (
-                <Link href="/app/operations/meckano" className="bento-btn bento-btn--primary">
+      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+      <Tile tone="clients" span={12}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="tile-eyebrow">Operations · Command Center</p>
+              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
+                {t("workspaceOperations.heroTitle")}
+              </h1>
+              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
+                {t("workspaceOperations.heroSubtitle", { org: organizationName })}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {meckanoEnabled && (
+                <Link
+                  href="/app/operations/meckano"
+                  className="bento-btn bento-btn--primary"
+                  style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
+                >
                   {t("workspaceOperations.meckanoCta")}
-                  <ArrowLeft className="h-4 w-4" aria-hidden />
+                  <ArrowLeft className="h-4 w-4" strokeWidth={2} aria-hidden />
                 </Link>
-              ) : null}
-              <Link href="/app/inbox" className="bento-btn bento-btn--secondary">
-                {t("workspaceOperations.inboxCta")}
-                <Sparkles className="h-4 w-4" aria-hidden />
-              </Link>
+              )}
+              <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] sm:flex">
+                <Workflow className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               { label: t("workspaceOperations.statActiveUsers"), value: stats.activeUsers, icon: UsersRound },
               { label: t("workspaceOperations.statOpenQueues"), value: stats.openQueues, icon: Workflow },
               { label: t("workspaceOperations.statFieldCoverage"), value: stats.fieldCoverage, icon: MapPinned },
               { label: t("workspaceOperations.statReviewLoad"), value: stats.reviewLoad, icon: ClipboardList },
             ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="tile p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)] text-[color:var(--axis-clients)]">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <p className="mt-4 text-sm font-bold text-[color:var(--ink-500)]">{label}</p>
-                <p className="mt-2 text-2xl font-black tracking-[-0.04em] text-[color:var(--ink-900)]">{value}</p>
+              <div key={label} className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-[color:var(--axis-clients)]" strokeWidth={2} aria-hidden />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{label}</p>
+                </div>
+                <p className="mt-2 text-xl font-black text-[color:var(--ink-900)] tracking-tight">{value}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </Tile>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
