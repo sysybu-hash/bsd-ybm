@@ -18,19 +18,19 @@ export default function LanguageSwitcher({ className, showLabel, tone = "default
 
   const isDark = tone === "dark";
   const selectClass = isDark
-    ? "min-w-[9rem] rounded-xl border border-white/30 bg-white/15 px-3 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 [&>option]:bg-white [&>option]:text-white"
+    ? "min-w-[9rem] rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-300/50 [&>option]:bg-slate-950 [&>option]:text-white"
     : "rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 min-w-[9rem]";
 
   return (
     <label className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <Globe
         size={18}
-        className={`shrink-0 ${isDark ? "text-gray-700" : "opacity-70"}`}
+        className={`shrink-0 ${isDark ? "text-slate-300" : "opacity-70"}`}
         aria-hidden
       />
       {showLabel ? (
         <span
-          className={`text-sm font-medium whitespace-nowrap ${isDark ? "text-gray-800" : "text-gray-500"}`}
+          className={`text-sm font-medium whitespace-nowrap ${isDark ? "text-slate-300" : "text-gray-500"}`}
         >
           {t("language.label")}
         </span>

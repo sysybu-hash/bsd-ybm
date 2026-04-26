@@ -1595,6 +1595,85 @@ html.reduce-motion *::after {
   background-color: color-mix(in srgb, var(--ink-500) 50%, transparent);
 }
 
+/* Unified public marketing surface */
+.marketing-unified-shell {
+  color: #f8fafc;
+  background: #05060d;
+}
+
+.marketing-unified-shell h1,
+.marketing-unified-shell h2,
+.marketing-unified-shell h3,
+.marketing-unified-shell h4,
+.marketing-unified-shell h5,
+.marketing-unified-shell h6 {
+  color: #ffffff !important;
+}
+
+.marketing-unified-shell p {
+  color: #cbd5e1;
+}
+
+.marketing-unified-shell select {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.marketing-unified-shell .tile,
+.marketing-unified-shell .tile--soft,
+.marketing-unified-shell .tile--highlight {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22) !important;
+}
+
+.marketing-unified-shell .tile:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 28px 84px rgba(0, 0, 0, 0.3) !important;
+}
+
+.marketing-unified-shell .tile h1,
+.marketing-unified-shell .tile h2,
+.marketing-unified-shell .tile h3,
+.marketing-unified-shell .tile strong,
+.marketing-unified-shell .tile span {
+  color: #ffffff !important;
+}
+
+.marketing-unified-shell .tile p,
+.marketing-unified-shell .tile li {
+  color: #cbd5e1 !important;
+}
+
+.marketing-unified-shell .tile svg {
+  color: #8fb7ff !important;
+}
+
+.marketing-unified-shell .bento-eyebrow {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #a5f3fc !important;
+}
+
+.marketing-unified-shell .bento-btn--primary {
+  border-color: #7c57ff !important;
+  border-radius: 8px !important;
+  background: #7c57ff !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 36px rgba(124, 87, 255, 0.28) !important;
+}
+
+.marketing-unified-shell .bento-btn--secondary,
+.marketing-unified-shell .bento-btn--ghost {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+}
+
 /* Final dashboard visual language override */
 @layer base {
   :root {
