@@ -125,25 +125,30 @@ export function UpgradeCheckoutModal({
   if (!isOpen || !planDetails) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" dir="rtl">
+    <div
+      className="dashboard-design-shell fixed inset-0 z-50 flex items-center justify-center p-4"
+      dir="rtl"
+      role="dialog"
+      aria-modal="true"
+    >
       <div
         role="presentation"
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
         onClick={!isProcessing ? onClose : undefined}
         onKeyDown={undefined}
       />
-      <div className="relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl md:flex-row">
+      <div className="workspace-window relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-white shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)] md:flex-row">
         <button
           type="button"
           onClick={onClose}
           disabled={isProcessing}
-          className="absolute left-4 top-4 z-20 rounded-full bg-gray-100 p-2 text-gray-500 transition-colors hover:bg-gray-200 disabled:opacity-50"
+          className="absolute left-4 top-4 z-20 rounded-xl border border-[color:var(--dash-line)] bg-white p-2 text-[color:var(--dash-muted)] transition-colors hover:text-[color:var(--dash-purple)] disabled:opacity-50"
           aria-label="סגור"
         >
           <X size={18} aria-hidden />
         </button>
 
-        <div className="flex w-full flex-col justify-center border-brand-light/30 border-s bg-brand-surface p-8 md:w-2/5">
+        <div className="flex w-full flex-col justify-center border-s border-[color:var(--dash-line)] bg-[color:var(--dash-purple-soft)]/60 p-8 md:w-2/5">
           <div className="mb-6">
             <h3 className="mb-1 text-xl font-bold text-brand-dark">סיכום הזמנה</h3>
             <p className="text-sm text-text-secondary">מערכת BSD-YBM</p>

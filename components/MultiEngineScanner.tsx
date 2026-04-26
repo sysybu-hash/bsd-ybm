@@ -1282,9 +1282,9 @@ export default function MultiEngineScanner({
       </div>
 
       {previewOpen && activeFile && activePreviewUrl ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
-          <div className="flex h-[min(92vh,980px)] w-[min(96vw,1500px)] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-white shadow-2xl">
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <div className="dashboard-design-shell fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
+          <div className="workspace-window flex h-[min(92vh,980px)] w-[min(96vw,1500px)] flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-white shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)]">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--dash-line)] px-4 py-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-black text-slate-950">{activeFile.name}</p>
                 <p className="mt-0.5 text-xs text-slate-500">תצוגה מקדימה נפתחה בחלון נפרד כדי לשמור על לוח סריקה נקי.</p>
@@ -1292,14 +1292,14 @@ export default function MultiEngineScanner({
               <button
                 type="button"
                 onClick={() => setPreviewOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--dash-line)] bg-white text-[color:var(--dash-muted)] transition hover:text-[color:var(--dash-purple)]"
                 aria-label="סגור תצוגה מקדימה"
               >
                 <X className="h-4 w-4" aria-hidden />
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-hidden bg-slate-100 p-4">
+            <div className="min-h-0 flex-1 overflow-hidden bg-[color:var(--dash-canvas)] p-4">
               {isImageFile(activeFile) ? (
                 <div className="flex h-full items-center justify-center">
                   <Image
@@ -1308,17 +1308,17 @@ export default function MultiEngineScanner({
                     width={1800}
                     height={1400}
                     unoptimized
-                    className="max-h-full w-auto max-w-full rounded-2xl border border-slate-200 bg-white object-contain shadow-sm"
+                    className="max-h-full w-auto max-w-full rounded-[24px] border border-[color:var(--dash-line)] bg-white object-contain shadow-[var(--dash-shadow)]"
                   />
                 </div>
               ) : isPdfFile(activeFile) ? (
                 <iframe
                   title={activeFile.name}
                   src={activePreviewUrl}
-                  className="h-full min-h-0 w-full rounded-2xl border border-slate-200 bg-white shadow-sm"
+                  className="h-full min-h-0 w-full rounded-[24px] border border-[color:var(--dash-line)] bg-white shadow-[var(--dash-shadow)]"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-500">
+                <div className="flex h-full items-center justify-center rounded-[24px] border border-[color:var(--dash-line)] bg-white text-sm font-bold text-[color:var(--dash-muted)]">
                   אין תצוגה מקדימה לסוג הקובץ הזה.
                 </div>
               )}

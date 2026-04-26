@@ -103,7 +103,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
 
   return (
     <div
-      className="card-avenue relative mx-auto max-w-[900px] overflow-hidden bg-white text-start font-sans shadow-xl print:border-none print:shadow-none print:max-w-none print:m-0 print:w-full min-h-[1100px] flex flex-col"
+      className="dashboard-design-shell document-print-template card-avenue relative mx-auto max-w-[900px] overflow-hidden bg-white text-start font-sans shadow-xl print:border-none print:shadow-none print:max-w-none print:m-0 print:w-full min-h-[1100px] flex flex-col"
       dir={dir}
       id={`print-doc-${doc.number}`}
     >

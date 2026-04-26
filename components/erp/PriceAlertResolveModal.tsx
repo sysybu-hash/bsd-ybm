@@ -71,7 +71,7 @@ export default function PriceAlertResolveModal({ open, onDismiss, lines, totalPe
       onClose={() => {
         if (!pending) onDismiss();
       }}
-      className={`relative ${WORKSPACE_OVERLAY_Z_CLASS}`}
+      className={`dashboard-design-shell relative ${WORKSPACE_OVERLAY_Z_CLASS}`}
     >
       <DialogBackdrop
         transition
@@ -80,7 +80,7 @@ export default function PriceAlertResolveModal({ open, onDismiss, lines, totalPe
       <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end justify-center p-4 sm:items-center sm:p-6`}>
         <DialogPanel
           transition
-          className="flex max-h-[min(88vh,40rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/85 shadow-xl backdrop-blur-xl backdrop-saturate-150 transition data-[closed]:scale-95 data-[closed]:opacity-0"
+          className="workspace-window flex max-h-[min(88vh,40rem)] w-full max-w-lg flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-white/95 shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)] backdrop-blur-xl backdrop-saturate-150 transition data-[closed]:scale-95 data-[closed]:opacity-0"
           dir={dir}
         >
           <div className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200/60 px-5 py-4">

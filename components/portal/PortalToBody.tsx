@@ -16,5 +16,10 @@ export default function PortalToBody({ children }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
-  return createPortal(children, document.body);
+  return createPortal(
+    <div className="dashboard-design-shell workspace-portal-scope" dir="rtl">
+      {children}
+    </div>,
+    document.body,
+  );
 }

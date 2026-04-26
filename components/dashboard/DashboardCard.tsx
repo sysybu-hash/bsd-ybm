@@ -10,13 +10,13 @@ interface DashboardCardProps {
 export function DashboardCard({ title, actionIcon, children, className = "" }: DashboardCardProps) {
   return (
     <div
-      className={`bg-brand-surface flex flex-col rounded-3xl border border-gray-50 p-6 shadow-card ${className}`}
+      className={`dashboard-card flex flex-col rounded-[26px] border border-[color:var(--dash-line)] bg-[color:var(--dash-card)] p-5 shadow-[var(--dash-shadow)] ${className}`}
     >
       {(title || actionIcon) && (
-        <div className="mb-6 flex items-center justify-between">
-          {title && <h3 className="text-lg font-semibold text-text-primary">{title}</h3>}
+        <div className="mb-5 flex items-center justify-between gap-3">
+          {title && <h3 className="text-base font-black text-[color:var(--ink-900)]">{title}</h3>}
           {actionIcon && (
-            <div className="cursor-pointer text-gray-400 transition-colors hover:text-brand">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--dash-purple-soft)] text-[color:var(--dash-purple)] transition-colors hover:text-[color:var(--dash-purple-strong)]">
               {actionIcon}
             </div>
           )}

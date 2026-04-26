@@ -10,14 +10,18 @@ import {
   Accessibility,
   BrainCircuit,
   Loader2,
+  Mic,
+  MicOff,
   ScanSearch,
   Sparkles,
+  Volume2,
   WandSparkles,
   X,
 } from "lucide-react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import { useI18n } from "@/components/I18nProvider";
+import { useSpeechServices } from "@/hooks/useSpeechServices";
 import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import type { MessageTree } from "@/lib/i18n/keys";
@@ -52,7 +56,7 @@ const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner
 });
 
 type DockPanel = "accessibility" | "assistant" | "scanner" | null;
-type AssistantSource = "system" | "text";
+type AssistantSource = "system" | "text" | "voice";
 type AssistantMessage = {
   id: string;
   role: "user" | "assistant";
@@ -218,6 +222,8 @@ export default function WorkspaceUtilityDock({
   }, [currentSection.href, currentSection.label, industryProfile, localeMessages, t]);
 
   const [openPanel, setOpenPanel] = useState<DockPanel>(null);
+  const sendVoiceMessageRef = useRef<((text: string) => void) | null>(null);
+  const speakRef = useRef<(text: string) => void>(() => {});
   const [chatMessages, setChatMessages] = useState<AssistantMessage[]>([
     createMessage("assistant", welcomeMessage, "system"),
   ]);
@@ -235,7 +241,7 @@ export default function WorkspaceUtilityDock({
   }, [welcomeMessage]);
 
   const sendAssistantMessage = useCallback(
-    async (rawMessage: string, source: Extract<AssistantSource, "text"> = "text") => {
+    async (rawMessage: string, source: Exclude<AssistantSource, "system"> = "text") => {
       const trimmed = rawMessage.trim();
       if (!trimmed || sending) return;
 
@@ -264,6 +270,7 @@ export default function WorkspaceUtilityDock({
             body: JSON.stringify({
               orgId,
               message: contextualMessage,
+              provider: source === "voice" ? "gemini" : undefined,
               sectionLabel: currentSection.label,
               sectionSummary: currentSection.summary,
             }),
@@ -303,15 +310,45 @@ export default function WorkspaceUtilityDock({
 
         const assistantMessage = createMessage("assistant", reply, source);
         setChatMessages((current) => [...current, assistantMessage]);
+        if (source === "voice" && reply.trim()) {
+          speakRef.current(reply);
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : t("workspaceDock.errors.generic");
         setChatMessages((current) => [...current, createMessage("assistant", message, source)]);
+        if (source === "voice") {
+          speakRef.current(message);
+        }
       } finally {
         setSending(false);
       }
     },
     [currentSection.label, currentSection.summary, industryProfile, orgId, sending, t],
   );
+
+  sendVoiceMessageRef.current = (text: string) => {
+    setOpenPanel("assistant");
+    void sendAssistantMessage(text, "voice");
+  };
+
+  const {
+    isListening,
+    isSpeaking,
+    transcript,
+    error: speechError,
+    startListening,
+    stopListening,
+    speak,
+  } = useSpeechServices((text) => {
+    sendVoiceMessageRef.current?.(text);
+  });
+  speakRef.current = speak;
+
+  const stopSpeaking = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
 
   useEffect(() => {
     if (!messagesRef.current) return;
@@ -337,6 +374,15 @@ export default function WorkspaceUtilityDock({
     void sendAssistantMessage(draft, "text");
   }, [input, sendAssistantMessage]);
 
+  const toggleVoiceInput = useCallback(() => {
+    setOpenPanel("assistant");
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }, [isListening, startListening, stopListening]);
+
   const scannerButtonDisabled = !orgId;
 
   /**
@@ -348,7 +394,7 @@ export default function WorkspaceUtilityDock({
 
   /** פאנלים קומפקטיים: ממוקמים משמאל לעמודת הבועות (~3.5rem) */
   const compactPanelClassName =
-    "fixed z-[9800] flex max-h-[min(calc(100dvh-2rem),calc(100vh-2rem))] w-[min(100vw-2rem,26rem)] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/88 shadow-xl backdrop-blur-xl backdrop-saturate-150 top-1/2 -translate-y-1/2 left-[max(0.75rem,calc(env(safe-area-inset-left,0px)+0.75rem+3.5rem))] lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]";
+    "fixed z-[9800] inset-x-3 bottom-[calc(7.1rem+env(safe-area-inset-bottom,0px))] flex max-h-[min(72dvh,calc(100dvh-8rem))] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/94 shadow-xl backdrop-blur-xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:w-[min(100vw-2rem,26rem)] lg:max-w-[calc(100%-2rem)] lg:-translate-y-1/2 lg:bg-white/88 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]";
 
   const desktopDock = (
     <div className={`${workspaceDockFabPosition} hidden flex-col gap-2 lg:flex`}>
@@ -372,14 +418,20 @@ export default function WorkspaceUtilityDock({
             label={t("workspaceDock.dock.assistant")}
             onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
           />
+          <DockButton
+            active={isListening || isSpeaking}
+            icon={isListening ? MicOff : Mic}
+            label={isListening ? "עצור האזנה קולית" : "דבר עם עוזר AI"}
+            onClick={toggleVoiceInput}
+          />
         </div>
       </div>
     </div>
   );
 
   const mobileDock = (
-    <div className="fixed z-[9900] lg:hidden top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))]">
-      <div className="flex flex-col gap-1 rounded-2xl border border-slate-200/10 bg-white/88 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
+    <div className="fixed z-[9900] lg:hidden bottom-[calc(4.85rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2">
+      <div className="flex gap-1 rounded-2xl border border-slate-200/10 bg-white/94 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <DockButton
           active={openPanel === "accessibility"}
           icon={Accessibility}
@@ -397,6 +449,12 @@ export default function WorkspaceUtilityDock({
           icon={Sparkles}
           label={t("workspaceDock.dock.assistant")}
           onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
+        />
+        <DockButton
+          active={isListening || isSpeaking}
+          icon={isListening ? MicOff : Mic}
+          label={isListening ? "עצור האזנה קולית" : "דבר עם עוזר AI"}
+          onClick={toggleVoiceInput}
         />
       </div>
     </div>
@@ -459,6 +517,41 @@ export default function WorkspaceUtilityDock({
               <p className="mt-1 text-xs leading-5 text-slate-500">{currentSection.summary}</p>
             </div>
 
+            <div className="rounded-2xl border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--axis-ai)]">
+                    Gemini Live voice
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-[color:var(--ink-800)]">
+                    {isListening
+                      ? transcript || "מקשיב עכשיו..."
+                      : isSpeaking
+                        ? "מקריא תשובה קולית..."
+                        : "הקול מאוחד בתוך עוזר ה-AI"}
+                  </p>
+                  {speechError ? <p className="mt-1 text-xs font-semibold text-rose-600">{speechError}</p> : null}
+                </div>
+                <div className="flex gap-2">
+                  {isSpeaking ? (
+                    <button type="button" onClick={stopSpeaking} className="bento-btn bento-btn--secondary">
+                      עצור קול
+                      <Volume2 className="h-4 w-4" aria-hidden />
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={toggleVoiceInput}
+                    disabled={sending}
+                    className={`bento-btn ${isListening ? "bento-btn--secondary" : "bento-btn--primary"} disabled:cursor-not-allowed disabled:opacity-50`}
+                  >
+                    {isListening ? "עצור האזנה" : "התחל דיבור"}
+                    {isListening ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {quickPrompts.map((prompt) => (
                 <button
@@ -477,7 +570,7 @@ export default function WorkspaceUtilityDock({
 
             <div
               ref={messagesRef}
-              className="max-h-[min(45vh,22rem)] space-y-3 overflow-y-auto rounded-[24px] border border-slate-200 bg-white p-4"
+              className="max-h-[min(36dvh,22rem)] space-y-3 overflow-y-auto rounded-[24px] border border-slate-200 bg-white p-4 lg:max-h-[min(45vh,22rem)]"
             >
               {chatMessages.map((message) => (
                 <AssistantMessageBubble
@@ -485,6 +578,18 @@ export default function WorkspaceUtilityDock({
                   role={message.role}
                   content={message.content}
                   source={message.source}
+                  showSpeak={message.role === "assistant" && message.source !== "system"}
+                  isSpeaking={isSpeaking}
+                  onSpeakToggle={() => {
+                    if (isSpeaking) {
+                      stopSpeaking();
+                    } else {
+                      speak(message.content);
+                    }
+                  }}
+                  readLabel="הקרא"
+                  stopLabel="עצור"
+                  voiceBadgeLabel="קולי"
                 />
               ))}
 
@@ -554,7 +659,7 @@ export default function WorkspaceUtilityDock({
             <X className="h-5 w-5" aria-hidden />
           </button>
 
-          <div className="relative h-screen w-screen overflow-hidden p-3 sm:p-4">
+          <div className="relative h-[100svh] w-screen overflow-hidden p-2 sm:h-[100dvh] sm:p-4">
             {scannerButtonDisabled ? (
               <div className="flex h-full items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/90 p-8 text-center">
                 <div className="max-w-md">
@@ -574,5 +679,10 @@ export default function WorkspaceUtilityDock({
   if (typeof document === "undefined" || !portalReady) {
     return null;
   }
-  return createPortal(dockLayer, document.body);
+  return createPortal(
+    <div className="dashboard-design-shell workspace-portal-scope" dir={dir}>
+      {dockLayer}
+    </div>,
+    document.body,
+  );
 }
