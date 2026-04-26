@@ -16,6 +16,10 @@ export default async function AppHomePage() {
   if (!session?.user?.organizationId) redirect("/login");
 
   const organizationId = session.user.organizationId;
+  const userFirstName =
+    (session.user?.name ?? "").trim().split(" ")[0] ||
+    session.user?.email?.split("@")[0] ||
+    "";
 
   const monthStart = new Date();
   monthStart.setDate(1);
@@ -23,21 +27,33 @@ export default async function AppHomePage() {
   const prevMonthStart = new Date(monthStart);
   prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
 
+  // חישוב 6 חודשים אחורה לגרף sparkline
+  const sparkMonths = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(monthStart);
+    d.setMonth(d.getMonth() - (5 - i));
+    return d;
+  });
+
   const [
     organization,
-    documentsCount,
     activeClientsCount,
-    hasMeckanoAccess,
+    activeProjectsCount,
+    openDealsCount,
     issuedThisMonth,
     issuedPrevMonth,
+    recentProjectsRaw,
+    recentDocumentsRaw,
+    sparklineRaw,
   ] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: organizationId },
       select: { subscriptionTier: true, constructionTrade: true },
     }),
-    prisma.document.count({ where: { organizationId } }),
     prisma.contact.count({ where: { organizationId, status: "ACTIVE" } }),
-    canAccessMeckano(session),
+    prisma.project.count({ where: { organizationId, isActive: true } }),
+    prisma.contact.count({
+      where: { organizationId, status: { in: ["LEAD", "PROPOSAL"] } },
+    }),
     prisma.issuedDocument.aggregate({
       where: { organizationId, date: { gte: monthStart } },
       _sum: { total: true },
@@ -46,6 +62,43 @@ export default async function AppHomePage() {
       where: { organizationId, date: { gte: prevMonthStart, lt: monthStart } },
       _sum: { total: true },
     }),
+    prisma.project.findMany({
+      where: { organizationId, isActive: true },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        name: true,
+        isActive: true,
+        _count: { select: { contacts: true } },
+      },
+    }),
+    prisma.issuedDocument.findMany({
+      where: { organizationId },
+      orderBy: { date: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        type: true,
+        clientName: true,
+        total: true,
+        status: true,
+        date: true,
+      },
+    }),
+    // sparkline: סכום לכל אחד מ-6 החודשים האחרונים
+    Promise.all(
+      sparkMonths.map((from) => {
+        const to = new Date(from);
+        to.setMonth(to.getMonth() + 1);
+        return prisma.issuedDocument
+          .aggregate({
+            where: { organizationId, date: { gte: from, lt: to } },
+            _sum: { total: true },
+          })
+          .then((r) => r._sum.total ?? 0);
+      }),
+    ),
   ]);
 
   const jar = await cookies();
@@ -65,15 +118,39 @@ export default async function AppHomePage() {
         ? 100
         : 0;
 
+  // ספירת מסמכים שנסרקו (כאן נשתמש במספר המסמכים שהופקו כגישה פשוטה)
+  const scanUsed = await prisma.document.count({ where: { organizationId } });
+
+  const recentProjects = recentProjectsRaw.map((p) => ({
+    id: p.id,
+    name: p.name,
+    isActive: p.isActive,
+    contactCount: p._count.contacts,
+  }));
+
+  const recentDocuments = recentDocumentsRaw.map((doc) => ({
+    id: doc.id,
+    kind: String(doc.type),
+    contactName: doc.clientName ?? null,
+    total: doc.total,
+    status: String(doc.status),
+    dateStr: doc.date.toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit" }),
+  }));
+
   return (
-    <div className="w-full min-w-0" dir={dirRtl ? "rtl" : "ltr"}>
+    <div className="w-full min-w-0 px-4 pb-8 pt-6 sm:px-6" dir={dirRtl ? "rtl" : "ltr"}>
       <ExecutiveDashboard
-        scanUsed={documentsCount}
+        userFirstName={userFirstName}
+        scanUsed={scanUsed}
         scanLimit={scanLimit}
         cashDisplay={formatCurrencyILS(issuedThisSum)}
         cashChangePct={financeTrendPct}
-        meckanoFieldActive={activeClientsCount}
-        hasMeckano={hasMeckanoAccess}
+        activeClientsCount={activeClientsCount}
+        activeProjectsCount={activeProjectsCount}
+        openDealsCount={openDealsCount}
+        recentProjects={recentProjects}
+        recentDocuments={recentDocuments}
+        sparklineValues={sparklineRaw as number[]}
         constructionTrade={organization?.constructionTrade}
       />
     </div>

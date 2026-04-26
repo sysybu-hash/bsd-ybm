@@ -379,10 +379,14 @@ export default function AppShellV2({ children, user }: Props) {
         <div className="relative z-10 flex min-h-screen w-full">
           {/* Content column */}
           <div className="flex min-w-0 flex-1 flex-col">
-            {/* Desktop Top Bar — bordered bottom, no floating */}
+            {/* Desktop Top Bar */}
             <header className="sticky top-0 z-40 hidden border-b border-[color:var(--line)] bg-white/96 backdrop-blur-xl lg:block">
-              <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-6 px-6">
-                <nav className="flex h-full items-center gap-1" aria-label="תפריט ראשי עליון">
+              <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-4 px-6">
+                {/* לוגו */}
+                <BsdYbmLogo href="/app" variant="marketing-light" size="sm" className="shrink-0" />
+
+                {/* לשוניות ניווט ראשי */}
+                <nav className="flex h-full flex-1 items-center gap-0.5 overflow-x-auto" aria-label="תפריט ראשי">
                   {nav.primary.map((item) => {
                     const active = isAppNavPathActive(pathname, item.href);
                     const Icon = item.icon;
@@ -390,27 +394,54 @@ export default function AppShellV2({ children, user }: Props) {
                       <Link
                         key={item.id}
                         href={item.href}
-                        className={`group relative flex h-full items-center gap-2 px-3 text-sm font-bold transition-colors ${
+                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold transition-colors ${
                           active
                             ? "text-[color:var(--ink-900)]"
-                            : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-900)]"
+                            : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
                         }`}
                       >
-                        <Icon className={`h-4 w-4 ${active ? "text-[color:var(--axis-ai)]" : ""}`} aria-hidden />
+                        <Icon className={`h-[15px] w-[15px] shrink-0 ${active ? "text-[color:var(--axis-clients)]" : ""}`} aria-hidden />
+                        {item.label}
+                        {item.id === "ai" && (
+                          <span className="ms-0.5 inline-flex items-center rounded-full bg-[color:var(--axis-ai-soft)] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-[color:var(--axis-ai)]">
+                            AI
+                          </span>
+                        )}
+                        {active && (
+                          <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-[color:var(--axis-clients)]" aria-hidden />
+                        )}
+                      </Link>
+                    );
+                  })}
+                  {/* פרויקטים מה-utility nav */}
+                  {nav.utility.filter(u => u.id === "projects" || u.id === "operations").map((item) => {
+                    const active = isAppNavPathActive(pathname, item.href);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold transition-colors ${
+                          active
+                            ? "text-[color:var(--ink-900)]"
+                            : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
+                        }`}
+                      >
+                        <Icon className={`h-[15px] w-[15px] shrink-0 ${active ? "text-[color:var(--axis-clients)]" : ""}`} aria-hidden />
                         {item.label}
                         {active && (
-                          <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-[color:var(--axis-ai)]" aria-hidden />
-                        )}
-                        {item.id === "ai" && !active && (
-                          <Sparkles className="absolute end-0 top-3 h-3 w-3 text-[color:var(--axis-ai)] opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+                          <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-[color:var(--axis-clients)]" aria-hidden />
                         )}
                       </Link>
                     );
                   })}
                 </nav>
-                <div className="flex-1" />
-                <div className="flex w-72 shrink-0 items-center">
-                  <AppCommandPalette items={commandItems} />
+
+                {/* כלי ניהול ימין */}
+                <div className="flex shrink-0 items-center gap-2">
+                  <div className="w-56">
+                    <AppCommandPalette items={commandItems} />
+                  </div>
                 </div>
               </div>
             </header>
