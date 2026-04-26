@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import confetti from "canvas-confetti";
 import { useI18n } from "@/components/I18nProvider";
-import { purchasableTierKeysAbove, planLabelHe, planPriceIls } from "@/lib/subscription-plans";
+import {
+  purchasableTierKeysAbove,
+  planLabelHe,
+  planPriceIls,
+} from "@/lib/subscription-plans";
 import type { SubscriptionTierKey } from "@/lib/subscription-tier-config";
 
 type TierPriceMap = Partial<Record<SubscriptionTierKey, number>>;
@@ -56,7 +60,9 @@ export default function PayPalSubscriptionCheckout({
       setSelectedTier("");
       return;
     }
-    setSelectedTier((prev) => (available.includes(prev as SubscriptionTierKey) ? prev : available[0]));
+    setSelectedTier((prev) =>
+      available.includes(prev as SubscriptionTierKey) ? prev : available[0],
+    );
   }, [available]);
 
   const effectiveTier = selectedTier || available[0] || "";
@@ -89,14 +95,17 @@ export default function PayPalSubscriptionCheckout({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderID }),
       });
-      const j = (await res.json()) as { ok?: boolean; message?: string; error?: string };
+      const j = (await res.json()) as {
+        ok?: boolean;
+        message?: string;
+        error?: string;
+      };
       if (!res.ok || !j.ok) {
         throw new Error(j.error || "אישור תשלום נכשל");
       }
 
       const msg =
-        j.message ||
-        "תודה! המנוי שלך הופעל. ברוך הבא לשדרה שמחברת בין כולם";
+        j.message || "תודה! המנוי שלך הופעל. ברוך הבא לשדרה שמחברת בין כולם";
       setSuccessMsg(msg);
       confetti({ particleCount: 120, spread: 70, origin: { y: 0.65 } });
       router.refresh();
@@ -111,8 +120,10 @@ export default function PayPalSubscriptionCheckout({
           className="card-avenue border-teal-500/30 bg-teal-500/15 px-4 py-3 text-sm text-teal-800"
           dir={dir}
         >
-          להפעלת תשלום PayPal Live הוסיפו <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
-          <code className="text-xs">.env</code> או הגדירו מזהה בלוח הבקרה לבעלי פלטפורמה.
+          להפעלת תשלום PayPal Live הוסיפו{" "}
+          <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> ב־
+          <code className="text-xs">.env</code> או הגדירו מזהה בלוח הבקרה לבעלי
+          פלטפורמה.
         </div>
       </div>
     );
@@ -125,8 +136,8 @@ export default function PayPalSubscriptionCheckout({
           className="card-avenue border-emerald-500/25 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-900"
           dir={dir}
         >
-          המנוי הנוכחי ({planLabelHe(currentTier)}) מעודכן — אין שדרוג זמין לתשלום ישיר כאן. לשדרוג נוסף פנו
-          לתמיכה.
+          המנוי הנוכחי ({planLabelHe(currentTier)}) מעודכן — אין שדרוג זמין
+          לתשלום ישיר כאן. לשדרוג נוסף פנו לתמיכה.
         </div>
       </div>
     );
@@ -140,20 +151,26 @@ export default function PayPalSubscriptionCheckout({
       className="card-avenue scroll-mt-24 border-teal-500/20 p-6 shadow-sm md:p-8"
       dir={dir}
     >
-      <h2 className="mb-2 text-xl font-black text-gray-900">הפעלת מנוי — PayPal (Live)</h2>
+      <h2 className="mb-2 text-xl font-black text-gray-900">
+        הפעלת מנוי — PayPal (Live)
+      </h2>
       <p className="mb-4 text-sm text-gray-500">
-        בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע: <strong>ILS</strong> (שקל).
+        בחרו רמת מנוי, ואז השלימו תשלום בכפתורי PayPal. המטבע:{" "}
+        <strong>ILS</strong> (שקל).
       </p>
       <div className="mb-6 rounded-xl border border-teal-500/20 bg-teal-500/15 px-4 py-3 text-xs leading-relaxed text-gray-600">
-        <strong className="text-white">חשבון חינם:</strong> רמת FREE נשארת בלי חיוב כאן. התשלום למטה הוא{" "}
-        <strong>רק</strong> לשדרוג למשק בית / עוסק / חברה / תאגיד. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; ו־
-        PayPal.Me של הארגון בהגדרות.
+        <strong className="text-white">חשבון חינם:</strong> רמת FREE נשארת בלי
+        חיוב כאן. התשלום למטה הוא <strong>רק</strong> לשדרוג לעצמאי / חברה /
+        תאגיד. גבייה מלקוחות — דרך &quot;בקשות גבייה&quot; ו־ PayPal.Me של
+        הארגון בהגדרות.
       </div>
 
       {successMsg ? (
         <div className="mb-6 rounded-2xl border border-emerald-500/25 bg-emerald-500/15 px-5 py-6 text-center">
           <p className="text-lg font-black text-emerald-800 mb-2">הצלחה</p>
-          <p className="font-medium leading-relaxed text-gray-700">{successMsg}</p>
+          <p className="font-medium leading-relaxed text-gray-700">
+            {successMsg}
+          </p>
         </div>
       ) : null}
 
@@ -185,9 +202,12 @@ export default function PayPalSubscriptionCheckout({
 
       {price != null ? (
         <div className="mb-4 text-center text-sm text-gray-500">
-          סכום לחיוב: <span className="font-black text-gray-900">₪{price.toFixed(2)}</span>
+          סכום לחיוב:{" "}
+          <span className="font-black text-gray-900">₪{price.toFixed(2)}</span>
           {subscriptionStatus !== "ACTIVE" ? (
-            <span className="mt-1 block text-xs text-gray-400">לאחר התשלום המנוי יסומן כ־ACTIVE</span>
+            <span className="mt-1 block text-xs text-gray-400">
+              לאחר התשלום המנוי יסומן כ־ACTIVE
+            </span>
           ) : null}
         </div>
       ) : null}

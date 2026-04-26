@@ -1,7 +1,14 @@
 ﻿"use client";
 
 import type { FormEvent } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import type { ScanBundle, SubscriptionTier } from "@prisma/client";
 import {
   ChevronDown,
@@ -37,9 +44,12 @@ import {
   tierAllowance,
   tierLabelHe,
 } from "@/lib/subscription-tier-config";
-import { formatCreditsForDisplay, isEffectivelyUnlimitedCredits } from "@/lib/org-credits-display";
+import {
+  formatCreditsForDisplay,
+  isEffectivelyUnlimitedCredits,
+} from "@/lib/org-credits-display";
 const ORG_TYPES = [
-  { value: "HOME", label: "משק בית" },
+  { value: "HOME", label: "דמו 30 יום" },
   { value: "FREELANCER", label: "עצמאי" },
   { value: "COMPANY", label: "חברה" },
   { value: "ENTERPRISE", label: "ארגון" },
@@ -153,7 +163,7 @@ export default function AdminSubscriptionControlCenter({
     }
     return JSON.stringify(
       {
-        HOUSEHOLD: 59.9,
+        HOUSEHOLD: 0,
         DEALER: 99.9,
         COMPANY: 159.9,
         CORPORATE: 299.9,
@@ -219,11 +229,21 @@ export default function AdminSubscriptionControlCenter({
     const t = window.setTimeout(() => {
       const el = document.getElementById(`admin-sub-row-${id}`);
       el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      el?.classList.add("ring-2", "ring-teal-400", "ring-offset-2", "bg-teal-50/80");
+      el?.classList.add(
+        "ring-2",
+        "ring-teal-400",
+        "ring-offset-2",
+        "bg-teal-50/80",
+      );
       const o = orgs.find((x) => x.id === id);
       if (o) openRow(o);
       window.setTimeout(() => {
-        el?.classList.remove("ring-2", "ring-teal-400", "ring-offset-2", "bg-teal-50/80");
+        el?.classList.remove(
+          "ring-2",
+          "ring-teal-400",
+          "ring-offset-2",
+          "bg-teal-50/80",
+        );
       }, 4000);
     }, 320);
     return () => window.clearTimeout(t);
@@ -243,7 +263,7 @@ export default function AdminSubscriptionControlCenter({
     ];
     const escapeCell = (v: string | number | null | undefined) => {
       const s = String(v ?? "");
-      if (/[",\n]/.test(s)) return `"${s.replace(/"/g, "\"\"")}"`;
+      if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
       return s;
     };
     const lines = [
@@ -306,20 +326,21 @@ export default function AdminSubscriptionControlCenter({
     });
   };
 
-  const onBundleSubmit = (bundleId: string) => (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const v = Number(fd.get("price"));
-    setMsg(null);
-    setErr(null);
-    startTransition(async () => {
-      const r = await executiveUpdateBundlePriceAction(bundleId, v);
-      if (r.ok) {
-        setMsg("מחיר חבילה עודכן.");
-        pushToast("ok", "מחיר חבילה עודכן.");
-      } else setErr(r.error);
-    });
-  };
+  const onBundleSubmit =
+    (bundleId: string) => (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const fd = new FormData(e.currentTarget);
+      const v = Number(fd.get("price"));
+      setMsg(null);
+      setErr(null);
+      startTransition(async () => {
+        const r = await executiveUpdateBundlePriceAction(bundleId, v);
+        if (r.ok) {
+          setMsg("מחיר חבילה עודכן.");
+          pushToast("ok", "מחיר חבילה עודכן.");
+        } else setErr(r.error);
+      });
+    };
 
   const onCreateUser = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -359,10 +380,14 @@ export default function AdminSubscriptionControlCenter({
   };
 
   const copyId = (id: string) => {
-    void navigator.clipboard.writeText(id).then(() => pushToast("ok", "מזהה ארגון הועתק."));
+    void navigator.clipboard
+      .writeText(id)
+      .then(() => pushToast("ok", "מזהה ארגון הועתק."));
   };
 
-  const selectedAllow = selected ? tierAllowance(selected.subscriptionTier) : null;
+  const selectedAllow = selected
+    ? tierAllowance(selected.subscriptionTier)
+    : null;
 
   return (
     <div className="relative min-h-screen pb-24" dir={dir}>
@@ -396,7 +421,9 @@ export default function AdminSubscriptionControlCenter({
         <div className="mx-auto mb-6 max-w-[1800px] px-4 sm:px-8">
           <div
             className={`rounded-2xl border px-4 py-3 text-sm font-medium ${
-              err ? "border-rose-500/25 bg-rose-500/[0.08] text-rose-300" : "border-emerald-500/25 bg-emerald-500/[0.08] text-emerald-300"
+              err
+                ? "border-rose-500/25 bg-rose-500/[0.08] text-rose-300"
+                : "border-emerald-500/25 bg-emerald-500/[0.08] text-emerald-300"
             }`}
           >
             {err ?? msg}
@@ -415,14 +442,22 @@ export default function AdminSubscriptionControlCenter({
               <p className="text-xs font-black uppercase tracking-wider text-teal-400/80">
                 Avenue — תצורת פלטפורמה
               </p>
-              <p className="text-base font-black text-gray-900">גבייה, חבילות סריקה והזמנות הצטרפות</p>
+              <p className="text-base font-black text-gray-900">
+                גבייה, חבילות סריקה והזמנות הצטרפות
+              </p>
             </div>
-            {platformOpen ? <ChevronUp className="shrink-0 text-gray-400" /> : <ChevronDown className="shrink-0 text-gray-400" />}
+            {platformOpen ? (
+              <ChevronUp className="shrink-0 text-gray-400" />
+            ) : (
+              <ChevronDown className="shrink-0 text-gray-400" />
+            )}
           </button>
           {platformOpen ? (
             <div className="space-y-8 border-t border-gray-100 px-5 pb-8 pt-6">
               <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-                <h3 className="mb-4 text-lg font-black text-gray-900">גבייה ו־PayPal</h3>
+                <h3 className="mb-4 text-lg font-black text-gray-900">
+                  גבייה ו־PayPal
+                </h3>
                 <form className="space-y-4" onSubmit={onBillingSubmit}>
                   <label className="block text-sm font-bold text-gray-600">
                     PayPal Client ID (ציבורי)
@@ -455,8 +490,13 @@ export default function AdminSubscriptionControlCenter({
               </section>
 
               <section className="rounded-2xl border border-teal-500/20 bg-teal-500/\[0.06\] p-6">
-                <h3 className="mb-3 text-lg font-black text-gray-900">הזמנת הצטרפות במייל</h3>
-                <form className="grid gap-3 md:grid-cols-2" onSubmit={onInviteSubmit}>
+                <h3 className="mb-3 text-lg font-black text-gray-900">
+                  הזמנת הצטרפות במייל
+                </h3>
+                <form
+                  className="grid gap-3 md:grid-cols-2"
+                  onSubmit={onInviteSubmit}
+                >
                   <input
                     name="email"
                     type="email"
@@ -464,8 +504,15 @@ export default function AdminSubscriptionControlCenter({
                     placeholder="לקוח@דומיין"
                     className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
                   />
-                  <input name="headline" placeholder="כותרת המייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"/>
-                  <select name="tierHint" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 md:col-span-2">
+                  <input
+                    name="headline"
+                    placeholder="כותרת המייל"
+                    className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                  />
+                  <select
+                    name="tierHint"
+                    className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 md:col-span-2"
+                  >
                     <option value="">ללא ציון רמה</option>
                     {tierOptions.map((o) => (
                       <option key={o.value} value={o.value}>
@@ -490,7 +537,9 @@ export default function AdminSubscriptionControlCenter({
               </section>
 
               <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-                <h3 className="mb-4 text-lg font-black text-gray-900">חבילות סריקה — מחירים</h3>
+                <h3 className="mb-4 text-lg font-black text-gray-900">
+                  חבילות סריקה — מחירים
+                </h3>
                 <ul className="space-y-3">
                   {bundles.map((b) => (
                     <li
@@ -501,7 +550,10 @@ export default function AdminSubscriptionControlCenter({
                         <p className="font-bold text-gray-900">{b.name}</p>
                         <p className="text-xs text-gray-400">{`+${b.cheapAdds} זולות · +${b.premiumAdds} פרימיום`}</p>
                       </div>
-                      <form className="flex items-center gap-2" onSubmit={onBundleSubmit(b.id)}>
+                      <form
+                        className="flex items-center gap-2"
+                        onSubmit={onBundleSubmit(b.id)}
+                      >
                         <label className="text-xs font-bold text-gray-500">
                           ₪
                           <input
@@ -536,28 +588,59 @@ export default function AdminSubscriptionControlCenter({
             className="flex w-full items-center justify-between gap-3 px-5 py-4 text-start"
           >
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-gray-400">כלים</p>
-              <p className="text-base font-black text-gray-900">יצירת משתמש, הזמנת רמה וייצוא</p>
+              <p className="text-xs font-black uppercase tracking-wider text-gray-400">
+                כלים
+              </p>
+              <p className="text-base font-black text-gray-900">
+                יצירת משתמש, הזמנת רמה וייצוא
+              </p>
             </div>
-            {toolsOpen ? <ChevronUp className="shrink-0 text-gray-400" /> : <ChevronDown className="shrink-0 text-gray-400" />}
+            {toolsOpen ? (
+              <ChevronUp className="shrink-0 text-gray-400" />
+            ) : (
+              <ChevronDown className="shrink-0 text-gray-400" />
+            )}
           </button>
           {toolsOpen ? (
             <div className="space-y-8 border-t border-gray-100 px-5 pb-8 pt-6">
               <div className="grid gap-8 lg:grid-cols-2">
                 <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-                  <h3 className="mb-3 text-base font-black text-gray-900">יצירת משתמש ידנית</h3>
+                  <h3 className="mb-3 text-base font-black text-gray-900">
+                    יצירת משתמש ידנית
+                  </h3>
                   <form className="grid gap-3" onSubmit={onCreateUser}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
-                    <input name="name" placeholder="שם (אופציונלי)" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
-                    <input name="organizationName" required placeholder="שם ארגון" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
-                    <select name="orgType" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
+                    <input
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="אימייל"
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                    />
+                    <input
+                      name="name"
+                      placeholder="שם (אופציונלי)"
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                    />
+                    <input
+                      name="organizationName"
+                      required
+                      placeholder="שם ארגון"
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                    />
+                    <select
+                      name="orgType"
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900"
+                    >
                       {ORG_TYPES.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <select name="tier" className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
+                    <select
+                      name="tier"
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900"
+                    >
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
@@ -565,7 +648,11 @@ export default function AdminSubscriptionControlCenter({
                       ))}
                     </select>
                     <label className="flex items-center gap-2 text-sm font-bold text-gray-600">
-                      <input type="checkbox" name="vip" className="rounded border-gray-300" />
+                      <input
+                        type="checkbox"
+                        name="vip"
+                        className="rounded border-gray-300"
+                      />
                       VIP
                     </label>
                     <button
@@ -578,17 +665,36 @@ export default function AdminSubscriptionControlCenter({
                   </form>
                 </section>
                 <section className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-                  <h3 className="mb-3 text-base font-black text-gray-900">הזמנה לרמת מנוי (טוקן)</h3>
+                  <h3 className="mb-3 text-base font-black text-gray-900">
+                    הזמנה לרמת מנוי (טוקן)
+                  </h3>
                   <form className="grid gap-3" onSubmit={onTierInvite}>
-                    <input name="email" type="email" required placeholder="אימייל" className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400" />
-                    <select name="tier" required className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900">
+                    <input
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="אימייל"
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                    />
+                    <select
+                      name="tier"
+                      required
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900"
+                    >
                       {tierOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
                       ))}
                     </select>
-                    <input name="validDays" type="number" min={1} max={90} defaultValue={14} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900" />
+                    <input
+                      name="validDays"
+                      type="number"
+                      min={1}
+                      max={90}
+                      defaultValue={14}
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900"
+                    />
                     <button
                       type="submit"
                       disabled={pending}
@@ -678,8 +784,13 @@ export default function AdminSubscriptionControlCenter({
                       }}
                       className="cursor-pointer border-b border-gray-100 transition-colors hover:bg-teal-500/[0.06] focus:bg-teal-500/[0.08] focus:outline-none"
                     >
-                      <td className="px-4 py-3.5 font-bold text-gray-900">{o.name}</td>
-                      <td className="px-4 py-3.5 font-mono text-xs text-gray-500" dir="ltr">
+                      <td className="px-4 py-3.5 font-bold text-gray-900">
+                        {o.name}
+                      </td>
+                      <td
+                        className="px-4 py-3.5 font-mono text-xs text-gray-500"
+                        dir="ltr"
+                      >
                         {o.primaryEmail ?? "—"}
                       </td>
                       <td className="px-4 py-3.5 font-semibold text-gray-900">
@@ -689,11 +800,16 @@ export default function AdminSubscriptionControlCenter({
                       </td>
                       <td className="px-4 py-3.5 text-xs text-gray-500">
                         <span className="font-mono" dir="ltr">
-                          זול {formatCreditsForDisplay(o.cheapScansRemaining)} · פרימיום{" "}
+                          זול {formatCreditsForDisplay(o.cheapScansRemaining)} ·
+                          פרימיום{" "}
                           {formatCreditsForDisplay(o.premiumScansRemaining)}
                         </span>
                       </td>
-                      <td className="max-w-[10rem] truncate px-4 py-3.5 font-mono text-xs text-gray-400" dir="ltr" title={o.tenantPublicDomain ?? ""}>
+                      <td
+                        className="max-w-[10rem] truncate px-4 py-3.5 font-mono text-xs text-gray-400"
+                        dir="ltr"
+                        title={o.tenantPublicDomain ?? ""}
+                      >
                         {o.tenantPublicDomain || "—"}
                       </td>
                       <td className="px-4 py-3.5">
@@ -722,293 +838,368 @@ export default function AdminSubscriptionControlCenter({
 
       {sheetOpen && selected ? (
         <PortalToBody>
-        <>
-          <button
-            type="button"
-            aria-label="סגור"
-            className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} bg-black/55 transition-opacity`}
-            onClick={closeSheet}
-          />
-          <aside
-            className={`fixed start-0 top-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} flex h-full w-full max-w-xl flex-col border-s border-gray-200 bg-white shadow-2xl`}
-            dir={dir}
-          >
-            <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
-              <div>
-                <p className="text-xs font-black text-teal-400">מנוי נבחר</p>
-                <h3 className="text-lg font-black text-gray-900">{selected.name}</h3>
-                <p className="mt-0.5 font-mono text-[11px] text-gray-400" dir="ltr">
-                  {selected.primaryEmail ?? "— אימייל"}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={closeSheet}
-                className="rounded-xl border border-gray-200 bg-gray-50 p-2 text-gray-500 hover:bg-gray-100"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
-              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <h4 className="mb-3 text-sm font-black text-gray-900">הקמת אתר — דומיין מותאם</h4>
-                <form
-                  className="space-y-3"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const fd = new FormData(e.currentTarget);
-                    fd.set("organizationId", selected.id);
-                    setMsg(null);
-                    setErr(null);
-                    startTransition(async () => {
-                      const r = await manageSubsSaveTenantDomainAction(fd);
-                      if (r.ok) {
-                        pushToast("ok", "דומיין נשמר.");
-                        startTransition(async () => {
-                          const rows = await manageSubsListOrganizationsAction();
-                          if (Array.isArray(rows)) {
-                            setOrgs(rows);
-                            const u = rows.find((x) => x.id === selected.id);
-                            if (u) setSelected(u);
-                          }
-                        });
-                      } else {
-                        pushToast("err", r.error);
-                        setErr(r.error);
-                      }
-                    });
-                  }}
-                >
-                  <input type="hidden" name="organizationId" value={selected.id} />
-                  <label className="block text-xs font-bold text-gray-500">
-                    דומיין ציבורי
-                    <input
-                      name="tenantPublicDomain"
-                      key={selected.id + (selected.tenantPublicDomain ?? "")}
-                      defaultValue={selected.tenantPublicDomain ?? ""}
-                      placeholder="דוגמה: app.client.com"
-                      className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400"
-                      dir="ltr"
-                    />
-                  </label>
-                  <button
-                    type="submit"
-                    disabled={pending}
-                    className="w-full rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
+          <>
+            <button
+              type="button"
+              aria-label="סגור"
+              className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} bg-black/55 transition-opacity`}
+              onClick={closeSheet}
+            />
+            <aside
+              className={`fixed start-0 top-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} flex h-full w-full max-w-xl flex-col border-s border-gray-200 bg-white shadow-2xl`}
+              dir={dir}
+            >
+              <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-4">
+                <div>
+                  <p className="text-xs font-black text-teal-400">מנוי נבחר</p>
+                  <h3 className="text-lg font-black text-gray-900">
+                    {selected.name}
+                  </h3>
+                  <p
+                    className="mt-0.5 font-mono text-[11px] text-gray-400"
+                    dir="ltr"
                   >
-                    שמירת דומיין
-                  </button>
-                </form>
-              </section>
-
-              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <h4 className="mb-4 text-sm font-black text-gray-900">מוניטור שימוש</h4>
-                {selectedAllow ? (
-                  <div className="space-y-4">
-                    <UsageBar
-                      label="סריקות זולות (מול מכסת רמה)"
-                      remaining={selected.cheapScansRemaining}
-                      included={selectedAllow.cheapScans}
-                    />
-                    <UsageBar
-                      label="סריקות פרימיום"
-                      remaining={selected.premiumScansRemaining}
-                      included={selectedAllow.premiumScans}
-                    />
-                  </div>
-                ) : null}
-                <p className="mt-3 text-[11px] text-gray-400">
-                  מכסות ברירת מחדש לפי רמה; ארגוני VIP או חבילות עלולים לחרוג מהסרגל.
-                </p>
-              </section>
-
-              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <h4 className="mb-3 text-sm font-black text-gray-900">עקיפה ידנית — סריקות</h4>
-                <form
-                  className="mb-4 flex flex-wrap gap-2"
-                  onSubmit={(ev) => {
-                    ev.preventDefault();
-                    const fd = new FormData(ev.currentTarget);
-                    fd.set("organizationId", selected.id);
-                    startTransition(async () => {
-                      const r = await manageSubsAdjustScansAction(fd);
-                      if (r.ok) {
-                        pushToast("ok", "יתרה עודכנה.");
-                        refresh();
-                      } else pushToast("err", r.error);
-                    });
-                  }}
-                >
-                  <input type="hidden" name="organizationId" value={selected.id} />
-                  <input name="cheapDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900" />
-                  <input name="premiumDelta" type="number" defaultValue={0} className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900" />
-                  <button type="submit" disabled={pending} className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-900 hover:bg-gray-100">
-                    החל שינוי
-                  </button>
-                </form>
-                <div className="flex flex-wrap gap-2">
-                  {([-50, -10, 10, 50, 100] as const).map((d) => (
-                    <button
-                      key={`c-${d}`}
-                      type="button"
-                      disabled={pending}
-                      onClick={() => {
-                        startTransition(async () => {
-                          const fd = new FormData();
-                          fd.set("organizationId", selected.id);
-                          fd.set("cheapDelta", String(d));
-                          fd.set("premiumDelta", "0");
-                          const r = await manageSubsAdjustScansAction(fd);
-                          if (r.ok) {
-                            pushToast("ok", `זול ${d > 0 ? "+" : ""}${d}`);
-                            refresh();
-                          } else pushToast("err", r.error);
-                        });
-                      }}
-                      className="rounded-lg border border-teal-200/80 bg-teal-50/50 px-2.5 py-1 text-[11px] font-bold text-teal-900"
-                    >
-                      זול {d > 0 ? `+${d}` : d}
-                    </button>
-                  ))}
+                    {selected.primaryEmail ?? "— אימייל"}
+                  </p>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {([-20, -5, 5, 20] as const).map((d) => (
-                    <button
-                      key={`p-${d}`}
-                      type="button"
-                      disabled={pending}
-                      onClick={() => {
-                        startTransition(async () => {
-                          const fd = new FormData();
-                          fd.set("organizationId", selected.id);
-                          fd.set("cheapDelta", "0");
-                          fd.set("premiumDelta", String(d));
-                          const r = await manageSubsAdjustScansAction(fd);
-                          if (r.ok) {
-                            pushToast("ok", `פרימיום ${d > 0 ? "+" : ""}${d}`);
-                            refresh();
-                          } else pushToast("err", r.error);
-                        });
-                      }}
-                      className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1 text-[11px] font-bold text-teal-900"
-                    >
-                      פרימיום {d > 0 ? `+${d}` : d}
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <h4 className="mb-3 text-sm font-black text-gray-900">רמת מנוי וסטטוס</h4>
-                <form
-                  className="flex flex-col gap-3"
-                  onSubmit={(ev) => {
-                    ev.preventDefault();
-                    const fd = new FormData(ev.currentTarget);
-                    fd.set("organizationId", selected.id);
-                    startTransition(async () => {
-                      const r = await manageSubsUpdateSubscriptionAction(fd);
-                      if (r.ok) {
-                        pushToast("ok", "מנוי עודכן.");
-                        refresh();
-                      } else pushToast("err", r.error);
-                    });
-                  }}
+                <button
+                  type="button"
+                  onClick={closeSheet}
+                  className="rounded-xl border border-gray-200 bg-gray-50 p-2 text-gray-500 hover:bg-gray-100"
                 >
-                  <select name="tier" defaultValue={selected.subscriptionTier} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400">
-                    {tierOptions.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    name="subscriptionStatus"
-                    defaultValue={selected.subscriptionStatus}
-                    className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm uppercase text-gray-900"
-                  />
-                  <button type="submit" disabled={pending} className="rounded-xl bg-teal-500 py-2 text-sm font-bold text-white hover:bg-teal-400 shadow-sm shadow-teal-500/20">
-                    שמור רמה וסטטוס
-                  </button>
-                </form>
-                <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
-                  <p className="text-xs font-bold text-gray-500">החלה מהירה (כל המכסות לפי מצב)</p>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <h4 className="mb-3 text-sm font-black text-gray-900">
+                    הקמת אתר — דומיין מותאם
+                  </h4>
+                  <form
+                    className="space-y-3"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const fd = new FormData(e.currentTarget);
+                      fd.set("organizationId", selected.id);
+                      setMsg(null);
+                      setErr(null);
+                      startTransition(async () => {
+                        const r = await manageSubsSaveTenantDomainAction(fd);
+                        if (r.ok) {
+                          pushToast("ok", "דומיין נשמר.");
+                          startTransition(async () => {
+                            const rows =
+                              await manageSubsListOrganizationsAction();
+                            if (Array.isArray(rows)) {
+                              setOrgs(rows);
+                              const u = rows.find((x) => x.id === selected.id);
+                              if (u) setSelected(u);
+                            }
+                          });
+                        } else {
+                          pushToast("err", r.error);
+                          setErr(r.error);
+                        }
+                      });
+                    }}
+                  >
+                    <input
+                      type="hidden"
+                      name="organizationId"
+                      value={selected.id}
+                    />
+                    <label className="block text-xs font-bold text-gray-500">
+                      דומיין ציבורי
+                      <input
+                        name="tenantPublicDomain"
+                        key={selected.id + (selected.tenantPublicDomain ?? "")}
+                        defaultValue={selected.tenantPublicDomain ?? ""}
+                        placeholder="דוגמה: app.client.com"
+                        className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400"
+                        dir="ltr"
+                      />
+                    </label>
+                    <button
+                      type="submit"
+                      disabled={pending}
+                      className="w-full rounded-xl bg-white border border-gray-200 py-2.5 text-sm font-bold text-gray-900 hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      שמירת דומיין
+                    </button>
+                  </form>
+                </section>
+
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <h4 className="mb-4 text-sm font-black text-gray-900">
+                    מוניטור שימוש
+                  </h4>
+                  {selectedAllow ? (
+                    <div className="space-y-4">
+                      <UsageBar
+                        label="סריקות זולות (מול מכסת רמה)"
+                        remaining={selected.cheapScansRemaining}
+                        included={selectedAllow.cheapScans}
+                      />
+                      <UsageBar
+                        label="סריקות פרימיום"
+                        remaining={selected.premiumScansRemaining}
+                        included={selectedAllow.premiumScans}
+                      />
+                    </div>
+                  ) : null}
+                  <p className="mt-3 text-[11px] text-gray-400">
+                    מכסות ברירת מחדש לפי רמה; ארגוני VIP או חבילות עלולים לחרוג
+                    מהסרגל.
+                  </p>
+                </section>
+
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <h4 className="mb-3 text-sm font-black text-gray-900">
+                    עקיפה ידנית — סריקות
+                  </h4>
+                  <form
+                    className="mb-4 flex flex-wrap gap-2"
+                    onSubmit={(ev) => {
+                      ev.preventDefault();
+                      const fd = new FormData(ev.currentTarget);
+                      fd.set("organizationId", selected.id);
+                      startTransition(async () => {
+                        const r = await manageSubsAdjustScansAction(fd);
+                        if (r.ok) {
+                          pushToast("ok", "יתרה עודכנה.");
+                          refresh();
+                        } else pushToast("err", r.error);
+                      });
+                    }}
+                  >
+                    <input
+                      type="hidden"
+                      name="organizationId"
+                      value={selected.id}
+                    />
+                    <input
+                      name="cheapDelta"
+                      type="number"
+                      defaultValue={0}
+                      className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900"
+                    />
+                    <input
+                      name="premiumDelta"
+                      type="number"
+                      defaultValue={0}
+                      className="w-24 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900"
+                    />
+                    <button
+                      type="submit"
+                      disabled={pending}
+                      className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-900 hover:bg-gray-100"
+                    >
+                      החל שינוי
+                    </button>
+                  </form>
                   <div className="flex flex-wrap gap-2">
-                    {MANUAL_MODES.map((m) => (
+                    {([-50, -10, 10, 50, 100] as const).map((d) => (
                       <button
-                        key={m.value}
+                        key={`c-${d}`}
                         type="button"
                         disabled={pending}
                         onClick={() => {
-                          const tierEl = document.getElementById(`sheet-tier-${selected.id}`) as HTMLSelectElement | null;
-                          const tier = (tierEl?.value ?? selected.subscriptionTier) as SubscriptionTier;
                           startTransition(async () => {
-                            const r = await executiveApplyManualSubscriptionAction(selected.id, tier, m.value);
+                            const fd = new FormData();
+                            fd.set("organizationId", selected.id);
+                            fd.set("cheapDelta", String(d));
+                            fd.set("premiumDelta", "0");
+                            const r = await manageSubsAdjustScansAction(fd);
                             if (r.ok) {
-                              pushToast("ok", `הוחל: ${m.label}`);
+                              pushToast("ok", `זול ${d > 0 ? "+" : ""}${d}`);
                               refresh();
-                              void manageSubsListOrganizationsAction().then((rows) => {
-                                if (Array.isArray(rows)) {
-                                  setOrgs(rows);
-                                  const u = rows.find((x) => x.id === selected.id);
-                                  if (u) setSelected(u);
-                                }
-                              });
                             } else pushToast("err", r.error);
                           });
                         }}
-                        className="rounded-lg bg-emerald-500/80 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-400"
+                        className="rounded-lg border border-teal-200/80 bg-teal-50/50 px-2.5 py-1 text-[11px] font-bold text-teal-900"
                       >
-                        {m.label}
+                        זול {d > 0 ? `+${d}` : d}
                       </button>
                     ))}
                   </div>
-                  <select id={`sheet-tier-${selected.id}`} defaultValue={selected.subscriptionTier} className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-900">
-                    {tierOptions.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {([-20, -5, 5, 20] as const).map((d) => (
+                      <button
+                        key={`p-${d}`}
+                        type="button"
+                        disabled={pending}
+                        onClick={() => {
+                          startTransition(async () => {
+                            const fd = new FormData();
+                            fd.set("organizationId", selected.id);
+                            fd.set("cheapDelta", "0");
+                            fd.set("premiumDelta", String(d));
+                            const r = await manageSubsAdjustScansAction(fd);
+                            if (r.ok) {
+                              pushToast(
+                                "ok",
+                                `פרימיום ${d > 0 ? "+" : ""}${d}`,
+                              );
+                              refresh();
+                            } else pushToast("err", r.error);
+                          });
+                        }}
+                        className="rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1 text-[11px] font-bold text-teal-900"
+                      >
+                        פרימיום {d > 0 ? `+${d}` : d}
+                      </button>
                     ))}
-                  </select>
-                </div>
-              </section>
+                  </div>
+                </section>
 
-              <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <h4 className="mb-3 text-sm font-black text-gray-900">שיוך — CRM / ERP</h4>
-                <p className="mb-3 text-xs text-gray-500">
-                  מודולי CRM ו־ERP נשמים על <strong className="text-gray-900">הארגון המחובר כרגע</strong>. להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
-                </p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <code className="rounded-lg bg-gray-100 px-2 py-1 font-mono text-[11px] text-gray-900" dir="ltr">
-                    {selected.id}
-                  </code>
-                  <button
-                    type="button"
-                    onClick={() => copyId(selected.id)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-bold text-gray-900"
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <h4 className="mb-3 text-sm font-black text-gray-900">
+                    רמת מנוי וסטטוס
+                  </h4>
+                  <form
+                    className="flex flex-col gap-3"
+                    onSubmit={(ev) => {
+                      ev.preventDefault();
+                      const fd = new FormData(ev.currentTarget);
+                      fd.set("organizationId", selected.id);
+                      startTransition(async () => {
+                        const r = await manageSubsUpdateSubscriptionAction(fd);
+                        if (r.ok) {
+                          pushToast("ok", "מנוי עודכן.");
+                          refresh();
+                        } else pushToast("err", r.error);
+                      });
+                    }}
                   >
-                    <Copy size={12} /> העתק
-                  </button>
-                </div>
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                  <a
-                    href="/app/clients"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
-                  >
-                    <ExternalLink size={14} /> מערכת CRM
-                  </a>
-                  <a
-                    href="/app/documents/erp"
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
-                  >
-                    <ExternalLink size={14} /> ERP
-                  </a>
-                </div>
-              </section>
-            </div>
-          </aside>
-        </>
+                    <select
+                      name="tier"
+                      defaultValue={selected.subscriptionTier}
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
+                    >
+                      {tierOptions.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      name="subscriptionStatus"
+                      defaultValue={selected.subscriptionStatus}
+                      className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm uppercase text-gray-900"
+                    />
+                    <button
+                      type="submit"
+                      disabled={pending}
+                      className="rounded-xl bg-teal-500 py-2 text-sm font-bold text-white hover:bg-teal-400 shadow-sm shadow-teal-500/20"
+                    >
+                      שמור רמה וסטטוס
+                    </button>
+                  </form>
+                  <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
+                    <p className="text-xs font-bold text-gray-500">
+                      החלה מהירה (כל המכסות לפי מצב)
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {MANUAL_MODES.map((m) => (
+                        <button
+                          key={m.value}
+                          type="button"
+                          disabled={pending}
+                          onClick={() => {
+                            const tierEl = document.getElementById(
+                              `sheet-tier-${selected.id}`,
+                            ) as HTMLSelectElement | null;
+                            const tier = (tierEl?.value ??
+                              selected.subscriptionTier) as SubscriptionTier;
+                            startTransition(async () => {
+                              const r =
+                                await executiveApplyManualSubscriptionAction(
+                                  selected.id,
+                                  tier,
+                                  m.value,
+                                );
+                              if (r.ok) {
+                                pushToast("ok", `הוחל: ${m.label}`);
+                                refresh();
+                                void manageSubsListOrganizationsAction().then(
+                                  (rows) => {
+                                    if (Array.isArray(rows)) {
+                                      setOrgs(rows);
+                                      const u = rows.find(
+                                        (x) => x.id === selected.id,
+                                      );
+                                      if (u) setSelected(u);
+                                    }
+                                  },
+                                );
+                              } else pushToast("err", r.error);
+                            });
+                          }}
+                          className="rounded-lg bg-emerald-500/80 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-400"
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                    <select
+                      id={`sheet-tier-${selected.id}`}
+                      defaultValue={selected.subscriptionTier}
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-900"
+                    >
+                      {tierOptions.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </section>
+
+                <section className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <h4 className="mb-3 text-sm font-black text-gray-900">
+                    שיוך — CRM / ERP
+                  </h4>
+                  <p className="mb-3 text-xs text-gray-500">
+                    מודולי CRM ו־ERP נשמים על{" "}
+                    <strong className="text-gray-900">
+                      הארגון המחובר כרגע
+                    </strong>
+                    . להלן מזהה הארגון של הלקוח לצורך תיאום וייבוא נתונים.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <code
+                      className="rounded-lg bg-gray-100 px-2 py-1 font-mono text-[11px] text-gray-900"
+                      dir="ltr"
+                    >
+                      {selected.id}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={() => copyId(selected.id)}
+                      className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-bold text-gray-900"
+                    >
+                      <Copy size={12} /> העתק
+                    </button>
+                  </div>
+                  <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                    <a
+                      href="/app/clients"
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
+                    >
+                      <ExternalLink size={14} /> מערכת CRM
+                    </a>
+                    <a
+                      href="/app/documents/erp"
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
+                    >
+                      <ExternalLink size={14} /> ERP
+                    </a>
+                  </div>
+                </section>
+              </div>
+            </aside>
+          </>
         </PortalToBody>
       ) : null}
     </div>

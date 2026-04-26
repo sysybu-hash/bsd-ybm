@@ -16,7 +16,9 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
+import PortalToBody, {
+  WORKSPACE_OVERLAY_Z_CLASS,
+} from "@/components/portal/PortalToBody";
 import {
   ACCESSIBILITY_THEME_OPTIONS,
   applyAccessibilitySettings,
@@ -96,7 +98,11 @@ function AccessibilityPanel({
     () => [
       { id: "default", label: "רגיל", summary: "גודל טקסט ברירת מחדל." },
       { id: "large", label: "גדול", summary: "טקסט מעט גדול יותר." },
-      { id: "xlarge", label: "גדול מאוד", summary: "טקסט מודגש לקריאות מקסימלית." },
+      {
+        id: "xlarge",
+        label: "גדול מאוד",
+        summary: "טקסט מודגש לקריאות מקסימלית.",
+      },
     ],
     [],
   );
@@ -124,7 +130,9 @@ function AccessibilityPanel({
               <Accessibility className="h-5 w-5" aria-hidden />
             </span>
             <div>
-              <h2 className="text-base font-black text-[color:var(--ink-900)]">נגישות חכמה</h2>
+              <h2 className="text-base font-black text-[color:var(--ink-900)]">
+                נגישות חכמה
+              </h2>
               <p className="mt-1 text-[12px] text-[color:var(--ink-500)]">
                 התאמות קריאה, צבעים, פוקוס ותנועה לכל האתר.
               </p>
@@ -147,8 +155,12 @@ function AccessibilityPanel({
       <div className="mt-4 rounded-2xl border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--axis-ai)]">Live Preview</p>
-            <p className="mt-1 text-sm font-black text-[color:var(--ink-900)]">כך הקריאה תיראה</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[color:var(--axis-ai)]">
+              Live Preview
+            </p>
+            <p className="mt-1 text-sm font-black text-[color:var(--ink-900)]">
+              כך הקריאה תיראה
+            </p>
             <p className="mt-1 text-[12px] leading-6 text-[color:var(--ink-600)]">
               טקסט מדגים ניגודיות, ריווח, פוקוס ותנועת מסך.
             </p>
@@ -161,7 +173,10 @@ function AccessibilityPanel({
           <div className="h-2 rounded-full bg-white/60 overflow-hidden">
             <div
               className="h-full rounded-full"
-              style={{ width: `${Math.round((activeCount / 7) * 100)}%`, background: "var(--progress-fill-ai)" }}
+              style={{
+                width: `${Math.round((activeCount / 7) * 100)}%`,
+                background: "var(--progress-fill-ai)",
+              }}
             />
           </div>
         </div>
@@ -180,11 +195,20 @@ function AccessibilityPanel({
                 <button
                   key={option.id}
                   type="button"
-                  onClick={() => setSettings((current) => ({ ...current, fontScale: option.id }))}
+                  onClick={() =>
+                    setSettings((current) => ({
+                      ...current,
+                      fontScale: option.id,
+                    }))
+                  }
                   className={`tile px-3 py-3 text-right transition ${active ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)]" : ""}`}
                 >
-                  <span className="block text-sm font-black text-[color:var(--ink-900)]">{option.label}</span>
-                  <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">{option.summary}</span>
+                  <span className="block text-sm font-black text-[color:var(--ink-900)]">
+                    {option.label}
+                  </span>
+                  <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">
+                    {option.summary}
+                  </span>
                 </button>
               );
             })}
@@ -216,15 +240,21 @@ function AccessibilityPanel({
                     <span
                       className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg"
                       style={{
-                        background: active ? "var(--axis-clients)" : "var(--canvas-sunken)",
+                        background: active
+                          ? "var(--axis-clients)"
+                          : "var(--canvas-sunken)",
                         color: active ? "#fff" : "var(--ink-500)",
                       }}
                     >
                       <Icon className="h-4 w-4" aria-hidden />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-black text-[color:var(--ink-900)]">{card.label}</span>
-                      <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">{card.summary}</span>
+                      <span className="block text-sm font-black text-[color:var(--ink-900)]">
+                        {card.label}
+                      </span>
+                      <span className="mt-1 block text-[11px] leading-5 text-[color:var(--ink-500)]">
+                        {card.summary}
+                      </span>
                     </span>
                   </div>
                 </button>
@@ -245,7 +275,12 @@ function AccessibilityPanel({
                 <button
                   key={theme.id}
                   type="button"
-                  onClick={() => setSettings((current) => ({ ...current, themeColor: theme.id }))}
+                  onClick={() =>
+                    setSettings((current) => ({
+                      ...current,
+                      themeColor: theme.id,
+                    }))
+                  }
                   title={theme.label}
                   className={`h-11 rounded-xl border-2 transition ${active ? "scale-[1.04] border-[color:var(--ink-900)] shadow-[var(--shadow-sm)]" : "border-white"}`}
                   style={{ backgroundColor: theme.color }}
@@ -258,8 +293,12 @@ function AccessibilityPanel({
 
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3">
           <div>
-            <p className="text-sm font-black text-[color:var(--ink-900)]">ההגדרות נשמרות לכל האתר</p>
-            <p className="mt-1 text-[11px] text-[color:var(--ink-500)]">שמירה מקומית מיידית והחלה על כל המסכים.</p>
+            <p className="text-sm font-black text-[color:var(--ink-900)]">
+              ההגדרות נשמרות לכל האתר
+            </p>
+            <p className="mt-1 text-[11px] text-[color:var(--ink-500)]">
+              שמירה מקומית מיידית והחלה על כל המסכים.
+            </p>
           </div>
           <button
             type="button"
@@ -283,7 +322,9 @@ export default function AccessibilityMenu({
 }: AccessibilityMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-  const [settings, setSettings] = useState<AccessibilitySettings>(DEFAULT_ACCESSIBILITY_SETTINGS);
+  const [settings, setSettings] = useState<AccessibilitySettings>(
+    DEFAULT_ACCESSIBILITY_SETTINGS,
+  );
 
   useEffect(() => {
     const nextSettings = readStoredAccessibilitySettings();
@@ -323,20 +364,23 @@ export default function AccessibilityMenu({
           }`}
           aria-label="פתיחת סרגל נגישות"
         >
-          <Accessibility className="h-5 w-5 transition group-hover:scale-110" aria-hidden />
+          <Accessibility
+            className="h-5 w-5 transition group-hover:scale-110"
+            aria-hidden
+          />
         </button>
 
-        {isOpen ? <div className="absolute left-16 top-0 z-[350]">{panel}</div> : null}
+        {isOpen ? (
+          <div className="absolute left-16 top-0 z-[350]">{panel}</div>
+        ) : null}
       </div>
     );
   }
 
   return (
     <div
-      className={`fixed z-[320] ${
-        compactFab
-          ? "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] left-[max(1rem,env(safe-area-inset-left,0px))] sm:bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:left-[max(1.25rem,env(safe-area-inset-left,0px))]"
-          : "bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] left-[max(1.5rem,env(safe-area-inset-left,0px))]"
+      className={`fixed z-[2147483000] ${
+        compactFab ? "bottom-4 left-4 sm:bottom-5 sm:left-5" : "bottom-6 left-6"
       }`}
       dir="rtl"
     >
@@ -346,10 +390,14 @@ export default function AccessibilityMenu({
         className={
           compactFab
             ? `inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl border border-white/70 text-white shadow-[var(--tile-shadow-raised)] transition ${
-                isOpen ? "bg-[color:var(--ink-900)]" : "bg-[color:var(--axis-ai)]"
+                isOpen
+                  ? "bg-[color:var(--ink-900)]"
+                  : "bg-[color:var(--axis-ai)]"
               }`
             : `inline-flex h-14 w-14 touch-manipulation items-center justify-center rounded-2xl border border-white/70 text-white shadow-[0_20px_50px_-20px_rgba(109,81,209,0.65)] transition ${
-                isOpen ? "bg-[color:var(--ink-900)]" : "bg-[color:var(--axis-ai)]"
+                isOpen
+                  ? "bg-[color:var(--ink-900)]"
+                  : "bg-[color:var(--axis-ai)]"
               }`
         }
         aria-label="פתיחת סרגל נגישות"
@@ -357,18 +405,21 @@ export default function AccessibilityMenu({
         {isOpen ? (
           <X className={compactFab ? "h-5 w-5" : "h-6 w-6"} aria-hidden />
         ) : (
-          <Accessibility className={compactFab ? "h-5 w-5" : "h-6 w-6"} aria-hidden />
+          <Accessibility
+            className={compactFab ? "h-5 w-5" : "h-6 w-6"}
+            aria-hidden
+          />
         )}
       </button>
 
       {isOpen ? (
         <PortalToBody>
-        <div
-          className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end justify-start bg-slate-950/30 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:items-center sm:justify-center sm:pb-4`}
-          onClick={() => setIsOpen(false)}
-        >
-          <div onClick={(event) => event.stopPropagation()}>{panel}</div>
-        </div>
+          <div
+            className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end justify-start bg-slate-950/30 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:items-center sm:justify-center sm:pb-4`}
+            onClick={() => setIsOpen(false)}
+          >
+            <div onClick={(event) => event.stopPropagation()}>{panel}</div>
+          </div>
         </PortalToBody>
       ) : null}
     </div>

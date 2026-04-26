@@ -26,14 +26,13 @@ type UpgradeCheckoutModalProps = {
   clientId?: string;
 };
 
-const PLAN_ID_TO_TIER: Record<string, SubscriptionTierKey> = {
+const PLAN_ID_TO_TIER: Partial<Record<string, SubscriptionTierKey>> = {
   CHEAP: "DEALER",
   PREMIUM: "COMPANY",
   VIP: "CORPORATE",
   DEALER: "DEALER",
   COMPANY: "COMPANY",
   CORPORATE: "CORPORATE",
-  HOUSEHOLD: "HOUSEHOLD",
 };
 
 function resolveTier(planId: string): SubscriptionTierKey | null {
@@ -55,7 +54,11 @@ export function UpgradeCheckoutModal({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const clientId = (clientIdProp ?? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "").trim();
+  const clientId = (
+    clientIdProp ??
+    process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ??
+    ""
+  ).trim();
 
   const isProcessing = parentProcessing || busy;
 
@@ -104,7 +107,11 @@ export function UpgradeCheckoutModal({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderID }),
         });
-        const j = (await res.json()) as { ok?: boolean; message?: string; error?: string };
+        const j = (await res.json()) as {
+          ok?: boolean;
+          message?: string;
+          error?: string;
+        };
         if (!res.ok || !j.ok) {
           throw new Error(j.error || "אישור תשלום נכשל");
         }
@@ -150,7 +157,9 @@ export function UpgradeCheckoutModal({
 
         <div className="flex w-full flex-col justify-center border-s border-[color:var(--dash-line)] bg-[color:var(--dash-purple-soft)]/60 p-8 md:w-2/5">
           <div className="mb-6">
-            <h3 className="mb-1 text-xl font-bold text-brand-dark">סיכום הזמנה</h3>
+            <h3 className="mb-1 text-xl font-bold text-brand-dark">
+              סיכום הזמנה
+            </h3>
             <p className="text-sm text-text-secondary">מערכת BSD-YBM</p>
           </div>
 
@@ -161,16 +170,22 @@ export function UpgradeCheckoutModal({
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-text-primary">מחזור חיוב:</span>
-              <span>{planDetails.isAnnual ? "שנתי (חיסכון 20%)" : "חודשי"}</span>
+              <span>
+                {planDetails.isAnnual ? "שנתי (חיסכון 20%)" : "חודשי"}
+              </span>
             </div>
             <div className="my-2 h-px w-full bg-brand-light/40" />
             <div className="flex items-end justify-between">
               <span className="font-bold text-text-primary">סך הכל:</span>
               <div className="text-end">
                 {planDetails.totalLabel ? (
-                  <span className="text-3xl font-extrabold text-brand">{planDetails.totalLabel}</span>
+                  <span className="text-3xl font-extrabold text-brand">
+                    {planDetails.totalLabel}
+                  </span>
                 ) : (
-                  <span className="text-3xl font-extrabold text-brand">₪{planDetails.price}</span>
+                  <span className="text-3xl font-extrabold text-brand">
+                    ₪{planDetails.price}
+                  </span>
                 )}
                 <span className="mt-1 block text-xs text-text-secondary">
                   + מע״מ כחוק. תשלום {planDetails.isAnnual ? "שנתי" : "חודשי"}.
@@ -189,12 +204,18 @@ export function UpgradeCheckoutModal({
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
               <p className="text-lg font-bold text-emerald-800">הצלחה</p>
               <p className="mt-2 text-sm text-emerald-900">{successMessage}</p>
-              <p className="mt-3 text-xs text-emerald-700">מעבירים ללוח הבקרה…</p>
+              <p className="mt-3 text-xs text-emerald-700">
+                מעבירים ללוח הבקרה…
+              </p>
             </div>
           ) : (
             <>
-              <h2 className="mb-2 text-2xl font-bold text-text-primary">אמצעי תשלום</h2>
-              <p className="mb-6 text-sm text-text-secondary">השלימו את התשלום ב-PayPal לשדרוג המנוי.</p>
+              <h2 className="mb-2 text-2xl font-bold text-text-primary">
+                אמצעי תשלום
+              </h2>
+              <p className="mb-6 text-sm text-text-secondary">
+                השלימו את התשלום ב-PayPal לשדרוג המנוי.
+              </p>
 
               {errorMessage ? (
                 <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
@@ -204,7 +225,9 @@ export function UpgradeCheckoutModal({
 
               {!clientId ? (
                 <p className="text-sm text-amber-800">
-                  חסר <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> — לא ניתן להטעין את PayPal.
+                  חסר{" "}
+                  <code className="text-xs">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code>{" "}
+                  — לא ניתן להטעין את PayPal.
                 </p>
               ) : (
                 <div className="min-h-[120px] w-full max-w-md" dir="ltr">
@@ -213,7 +236,11 @@ export function UpgradeCheckoutModal({
                     options={options}
                   >
                     <PayPalButtons
-                      style={{ layout: "vertical", shape: "rect", label: "pay" }}
+                      style={{
+                        layout: "vertical",
+                        shape: "rect",
+                        label: "pay",
+                      }}
                       disabled={isProcessing}
                       createOrder={async () => {
                         setBusy(true);
@@ -225,7 +252,9 @@ export function UpgradeCheckoutModal({
                       }}
                       onApprove={(data) =>
                         onApprove(data).catch((e) => {
-                          setErrorMessage(e instanceof Error ? e.message : "שגיאה");
+                          setErrorMessage(
+                            e instanceof Error ? e.message : "שגיאה",
+                          );
                           throw e;
                         })
                       }
@@ -254,7 +283,10 @@ export function UpgradeCheckoutModal({
 
               <ul className="mt-8 space-y-2">
                 {planDetails.features.slice(0, 3).map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-text-secondary text-xs">
+                  <li
+                    key={feature}
+                    className="flex items-center gap-2 text-text-secondary text-xs"
+                  >
                     <Check className="text-emerald-500" size={14} aria-hidden />
                     {feature}
                   </li>
