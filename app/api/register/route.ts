@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { jsonBadRequest, jsonConflict, jsonServerError } from "@/lib/api-json";
+import {
+  jsonBadRequest,
+  jsonConflict,
+  jsonServerError,
+} from "@/lib/api-json";
 import { AccountStatus, CustomerType } from "@prisma/client";
 import { trialEndsAtFromNow } from "@/lib/trial";
 import { sendRegistrationWelcomeEmail } from "@/lib/mail";
-import {
-  defaultScanBalancesForTier,
-  tierLabelHe,
-} from "@/lib/subscription-tier-config";
+import { defaultScanBalancesForTier, tierLabelHe } from "@/lib/subscription-tier-config";
 import { normalizeConstructionTrade } from "@/lib/construction-trades";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,14 +31,7 @@ export async function POST(req: Request) {
     const name = String(body.name ?? "").trim() || null;
     const organizationName = String(body.organizationName ?? "").trim();
     const typeRaw = String(body.orgType ?? "COMPANY").toUpperCase();
-    const industry =
-      String(body.industry ?? "GENERAL")
-        .trim()
-        .toUpperCase() || "GENERAL";
-    const constructionTrade =
-      industry === "CONSTRUCTION"
-        ? normalizeConstructionTrade(body.constructionTrade)
-        : "GENERAL_CONTRACTOR";
+    const constructionTrade = normalizeConstructionTrade(body.constructionTrade);
     const inviteToken = String(body.inviteToken ?? "").trim();
     const orgInviteToken = String(body.orgInviteToken ?? "").trim();
 
@@ -72,10 +66,7 @@ export async function POST(req: Request) {
         where: { email: { equals: normalized, mode: "insensitive" } },
       });
 
-      if (
-        existing?.organizationId &&
-        existing.organizationId !== inv.organizationId
-      ) {
+      if (existing?.organizationId && existing.organizationId !== inv.organizationId) {
         return jsonConflict(
           "האימייל כבר משויך לארגון אחר. יש לפנות למנהל או להשתמש באימייל אחר.",
           "email_org_mismatch",
@@ -126,9 +117,7 @@ export async function POST(req: Request) {
         accountActive: true,
         extraNote:
           "הצטרפתם לארגון קיים כחברי צוות. Welcome to BSD-YBM — הרשאות לפי ההזמנה.",
-      }).catch((err) =>
-        console.error("sendRegistrationWelcomeEmail (orgInvite)", err),
-      );
+      }).catch((err) => console.error("sendRegistrationWelcomeEmail (orgInvite)", err));
 
       return NextResponse.json({
         ok: true,
@@ -148,9 +137,7 @@ export async function POST(req: Request) {
       return jsonConflict("כתובת האימייל כבר רשומה במערכת", "email_taken");
     }
 
-    const orgType = Object.values(CustomerType).includes(
-      typeRaw as CustomerType,
-    )
+    const orgType = Object.values(CustomerType).includes(typeRaw as CustomerType)
       ? (typeRaw as CustomerType)
       : CustomerType.COMPANY;
 
@@ -182,7 +169,7 @@ export async function POST(req: Request) {
           data: {
             name: organizationName,
             type: orgType,
-            industry,
+            industry: "CONSTRUCTION",
             constructionTrade,
             subscriptionTier: inv.subscriptionTier,
             subscriptionStatus: "ACTIVE",
@@ -215,9 +202,7 @@ export async function POST(req: Request) {
           inv.subscriptionTier === "FREE"
             ? "Welcome to BSD-YBM! You are currently on the FREE tier with an active trial window where applicable."
             : undefined,
-      }).catch((err) =>
-        console.error("sendRegistrationWelcomeEmail (invite)", err),
-      );
+      }).catch((err) => console.error("sendRegistrationWelcomeEmail (invite)", err));
 
       return NextResponse.json({
         ok: true,
@@ -230,21 +215,13 @@ export async function POST(req: Request) {
     const isDirectPlan = !!body.plan;
 
     // Mapping plan string to SubscriptionTier enum
-    const tier = [
-      "FREE",
-      "HOUSEHOLD",
-      "DEALER",
-      "COMPANY",
-      "CORPORATE",
-    ].includes(planRaw)
-      ? (planRaw as import("@prisma/client").SubscriptionTier)
-      : "FREE";
+    const tier = ["FREE", "HOUSEHOLD", "DEALER", "COMPANY", "CORPORATE"].includes(planRaw)
+       ? (planRaw as import("@prisma/client").SubscriptionTier)
+       : "FREE";
 
     // Only general signup (no plan, no invite) goes to PENDING_APPROVAL
     const shouldApprove = isDirectPlan || !!inviteToken || !!orgInviteToken;
-    const initialStatus = shouldApprove
-      ? AccountStatus.ACTIVE
-      : AccountStatus.PENDING_APPROVAL;
+    const initialStatus = shouldApprove ? AccountStatus.ACTIVE : AccountStatus.PENDING_APPROVAL;
     const initialSubStatus = shouldApprove ? "ACTIVE" : "PENDING_APPROVAL";
 
     const balances = defaultScanBalancesForTier(tier);
@@ -253,7 +230,7 @@ export async function POST(req: Request) {
       data: {
         name: organizationName,
         type: orgType,
-        industry,
+        industry: "CONSTRUCTION",
         constructionTrade,
         subscriptionTier: tier,
         trialEndsAt: tier === "FREE" ? trialEndsAtFromNow() : null,
@@ -279,13 +256,11 @@ export async function POST(req: Request) {
       extraNote: shouldApprove
         ? `Welcome to BSD-YBM! Your ${tierLabelHe(tier)} account is now ACTIVE.`
         : "Welcome to BSD-YBM! You are currently on the FREE tier pending admin approval — you will receive full access once approved.",
-    }).catch((err) =>
-      console.error("sendRegistrationWelcomeEmail (signup)", err),
-    );
+    }).catch((err) => console.error("sendRegistrationWelcomeEmail (signup)", err));
 
     return NextResponse.json({
       ok: true,
-      message: shouldApprove
+      message: shouldApprove 
         ? "ההרשמה הושלמה בהצלחה! ניתן להתחבר כעת."
         : "הבקשה נקלטה. מנהל המערכת יאשר את המנוי וישלח לך פרטי כניסה.",
     });

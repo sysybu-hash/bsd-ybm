@@ -32,16 +32,16 @@ export type TierAllowance = {
 
 const TIER_ALLOWANCES: Record<SubscriptionTierKey, TierAllowance> = {
   FREE: {
-    cheapScans: 30,
+    cheapScans: 10,
     premiumScans: 0,
     maxCompanies: 1,
     monthlyPriceIls: 0,
   },
   HOUSEHOLD: {
-    cheapScans: 30,
-    premiumScans: 0,
+    cheapScans: 50,
+    premiumScans: 5,
     maxCompanies: 1,
-    monthlyPriceIls: 0,
+    monthlyPriceIls: 59.9,
   },
   DEALER: {
     cheapScans: 100,
@@ -65,9 +65,7 @@ const TIER_ALLOWANCES: Record<SubscriptionTierKey, TierAllowance> = {
   },
 };
 
-export function tierAllowance(
-  tier: SubscriptionTierKey | string,
-): TierAllowance {
+export function tierAllowance(tier: SubscriptionTierKey | string): TierAllowance {
   const t = parseSubscriptionTier(tier);
   return t ? TIER_ALLOWANCES[t] : TIER_ALLOWANCES.FREE;
 }
@@ -76,11 +74,11 @@ export function tierLabelHe(tier: string): string {
   const u = (tier || "FREE").toUpperCase();
   switch (u) {
     case "FREE":
-      return "דמו 30 יום";
+      return "חינם (ניסיון)";
     case "HOUSEHOLD":
-      return "דמו 30 יום";
+      return "משק בית";
     case "DEALER":
-      return "עצמאי / עוסק";
+      return "עוסק מורשה";
     case "COMPANY":
       return "חברה";
     case "CORPORATE":
@@ -103,9 +101,7 @@ export function tierRank(tier: SubscriptionTierKey | string): number {
   return i >= 0 ? i : 0;
 }
 
-export function parseSubscriptionTier(
-  raw: string | null | undefined,
-): SubscriptionTierKey | null {
+export function parseSubscriptionTier(raw: string | null | undefined): SubscriptionTierKey | null {
   const u = String(raw ?? "")
     .trim()
     .toUpperCase();
@@ -125,16 +121,11 @@ export function parseSubscriptionTier(
 export function paypalPurchasableTiers(): SubscriptionTierKey[] {
   return ADMIN_SUBSCRIPTION_TIER_OPTIONS.filter((t) => {
     if (t === "FREE") return false;
-    return (
-      TIER_ALLOWANCES[t].monthlyPriceIls != null &&
-      TIER_ALLOWANCES[t].monthlyPriceIls > 0
-    );
+    return TIER_ALLOWANCES[t].monthlyPriceIls != null;
   });
 }
 
-export function defaultScanBalancesForTier(
-  tier: SubscriptionTierKey | string,
-): {
+export function defaultScanBalancesForTier(tier: SubscriptionTierKey | string): {
   cheapScansRemaining: number;
   premiumScansRemaining: number;
   maxCompanies: number;
@@ -151,32 +142,28 @@ export function defaultScanBalancesForTier(
 /** טקסט ל-AI / תיעוד — מחירון BSD-YBM */
 export function subscriptionTiersPromptBlockHe(): string {
   return `מחירון מנוי BSD-YBM (ILS, סריקה זולה=Gemini, פרימיום=OpenAI/Claude):
-- FREE / HOUSEHOLD: 0 ₪, דמו ל-30 יום, 30 סריקות רגילות, 0 פרימיום.
-- DEALER (עצמאי / עוסק): 99.90 ₪, 100 זולות, 15 פרימיום.
+- FREE: 0 ₪, 10 סריקות זולות, 0 פרימיום, ניסיון חודש.
+- HOUSEHOLD: 59.90 ₪, 50 זולות, 5 פרימיום.
+- DEALER (מומלץ לעוסקים): 99.90 ₪, 100 זולות, 15 פרימיום.
 - COMPANY: 159.90 ₪, 200 זולות, 40 פרימיום, עד 2 חברות.
 - CORPORATE: 299.90 ₪, 500 זולות, 100 פרימיום, חברות ללא הגבלה מעשית.
 המלץ לרמה לפי תיאור המשתמש (למשל "אני עוסק" → DEALER, "חברה" → COMPANY).`;
 }
 
-export function executiveTierOptionsForSelect(): {
-  value: string;
-  label: string;
-}[] {
+export function executiveTierOptionsForSelect(): { value: string; label: string }[] {
   return ADMIN_SUBSCRIPTION_TIER_OPTIONS.map((t) => ({
     value: t,
     label: `${tierLabelHe(t)} (${t})`,
   }));
 }
 
-export function legacyPlanToTierKey(
-  plan: string | null | undefined,
-): SubscriptionTierKey {
+export function legacyPlanToTierKey(plan: string | null | undefined): SubscriptionTierKey {
   const u = String(plan ?? "")
     .trim()
     .toUpperCase();
   switch (u) {
     case "PRO":
-      return "DEALER";
+      return "HOUSEHOLD";
     case "BUSINESS":
       return "COMPANY";
     case "ENTERPRISE":
