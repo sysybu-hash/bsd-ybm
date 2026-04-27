@@ -39,18 +39,9 @@ describe("workspace-access", () => {
     expect(hasActiveWorkspaceSubscription("PENDING_APPROVAL")).toBe(true);
     expect(hasActiveWorkspaceSubscription("INACTIVE")).toBe(false);
 
-    expect(getVisibleUtilitySectionIds({ role: "CLIENT", isPlatformAdmin: false })).toEqual([
-      "projects",
-      "operations",
-      "help",
-      "business",
-    ]);
+    expect(getVisibleUtilitySectionIds({ role: "CLIENT", isPlatformAdmin: false })).toEqual([]);
 
     expect(getVisibleUtilitySectionIds({ role: "SUPER_ADMIN", isPlatformAdmin: true })).toEqual([
-      "projects",
-      "operations",
-      "help",
-      "business",
       "admin",
     ]);
   });

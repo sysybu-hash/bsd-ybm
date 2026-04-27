@@ -10,13 +10,11 @@ import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeri
 
 export const dynamic = "force-dynamic";
 
-export default async function AppFinancePage() {
+export default async function ErpPage() {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
 
-  if (!organizationId) {
-    redirect("/login");
-  }
+  if (!organizationId) redirect("/login");
 
   const [snapshot, organization] = await Promise.all([
     loadCommercialHubSnapshot(organizationId),
@@ -40,11 +38,13 @@ export default async function AppFinancePage() {
     "";
 
   return (
-    <FinanceHubContent
-      snapshot={snapshot}
-      organizationId={organizationId}
-      industryProfile={industryProfile}
-      userFirstName={userFirstName}
-    />
+    <WorkspaceEngineeringShell>
+      <FinanceHubContent
+        snapshot={snapshot}
+        organizationId={organizationId}
+        industryProfile={industryProfile}
+        userFirstName={userFirstName}
+      />
+    </WorkspaceEngineeringShell>
   );
 }

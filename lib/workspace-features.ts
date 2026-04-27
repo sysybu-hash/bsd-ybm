@@ -15,13 +15,9 @@ import type { WorkspaceAccessContext } from "@/lib/workspace-access";
  * ניתן להרחיב (למשל `scanner.electrical_only`) ללא שינוי חוזה הניווט.
  */
 export type WorkspaceFeatureKey =
-  | "module_inbox"
-  | "module_projects"
-  | "module_clients"
-  | "module_documents"
-  | "module_billing"
-  | "module_operations"
-  | "module_insights";
+  | "module_crm"
+  | "module_erp"
+  | "module_operations";
 
 /** קלט לאיחוד RBAC + תעשייה + מקצוע בנייה (מיושר ל־getIndustryProfile / session) */
 export type WorkspaceFeatureInput = WorkspaceAccessContext & {
@@ -31,13 +27,9 @@ export type WorkspaceFeatureInput = WorkspaceAccessContext & {
 };
 
 const ALL_MODULES: WorkspaceFeatureKey[] = [
-  "module_inbox",
-  "module_projects",
-  "module_clients",
-  "module_documents",
-  "module_billing",
+  "module_crm",
+  "module_erp",
   "module_operations",
-  "module_insights",
 ];
 
 /** כפול קל מ־`professions/config` — בלי ייבוא כבד (React/אייקונים) ל־Edge middleware */
@@ -60,12 +52,8 @@ function normalizeIndustryTypeForJwt(id?: string | null): IndustryType {
 }
 
 const ROUTE_FEATURE: Partial<Record<AppRouteId, WorkspaceFeatureKey>> = {
-  inbox: "module_inbox",
-  projects: "module_projects",
-  clients: "module_clients",
-  documents: "module_documents",
-  finance: "module_billing",
-  ai: "module_insights",
+  crm: "module_crm",
+  erp: "module_erp",
   operations: "module_operations",
 };
 
@@ -123,7 +111,7 @@ export function getHiddenPrimaryRouteIds(input: WorkspaceFeatureInput): Set<AppR
   const hidden = new Set<AppRouteId>();
 
   for (const [routeId, feat] of Object.entries(ROUTE_FEATURE) as [AppRouteId, WorkspaceFeatureKey][]) {
-    if (!feat || routeId === "home" || routeId === "settings") continue;
+    if (!feat || (["home", "settings"] as AppRouteId[]).includes(routeId)) continue;
     if (!features.has(feat)) {
       hidden.add(routeId);
     }
@@ -156,12 +144,8 @@ export function toWorkspaceFeatureInput(
 }
 
 const APP_SEGMENT_TO_ROUTE: Record<string, AppRouteId> = {
-  inbox: "inbox",
-  projects: "projects",
-  clients: "clients",
-  documents: "documents",
-  finance: "finance",
-  ai: "ai",
+  crm: "crm",
+  erp: "erp",
   operations: "operations",
   settings: "settings",
 };
@@ -179,12 +163,14 @@ export function pathnameToWorkspacePrimaryRoute(pathname: string): AppRouteId | 
   if (parts.length === 1) return "home";
   const seg = parts[1];
   if (!seg) return "home";
-  /** חיוב פלטפורמה תחת הגדרות — מקושר לפריט «כספים» בניווט */
-  if (seg === "settings" && parts[2] === "billing") {
-    return "finance";
+  if (seg === "insights" || seg === "intelligence" || seg === "documents" || seg === "finance") {
+    return "erp";
   }
-  if (seg === "insights" || seg === "intelligence") {
-    return "ai";
+  if (seg === "clients" || seg === "projects") {
+    return "crm";
+  }
+  if (seg === "ai" || seg === "inbox" || seg === "business" || seg === "advanced") {
+    return "home";
   }
   return APP_SEGMENT_TO_ROUTE[seg] ?? null;
 }

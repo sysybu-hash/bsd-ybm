@@ -8,13 +8,7 @@ import { getIndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
 
-const STATUS_LABEL_HE: Record<string, string> = {
-  LEAD: "ליד",
-  PROPOSAL: "הצעה",
-  ACTIVE: "פעיל",
-  CLOSED_WON: "נסגר (זכייה)",
-  CLOSED_LOST: "נסגר (הפסד)",
-};
+export const dynamic = "force-dynamic";
 
 function clientInsightLine(c: {
   notes: string | null;
@@ -25,15 +19,11 @@ function clientInsightLine(c: {
   const n = c.notes?.trim();
   if (n) return n.length > 140 ? `${n.slice(0, 140)}…` : n;
   if (c.totalPending > 0) return `יתרה לגבייה: ${formatCurrencyILS(c.totalPending)}`;
-  if (c.totalBilled > 0) {
-    return `הופק: ${formatCurrencyILS(c.totalBilled)} · ${c.invoiceCount} מסמכים`;
-  }
+  if (c.totalBilled > 0) return `הופק: ${formatCurrencyILS(c.totalBilled)} · ${c.invoiceCount} מסמכים`;
   return "אין היסטוריית הופקה";
 }
 
-export const dynamic = "force-dynamic";
-
-export default async function AppClientsPage({
+export default async function CrmPage({
   searchParams,
 }: {
   searchParams: Promise<{ projectId?: string; clientId?: string }>;
@@ -41,9 +31,7 @@ export default async function AppClientsPage({
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
 
-  if (!organizationId) {
-    redirect("/login");
-  }
+  if (!organizationId) redirect("/login");
 
   const userFirstName =
     (session.user?.name ?? "").trim().split(" ")[0] ||
@@ -52,14 +40,10 @@ export default async function AppClientsPage({
 
   const sp = await searchParams;
 
-  const [organization, contactsRaw, projectsRaw, meckanoZonesCount] = await Promise.all([
+  const [organization, contactsRaw, projectsRaw] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: organizationId },
-      select: {
-        industry: true,
-        constructionTrade: true,
-        industryConfigJson: true,
-      },
+      select: { industry: true, constructionTrade: true, industryConfigJson: true },
     }),
     prisma.contact.findMany({
       where: { organizationId },
@@ -73,18 +57,8 @@ export default async function AppClientsPage({
         status: true,
         value: true,
         createdAt: true,
-        project: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        issuedDocuments: {
-          select: {
-            total: true,
-            status: true,
-          },
-        },
+        project: { select: { id: true, name: true } },
+        issuedDocuments: { select: { total: true, status: true } },
       },
     }),
     prisma.project.findMany({
@@ -96,30 +70,23 @@ export default async function AppClientsPage({
         isActive: true,
         activeFrom: true,
         activeTo: true,
-        _count: {
-          select: {
-            contacts: true,
-          },
-        },
+        _count: { select: { contacts: true } },
       },
     }),
-    prisma.meckanoZone.count({ where: { organizationId } }),
   ]);
 
   const projectMetrics = new Map<string, { totalValue: number; activeDeals: number }>();
 
   const contacts = contactsRaw.map((contact) => {
-    const totalBilled = contact.issuedDocuments.reduce((sum, document) => sum + document.total, 0);
+    const totalBilled = contact.issuedDocuments.reduce((sum, d) => sum + d.total, 0);
     const totalPending = contact.issuedDocuments
-      .filter((document) => document.status === "PENDING")
-      .reduce((sum, document) => sum + document.total, 0);
+      .filter((d) => d.status === "PENDING")
+      .reduce((sum, d) => sum + d.total, 0);
 
     if (contact.project?.id) {
       const current = projectMetrics.get(contact.project.id) ?? { totalValue: 0, activeDeals: 0 };
       current.totalValue += contact.value ?? 0;
-      if (contact.status !== "CLOSED_LOST") {
-        current.activeDeals += 1;
-      }
+      if (contact.status !== "CLOSED_LOST") current.activeDeals += 1;
       projectMetrics.set(contact.project.id, current);
     }
 
@@ -136,12 +103,12 @@ export default async function AppClientsPage({
       invoiceCount: contact.issuedDocuments.length,
       totalBilled,
       totalPending,
+      insightLine: clientInsightLine({ notes: contact.notes, totalBilled, totalPending, invoiceCount: contact.issuedDocuments.length }),
     };
   });
 
   const projects = projectsRaw.map((project) => {
     const metrics = projectMetrics.get(project.id) ?? { totalValue: 0, activeDeals: 0 };
-
     return {
       id: project.id,
       name: project.name,
@@ -167,7 +134,7 @@ export default async function AppClientsPage({
     projectIdParam && projects.some((p) => p.id === projectIdParam) ? projectIdParam : undefined;
   const clientIdParam = sp.clientId?.trim();
   const initialClientId =
-    clientIdParam && contacts.some((contact) => contact.id === clientIdParam) ? clientIdParam : undefined;
+    clientIdParam && contacts.some((c) => c.id === clientIdParam) ? clientIdParam : undefined;
 
   return (
     <WorkspaceEngineeringShell>

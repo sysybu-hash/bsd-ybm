@@ -11,7 +11,7 @@ import {
 describe("subscription-tier-config", () => {
   test("falls back to FREE allowance for unknown tiers", () => {
     expect(tierAllowance("unknown")).toMatchObject({
-      cheapScans: 30,
+      cheapScans: 10,
       premiumScans: 0,
       maxCompanies: 1,
       monthlyPriceIls: 0,
@@ -32,7 +32,7 @@ describe("subscription-tier-config", () => {
   });
 
   test("maps legacy plans into current tier keys", () => {
-    expect(legacyPlanToTierKey("PRO")).toBe("DEALER");
+    expect(legacyPlanToTierKey("PRO")).toBe("HOUSEHOLD");
     expect(legacyPlanToTierKey("BUSINESS")).toBe("COMPANY");
     expect(legacyPlanToTierKey("ENTERPRISE")).toBe("CORPORATE");
   });
@@ -44,6 +44,7 @@ describe("subscription-tier-config", () => {
 
   test("excludes FREE from PayPal purchasable tiers", () => {
     expect(paypalPurchasableTiers()).toEqual([
+      "HOUSEHOLD",
       "DEALER",
       "COMPANY",
       "CORPORATE",

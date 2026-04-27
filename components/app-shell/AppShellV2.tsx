@@ -81,7 +81,7 @@ function SidebarIconLink({
         active ? "bg-white/55 text-[color:var(--sidebar-accent-line)]" : "bg-[color:var(--canvas-sunken)] text-current"
       }`}>
         <Icon className="h-[18px] w-[18px]" aria-hidden />
-        {routeId === "ai" ? (
+        {routeId === "home" ? (
           <Sparkles className="pointer-events-none absolute end-0.5 top-0.5 h-2.5 w-2.5 text-[color:var(--axis-ai)]" aria-hidden />
         ) : null}
       </span>
@@ -218,7 +218,7 @@ function MobileNavLink({
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1 truncate">
         {label}
-        {routeId === "ai" ? (
+        {routeId === "home" ? (
           <Sparkles className="h-3.5 w-3.5 text-[color:var(--axis-ai)]" aria-hidden />
         ) : null}
       </span>
@@ -250,7 +250,7 @@ function MobileBottomTab({
       }`}
     >
       <Icon className="h-5 w-5" aria-hidden />
-      {routeId === "ai" ? (
+      {routeId === "home" ? (
         <Sparkles
           className={`pointer-events-none absolute end-2 top-1.5 h-3 w-3 ${
             active ? "text-white/80" : "text-[color:var(--axis-ai)]"
@@ -297,7 +297,7 @@ export default function AppShellV2({ children, user }: Props) {
   const utilityNavItems = nav.utility.filter(
     (item) =>
       item.showInNav !== false &&
-      visibleUtilityIds.includes(item.id as "projects" | "operations" | "help" | "business" | "admin"),
+      visibleUtilityIds.includes(item.id as "admin"),
   );
   const currentSection = resolveActiveAppNavItem(pathname, nav);
 
@@ -319,41 +319,40 @@ export default function AppShellV2({ children, user }: Props) {
       .filter((item): item is AppNavItem => item !== undefined && item.showInNav !== false);
   const desktopNavGroups: DesktopNavGroup[] = [
     {
-      title: "עבודה יומית",
-      items: pickDesktopItems(["home", "inbox", "projects"]),
-      sublinks: {
-        inbox: [{ href: "/app/inbox/advanced", label: "תיבת עבודה מתקדמת" }],
-      },
+      title: "מרכז הסורק",
+      items: pickDesktopItems(["home"]),
+      sublinks: {},
     },
     {
-      title: "לקוחות, מסמכים וכספים",
-      items: pickDesktopItems(["clients", "documents", "finance"]),
+      title: "לקוחות ופרויקטים",
+      items: pickDesktopItems(["crm"]),
+      sublinks: {},
+    },
+    {
+      title: "מסמכים וכספים",
+      items: pickDesktopItems(["erp"]),
       sublinks: {
-        clients: [{ href: "/app/clients/advanced", label: "CRM מתקדם" }],
-        documents: [
-          { href: "/app/documents/erp", label: "לוח סריקה חכם" },
-          { href: "/app/documents/issue", label: "הפקת מסמך" },
-          { href: "/app/documents/issued", label: "מסמכים שהופקו" },
+        erp: [
+          { href: "/app/erp", label: "לוח פיננסי" },
         ],
       },
     },
     {
-      title: "מנועים ותפעול",
-      items: pickDesktopItems(["ai", "operations", "business"]),
+      title: "תפעול",
+      items: pickDesktopItems(["operations"]),
       sublinks: {
         operations: [
           { href: "/app/operations/meckano", label: "Meckano ונוכחות" },
-          { href: "/app/operations/advanced", label: "תפעול מתקדם" },
         ],
       },
     },
     {
-      title: "מערכת וניהול",
-      items: pickDesktopItems(["settings", "help", "admin"]),
+      title: "מערכת",
+      items: pickDesktopItems(["settings", "admin"]),
       sublinks: {
         settings: [
+          { href: "/app/onboarding", label: "בחירת מקצוע" },
           { href: "/app/settings/organization", label: "ארגון והרשאות" },
-          { href: "/app/settings/profession", label: "התאמת מקצוע" },
           { href: "/app/settings/stack", label: "מנועים וחיבורים" },
           { href: "/app/settings/billing", label: "מנוי וחיוב" },
         ],
@@ -402,7 +401,7 @@ export default function AppShellV2({ children, user }: Props) {
                       >
                         <Icon className={`h-[15px] w-[15px] shrink-0 ${active ? "text-[color:var(--axis-clients)]" : ""}`} aria-hidden />
                         {item.label}
-                        {item.id === "ai" && (
+                        {item.id === "home" && (
                           <span className="ms-0.5 inline-flex items-center rounded-full bg-[color:var(--axis-ai-soft)] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-[color:var(--axis-ai)]">
                             AI
                           </span>
@@ -413,8 +412,7 @@ export default function AppShellV2({ children, user }: Props) {
                       </Link>
                     );
                   })}
-                  {/* פרויקטים מה-utility nav */}
-                  {nav.utility.filter(u => u.id === "projects" || u.id === "operations").map((item) => {
+                  {nav.utility.filter(u => u.showInNav !== false).map((item) => {
                     const active = isAppNavPathActive(pathname, item.href);
                     const Icon = item.icon;
                     return (

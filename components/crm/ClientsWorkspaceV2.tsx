@@ -403,7 +403,7 @@ export default function ClientsWorkspaceV2({
             {/* Quick stats in Hero */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">סה"כ לקוחות</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{'סה"כ לקוחות'}</p>
                 <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{contacts.length}</p>
               </div>
               <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">

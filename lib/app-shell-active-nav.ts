@@ -13,10 +13,8 @@ export function isAppNavPathActive(pathname: string, href: string): boolean {
 }
 
 const UTILITY_SEGMENT_TO_ID: Partial<
-  Record<string, Extract<AppRouteId, "help" | "business" | "admin" | "success">>
+  Record<string, Extract<AppRouteId, "admin" | "success">>
 > = {
-  help: "help",
-  business: "business",
   admin: "admin",
   success: "success",
 };

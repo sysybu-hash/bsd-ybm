@@ -1,158 +1,152 @@
-import { cookies } from "next/headers";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import DocumentsWorkspaceV2 from "@/components/documents/DocumentsWorkspaceV2";
+import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
 import { authOptions } from "@/lib/auth";
-import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
-import { COOKIE_LOCALE, isRtlLocale, normalizeLocale } from "@/lib/i18n/config";
-import { formatCurrencyILS } from "@/lib/ui-formatters";
-import { tierAllowance } from "@/lib/subscription-tier-config";
-import { ExecutiveDashboard } from "@/components/dashboard/ExecutiveDashboard";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
+import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
+import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const dynamic = "force-dynamic";
 
-export default async function AppHomePage() {
+type AiPayload = {
+  vendor?: unknown;
+  total?: unknown;
+  summary?: unknown;
+  docType?: unknown;
+  contactId?: unknown;
+  contactName?: unknown;
+};
+
+function readAi(value: Prisma.JsonValue | null): AiPayload {
+  return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as AiPayload) : {};
+}
+
+function numberOrZero(value: unknown) {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const normalized = Number.parseFloat(value.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(normalized) ? normalized : 0;
+  }
+  return 0;
+}
+
+function stringOrFallback(value: unknown, fallback: string) {
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
+}
+
+export default async function ScannerHubPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.organizationId) redirect("/login");
+  const organizationId = session?.user?.organizationId;
 
-  const organizationId = session.user.organizationId;
-  const userFirstName =
-    (session.user?.name ?? "").trim().split(" ")[0] ||
-    session.user?.email?.split("@")[0] ||
-    "";
+  if (!organizationId) {
+    redirect("/login");
+  }
 
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  monthStart.setHours(0, 0, 0, 0);
-  const prevMonthStart = new Date(monthStart);
-  prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
-
-  // חישוב 6 חודשים אחורה לגרף sparkline
-  const sparkMonths = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(monthStart);
-    d.setMonth(d.getMonth() - (5 - i));
-    return d;
-  });
-
-  const [
-    organization,
-    activeClientsCount,
-    activeProjectsCount,
-    openDealsCount,
-    issuedThisMonth,
-    issuedPrevMonth,
-    recentProjectsRaw,
-    recentDocumentsRaw,
-    sparklineRaw,
-  ] = await Promise.all([
+  const [organization, scannedRaw, issuedRaw, contactsRaw] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: organizationId },
-      select: { subscriptionTier: true, constructionTrade: true },
+      select: {
+        industry: true,
+        constructionTrade: true,
+        industryConfigJson: true,
+      },
     }),
-    prisma.contact.count({ where: { organizationId, status: "ACTIVE" } }),
-    prisma.project.count({ where: { organizationId, isActive: true } }),
-    prisma.contact.count({
-      where: { organizationId, status: { in: ["LEAD", "PROPOSAL"] } },
-    }),
-    prisma.issuedDocument.aggregate({
-      where: { organizationId, date: { gte: monthStart } },
-      _sum: { total: true },
-    }),
-    prisma.issuedDocument.aggregate({
-      where: { organizationId, date: { gte: prevMonthStart, lt: monthStart } },
-      _sum: { total: true },
-    }),
-    prisma.project.findMany({
-      where: { organizationId, isActive: true },
+    prisma.document.findMany({
+      where: { organizationId },
       orderBy: { createdAt: "desc" },
-      take: 5,
       select: {
         id: true,
-        name: true,
-        isActive: true,
-        _count: { select: { contacts: true } },
+        fileName: true,
+        type: true,
+        status: true,
+        createdAt: true,
+        aiData: true,
+        _count: {
+          select: {
+            lineItems: true,
+          },
+        },
       },
     }),
     prisma.issuedDocument.findMany({
       where: { organizationId },
-      orderBy: { date: "desc" },
-      take: 5,
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         type: true,
+        number: true,
+        date: true,
+        dueDate: true,
         clientName: true,
+        amount: true,
+        vat: true,
         total: true,
         status: true,
-        date: true,
+        items: true,
+        contactId: true,
       },
     }),
-    // sparkline: סכום לכל אחד מ-6 החודשים האחרונים
-    Promise.all(
-      sparkMonths.map((from) => {
-        const to = new Date(from);
-        to.setMonth(to.getMonth() + 1);
-        return prisma.issuedDocument
-          .aggregate({
-            where: { organizationId, date: { gte: from, lt: to } },
-            _sum: { total: true },
-          })
-          .then((r) => r._sum.total ?? 0);
-      }),
-    ),
+    prisma.contact.findMany({
+      where: { organizationId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
 
-  const jar = await cookies();
-  const uiLocale = normalizeLocale(jar.get(COOKIE_LOCALE)?.value);
-  const dirRtl = isRtlLocale(uiLocale);
+  const messages = await readRequestMessages();
+  const industryProfile = getIndustryProfile(
+    organization?.industry ?? "CONSTRUCTION",
+    organization?.industryConfigJson,
+    organization?.constructionTrade,
+    messages,
+  );
 
-  const tier = organization?.subscriptionTier ?? "FREE";
-  const allowance = tierAllowance(tier);
-  const scanLimit = Math.max(1, allowance.cheapScans + allowance.premiumScans);
+  const scannedDocuments = scannedRaw.map((document) => {
+    const ai = readAi(document.aiData);
+    return {
+      id: document.id,
+      fileName: document.fileName,
+      type: document.type,
+      status: document.status,
+      createdAt: document.createdAt.toISOString(),
+      vendor: stringOrFallback(ai.vendor, DOC_UI_FALLBACK.unknownVendor),
+      total: numberOrZero(ai.total),
+      summary: stringOrFallback(ai.summary, DOC_UI_FALLBACK.noSummary),
+      extractedType: stringOrFallback(ai.docType, document.type || DOC_UI_FALLBACK.unknownDocType),
+      lineItemCount: document._count.lineItems,
+      linkedContactId: typeof ai.contactId === "string" ? ai.contactId : null,
+      linkedContactName: typeof ai.contactName === "string" ? ai.contactName : null,
+    };
+  });
 
-  const issuedThisSum = issuedThisMonth._sum.total ?? 0;
-  const issuedPrevSum = issuedPrevMonth._sum.total ?? 0;
-  const financeTrendPct =
-    issuedPrevSum > 0
-      ? Math.round(((issuedThisSum - issuedPrevSum) / issuedPrevSum) * 100)
-      : issuedThisSum > 0
-        ? 100
-        : 0;
-
-  // ספירת מסמכים שנסרקו (כאן נשתמש במספר המסמכים שהופקו כגישה פשוטה)
-  const scanUsed = await prisma.document.count({ where: { organizationId } });
-
-  const recentProjects = recentProjectsRaw.map((p) => ({
-    id: p.id,
-    name: p.name,
-    isActive: p.isActive,
-    contactCount: p._count.contacts,
+  const issuedDocuments = issuedRaw.map((document) => ({
+    id: document.id,
+    type: document.type,
+    number: document.number,
+    date: document.date.toISOString(),
+    dueDate: document.dueDate?.toISOString() ?? null,
+    clientName: document.clientName,
+    amount: document.amount,
+    vat: document.vat,
+    total: document.total,
+    status: document.status,
+    items: (Array.isArray(document.items) ? document.items : []) as Array<{ desc?: string; qty?: number; price?: number }>,
+    contactId: document.contactId,
   }));
 
-  const recentDocuments = recentDocumentsRaw.map((doc) => ({
-    id: doc.id,
-    kind: String(doc.type),
-    contactName: doc.clientName ?? null,
-    total: doc.total,
-    status: String(doc.status),
-    dateStr: doc.date.toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit" }),
-  }));
+  const contacts = contactsRaw.map((c) => ({ id: c.id, name: c.name }));
 
   return (
-    <div className="w-full min-w-0 px-4 pb-8 pt-6 sm:px-6" dir={dirRtl ? "rtl" : "ltr"}>
-      <ExecutiveDashboard
-        userFirstName={userFirstName}
-        scanUsed={scanUsed}
-        scanLimit={scanLimit}
-        cashDisplay={formatCurrencyILS(issuedThisSum)}
-        cashChangePct={financeTrendPct}
-        activeClientsCount={activeClientsCount}
-        activeProjectsCount={activeProjectsCount}
-        openDealsCount={openDealsCount}
-        recentProjects={recentProjects}
-        recentDocuments={recentDocuments}
-        sparklineValues={sparklineRaw as number[]}
-        constructionTrade={organization?.constructionTrade}
+    <WorkspaceEngineeringShell>
+      <DocumentsWorkspaceV2
+        industryProfile={industryProfile}
+        scannedDocuments={scannedDocuments}
+        issuedDocuments={issuedDocuments}
+        contacts={contacts}
       />
-    </div>
+    </WorkspaceEngineeringShell>
   );
 }

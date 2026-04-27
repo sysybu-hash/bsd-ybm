@@ -10,40 +10,24 @@
     "primaryNavAria": "Primary workspace navigation",
     "items": {
       "home": {
-        "label": "Dashboard",
-        "summary": "Status, shortcuts, and a clear entry point to every workspace area."
+        "label": "AI Scanner",
+        "summary": "Scan invoices and documents — the core feature of the system."
       },
-      "inbox": {
-        "label": "Work inbox",
-        "summary": "What needs attention now, open approvals, and what’s waiting for the team."
-      },
-      "projects": {
-        "label": "Projects",
-        "summary": "Active projects, status, and links to clients."
-      },
-      "clients": {
+      "crm": {
         "label": "Clients",
-        "summary": "Manage {clients} with a direct link to {documents}."
+        "summary": "Manage {clients}, projects, and quotes in one place."
       },
-      "documents": {
+      "erp": {
         "label": "Documents",
-        "summary": "Scan, control, and produce {records} for {industry}."
-      },
-      "finance": {
-        "label": "Finance",
-        "summary": "Cash flow, invoices, collections, ERP, and payment tracking."
-      },
-      "ai": {
-        "label": "AI",
-        "summary": "Insights, operational intelligence, and smart recommendations in one place."
+        "summary": "Scans, expenses, finances, and {records} organized."
       },
       "operations": {
         "label": "Operations",
-        "summary": "Processes, tasks, automations, and team tools."
+        "summary": "Employee attendance, field work, and team processes."
       },
       "settings": {
         "label": "Settings",
-        "summary": "Organization, team, integrations, AI, and billing settings."
+        "summary": "Organization, trade, team, and billing settings."
       }
     },
     "utility": {

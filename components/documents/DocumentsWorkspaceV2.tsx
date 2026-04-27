@@ -10,9 +10,11 @@ import {
   Filter,
   FolderArchive,
   LayoutGrid,
+  Link2,
   ListFilter,
   Loader2,
   PencilLine,
+  Search,
   Sparkles,
   Tags,
   Trash2,
@@ -28,6 +30,9 @@ import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
 import type { TFunction } from "@/lib/i18n/translate";
+import { useWorkspaceContext } from "@/components/workspace/WorkspaceContext";
+
+type ContactOption = { id: string; name: string };
 
 type ScannedDocumentRecord = {
   id: string;
@@ -40,6 +45,8 @@ type ScannedDocumentRecord = {
   summary: string;
   extractedType: string;
   lineItemCount: number;
+  linkedContactId?: string | null;
+  linkedContactName?: string | null;
 };
 
 type IssuedItemRecord = {
@@ -67,6 +74,7 @@ type Props = Readonly<{
   industryProfile: IndustryProfile;
   scannedDocuments: ScannedDocumentRecord[];
   issuedDocuments: IssuedDocumentRecord[];
+  contacts?: ContactOption[];
 }>;
 
 type ScannedDraft = {
@@ -161,10 +169,12 @@ function ScannedCard({
   document,
   onOpen,
   onDelete,
+  onLinkClient,
 }: {
   document: ScannedDocumentRecord;
   onOpen: (document: ScannedDocumentRecord) => void;
   onDelete: (document: ScannedDocumentRecord) => void;
+  onLinkClient?: (document: ScannedDocumentRecord) => void;
 }) {
   const { t, dir } = useI18n();
   const badgeClassName = badgeClass(document.status, "scanned");
@@ -223,11 +233,24 @@ function ScannedCard({
         <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{summaryDisplay}</p>
       </div>
 
+      {document.linkedContactName && (
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700">
+          <Link2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="truncate">{document.linkedContactName}</span>
+        </div>
+      )}
+
       <div className="mt-5 flex flex-wrap gap-3">
         <button type="button" onClick={() => onOpen(document)} className="bento-btn bento-btn--primary">
           {t("workspaceDocuments.buttonViewEdit")}
           <Eye className="h-4 w-4" aria-hidden />
         </button>
+        {onLinkClient && (
+          <button type="button" onClick={() => onLinkClient(document)} className="bento-btn bento-btn--secondary">
+            שייך ללקוח
+            <Link2 className="h-4 w-4" aria-hidden />
+          </button>
+        )}
         <button type="button" onClick={() => onDelete(document)} className="bento-btn bento-btn--secondary">
           {t("workspaceDocuments.buttonDelete")}
           <Trash2 className="h-4 w-4" aria-hidden />
@@ -305,8 +328,10 @@ export default function DocumentsWorkspaceV2({
   industryProfile,
   scannedDocuments,
   issuedDocuments,
+  contacts = [],
 }: Props) {
   const { t, dir } = useI18n();
+  const { setActiveClient } = useWorkspaceContext();
   const [scannedState, setScannedState] = useState(scannedDocuments);
   const [issuedState, setIssuedState] = useState(issuedDocuments);
   const [search, setSearch] = useState("");
@@ -318,6 +343,8 @@ export default function DocumentsWorkspaceV2({
   const [isPending, startFilterTransition] = useTransition();
   const [isSaving, startSaveTransition] = useTransition();
   const deferredSearch = useDeferredValue(search);
+  const [linkingDoc, setLinkingDoc] = useState<ScannedDocumentRecord | null>(null);
+  const [contactSearch, setContactSearch] = useState("");
 
   const normalizedSearch = deferredSearch.trim().toLowerCase();
 
@@ -528,6 +555,37 @@ export default function DocumentsWorkspaceV2({
     setActionMessage({ type: "success", text: t("workspaceDocuments.success.deletedIssued") });
   }
 
+  const filteredContacts = useMemo(() => {
+    const q = contactSearch.trim().toLowerCase();
+    return q ? contacts.filter((c) => c.name.toLowerCase().includes(q)) : contacts;
+  }, [contacts, contactSearch]);
+
+  async function linkDocumentToClient(contact: ContactOption) {
+    if (!linkingDoc) return;
+    const response = await fetch(`/api/erp/documents/${linkingDoc.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        aiData: { contactId: contact.id, contactName: contact.name },
+      }),
+    });
+    if (response.ok) {
+      setScannedState((current) =>
+        current.map((item) =>
+          item.id === linkingDoc.id
+            ? { ...item, linkedContactId: contact.id, linkedContactName: contact.name }
+            : item,
+        ),
+      );
+      setActiveClient(contact.id, contact.name);
+      setActionMessage({ type: "success", text: `שויך ללקוח: ${contact.name}` });
+    } else {
+      setActionMessage({ type: "error", text: "שגיאה בשמירת הקישור" });
+    }
+    setLinkingDoc(null);
+    setContactSearch("");
+  }
+
   const documentsLabel = industryProfile.documentsLabel;
   const industryLabel = industryProfile.industryLabel;
 
@@ -689,6 +747,7 @@ export default function DocumentsWorkspaceV2({
                   document={document}
                   onOpen={openScanned}
                   onDelete={deleteScannedDocument}
+                  onLinkClient={contacts.length > 0 ? setLinkingDoc : undefined}
                 />
               ))}
             </div>
@@ -934,6 +993,58 @@ export default function DocumentsWorkspaceV2({
             </div>
           </div>
         </div>
+        </PortalToBody>
+      ) : null}
+
+      {linkingDoc ? (
+        <PortalToBody>
+          <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-end justify-center bg-slate-950/35 px-4 pb-6 pt-20 sm:items-center`}>
+            <div className="tile w-full max-w-sm p-5" dir={dir}>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--ink-500)]">שיוך מסמך ללקוח</p>
+                  <p className="mt-1 truncate text-sm font-semibold text-[color:var(--ink-900)]">{linkingDoc.vendor}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setLinkingDoc(null); setContactSearch(""); }}
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[color:var(--line)] bg-white/90"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden />
+                </button>
+              </div>
+
+              <div className="relative mt-3">
+                <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--ink-400)]" aria-hidden />
+                <input
+                  type="text"
+                  value={contactSearch}
+                  onChange={(e) => setContactSearch(e.target.value)}
+                  placeholder="חפש לקוח…"
+                  className="w-full rounded-xl border border-[color:var(--line)] bg-white py-2 pe-3 ps-9 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  autoFocus
+                />
+              </div>
+
+              <ul className="mt-2 max-h-52 divide-y divide-[color:var(--line)] overflow-y-auto rounded-xl border border-[color:var(--line)]">
+                {filteredContacts.length === 0 ? (
+                  <li className="px-4 py-3 text-center text-sm text-[color:var(--ink-400)]">אין לקוחות תואמים</li>
+                ) : (
+                  filteredContacts.slice(0, 40).map((contact) => (
+                    <li key={contact.id}>
+                      <button
+                        type="button"
+                        onClick={() => linkDocumentToClient(contact)}
+                        className="w-full px-4 py-3 text-start text-sm font-semibold text-[color:var(--ink-900)] hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      >
+                        {contact.name}
+                      </button>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          </div>
         </PortalToBody>
       ) : null}
     </div>

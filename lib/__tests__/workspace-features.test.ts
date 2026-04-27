@@ -32,10 +32,13 @@ describe("workspace-features", () => {
 
   it("pathnameToWorkspacePrimaryRoute מזהה מקטע ראשי", () => {
     expect(pathnameToWorkspacePrimaryRoute("/app")).toBe("home");
-    expect(pathnameToWorkspacePrimaryRoute("/app/finance")).toBe("finance");
-    expect(pathnameToWorkspacePrimaryRoute("/app/ai")).toBe("ai");
+    expect(pathnameToWorkspacePrimaryRoute("/app/erp")).toBe("erp");
+    expect(pathnameToWorkspacePrimaryRoute("/app/crm")).toBe("crm");
     expect(pathnameToWorkspacePrimaryRoute("/app/operations/meckano")).toBe("operations");
     expect(pathnameToWorkspacePrimaryRoute("/app/admin")).toBeNull();
+    // נתיבים ישנים מנותבים מחדש
+    expect(pathnameToWorkspacePrimaryRoute("/app/finance")).toBe("erp");
+    expect(pathnameToWorkspacePrimaryRoute("/app/clients")).toBe("crm");
   });
 
   it("resolveWorkspaceFeatures מחזיר סט מלא לברירת מחדל", () => {
@@ -47,6 +50,8 @@ describe("workspace-features", () => {
       subscriptionTier: "PRO",
       subscriptionStatus: "ACTIVE",
     });
-    expect(f.has("module_insights")).toBe(true);
+    expect(f.has("module_crm")).toBe(true);
+    expect(f.has("module_erp")).toBe(true);
+    expect(f.has("module_operations")).toBe(true);
   });
 });

@@ -10,6 +10,7 @@ import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import WorkspacePageMotion from "@/components/workspace/WorkspacePageMotion";
 import MainContainer from "@/components/layout/MainContainer";
+import { WorkspaceContextProvider } from "@/components/workspace/WorkspaceContext";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -39,6 +40,9 @@ export default async function AppWorkspaceLayout({ children }: { children: React
       : Promise.resolve(null),
     canAccessMeckano(session),
   ]);
+
+  // הפניה לonboarding אם עדיין לא נבחר מקצוע (רק בדפים שאינם onboarding עצמו)
+  // נבדוק URL מהבקשה — אך ב-RSC אין גישה ישירה ל-pathname, אז בדיקה בצד ה-middleware
   const messages = await readRequestMessages();
   const industryProfile = getIndustryProfile(
     organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
@@ -48,22 +52,24 @@ export default async function AppWorkspaceLayout({ children }: { children: React
   );
 
   return (
-    <AppShellV2
-      user={{
-        name: session.user.name?.trim() || session.user.email.split("@")[0],
-        email: session.user.email,
-        organizationId,
-        role: session.user.role ?? "",
-        isPlatformAdmin: isAdmin(session.user.email),
-        subscriptionTier: organization?.subscriptionTier ?? "FREE",
-        subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
-        hasMeckanoAccess,
-        industryProfile,
-      }}
-    >
-      <WorkspacePageMotion>
-        <MainContainer>{children}</MainContainer>
-      </WorkspacePageMotion>
-    </AppShellV2>
+    <WorkspaceContextProvider>
+      <AppShellV2
+        user={{
+          name: session.user.name?.trim() || session.user.email.split("@")[0],
+          email: session.user.email,
+          organizationId,
+          role: session.user.role ?? "",
+          isPlatformAdmin: isAdmin(session.user.email),
+          subscriptionTier: organization?.subscriptionTier ?? "FREE",
+          subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
+          hasMeckanoAccess,
+          industryProfile,
+        }}
+      >
+        <WorkspacePageMotion>
+          <MainContainer>{children}</MainContainer>
+        </WorkspacePageMotion>
+      </AppShellV2>
+    </WorkspaceContextProvider>
   );
 }

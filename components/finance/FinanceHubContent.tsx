@@ -112,7 +112,7 @@ export default async function FinanceHubContent({
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">סה"כ הופק</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{'סה"כ הופק'}</p>
               <p className="mt-1 text-xl font-black text-[color:var(--ink-900)]">{formatCurrencyILS(totalInvoiced)}</p>
             </div>
             <div className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
