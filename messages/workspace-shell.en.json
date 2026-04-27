@@ -10,8 +10,12 @@
     "primaryNavAria": "Primary workspace navigation",
     "items": {
       "home": {
+        "label": "Dashboard",
+        "summary": "Quick overview — KPIs, recent activity, and quick actions."
+      },
+      "scan": {
         "label": "AI Scanner",
-        "summary": "Scan invoices and documents — the core feature of the system."
+        "summary": "Scan invoices and documents — auto-link to clients and expenses."
       },
       "crm": {
         "label": "Clients",

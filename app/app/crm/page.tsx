@@ -7,6 +7,7 @@ import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
+import { PageHeader } from "@/components/ui/claude";
 
 export const dynamic = "force-dynamic";
 
@@ -138,6 +139,11 @@ export default async function CrmPage({
 
   return (
     <WorkspaceEngineeringShell>
+      <PageHeader
+        eyebrow="CRM"
+        title={industryProfile.clientsLabel}
+        subtitle={`${contacts.length} ${industryProfile.clientsLabel.toLowerCase()} · ${projects.length} פרויקטים`}
+      />
       <ClientsWorkspaceV2
         contacts={contacts}
         projects={projects}

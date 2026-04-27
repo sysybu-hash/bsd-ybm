@@ -53,23 +53,25 @@ export default async function AppWorkspaceLayout({ children }: { children: React
 
   return (
     <WorkspaceContextProvider>
-      <AppShellV2
-        user={{
-          name: session.user.name?.trim() || session.user.email.split("@")[0],
-          email: session.user.email,
-          organizationId,
-          role: session.user.role ?? "",
-          isPlatformAdmin: isAdmin(session.user.email),
-          subscriptionTier: organization?.subscriptionTier ?? "FREE",
-          subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
-          hasMeckanoAccess,
-          industryProfile,
-        }}
-      >
-        <WorkspacePageMotion>
-          <MainContainer>{children}</MainContainer>
-        </WorkspacePageMotion>
-      </AppShellV2>
+      <div data-theme="claude" className="min-h-screen bg-[color:var(--cd-bg)]">
+        <AppShellV2
+          user={{
+            name: session.user.name?.trim() || session.user.email.split("@")[0],
+            email: session.user.email,
+            organizationId,
+            role: session.user.role ?? "",
+            isPlatformAdmin: isAdmin(session.user.email),
+            subscriptionTier: organization?.subscriptionTier ?? "FREE",
+            subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
+            hasMeckanoAccess,
+            industryProfile,
+          }}
+        >
+          <WorkspacePageMotion>
+            <MainContainer>{children}</MainContainer>
+          </WorkspacePageMotion>
+        </AppShellV2>
+      </div>
     </WorkspaceContextProvider>
   );
 }

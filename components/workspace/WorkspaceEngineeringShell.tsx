@@ -8,7 +8,7 @@ type Props = {
 export default function WorkspaceEngineeringShell({ children, className = "" }: Props) {
   return (
     <div
-      className={`workspace-panel w-full min-w-0 space-y-6 rounded-[26px] border border-[color:var(--dash-line)] bg-[color:var(--dash-card)] p-4 shadow-[var(--dash-shadow)] sm:p-5 ${className}`}
+      className={`cd-canvas mx-auto w-full max-w-[1240px] space-y-6 px-4 py-6 md:px-8 md:py-8 ${className}`}
     >
       {children}
     </div>

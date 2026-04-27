@@ -2,6 +2,211 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════
+   CLAUDE DESIGN — שכבת עיצוב שקטה ומלוטשת
+   רקע קרם חמים, שחור-חם, מינימליזם, ללא גרדיאנטים צעקניים
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --cd-bg:           #FAF9F5;
+  --cd-bg-raised:    #FFFFFF;
+  --cd-bg-sunken:    #F2F0E8;
+  --cd-bg-tint:      #F5F3EC;
+  --cd-ink:          #1F1E1B;
+  --cd-ink-soft:     #4A4843;
+  --cd-ink-mute:     #7A7770;
+  --cd-ink-faint:    #A6A39B;
+  --cd-line:         rgba(31, 30, 27, 0.08);
+  --cd-line-strong:  rgba(31, 30, 27, 0.16);
+  --cd-accent:       #C96442;
+  --cd-accent-soft:  #FBEEE6;
+  --cd-accent-ink:   #8B3F22;
+  --cd-positive:     #2B7A4B;
+  --cd-positive-soft:#E5F2EA;
+  --cd-negative:     #B0362F;
+  --cd-negative-soft:#F7E6E4;
+  --cd-warn:         #B8801A;
+  --cd-warn-soft:    #FAEFD3;
+  --cd-radius-sm:    8px;
+  --cd-radius:       12px;
+  --cd-radius-lg:    16px;
+  --cd-shadow-sm:    0 1px 2px rgba(31, 30, 27, 0.04);
+  --cd-shadow:       0 1px 3px rgba(31, 30, 27, 0.06), 0 1px 2px rgba(31, 30, 27, 0.04);
+  --cd-font:         "Inter", "Heebo", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="claude"] {
+  background-color: var(--cd-bg);
+  color: var(--cd-ink);
+  font-family: var(--cd-font);
+}
+
+[data-theme="claude"] .cd-canvas {
+  background-color: var(--cd-bg);
+  color: var(--cd-ink);
+}
+
+.cd-surface {
+  background-color: var(--cd-bg-raised);
+  border: 1px solid var(--cd-line);
+  border-radius: var(--cd-radius);
+  box-shadow: var(--cd-shadow-sm);
+}
+
+.cd-surface-flat {
+  background-color: var(--cd-bg-raised);
+  border: 1px solid var(--cd-line);
+  border-radius: var(--cd-radius);
+}
+
+.cd-surface-tinted {
+  background-color: var(--cd-bg-tint);
+  border: 1px solid var(--cd-line);
+  border-radius: var(--cd-radius);
+}
+
+.cd-divider {
+  border-color: var(--cd-line);
+}
+
+.cd-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cd-ink-mute);
+}
+
+.cd-h1 {
+  font-size: clamp(1.625rem, 2.4vw, 2.125rem);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  color: var(--cd-ink);
+  line-height: 1.15;
+}
+
+.cd-h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--cd-ink);
+  line-height: 1.25;
+}
+
+.cd-h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cd-ink);
+}
+
+.cd-body {
+  color: var(--cd-ink-soft);
+  line-height: 1.55;
+}
+
+.cd-mute {
+  color: var(--cd-ink-mute);
+}
+
+.cd-stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--cd-ink);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border-radius: var(--cd-radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.cd-btn-primary {
+  background-color: var(--cd-ink);
+  color: var(--cd-bg);
+}
+.cd-btn-primary:hover { background-color: #2C2A26; }
+
+.cd-btn-secondary {
+  background-color: var(--cd-bg-raised);
+  color: var(--cd-ink);
+  border-color: var(--cd-line-strong);
+}
+.cd-btn-secondary:hover { background-color: var(--cd-bg-tint); }
+
+.cd-btn-ghost {
+  background-color: transparent;
+  color: var(--cd-ink-soft);
+}
+.cd-btn-ghost:hover { background-color: var(--cd-bg-tint); color: var(--cd-ink); }
+
+.cd-btn-accent {
+  background-color: var(--cd-accent);
+  color: #FFFFFF;
+}
+.cd-btn-accent:hover { background-color: var(--cd-accent-ink); }
+
+.cd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--cd-bg-tint);
+  color: var(--cd-ink-soft);
+  border: 1px solid var(--cd-line);
+}
+.cd-chip-positive { background: var(--cd-positive-soft); color: var(--cd-positive); border-color: rgba(43,122,75,0.18); }
+.cd-chip-negative { background: var(--cd-negative-soft); color: var(--cd-negative); border-color: rgba(176,54,47,0.18); }
+.cd-chip-warn     { background: var(--cd-warn-soft);     color: var(--cd-warn);     border-color: rgba(184,128,26,0.22); }
+.cd-chip-accent   { background: var(--cd-accent-soft);   color: var(--cd-accent-ink); border-color: rgba(201,100,66,0.22); }
+
+.cd-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--cd-line);
+}
+.cd-row:last-child { border-bottom: 0; }
+.cd-row:hover { background: var(--cd-bg-tint); }
+
+.cd-link {
+  color: var(--cd-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--cd-line-strong);
+  text-underline-offset: 3px;
+}
+.cd-link:hover { text-decoration-color: var(--cd-ink); }
+
+[data-theme="claude"] .bento-site-shell,
+[data-theme="claude"] .v2-site-shell {
+  background: var(--cd-bg) !important;
+  color: var(--cd-ink) !important;
+}
+[data-theme="claude"] .bento-site-shell::before,
+[data-theme="claude"] .v2-site-shell::before {
+  display: none !important;
+}
+[data-theme="claude"] .workspace-panel {
+  border-radius: var(--cd-radius) !important;
+  background: var(--cd-bg-raised) !important;
+  border-color: var(--cd-line) !important;
+  box-shadow: var(--cd-shadow-sm) !important;
+}
+
+
+
 /* תאימות מובייל / דפדפנים: מניעת זום טקסט ב־iOS, גלילה אופקית, מגע */
 @layer base {
   html {

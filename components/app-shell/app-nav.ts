@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   CheckCircle2,
   FolderCog,
+  LayoutDashboard,
   ScanSearch,
   Settings,
   ShieldCheck,
@@ -13,6 +14,7 @@ import type { IndustryProfile } from "@/lib/professions/runtime";
 
 export type AppRouteId =
   | "home"
+  | "scan"
   | "crm"
   | "erp"
   | "operations"
@@ -38,14 +40,15 @@ export type AppNavCollection = Readonly<{
 }>;
 
 type PrimaryNavSpec = {
-  id: Extract<AppRouteId, "home" | "crm" | "erp" | "operations" | "settings">;
+  id: Extract<AppRouteId, "home" | "scan" | "crm" | "erp" | "operations" | "settings">;
   href: string;
   icon: LucideIcon;
   legacyHref: string;
 };
 
 const PRIMARY_NAV_SPECS: readonly PrimaryNavSpec[] = [
-  { id: "home",       href: "/app",            icon: ScanSearch, legacyHref: "/app" },
+  { id: "home",       href: "/app",            icon: LayoutDashboard, legacyHref: "/app" },
+  { id: "scan",       href: "/app/scan",        icon: ScanSearch, legacyHref: "/app/scan" },
   { id: "crm",        href: "/app/crm",         icon: Users,      legacyHref: "/app/clients" },
   { id: "erp",        href: "/app/erp",         icon: Wallet,     legacyHref: "/app/documents" },
   { id: "operations", href: "/app/operations",  icon: FolderCog,  legacyHref: "/app/operations" },

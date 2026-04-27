@@ -144,6 +144,7 @@ export function toWorkspaceFeatureInput(
 }
 
 const APP_SEGMENT_TO_ROUTE: Record<string, AppRouteId> = {
+  scan: "scan",
   crm: "crm",
   erp: "erp",
   operations: "operations",
@@ -170,7 +171,7 @@ export function pathnameToWorkspacePrimaryRoute(pathname: string): AppRouteId | 
     return "crm";
   }
   if (seg === "ai" || seg === "inbox" || seg === "business" || seg === "advanced") {
-    return "home";
+    return "scan";
   }
   return APP_SEGMENT_TO_ROUTE[seg] ?? null;
 }

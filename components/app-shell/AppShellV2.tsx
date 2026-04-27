@@ -81,7 +81,7 @@ function SidebarIconLink({
         active ? "bg-white/55 text-[color:var(--sidebar-accent-line)]" : "bg-[color:var(--canvas-sunken)] text-current"
       }`}>
         <Icon className="h-[18px] w-[18px]" aria-hidden />
-        {routeId === "home" ? (
+        {routeId === "scan" ? (
           <Sparkles className="pointer-events-none absolute end-0.5 top-0.5 h-2.5 w-2.5 text-[color:var(--axis-ai)]" aria-hidden />
         ) : null}
       </span>
@@ -218,7 +218,7 @@ function MobileNavLink({
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1 truncate">
         {label}
-        {routeId === "home" ? (
+        {routeId === "scan" ? (
           <Sparkles className="h-3.5 w-3.5 text-[color:var(--axis-ai)]" aria-hidden />
         ) : null}
       </span>
@@ -250,7 +250,7 @@ function MobileBottomTab({
       }`}
     >
       <Icon className="h-5 w-5" aria-hidden />
-      {routeId === "home" ? (
+      {routeId === "scan" ? (
         <Sparkles
           className={`pointer-events-none absolute end-2 top-1.5 h-3 w-3 ${
             active ? "text-white/80" : "text-[color:var(--axis-ai)]"
@@ -319,8 +319,8 @@ export default function AppShellV2({ children, user }: Props) {
       .filter((item): item is AppNavItem => item !== undefined && item.showInNav !== false);
   const desktopNavGroups: DesktopNavGroup[] = [
     {
-      title: "מרכז הסורק",
-      items: pickDesktopItems(["home"]),
+      title: "ראשי",
+      items: pickDesktopItems(["home", "scan"]),
       sublinks: {},
     },
     {
@@ -401,7 +401,7 @@ export default function AppShellV2({ children, user }: Props) {
                       >
                         <Icon className={`h-[15px] w-[15px] shrink-0 ${active ? "text-[color:var(--axis-clients)]" : ""}`} aria-hidden />
                         {item.label}
-                        {item.id === "home" && (
+                        {item.id === "scan" && (
                           <span className="ms-0.5 inline-flex items-center rounded-full bg-[color:var(--axis-ai-soft)] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-[color:var(--axis-ai)]">
                             AI
                           </span>

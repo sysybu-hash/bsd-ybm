@@ -7,6 +7,7 @@ import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import { loadCommercialHubSnapshot } from "@/lib/workspace/load-commercial-hub";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
+import { PageHeader } from "@/components/ui/claude";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,11 @@ export default async function ErpPage() {
 
   return (
     <WorkspaceEngineeringShell>
+      <PageHeader
+        eyebrow="ERP"
+        title="מסמכים וכספים"
+        subtitle="הנפקת חשבוניות, מעקב גבייה, הוצאות ופיננסים — מאוחד במקום אחד."
+      />
       <FinanceHubContent
         snapshot={snapshot}
         organizationId={organizationId}

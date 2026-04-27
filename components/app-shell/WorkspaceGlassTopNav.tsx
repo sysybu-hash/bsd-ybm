@@ -56,7 +56,7 @@ export default function WorkspaceGlassTopNav({
               href={item.href}
               className={`bento-topnav-link ${active ? "bento-topnav-link--active" : ""}`}
             >
-              {item.id === "home" ? (
+              {item.id === "scan" ? (
                 <Sparkles className="h-3.5 w-3.5 shrink-0 text-[color:var(--axis-ai)]" aria-hidden />
               ) : null}
               <span className="whitespace-nowrap">{item.label}</span>
