@@ -7,6 +7,14 @@ test.describe("הפניות workspace (next.config)", () => {
     expect(res.headers().location ?? "").toContain("/app/crm");
   });
 
+  test("‏/app/projects מפנה ל־CRM עם לשונית פרויקטים", async ({ request }) => {
+    const res = await request.get("/app/projects", { maxRedirects: 0 });
+    expect([301, 302, 307, 308]).toContain(res.status());
+    const loc = res.headers().location ?? "";
+    expect(loc).toContain("/app/crm");
+    expect(loc).toContain("hub=projects");
+  });
+
   test("‏/app/documents מפנה ל־/app/erp", async ({ request }) => {
     const res = await request.get("/app/documents", { maxRedirects: 0 });
     expect([301, 302, 307, 308]).toContain(res.status());

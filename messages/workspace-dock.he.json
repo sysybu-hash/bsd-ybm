@@ -111,6 +111,22 @@
       "needOrgTitle": "לוח הסריקה זמין אחרי חיבור לארגון",
       "needOrgBody": "צריך מזהה ארגון פעיל כדי לחבר את הסריקה ל-AI, למסמכים ולהפקה."
     },
+    "scannerWizard": {
+      "navAria": "שלבי אשף הסריקה",
+      "stepAria": "שלב {current} מתוך {total}: {label}",
+      "next": "הבא",
+      "back": "חזור",
+      "nextAria": "שלב הבא באשף הסריקה",
+      "backAria": "שלב קודם באשף הסריקה",
+      "runHint": "הפעל סריקה והמתן לסיום כדי לעבור לתוצאות.",
+      "steps": {
+        "files": "קבצים",
+        "engines": "מנועים והגדרות",
+        "crm": "שיוך CRM",
+        "run": "הרצה",
+        "results": "תוצאות ושמירה"
+      }
+    },
     "sectionMeta": {
       "clientsSummary": "ניהול {clients} וחיבור ישיר אל {documents}.",
       "documentsSummary": "סריקה, בקרה והפקה של {records} עבור {industry}."

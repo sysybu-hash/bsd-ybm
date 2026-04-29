@@ -26,5 +26,16 @@
     "openAction": "Open",
     "footerHint": "Cross-app search: main screens, deep tools, and admin.",
     "enterToOpen": "Enter to open"
+  },
+  "siteErrors": {
+    "errorTitle": "Something went wrong while loading",
+    "errorBody": "Try again or go back home. If it persists, refresh the page.",
+    "retry": "Try again",
+    "home": "Home",
+    "login": "Sign in",
+    "workspace": "Workspace",
+    "notFoundCode": "404",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The link may be wrong or the page moved. You can go home, open the workspace, or sign in."
   }
 }

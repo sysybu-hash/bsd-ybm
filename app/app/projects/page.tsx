@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** נתיב legacy — כל ניהול הפרויקטים במרכז CRM */
+/** נתיב legacy — מרכז הפרויקטים בלשונית CRM */
 export default function ProjectsRedirectPage() {
-  redirect("/app/crm");
+  redirect("/app/crm?hub=projects");
 }

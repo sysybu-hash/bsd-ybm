@@ -111,6 +111,22 @@
       "needOrgTitle": "Scan panel is available after connecting an organization",
       "needOrgBody": "An active organization ID is required to connect scanning to AI, documents, and issuance."
     },
+    "scannerWizard": {
+      "navAria": "Scan wizard steps",
+      "stepAria": "Step {current} of {total}: {label}",
+      "next": "Next",
+      "back": "Back",
+      "nextAria": "Next step in scan wizard",
+      "backAria": "Previous step in scan wizard",
+      "runHint": "Run a scan and wait for it to finish to continue to results.",
+      "steps": {
+        "files": "Files",
+        "engines": "Engines & settings",
+        "crm": "CRM link",
+        "run": "Run",
+        "results": "Results & save"
+      }
+    },
     "sectionMeta": {
       "clientsSummary": "Manage {clients} with a direct link to {documents}.",
       "documentsSummary": "Scan, control, and produce {records} for {industry}."

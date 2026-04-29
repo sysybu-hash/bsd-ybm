@@ -39,7 +39,8 @@
     "neon:ensure-direct": "node scripts/ensure-neon-direct-env.mjs",
     "icons:generate": "node scripts/generate-pwa-icons.mjs",
     "i18n:construction-trades": "node scripts/build-construction-trade-locales.mjs",
-    "tutorials:encode": "node scripts/generate-tutorial-videos.mjs"
+    "tutorials:encode": "node scripts/generate-tutorial-videos.mjs",
+    "lighthouse:sample": "node scripts/lighthouse-sample.mjs"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.64",
@@ -103,6 +104,7 @@
     "eslint-config-next": "^15.5.14",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "lighthouse": "^13.1.0",
     "postcss": "^8.4.49",
     "prisma": "^6.1.0",
     "sharp": "^0.34.5",

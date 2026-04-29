@@ -178,6 +178,8 @@ model MeckanoZone {
   assignedEmployeeIds Int[]   @default([])
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+  /// פרויקטים ב־CRM המשויכים לאזור שטח זה (אופציונלי)
+  linkedCrmProjects Project[]
 
   @@index([organizationId])
 }
@@ -244,22 +246,26 @@ model SubscriptionInvitation {
 
 /// פרויקט / עסק תחת ארגון — לשיוך לקוחות ומעקב
 model Project {
-  id             String       @id @default(cuid())
+  id             String        @id @default(cuid())
   name           String
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contacts       Contact[]
   expenseRecords ExpenseRecord[]
+  /// אופציונלי — קישור לאזור שטח/אתר במקאנו (אותו ארגון)
+  meckanoZoneId  String?
+  meckanoZone    MeckanoZone?  @relation(fields: [meckanoZoneId], references: [id], onDelete: SetNull)
   /// פרויקט פעיל — מופיע בברירות מחדל; כבוי = ארכיון / לא ממשיך
-  isActive       Boolean      @default(true)
+  isActive       Boolean       @default(true)
   /// תחילת תקופת עבודה / זמינות (אופציונלי)
   activeFrom     DateTime?
   /// סיום תקופה מתוכננת (אופציונלי) — לתכנון משאבים
   activeTo       DateTime?
-  createdAt      DateTime     @default(now())
+  createdAt      DateTime      @default(now())
 
   @@index([organizationId])
   @@index([organizationId, isActive])
+  @@index([meckanoZoneId])
 }
 
 model User {

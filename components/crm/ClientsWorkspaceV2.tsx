@@ -77,6 +77,8 @@ type Props = Readonly<{
   industryProfile: IndustryProfile;
   organizationId: string;
   userFirstName: string;
+  /** לשונית ראשית ב־CRM כשמוסתר ה־Hero (מגיע מ־`?hub=projects` וכו׳) */
+  initialHub?: "projects" | "clients";
   initialProjectFilter?: string;
   initialClientId?: string;
   /** כש־true — כותרת ה-Hero (כותרת+CTA) מוסתרת כי מוצגת שכבת סקירה מעל */
@@ -312,6 +314,7 @@ function ProjectsHubPanel({
   projectActiveFilter: "all" | "active" | "archived";
   setProjectActiveFilter: (v: "all" | "active" | "archived") => void;
 }) {
+  const { t } = useI18n();
   const normalized = projectSearch.trim().toLowerCase();
   const list = useMemo(() => {
     return projects.filter((p) => {
@@ -335,7 +338,7 @@ function ProjectsHubPanel({
             value={projectSearch}
             onChange={(e) => setProjectSearch(e.target.value)}
             className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-2.5 pe-4 ps-10 text-sm font-medium outline-none focus:border-[color:var(--axis-clients)]"
-            placeholder="חיפוש פרויקט"
+            placeholder={t("workspaceClients.projectsHub.searchPlaceholder")}
           />
         </div>
         <select
@@ -343,9 +346,9 @@ function ProjectsHubPanel({
           onChange={(e) => setProjectActiveFilter(e.target.value as "all" | "active" | "archived")}
           className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold"
         >
-          <option value="active">פעילים</option>
-          <option value="archived">ארכיון</option>
-          <option value="all">הכל</option>
+          <option value="active">{t("workspaceClients.projectsHub.filterActive")}</option>
+          <option value="archived">{t("workspaceClients.projectsHub.filterArchived")}</option>
+          <option value="all">{t("workspaceClients.projectsHub.filterAll")}</option>
         </select>
       </Surface>
 
@@ -353,8 +356,8 @@ function ProjectsHubPanel({
         <EmptyState
           variant="card"
           icon={BriefcaseBusiness}
-          title="לא נמצאו פרויקטים לפי הסינון"
-          description="נסו לחפש בשם אחר או להציג גם ארכיון. פרויקט חדש ייפתח את דף העבודה והשיוך ללקוחות."
+          title={t("workspaceClients.projectsHub.emptyTitle")}
+          description={t("workspaceClients.projectsHub.emptyDescription")}
           className="py-12"
         />
       ) : (
@@ -372,20 +375,27 @@ function ProjectsHubPanel({
                     p.isActive ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]" : "bg-[color:var(--ink-200)] text-[color:var(--ink-600)]"
                   }`}
                 >
-                  {p.isActive ? "פעיל" : "ארכיון"}
+                  {p.isActive ? t("workspaceClients.projectsHub.badgeActive") : t("workspaceClients.projectsHub.badgeArchived")}
                 </span>
               </div>
               <p className="mt-2 text-xs text-[color:var(--ink-500)]">
-                {p.contactCount} לקוחות · צפי {formatCurrencyILS(p.totalValue)}
+                {t("workspaceClients.projectsHub.cardMeta", {
+                  count: String(p.contactCount),
+                  total: formatCurrencyILS(p.totalValue),
+                })}
               </p>
-              <p className="mt-1 text-[11px] font-bold text-[color:var(--axis-clients)]">פתיחת דף פרויקט</p>
+              <p className="mt-1 text-[11px] font-bold text-[color:var(--axis-clients)]">
+                {t("workspaceClients.projectsHub.cardOpenCta")}
+              </p>
             </Link>
           ))}
         </div>
       )}
 
       <Surface className="!p-5">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">פרויקט חדש</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">
+          {t("workspaceClients.projectsHub.newProjectTitle")}
+        </p>
         <div className="mt-4">
           <QuickProjectForm />
         </div>
@@ -400,14 +410,15 @@ export default function ClientsWorkspaceV2({
   industryProfile,
   organizationId,
   userFirstName,
+  initialHub,
   initialProjectFilter,
   initialClientId,
   embedBelowSummary = false,
   hideWorkspaceHero = false,
 }: Props) {
   const { t, dir } = useI18n();
-  const [hubTab, setHubTab] = useState<"projects" | "clients">(() =>
-    initialClientId || initialProjectFilter ? "clients" : "projects",
+  const [hubTab, setHubTab] = useState<"projects" | "clients">(
+    () => initialHub ?? (initialClientId || initialProjectFilter ? "clients" : "projects"),
   );
   const [projectSearch, setProjectSearch] = useState("");
   const [projectActiveFilter, setProjectActiveFilter] = useState<"all" | "active" | "archived">("active");
@@ -505,7 +516,7 @@ export default function ClientsWorkspaceV2({
                 : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-600)] hover:text-[color:var(--ink-900)]"
             }`}
           >
-            פרויקטים
+            {t("workspaceClients.projectsHub.hubTabProjects")}
           </button>
           <button
             type="button"
@@ -516,7 +527,7 @@ export default function ClientsWorkspaceV2({
                 : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-600)] hover:text-[color:var(--ink-900)]"
             }`}
           >
-            לקוחות וצנרת
+            {t("workspaceClients.projectsHub.hubTabClients")}
           </button>
         </div>
       ) : null}
@@ -712,7 +723,7 @@ export default function ClientsWorkspaceV2({
         <Tile tone="neutral" span={4}>
           <TileHeader
             eyebrow={t("workspaceClients.statActiveProjects")}
-            action={<TileLink href="/app/projects" label={t("workspaceClients.projectsAllLink")} />}
+            action={<TileLink href="/app/crm?hub=projects" label={t("workspaceClients.projectsAllLink")} />}
           />
           <p className="tile-hero-value mt-3 text-[color:var(--ink-900)]">
             {projects.filter((p) => p.isActive).length}

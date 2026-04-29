@@ -47,7 +47,7 @@ export function mapDashboardPathToApp(pathname: string): string | null {
     "/control-center": "/app",
     "/success": "/app/success",
     "/advanced": "/app",
-    "/projects": "/app/crm",
+    "/projects": "/app/crm?hub=projects",
     "/inbox": "/app",
   };
 

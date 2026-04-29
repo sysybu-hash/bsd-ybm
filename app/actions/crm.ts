@@ -114,6 +114,17 @@ export async function updateProjectAction(formData: FormData) {
   const activeToRaw = String(formData.get("activeTo") || "").trim();
   const isActive = formData.has("isActive") && formData.get("isActive") !== "off" && formData.get("isActive") !== "false";
 
+  const meckanoZoneRaw = String(formData.get("meckanoZoneId") ?? "").trim();
+  let meckanoZoneId: string | null = null;
+  if (meckanoZoneRaw) {
+    const zone = await prisma.meckanoZone.findFirst({
+      where: { id: meckanoZoneRaw, organizationId: ctx.orgId },
+      select: { id: true },
+    });
+    if (!zone) return { ok: false as const, error: "אזור Meckano לא נמצא או שייך לארגון אחר" };
+    meckanoZoneId = zone.id;
+  }
+
   await prisma.project.update({
     where: { id: projectId },
     data: {
@@ -121,6 +132,7 @@ export async function updateProjectAction(formData: FormData) {
       isActive,
       activeFrom: activeFromRaw ? new Date(`${activeFromRaw}T12:00:00`) : null,
       activeTo: activeToRaw ? new Date(`${activeToRaw}T12:00:00`) : null,
+      meckanoZoneId,
     },
   });
 

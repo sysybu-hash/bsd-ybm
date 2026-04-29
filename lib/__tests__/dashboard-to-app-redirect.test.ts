@@ -8,5 +8,6 @@ describe("dashboard-to-app-redirect", () => {
     expect(mapDashboardPathToApp("/dashboard/control-center")).toBe("/app");
     expect(mapDashboardPathToApp("/dashboard/business")).toBe("/app/business");
     expect(mapDashboardPathToApp("/dashboard")).toBe("/app");
+    expect(mapDashboardPathToApp("/dashboard/projects")).toBe("/app/crm?hub=projects");
   });
 });

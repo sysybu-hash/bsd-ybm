@@ -13,9 +13,7 @@ import {
   Brain,
   Building2,
   CheckCircle2,
-  ChevronLeft,
   CircleDollarSign,
-  ClipboardCheck,
   DatabaseZap,
   Eye,
   FileSearch,
@@ -28,6 +26,7 @@ import {
   Play,
   ReceiptText,
   RotateCcw,
+  ScanSearch,
   Search,
   Settings2,
   ShieldCheck,
@@ -46,245 +45,62 @@ import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import { DROPZONE_ACCEPT, MAX_SCAN_FILE_BYTES } from "@/lib/scan-mime";
 import type { IndustryType } from "@/lib/professions/config";
 import type { ScanExtractionV5, ScanModeV5 } from "@/lib/scan-schema-v5";
+import type {
+  EngineMetaResponse,
+  EngineRunMode,
+  ScanHubPreviewPayload,
+  ScanLookupContact,
+  ScanLookupProject,
+  ScannerProps,
+  TriTelemetry,
+} from "./multi-engine-scanner/types";
+import {
+  DOC_AI_MODE_MATRIX,
+  FALLBACK_OPENAI_MODEL_OPTIONS,
+  IDLE_TELEMETRY,
+  RUN_MODES,
+  RUNNING_TELEMETRY,
+  SCAN_MODES,
+  STREAM_STAGE_LABELS,
+} from "./multi-engine-scanner/constants";
+import {
+  engineProgress,
+  fileSizeLabel,
+  isImageFile,
+  isPdfFile,
+  phaseIcon,
+  phaseLabel,
+  progressTone,
+  readV5FromAiData,
+  truncateText,
+} from "./multi-engine-scanner/utils";
+import {
+  Capability,
+  CardShell,
+  DashboardAction,
+  EngineOptionRow,
+  IconMetric,
+  MetaLine,
+  Metric,
+  MiniPill,
+  ProcessorBadge,
+  ResultRows,
+  SectionTitle,
+  StatTile,
+} from "./multi-engine-scanner/ui-blocks";
+import { DockWizardScanLayout } from "./multi-engine-scanner/DockWizardScanLayout";
 
-export type ScanHubPreviewPayload = {
-  fileName: string | null;
-  previewUrl: string | null;
-  previewKind: "image" | "pdf" | "none";
-  extraction: unknown | null;
-  streamStage: string | null;
-  scanError: string | null;
-  scanning: boolean;
-};
-
-type ScannerProps = {
-  industry?: IndustryType;
-  compactHeader?: boolean;
-  /** סנכרון תצוגה מקדימה מאוחדת (מסך מרכז AI) */
-  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
-  /** כאשר true — לחיצה על «תצוגה מקדימה» מפנה לפאנל חיצוני במקום מודל */
-  hubPreviewMode?: boolean;
-  onHubPreviewFocusRequest?: () => void;
-};
-
-type EnginePhase = "idle" | "running" | "ok" | "error" | "skipped";
-
-type TriTelemetry = {
-  documentAI: { phase: EnginePhase; ms?: number; detail?: string };
-  gemini: { phase: EnginePhase; ms?: number; detail?: string };
-  gpt: { phase: EnginePhase; ms?: number; detail?: string };
-};
-
-type EngineMetaResponse = {
-  configured: { documentAI: boolean; gemini: boolean; openai: boolean };
-  documentAI?: {
-    processors?: Array<{ kind: string; label: string; env: string; consoleType: string; configured: boolean }>;
-  };
-  gemini: { flagshipModelId: string; primaryModelId: string; primaryLabel: string };
-  openai: { defaultModelId: string; modelOptions: { id: string; label: string }[] };
-};
-
-type ScanLookupProject = { id: string; name: string; isActive: boolean };
-type ScanLookupContact = { id: string; name: string; projectId: string | null };
-
-type EngineRunMode =
-  | "AUTO"
-  | "MULTI_SEQUENTIAL"
-  | "MULTI_PARALLEL"
-  | "SINGLE_DOCUMENT_AI"
-  | "SINGLE_GEMINI"
-  | "SINGLE_OPENAI";
-
-const IDLE_TELEMETRY: TriTelemetry = {
-  documentAI: { phase: "idle" },
-  gemini: { phase: "idle" },
-  gpt: { phase: "idle" },
-};
-
-const RUNNING_TELEMETRY: TriTelemetry = {
-  documentAI: { phase: "running" },
-  gemini: { phase: "running" },
-  gpt: { phase: "running" },
-};
-
-const FALLBACK_OPENAI_MODEL_OPTIONS = [
-  { id: "gpt-5.4-turbo-2026-03", label: "GPT-5.4 Turbo" },
-  { id: "gpt-4o-mini", label: "GPT-4o mini" },
-  { id: "gpt-4o", label: "GPT-4o" },
-];
-
-const SCAN_MODES: {
-  id: ScanModeV5;
-  label: string;
-  accent: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-  output: string;
-}[] = [
-  {
-    id: "INVOICE_FINANCIAL",
-    label: "חשבונית / כספים",
-    accent: "emerald",
-    icon: ReceiptText,
-    description: "פענוח חשבוניות, ספקים, שורות מחיר, מע\"מ וסיכום ERP.",
-    output: "שורות ERP, ספק, תאריך, סכום ומחירי שורה.",
-  },
-  {
-    id: "DRAWING_BOQ",
-    label: "תכנית / כתב כמויות",
-    accent: "sky",
-    icon: BarChart3,
-    description: "קריאת תכניות, מקרא, מידות, יחידות וכתב כמויות.",
-    output: "BOQ מלא, כמויות, יחידות ושורות ERP ללא מחיר כשצריך.",
-  },
-  {
-    id: "GENERAL_DOCUMENT",
-    label: "מסמך כללי",
-    accent: "violet",
-    icon: FileText,
-    description: "סיכום מהיר, ישויות, מטא-דאטה וסיווג מסמך.",
-    output: "סיכום, סוג מסמך, שדות עיקריים ומטא-דאטה.",
-  },
-];
-
-const RUN_MODES: {
-  id: EngineRunMode;
-  label: string;
-  short: string;
-  description: string;
-  engines: ("documentAI" | "gemini" | "gpt")[];
-}[] = [
-  {
-    id: "AUTO",
-    label: "חכם לפי סוג מסמך",
-    short: "Auto",
-    description: "המערכת בוחרת מסלול מיטבי לפי מסמך כספי, תכנית או מסמך כללי.",
-    engines: ["documentAI", "gemini", "gpt"],
-  },
-  {
-    id: "MULTI_PARALLEL",
-    label: "כמה מנועים במקביל",
-    short: "Parallel",
-    description: "Gemini ו-GPT רצים יחד, ו-Document AI נכנס כשיש התאמה למסמך.",
-    engines: ["documentAI", "gemini", "gpt"],
-  },
-  {
-    id: "MULTI_SEQUENTIAL",
-    label: "רב-מנועי מדורג",
-    short: "Tri-Engine",
-    description: "מסלול יציב ומבוקר: מנוע ייעודי, מנוע חזותי ואז מיזוג.",
-    engines: ["documentAI", "gemini", "gpt"],
-  },
-  {
-    id: "SINGLE_DOCUMENT_AI",
-    label: "Document AI בלבד",
-    short: "DocAI",
-    description: "למסמכים מובנים: OCR, entities, טפסים, חשבוניות והוצאות.",
-    engines: ["documentAI"],
-  },
-  {
-    id: "SINGLE_GEMINI",
-    label: "Gemini בלבד",
-    short: "Gemini",
-    description: "מנוע חזותי מהיר לתכניות, PDF ותמונות.",
-    engines: ["gemini"],
-  },
-  {
-    id: "SINGLE_OPENAI",
-    label: "GPT בלבד",
-    short: "GPT",
-    description: "דיוק, מיזוג, נרמול ושדות משלימים לפי המודל שנבחר.",
-    engines: ["gpt"],
-  },
-];
-
-const STREAM_STAGE_LABELS: Record<string, string> = {
-  document_ai: "Document AI",
-  openai: "OpenAI",
-  openai_single: "OpenAI בלבד",
-  openai_parallel: "OpenAI במקביל",
-  gemini: "Gemini",
-  gemini_single: "Gemini בלבד",
-  gemini_parallel: "Gemini במקביל",
-  gemini_flash: "Gemini Flash",
-  gemini_fallback: "Gemini fallback",
-  merged_gemini_openai: "מיזוג Gemini + GPT",
-  merged_parallel: "מיזוג מנועים מקבילים",
-};
-
-const DOC_AI_MODE_MATRIX: Record<ScanModeV5, string[]> = {
-  INVOICE_FINANCIAL: ["INVOICE", "EXPENSE", "FORM", "OCR"],
-  DRAWING_BOQ: ["FORM", "OCR"],
-  GENERAL_DOCUMENT: ["FORM", "OCR", "INVOICE", "EXPENSE"],
-};
-
-function truncateText(value: string, max: number) {
-  const text = value.trim();
-  if (text.length <= max) return text;
-  return `${text.slice(0, max)}...`;
-}
-
-function isPdfFile(file: File) {
-  return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
-}
-
-function isImageFile(file: File) {
-  return file.type.startsWith("image/");
-}
-
-function readV5FromAiData(ai: Record<string, unknown> | null): ScanExtractionV5 | null {
-  if (!ai) return null;
-  const raw = ai._v5;
-  if (!raw || typeof raw !== "object") return null;
-  const candidate = raw as Record<string, unknown>;
-  if (candidate.schemaVersion !== 5) return null;
-  return raw as ScanExtractionV5;
-}
-
-function phaseLabel(phase: EnginePhase) {
-  if (phase === "running") return "רץ";
-  if (phase === "ok") return "הושלם";
-  if (phase === "error") return "נכשל";
-  if (phase === "skipped") return "דולג";
-  return "מוכן";
-}
-
-function engineProgress(phase: EnginePhase, scanning: boolean, elapsed: number, offset: number) {
-  if (phase === "ok" || phase === "error" || phase === "skipped") return 100;
-  if (phase === "running") return Math.min(94, 18 + elapsed * 7 + offset);
-  return scanning ? 8 : 0;
-}
-
-function progressTone(phase: EnginePhase) {
-  if (phase === "ok") return "bg-emerald-500";
-  if (phase === "error") return "bg-rose-500";
-  if (phase === "skipped") return "bg-[color:var(--ink-300)]";
-  if (phase === "running") return "bg-blue-600";
-  return "bg-[color:var(--canvas-sunken)]";
-}
-
-function phaseIcon(phase: EnginePhase) {
-  if (phase === "running") return Loader2;
-  if (phase === "ok") return CheckCircle2;
-  if (phase === "error") return XCircle;
-  if (phase === "skipped") return ChevronLeft;
-  return Gauge;
-}
-
-function fileSizeLabel(size: number) {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  return `${(size / 1024 / 1024).toFixed(1)} MB`;
-}
+export type { ScanHubPreviewPayload } from "./multi-engine-scanner/types";
 
 export default function MultiEngineScanner({
   industry: industryOverride,
   compactHeader = false,
+  dockWizard = false,
   onScanHubPreviewUpdate,
   hubPreviewMode = false,
   onHubPreviewFocusRequest,
 }: ScannerProps) {
-  const { messages } = useI18n();
+  const { messages, t, dir, locale } = useI18n();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
 
@@ -292,7 +108,8 @@ export default function MultiEngineScanner({
   const trade = session?.user?.organizationConstructionTrade ?? null;
   const config = getMergedIndustryConfig(userIndustry, trade, messages);
   const iconMap = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
-  const ActiveIcon = iconMap[config.iconName] ?? Bot;
+  /** במצב dockWizard סמל קבוע וברור — לא תלוי בשם אייקון מתוך תצורת מקצוע שעלול להיות חסר ב־Lucide */
+  const ActiveIcon = dockWizard ? ScanSearch : (iconMap[config.iconName] ?? Bot);
 
   const [files, setFiles] = useState<File[]>([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
@@ -319,6 +136,7 @@ export default function MultiEngineScanner({
   const [savingTarget, setSavingTarget] = useState<"ERP" | "CRM" | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(false);
+  const [dockWizardStep, setDockWizardStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   const activeFile = files[activeFileIndex] ?? null;
   const activePreviewUrl = previewUrls[activeFileIndex] ?? null;
@@ -462,6 +280,27 @@ export default function MultiEngineScanner({
 
   const v5 = useMemo(() => readV5FromAiData(aiData) ?? streamPartialV5, [aiData, streamPartialV5]);
 
+  const wizardStepLabels = useMemo(
+    () => [
+      t("workspaceDock.scannerWizard.steps.files"),
+      t("workspaceDock.scannerWizard.steps.engines"),
+      t("workspaceDock.scannerWizard.steps.crm"),
+      t("workspaceDock.scannerWizard.steps.run"),
+      t("workspaceDock.scannerWizard.steps.results"),
+    ],
+    [t],
+  );
+
+  useEffect(() => {
+    if (!dockWizard) return;
+    if (scanning) setDockWizardStep(4);
+  }, [dockWizard, scanning]);
+
+  useEffect(() => {
+    if (!dockWizard) return;
+    if (!scanning && v5 && dockWizardStep === 4) setDockWizardStep(5);
+  }, [dockWizard, scanning, v5, dockWizardStep]);
+
   const triggerFilePreview = useCallback(() => {
     if (hubPreviewMode && onHubPreviewFocusRequest) {
       onHubPreviewFocusRequest();
@@ -540,6 +379,7 @@ export default function MultiEngineScanner({
     setTelemetry(IDLE_TELEMETRY);
     setPreviewOpen(false);
     setResultsOpen(false);
+    if (dockWizard) setDockWizardStep(1);
   };
 
   const resetResult = () => {
@@ -549,6 +389,7 @@ export default function MultiEngineScanner({
     setScanError(null);
     setTelemetry(IDLE_TELEMETRY);
     setResultsOpen(false);
+    if (dockWizard) setDockWizardStep(4);
   };
 
   const runScan = async () => {
@@ -746,7 +587,13 @@ export default function MultiEngineScanner({
         : "h-[calc(100vh-150px)] min-h-[620px] overflow-hidden rounded-[24px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--cd-shadow)]";
 
   return (
-    <div id="erp-multi-scanner" data-scanner-board="true" dir="rtl" lang="he" className={shellClass}>
+    <div
+      id="erp-multi-scanner"
+      data-scanner-board="true"
+      dir={dockWizard ? dir : "rtl"}
+      lang={dockWizard ? locale : "he"}
+      className={shellClass}
+    >
       <div className="flex h-full min-h-0 flex-col">
         <header className="shrink-0 border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 px-3 py-3 backdrop-blur xl:px-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -769,15 +616,17 @@ export default function MultiEngineScanner({
             </div>
 
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={triggerFilePreview}
-                disabled={!activeFile || !activePreviewUrl}
-                className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 text-[11px] font-black text-[color:var(--ink-800)] transition hover:bg-[color:var(--canvas-sunken)] disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                <Eye className="h-4 w-4" aria-hidden />
-                תצוגה מקדימה
-              </button>
+              {!dockWizard ? (
+                <button
+                  type="button"
+                  onClick={triggerFilePreview}
+                  disabled={!activeFile || !activePreviewUrl}
+                  className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 text-[11px] font-black text-[color:var(--ink-800)] transition hover:bg-[color:var(--canvas-sunken)] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  <Eye className="h-4 w-4" aria-hidden />
+                  תצוגה מקדימה
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={resetResult}
@@ -793,19 +642,75 @@ export default function MultiEngineScanner({
               >
                 ניקוי לוח
               </button>
-              <button
-                type="button"
-                onClick={runScan}
-                disabled={scanning || !activeFile || authStatus !== "authenticated"}
-                className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-4 text-[11px] font-black text-white shadow-md transition hover:bg-[color:var(--axis-clients-strong)] disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                {scanning ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Play className="h-4 w-4" aria-hidden />}
-                {scanning ? "מריץ פענוח..." : activeFile ? "הפעל סריקה" : "בחר קובץ לסריקה"}
-              </button>
+              {!dockWizard ? (
+                <button
+                  type="button"
+                  onClick={runScan}
+                  disabled={scanning || !activeFile || authStatus !== "authenticated"}
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-4 text-[11px] font-black text-white shadow-md transition hover:bg-[color:var(--axis-clients-strong)] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  {scanning ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Play className="h-4 w-4" aria-hidden />}
+                  {scanning ? "מריץ פענוח..." : activeFile ? "הפעל סריקה" : "בחר קובץ לסריקה"}
+                </button>
+              ) : null}
             </div>
           </div>
         </header>
 
+        {dockWizard ? (
+          <DockWizardScanLayout
+            hubPreviewMode={hubPreviewMode}
+            dockWizardStep={dockWizardStep}
+            setDockWizardStep={setDockWizardStep}
+            wizardStepLabels={wizardStepLabels}
+            t={t}
+            getRootProps={getRootProps}
+            getInputProps={getInputProps}
+            isDragActive={isDragActive}
+            files={files}
+            activeFileIndex={activeFileIndex}
+            setActiveFileIndex={setActiveFileIndex}
+            activeFile={activeFile}
+            activePreviewUrl={activePreviewUrl}
+            triggerFilePreview={triggerFilePreview}
+            scanMode={scanMode}
+            setScanMode={setScanMode}
+            engineRunMode={engineRunMode}
+            setEngineRunMode={setEngineRunMode}
+            scanning={scanning}
+            authStatus={authStatus}
+            lookupSearch={lookupSearch}
+            setLookupSearch={setLookupSearch}
+            lookupsLoading={lookupsLoading}
+            selectedProjectId={selectedProjectId}
+            setSelectedProjectId={setSelectedProjectId}
+            selectedContactId={selectedContactId}
+            setSelectedContactId={setSelectedContactId}
+            visibleProjects={visibleProjects}
+            contacts={contacts}
+            engineMeta={engineMeta}
+            engineMetaLoading={engineMetaLoading}
+            resolvedOpenAiModel={resolvedOpenAiModel}
+            openAiModelOptions={openAiModelOptions}
+            setOpenAiModel={setOpenAiModel}
+            docAiProcessors={docAiProcessors}
+            docAiRecommendedKinds={docAiRecommendedKinds}
+            engineRows={engineRows}
+            selectedScanMode={selectedScanMode}
+            selectedRunMode={selectedRunMode}
+            streamStage={streamStage}
+            scanError={scanError}
+            v5={v5}
+            totalProgress={totalProgress}
+            elapsedSeconds={elapsedSeconds}
+            runScan={runScan}
+            setResultsOpen={setResultsOpen}
+            handleSave={handleSave}
+            aiData={aiData}
+            savingTarget={savingTarget}
+            docAiProcessorSummary={docAiProcessorSummary}
+          />
+        ) : (
         <main
           className={`grid min-h-0 flex-1 grid-cols-1 gap-3 p-2.5 xl:grid-cols-3 ${hubPreviewMode ? "overflow-y-auto overflow-x-hidden" : "overflow-hidden"}`}
         >
@@ -1293,6 +1198,7 @@ export default function MultiEngineScanner({
             </div>
           </aside>
         </main>
+        )}
       </div>
 
       {resultsOpen && v5 ? (
@@ -1448,234 +1354,6 @@ export default function MultiEngineScanner({
           </div>
         </div>
       ) : null}
-    </div>
-  );
-}
-
-function SectionTitle({
-  eyebrow,
-  title,
-  icon: Icon,
-}: {
-  eyebrow: string;
-  title: string;
-  icon: React.ComponentType<{ className?: string }>;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <div>
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[color:var(--ink-400)]">{eyebrow}</p>
-        <h2 className="text-sm font-black text-[color:var(--ink-900)] xl:text-base">{title}</h2>
-      </div>
-      <Icon className="h-5 w-5 text-blue-600" aria-hidden />
-    </div>
-  );
-}
-
-function CardShell({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section
-      className={`rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-2.5 shadow-[var(--cd-shadow-sm)] ${className}`.trim()}
-    >
-      {children}
-    </section>
-  );
-}
-
-function ProcessorBadge({
-  label,
-  sublabel,
-  active,
-  configured,
-}: {
-  label: string;
-  sublabel: string;
-  active: boolean;
-  configured: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border px-3 py-2 text-xs ${
-        active ? "border-blue-200 bg-blue-50 text-blue-900" : "border-[color:var(--line)] bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)]"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-black">{label}</span>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${configured ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-          {configured ? "ON" : "OFF"}
-        </span>
-      </div>
-      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">{sublabel}</p>
-    </div>
-  );
-}
-
-function EngineOptionRow({
-  title,
-  description,
-  tone,
-  children,
-}: {
-  title: string;
-  description: string;
-  tone: "emerald" | "violet";
-  children?: React.ReactNode;
-}) {
-  const toneClass =
-    tone === "emerald" ? "border-emerald-200 bg-emerald-50/60 text-emerald-900" : "border-violet-200 bg-violet-50/60 text-violet-900";
-  return (
-    <div className={`rounded-2xl border p-3 ${toneClass}`}>
-      <p className="text-xs font-black">{title}</p>
-      <p className="mt-1 text-[11px] font-semibold leading-5 text-[color:var(--ink-600)]">{description}</p>
-      {children ? <div className="mt-3">{children}</div> : null}
-    </div>
-  );
-}
-
-function MiniPill({ label, value }: { label: string; value: string }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-700)]">
-      <span className="text-[color:var(--ink-400)]">{label}</span>
-      <span className="max-w-[170px] truncate text-[color:var(--ink-900)]">{value}</span>
-    </span>
-  );
-}
-
-function StatTile({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
-      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-400)]">{label}</p>
-      <p className="mt-1.5 truncate text-base font-black text-[color:var(--ink-900)] xl:text-lg">{value}</p>
-      <p className="mt-0.5 text-[10px] font-semibold text-[color:var(--ink-500)]">{hint}</p>
-    </div>
-  );
-}
-
-function DashboardAction({
-  icon: Icon,
-  label,
-  hint,
-  onClick,
-  disabled,
-  primary = false,
-  spinning = false,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  hint: string;
-  onClick: () => void;
-  disabled?: boolean;
-  primary?: boolean;
-  spinning?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={hint}
-      className={`flex min-h-[92px] items-center gap-3 rounded-2xl border p-4 text-start transition disabled:cursor-not-allowed disabled:opacity-45 ${
-        primary
-          ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700"
-          : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] hover:bg-[color:var(--canvas-sunken)]"
-      }`}
-    >
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${primary ? "bg-white/15" : "bg-blue-50 text-blue-600"}`}>
-        <Icon className={`h-5 w-5 ${spinning ? "animate-spin" : ""}`} aria-hidden />
-      </span>
-      <span className="min-w-0">
-        <span className="block text-base font-black">{label}</span>
-        <span className={`mt-1 block truncate text-xs font-bold ${primary ? "text-white/80" : "text-[color:var(--ink-500)]"}`}>
-          {hint}
-        </span>
-      </span>
-    </button>
-  );
-}
-
-function IconMetric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="min-w-0 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 text-start shadow-sm">
-      <Icon className="h-4 w-4 text-blue-600" aria-hidden />
-      <p className="mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-[color:var(--ink-400)]">{label}</p>
-      <p className="mt-1 truncate text-xs font-black text-[color:var(--ink-900)]">{value}</p>
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3">
-      <p className="text-[11px] font-black text-[color:var(--ink-400)]">{label}</p>
-      <p className="mt-1 truncate text-sm font-black text-[color:var(--ink-900)]">{value}</p>
-    </div>
-  );
-}
-
-function MetaLine({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3 py-2">
-      <p className="text-[11px] font-black text-[color:var(--ink-400)]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[color:var(--ink-800)]">{value}</p>
-    </div>
-  );
-}
-
-function ResultRows({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: { main: string; meta: string; amount: string }[];
-}) {
-  return (
-    <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[color:var(--line)] px-3 py-3">
-        <ClipboardCheck className="h-4 w-4 text-blue-600" aria-hidden />
-        <p className="text-sm font-black text-[color:var(--ink-900)]">{title}</p>
-      </div>
-      <div className="max-h-[320px] overflow-y-auto">
-        {rows.slice(0, 50).map((row, index) => (
-          <div key={`${row.main}-${index}`} className="grid grid-cols-[1fr_90px] gap-3 border-b border-[color:var(--line-subtle)] px-3 py-2 last:border-b-0">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-black text-[color:var(--ink-900)]">{row.main}</p>
-              <p className="mt-0.5 truncate text-[11px] font-semibold text-[color:var(--ink-500)]">{row.meta || "-"}</p>
-            </div>
-            <p className="text-end text-sm font-black tabular-nums text-[color:var(--ink-800)]">{row.amount}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Capability({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-2 rounded-xl bg-[color:var(--canvas-sunken)] p-2">
-      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
-      <span>{text}</span>
     </div>
   );
 }

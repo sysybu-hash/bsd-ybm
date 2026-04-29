@@ -1,5 +1,35 @@
 import { prisma } from "@/lib/prisma";
 
+/** ב־Prisma ORM מודרני `aggregate` עם `_count: true` מחזיר `{ _all: n }` — לא לערבב עם ילדי React */
+function unwrapAggregateAllCount(countVal: unknown): number {
+  if (typeof countVal === "number" && !Number.isNaN(countVal)) return countVal;
+  if (countVal && typeof countVal === "object" && "_all" in countVal) {
+    const n = (countVal as { _all?: unknown })._all;
+    if (typeof n === "number" && !Number.isNaN(n)) return n;
+  }
+  return 0;
+}
+
+/** סכומי `_sum` / שדות Float לפעמים יוצאים כ־Decimal מטיפוס runtime — חייבים מספר פשוט ל־React ול־Intl */
+function toPlainNumber(value: unknown): number {
+  if (value == null) return 0;
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  if (typeof value === "bigint") return Number(value);
+  if (typeof value === "object" && value !== null && "toNumber" in value) {
+    const fn = (value as { toNumber?: () => unknown }).toNumber;
+    if (typeof fn === "function") {
+      try {
+        const n = fn.call(value);
+        if (typeof n === "number" && Number.isFinite(n)) return n;
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  const coerced = Number(value);
+  return Number.isFinite(coerced) ? coerced : 0;
+}
+
 export type WorkspaceHomeRecentIssued = {
   id: string;
   type: string;
@@ -32,6 +62,23 @@ export type WorkspaceHomeData = {
   scannedDocsCount: number;
   recentIssued: WorkspaceHomeRecentIssued[];
   recentClients: WorkspaceHomeRecentClient[];
+};
+
+/** נפילה רכה בדף הבית כשהשאילתה נכשלת (חיבור DB, timeout וכו׳) */
+export const EMPTY_WORKSPACE_HOME_DATA: WorkspaceHomeData = {
+  monthRevenue: 0,
+  monthIssuedCount: 0,
+  pendingAmount: 0,
+  pendingCount: 0,
+  paidAmount: 0,
+  collectionRate: 0,
+  trendLabel: undefined,
+  trendDirection: "flat",
+  activeClients: 0,
+  activeProjects: 0,
+  scannedDocsCount: 0,
+  recentIssued: [],
+  recentClients: [],
 };
 
 export async function loadWorkspaceHomeData(organizationId: string): Promise<WorkspaceHomeData> {
@@ -98,11 +145,11 @@ export async function loadWorkspaceHomeData(organizationId: string): Promise<Wor
     }),
   ]);
 
-  const monthRevenue = monthIssued._sum.total ?? 0;
-  const prevRevenue = prevMonthIssued._sum.total ?? 0;
-  const pendingAmount = pendingAgg._sum.total ?? 0;
-  const pendingCount = pendingAgg._count ?? 0;
-  const paidAmount = paidAgg._sum.total ?? 0;
+  const monthRevenue = toPlainNumber(monthIssued._sum.total);
+  const prevRevenue = toPlainNumber(prevMonthIssued._sum.total);
+  const pendingAmount = toPlainNumber(pendingAgg._sum.total);
+  const pendingCount = unwrapAggregateAllCount(pendingAgg._count);
+  const paidAmount = toPlainNumber(paidAgg._sum.total);
   const totalBilled = monthRevenue;
   const collectionRate = totalBilled > 0 ? Math.round((paidAmount / totalBilled) * 100) : 0;
 
@@ -118,7 +165,7 @@ export async function loadWorkspaceHomeData(organizationId: string): Promise<Wor
 
   return {
     monthRevenue,
-    monthIssuedCount: monthIssued._count,
+    monthIssuedCount: unwrapAggregateAllCount(monthIssued._count),
     pendingAmount,
     pendingCount,
     paidAmount,
@@ -128,7 +175,13 @@ export async function loadWorkspaceHomeData(organizationId: string): Promise<Wor
     activeClients,
     activeProjects,
     scannedDocsCount,
-    recentIssued,
-    recentClients,
+    recentIssued: recentIssued.map((row) => ({
+      ...row,
+      total: toPlainNumber(row.total),
+    })),
+    recentClients: recentClients.map((row) => ({
+      ...row,
+      value: row.value == null ? null : toPlainNumber(row.value),
+    })),
   };
 }

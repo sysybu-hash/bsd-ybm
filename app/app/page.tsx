@@ -1,7 +1,11 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { loadWorkspaceHomeData } from "@/lib/load-workspace-home";
+import type { WorkspaceHomeData } from "@/lib/load-workspace-home";
+import {
+  EMPTY_WORKSPACE_HOME_DATA,
+  loadWorkspaceHomeData,
+} from "@/lib/load-workspace-home";
 import WorkspaceHomeView from "@/components/workspace/WorkspaceHomeView";
 import AppPageChrome from "@/components/workspace/AppPageChrome";
 
@@ -14,7 +18,13 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const data = await loadWorkspaceHomeData(organizationId);
+  let data: WorkspaceHomeData;
+  try {
+    data = await loadWorkspaceHomeData(organizationId);
+  } catch (error) {
+    console.error("[DashboardPage] loadWorkspaceHomeData failed", error);
+    data = EMPTY_WORKSPACE_HOME_DATA;
+  }
   const userFirst = (session?.user?.name ?? session?.user?.email ?? "").split(/[\s@]/)[0] || "ברוך הבא";
   const todayLabel = new Intl.DateTimeFormat("he-IL", {
     weekday: "long",

@@ -646,30 +646,36 @@ export default function WorkspaceUtilityDock({
 
       {openPanel === "scanner" ? (
         <section
-          className="fixed inset-0 z-[9950] bg-slate-950/80 backdrop-blur-md"
+          className="fixed inset-0 z-[9950] flex flex-col bg-slate-950/80 backdrop-blur-md"
           dir={dir}
           aria-label={t("workspaceDock.scanner.panelAria")}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_10%,rgba(59,130,246,0.28),transparent_34%),radial-gradient(circle_at_20%_85%,rgba(20,184,166,0.22),transparent_30%)]" />
-          <button
-            type="button"
-            onClick={() => setOpenPanel(null)}
-            className="absolute left-4 top-4 z-[2] inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/92 text-slate-700 shadow-2xl shadow-slate-950/20 transition hover:bg-white hover:text-slate-950"
-            aria-label={t("workspaceDock.scanner.closeAria")}
-          >
-            <X className="h-5 w-5" aria-hidden />
-          </button>
+          <div
+            className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_75%_10%,rgba(59,130,246,0.28),transparent_34%),radial-gradient(circle_at_20%_85%,rgba(20,184,166,0.22),transparent_30%)]"
+            aria-hidden
+          />
+          {/* שורת סגירה בזרימת המסמך — לא חופפת לכפתורי ניקוי/איפוס בכותרת הסורק (בעברית כפתור הסגירה בצד ההתחלה של השורה = ימין) */}
+          <div className="relative z-[2] flex shrink-0 justify-start px-3 pt-3 sm:px-4 sm:pt-4">
+            <button
+              type="button"
+              onClick={() => setOpenPanel(null)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/25 bg-white/95 text-slate-800 shadow-lg shadow-slate-950/25 transition hover:bg-white hover:text-slate-950 sm:h-12 sm:w-12"
+              aria-label={t("workspaceDock.scanner.closeAria")}
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
 
-          <div className="relative h-[100svh] w-screen overflow-hidden p-2 sm:h-[100dvh] sm:p-4">
+          <div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-2 pb-3 sm:px-4 sm:pb-4">
             {scannerButtonDisabled ? (
-              <div className="flex h-full items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/90 p-8 text-center">
+              <div className="flex min-h-[320px] flex-1 items-center justify-center rounded-[28px] border border-dashed border-slate-300 bg-white/90 p-8 text-center">
                 <div className="max-w-md">
                   <p className="text-lg font-black text-slate-900">{t("workspaceDock.scanner.needOrgTitle")}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-500">{t("workspaceDock.scanner.needOrgBody")}</p>
                 </div>
               </div>
             ) : (
-              <MultiEngineScanner industry={industryProfile.id} compactHeader />
+              <MultiEngineScanner industry={industryProfile.id} compactHeader dockWizard />
             )}
           </div>
         </section>

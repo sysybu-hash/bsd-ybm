@@ -7,7 +7,9 @@ import { isAdmin } from "@/lib/is-admin";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
-import { getIndustryProfile } from "@/lib/professions/runtime";
+import { getMessages } from "@/lib/i18n/load-messages";
+import type { MessageTree } from "@/lib/i18n/keys";
+import { getIndustryProfile, type IndustryProfile } from "@/lib/professions/runtime";
 import WorkspacePageMotion from "@/components/workspace/WorkspacePageMotion";
 import MainContainer from "@/components/layout/MainContainer";
 import { WorkspaceContextProvider } from "@/components/workspace/WorkspaceContext";
@@ -22,6 +24,32 @@ const workspaceOrgSelect = {
   subscriptionStatus: true,
 } as const;
 
+async function fetchWorkspaceOrganization(orgId: string) {
+  try {
+    return await prisma.organization.findUnique({
+      where: { id: orgId },
+      select: workspaceOrgSelect,
+    });
+  } catch (e) {
+    console.error("[app/layout] prisma.organization.findUnique failed", e);
+    return null;
+  }
+}
+
+function safeIndustryProfile(
+  industry: string | undefined,
+  industryConfigJson: unknown,
+  constructionTrade: string | null | undefined,
+  messages: MessageTree,
+): IndustryProfile {
+  try {
+    return getIndustryProfile(industry, industryConfigJson, constructionTrade, messages);
+  } catch (e) {
+    console.error("[app/layout] getIndustryProfile failed", e);
+    return getIndustryProfile("CONSTRUCTION", undefined, null, getMessages("he"));
+  }
+}
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
@@ -35,15 +63,25 @@ export default async function AppWorkspaceLayout({ children }: { children: React
   }
 
   const organizationId = session.user.organizationId ?? null;
-  const [organizationInitial, hasMeckanoAccess] = await Promise.all([
-    organizationId
-      ? prisma.organization.findUnique({
-          where: { id: organizationId },
-          select: workspaceOrgSelect,
-        })
-      : Promise.resolve(null),
-    canAccessMeckano(session),
-  ]);
+
+  let organizationInitial = null as Awaited<ReturnType<typeof fetchWorkspaceOrganization>>;
+  let hasMeckanoAccess = false;
+  try {
+    const [org, meckano] = await Promise.all([
+      organizationId ? fetchWorkspaceOrganization(organizationId) : Promise.resolve(null),
+      canAccessMeckano(session),
+    ]);
+    organizationInitial = org;
+    hasMeckanoAccess = meckano;
+  } catch (e) {
+    console.error("[app/layout] Promise.all(org + meckano) failed", e);
+    try {
+      hasMeckanoAccess = await canAccessMeckano(session);
+    } catch (e2) {
+      console.error("[app/layout] canAccessMeckano fallback failed", e2);
+      hasMeckanoAccess = false;
+    }
+  }
 
   /** מילוי `industryConfigJson` ברירת מחדל — רק כשחסר; מרונדר מחדש עם נתוני DB אחרי patch */
   let organization = organizationInitial;
@@ -52,19 +90,28 @@ export default async function AppWorkspaceLayout({ children }: { children: React
     organization &&
     needsIndustryConfigPolish(organization.industryConfigJson)
   ) {
-    const polish = await polishOrganizationState(organizationId);
-    if (polish.success && polish.data?.patched) {
-      organization = await prisma.organization.findUnique({
-        where: { id: organizationId },
-        select: workspaceOrgSelect,
-      });
+    try {
+      const polish = await polishOrganizationState(organizationId);
+      if (polish.success && polish.data?.patched) {
+        const refreshed = await fetchWorkspaceOrganization(organizationId);
+        if (refreshed) organization = refreshed;
+      }
+    } catch (e) {
+      console.error("[app/layout] polishOrganizationState / refresh failed", e);
     }
   }
 
   // הפניה לonboarding אם עדיין לא נבחר מקצוע (רק בדפים שאינם onboarding עצמו)
   // נבדוק URL מהבקשה — אך ב-RSC אין גישה ישירה ל-pathname, אז בדיקה בצד ה-middleware
-  const messages = await readRequestMessages();
-  const industryProfile = getIndustryProfile(
+  let messages: MessageTree;
+  try {
+    messages = await readRequestMessages();
+  } catch (e) {
+    console.error("[app/layout] readRequestMessages failed", e);
+    messages = getMessages("he");
+  }
+
+  const industryProfile = safeIndustryProfile(
     organization?.industry ?? session.user.organizationIndustry ?? "CONSTRUCTION",
     organization?.industryConfigJson,
     organization?.constructionTrade ?? session.user.organizationConstructionTrade,

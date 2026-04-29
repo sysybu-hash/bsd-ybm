@@ -46,8 +46,10 @@ function fmtIls(n: number) {
   }).format(n);
 }
 
-function fmtDate(date: Date) {
-  return new Intl.DateTimeFormat("he-IL", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(date);
+function fmtDate(date: Date | string) {
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("he-IL", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(d);
 }
 
 type Props = {

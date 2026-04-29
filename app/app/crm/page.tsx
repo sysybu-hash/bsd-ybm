@@ -25,10 +25,21 @@ function clientInsightLine(c: {
   return "אין היסטוריית הופקה";
 }
 
+function resolveInitialHub(opts: {
+  initialClientId?: string;
+  initialProjectFilter?: string;
+  hub?: string;
+}): "projects" | "clients" {
+  if (opts.initialClientId) return "clients";
+  if (opts.hub?.toLowerCase() === "projects") return "projects";
+  if (opts.initialProjectFilter) return "clients";
+  return "projects";
+}
+
 export default async function CrmPage({
   searchParams,
 }: {
-  searchParams: Promise<{ projectId?: string; clientId?: string }>;
+  searchParams: Promise<{ projectId?: string; clientId?: string; hub?: string }>;
 }) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
@@ -137,6 +148,11 @@ export default async function CrmPage({
   const clientIdParam = sp.clientId?.trim();
   const initialClientId =
     clientIdParam && contacts.some((c) => c.id === clientIdParam) ? clientIdParam : undefined;
+  const initialHub = resolveInitialHub({
+    initialClientId,
+    initialProjectFilter,
+    hub: sp.hub?.trim(),
+  });
 
   return (
     <AppPageChrome>
@@ -157,6 +173,7 @@ export default async function CrmPage({
         industryProfile={industryProfile}
         organizationId={organizationId}
         userFirstName={userFirstName}
+        initialHub={initialHub}
         initialProjectFilter={initialProjectFilter}
         initialClientId={initialClientId}
         hideWorkspaceHero

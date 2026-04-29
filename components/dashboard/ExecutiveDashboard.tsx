@@ -147,7 +147,7 @@ export function ExecutiveDashboard({
           <TileHeader
             eyebrow="פרויקטים"
             title="פרויקטים פעילים"
-            action={<TileLink href="/app/projects" label="הכל" tone="clients" />}
+            action={<TileLink href="/app/crm?hub=projects" label="הכל" tone="clients" />}
           />
           <ul className="mt-4 space-y-2">
             {recentProjects.length === 0 && (
