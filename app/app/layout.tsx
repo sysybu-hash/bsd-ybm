@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Session } from "next-auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import AppShellV2 from "@/components/app-shell/AppShellV2";
@@ -13,8 +14,8 @@ import { getIndustryProfile, type IndustryProfile } from "@/lib/professions/runt
 import WorkspacePageMotion from "@/components/workspace/WorkspacePageMotion";
 import MainContainer from "@/components/layout/MainContainer";
 import { WorkspaceContextProvider } from "@/components/workspace/WorkspaceContext";
-import { polishOrganizationState } from "@/app/actions/workspace-polish";
 import { needsIndustryConfigPolish } from "@/lib/polish/industry-config";
+import { polishOrganizationIndustryConfigFromRsc } from "@/lib/polish/polish-organization-industry-rsc";
 
 const workspaceOrgSelect = {
   industry: true,
@@ -61,7 +62,13 @@ export const fetchCache = "force-no-store";
 
 /** אכיפת נתיבי primary לפי מקצוע — ב־`middleware.ts` (getHiddenPrimaryRouteIds) + ניווט מסונן ב־AppShell */
 export default async function AppWorkspaceLayout({ children }: { children: ReactNode }) {
-  const session = await getServerSession(authOptions);
+  let session: Session | null = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (e) {
+    console.error("[app/layout] getServerSession failed", e);
+    redirect("/login");
+  }
 
   if (!session?.user?.email) {
     redirect("/login");
@@ -96,13 +103,16 @@ export default async function AppWorkspaceLayout({ children }: { children: React
     needsIndustryConfigPolish(organization.industryConfigJson)
   ) {
     try {
-      const polish = await polishOrganizationState(organizationId);
-      if (polish.success && polish.data?.patched) {
-        const refreshed = await fetchWorkspaceOrganization(organizationId);
-        if (refreshed) organization = refreshed;
+      const uid = session.user.id;
+      if (typeof uid === "string" && uid.length > 0) {
+        const patched = await polishOrganizationIndustryConfigFromRsc(organizationId, uid);
+        if (patched) {
+          const refreshed = await fetchWorkspaceOrganization(organizationId);
+          if (refreshed) organization = refreshed;
+        }
       }
     } catch (e) {
-      console.error("[app/layout] polishOrganizationState / refresh failed", e);
+      console.error("[app/layout] polish industry config / refresh failed", e);
     }
   }
 
