@@ -72,7 +72,7 @@ export default function DashboardNotificationBell() {
           setOpen((v) => !v);
           if (!open) void load();
         }}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-500)] shadow-[var(--cd-shadow-sm)] hover:bg-[color:var(--canvas-sunken)]"
         aria-label="התראות"
         aria-expanded={open}
       >
@@ -85,9 +85,9 @@ export default function DashboardNotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60">
-          <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
-            <span className="text-xs font-black text-gray-700">הודעות</span>
+        <div className="absolute end-0 top-12 z-[200] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] shadow-lg shadow-[color:var(--ink-900)]/10">
+          <div className="flex items-center justify-between border-b border-[color:var(--line-subtle)] px-3 py-2">
+            <span className="text-xs font-black text-[color:var(--ink-700)]">הודעות</span>
             {unread > 0 ? (
               <button
                 type="button"
@@ -111,13 +111,13 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full text-right border-b border-gray-100 px-3 py-2.5 hover:bg-gray-50 ${
+                  className={`w-full border-b border-[color:var(--line-subtle)] px-3 py-2.5 text-right hover:bg-[color:var(--canvas-sunken)] ${
                     n.read ? "opacity-70" : "bg-teal-500/15"
                   }`}
                 >
-                  <p className="text-xs font-black text-gray-900">{n.title}</p>
-                  <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{n.body}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">
+                  <p className="text-xs font-black text-[color:var(--ink-900)]">{n.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-[color:var(--ink-500)]">{n.body}</p>
+                  <p className="mt-1 text-[10px] text-[color:var(--ink-400)]">
                     {new Date(n.createdAt).toLocaleString("he-IL")}
                   </p>
                 </button>

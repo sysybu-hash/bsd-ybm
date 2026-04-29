@@ -1,22 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Bot,
-  BriefcaseBusiness,
-  Building2,
-  CheckCircle2,
-  CreditCard,
-  Globe,
-  ShieldCheck,
-  UsersRound,
-} from "lucide-react";
+import { Bot, BriefcaseBusiness, Building2, CheckCircle2, Globe } from "lucide-react";
 import { settingsHubPath } from "@/lib/settings-hub-nav";
-import { getIndustryProfile } from "@/lib/professions/runtime";
 import { tierLabelHe } from "@/lib/subscription-tier-config";
 import type { SettingsHubOrganizationRecord, SettingsHubViewer } from "@/lib/settings-hub-server";
-import { useI18n } from "@/components/I18nProvider";
-import { Tile } from "@/components/ui/bento";
+import { BentoGrid, Tile, TileHeader } from "@/components/ui/bento";
 
 type Props = Readonly<{
   organization: SettingsHubOrganizationRecord;
@@ -58,14 +47,6 @@ export default function OverviewSettingsPanel({
   activeUsers,
   viewer,
 }: Props) {
-  const { messages } = useI18n();
-  const profile = getIndustryProfile(
-    organization.industry,
-    organization.industryConfigJson,
-    organization.constructionTrade,
-    messages,
-  );
-
   const configured = [
     organization.name,
     organization.taxId,
@@ -76,125 +57,89 @@ export default function OverviewSettingsPanel({
     organization.meckanoApiKey,
   ].filter(Boolean).length;
   const completion = Math.round((configured / 7) * 100);
-  const activePct = usersTotal > 0 ? Math.round((activeUsers / usersTotal) * 100) : 0;
 
   return (
-    <div className="space-y-8" dir="rtl">
-      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
+    <div className="space-y-6" dir="rtl">
+      {/* ── Hero: Control Center ── */}
       <Tile tone="ai" span={12}>
         <div className="flex flex-col gap-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="tile-eyebrow">Settings · Control Center</p>
-              <h1 className="mt-2 text-[28px] font-black tracking-tight text-white">
-                מרכז ההפעלה של BSD-YBM
+              <h1 className="mt-2 text-[32px] font-black tracking-tight text-white leading-none">
+                מרכז ההפעלה
               </h1>
-              <p className="mt-1 text-sm text-violet-200">
-                כאן מגדירים את הזהות העסקית, תחום הבניה, מנועי הפיענוח, הפורטל והגבייה.
+              <p className="mt-2 text-sm text-violet-200 font-bold max-w-md">
+                כאן מגדירים את הליבה של BSD-YBM: זהות עסקית, מנועי AI, אוטומציה וחיוב.
               </p>
             </div>
-            <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-white/10 sm:flex">
-              <Bot className="h-6 w-6 text-white" aria-hidden />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 shadow-inner">
+              <Bot className="h-7 w-7 text-white" aria-hidden />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מוכנות מערכת</p>
-              <p className="mt-1 text-xl font-black text-white">{completion}%</p>
-              <div className="mt-2 h-1.5 rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-white" style={{ width: `${completion}%` }} />
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm shadow-sm transition hover:bg-white/15">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-violet-200">מוכנות מערכת</p>
+              <p className="mt-1 text-2xl font-black text-white tracking-tight">{completion}%</p>
+              <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div className="h-full rounded-full bg-white shadow-[0_0_10px_white]" style={{ width: `${completion}%` }} />
               </div>
             </div>
-            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">מנוי פעיל</p>
-              <p className="mt-1 text-xl font-black text-white">{tierLabelHe(organization.subscriptionTier)}</p>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm shadow-sm transition hover:bg-white/15">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-violet-200">מנוי פעיל</p>
+              <p className="mt-1 text-2xl font-black text-white tracking-tight">{tierLabelHe(organization.subscriptionTier)}</p>
             </div>
-            <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-violet-200">משתמשים</p>
-              <p className="mt-1 text-xl font-black text-white">{activeUsers}/{usersTotal}</p>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm shadow-sm transition hover:bg-white/15">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-violet-200">משתמשים</p>
+              <p className="mt-1 text-2xl font-black text-white tracking-tight">{activeUsers}/{usersTotal}</p>
+            </div>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm shadow-sm transition hover:bg-white/15">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-violet-200">הרשאה</p>
+              <p className="mt-1 text-2xl font-black text-white tracking-tight truncate">{viewer.roleLabel}</p>
             </div>
           </div>
         </div>
       </Tile>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric label="מנוי פעיל" value={tierLabelHe(organization.subscriptionTier)} icon={CreditCard} />
-        <Metric label="תחום עבודה" value={profile.industryLabel} icon={BriefcaseBusiness} />
-        <Metric label="משתמשים פעילים" value={`${activeUsers}/${usersTotal}`} icon={UsersRound} progress={activePct} />
-        <Metric label="הרשאה" value={viewer.roleLabel} icon={ShieldCheck} />
-      </div>
+      <BentoGrid>
+        <Tile tone="neutral" span={12}>
+          <TileHeader eyebrow="הגדרות לפי אזור" />
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {SETUP_LINKS.map(({ href, title, body, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex gap-4 rounded-3xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-violet-200 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-violet-600 group-hover:text-white group-hover:ring-violet-600">
+                  <Icon className="h-6 w-6" aria-hidden />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-black text-slate-900 leading-tight">{title}</h3>
+                  <p className="mt-1 text-[13px] leading-relaxed text-slate-500 font-medium">{body}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </Tile>
 
-      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
-        <div className="flex flex-col gap-1 border-b border-[color:var(--line-subtle)] pb-4">
-          <h2 className="text-lg font-black text-[color:var(--ink-900)]">הגדרות לפי אחריות</h2>
-          <p className="text-[13px] leading-6 text-[color:var(--ink-500)]">
-            במקום חלון ארוך עם הכל ביחד, כל אזור מוביל למסך ייעודי וברור.
-          </p>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {SETUP_LINKS.map(({ href, title, body, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group flex gap-3 rounded-lg border border-[color:var(--line)] bg-white p-4 transition hover:border-[color:var(--ops-indigo)] hover:shadow-[var(--shadow-sm)]"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[color:var(--axis-ai-soft)] text-[color:var(--ops-indigo)]">
-                <Icon className="h-5 w-5" aria-hidden />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-[14px] font-black text-[color:var(--ink-900)]">{title}</span>
-                <span className="mt-1 block text-[12px] leading-5 text-[color:var(--ink-500)]">{body}</span>
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)]">
-        <h2 className="text-lg font-black text-[color:var(--ink-900)]">כללי סדר במערכת</h2>
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          {[
-            "פרטי העסק נמצאים רק בארגון ומיסוי.",
-            "מנועי סריקה וחיבורי API נמצאים רק במנועים וחיבורים.",
-            "מנוי BSD-YBM מופרד מגבייה מלקוחות.",
-          ].map((rule) => (
-            <div key={rule} className="flex items-start gap-3 rounded-lg bg-[color:var(--canvas-sunken)] p-3">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--state-success)]" aria-hidden />
-              <p className="text-[12px] font-semibold leading-6 text-[color:var(--ink-700)]">{rule}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  icon: Icon,
-  progress,
-}: {
-  label: string;
-  value: string;
-  icon: typeof Building2;
-  progress?: number;
-}) {
-  return (
-    <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--shadow-sm)]">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] font-black uppercase tracking-[0.08em] text-[color:var(--ink-500)]">{label}</p>
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--axis-ai-soft)] text-[color:var(--ops-indigo)]">
-          <Icon className="h-4 w-4" aria-hidden />
-        </span>
-      </div>
-      <p className="mt-3 truncate text-xl font-black text-[color:var(--ink-900)]" title={value}>{value}</p>
-      {typeof progress === "number" ? (
-        <div className="mt-3 h-1.5 rounded-full bg-[color:var(--progress-track)]">
-          <div className="h-full rounded-full bg-[color:var(--ops-teal)]" style={{ width: `${progress}%` }} />
-        </div>
-      ) : null}
+        <Tile tone="neutral" span={12}>
+          <TileHeader eyebrow="כללי סדר במערכת" />
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {[
+              "פרטי העסק מוגדרים במרכז הזהות והמיסוי.",
+              "מנועי AI וחיבורי API מנוהלים תחת 'מנועים וחיבורים'.",
+              "מנוי BSD-YBM מופרד לחלוטין ממערכות הגבייה שלכם.",
+            ].map((rule) => (
+              <div key={rule} className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-500" aria-hidden />
+                <p className="text-[13px] font-bold leading-6 text-slate-700">{rule}</p>
+              </div>
+            ))}
+          </div>
+        </Tile>
+      </BentoGrid>
     </div>
   );
 }

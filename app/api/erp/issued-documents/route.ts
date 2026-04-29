@@ -1,4 +1,6 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import { calculateIssuedDocumentTotals } from "@/lib/billing-calculations";
 import { prisma } from "@/lib/prisma";
 import { withWorkspacesAuth } from "@/lib/api-handler";
 import { jsonBadRequest } from "@/lib/api-json";
@@ -33,10 +35,18 @@ export const POST = withWorkspacesAuth(async (req, { orgId }) => {
     return jsonBadRequest("נדרשים type, clientName ולפחות פריט אחד.", "invalid_issued_payload");
   }
 
-  /* חישוב סכומים */
+  const org = await prisma.organization.findUnique({
+    where: { id: orgId },
+    select: { companyType: true, isReportable: true },
+  });
+  if (!org) {
+    return jsonBadRequest("ארגון לא נמצא.", "org_not_found");
+  }
+
   const amount = items.reduce((sum, i) => sum + i.qty * i.price, 0);
-  const vat = Math.round(amount * 0.17 * 100) / 100;
-  const total = Math.round((amount + vat) * 100) / 100;
+  const t = calculateIssuedDocumentTotals(amount, org.companyType, org.isReportable);
+  const vat = Math.round(t.vat * 100) / 100;
+  const total = Math.round(t.total * 100) / 100;
 
   /* מספר רץ — MAX(number) + 1 לסוג מסמך בתוך הארגון */
   const last = await prisma.issuedDocument.findFirst({
@@ -70,6 +80,12 @@ export const POST = withWorkspacesAuth(async (req, { orgId }) => {
       contactId: resolvedContactId ?? null,
     },
   });
+
+  revalidatePath("/app/erp");
+  revalidatePath("/app/crm");
+  if (resolvedContactId) {
+    revalidatePath(`/app/crm/client/${resolvedContactId}`);
+  }
 
   return NextResponse.json({ document: doc }, { status: 201 });
 });

@@ -5,12 +5,9 @@ type Props = {
   className?: string;
 };
 
+/** מרווח אנכי בין בלוקים; הרוחב המרבי מגיע מ־MainContainer */
 export default function WorkspaceEngineeringShell({ children, className = "" }: Props) {
   return (
-    <div
-      className={`cd-canvas mx-auto w-full max-w-[1240px] space-y-6 px-4 py-6 md:px-8 md:py-8 ${className}`}
-    >
-      {children}
-    </div>
+    <div className={`cd-canvas w-full min-w-0 space-y-6 py-4 md:py-6 ${className}`}>{children}</div>
   );
 }

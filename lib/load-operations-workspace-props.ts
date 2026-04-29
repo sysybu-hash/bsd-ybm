@@ -175,7 +175,7 @@ export async function loadOperationsWorkspaceProps(): Promise<OperationsWorkspac
             ? "יש backlog קטן של מסמכים לבדיקה, אבל הוא עדיין בשליטה."
             : "זרימת הקליטה נראית נקייה כרגע בלי מסמכים פתוחים לבדיקה.",
       status: reviewCount > 8 ? ("blocked" as const) : reviewCount > 0 ? ("attention" as const) : ("healthy" as const),
-      href: "/app/documents",
+      href: "/app/erp",
       cta: "לחלון המסמכים",
       metrics: [`${reviewCount} לבדיקה`, `${documentsRaw.length} מסמכים אחרונים`, `${autoScanCount} חיבורים עם Auto Scan`],
     },

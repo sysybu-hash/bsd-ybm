@@ -13,7 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import { CompanyType, DocType } from "@prisma/client";
-import { createIssuedDocument } from "@/app/dashboard/billing/actions";
+import { createIssuedDocument } from "@/app/actions/issued-documents";
 import { calculateIssuedDocumentTotals, VAT_RATE } from "@/lib/billing-calculations";
 import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 

@@ -1,4 +1,9 @@
+import { DocType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import {
+  readScanProjectClientLabels,
+  scannedDocumentNeedsCompletion,
+} from "@/lib/commercial-billing-helpers";
 import { loadFinanceForecast, type FinanceForecast } from "@/lib/finance-forecast";
 
 export type CommercialClientSnapshot = {
@@ -37,6 +42,17 @@ export type CommercialIssuedDocumentSnapshot = {
   total: number;
   date: string;
   contactId: string | null;
+  projectName: string | null;
+  projectId: string | null;
+  contactEmail: string | null;
+};
+
+export type CommercialDocumentDraftSnapshot = {
+  id: string;
+  fileName: string;
+  createdAt: string;
+  projectLabel: string | null;
+  clientLabel: string | null;
 };
 
 export type CommercialHubSnapshot = {
@@ -44,6 +60,8 @@ export type CommercialHubSnapshot = {
   contacts: CommercialClientSnapshot[];
   projects: CommercialProjectSnapshot[];
   recentIssued: CommercialIssuedDocumentSnapshot[];
+  /** מסמכי סריקה/ERP שעדיין לא הושלמו (לעומת חשבוניות שהונפקו) */
+  documentDrafts: CommercialDocumentDraftSnapshot[];
   /** אחוז שינוי בסכום מסמכים מונפקים (לפי שדה date) בין החודש הנוכחי לקודם */
   issuedMonthOverMonthPct: number;
   totals: {
@@ -51,8 +69,14 @@ export type CommercialHubSnapshot = {
     activeProjects: number;
     pipelineValue: number;
     pendingCollection: number;
+    /** כל מסמך הונפק ב-PENDING (כולל קבלות/זיכויים) — שימורי תאימות */
     pendingIssuedTotal: number;
     pendingIssuedCount: number;
+    /** חשבונית מס / מס-קבלה בלבד, PENDING — גבייה אמיתית */
+    billingPendingTotal: number;
+    billingPendingCount: number;
+    /** מסמכי סריקה/ERP שממתינים לטיפול לפני הפקה ללקוח */
+    documentDraftsCount: number;
     paidIssuedTotal: number;
     paidIssuedCount: number;
   };
@@ -71,10 +95,12 @@ export async function loadCommercialHubSnapshot(
     contactsRaw,
     projectsRaw,
     recentIssuedRaw,
+    documentsForDrafts,
     forecast,
     issuedThisMonth,
     issuedPrevMonth,
     pendingIssuedAgg,
+    pendingBillingAgg,
     paidIssuedAgg,
   ] = await Promise.all([
     prisma.contact.findMany({
@@ -131,6 +157,26 @@ export async function loadCommercialHubSnapshot(
         total: true,
         date: true,
         contactId: true,
+        contact: {
+          select: {
+            email: true,
+            name: true,
+            project: { select: { id: true, name: true } },
+          },
+        },
+      },
+    }),
+    prisma.document.findMany({
+      where: { organizationId },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+      select: {
+        id: true,
+        fileName: true,
+        status: true,
+        aiData: true,
+        createdAt: true,
+        _count: { select: { lineItems: true } },
       },
     }),
     loadFinanceForecast(organizationId),
@@ -144,6 +190,15 @@ export async function loadCommercialHubSnapshot(
     }),
     prisma.issuedDocument.aggregate({
       where: { organizationId, status: "PENDING" },
+      _sum: { total: true },
+      _count: { _all: true },
+    }),
+    prisma.issuedDocument.aggregate({
+      where: {
+        organizationId,
+        status: "PENDING",
+        type: { in: [DocType.INVOICE, DocType.INVOICE_RECEIPT] },
+      },
       _sum: { total: true },
       _count: { _all: true },
     }),
@@ -227,7 +282,22 @@ export async function loadCommercialHubSnapshot(
     total: document.total,
     date: document.date.toISOString(),
     contactId: document.contactId,
+    projectName: document.contact?.project?.name ?? null,
+    projectId: document.contact?.project?.id ?? null,
+    contactEmail: document.contact?.email ?? null,
   }));
+
+  const documentsNeedingWork = documentsForDrafts.filter((d) => scannedDocumentNeedsCompletion(d));
+  const documentDrafts = documentsNeedingWork.slice(0, 8).map((d) => {
+    const labels = readScanProjectClientLabels(d.aiData);
+    return {
+      id: d.id,
+      fileName: d.fileName,
+      createdAt: d.createdAt.toISOString(),
+      projectLabel: labels.projectLabel,
+      clientLabel: labels.clientLabel,
+    } satisfies CommercialDocumentDraftSnapshot;
+  });
 
   const issuedThisSum = issuedThisMonth._sum.total ?? 0;
   const issuedPrevSum = issuedPrevMonth._sum.total ?? 0;
@@ -243,6 +313,7 @@ export async function loadCommercialHubSnapshot(
     contacts,
     projects,
     recentIssued,
+    documentDrafts,
     issuedMonthOverMonthPct,
     totals: {
       clientsCount: contacts.length,
@@ -251,6 +322,9 @@ export async function loadCommercialHubSnapshot(
       pendingCollection: contacts.reduce((sum, contact) => sum + contact.totalPending, 0),
       pendingIssuedTotal: pendingIssuedAgg._sum.total ?? 0,
       pendingIssuedCount: pendingIssuedAgg._count._all,
+      billingPendingTotal: pendingBillingAgg._sum.total ?? 0,
+      billingPendingCount: pendingBillingAgg._count._all,
+      documentDraftsCount: documentsNeedingWork.length,
       paidIssuedTotal: paidIssuedAgg._sum.total ?? 0,
       paidIssuedCount: paidIssuedAgg._count._all,
     },

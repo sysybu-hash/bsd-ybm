@@ -27,6 +27,8 @@ type IndustryProfileBase = {
   clientsLabel: string;
   documentsLabel: string;
   recordsLabel: string;
+  /** תווית טאב ERP/כספים — כשלא מוגדר משתמשים ב-documentsLabel */
+  financeNavLabel?: string;
   homeTitle: string;
   homeDescription: string;
   templates: ProfessionalDocumentTemplate[];
@@ -102,8 +104,9 @@ const INDUSTRY_PROFILES: Record<IndustryType, IndustryProfileBase> = {
     ],
   },
   CONSTRUCTION: {
-    clientsLabel: "יזמים, אתרים ופרויקטים",
+    clientsLabel: "פרויקטים",
     documentsLabel: "יומנים, תוכניות ומסמכי שטח",
+    financeNavLabel: "כספים",
     recordsLabel: "אישורי שטח ומסמכי פרויקט",
     homeTitle: "מרחב עבודה לפרויקטים, אישורי שטח וחומרי בנייה.",
     homeDescription: "הממשק משנה שפה לניהול אתרים, אישורי ביצוע, יומני עבודה וחומרי גלם.",
@@ -220,6 +223,7 @@ export function getIndustryProfile(
     industryLabel,
     clientsLabel: readString(customLabels.clients, clientsBase),
     documentsLabel: readString(customLabels.documents, documentsBase),
+    financeNavLabel: profile.financeNavLabel,
     recordsLabel: readString(customLabels.records, recordsBase),
     homeTitle: homeTitleBase,
     homeDescription: homeDescriptionBase,

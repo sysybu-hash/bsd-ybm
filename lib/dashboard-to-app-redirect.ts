@@ -1,6 +1,7 @@
 /**
  * מיפוי רשמי מ־/dashboard (legacy) ל־/app (workspace מודרני).
  * query string נשמר אוטומטית דרך clone של nextUrl.
+ * יעדים מיושרים ל־`next.config.js` ול־`lib/workspace-canonical-routes.ts`.
  */
 
 /** מניעת לולאת הפניה: אף מטרה לא חוזרת ל־/dashboard */
@@ -24,30 +25,30 @@ export function mapDashboardPathToApp(pathname: string): string | null {
 
   const exact: Record<string, string> = {
     "/business": "/app/business",
-    "/crm": "/app/clients",
-    "/clients": "/app/clients",
-    "/erp": "/app/documents/erp",
-    "/erp/invoice": "/app/documents/issue",
-    "/invoice": "/app/documents/issue",
-    "/invoices": "/app/documents/issued",
-    "/documents": "/app/documents/erp",
-    "/scanner": "/app/documents/erp",
-    "/ai": "/app/ai",
-    "/intelligence": "/app/ai",
+    "/crm": "/app/crm",
+    "/clients": "/app/crm",
+    "/erp": "/app/erp",
+    "/erp/invoice": "/app/erp",
+    "/invoice": "/app/erp",
+    "/invoices": "/app/erp",
+    "/documents": "/app/erp",
+    "/scanner": "/app/erp",
+    "/ai": "/app",
+    "/intelligence": "/app",
     "/settings": "/app/settings/overview",
-    "/help": "/app/help",
+    "/help": "/app/settings/overview",
     "/admin": "/app/admin",
     "/meckano": "/app/operations/meckano",
     "/operations": "/app/operations",
     "/attendance": "/app/operations/meckano",
-    "/executive": "/app/ai",
-    "/finance": "/app/finance",
-    "/operator": "/app/ai",
-    "/control-center": "/app/inbox",
+    "/executive": "/app",
+    "/finance": "/app/erp",
+    "/operator": "/app",
+    "/control-center": "/app",
     "/success": "/app/success",
     "/advanced": "/app",
-    "/projects": "/app/projects",
-    "/inbox": "/app/inbox",
+    "/projects": "/app/crm",
+    "/inbox": "/app",
   };
 
   if (exact[path]) return finalizeAppTarget(exact[path]);
@@ -56,16 +57,16 @@ export function mapDashboardPathToApp(pathname: string): string | null {
     const sub = path.replace(/^\/legacy/, "") || "/";
     const legacyMap: Record<string, string> = {
       "/": "/app",
-      "/crm": "/app/clients",
-      "/clients": "/app/clients",
-      "/ai": "/app/ai",
+      "/crm": "/app/crm",
+      "/clients": "/app/crm",
+      "/ai": "/app",
       "/operations": "/app/operations",
-      "/finance": "/app/finance",
+      "/finance": "/app/erp",
       "/business": "/app/business",
       "/settings": "/app/settings/overview",
-      "/control-center": "/app/inbox",
-      "/documents": "/app/documents/erp",
-      "/invoice": "/app/documents/issue",
+      "/control-center": "/app",
+      "/documents": "/app/erp",
+      "/invoice": "/app/erp",
     };
     return finalizeAppTarget(legacyMap[sub] ?? "/app");
   }

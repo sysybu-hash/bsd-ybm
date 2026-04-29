@@ -11,6 +11,16 @@ import { getIndustryProfile } from "@/lib/professions/runtime";
 import WorkspacePageMotion from "@/components/workspace/WorkspacePageMotion";
 import MainContainer from "@/components/layout/MainContainer";
 import { WorkspaceContextProvider } from "@/components/workspace/WorkspaceContext";
+import { polishOrganizationState } from "@/app/actions/workspace-polish";
+import { needsIndustryConfigPolish } from "@/lib/polish/industry-config";
+
+const workspaceOrgSelect = {
+  industry: true,
+  constructionTrade: true,
+  industryConfigJson: true,
+  subscriptionTier: true,
+  subscriptionStatus: true,
+} as const;
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -25,21 +35,31 @@ export default async function AppWorkspaceLayout({ children }: { children: React
   }
 
   const organizationId = session.user.organizationId ?? null;
-  const [organization, hasMeckanoAccess] = await Promise.all([
+  const [organizationInitial, hasMeckanoAccess] = await Promise.all([
     organizationId
       ? prisma.organization.findUnique({
           where: { id: organizationId },
-          select: {
-            industry: true,
-            constructionTrade: true,
-            industryConfigJson: true,
-            subscriptionTier: true,
-            subscriptionStatus: true,
-          },
+          select: workspaceOrgSelect,
         })
       : Promise.resolve(null),
     canAccessMeckano(session),
   ]);
+
+  /** מילוי `industryConfigJson` ברירת מחדל — רק כשחסר; מרונדר מחדש עם נתוני DB אחרי patch */
+  let organization = organizationInitial;
+  if (
+    organizationId &&
+    organization &&
+    needsIndustryConfigPolish(organization.industryConfigJson)
+  ) {
+    const polish = await polishOrganizationState(organizationId);
+    if (polish.success && polish.data?.patched) {
+      organization = await prisma.organization.findUnique({
+        where: { id: organizationId },
+        select: workspaceOrgSelect,
+      });
+    }
+  }
 
   // הפניה לonboarding אם עדיין לא נבחר מקצוע (רק בדפים שאינם onboarding עצמו)
   // נבדוק URL מהבקשה — אך ב-RSC אין גישה ישירה ל-pathname, אז בדיקה בצד ה-middleware

@@ -24,12 +24,15 @@ import {
   Layers3,
   Loader2,
   Network,
+  PanelTopOpen,
   Play,
   ReceiptText,
   RotateCcw,
   Search,
+  Settings2,
   ShieldCheck,
   Sparkles,
+  TableProperties,
   UploadCloud,
   UserRound,
   X,
@@ -44,9 +47,24 @@ import { DROPZONE_ACCEPT, MAX_SCAN_FILE_BYTES } from "@/lib/scan-mime";
 import type { IndustryType } from "@/lib/professions/config";
 import type { ScanExtractionV5, ScanModeV5 } from "@/lib/scan-schema-v5";
 
+export type ScanHubPreviewPayload = {
+  fileName: string | null;
+  previewUrl: string | null;
+  previewKind: "image" | "pdf" | "none";
+  extraction: unknown | null;
+  streamStage: string | null;
+  scanError: string | null;
+  scanning: boolean;
+};
+
 type ScannerProps = {
   industry?: IndustryType;
   compactHeader?: boolean;
+  /** סנכרון תצוגה מקדימה מאוחדת (מסך מרכז AI) */
+  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
+  /** כאשר true — לחיצה על «תצוגה מקדימה» מפנה לפאנל חיצוני במקום מודל */
+  hubPreviewMode?: boolean;
+  onHubPreviewFocusRequest?: () => void;
 };
 
 type EnginePhase = "idle" | "running" | "ok" | "error" | "skipped";
@@ -240,9 +258,9 @@ function engineProgress(phase: EnginePhase, scanning: boolean, elapsed: number, 
 function progressTone(phase: EnginePhase) {
   if (phase === "ok") return "bg-emerald-500";
   if (phase === "error") return "bg-rose-500";
-  if (phase === "skipped") return "bg-slate-300";
+  if (phase === "skipped") return "bg-[color:var(--ink-300)]";
   if (phase === "running") return "bg-blue-600";
-  return "bg-slate-200";
+  return "bg-[color:var(--canvas-sunken)]";
 }
 
 function phaseIcon(phase: EnginePhase) {
@@ -262,6 +280,9 @@ function fileSizeLabel(size: number) {
 export default function MultiEngineScanner({
   industry: industryOverride,
   compactHeader = false,
+  onScanHubPreviewUpdate,
+  hubPreviewMode = false,
+  onHubPreviewFocusRequest,
 }: ScannerProps) {
   const { messages } = useI18n();
   const { data: session, status: authStatus } = useSession();
@@ -297,6 +318,7 @@ export default function MultiEngineScanner({
   const [scanError, setScanError] = useState<string | null>(null);
   const [savingTarget, setSavingTarget] = useState<"ERP" | "CRM" | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [resultsOpen, setResultsOpen] = useState(false);
 
   const activeFile = files[activeFileIndex] ?? null;
   const activePreviewUrl = previewUrls[activeFileIndex] ?? null;
@@ -440,6 +462,42 @@ export default function MultiEngineScanner({
 
   const v5 = useMemo(() => readV5FromAiData(aiData) ?? streamPartialV5, [aiData, streamPartialV5]);
 
+  const triggerFilePreview = useCallback(() => {
+    if (hubPreviewMode && onHubPreviewFocusRequest) {
+      onHubPreviewFocusRequest();
+      return;
+    }
+    setPreviewOpen(true);
+  }, [hubPreviewMode, onHubPreviewFocusRequest]);
+
+  useEffect(() => {
+    if (!onScanHubPreviewUpdate) return;
+    const extraction = v5 ?? aiData;
+    let previewKind: ScanHubPreviewPayload["previewKind"] = "none";
+    if (activeFile) {
+      if (isImageFile(activeFile)) previewKind = "image";
+      else if (isPdfFile(activeFile)) previewKind = "pdf";
+    }
+    onScanHubPreviewUpdate({
+      fileName: activeFile?.name ?? null,
+      previewUrl: activePreviewUrl,
+      previewKind,
+      extraction,
+      streamStage,
+      scanError,
+      scanning,
+    });
+  }, [
+    onScanHubPreviewUpdate,
+    v5,
+    aiData,
+    activeFile,
+    activePreviewUrl,
+    streamStage,
+    scanError,
+    scanning,
+  ]);
+
   const totalProgress = useMemo(() => {
     const phases = [telemetry.documentAI.phase, telemetry.gemini.phase, telemetry.gpt.phase];
     const values = phases.map((phase, index) => engineProgress(phase, scanning, elapsedSeconds, index * 6));
@@ -481,6 +539,7 @@ export default function MultiEngineScanner({
     setScanError(null);
     setTelemetry(IDLE_TELEMETRY);
     setPreviewOpen(false);
+    setResultsOpen(false);
   };
 
   const resetResult = () => {
@@ -489,6 +548,7 @@ export default function MultiEngineScanner({
     setStreamStage(null);
     setScanError(null);
     setTelemetry(IDLE_TELEMETRY);
+    setResultsOpen(false);
   };
 
   const runScan = async () => {
@@ -678,39 +738,42 @@ export default function MultiEngineScanner({
     },
   ];
 
-  const shellClass = compactHeader
-    ? "h-full min-h-0 overflow-hidden rounded-[24px] border border-white/20 bg-slate-50 text-slate-950 shadow-[0_32px_120px_rgba(2,6,23,0.32)]"
-    : "h-[calc(100vh-150px)] min-h-[620px] overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50 text-slate-950 shadow-sm";
+  const shellClass =
+    compactHeader && hubPreviewMode
+      ? "h-[clamp(520px,min(78vh,860px),min(94vh,940px))] w-full overflow-hidden rounded-[24px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--cd-shadow)]"
+      : compactHeader
+        ? "h-full min-h-0 overflow-hidden rounded-[24px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--cd-shadow)]"
+        : "h-[calc(100vh-150px)] min-h-[620px] overflow-hidden rounded-[24px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] shadow-[var(--cd-shadow)]";
 
   return (
     <div id="erp-multi-scanner" data-scanner-board="true" dir="rtl" lang="he" className={shellClass}>
       <div className="flex h-full min-h-0 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white/95 px-3 py-2.5 backdrop-blur xl:px-4">
+        <header className="shrink-0 border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 px-3 py-3 backdrop-blur xl:px-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-700 text-white shadow-sm">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--ink-900)] text-white shadow-sm">
                 <ActiveIcon className="h-5 w-5" aria-hidden />
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-base font-black tracking-tight text-slate-950 xl:text-lg">לוח סריקה חכם</h1>
-                  <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-black text-blue-700">
+                  <h1 className="text-base font-black tracking-tight text-[color:var(--ink-900)] xl:text-lg">לוח סריקה חכם</h1>
+                  <span className="rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-2.5 py-1 text-[11px] font-black text-[color:var(--ink-700)]">
                     CRM + ERP + Multi-Engine
                   </span>
                 </div>
-                <p className="mt-0.5 max-w-4xl truncate text-[11px] font-medium text-slate-500 xl:text-xs">
+                <p className="mt-0.5 max-w-4xl truncate text-[11px] font-medium text-[color:var(--ink-500)] xl:text-xs">
                   מותאם ל-{config.label}: עבודה מלאה ב-100% זום, מסלולי מנועים, בחירת מודל, בחירת מעבדי Document AI,
                   שיוך לפרויקט וללקוח, ושמירה ישירה ל-ERP או CRM.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
               <button
                 type="button"
-                onClick={() => setPreviewOpen(true)}
+                onClick={triggerFilePreview}
                 disabled={!activeFile || !activePreviewUrl}
-                className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 text-[11px] font-black text-[color:var(--ink-800)] transition hover:bg-[color:var(--canvas-sunken)] disabled:cursor-not-allowed disabled:opacity-45"
               >
                 <Eye className="h-4 w-4" aria-hidden />
                 תצוגה מקדימה
@@ -718,7 +781,7 @@ export default function MultiEngineScanner({
               <button
                 type="button"
                 onClick={resetResult}
-                className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex h-8.5 items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 text-[11px] font-black text-[color:var(--ink-800)] transition hover:bg-[color:var(--canvas-sunken)]"
               >
                 <RotateCcw className="h-4 w-4" aria-hidden />
                 איפוס תוצאה
@@ -726,7 +789,7 @@ export default function MultiEngineScanner({
               <button
                 type="button"
                 onClick={clearWorkspace}
-                className="inline-flex h-8.5 items-center gap-2 rounded-xl bg-slate-950 px-4 text-[11px] font-black text-white transition hover:bg-slate-800"
+                className="inline-flex h-8.5 items-center gap-2 rounded-xl bg-[color:var(--ink-900)] px-4 text-[11px] font-black text-white transition hover:bg-[color:var(--ink-800)]"
               >
                 ניקוי לוח
               </button>
@@ -734,7 +797,7 @@ export default function MultiEngineScanner({
                 type="button"
                 onClick={runScan}
                 disabled={scanning || !activeFile || authStatus !== "authenticated"}
-                className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-[11px] font-black text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-[color:var(--axis-clients)] px-4 text-[11px] font-black text-white shadow-md transition hover:bg-[color:var(--axis-clients-strong)] disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {scanning ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Play className="h-4 w-4" aria-hidden />}
                 {scanning ? "מריץ פענוח..." : activeFile ? "הפעל סריקה" : "בחר קובץ לסריקה"}
@@ -743,8 +806,10 @@ export default function MultiEngineScanner({
           </div>
         </header>
 
-        <main className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden p-2.5 xl:grid-cols-[260px_minmax(0,1fr)_280px] 2xl:grid-cols-[280px_minmax(0,1fr)_300px]">
-          <aside className="min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <main
+          className={`grid min-h-0 flex-1 grid-cols-1 gap-3 p-2.5 xl:grid-cols-3 ${hubPreviewMode ? "overflow-y-auto overflow-x-hidden" : "overflow-hidden"}`}
+        >
+          <aside className="min-h-0 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--cd-shadow-sm)]">
             <div className="flex h-full min-h-0 flex-col overflow-y-auto p-3">
               <SectionTitle eyebrow="מנועים" title="תכנון הסריקה" icon={Network} />
 
@@ -752,7 +817,7 @@ export default function MultiEngineScanner({
                 <CardShell>
                   <div className="mb-2 flex items-center gap-2">
                     <BarChart3 className="h-4 w-4 text-blue-600" aria-hidden />
-                    <h2 className="text-sm font-black text-slate-950">מצב סריקה</h2>
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">מצב סריקה</h2>
                   </div>
                   <div className="space-y-2">
                     {SCAN_MODES.map((mode) => {
@@ -766,17 +831,17 @@ export default function MultiEngineScanner({
                           disabled={scanning}
                           className={`flex w-full items-start gap-3 rounded-2xl border p-3 text-start transition ${
                             selected
-                              ? "border-slate-950 bg-slate-950 text-white"
-                              : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50"
+                              ? "border-[color:var(--ink-900)] bg-[color:var(--ink-900)] text-white"
+                              : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]"
                           }`}
                         >
                           <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${selected ? "text-white" : "text-blue-600"}`} aria-hidden />
                           <span className="min-w-0">
                             <span className="block text-sm font-black">{mode.label}</span>
-                            <span className={`mt-1 block text-[11px] leading-4 ${selected ? "text-slate-300" : "text-slate-500"}`}>
+                            <span className={`mt-1 block text-[11px] leading-4 ${selected ? "text-[color:var(--ink-400)]" : "text-[color:var(--ink-500)]"}`}>
                               {mode.description}
                             </span>
-                            <span className={`mt-1 block text-[11px] font-bold ${selected ? "text-slate-200" : "text-slate-600"}`}>
+                            <span className={`mt-1 block text-[11px] font-bold ${selected ? "text-[color:var(--ink-300)]" : "text-[color:var(--ink-600)]"}`}>
                               פלט: {mode.output}
                             </span>
                           </span>
@@ -788,8 +853,8 @@ export default function MultiEngineScanner({
 
                 <CardShell>
                   <div className="mb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-slate-500" aria-hidden />
-                    <h2 className="text-sm font-black text-slate-950">אסטרטגיית מנועים</h2>
+                    <ShieldCheck className="h-4 w-4 text-[color:var(--ink-500)]" aria-hidden />
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">אסטרטגיית מנועים</h2>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     {RUN_MODES.map((mode) => {
@@ -804,29 +869,29 @@ export default function MultiEngineScanner({
                           className={`rounded-2xl border px-3 py-2 text-start transition ${
                             selected
                               ? "border-blue-500 bg-blue-50 text-blue-900"
-                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                              : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-700)] hover:bg-[color:var(--canvas-sunken)]"
                           }`}
                         >
                           <span className="block text-xs font-black">{mode.label}</span>
-                          <span className="mt-1 block text-[10px] font-semibold text-slate-500">{mode.short}</span>
+                          <span className="mt-1 block text-[10px] font-semibold text-[color:var(--ink-500)]">{mode.short}</span>
                         </button>
                       );
                     })}
                   </div>
-                  <p className="mt-2 rounded-2xl bg-slate-50 p-3 text-[11px] font-semibold leading-5 text-slate-600">
+                  <p className="mt-2 rounded-2xl bg-[color:var(--canvas-sunken)] p-3 text-[11px] font-semibold leading-5 text-[color:var(--ink-600)]">
                     {selectedRunMode.description}
                   </p>
                 </CardShell>
 
                 <CardShell>
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <h2 className="text-sm font-black text-slate-950">יכולות מנוע לפי מצב</h2>
-                    {engineMetaLoading ? <Loader2 className="h-4 w-4 animate-spin text-slate-400" aria-hidden /> : null}
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">יכולות מנוע לפי מצב</h2>
+                    {engineMetaLoading ? <Loader2 className="h-4 w-4 animate-spin text-[color:var(--ink-400)]" aria-hidden /> : null}
                   </div>
 
                   <div className="space-y-3">
                     <div>
-                      <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Document AI</p>
+                      <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-[color:var(--ink-400)]">Document AI</p>
                       <div className="flex flex-wrap gap-2">
                         {docAiProcessors.length > 0 ? (
                           docAiProcessors.map((processor) => (
@@ -842,7 +907,7 @@ export default function MultiEngineScanner({
                           <ProcessorBadge label="OCR + Forms + Invoice + Expense" sublabel="Processors" active configured={false} />
                         )}
                       </div>
-                      <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-600">
+                      <p className="mt-2 text-[11px] font-semibold leading-5 text-[color:var(--ink-600)]">
                         סדר עדיפות במצב הנוכחי: {docAiRecommendedKinds.join(" -> ")}
                       </p>
                     </div>
@@ -858,7 +923,7 @@ export default function MultiEngineScanner({
                           value={resolvedOpenAiModel}
                           onChange={(event) => setOpenAiModel(event.target.value)}
                           disabled={scanning}
-                          className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-200"
+                          className="h-10 w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-3 text-sm font-bold text-[color:var(--ink-900)] outline-none focus:ring-2 focus:ring-blue-200"
                         >
                           {openAiModelOptions.map((option) => (
                             <option key={option.id} value={option.id}>
@@ -873,8 +938,8 @@ export default function MultiEngineScanner({
 
                 <CardShell className="min-h-[190px]">
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <h2 className="text-sm font-black text-slate-950">התקדמות מנועים</h2>
-                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600">
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">התקדמות מנועים</h2>
+                    <span className="rounded-full bg-[color:var(--canvas-sunken)] px-2.5 py-1 text-[11px] font-black text-[color:var(--ink-600)]">
                       {totalProgress}% כולל
                     </span>
                   </div>
@@ -888,15 +953,15 @@ export default function MultiEngineScanner({
                         <div
                           key={engine.key}
                           className={`rounded-2xl border p-3 ${
-                            activeInMode ? "border-slate-200 bg-white" : "border-slate-200 bg-slate-50 opacity-70"
+                            activeInMode ? "border-[color:var(--line)] bg-[color:var(--canvas-raised)]" : "border-[color:var(--line)] bg-[color:var(--canvas-sunken)] opacity-70"
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex min-w-0 items-start gap-2">
-                              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden />
+                              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--ink-500)]" aria-hidden />
                               <div className="min-w-0">
-                                <p className="truncate text-xs font-black text-slate-900">{engine.label}</p>
-                                <p className="text-[11px] font-semibold text-slate-500">{engine.detail}</p>
+                                <p className="truncate text-xs font-black text-[color:var(--ink-900)]">{engine.label}</p>
+                                <p className="text-[11px] font-semibold text-[color:var(--ink-500)]">{engine.detail}</p>
                               </div>
                             </div>
                             <span
@@ -907,24 +972,24 @@ export default function MultiEngineScanner({
                               {engine.configured ? "מוגדר" : "חסר"}
                             </span>
                           </div>
-                          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--canvas-sunken)]">
                             <div
                               className={`h-full rounded-full transition-all duration-500 ${progressTone(engine.telemetry.phase)}`}
                               style={{ width: `${progress}%` }}
                             />
                           </div>
                           <div className="mt-2 flex items-center justify-between gap-2 text-[11px] font-black">
-                            <span className="inline-flex items-center gap-1 text-slate-600">
+                            <span className="inline-flex items-center gap-1 text-[color:var(--ink-600)]">
                               <StatusIcon
                                 className={`h-3.5 w-3.5 ${engine.telemetry.phase === "running" ? "animate-spin" : ""}`}
                                 aria-hidden
                               />
                               {phaseLabel(engine.telemetry.phase)}
                             </span>
-                            <span className="text-slate-400">{engine.telemetry.ms ? `${engine.telemetry.ms}ms` : `${progress}%`}</span>
+                            <span className="text-[color:var(--ink-400)]">{engine.telemetry.ms ? `${engine.telemetry.ms}ms` : `${progress}%`}</span>
                           </div>
                           {engine.telemetry.detail ? (
-                            <p className="mt-2 rounded-xl bg-slate-50 p-2 text-[11px] font-semibold leading-4 text-slate-500">
+                            <p className="mt-2 rounded-xl bg-[color:var(--canvas-sunken)] p-2 text-[11px] font-semibold leading-4 text-[color:var(--ink-500)]">
                               {truncateText(engine.telemetry.detail, 160)}
                             </p>
                           ) : null}
@@ -937,28 +1002,24 @@ export default function MultiEngineScanner({
             </div>
           </aside>
 
-          <section className="min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <section className="min-h-0 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--cd-shadow-sm)]">
             <div className="flex h-full min-h-0 flex-col">
-              <div className="shrink-0 border-b border-slate-200 px-3 py-2.5">
+              <div className="shrink-0 border-b border-[color:var(--line)] bg-[color:var(--canvas-sunken)]/35 px-3 py-2.5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-black text-slate-950 xl:text-base">מרכז פענוח ותוצרים</p>
-                      {streamStage ? (
-                        <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-                          {scanning ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : null}
-                          {STREAM_STAGE_LABELS[streamStage] ?? streamStage}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="mt-1 text-[11px] text-slate-500 xl:text-xs">
-                      אין יותר תצוגה מקדימה קבועה בלוח. כל השטח המרכזי מוקדש לתוצאה, QA, טבלאות ומיפוי.
-                    </p>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <PanelTopOpen className="h-4 w-4 text-blue-600" aria-hidden />
+                    <p className="text-sm font-black text-[color:var(--ink-900)] xl:text-base">דשבורד סריקה</p>
+                    {streamStage ? (
+                      <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+                        {scanning ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : null}
+                        {STREAM_STAGE_LABELS[streamStage] ?? streamStage}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <MiniPill label="מצב" value={selectedScanMode.label} />
-                    <MiniPill label="מסלול" value={selectedRunMode.short} />
-                    <MiniPill label="קובץ" value={activeFile?.name ?? "לא נבחר"} />
+                    <MiniPill label="מנוע" value={selectedRunMode.short} />
+                    <MiniPill label="קובץ" value={activeFile?.name ?? "אין"} />
                   </div>
                 </div>
               </div>
@@ -975,142 +1036,95 @@ export default function MultiEngineScanner({
                 ) : null}
 
                 <div className="grid gap-4">
-                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                    <StatTile label="ספק / מקור" value={v5?.vendor || "-"} hint="Vendor / source" />
-                    <StatTile label="סוג מסמך" value={v5?.docType || "-"} hint="Doc type" />
-                    <StatTile label="שורות ERP" value={String(v5?.lineItems.length ?? 0)} hint="Line items" />
-                    <StatTile label="פריטי BOQ" value={String(v5?.billOfQuantities.length ?? 0)} hint="Quantities" />
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <StatTile label="ספק" value={v5?.vendor || "-"} hint="זיהוי" />
+                    <StatTile label="סוג" value={v5?.docType || "-"} hint="מסמך" />
+                    <StatTile label="ERP" value={String(v5?.lineItems.length ?? 0)} hint="שורות" />
+                    <StatTile label="כמויות" value={String(v5?.billOfQuantities.length ?? 0)} hint="פריטים" />
                   </div>
 
-                  {!v5 && !scanError ? (
-                    <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_280px]">
-                      <CardShell className="min-h-[280px]">
-                        <div className="flex h-full flex-col items-center justify-center text-center">
-                          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-50 text-blue-600">
-                            <UploadCloud className="h-8 w-8" aria-hidden />
-                          </div>
-                          <h3 className="text-xl font-black text-slate-950">בחרו קובץ והפעילו סריקה</h3>
-                          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-500">
-                            אחרי ההרצה נראה כאן סיכום, שורות ERP, כתב כמויות, מטא-דאטה, סטטוס מנועים והמלצות פעולה.
-                          </p>
-                        </div>
-                      </CardShell>
+                  <div className="grid gap-3 lg:grid-cols-3">
+                    <DashboardAction
+                      icon={Eye}
+                      label="תצוגה"
+                      hint={activeFile ? activeFile.name : "בחר קובץ"}
+                      onClick={triggerFilePreview}
+                      disabled={!activeFile || !activePreviewUrl}
+                    />
+                    <DashboardAction
+                      icon={TableProperties}
+                      label="תוצאות"
+                      hint={v5 ? `${v5.lineItems.length + v5.billOfQuantities.length} שורות` : "ממתין"}
+                      onClick={() => setResultsOpen(true)}
+                      disabled={!v5}
+                    />
+                    <DashboardAction
+                      icon={scanning ? Loader2 : Play}
+                      label={scanning ? "סורק" : "סריקה"}
+                      hint={`${selectedRunMode.short} | ${selectedScanMode.label}`}
+                      onClick={runScan}
+                      disabled={scanning || !activeFile || authStatus !== "authenticated"}
+                      primary
+                      spinning={scanning}
+                    />
+                  </div>
 
-                      <CardShell>
-                        <div className="mb-3 flex items-center gap-2">
-                          <ClipboardCheck className="h-4 w-4 text-blue-600" aria-hidden />
-                          <h3 className="text-sm font-black text-slate-950">מה יופיע כאן</h3>
-                        </div>
-                        <div className="space-y-2">
-                          <Capability text="תוצאה חיה מתוך ה-stream עוד לפני סיום מלא." />
-                          <Capability text="שורות ERP, BOQ, מטא-דאטה ותקציר מסמך." />
-                          <Capability text="מיזוג בין Document AI, Gemini ו-OpenAI." />
-                          <Capability text="שמירה ישירה ל-ERP או ל-CRM אחרי QA." />
-                        </div>
-                      </CardShell>
-                    </div>
-                  ) : null}
-
-                  {v5 ? (
-                    <div className="grid gap-3 xl:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.95fr)]">
-                      <div className="space-y-3">
-                        <CardShell>
-                          <div className="mb-3 flex items-center gap-2">
-                            <Layers3 className="h-4 w-4 text-blue-600" aria-hidden />
-                            <h3 className="text-sm font-black text-slate-950">תקציר והבנת מסמך</h3>
-                          </div>
-                          <div className="grid gap-3 md:grid-cols-2">
-                            <Metric label="תאריך" value={v5.date || "-"} />
-                            <Metric label="סה״כ" value={String(v5.total ?? 0)} />
-                            <Metric label="פרויקט" value={v5.documentMetadata.project || projectLabel || "-"} />
-                            <Metric label="לקוח" value={v5.documentMetadata.client || clientLabel || "-"} />
-                          </div>
-                          <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">Summary</p>
-                            <p className="text-sm font-semibold leading-7 text-slate-800">
-                              {v5.summary || "אין סיכום עדיין."}
-                            </p>
-                          </div>
-                          <div className="mt-3 grid gap-2 md:grid-cols-2">
-                            <MetaLine label="מקור קובץ" value={v5.documentMetadata.sourceFileName || activeFile?.name || "-"} />
-                            <MetaLine label="Sheet / discipline" value={[v5.documentMetadata.sheetIndex, v5.documentMetadata.discipline].filter(Boolean).join(" | ") || "-"} />
-                            <MetaLine label="Drawing refs" value={v5.documentMetadata.drawingRefs?.join(", ") || "-"} />
-                            <MetaLine label="Engines used" value={v5.enginesUsed?.join(" / ") || selectedRunMode.engines.join(" / ")} />
-                          </div>
-                        </CardShell>
-
-                        {v5.priceAlertPending ? (
-                          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-black text-amber-800">
-                            חסרים מחירים או שיש שורות חלקיות. לפני שמירה ל-ERP מומלץ לעבור על שורות הסכום.
-                          </div>
-                        ) : null}
-
-                        <CardShell>
-                          <div className="mb-3 flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <Brain className="h-4 w-4 text-violet-600" aria-hidden />
-                              <h3 className="text-sm font-black text-slate-950">יכולת מנועים זמינה בלוח</h3>
-                            </div>
-                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600">
-                              {docAiProcessorSummary}
-                            </span>
-                          </div>
-                          <div className="grid gap-2 md:grid-cols-2">
-                            <Capability text="Document AI: OCR, Invoice, Expense, Form processors." />
-                            <Capability text="Gemini: ראיית מסמכים, PDF, תכניות, תמונות ורב-עמודי." />
-                            <Capability text="OpenAI: מיזוג, נרמול, QA ושדות משלימים." />
-                            <Capability text="Stream NDJSON עם partial V5 ו-telemetry לכל מנוע." />
-                          </div>
-                        </CardShell>
+                  <CardShell className="min-h-[280px]">
+                    <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                      <div className={`flex h-20 w-20 items-center justify-center rounded-[2rem] ${v5 ? "bg-emerald-50 text-emerald-700" : scanning ? "bg-blue-50 text-blue-700" : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-500)]"}`}>
+                        {v5 ? (
+                          <CheckCircle2 className="h-10 w-10" aria-hidden />
+                        ) : scanning ? (
+                          <Loader2 className="h-10 w-10 animate-spin" aria-hidden />
+                        ) : (
+                          <UploadCloud className="h-10 w-10" aria-hidden />
+                        )}
                       </div>
-
-                      <div className="space-y-3">
-                        {v5.lineItems.length > 0 ? (
-                          <ResultRows
-                            title="שורות ERP"
-                            rows={v5.lineItems.map((row) => ({
-                              main: row.description,
-                              meta: [row.sku, row.unitPrice == null ? null : `יח׳ ${row.unitPrice}`].filter(Boolean).join(" | "),
-                              amount:
-                                row.lineTotal == null ? (row.quantity == null ? "-" : String(row.quantity)) : String(row.lineTotal),
-                            }))}
-                          />
-                        ) : null}
-
-                        {v5.billOfQuantities.length > 0 ? (
-                          <ResultRows
-                            title="כתב כמויות"
-                            rows={v5.billOfQuantities.map((row) => ({
-                              main: row.description,
-                              meta: [row.itemRef, row.material, row.unit].filter(Boolean).join(" | "),
-                              amount: row.quantity == null ? "-" : String(row.quantity),
-                            }))}
-                          />
-                        ) : null}
-
-                        <CardShell>
-                          <div className="mb-3 flex items-center gap-2">
-                            <Boxes className="h-4 w-4 text-slate-500" aria-hidden />
-                            <h3 className="text-sm font-black text-slate-950">מיפוי API ופעולות</h3>
-                          </div>
-                          <div className="space-y-2 text-[11px] font-semibold leading-5 text-slate-600">
-                            <Capability text={`Document AI processors: ${docAiProcessorSummary}.`} />
-                            <Capability text="GET /api/scan/engine-meta: מצב מנועים, מעבדים ומודלי GPT/Gemini." />
-                            <Capability text="POST /api/scan/tri-engine/stream: NDJSON חי עם telemetry ו-partial V5." />
-                            <Capability text="POST /api/scan/tri-engine: סריקה רגילה ושמירה אופציונלית." />
-                            <Capability text="GET /api/org/scan-lookups: חיפוש פרויקט ולקוח CRM." />
-                            <Capability text="saveScannedDocumentAction: אישור ושמירה ל-ERP או CRM." />
-                          </div>
-                        </CardShell>
+                      <div>
+                        <h3 className="text-xl font-black text-[color:var(--ink-900)]">
+                          {v5 ? "פוענח" : scanning ? "בעבודה" : "בחר קובץ"}
+                        </h3>
+                        <p className="mt-2 text-sm font-bold text-[color:var(--ink-500)]">
+                          {v5 ? "פתח את התוצאות לבדיקה." : activeFile ? "מוכן לסריקה." : "גרור קובץ בצד."}
+                        </p>
+                      </div>
+                      <div className="grid w-full max-w-xl grid-cols-3 gap-2">
+                        <IconMetric icon={Settings2} label="מצב" value={selectedScanMode.label} />
+                        <IconMetric icon={Network} label="מנוע" value={selectedRunMode.short} />
+                        <IconMetric icon={Gauge} label="התקדמות" value={`${totalProgress}%`} />
                       </div>
                     </div>
-                  ) : null}
+                  </CardShell>
+
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {engineRows.map((engine) => {
+                      const Icon = engine.icon;
+                      const StatusIcon = phaseIcon(engine.telemetry.phase);
+                      return (
+                        <button
+                          key={engine.key}
+                          type="button"
+                          title={engine.detail}
+                          className="flex items-center justify-between gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 text-start shadow-sm"
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Icon className="h-4 w-4 shrink-0 text-blue-600" aria-hidden />
+                            <span className="truncate text-xs font-black text-[color:var(--ink-900)]">{engine.label}</span>
+                          </span>
+                          <span className="flex shrink-0 items-center gap-1 text-[11px] font-black text-[color:var(--ink-500)]">
+                            <StatusIcon className={`h-3.5 w-3.5 ${engine.telemetry.phase === "running" ? "animate-spin" : ""}`} aria-hidden />
+                            {phaseLabel(engine.telemetry.phase)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <aside className="min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <aside className="min-h-0 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--cd-shadow-sm)]">
             <div className="flex h-full min-h-0 flex-col overflow-y-auto p-3">
               <SectionTitle eyebrow="קלט" title="קבצים, שיוך ופעולות" icon={UploadCloud} />
 
@@ -1121,20 +1135,20 @@ export default function MultiEngineScanner({
                     className={`group cursor-pointer rounded-2xl border border-dashed p-4 text-center transition ${
                       isDragActive
                         ? "border-blue-500 bg-blue-50"
-                        : "border-slate-300 bg-slate-50 hover:border-blue-400 hover:bg-blue-50/60"
+                        : "border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] hover:border-blue-400 hover:bg-blue-50/60"
                     }`}
                   >
                     <input {...getInputProps()} />
-                    <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+                    <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:var(--canvas-raised)] shadow-sm ring-1 ring-[color:var(--line)]">
                       <UploadCloud className="h-5 w-5 text-blue-600" aria-hidden />
                     </div>
-                    <p className="text-sm font-black text-slate-900">גררו קבצים או לחצו להעלאה</p>
-                    <p className="mt-1 text-[11px] text-slate-500">PDF, תמונות ומסמכים נתמכים.</p>
+                    <p className="text-sm font-black text-[color:var(--ink-900)]">גררו קבצים או לחצו להעלאה</p>
+                    <p className="mt-1 text-[11px] text-[color:var(--ink-500)]">PDF, תמונות ומסמכים נתמכים.</p>
                   </div>
 
                   <div className="mt-3 space-y-2">
                     {files.length === 0 ? (
-                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-center text-xs text-slate-500">
+                      <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-3 text-center text-xs text-[color:var(--ink-500)]">
                         עדיין לא נבחר קובץ.
                       </div>
                     ) : (
@@ -1146,13 +1160,13 @@ export default function MultiEngineScanner({
                           className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-start transition ${
                             index === activeFileIndex
                               ? "border-blue-300 bg-blue-50 text-blue-950"
-                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                              : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-700)] hover:bg-[color:var(--canvas-sunken)]"
                           }`}
                         >
                           <FileSearch className="h-4 w-4 shrink-0" aria-hidden />
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-xs font-black">{file.name}</span>
-                            <span className="text-[11px] text-slate-500">{fileSizeLabel(file.size)}</span>
+                            <span className="text-[11px] text-[color:var(--ink-500)]">{fileSizeLabel(file.size)}</span>
                           </span>
                           {index === activeFileIndex ? (
                             <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-black text-blue-700">פעיל</span>
@@ -1165,14 +1179,14 @@ export default function MultiEngineScanner({
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setPreviewOpen(true)}
+                      onClick={triggerFilePreview}
                       disabled={!activeFile || !activePreviewUrl}
-                      className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-sm font-black text-[color:var(--ink-700)] transition hover:bg-[color:var(--canvas-sunken)] disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       <Eye className="h-4 w-4" aria-hidden />
                       תצוגה
                     </button>
-                    <div className="flex h-10 items-center justify-center rounded-xl bg-slate-100 px-3 text-[11px] font-black text-slate-600">
+                    <div className="flex h-10 items-center justify-center rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-[11px] font-black text-[color:var(--ink-600)]">
                       {activeFile ? fileSizeLabel(activeFile.size) : "אין קובץ"}
                     </div>
                   </div>
@@ -1180,31 +1194,31 @@ export default function MultiEngineScanner({
 
                 <CardShell>
                   <div className="mb-2 flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-slate-500" aria-hidden />
-                    <h2 className="text-sm font-black text-slate-950">שיוך CRM / ERP</h2>
-                    {lookupsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" aria-hidden /> : null}
+                    <Building2 className="h-4 w-4 text-[color:var(--ink-500)]" aria-hidden />
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">שיוך CRM / ERP</h2>
+                    {lookupsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin text-[color:var(--ink-400)]" aria-hidden /> : null}
                   </div>
 
-                  <label className="block text-xs font-black text-slate-500">
+                  <label className="block text-xs font-black text-[color:var(--ink-500)]">
                     חיפוש לקוח או פרויקט
-                    <div className="mt-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3">
-                      <Search className="h-4 w-4 text-slate-400" aria-hidden />
+                    <div className="mt-1 flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3">
+                      <Search className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
                       <input
                         value={lookupSearch}
                         onChange={(event) => setLookupSearch(event.target.value)}
                         placeholder="שם לקוח, פרויקט או אתר..."
-                        className="h-10 min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+                        className="h-10 min-w-0 flex-1 bg-transparent text-sm font-semibold text-[color:var(--ink-900)] outline-none placeholder:text-[color:var(--ink-400)]"
                       />
                     </div>
                   </label>
 
-                  <label className="mt-3 block text-xs font-black text-slate-500">
+                  <label className="mt-3 block text-xs font-black text-[color:var(--ink-500)]">
                     פרויקט
                     <select
                       value={selectedProjectId}
                       onChange={(event) => setSelectedProjectId(event.target.value)}
                       disabled={scanning}
-                      className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-200"
+                      className="mt-1 h-10 w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-3 text-sm font-bold text-[color:var(--ink-900)] outline-none focus:ring-2 focus:ring-blue-200"
                     >
                       <option value="">ללא פרויקט</option>
                       {visibleProjects.map((project) => (
@@ -1216,13 +1230,13 @@ export default function MultiEngineScanner({
                     </select>
                   </label>
 
-                  <label className="mt-3 block text-xs font-black text-slate-500">
+                  <label className="mt-3 block text-xs font-black text-[color:var(--ink-500)]">
                     לקוח CRM
                     <select
                       value={selectedContactId}
                       onChange={(event) => setSelectedContactId(event.target.value)}
                       disabled={scanning}
-                      className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-200"
+                      className="mt-1 h-10 w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-3 text-sm font-bold text-[color:var(--ink-900)] outline-none focus:ring-2 focus:ring-blue-200"
                     >
                       <option value="">ללא לקוח</option>
                       {contacts.map((contact) => (
@@ -1237,7 +1251,7 @@ export default function MultiEngineScanner({
                 <CardShell>
                   <div className="mb-3 flex items-center gap-2">
                     <Play className="h-4 w-4 text-blue-600" aria-hidden />
-                    <h2 className="text-sm font-black text-slate-950">פעולות ושמירה</h2>
+                    <h2 className="text-sm font-black text-[color:var(--ink-900)]">פעולות ושמירה</h2>
                   </div>
                   <div className="grid gap-2">
                     <button
@@ -1281,18 +1295,126 @@ export default function MultiEngineScanner({
         </main>
       </div>
 
-      {previewOpen && activeFile && activePreviewUrl ? (
-        <div className="dashboard-design-shell fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
-          <div className="workspace-window flex h-[min(92vh,980px)] w-[min(96vw,1500px)] flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-white shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)]">
+      {resultsOpen && v5 ? (
+        <div className="dashboard-design-shell fixed inset-0 z-50 flex items-center justify-center bg-[color:var(--ink-900)]/55 p-4 backdrop-blur-sm">
+          <div className="workspace-window flex h-[min(92vh,980px)] w-[min(96vw,1500px)] flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)]">
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--dash-line)] px-4 py-3">
               <div className="min-w-0">
-                <p className="truncate text-sm font-black text-slate-950">{activeFile.name}</p>
-                <p className="mt-0.5 text-xs text-slate-500">תצוגה מקדימה נפתחה בחלון נפרד כדי לשמור על לוח סריקה נקי.</p>
+                <p className="truncate text-sm font-black text-[color:var(--ink-900)]">תוצאות פענוח</p>
+                <p className="mt-0.5 truncate text-xs text-[color:var(--ink-500)]">
+                  {activeFile?.name ?? v5.documentMetadata.sourceFileName ?? "מסמך מפוענח"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setResultsOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-[color:var(--dash-muted)] transition hover:text-[color:var(--dash-purple)]"
+                aria-label="סגור תוצאות"
+              >
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto bg-[color:var(--dash-canvas)] p-4">
+              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(340px,0.75fr)]">
+                <div className="space-y-4">
+                  <CardShell>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <Metric label="תאריך" value={v5.date || "-"} />
+                      <Metric label="סהכ" value={String(v5.total ?? 0)} />
+                      <Metric label="פרויקט" value={v5.documentMetadata.project || projectLabel || "-"} />
+                      <Metric label="לקוח" value={v5.documentMetadata.client || clientLabel || "-"} />
+                    </div>
+                    <div className="mt-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-3">
+                      <p className="mb-1 text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-400)]">סיכום</p>
+                      <p className="text-sm font-semibold leading-7 text-[color:var(--ink-800)]">
+                        {v5.summary || "אין סיכום עדיין."}
+                      </p>
+                    </div>
+                  </CardShell>
+
+                  {v5.lineItems.length > 0 ? (
+                    <ResultRows
+                      title="שורות ERP"
+                      rows={v5.lineItems.map((row) => ({
+                        main: row.description,
+                        meta: [row.sku, row.unitPrice == null ? null : `יחידה ${row.unitPrice}`].filter(Boolean).join(" | "),
+                        amount: row.lineTotal == null ? (row.quantity == null ? "-" : String(row.quantity)) : String(row.lineTotal),
+                      }))}
+                    />
+                  ) : null}
+
+                  {v5.billOfQuantities.length > 0 ? (
+                    <ResultRows
+                      title="BOQ"
+                      rows={v5.billOfQuantities.map((row) => ({
+                        main: row.description,
+                        meta: [row.itemRef, row.material, row.unit].filter(Boolean).join(" | "),
+                        amount: row.quantity == null ? "-" : String(row.quantity),
+                      }))}
+                    />
+                  ) : null}
+                </div>
+
+                <div className="space-y-4">
+                  {v5.priceAlertPending ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-black text-amber-800">
+                      חסרים מחירים או שיש שורות חלקיות. בדוק לפני שמירה ל-ERP.
+                    </div>
+                  ) : null}
+                  <CardShell>
+                    <div className="mb-3 flex items-center gap-2">
+                      <Layers3 className="h-4 w-4 text-blue-600" aria-hidden />
+                      <h3 className="text-sm font-black text-[color:var(--ink-900)]">נתוני מסמך</h3>
+                    </div>
+                    <div className="grid gap-2">
+                      <MetaLine label="מקור" value={v5.documentMetadata.sourceFileName || activeFile?.name || "-"} />
+                      <MetaLine label="גיליון / תחום" value={[v5.documentMetadata.sheetIndex, v5.documentMetadata.discipline].filter(Boolean).join(" | ") || "-"} />
+                      <MetaLine label="שרטוטים" value={v5.documentMetadata.drawingRefs?.join(", ") || "-"} />
+                      <MetaLine label="מנועים" value={v5.enginesUsed?.join(" / ") || selectedRunMode.engines.join(" / ")} />
+                    </div>
+                  </CardShell>
+                  <CardShell>
+                    <div className="grid gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSave("ERP")}
+                        disabled={!aiData || !activeFile || savingTarget !== null}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-emerald-600 text-sm font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        {savingTarget === "ERP" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <CircleDollarSign className="h-4 w-4" aria-hidden />}
+                        Save ERP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("CRM")}
+                        disabled={!aiData || !activeFile || savingTarget !== null}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-violet-600 text-sm font-black text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        {savingTarget === "CRM" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <UserRound className="h-4 w-4" aria-hidden />}
+                        Save CRM
+                      </button>
+                    </div>
+                  </CardShell>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {previewOpen && activeFile && activePreviewUrl && !hubPreviewMode ? (
+        <div className="dashboard-design-shell fixed inset-0 z-50 flex items-center justify-center bg-[color:var(--ink-900)]/55 p-4 backdrop-blur-sm">
+          <div className="workspace-window flex h-[min(92vh,980px)] w-[min(96vw,1500px)] flex-col overflow-hidden rounded-[28px] border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)]">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--dash-line)] px-4 py-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black text-[color:var(--ink-900)]">{activeFile.name}</p>
+                <p className="mt-0.5 text-xs text-[color:var(--ink-500)]">תצוגה מקדימה נפתחה בחלון נפרד כדי לשמור על לוח סריקה נקי.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setPreviewOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--dash-line)] bg-white text-[color:var(--dash-muted)] transition hover:text-[color:var(--dash-purple)]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-[color:var(--dash-muted)] transition hover:text-[color:var(--dash-purple)]"
                 aria-label="סגור תצוגה מקדימה"
               >
                 <X className="h-4 w-4" aria-hidden />
@@ -1308,17 +1430,17 @@ export default function MultiEngineScanner({
                     width={1800}
                     height={1400}
                     unoptimized
-                    className="max-h-full w-auto max-w-full rounded-[24px] border border-[color:var(--dash-line)] bg-white object-contain shadow-[var(--dash-shadow)]"
+                    className="max-h-full w-auto max-w-full rounded-[24px] border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] object-contain shadow-[var(--dash-shadow)]"
                   />
                 </div>
               ) : isPdfFile(activeFile) ? (
                 <iframe
                   title={activeFile.name}
                   src={activePreviewUrl}
-                  className="h-full min-h-0 w-full rounded-[24px] border border-[color:var(--dash-line)] bg-white shadow-[var(--dash-shadow)]"
+                  className="h-full min-h-0 w-full rounded-[24px] border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] shadow-[var(--dash-shadow)]"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center rounded-[24px] border border-[color:var(--dash-line)] bg-white text-sm font-bold text-[color:var(--dash-muted)]">
+                <div className="flex h-full items-center justify-center rounded-[24px] border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-sm font-bold text-[color:var(--dash-muted)]">
                   אין תצוגה מקדימה לסוג הקובץ הזה.
                 </div>
               )}
@@ -1342,8 +1464,8 @@ function SectionTitle({
   return (
     <div className="flex items-center justify-between gap-3">
       <div>
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{eyebrow}</p>
-        <h2 className="text-sm font-black text-slate-950 xl:text-base">{title}</h2>
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[color:var(--ink-400)]">{eyebrow}</p>
+        <h2 className="text-sm font-black text-[color:var(--ink-900)] xl:text-base">{title}</h2>
       </div>
       <Icon className="h-5 w-5 text-blue-600" aria-hidden />
     </div>
@@ -1357,7 +1479,13 @@ function CardShell({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <section className={`rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm ${className}`.trim()}>{children}</section>;
+  return (
+    <section
+      className={`rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-2.5 shadow-[var(--cd-shadow-sm)] ${className}`.trim()}
+    >
+      {children}
+    </section>
+  );
 }
 
 function ProcessorBadge({
@@ -1374,7 +1502,7 @@ function ProcessorBadge({
   return (
     <div
       className={`rounded-2xl border px-3 py-2 text-xs ${
-        active ? "border-blue-200 bg-blue-50 text-blue-900" : "border-slate-200 bg-slate-50 text-slate-700"
+        active ? "border-blue-200 bg-blue-50 text-blue-900" : "border-[color:var(--line)] bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)]"
       }`}
     >
       <div className="flex items-center justify-between gap-3">
@@ -1383,7 +1511,7 @@ function ProcessorBadge({
           {configured ? "ON" : "OFF"}
         </span>
       </div>
-      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">{sublabel}</p>
+      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ink-500)]">{sublabel}</p>
     </div>
   );
 }
@@ -1404,7 +1532,7 @@ function EngineOptionRow({
   return (
     <div className={`rounded-2xl border p-3 ${toneClass}`}>
       <p className="text-xs font-black">{title}</p>
-      <p className="mt-1 text-[11px] font-semibold leading-5 text-slate-600">{description}</p>
+      <p className="mt-1 text-[11px] font-semibold leading-5 text-[color:var(--ink-600)]">{description}</p>
       {children ? <div className="mt-3">{children}</div> : null}
     </div>
   );
@@ -1412,9 +1540,9 @@ function EngineOptionRow({
 
 function MiniPill({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-black text-slate-700">
-      <span className="text-slate-400">{label}</span>
-      <span className="max-w-[170px] truncate text-slate-900">{value}</span>
+    <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-700)]">
+      <span className="text-[color:var(--ink-400)]">{label}</span>
+      <span className="max-w-[170px] truncate text-[color:var(--ink-900)]">{value}</span>
     </span>
   );
 }
@@ -1429,28 +1557,88 @@ function StatTile({
   hint: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">{label}</p>
-      <p className="mt-1.5 truncate text-base font-black text-slate-950 xl:text-lg">{value}</p>
-      <p className="mt-0.5 text-[10px] font-semibold text-slate-500">{hint}</p>
+    <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
+      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-400)]">{label}</p>
+      <p className="mt-1.5 truncate text-base font-black text-[color:var(--ink-900)] xl:text-lg">{value}</p>
+      <p className="mt-0.5 text-[10px] font-semibold text-[color:var(--ink-500)]">{hint}</p>
+    </div>
+  );
+}
+
+function DashboardAction({
+  icon: Icon,
+  label,
+  hint,
+  onClick,
+  disabled,
+  primary = false,
+  spinning = false,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  hint: string;
+  onClick: () => void;
+  disabled?: boolean;
+  primary?: boolean;
+  spinning?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={hint}
+      className={`flex min-h-[92px] items-center gap-3 rounded-2xl border p-4 text-start transition disabled:cursor-not-allowed disabled:opacity-45 ${
+        primary
+          ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700"
+          : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] hover:bg-[color:var(--canvas-sunken)]"
+      }`}
+    >
+      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${primary ? "bg-white/15" : "bg-blue-50 text-blue-600"}`}>
+        <Icon className={`h-5 w-5 ${spinning ? "animate-spin" : ""}`} aria-hidden />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-base font-black">{label}</span>
+        <span className={`mt-1 block truncate text-xs font-bold ${primary ? "text-white/80" : "text-[color:var(--ink-500)]"}`}>
+          {hint}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function IconMetric({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="min-w-0 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 text-start shadow-sm">
+      <Icon className="h-4 w-4 text-blue-600" aria-hidden />
+      <p className="mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-[color:var(--ink-400)]">{label}</p>
+      <p className="mt-1 truncate text-xs font-black text-[color:var(--ink-900)]">{value}</p>
     </div>
   );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3">
-      <p className="text-[11px] font-black text-slate-400">{label}</p>
-      <p className="mt-1 truncate text-sm font-black text-slate-950">{value}</p>
+    <div className="rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3">
+      <p className="text-[11px] font-black text-[color:var(--ink-400)]">{label}</p>
+      <p className="mt-1 truncate text-sm font-black text-[color:var(--ink-900)]">{value}</p>
     </div>
   );
 }
 
 function MetaLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-      <p className="text-[11px] font-black text-slate-400">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-800">{value}</p>
+    <div className="rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3 py-2">
+      <p className="text-[11px] font-black text-[color:var(--ink-400)]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[color:var(--ink-800)]">{value}</p>
     </div>
   );
 }
@@ -1463,19 +1651,19 @@ function ResultRows({
   rows: { main: string; meta: string; amount: string }[];
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-3">
+    <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-sm">
+      <div className="flex items-center gap-2 border-b border-[color:var(--line)] px-3 py-3">
         <ClipboardCheck className="h-4 w-4 text-blue-600" aria-hidden />
-        <p className="text-sm font-black text-slate-950">{title}</p>
+        <p className="text-sm font-black text-[color:var(--ink-900)]">{title}</p>
       </div>
       <div className="max-h-[320px] overflow-y-auto">
         {rows.slice(0, 50).map((row, index) => (
-          <div key={`${row.main}-${index}`} className="grid grid-cols-[1fr_90px] gap-3 border-b border-slate-100 px-3 py-2 last:border-b-0">
+          <div key={`${row.main}-${index}`} className="grid grid-cols-[1fr_90px] gap-3 border-b border-[color:var(--line-subtle)] px-3 py-2 last:border-b-0">
             <div className="min-w-0">
-              <p className="truncate text-sm font-black text-slate-900">{row.main}</p>
-              <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">{row.meta || "-"}</p>
+              <p className="truncate text-sm font-black text-[color:var(--ink-900)]">{row.main}</p>
+              <p className="mt-0.5 truncate text-[11px] font-semibold text-[color:var(--ink-500)]">{row.meta || "-"}</p>
             </div>
-            <p className="text-end text-sm font-black tabular-nums text-slate-800">{row.amount}</p>
+            <p className="text-end text-sm font-black tabular-nums text-[color:var(--ink-800)]">{row.amount}</p>
           </div>
         ))}
       </div>
@@ -1485,7 +1673,7 @@ function ResultRows({
 
 function Capability({ text }: { text: string }) {
   return (
-    <div className="flex items-start gap-2 rounded-xl bg-slate-50 p-2">
+    <div className="flex items-start gap-2 rounded-xl bg-[color:var(--canvas-sunken)] p-2">
       <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
       <span>{text}</span>
     </div>

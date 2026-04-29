@@ -102,15 +102,15 @@ function DocumentCard({ document }: { document: BillingDocumentRecord }) {
       </div>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href="/app/documents/erp" className="bento-btn bento-btn--primary">
+        <Link href="/app/erp" className="bento-btn bento-btn--primary">
           ניהול מלא ב-ERP
           <ArrowLeft className="h-4 w-4" aria-hidden />
         </Link>
         <Link
           href={
             document.contactId
-              ? `/app/documents/issue?client=${encodeURIComponent(document.clientName)}&contactId=${document.contactId}`
-              : "/app/documents/issue"
+              ? `/app/erp?client=${encodeURIComponent(document.clientName)}&contactId=${document.contactId}`
+              : "/app/erp"
           }
           className="bento-btn bento-btn--secondary"
         >
@@ -172,11 +172,11 @@ export default function BillingWorkspaceV2({ documents }: Props) {
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/documents/erp" className="bento-btn bento-btn--primary">
+              <Link href="/app/erp" className="bento-btn bento-btn--primary">
                 פתיחת ERP מלא
                 <ArrowLeft className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/app/documents/issue" className="bento-btn bento-btn--secondary">
+              <Link href="/app/erp" className="bento-btn bento-btn--secondary">
                 הפקת מסמך חדש
                 <Sparkles className="h-4 w-4" aria-hidden />
               </Link>

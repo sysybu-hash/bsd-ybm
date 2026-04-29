@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { POLISH_PAGE_SUBTITLE, POLISH_PAGE_TITLE, POLISH_PREMIUM_INTERACTIVE, POLISH_SECTION_TITLE } from "@/lib/polish/premium-tokens";
 
 export function PageHeader({
   eyebrow,
@@ -17,8 +18,8 @@ export function PageHeader({
     <header className="flex flex-col gap-4 border-b border-[color:var(--cd-line)] pb-6 md:flex-row md:items-end md:justify-between">
       <div className="min-w-0">
         {eyebrow ? <p className="cd-eyebrow mb-2">{eyebrow}</p> : null}
-        <h1 className="cd-h1">{title}</h1>
-        {subtitle ? <p className="cd-body mt-2 max-w-2xl text-sm">{subtitle}</p> : null}
+        <h1 className={POLISH_PAGE_TITLE}>{title}</h1>
+        {subtitle ? <p className={`${POLISH_PAGE_SUBTITLE} mt-2 max-w-2xl`}>{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </header>
@@ -29,16 +30,20 @@ export function SectionHeader({
   title,
   subtitle,
   actions,
+  id,
 }: {
   title: string;
   subtitle?: string;
   actions?: ReactNode;
+  id?: string;
 }) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div className="min-w-0">
-        <h2 className="cd-h2">{title}</h2>
-        {subtitle ? <p className="cd-mute mt-1 text-sm">{subtitle}</p> : null}
+        <h2 id={id} className={POLISH_SECTION_TITLE}>
+          {title}
+        </h2>
+        {subtitle ? <p className={`${POLISH_PAGE_SUBTITLE} mt-1`}>{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
     </div>
@@ -55,7 +60,7 @@ export function Surface({
   padded?: boolean;
 }) {
   return (
-    <div className={`cd-surface ${padded ? "p-6" : ""} ${className}`}>{children}</div>
+    <div className={`${POLISH_PREMIUM_INTERACTIVE} ${padded ? "p-6" : ""} ${className}`}>{children}</div>
   );
 }
 
@@ -105,13 +110,13 @@ export function Stat({
     return (
       <Link
         href={href}
-        className="cd-surface block p-5 transition-colors hover:bg-[color:var(--cd-bg-tint)]"
+        className={`${POLISH_PREMIUM_INTERACTIVE} block p-5 transition-colors hover:bg-slate-50 active:bg-slate-100`}
       >
         {inner}
       </Link>
     );
   }
-  return <div className="cd-surface p-5">{inner}</div>;
+  return <div className={`${POLISH_PREMIUM_INTERACTIVE} p-5`}>{inner}</div>;
 }
 
 export function ActionTile({
@@ -156,31 +161,6 @@ export function ActionTile({
         ) : null}
       </div>
     </Link>
-  );
-}
-
-export function EmptyState({
-  icon: Icon,
-  title,
-  body,
-  action,
-}: {
-  icon?: LucideIcon;
-  title: string;
-  body?: string;
-  action?: ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-3 rounded-[var(--cd-radius)] border border-dashed border-[color:var(--cd-line-strong)] bg-[color:var(--cd-bg-tint)] px-6 py-10 text-center">
-      {Icon ? (
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--cd-bg-raised)] text-[color:var(--cd-ink-mute)]">
-          <Icon size={18} strokeWidth={1.75} aria-hidden />
-        </span>
-      ) : null}
-      <p className="cd-h3">{title}</p>
-      {body ? <p className="cd-mute max-w-sm text-sm">{body}</p> : null}
-      {action ? <div className="mt-1">{action}</div> : null}
-    </div>
   );
 }
 

@@ -7,10 +7,11 @@
    רקע קרם חמים, שחור-חם, מינימליזם, ללא גרדיאנטים צעקניים
    ═══════════════════════════════════════════════════════════ */
 :root {
-  --cd-bg:           #FAF9F5;
-  --cd-bg-raised:    #FFFFFF;
-  --cd-bg-sunken:    #F2F0E8;
-  --cd-bg-tint:      #F5F3EC;
+  /* בז׳ נוטה לחום בהיר — רקע כללי חמים יותר מלבן קר */
+  --cd-bg:           #E8E2D6;
+  --cd-bg-raised:    #FAF6EE;
+  --cd-bg-sunken:    #DDD5C9;
+  --cd-bg-tint:      #EDE6DB;
   --cd-ink:          #1F1E1B;
   --cd-ink-soft:     #4A4843;
   --cd-ink-mute:     #7A7770;
@@ -246,8 +247,8 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
    ═══════════════════════════════════════════════════════════ */
 :root {
   --foreground-rgb: 11, 15, 20;
-  --background-start-rgb: 247, 248, 250;
-  --background-end-rgb: 239, 241, 245;
+  --background-start-rgb: 237, 230, 220;
+  --background-end-rgb: 226, 218, 206;
 
   /* ─── Ink (טקסט) ─── */
   --ink-900: #0B0F14;
@@ -258,16 +259,16 @@ h1, h2, h3, h4, h5, h6, .heading-primary {
   --ink-400: #94A3B8;
   --ink-300: #CBD5E1;
 
-  /* ─── Surface (רקעים) ─── */
-  --canvas: #F7F8FA;
-  --canvas-raised: #FFFFFF;
-  --canvas-sunken: #EFF1F5;
-  --canvas-overlay: rgba(247, 248, 250, 0.88);
+  /* ─── Surface (רקעים) — בז׳/חום בהיר לעומק ויזואלי ─── */
+  --canvas: #E8E2D6;
+  --canvas-raised: #FAF6EE;
+  --canvas-sunken: #DDD5C9;
+  --canvas-overlay: rgba(232, 226, 214, 0.92);
 
-  /* ─── Lines ─── */
-  --line: #E5E7EB;
-  --line-strong: #D1D5DB;
-  --line-subtle: #F1F3F6;
+  /* ─── Lines — מתאימים לבז׳ ─── */
+  --line: rgba(31, 30, 27, 0.1);
+  --line-strong: rgba(31, 30, 27, 0.16);
+  --line-subtle: #E5DFD4;
 
   /* ─── ציר כספים (Finance — זהב חם) ─── */
   --axis-finance:         #B8811A;

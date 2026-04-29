@@ -74,29 +74,29 @@ export default function DocumentPreviewModal({ doc, org, onClose }: Props) {
   return (
     <PortalToBody>
     <div
-      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-start justify-center overflow-y-auto bg-gray-900/50 p-4 pt-8`}
+      className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-start justify-center overflow-y-auto bg-[color:var(--ink-900)]/50 p-4 pt-8`}
       dir="rtl"
       role="dialog"
       aria-modal="true"
     >
       {/* Floating toolbar */}
       <div className={`pointer-events-none fixed top-4 inset-x-0 ${WORKSPACE_OVERLAY_TOOLBAR_Z_CLASS} flex justify-center`}>
-        <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-gray-100 bg-white px-3 py-2 shadow-lg shadow-gray-200/60">
-          <span className="px-2 text-sm font-black text-gray-600">
+        <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-raised)] px-3 py-2 shadow-[var(--cd-shadow)]">
+          <span className="px-2 text-sm font-black text-[color:var(--ink-600)]">
             תצוגה מקדימה — מסמך #{doc.number}
           </span>
-          <div className="h-5 w-px bg-gray-100" />
+          <div className="h-5 w-px bg-[color:var(--line-subtle)]" />
           <button
             type="button"
             onClick={handlePrint}
-            className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-teal-700 transition"
+            className="flex items-center gap-1.5 rounded-xl bg-[color:var(--cd-accent)] px-4 py-2 text-sm font-bold text-white shadow-[var(--cd-shadow-sm)] transition hover:bg-[color:var(--cd-accent-ink)]"
           >
             <Printer size={15} /> הדפסה
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="flex items-center gap-1.5 rounded-xl border border-gray-100 bg-white px-3 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
+            className="flex items-center gap-1.5 rounded-xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-raised)] px-3 py-2 text-sm font-bold text-[color:var(--ink-600)] transition hover:bg-[color:var(--canvas-sunken)]"
           >
             <X size={15} /> סגור
           </button>

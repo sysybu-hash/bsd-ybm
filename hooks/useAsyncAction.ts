@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import type { ActionResponse } from "@/lib/polish/action-response";
 
 export type AsyncActionOptions = {
   /** מוצג רק כשהפעולה הצליחה (ללא אובייקט { ok: false }) */
@@ -12,6 +13,10 @@ export type AsyncActionOptions = {
 
 function isOkResult(value: unknown): value is { ok: boolean; error?: string } {
   return typeof value === "object" && value !== null && "ok" in value;
+}
+
+function isActionResponse(value: unknown): value is ActionResponse {
+  return typeof value === "object" && value !== null && "success" in value;
 }
 
 /**
@@ -25,10 +30,21 @@ export function useAsyncAction() {
       setPending(true);
       try {
         const result = await fn();
+
+        if (isActionResponse(result)) {
+          if (!result.success) {
+            toast.error(`שגיאה: ${(result.error ?? "").trim() || opts?.errorToast || "לא ידוע"}`);
+            return result;
+          }
+          toast.success(opts?.successToast ?? "הפעולה בוצעה בהצלחה");
+          return result;
+        }
+
         if (isOkResult(result) && result.ok === false) {
           toast.error(result.error?.trim() || opts?.errorToast || "הפעולה נכשלה");
           return result;
         }
+
         if (opts?.successToast) {
           toast.success(opts.successToast);
         }

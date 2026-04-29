@@ -44,9 +44,9 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto grid min-h-[calc(100vh-141px)] max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-14">
-        <section className="order-2 lg:order-1">
-          <div className="max-w-xl space-y-7">
+      <main className="relative z-10 mx-auto grid min-h-[calc(100vh-141px)] max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:items-stretch lg:gap-14 lg:px-8 lg:py-14">
+        <section className="order-2 flex flex-col justify-center lg:order-1">
+          <div className="mx-auto w-full max-w-xl space-y-7">
             <span className="bento-eyebrow">{t("publicShell.authEyebrow")}</span>
             <div className="space-y-4">
               <h1 className="text-4xl font-black leading-[0.95] tracking-[-0.06em] text-[color:var(--ink-900)] sm:text-6xl">
@@ -84,7 +84,9 @@ export default function AuthPageShell({ children, secondaryNav }: Props) {
           </div>
         </section>
 
-        <section className="order-1 flex justify-center lg:order-2 lg:justify-end">{children}</section>
+        <section className="order-1 flex flex-col justify-center lg:order-2">
+          <div className="mx-auto w-full max-w-xl">{children}</div>
+        </section>
       </main>
 
       <footer className="relative z-10 border-t border-[color:var(--line)] bg-[color:var(--canvas-raised)]/82">

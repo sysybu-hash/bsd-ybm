@@ -119,7 +119,7 @@ export default function InsightsWorkspaceV2({
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/app/inbox" className="bento-btn bento-btn--primary">
+              <Link href="/app" className="bento-btn bento-btn--primary">
                 {t("workspaceInsights.advancedCta")}
               </Link>
             <Link href="/app/settings/billing" className="bento-btn bento-btn--secondary">

@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatDateTime } from "@/lib/ui-formatters";
+import { PageHeader, Stat } from "@/components/ui/claude";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Tile } from "@/components/ui/bento";
 
 type WorkflowStatus = "healthy" | "attention" | "blocked";
@@ -90,55 +92,27 @@ export default function OperationsWorkspaceV2({
   };
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
-      {/* ── Hero: ברכה + 4 KPI + תובנת AI ── */}
-      <Tile tone="clients" span={12}>
-        <div className="flex flex-col gap-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="tile-eyebrow">Operations · Command Center</p>
-              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
-                {t("workspaceOperations.heroTitle")}
-              </h1>
-              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
-                {t("workspaceOperations.heroSubtitle", { org: organizationName })}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {meckanoEnabled && (
-                <Link
-                  href="/app/operations/meckano"
-                  className="bento-btn bento-btn--primary"
-                  style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
-                >
-                  {t("workspaceOperations.meckanoCta")}
-                  <ArrowLeft className="h-4 w-4" strokeWidth={2} aria-hidden />
-                </Link>
-              )}
-              <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] sm:flex">
-                <Workflow className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
-              </div>
-            </div>
-          </div>
+    <div className="cd-canvas flex w-full min-w-0 flex-col space-y-10" dir={dir}>
+      <PageHeader
+        eyebrow={t("workspaceOperations.eyebrow")}
+        title={t("workspaceOperations.heroTitle")}
+        subtitle={t("workspaceOperations.heroSubtitle", { org: organizationName })}
+        actions={
+          meckanoEnabled ? (
+            <Link href="/app/operations/meckano" className="cd-btn cd-btn-primary">
+              {t("workspaceOperations.meckanoCta")}
+              <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            </Link>
+          ) : null
+        }
+      />
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { label: t("workspaceOperations.statActiveUsers"), value: stats.activeUsers, icon: UsersRound },
-              { label: t("workspaceOperations.statOpenQueues"), value: stats.openQueues, icon: Workflow },
-              { label: t("workspaceOperations.statFieldCoverage"), value: stats.fieldCoverage, icon: MapPinned },
-              { label: t("workspaceOperations.statReviewLoad"), value: stats.reviewLoad, icon: ClipboardList },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-[color:var(--axis-clients)]" strokeWidth={2} aria-hidden />
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{label}</p>
-                </div>
-                <p className="mt-2 text-xl font-black text-[color:var(--ink-900)] tracking-tight">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Tile>
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <Stat label={t("workspaceOperations.statActiveUsers")} value={stats.activeUsers} icon={UsersRound} href="/app/operations" />
+        <Stat label={t("workspaceOperations.statOpenQueues")} value={stats.openQueues} icon={Workflow} href="/app/operations" />
+        <Stat label={t("workspaceOperations.statFieldCoverage")} value={stats.fieldCoverage} icon={MapPinned} href="/app/operations" />
+        <Stat label={t("workspaceOperations.statReviewLoad")} value={stats.reviewLoad} icon={ClipboardList} href="/app/operations" />
+      </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="grid gap-4">
@@ -184,11 +158,16 @@ export default function OperationsWorkspaceV2({
               </div>
               <div className="mt-4 grid gap-3">
                 {zones.length === 0 ? (
-                  <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
-                    {operationsContextLabel
-                      ? t("workspaceOperations.zonesEmptyWithTrade", { trade: operationsContextLabel })
-                      : t("workspaceOperations.zonesEmpty")}
-                  </div>
+                  <EmptyState
+                    variant="card"
+                    icon={MapPinned}
+                    title="מוכנים למפות אתרי עבודה"
+                    description={
+                      operationsContextLabel
+                        ? `${t("workspaceOperations.zonesEmptyWithTrade", { trade: operationsContextLabel })} — הגדירו אזורים במקאנו כדי לראות כאן סנכרון ושטח.`
+                        : `${t("workspaceOperations.zonesEmpty")} חברו את מקאנו והגדירו אזורי דיווח — כך תראו כאן נוכחות וצוות במקום אחד.`
+                    }
+                  />
                 ) : null}
                 {zones.map((zone) => (
                   <div key={zone.id} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
@@ -247,11 +226,16 @@ export default function OperationsWorkspaceV2({
             </div>
             <div className="mt-4 grid gap-3">
               {recentActivity.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
-                  {operationsContextLabel
-                    ? t("workspaceOperations.recentEmptyWithTrade", { trade: operationsContextLabel })
-                    : t("workspaceOperations.recentEmpty")}
-                </div>
+                <EmptyState
+                  variant="card"
+                  icon={ClipboardList}
+                  title="עדיין שקט בפעילות האחרונה"
+                  description={
+                    operationsContextLabel
+                      ? `${t("workspaceOperations.recentEmptyWithTrade", { trade: operationsContextLabel })} כשתתחילו זרימות ודיווחים, יופיע כאן ציר זמן ברור.`
+                      : `${t("workspaceOperations.recentEmpty")} ברגע שתפעילו תהליכים ואינטגרציות, תראו כאן מה קורה בארגון.`
+                  }
+                />
               ) : null}
               {recentActivity.map((activity, index) => (
                 <div key={`${activity.action}-${index}`} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
@@ -272,7 +256,7 @@ export default function OperationsWorkspaceV2({
               <Link href="/app/settings/billing" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutBilling")}
               </Link>
-              <Link href="/app/documents" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/erp" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
                 {t("workspaceOperations.shortcutDocuments")}
               </Link>
               <Link href="/app/automations" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">

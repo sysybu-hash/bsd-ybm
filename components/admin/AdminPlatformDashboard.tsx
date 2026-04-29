@@ -122,7 +122,7 @@ export default async function AdminPlatformDashboard({ searchParams, platformBas
                 />
               ) : (
                 <Link
-                  href="/app/ai#assistant"
+                  href="/app"
                   className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]"
                 >
                   Intelligence

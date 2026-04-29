@@ -112,9 +112,10 @@ export function personalizeAppNavItem(
   }
 
   if (item.id === "erp") {
+    const erpLabel = industryProfile.financeNavLabel ?? industryProfile.documentsLabel;
     return {
       ...item,
-      label: industryProfile.documentsLabel,
+      label: erpLabel,
       summary: t("workspaceNav.items.erp.summary", {
         records: industryProfile.recordsLabel.toLowerCase(),
       }),

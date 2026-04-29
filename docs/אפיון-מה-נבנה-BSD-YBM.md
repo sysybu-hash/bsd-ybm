@@ -8,63 +8,62 @@
 
 | עקרון | יישום |
 |--------|--------|
-| **הפרדת כספים ו־AI** | שני פריטי ניווט נפרדים: «כספים» (`/app/finance`) ו־«AI» (`/app/ai`). |
-| **פרויקטים** | נתיב ראשי `/app/projects` + קישורים ממסך הלקוחות (`?projectId=`). |
-| **תאימות לאחור** | נתיבים ישנים (`/app/insights`, `/app/intelligence`) מפנים ל־`/app/ai`; הפניות `next.config.js` מ־`/dashboard/*` לנתיבים החדשים. |
-| **מנוי וחיוב פלטפורמה** | נשארים תחת **הגדרות** — `/app/settings/billing`; מסך הכספים מקשר אליהם. |
+| **בית אחד מרכזי** | סקירה, KPI ותובנות AI קצרות ב־`/app` (`WorkspaceHomeView` + `loadWorkspaceHomeData`). |
+| **CRM ו־ERP כנתיבים קנוניים** | לקוחות: `/app/crm`; מסמכים/הפקות/זרימות כספיות עיקריות: `/app/erp`. |
+| **סריקה נפרדת** | `/app/scan`. |
+| **תאימות לאחור** | `next.config.js` מפנה נתיבים ישנים (`/app/clients`, `/app/documents`, `/app/finance`, `/app/ai`, `/app/inbox`, `/dashboard/*`, …) ליעדים הקנוניים; רשימה ב־`LEGACY_REDIRECTS`. |
+| **מנוי וחיוב פלטפורמה** | `/app/settings/billing` (וגם הפניה מ־`/app/billing`). |
+| **ניווט בקוד** | מומלץ `WORKSPACE_ROUTES` מ־`lib/workspace-canonical-routes.ts`. |
 
 ---
 
 ## 2. מפת נתיבים (Workspace)
 
-| מזהה ניווט | נתיב | תפקיד קצר |
-|-------------|------|------------|
-| `home` | `/app` | דשבורד / בית workspace |
-| `inbox` | `/app/inbox` | תיבת עבודה |
-| `projects` | `/app/projects` | רשימת פרויקטים, קישור ללקוחות לפי פרויקט |
-| `clients` | `/app/clients` | לקוחות (ללא מונח CRM בממשק) |
-| `finance` | `/app/finance` | מרכז כספים — KPI, תחזית, ייצוא PDF/CSV |
-| `ai` | `/app/ai` | תובנות + מודיעין (מיזוג מסכים קודמים) |
-| `documents` | `/app/documents` | מסמכים + מחוללים לפי מקצוע |
-| `operations` | `/app/operations` | תפעול |
-| `settings` | `/app/settings` | הגדרות |
+מזהי primary מ־`components/app-shell/app-nav.ts` (`AppRouteId`):
 
-**Legacy שהוסר ממזהי `AppRouteId`:** `billing`, `insights` (לא כפריטי ניווט ראשיים; הגדרות חיוב נשארות תחת Settings).
+| מזהה | נתיב | תפקיד קצר |
+|--------|------|------------|
+| `home` | `/app` | בית — סקירה, הכנסות חודש, מסמכים ולקוחות אחרונים |
+| — | `/app/business` | מרכז עסקי משולב (CRM×ERP), לא מזהה primary נפרד בתפריט הצד |
+| `scan` | `/app/scan` | סריקת מסמכים |
+| `crm` | `/app/crm` | לקוחות (מיפוי legacy: `/app/clients`, `/app/projects` → כאן) |
+| `erp` | `/app/erp` | ERP / מסמכים / זרימות כספיות (מיפוי: `/app/documents`, `/app/finance`, `/app/insights` → כאן) |
+| `operations` | `/app/operations` | תפעול |
+| `settings` | `/app/settings/overview` (כניסה) | הגדרות |
+| `admin` | `/app/admin` | ניהול פלטפורמה (לפי הרשאה) |
+| `success` | `/app/success` | מסך הצלחה (לא בתפריט ראשי) |
+
+תאימות `/dashboard/*`: הפניות ב־`next.config.js` וב־`middleware`; אין עוד עמודים תחת `app/dashboard`.
 
 ---
 
 ## 3. מסכים עיקריים
 
-### 3.1 כספים — `/app/finance`
+### 3.1 בית — `/app`
 
-- **נתונים:** אגרגציות מ־`IssuedDocument` (פתוח / משולם), תחזית CRM דרך `loadFinanceForecast` (`lib/finance-forecast.ts`) לפי סטטוסי קשר `LEAD` / `ACTIVE` / `PROPOSAL`.
-- **UI:** כרטיסי KPI, פס תזרים (משולם / פתוח / תחזית), קישורים ל־ERP (`/app/documents/erp`), הפקה (`/app/documents/issue`), הגדרות מנוי (`/app/settings/billing`).
-- **ייצוא:**
-  - `GET /api/reports/finance-pdf` — PDF סיכום (`@react-pdf/renderer`, `lib/pdf/FinanceReportDocument.tsx`).
-  - `GET /api/reports/finance-csv` — עד 500 מסמכים מונפקים (UTF‑8 עם BOM).
+- **נתונים:** `loadWorkspaceHomeData` (`lib/load-workspace-home.ts`) — אגרגציות `IssuedDocument`, `Contact`, `Project`, `Document`.
+- **UI:** `WorkspaceHomeView` (`components/workspace/WorkspaceHomeView.tsx`) בשפה `components/ui/claude`; קישור «מרכז עסקי» ל־`/app/business`.
 
-### 3.2 AI — `/app/ai`
+### 3.2 מרכז עסקי — `/app/business`
 
-- **תוכן:** `InsightsWorkspaceV2` עם props מ־`loadInsightsWorkspaceProps` + `IntelligenceDashboardContent` (`skipRedirect` כשאין הרשאה למודיעין).
-- **הפניות:** `/app/insights`, `/app/intelligence` → `/app/ai`.
-- **ניווט:** אייקון קטן ליד פריט AI (למשל Sparkles) ב־`AppShellV2` (לפי יישום בקוד).
+- **שרת:** `BusinessPageContent` (`app/workspace-content/business/BusinessPageContent.tsx`) — אגרגציית ERP/CRM לארגון.
+- **לקוח:** `BusinessHubClient` (`components/business/BusinessHubClient.tsx`).
 
-### 3.3 פרויקטים — `/app/projects`
+### 3.3 ERP — `/app/erp`
 
-- רשימת `Project` מהארגון, מיון לפי פעילות ו־`createdAt`.
-- קישור «ללקוחות בפרויקט» → `/app/clients?projectId=…`.
+- **UI:** `FinanceHubContent` (Bento) + `MultiEngineScanner` בתחתית העמוד (עוגן `#erp-multi-scanner`, גלילה דרך `ErpScrollToHash`); עוגן `#erp-wizard` לקישורי onboarding.
+- תוכן מסמכים מוזג לכאת ממבנה ישן של «מסמכים/כספים»; רכיבים נוספים כמו `DocumentsWorkspaceV2` עשויים להופיע בהקשרים אחרים.
+- **ייצוא דוחות (API ללא שינוי נתיב):**
+  - `GET /api/reports/finance-pdf`, `GET /api/reports/finance-csv`
+  - `GET /api/professional-template/pdf?templateId=…`
 
-### 3.4 לקוחות — `/app/clients`
+### 3.4 CRM — `/app/crm`
 
-- פרמטר **`projectId`** — סינון התחלתי לפי פרויקט.
-- בסרגל הצד: קישור «כל הפרויקטים», קישור ללקוחות מסוננים לכל פרויקט בולט.
+- לקוחות ופרויקטים; פרמטרי שאילתה (`projectId`, `clientId`) נשמרים בקישורים פנימיים.
 
-### 3.5 מסמכים — `/app/documents`
+### 3.5 תובנות / מודיעין (מסכים נלווים)
 
-- **`DocumentsWorkspaceV2`** + **`DocumentGeneratorsStrip`**:
-  - תבניות מ־`IndustryProfile` (`lib/professions/runtime.ts`).
-  - **רשמי (OFFICIAL):** מעבר להפקה `/app/documents/issue`.
-  - **דוח / אישור / טופס:** טיוטה כ־`IssuedDocument` דרך `createDraftFromProfessionalTemplateAction`, או **הורדת PDF** ב־`GET /api/professional-template/pdf?templateId=…` (`lib/pdf/ProfessionalTemplatePdfDocument.tsx`).
+- עמודים כמו `app/app/insights/page.tsx` עשויים להמשיך להיטען בהקשר ERP; קישורים מומלצים ל־`/app/erp` או `/app` לפי המוצר.
 
 ---
 
@@ -82,8 +81,9 @@
 
 ## 5. הרשאות ותכונות (Workspace)
 
-- **`lib/workspace-features.ts`:** מיפוי `finance` → `module_billing`, `ai` → `module_insights`; נתיבים כמו `/app/settings/billing` נספרים כ־active tab תחת «כספים» ב־`pathnameToWorkspacePrimaryRoute`.
-- **`lib/workspace-access.ts`:** סקשני utility ללא `intelligence` נפרד (לפי יישום).
+- **`lib/workspace-features.ts`:** מודולים גסים `module_crm`, `module_erp`, `module_operations`; `pathnameToWorkspacePrimaryRoute` ממפה מקטעי URL (כולל legacy כמו `/app/clients` → `crm`, `/app/ai` → `home`).
+- **`lib/workspace-access.ts`:** הקשר הרשאות ותפקידים ל־shell.
+- **`lib/dashboard-to-app-redirect.ts`:** מיפוי נתיבי `/dashboard` ליעדי `/app` מעודכנים (מקביל ל־`next.config`).
 
 ---
 
@@ -97,7 +97,7 @@
 ## 7. בדיקות ואיכות
 
 - **Jest:** יחידות (כולל `workspace-access`, `professional-template-draft`, `workspace-features`); תיקיית `e2e/` מוחרגת מ־Jest.
-- **Playwright:** `e2e/smoke.spec.ts` — דף בית, התחברות, חסימת `/app` ללא סשן. פקודה: `npm run test:e2e`.
+- **Playwright:** `e2e/smoke.spec.ts` — דף בית, התחברות, חסימת `/app` ללא סשן; `e2e/redirects.spec.ts` — בדיקות הפניות legacy. פקודה: `npm run test:e2e`.
 - **`tsc` / `next build`:** כחלק מזרימת CI מקומית.
 
 ---

@@ -129,7 +129,7 @@ export async function loadInsightsWorkspaceProps(organizationId: string): Promis
     .sort((left, right) => right.total - left.total)
     .slice(0, 4);
 
-  const financeHref = "/app/finance";
+  const financeHref = "/app/erp";
 
   const recommendations = [
     ...(overdueDocuments.length > 0
@@ -154,7 +154,7 @@ export async function loadInsightsWorkspaceProps(organizationId: string): Promis
             source: "מסמכים",
             title: `${reviewDocuments.length} מסמכים דורשים בדיקה`,
             body: "יש מסמכים שלא עובדו עד הסוף, חסרות בהם שורות פריט, או שחסר להם הקשר ספק ברור.",
-            href: "/app/documents",
+            href: "/app/erp",
             cta: "לחלון המסמכים",
             severity: "medium" as const,
           },
@@ -167,7 +167,7 @@ export async function loadInsightsWorkspaceProps(organizationId: string): Promis
             source: "לקוחות",
             title: `${missingContacts.length} לקוחות עם פרטים חסרים`,
             body: "כדאי להשלים אימייל או טלפון כדי לאפשר המשך חיוב, תיאום והקצאת עבודה בלי עצירות מיותרות.",
-            href: "/app/clients",
+            href: "/app/crm",
             cta: "לחלון הלקוחות",
             severity: "low" as const,
           },

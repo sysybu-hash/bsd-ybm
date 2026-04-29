@@ -17,19 +17,23 @@ import {
   ReceiptText,
   Sparkles,
   Trash2,
+  Users,
+  Wallet,
 } from "lucide-react";
 import { updateContactAction, deleteContactAction } from "@/app/actions/crm";
 import ClientsHubAiAssist from "@/components/crm/ClientsHubAiAssist";
 import QuickClientForm from "@/components/crm/QuickClientForm";
+import QuickProjectForm from "@/components/crm/QuickProjectForm";
 import { FieldError } from "@/components/forms/FormWrapper";
-import WorkspacePageHeader from "@/components/layout/WorkspacePageHeader";
+import { PageHeader, Stat, Surface } from "@/components/ui/claude";
 import { inputClass, SubmitButton } from "@/components/settings/settings-form-primitives";
-import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { toastClientActionFeedback } from "@/lib/polish/action-response-toast";
 import { clientUpdateFormSchema } from "@/lib/validation/schemas/client";
 import { useI18n } from "@/components/I18nProvider";
 import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   BentoGrid,
   ProgressBar,
@@ -77,6 +81,8 @@ type Props = Readonly<{
   initialClientId?: string;
   /** כש־true — כותרת ה-Hero (כותרת+CTA) מוסתרת כי מוצגת שכבת סקירה מעל */
   embedBelowSummary?: boolean;
+  /** כותרת כפולה מדף האב — טאב פרויקטים/לקוחות */
+  hideWorkspaceHero?: boolean;
 }>;
 
 const STATUS_BADGE_CLASS = {
@@ -102,7 +108,7 @@ function EditContactModal({
 }) {
   const router = useRouter();
   const { t } = useI18n();
-  const { pending, run } = useAsyncAction();
+  const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   return (
@@ -157,25 +163,34 @@ function EditContactModal({
               return;
             }
             setErrors({});
-            void run(
-              async () =>
-                updateContactAction({
-                  contactId: parsed.data.contactId,
-                  name: parsed.data.name,
-                  email: parsed.data.email ?? "",
-                  phone: parsed.data.phone ?? "",
-                  status: parsed.data.status,
-                  projectId: parsed.data.projectId ?? "",
-                  value: parsed.data.value ?? "",
-                  notes: parsed.data.notes ?? "",
-                }),
-              { successToast: "פרטי הלקוח עודכנו", errorToast: "שמירה נכשלה" },
-            ).then((r) => {
-              if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
-                router.refresh();
-                onClose();
+            void (async () => {
+              setPending(true);
+              try {
+                const r = await toastClientActionFeedback(
+                  () =>
+                    updateContactAction({
+                      contactId: parsed.data.contactId,
+                      name: parsed.data.name,
+                      email: parsed.data.email ?? "",
+                      phone: parsed.data.phone ?? "",
+                      status: parsed.data.status,
+                      projectId: parsed.data.projectId ?? "",
+                      value: parsed.data.value ?? "",
+                      notes: parsed.data.notes ?? "",
+                    }),
+                  {
+                    successMessage: "פרטי הלקוח עודכנו בהצלחה",
+                    loadingMessage: "שומר…",
+                  },
+                );
+                if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
+                  router.refresh();
+                  onClose();
+                }
+              } finally {
+                setPending(false);
               }
-            });
+            })();
           }}
         >
           <div className="md:col-span-2">
@@ -245,15 +260,21 @@ function EditContactModal({
               type="button"
               onClick={() => {
                 if (!confirm(t("workspaceClients.editModal.deleteConfirm", { name: contact.name }))) return;
-                void run(async () => deleteContactAction(contact.id), {
-                  successToast: "הלקוח הוסר מהמערכת",
-                  errorToast: "מחיקה נכשלה",
-                }).then((r) => {
-                  if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
-                    router.refresh();
-                    onClose();
+                void (async () => {
+                  setPending(true);
+                  try {
+                    const r = await toastClientActionFeedback(() => deleteContactAction(contact.id), {
+                      successMessage: "הלקוח הוסר מהמערכת",
+                      loadingMessage: "מוחק…",
+                    });
+                    if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
+                      router.refresh();
+                      onClose();
+                    }
+                  } finally {
+                    setPending(false);
                   }
-                });
+                })();
               }}
               className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-black text-rose-800 hover:bg-rose-100 disabled:opacity-60"
               disabled={pending}
@@ -278,6 +299,101 @@ function initials(name: string) {
   return name.split(" ").slice(0, 2).map((p) => p[0] ?? "").join("").toUpperCase();
 }
 
+function ProjectsHubPanel({
+  projects,
+  projectSearch,
+  setProjectSearch,
+  projectActiveFilter,
+  setProjectActiveFilter,
+}: {
+  projects: ProjectRecord[];
+  projectSearch: string;
+  setProjectSearch: (v: string) => void;
+  projectActiveFilter: "all" | "active" | "archived";
+  setProjectActiveFilter: (v: "all" | "active" | "archived") => void;
+}) {
+  const normalized = projectSearch.trim().toLowerCase();
+  const list = useMemo(() => {
+    return projects.filter((p) => {
+      const matches =
+        normalized.length === 0 ||
+        p.name.toLowerCase().includes(normalized);
+      const activeOk =
+        projectActiveFilter === "all" ||
+        (projectActiveFilter === "active" && p.isActive) ||
+        (projectActiveFilter === "archived" && !p.isActive);
+      return matches && activeOk;
+    });
+  }, [projects, normalized, projectActiveFilter]);
+
+  return (
+    <div className="space-y-6">
+      <Surface className="flex flex-wrap items-center gap-3 !p-4">
+        <div className="relative min-w-[200px] flex-1">
+          <Filter className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--ink-400)]" aria-hidden />
+          <input
+            value={projectSearch}
+            onChange={(e) => setProjectSearch(e.target.value)}
+            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-2.5 pe-4 ps-10 text-sm font-medium outline-none focus:border-[color:var(--axis-clients)]"
+            placeholder="חיפוש פרויקט"
+          />
+        </div>
+        <select
+          value={projectActiveFilter}
+          onChange={(e) => setProjectActiveFilter(e.target.value as "all" | "active" | "archived")}
+          className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold"
+        >
+          <option value="active">פעילים</option>
+          <option value="archived">ארכיון</option>
+          <option value="all">הכל</option>
+        </select>
+      </Surface>
+
+      {list.length === 0 ? (
+        <EmptyState
+          variant="card"
+          icon={BriefcaseBusiness}
+          title="לא נמצאו פרויקטים לפי הסינון"
+          description="נסו לחפש בשם אחר או להציג גם ארכיון. פרויקט חדש ייפתח את דף העבודה והשיוך ללקוחות."
+          className="py-12"
+        />
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {list.map((p) => (
+            <Link
+              key={p.id}
+              href={`/app/crm/project/${encodeURIComponent(p.id)}`}
+              className="rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-4 shadow-sm transition hover:border-[color:var(--axis-clients)] hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="min-w-0 truncate text-base font-black text-[color:var(--ink-900)]">{p.name}</p>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-black ${
+                    p.isActive ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]" : "bg-[color:var(--ink-200)] text-[color:var(--ink-600)]"
+                  }`}
+                >
+                  {p.isActive ? "פעיל" : "ארכיון"}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-[color:var(--ink-500)]">
+                {p.contactCount} לקוחות · צפי {formatCurrencyILS(p.totalValue)}
+              </p>
+              <p className="mt-1 text-[11px] font-bold text-[color:var(--axis-clients)]">פתיחת דף פרויקט</p>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <Surface className="!p-5">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">פרויקט חדש</p>
+        <div className="mt-4">
+          <QuickProjectForm />
+        </div>
+      </Surface>
+    </div>
+  );
+}
+
 export default function ClientsWorkspaceV2({
   contacts,
   projects,
@@ -287,8 +403,14 @@ export default function ClientsWorkspaceV2({
   initialProjectFilter,
   initialClientId,
   embedBelowSummary = false,
+  hideWorkspaceHero = false,
 }: Props) {
   const { t, dir } = useI18n();
+  const [hubTab, setHubTab] = useState<"projects" | "clients">(() =>
+    initialClientId || initialProjectFilter ? "clients" : "projects",
+  );
+  const [projectSearch, setProjectSearch] = useState("");
+  const [projectActiveFilter, setProjectActiveFilter] = useState<"all" | "active" | "archived">("active");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [projectFilter, setProjectFilter] = useState(() =>
@@ -371,60 +493,72 @@ export default function ClientsWorkspaceV2({
   const insightText = insightParts.join(" · ");
 
   return (
-    <div className="w-full min-w-0 space-y-8" dir={dir}>
-      {!embedBelowSummary && (
-        <Tile tone="clients" span={12}>
-          <div className="flex flex-col gap-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="tile-eyebrow">{t("workspaceClients.eyebrow")}</p>
-                <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
-                  {t("workspaceClients.heroTitle", { clients: clientsLabel })}
-                </h1>
-                <p className="mt-1 text-sm text-[color:var(--ink-500)]">
-                  {t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/app/clients#quick-client-form"
-                  className="bento-btn bento-btn--primary"
-                  style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
-                >
-                  <Plus className="h-4 w-4" aria-hidden />
-                  {t("workspaceClients.addCta")}
-                </Link>
-                <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--axis-clients-soft)] sm:flex">
-                  <BriefcaseBusiness className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
-                </div>
-              </div>
-            </div>
+    <div className="cd-canvas w-full min-w-0 space-y-10" dir={dir}>
+      {hideWorkspaceHero ? (
+        <div className="flex flex-wrap gap-2 border-b border-[color:var(--line-subtle)] pb-3">
+          <button
+            type="button"
+            onClick={() => setHubTab("projects")}
+            className={`rounded-xl px-4 py-2 text-sm font-black transition ${
+              hubTab === "projects"
+                ? "bg-[color:var(--axis-clients)] text-white shadow-sm"
+                : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-600)] hover:text-[color:var(--ink-900)]"
+            }`}
+          >
+            פרויקטים
+          </button>
+          <button
+            type="button"
+            onClick={() => setHubTab("clients")}
+            className={`rounded-xl px-4 py-2 text-sm font-black transition ${
+              hubTab === "clients"
+                ? "bg-[color:var(--axis-clients)] text-white shadow-sm"
+                : "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-600)] hover:text-[color:var(--ink-900)]"
+            }`}
+          >
+            לקוחות וצנרת
+          </button>
+        </div>
+      ) : null}
 
-            {/* Quick stats in Hero */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{'סה"כ לקוחות'}</p>
-                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{contacts.length}</p>
-              </div>
-              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">פעילים</p>
-                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{activeCount}</p>
-              </div>
-              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">בטיפול (הצעות)</p>
-                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{proposalCount}</p>
-              </div>
-              <div className="rounded-xl border border-white/40 bg-white/30 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">צפי הכנסה</p>
-                <p className="mt-0.5 text-lg font-black text-[color:var(--ink-900)]">{formatCurrencyILS(totalValue)}</p>
-              </div>
-            </div>
-          </div>
-        </Tile>
+      {!embedBelowSummary && !hideWorkspaceHero && (
+        <>
+          <PageHeader
+            eyebrow={t("workspaceClients.eyebrow")}
+            title={t("workspaceClients.heroTitle", { clients: clientsLabel })}
+            subtitle={t("workspaceClients.heroSubtitle", { clients: clientsLabel })}
+            actions={
+              <Link href="/app/crm#quick-client-form" className="cd-btn cd-btn-primary">
+                <Plus className="h-3.5 w-3.5" aria-hidden />
+                {t("workspaceClients.addCta")}
+              </Link>
+            }
+          />
+          <section className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+            <Stat label={t("workspaceClients.heroKpiTotalClients")} value={contacts.length} icon={Users} href="/app/crm" />
+            <Stat label={t("workspaceClients.heroKpiActive")} value={activeCount} icon={BriefcaseBusiness} href="/app/crm" />
+            <Stat label={t("workspaceClients.heroKpiProposals")} value={proposalCount} icon={ReceiptText} href="/app/crm" />
+            <Stat
+              label={t("workspaceClients.heroKpiPipeline")}
+              value={formatCurrencyILS(totalValue)}
+              icon={Wallet}
+              href="/app/crm"
+            />
+          </section>
+        </>
       )}
 
-      {/* ── Filters bar — 2026 clean style ── */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
+      {hideWorkspaceHero && hubTab === "projects" ? (
+        <ProjectsHubPanel
+          projects={projects}
+          projectSearch={projectSearch}
+          setProjectSearch={setProjectSearch}
+          projectActiveFilter={projectActiveFilter}
+          setProjectActiveFilter={setProjectActiveFilter}
+        />
+      ) : (
+        <>
+      <Surface className="flex flex-wrap items-center gap-3 !p-4">
         <div className="relative flex flex-1 min-w-[280px] items-center">
           <Filter className="absolute start-3 h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
           <input
@@ -496,7 +630,7 @@ export default function ClientsWorkspaceV2({
             {t("workspaceClients.viewList")}
           </button>
         </div>
-      </div>
+      </Surface>
 
       <BentoGrid>
         {/* AI insight — hero */}
@@ -588,7 +722,7 @@ export default function ClientsWorkspaceV2({
             {projects.slice(0, 4).map((p) => (
               <Link
                 key={p.id}
-                href={`/app/clients?projectId=${encodeURIComponent(p.id)}`}
+                href={`/app/crm/project/${encodeURIComponent(p.id)}`}
                 className="flex-1 min-w-0 truncate rounded-full border border-[color:var(--axis-clients-border)] bg-[color:var(--axis-clients-soft)] px-2 py-1 text-center text-[10px] font-bold text-[color:var(--axis-clients-ink)] hover:bg-[color:var(--axis-clients)] hover:text-white"
               >
                 {p.name}
@@ -608,9 +742,13 @@ export default function ClientsWorkspaceV2({
           />
           <div className="mt-4">
             {filteredContacts.length === 0 ? (
-              <div className="flex min-h-[240px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-200/10 px-4 py-10 text-center text-sm text-[color:var(--ink-500)]">
-                {t("workspaceClients.emptyFilterTitle")}
-              </div>
+              <EmptyState
+                variant="card"
+                icon={Users}
+                title="ה-CRM מחכה ללקוח הראשון"
+                description="לא נמצאו לקוחות לפי הסינון. הרחיבו חיפוש, אפסו מסנים או הוסיפו לקוח חדש בטופס המהיר למטה."
+                className="min-h-[240px] justify-center border border-dashed border-slate-200/60 bg-white/80 py-10"
+              />
             ) : view === "pipeline" ? (
               <>
                 <div className="space-y-3 md:hidden">
@@ -649,7 +787,7 @@ export default function ClientsWorkspaceV2({
                               className="flex items-stretch gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] transition hover:border-[color:var(--axis-clients)] hover:shadow-[var(--shadow-sm)]"
                             >
                               <Link
-                                href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                                href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                                 className="flex min-w-0 flex-1 items-start gap-2.5 p-2.5"
                               >
                                 <span
@@ -716,7 +854,7 @@ export default function ClientsWorkspaceV2({
                                 className="flex items-stretch gap-1 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] transition hover:-translate-y-0.5 hover:border-[color:var(--axis-clients)] hover:shadow-[var(--shadow-sm)]"
                               >
                                 <Link
-                                  href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                                  href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                                   className="flex min-w-0 flex-1 items-start gap-2.5 p-2.5"
                                 >
                                   <span
@@ -789,7 +927,7 @@ export default function ClientsWorkspaceV2({
                         <tr key={c.id} className="align-middle">
                           <td>
                             <Link
-                              href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                              href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                               className="flex items-center gap-2 text-sm font-black text-[color:var(--ink-900)]"
                             >
                               <span
@@ -858,7 +996,7 @@ export default function ClientsWorkspaceV2({
                       className="flex items-center gap-2 rounded-xl border border-slate-200/10 bg-[color:var(--canvas-raised)] shadow-sm transition hover:border-[color:var(--axis-clients)] hover:bg-[color:var(--canvas-sunken)]"
                     >
                       <Link
-                        href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                        href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                         className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5"
                       >
                         <span
@@ -928,12 +1066,16 @@ export default function ClientsWorkspaceV2({
         <Tile tone="finance" span={6}>
           <TileHeader
             eyebrow={t("workspaceClients.topRevenueTitle")}
-            action={<TileLink href="/app/finance" tone="finance" label={t("workspaceClients.financeCta")} />}
+            action={<TileLink href="/app/erp" tone="finance" label={t("workspaceClients.financeCta")} />}
           />
           {topRevenueClients.length === 0 ? (
-            <div className="mt-4 rounded-lg border border-dashed border-[color:var(--line-strong)] px-4 py-6 text-center text-sm text-[color:var(--ink-500)]">
-              {t("workspaceClients.topRevenueEmpty")}
-            </div>
+            <EmptyState
+              variant="bare"
+              icon={Wallet}
+              title="עדיין אין הכנסות מדורגות"
+              description="ברגע שתפיקו מסמכים ותזינו תשלומים, נראה כאן את הלקוחות המובילים בהכנסות."
+              className="mt-4 rounded-xl border border-dashed border-slate-200/70 bg-white/50 py-8"
+            />
           ) : (
             <ul className="mt-3 divide-y divide-white/40">
               {topRevenueClients.map((c) => {
@@ -941,7 +1083,7 @@ export default function ClientsWorkspaceV2({
                 return (
                   <li key={c.id}>
                     <Link
-                      href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                      href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                       className="block py-2.5 transition hover:bg-white/40 rounded-md px-1"
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -973,7 +1115,7 @@ export default function ClientsWorkspaceV2({
               {missingContactDetails.map((c) => (
                 <li key={c.id} className="py-2.5">
                   <Link
-                    href={`/app/clients?clientId=${encodeURIComponent(c.id)}`}
+                    href={`/app/crm/client/${encodeURIComponent(c.id)}`}
                     className="flex items-center gap-2 text-[13px] transition hover:text-[color:var(--axis-ai)]"
                   >
                     <Sparkles className="h-3.5 w-3.5 shrink-0 text-[color:var(--axis-ai)]" aria-hidden />
@@ -994,11 +1136,11 @@ export default function ClientsWorkspaceV2({
             </ul>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
-            <Link href="/app/inbox" className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-[12px] font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
+            <Link href="/app" className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-[12px] font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
               {t("workspaceClients.inboxCta")}
             </Link>
-            <Link href="/app/documents/issue" className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--axis-finance-border)] bg-[color:var(--axis-finance-soft)] px-3 py-2 text-[12px] font-bold text-[color:var(--axis-finance-ink)] hover:bg-[color:var(--axis-finance)] hover:text-white">
+            <Link href="/app/erp" className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--axis-finance-border)] bg-[color:var(--axis-finance-soft)] px-3 py-2 text-[12px] font-bold text-[color:var(--axis-finance-ink)] hover:bg-[color:var(--axis-finance)] hover:text-white">
               <ReceiptText className="h-3.5 w-3.5" aria-hidden />
               {t("workspaceClients.issueCta")}
             </Link>
@@ -1020,6 +1162,8 @@ export default function ClientsWorkspaceV2({
           </div>
         </Tile>
       </BentoGrid>
+        </>
+      )}
 
       {editing ? <EditContactModal contact={editing} projects={projects} onClose={() => setEditing(null)} /> : null}
     </div>

@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "verify": "npm run lint && npx tsc --noEmit && npm test",
     "verify:all": "npm run verify && playwright test",
+    "verify:e2e:seeded": "npm run seed:test && playwright test",
     "postinstall": "prisma generate",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:execute:subscription-v2": "dotenv -e .env.local -- prisma db execute --file prisma/migrations/manual_subscription_v2.sql --schema prisma/schema.prisma",

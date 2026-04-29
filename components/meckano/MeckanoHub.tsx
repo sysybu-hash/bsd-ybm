@@ -168,7 +168,7 @@ function CheckStateBadge({ state }: { state: number }) {
   return <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${info.cls}`}>{info.label}</span>;
 }
 
-function EmptyState({ message }: { message: string }) {
+function MeckanoEmptyHint({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-gray-400">
       <AlertCircle size={36} className="mb-3 opacity-40" />
@@ -737,7 +737,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {empLoading ? <LoadingSpinner /> : empError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{empError}</div>
               ) : filtered.length === 0 ? (
-                <EmptyState message="לא נמצאו עובדים" />
+                <MeckanoEmptyHint message="לא נמצאו עובדים" />
               ) : (
                 <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {filtered.map(emp => {
@@ -854,7 +854,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {deptLoading ? <LoadingSpinner /> : deptError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{deptError}</div>
               ) : departments.length === 0 ? (
-                <EmptyState message="לא נמצאו מחלקות" />
+                <MeckanoEmptyHint message="לא נמצאו מחלקות" />
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {departments.map(dept => (
@@ -911,7 +911,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {attLoading ? <LoadingSpinner /> : attError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{attError}</div>
               ) : attendance.length === 0 ? (
-                <EmptyState message="אין רשומות נוכחות בטווח שנבחר" />
+                <MeckanoEmptyHint message="אין רשומות נוכחות בטווח שנבחר" />
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
@@ -1018,7 +1018,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {zonesLoading ? <LoadingSpinner /> : zonesError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{zonesError}</div>
               ) : zones.length === 0 ? (
-                <EmptyState message="אין פרויקטים — הוסף את אתרי העבודה שלך" />
+                <MeckanoEmptyHint message="אין פרויקטים — הוסף את אתרי העבודה שלך" />
               ) : (
                 <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {zones.map(zone => {
@@ -1348,7 +1348,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {tasksLoading ? <LoadingSpinner /> : tasksError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{tasksError}</div>
               ) : tasks.length === 0 ? (
-                <EmptyState message="לא נמצאו משימות" />
+                <MeckanoEmptyHint message="לא נמצאו משימות" />
               ) : (
                 <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
                   {tasks.map(task => (
@@ -1387,7 +1387,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {teLoading ? <LoadingSpinner /> : teError ? (
                 <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{teError}</div>
               ) : taskEntries.length === 0 ? (
-                <EmptyState message="אין דיווחי משימות בטווח שנבחר" />
+                <MeckanoEmptyHint message="אין דיווחי משימות בטווח שנבחר" />
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-gray-200">
                   <table className="w-full text-sm">
@@ -1611,11 +1611,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
               {reportLoading ? (
                 <LoadingSpinner />
               ) : reportGenerated && reportType === "attendance" && reportAttendance.length === 0 ? (
-                <EmptyState message="אין נתוני נוכחות בטווח שנבחר" />
+                <MeckanoEmptyHint message="אין נתוני נוכחות בטווח שנבחר" />
               ) : reportGenerated && reportType === "task-entries" && reportTaskEntries.length === 0 ? (
-                <EmptyState message="אין דיווחי משימות בטווח שנבחר" />
+                <MeckanoEmptyHint message="אין דיווחי משימות בטווח שנבחר" />
               ) : reportGenerated && reportType === "summary" && reportAttendance.length === 0 ? (
-                <EmptyState message="אין נתוני נוכחות לסיכום" />
+                <MeckanoEmptyHint message="אין נתוני נוכחות לסיכום" />
               ) : reportGenerated && reportType === "attendance" && reportAttendance.length > 0 ? (
                 <div className="space-y-2">
                   <p className="text-xs text-gray-400">{reportAttendance.length} רשומות נוכחות</p>
@@ -1705,7 +1705,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   );
                 })()
               ) : reportGenerated && reportType === "project-cost" && reportAttendance.length === 0 ? (
-                <EmptyState message="אין נתוני נוכחות לחישוב עלויות" />
+                <MeckanoEmptyHint message="אין נתוני נוכחות לחישוב עלויות" />
               ) : reportGenerated && reportType === "project-cost" && reportAttendance.length > 0 ? (
                 (() => {
                   const selectedZone = reportZoneId ? zones.find(z => z.id === reportZoneId) : null;
@@ -1786,7 +1786,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   );
                 })()
               ) : reportGenerated && reportType === "locations" && reportAttendance.length === 0 ? (
-                <EmptyState message="אין נתוני נוכחות בטווח שנבחר" />
+                <MeckanoEmptyHint message="אין נתוני נוכחות בטווח שנבחר" />
               ) : reportGenerated && reportType === "locations" && reportAttendance.length > 0 ? (
                 (() => {
                   // Build empId→zone map (first matching zone per employee)

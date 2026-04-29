@@ -30,11 +30,11 @@ Apply-Colors $f
 Apply-Colors "$b\components\DashboardGlobalSearch.tsx"
 Apply-Colors "$b\components\control-center\OperatorOnboardingPanel.tsx"
 Apply-Colors "$b\components\DashboardNotificationBell.tsx"
-Apply-Colors "$b\app\dashboard\trial-expired\page.tsx"
-Apply-Colors "$b\app\dashboard\(protected)\crm\CrmClient.tsx"
+Apply-Colors "$b\app\app\trial-expired\page.tsx"
+Apply-Colors "$b\components\crm\CrmClient.tsx"
 
 # success/page — update confetti to indigo palette + blanket
-$f = "$b\app\dashboard\(protected)\success\page.tsx"
+$f = "$b\app\app\success\page.tsx"
 $c = [IO.File]::ReadAllText($f, [Text.Encoding]::UTF8)
 $c = $c.Replace('"#3b82f6", "#60a5fa", "#e2e8f0"', '"#6366f1", "#818cf8", "#e0e7ff"')
 [IO.File]::WriteAllText($f, $c, [Text.Encoding]::UTF8)

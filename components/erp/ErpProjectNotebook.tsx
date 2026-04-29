@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   BookOpen,
   FileText,
   Loader2,
+  Maximize2,
   Send,
   Trash2,
   UploadCloud,
@@ -47,9 +48,21 @@ function readFileAsBase64(file: File): Promise<string> {
 
 type Props = {
   geminiConfigured: boolean;
+  /** מוטמע במרכז AI — ללא כותרת-על כפולה (הכותרת מבחוץ) */
+  embedInHub?: boolean;
+  /** מצמצם גובה צ'אט במרכז AI */
+  embedCompact?: boolean;
+  onAssistantReply?: (text: string) => void;
+  onSourcesChange?: (fileNames: string[]) => void;
 };
 
-export default function ErpProjectNotebook({ geminiConfigured }: Props) {
+export default function ErpProjectNotebook({
+  geminiConfigured,
+  embedInHub = false,
+  embedCompact = false,
+  onAssistantReply,
+  onSourcesChange,
+}: Props) {
   const { t, dir } = useI18n();
   const [sources, setSources] = useState<PdfSource[]>([]);
   const [messages, setMessages] = useState<ChatTurn[]>([]);
@@ -57,6 +70,10 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    onSourcesChange?.(sources.map((s) => s.fileName));
+  }, [sources, onSourcesChange]);
 
   const onDrop = useCallback(
     async (accepted: File[]) => {
@@ -153,6 +170,7 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
       }
       const answer = String(data.answer ?? "");
       setMessages((m) => [...m, { role: "model", content: answer }]);
+      onAssistantReply?.(answer);
     } catch (e) {
       setMessages((m) => m.slice(0, -1));
       setError(e instanceof Error ? e.message : String(e));
@@ -167,37 +185,65 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
       className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-lg"
       dir={dir}
     >
-      <div className="border-b border-[color:var(--line)] px-6 py-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
-              <BookOpen className="h-6 w-6" aria-hidden />
-            </span>
-            <div>
-              <h2 className="text-lg font-black text-[color:var(--ink-900)]">
-                {t("erpDash.notebook.title")}
-              </h2>
-              <p className="mt-1 max-w-2xl text-sm text-[color:var(--ink-500)]">
-                {t("erpDash.notebook.subtitle")}
-              </p>
-              <p className="mt-2 text-xs font-semibold text-[color:var(--ink-400)]">
-                {t("erpDash.notebook.modelHint")}
-              </p>
-            </div>
+      {embedInHub ? (
+        <div className="flex items-center justify-between border-b border-[color:var(--line)] px-4 py-2">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-violet-600" aria-hidden />
+            <span className="text-xs font-black text-[color:var(--ink-900)]">NotebookLM</span>
           </div>
           <button
             type="button"
             onClick={clearAll}
-            className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white px-4 py-2 text-xs font-bold text-[color:var(--ink-700)] transition hover:bg-[color:var(--canvas-sunken)]"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--line)] bg-white text-[color:var(--ink-700)] transition hover:bg-[color:var(--canvas-sunken)]"
+            title={t("erpDash.notebook.clear")}
+            aria-label={t("erpDash.notebook.clear")}
           >
             <Trash2 className="h-4 w-4" aria-hidden />
-            {t("erpDash.notebook.clear")}
           </button>
         </div>
-      </div>
+      ) : (
+        <div className="border-b border-[color:var(--line)] px-6 py-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                <BookOpen className="h-6 w-6" aria-hidden />
+              </span>
+              <div>
+                <h2 className="text-lg font-black text-[color:var(--ink-900)]">
+                  {t("erpDash.notebook.title")}
+                </h2>
+                <p className="mt-1 max-w-2xl text-sm text-[color:var(--ink-500)]">
+                  {t("erpDash.notebook.subtitle")}
+                </p>
+                <p className="mt-2 text-xs font-semibold text-[color:var(--ink-400)]">
+                  {t("erpDash.notebook.modelHint")}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={clearAll}
+              className="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white px-4 py-2 text-xs font-bold text-[color:var(--ink-700)] transition hover:bg-[color:var(--canvas-sunken)]"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+              {t("erpDash.notebook.clear")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {embedInHub && !embedCompact ? (
+        <p className="border-b border-[color:var(--line)] px-5 py-2 text-xs font-semibold text-[color:var(--ink-400)]">
+          {t("erpDash.notebook.modelHint")}
+        </p>
+      ) : null}
 
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="flex min-h-[420px] flex-col border-[color:var(--line)] lg:border-e">
+        <div
+          className={`flex flex-col border-[color:var(--line)] lg:border-e ${
+            embedCompact ? "min-h-[260px] max-h-[min(52vh,520px)]" : "min-h-[420px]"
+          }`}
+        >
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             {messages.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[color:var(--line)] bg-white/60 px-5 py-10 text-center">
@@ -270,16 +316,19 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
                 <Send className="h-5 w-5" aria-hidden />
               </button>
             </div>
-            <p className="mt-2 text-[11px] text-[color:var(--ink-400)]">
+            <p className={`mt-2 text-[11px] text-[color:var(--ink-400)] ${embedCompact ? "sr-only" : ""}`}>
               {t("erpDash.notebook.footerHint")}
             </p>
           </div>
         </div>
 
         <aside className="flex flex-col gap-3 p-5">
-          <p className="text-xs font-black uppercase tracking-wider text-[color:var(--ink-400)]">
-            {t("erpDash.notebook.sourcesTitle")}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-black uppercase tracking-wider text-[color:var(--ink-400)]">
+              {t("erpDash.notebook.sourcesTitle")}
+            </p>
+            <Maximize2 className="h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
+          </div>
           <div
             {...getRootProps()}
             className={`cursor-pointer rounded-2xl border-2 border-dashed px-4 py-6 text-center transition ${
@@ -293,7 +342,7 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
             <p className="mt-2 text-sm font-bold text-[color:var(--ink-700)]">
               {t("erpDash.notebook.dropTitle")}
             </p>
-            <p className="mt-1 text-xs text-[color:var(--ink-500)]">
+            <p className={`mt-1 text-xs text-[color:var(--ink-500)] ${embedCompact ? "sr-only" : ""}`}>
               {t("erpDash.notebook.dropHint")}
             </p>
           </div>
@@ -322,7 +371,7 @@ export default function ErpProjectNotebook({ geminiConfigured }: Props) {
             ))}
           </ul>
 
-          <p className="text-[11px] leading-relaxed text-[color:var(--ink-400)]">
+          <p className={`text-[11px] leading-relaxed text-[color:var(--ink-400)] ${embedCompact ? "sr-only" : ""}`}>
             {t("erpDash.notebook.limitsHint")}
           </p>
         </aside>

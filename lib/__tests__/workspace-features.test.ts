@@ -39,6 +39,8 @@ describe("workspace-features", () => {
     // נתיבים ישנים מנותבים מחדש
     expect(pathnameToWorkspacePrimaryRoute("/app/finance")).toBe("erp");
     expect(pathnameToWorkspacePrimaryRoute("/app/clients")).toBe("crm");
+    expect(pathnameToWorkspacePrimaryRoute("/app/ai")).toBe("home");
+    expect(pathnameToWorkspacePrimaryRoute("/app/inbox")).toBe("home");
   });
 
   it("resolveWorkspaceFeatures מחזיר סט מלא לברירת מחדל", () => {

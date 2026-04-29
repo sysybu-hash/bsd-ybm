@@ -5,6 +5,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+function revalidateCrmAndRelated() {
+  revalidatePath("/app/clients");
+  revalidatePath("/app/business");
+  revalidatePath("/app/inbox");
+  revalidatePath("/app/crm");
+  revalidatePath("/app/erp");
+  revalidatePath("/app");
+}
+
 async function getOrgContext() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -55,10 +64,7 @@ export async function createContactAction(formData: FormData) {
     },
   });
 
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
   return { ok: true as const };
 }
 
@@ -73,7 +79,7 @@ export async function createProjectAction(formData: FormData) {
 
   const activeFromRaw = String(formData.get("activeFrom") || "").trim();
   const activeToRaw = String(formData.get("activeTo") || "").trim();
-  const isActive = formData.get("isActive") !== "off" && formData.get("isActive") !== "false";
+  const isActive = formData.has("isActive") && formData.get("isActive") !== "off" && formData.get("isActive") !== "false";
 
   await prisma.project.create({
     data: {
@@ -85,10 +91,41 @@ export async function createProjectAction(formData: FormData) {
     },
   });
 
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
+  return { ok: true as const };
+}
+
+export async function updateProjectAction(formData: FormData) {
+  const ctx = await getOrgContext();
+  if ("error" in ctx) return { ok: false as const, error: ctx.error };
+
+  const projectId = String(formData.get("projectId") || "").trim();
+  if (!projectId) return { ok: false as const, error: "חסר מזהה פרויקט" };
+
+  const row = await prisma.project.findFirst({
+    where: { id: projectId, organizationId: ctx.orgId },
+  });
+  if (!row) return { ok: false as const, error: "פרויקט לא נמצא" };
+
+  const name = String(formData.get("name") || "").trim();
+  if (!name) return { ok: false as const, error: "יש להזין שם פרויקט" };
+
+  const activeFromRaw = String(formData.get("activeFrom") || "").trim();
+  const activeToRaw = String(formData.get("activeTo") || "").trim();
+  const isActive = formData.has("isActive") && formData.get("isActive") !== "off" && formData.get("isActive") !== "false";
+
+  await prisma.project.update({
+    where: { id: projectId },
+    data: {
+      name,
+      isActive,
+      activeFrom: activeFromRaw ? new Date(`${activeFromRaw}T12:00:00`) : null,
+      activeTo: activeToRaw ? new Date(`${activeToRaw}T12:00:00`) : null,
+    },
+  });
+
+  revalidateCrmAndRelated();
+  revalidatePath(`/app/crm/project/${projectId}`);
   return { ok: true as const };
 }
 
@@ -105,10 +142,7 @@ export async function deleteContactAction(contactId: string) {
 
   await prisma.quote.deleteMany({ where: { contactId } });
   await prisma.contact.delete({ where: { id: contactId } });
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
   return { ok: true as const };
 }
 
@@ -159,10 +193,7 @@ export async function updateContactAction(input: {
     },
   });
 
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
   return { ok: true as const };
 }
 
@@ -210,10 +241,7 @@ export async function updateContactStatusAction(contactId: string, status: strin
     }
   }
 
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
   return { ok: true as const };
 }
 
@@ -229,9 +257,7 @@ export async function deleteProjectAction(projectId: string) {
   // Unlink contacts from this project before deleting
   await prisma.contact.updateMany({ where: { projectId, organizationId: ctx.orgId }, data: { projectId: null } });
   await prisma.project.delete({ where: { id: projectId } });
-revalidatePath("/app/clients");
-revalidatePath("/app/business");
-  revalidatePath("/app/clients");
-  revalidatePath("/app/inbox");
+  revalidateCrmAndRelated();
+  revalidatePath(`/app/crm/project/${projectId}`);
   return { ok: true as const };
 }

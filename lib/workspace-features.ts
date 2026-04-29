@@ -171,7 +171,7 @@ export function pathnameToWorkspacePrimaryRoute(pathname: string): AppRouteId | 
     return "crm";
   }
   if (seg === "ai" || seg === "inbox" || seg === "business" || seg === "advanced") {
-    return "scan";
+    return "home";
   }
   return APP_SEGMENT_TO_ROUTE[seg] ?? null;
 }

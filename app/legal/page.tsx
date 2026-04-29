@@ -51,15 +51,15 @@ const items = [
 
 export default function LegalHubPage() {
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-[color:var(--canvas)]" dir="rtl">
       <Navbar />
       <main className="max-w-4xl mx-auto px-6 py-24 pt-32 pb-16">
-        <h1 className="text-4xl font-black italic text-gray-900 mb-3">מסמכים משפטיים</h1>
-        <p className="text-gray-500 mb-2">
+        <h1 className="text-4xl font-black italic text-[color:var(--ink-900)] mb-3">מסמכים משפטיים</h1>
+        <p className="text-[color:var(--ink-500)] mb-2">
           כל המסמכים הרשמיים של <strong>{legalSite.siteName}</strong> במקום אחד. יש להשלים נוסח
           סופי מול יועץ משפטי לפני הסתמכות עסקית.
         </p>
-        <p className="text-sm text-gray-400 mb-10">
+        <p className="text-sm text-[color:var(--ink-400)] mb-10">
           פניות:{" "}
           <a
             href={`mailto:${legalSite.contactEmail}`}
@@ -74,14 +74,14 @@ export default function LegalHubPage() {
             <li key={href}>
               <Link
                 href={href}
-                className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-teal-500/30 hover:shadow-md"
+                className="flex gap-4 rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow-sm)] transition-all hover:border-[color:var(--cd-accent)]/35 hover:shadow-[var(--cd-shadow)]"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-500/15 text-[var(--primary-color)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[color:var(--cd-accent-soft)] text-[color:var(--cd-accent)]">
                   <Icon size={24} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-                  <p className="text-gray-500 text-sm mt-1">{desc}</p>
+                  <h2 className="text-lg font-bold text-[color:var(--ink-900)]">{title}</h2>
+                  <p className="text-[color:var(--ink-500)] text-sm mt-1">{desc}</p>
                 </div>
               </Link>
             </li>

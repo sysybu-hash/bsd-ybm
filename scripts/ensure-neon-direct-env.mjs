@@ -1,5 +1,9 @@
 /**
- * יוצר DIRECT_URL מ־DATABASE_URL של Neon (pooler → direct) אם חסר.
+ * מבטיח DIRECT_URL אם חסר:
+ * 1) Neon עם pooler — ממיר host לחיבור ישיר.
+ * 2) אחרת — משכפל את DATABASE_URL (פיתוח מקומי / ללא pooler).
+ * קורא מ־.env ומ־.env.local (מיזוג: .env ואז .env.local דורס).
+ * כותב את המשתנה החדש לקובץ שבו מופיע DATABASE_URL (עדיפות: .env.local לפני .env).
  * לא מדפיס סודות — רק הודעות סטטוס.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -8,7 +12,6 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
-const envPath = resolve(root, ".env.local");
 
 function parseDotenvKeys(content) {
   const map = new Map();
@@ -28,6 +31,26 @@ function parseDotenvKeys(content) {
     map.set(key, val);
   }
   return map;
+}
+
+/** קובץ env שבו מוגדר המפתח (לשכפול ערך / הוספת שורה) */
+function fileDefiningKey(paths, key) {
+  for (const p of paths) {
+    if (!existsSync(p)) continue;
+    const raw = readFileSync(p, "utf8");
+    if (
+      raw.split(/\r?\n/).some((line) => {
+        const t = line.trim();
+        if (!t || t.startsWith("#")) return false;
+        const eq = t.indexOf("=");
+        if (eq === -1) return false;
+        return t.slice(0, eq).trim() === key;
+      })
+    ) {
+      return p;
+    }
+  }
+  return null;
 }
 
 function poolerToDirectNeon(databaseUrl) {
@@ -62,37 +85,54 @@ function poolerToDirectNeon(databaseUrl) {
 }
 
 function main() {
-  if (!existsSync(envPath)) {
-    console.error("חסר .env.local");
+  const envLocal = resolve(root, ".env.local");
+  const envDefault = resolve(root, ".env");
+  const paths = [envLocal, envDefault].filter((p) => existsSync(p));
+
+  if (paths.length === 0) {
+    console.error("חסרים .env ו-.env.local");
     process.exit(1);
   }
 
-  const raw = readFileSync(envPath, "utf8");
-  const map = parseDotenvKeys(raw);
-  const existingDirect = map.get("DIRECT_URL");
+  const merged = new Map();
+  for (const p of [envDefault, envLocal]) {
+    if (!existsSync(p)) continue;
+    const m = parseDotenvKeys(readFileSync(p, "utf8"));
+    for (const [k, v] of m) merged.set(k, v);
+  }
+
+  const existingDirect = merged.get("DIRECT_URL");
   if (existingDirect && String(existingDirect).trim().length > 0) {
     console.log("DIRECT_URL כבר מוגדר — אין צורך בשינוי.");
     process.exit(0);
   }
 
-  const db = map.get("DATABASE_URL");
+  const db = merged.get("DATABASE_URL");
   if (!db) {
-    console.error("חסר DATABASE_URL ב-.env.local");
+    console.error("חסר DATABASE_URL ב-.env או ב-.env.local");
     process.exit(1);
   }
 
-  const derived = poolerToDirectNeon(db);
-  if (!derived) {
-    console.error(
-      "לא ניתן לגזור DIRECT_URL אוטומטית (צפוי Neon עם pooler ב-host). הוסף ידנית DIRECT_URL מ-Neon עם Connection pooling כבוי.",
-    );
+  const derived = poolerToDirectNeon(db) ?? db;
+  const target =
+    fileDefiningKey([envLocal, envDefault], "DATABASE_URL") ??
+    fileDefiningKey([envDefault, envLocal], "DATABASE_URL");
+
+  if (!target) {
+    console.error("לא נמצא קובץ env עם DATABASE_URL");
     process.exit(1);
   }
 
+  const raw = readFileSync(target, "utf8");
   const sep = raw.endsWith("\n") ? "" : "\n";
   const line = `${sep}DIRECT_URL=${JSON.stringify(derived)}\n`;
-  writeFileSync(envPath, raw + line, "utf8");
-  console.log("נוסף DIRECT_URL (חיבור ישיר ל-Neon) ל-.env.local — ללא הצגת הערך.");
+  writeFileSync(target, raw + line, "utf8");
+
+  const note =
+    derived === db
+      ? `נוסף DIRECT_URL (העתקת DATABASE_URL) ל-${target.endsWith(".local") ? ".env.local" : ".env"}.`
+      : "נוסף DIRECT_URL (חיבור ישיר ל-Neon) — ללא הצגת הערך.";
+  console.log(note);
   process.exit(0);
 }
 

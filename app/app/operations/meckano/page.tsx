@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { canAccessMeckano } from "@/lib/meckano-access";
 import { prisma } from "@/lib/prisma";
 import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "מקאנו | BSD-YBM" };
@@ -26,10 +27,11 @@ export default async function OperationsMeckanoPage() {
   }
 
   return (
+    <AppPageChrome>
     <div className="w-full min-w-0 space-y-8" dir="rtl">
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">Meckano</p>
-        <h1 className="text-[32px] font-black tracking-tight text-[color:var(--ink-900)] sm:text-[38px]">מרכז מקאנו</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[color:var(--ink-900)] sm:text-3xl">מרכז מקאנו</h1>
         <p className="mt-1 max-w-2xl text-[14px] text-[color:var(--ink-500)]">
           ניהול סנכרון עובדים, מחלקות, נוכחות ונתוני שטח דרך החיבור הארגוני למקאנו.
         </p>
@@ -55,5 +57,6 @@ export default async function OperationsMeckanoPage() {
       </BentoGrid>
       <MeckanoHub hasMeckanoKey={hasMeckanoKey} />
     </div>
+    </AppPageChrome>
   );
 }

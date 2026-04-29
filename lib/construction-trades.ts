@@ -100,7 +100,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "חומר חשמל, לוחות ותאורה",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי חשמל",
+      clientsLabel: "פרויקטים",
       documentsLabel: "תעודות, תוכניות והזמנות בתחום החשמל",
       recordsLabel: "אישורי בדיקה, התקנה ובטיחות חשמל",
       homeTitle: "מרכז תפעול לצוותי חשמל — מהאתר ועד התיעוד.",
@@ -159,7 +159,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "צינורות, אביזרים ואטמים",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי אינסטלציה",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הזמנות חומר, בדיקות לחץ ותוכניות מים/ביוב",
       recordsLabel: "אישורי אינסטלציה, בדיקות לחץ ואספקת צנרת",
       homeTitle: "מרכז תפעול לאינסטלטורים — מסמכי שטח ואישורים.",
@@ -217,7 +217,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "יחידות מיזוג, צינורות נחושת ואביזרים",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי מיזוג",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הזמנות ציוד, דוחות כיול והתקנה",
       recordsLabel: "אישורי השלמת התקנה, בדיקות הפעלה ותעודות ספק",
       homeTitle: "מרכז תפעול למיזוג אוויר — ציוד, אתרים ואישורים.",
@@ -274,7 +274,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "צבע, כלים וחומרי מריחה",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי צביעה",
+      clientsLabel: "פרויקטים",
       documentsLabel: "כמויות שטח, הזמנות צבע ותוכניות גמר",
       recordsLabel: "אישורי שלב גמר, כמויות ואספקה",
       homeTitle: "מרכז תפעול לצבע וגמר — שטחים, חומרים ואישורים.",
@@ -331,7 +331,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "קרמיקה, אבן ודבקים",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי ריצוף",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הזמנות מ״ר, תעודות משלוח ושרטוטים",
       recordsLabel: "אישורי אספקה, אצוות וסיום ריצוף",
       homeTitle: "מרכז תפעול לריצוף ואבן — כמויות, אספקה ואישורים.",
@@ -389,7 +389,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "פרופילים, זכוכית ואביזרי התקנה",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי אלומיניום",
+      clientsLabel: "פרויקטים",
       documentsLabel: "שרטוטי פתחים, הזמנות פרופיל וזכוכית",
       recordsLabel: "אישורי מדידה, אספקה והתקנה",
       homeTitle: "מרכז תפעול לאלומיניום וזכוכית — פתחים, מידות ואישורים.",
@@ -446,7 +446,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "דלתות, מטבחים וריהוט מובנה",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי גמר פנים",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הזמנות נגרות, מטבחים ותעודות אספקה",
       recordsLabel: "אישורי התקנה, מסירה ושלבי גמר",
       homeTitle: "מרכז תפעול לגמר פנים — מטבחים, דלתות ואישורים.",
@@ -503,7 +503,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "צמחים, אבן דריכה ורכיבי השקיה",
     },
     profile: {
-      clientsLabel: "מזמינים, קבלנים ואתרי גינון",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הצעות, הזמנות חומר ותוכניות גינון",
       recordsLabel: "אישורי ביצוע, אספקה ושלבי חוץ",
       homeTitle: "מרכז תפעול לגינון וחוץ — היקפים, חומרים ואישורים.",
@@ -560,7 +560,7 @@ const TRADE_PATCHES: Record<ConstructionTradeId, ConstructionTradePatch | null> 
       inventory: "חומרים לפי תיקי משנה",
     },
     profile: {
-      clientsLabel: "קבלנים ראשיים ומזמינים",
+      clientsLabel: "פרויקטים",
       documentsLabel: "הצעות מחיר, חשבוניות ביצוע ותעודות שטח",
       recordsLabel: "אישורי התקדמות, אספקה וסגירת שלבים",
       homeTitle: "מרכז תפעול לקבלני משנה — הצעות, ביצוע וחיוב.",

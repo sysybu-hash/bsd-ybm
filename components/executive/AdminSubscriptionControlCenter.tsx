@@ -1184,13 +1184,13 @@ export default function AdminSubscriptionControlCenter({
                   </div>
                   <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                     <a
-                      href="/app/clients"
+                      href="/app/crm"
                       className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
                     >
                       <ExternalLink size={14} /> מערכת CRM
                     </a>
                     <a
-                      href="/app/documents/erp"
+                      href="/app/erp"
                       className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-center text-sm font-black text-gray-900 hover:bg-gray-100"
                     >
                       <ExternalLink size={14} /> ERP

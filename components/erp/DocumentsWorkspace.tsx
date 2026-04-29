@@ -24,7 +24,7 @@ type DocumentsWorkspaceProps = {
   uploadHref?: string;
 };
 
-const DEFAULT_UPLOAD = "/app/documents/erp?tab=scan#erp-multi-scanner";
+const DEFAULT_UPLOAD = "/app/erp#erp-multi-scanner";
 
 /**
  * שכבת מסמכי ERP: כותרת, CTA, מדדים וטבלת מסמכים אחרונים

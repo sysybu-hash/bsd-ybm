@@ -1,31 +1,35 @@
 "use client";
 
-import { startTransition, useDeferredValue, useMemo, useState, useTransition } from "react";
+import { startTransition, useCallback, useDeferredValue, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
 import {
-  AlertTriangle,
   ArrowLeft,
+  BookOpen,
   Eye,
-  FileSearch,
-  Filter,
-  FolderArchive,
-  LayoutGrid,
   Link2,
-  ListFilter,
   Loader2,
   PencilLine,
+  Rows3,
+  ScanLine,
   Search,
   Sparkles,
-  Tags,
   Trash2,
-  Upload,
   X,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";
-import WorkspacePageHeader, { HeaderResponsiveLabel } from "@/components/layout/WorkspacePageHeader";
 import DocumentGeneratorsStrip from "@/components/documents/DocumentGeneratorsStrip";
-import { Tile } from "@/components/ui/bento";
+import AiDocDraftPanel from "@/components/documents/AiDocDraftPanel";
+import AiHubScrollToHash from "@/components/documents/AiHubScrollToHash";
+import AiHubUnifiedPreview from "@/components/documents/AiHubUnifiedPreview";
+import ScanHubDecodePanel from "@/components/documents/ScanHubDecodePanel";
+import { AiHubPreviewProvider, useAiHubPreview, type AiHubTab } from "@/components/documents/AiHubPreviewContext";
+import ErpMultiEngineScannerLazy from "@/components/erp/ErpMultiEngineScannerLazy";
+import ErpProjectNotebook from "@/components/erp/ErpProjectNotebook";
+import type { ScanHubPreviewPayload } from "@/components/MultiEngineScanner";
+import { PageHeader, SectionHeader, Surface } from "@/components/ui/claude";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS, formatShortDate } from "@/lib/ui-formatters";
@@ -75,6 +79,7 @@ type Props = Readonly<{
   scannedDocuments: ScannedDocumentRecord[];
   issuedDocuments: IssuedDocumentRecord[];
   contacts?: ContactOption[];
+  geminiConfigured: boolean;
 }>;
 
 type ScannedDraft = {
@@ -165,173 +170,28 @@ function parseIssuedItems(text: string, t: TFunction) {
   return { items, error: null as string | null };
 }
 
-function ScannedCard({
-  document,
-  onOpen,
-  onDelete,
-  onLinkClient,
-}: {
-  document: ScannedDocumentRecord;
-  onOpen: (document: ScannedDocumentRecord) => void;
-  onDelete: (document: ScannedDocumentRecord) => void;
-  onLinkClient?: (document: ScannedDocumentRecord) => void;
-}) {
-  const { t, dir } = useI18n();
-  const badgeClassName = badgeClass(document.status, "scanned");
-  const vendorDisplay = translateFallback(
-    document.vendor,
-    DOC_UI_FALLBACK.unknownVendor,
-    "workspaceDocuments.fallbacks.unknownVendor",
-    t,
-  );
-  const summaryDisplay = translateFallback(
-    document.summary,
-    DOC_UI_FALLBACK.noSummary,
-    "workspaceDocuments.fallbacks.noSummary",
-    t,
-  );
-  const typeDisplay = translateFallback(
-    document.extractedType,
-    DOC_UI_FALLBACK.unknownDocType,
-    "workspaceDocuments.fallbacks.unknownDocType",
-    t,
-  );
-
-  return (
-    <article className="tile overflow-hidden p-5" dir={dir}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="truncate text-lg font-black text-[color:var(--ink-900)]">{vendorDisplay}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--ink-500)]">{document.fileName}</p>
-        </div>
-        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${badgeClassName}`}>
-          {statusLabel(t, "scanned", document.status)}
-        </span>
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.detectedAmount")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">
-            {document.total > 0 ? formatCurrencyILS(document.total) : t("workspaceDocuments.noAmountDetected")}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.lineItemsDetected")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{document.lineItemCount}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-[color:var(--line)] bg-white/76 px-4 py-3">
-        <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.labelDecipher")}</p>
-        <p className="mt-2 text-sm font-semibold text-[color:var(--ink-900)]">
-          {t("workspaceDocuments.scannedMetaLine", {
-            type: typeDisplay,
-            date: formatShortDate(document.createdAt),
-          })}
-        </p>
-        <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{summaryDisplay}</p>
-      </div>
-
-      {document.linkedContactName && (
-        <div className="mt-3 flex items-center gap-2 rounded-xl bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700">
-          <Link2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          <span className="truncate">{document.linkedContactName}</span>
-        </div>
-      )}
-
-      <div className="mt-5 flex flex-wrap gap-3">
-        <button type="button" onClick={() => onOpen(document)} className="bento-btn bento-btn--primary">
-          {t("workspaceDocuments.buttonViewEdit")}
-          <Eye className="h-4 w-4" aria-hidden />
-        </button>
-        {onLinkClient && (
-          <button type="button" onClick={() => onLinkClient(document)} className="bento-btn bento-btn--secondary">
-            שייך ללקוח
-            <Link2 className="h-4 w-4" aria-hidden />
-          </button>
-        )}
-        <button type="button" onClick={() => onDelete(document)} className="bento-btn bento-btn--secondary">
-          {t("workspaceDocuments.buttonDelete")}
-          <Trash2 className="h-4 w-4" aria-hidden />
-        </button>
-      </div>
-    </article>
-  );
-}
-
-function IssuedCard({
-  document,
-  onOpen,
-  onDelete,
-}: {
-  document: IssuedDocumentRecord;
-  onOpen: (document: IssuedDocumentRecord) => void;
-  onDelete: (document: IssuedDocumentRecord) => void;
-}) {
-  const { t, dir } = useI18n();
-  const badgeClassName = badgeClass(document.status, "issued");
-  const typeLabel = issuedTypeLabel(t, document.type);
-
-  return (
-    <article className="tile overflow-hidden p-5" dir={dir}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="truncate text-lg font-black text-[color:var(--ink-900)]">{document.clientName}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-[color:var(--ink-500)]">
-            {typeLabel} #{document.number}
-          </p>
-        </div>
-        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${badgeClassName}`}>
-          {statusLabel(t, "issued", document.status)}
-        </span>
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.totalAmount")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatCurrencyILS(document.total)}</p>
-        </div>
-        <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-3">
-          <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.dateLabel")}</p>
-          <p className="mt-2 text-base font-black text-[color:var(--ink-900)]">{formatShortDate(document.date)}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-[color:var(--line)] bg-white/76 px-4 py-3">
-        <p className="text-xs font-bold text-[color:var(--ink-500)]">{t("workspaceDocuments.lineItemsInDoc")}</p>
-        <p className="mt-2 text-sm font-semibold text-[color:var(--ink-900)]">
-          {t("workspaceDocuments.itemCount", { count: String(document.items.length) })}
-        </p>
-        <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">
-          {document.dueDate
-            ? t("workspaceDocuments.dueDateLine", { date: formatShortDate(document.dueDate) })
-            : t("workspaceDocuments.noDueDate")}
-        </p>
-      </div>
-
-      <div className="mt-5 flex flex-wrap gap-3">
-        <button type="button" onClick={() => onOpen(document)} className="bento-btn bento-btn--primary">
-          {t("workspaceDocuments.buttonViewEdit")}
-          <PencilLine className="h-4 w-4" aria-hidden />
-        </button>
-        <button type="button" onClick={() => onDelete(document)} className="bento-btn bento-btn--secondary">
-          {t("workspaceDocuments.buttonDelete")}
-          <Trash2 className="h-4 w-4" aria-hidden />
-        </button>
-      </div>
-    </article>
-  );
-}
-
-export default function DocumentsWorkspaceV2({
+function DocumentsWorkspaceV2Inner({
   industryProfile,
   scannedDocuments,
   issuedDocuments,
   contacts = [],
+  geminiConfigured,
 }: Props) {
   const { t, dir } = useI18n();
+  const {
+    hubTab,
+    setHubTab,
+    setScanPreview,
+    setNotebookLastReply,
+    setNotebookSourceNames,
+    libraryPeek,
+    setLibraryPeek,
+    setPreviewPanelTab,
+  } = useAiHubPreview();
   const { setActiveClient } = useWorkspaceContext();
+  const [libraryInsightsOpen, setLibraryInsightsOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [decodeModalOpen, setDecodeModalOpen] = useState(false);
   const [scannedState, setScannedState] = useState(scannedDocuments);
   const [issuedState, setIssuedState] = useState(issuedDocuments);
   const [search, setSearch] = useState("");
@@ -383,12 +243,64 @@ export default function DocumentsWorkspaceV2({
       document.lineItemCount === 0,
   ).length;
   const issuedPendingCount = filteredIssued.filter((document) => document.status === "PENDING").length;
-  const issuedTotal = filteredIssued.reduce((sum, document) => sum + document.total, 0);
   const vendors = Array.from(new Set(filteredScanned.map((document) => document.vendor))).slice(0, 5);
+
+  const onScanHubPreviewUpdate = useCallback(
+    (snapshot: ScanHubPreviewPayload) => {
+      setScanPreview(snapshot);
+    },
+    [setScanPreview],
+  );
+
+  const onHubPreviewFocusRequest = useCallback(() => {
+    setPreviewPanelTab("scan");
+    setPreviewModalOpen(true);
+  }, [setPreviewPanelTab]);
+
+  function setScannedLibraryPeek(document: ScannedDocumentRecord) {
+    setLibraryPeek({
+      kind: "scanned",
+      id: document.id,
+      fileName: document.fileName,
+      vendor: document.vendor,
+      summary: document.summary,
+      total: document.total,
+      lineItemCount: document.lineItemCount,
+      extractedType: document.extractedType,
+      status: document.status,
+      createdAt: document.createdAt,
+    });
+    setPreviewPanelTab("library");
+  }
+
+  function peekScannedDocument(document: ScannedDocumentRecord) {
+    setScannedLibraryPeek(document);
+    setPreviewModalOpen(true);
+  }
+
+  function setIssuedLibraryPeek(document: IssuedDocumentRecord) {
+    setLibraryPeek({
+      kind: "issued",
+      id: document.id,
+      clientName: document.clientName,
+      type: document.type,
+      number: document.number,
+      total: document.total,
+      status: document.status,
+      date: document.date,
+    });
+    setPreviewPanelTab("library");
+  }
+
+  function peekIssuedDocument(document: IssuedDocumentRecord) {
+    setIssuedLibraryPeek(document);
+    setPreviewModalOpen(true);
+  }
 
   function openScanned(document: ScannedDocumentRecord) {
     setActionMessage(null);
     setIssuedDraft(null);
+    setScannedLibraryPeek(document);
     setScannedDraft({
       id: document.id,
       fileName: document.fileName,
@@ -406,6 +318,7 @@ export default function DocumentsWorkspaceV2({
   function openIssued(document: IssuedDocumentRecord) {
     setActionMessage(null);
     setScannedDraft(null);
+    setIssuedLibraryPeek(document);
     setIssuedDraft({
       id: document.id,
       type: document.type,
@@ -422,6 +335,18 @@ export default function DocumentsWorkspaceV2({
   function appendIssuedFromGenerator(payload: IssuedDocumentRecord) {
     setIssuedState((current) => [payload, ...current]);
     setActionMessage({ type: "success", text: t("workspaceDocuments.generatorsSuccessDraft") });
+  }
+
+  function expandLibrarySelection() {
+    if (!libraryPeek) return;
+    setPreviewModalOpen(false);
+    if (libraryPeek.kind === "scanned") {
+      const doc = scannedState.find((d) => d.id === libraryPeek.id);
+      if (doc) openScanned(doc);
+    } else {
+      const doc = issuedState.find((d) => d.id === libraryPeek.id);
+      if (doc) openIssued(doc);
+    }
   }
 
   async function saveScannedDraft() {
@@ -531,6 +456,9 @@ export default function DocumentsWorkspaceV2({
     if (scannedDraft?.id === document.id) {
       setScannedDraft(null);
     }
+    if (libraryPeek?.kind === "scanned" && libraryPeek.id === document.id) {
+      setLibraryPeek(null);
+    }
     setActionMessage({ type: "success", text: t("workspaceDocuments.success.deletedScanned") });
   }
 
@@ -551,6 +479,9 @@ export default function DocumentsWorkspaceV2({
     setIssuedState((current) => current.filter((item) => item.id !== document.id));
     if (issuedDraft?.id === document.id) {
       setIssuedDraft(null);
+    }
+    if (libraryPeek?.kind === "issued" && libraryPeek.id === document.id) {
+      setLibraryPeek(null);
     }
     setActionMessage({ type: "success", text: t("workspaceDocuments.success.deletedIssued") });
   }
@@ -578,252 +509,246 @@ export default function DocumentsWorkspaceV2({
         ),
       );
       setActiveClient(contact.id, contact.name);
-      setActionMessage({ type: "success", text: `שויך ללקוח: ${contact.name}` });
+      setActionMessage({ type: "success", text: t("workspaceDocuments.linkToClientSuccess", { name: contact.name }) });
     } else {
-      setActionMessage({ type: "error", text: "שגיאה בשמירת הקישור" });
+      setActionMessage({ type: "error", text: t("workspaceDocuments.linkToClientError") });
     }
     setLinkingDoc(null);
     setContactSearch("");
   }
 
-  const documentsLabel = industryProfile.documentsLabel;
-  const industryLabel = industryProfile.industryLabel;
+  const hubTabs: { id: AiHubTab; icon: LucideIcon; label: string }[] = [
+    { id: "scan", icon: ScanLine, label: t("workspaceAiHub.tabScan") },
+    { id: "notebook", icon: BookOpen, label: t("workspaceAiHub.tabNotebook") },
+    { id: "generate", icon: Sparkles, label: t("workspaceAiHub.tabGenerate") },
+  ];
+  const decodeDocTotalCount = scannedState.length + issuedState.length;
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-8" dir={dir}>
-      <Tile tone="finance" span={12}>
-        <div className="flex flex-col gap-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="tile-eyebrow">{t("workspaceDocuments.eyebrow")}</p>
-              <h1 className="mt-2 text-[28px] font-black tracking-tight text-[color:var(--ink-900)]">
-                {t("workspaceDocuments.heroTitle", { documents: documentsLabel })}
-              </h1>
-              <p className="mt-1 text-sm text-[color:var(--ink-500)]">
-                {t("workspaceDocuments.heroSubtitle", { industry: industryLabel })}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-end gap-3">
-              <Link
-                href="/app/documents/issue"
-                className="bento-btn bento-btn--primary"
-                style={{ background: "var(--axis-clients)", borderColor: "var(--axis-clients)" }}
-              >
-                <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaIssueShort")} long={t("workspaceDocuments.ctaIssue")} />
-              </Link>
-              <Link
-                href="/app/documents/erp"
-                className="bento-btn bento-btn--secondary"
-              >
-                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaErp")} long={t("workspaceDocuments.ctaErp")} />
-                <ArrowLeft className="h-4 w-4 shrink-0 opacity-70" strokeWidth={2} aria-hidden />
-              </Link>
-              <Link
-                href="/app/documents/erp#erp-multi-scanner"
-                className="bento-btn bento-btn--secondary"
-                title={t("workspaceDocuments.ctaScan")}
-              >
-                <Upload className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-                <HeaderResponsiveLabel short={t("workspaceDocuments.ctaScanShort")} long={t("workspaceDocuments.ctaScan")} />
-              </Link>
-            </div>
-          </div>
+    <div className="cd-canvas flex w-full min-w-0 flex-col space-y-4" dir={dir}>
+      <AiHubScrollToHash />
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { label: t("workspaceDocuments.statScanned"), value: scannedState.length.toString(), icon: FileSearch },
-              { label: t("workspaceDocuments.statIssued"), value: issuedState.length.toString(), icon: FolderArchive },
-              { label: t("workspaceDocuments.statReview"), value: scannedReviewCount.toString(), icon: AlertTriangle },
-              { label: t("workspaceDocuments.statIssuedTotal"), value: formatCurrencyILS(issuedTotal), icon: Tags },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-[color:var(--axis-finance)]" strokeWidth={2} aria-hidden />
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--ink-500)]">{label}</p>
-                </div>
-                <p className="mt-2 text-xl font-black text-[color:var(--ink-900)] tracking-tight">{value}</p>
+      <PageHeader
+        title={t("workspaceAiHub.heroTitle")}
+        actions={
+          <>
+            <Link
+              href="/app/erp"
+              className="cd-btn cd-btn-primary"
+              title={t("workspaceDocuments.ctaIssue")}
+              aria-label={t("workspaceDocuments.ctaIssue")}
+            >
+              <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            </Link>
+            <Link
+              href="/app/erp"
+              className="cd-btn cd-btn-secondary"
+              title={t("workspaceDocuments.ctaErp")}
+              aria-label={t("workspaceDocuments.ctaErp")}
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0 opacity-70" strokeWidth={2} aria-hidden />
+            </Link>
+          </>
+        }
+      />
+
+      <div className="min-w-0 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div
+            role="tablist"
+            aria-label={t("workspaceAiHub.hubMainTabsAria")}
+            className="flex flex-wrap gap-1 rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-sunken)] p-1"
+          >
+            {hubTabs.map((tab) => {
+              const selected = hubTab === tab.id;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  title={tab.label}
+                  aria-label={tab.label}
+                  aria-selected={selected}
+                  onClick={() => startTransition(() => setHubTab(tab.id))}
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-xl transition ${
+                    selected
+                      ? "bg-[color:var(--cd-bg-raised)] text-[color:var(--cd-ink)] shadow-sm"
+                      : "text-[color:var(--cd-ink-mute)] hover:text-[color:var(--cd-ink)]"
+                  }`}
+                >
+                  <Icon className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setDecodeModalOpen(true)}
+              title={t("workspaceAiHub.decodeModalTitle")}
+              aria-label={t("workspaceAiHub.toolbarDecodeAria")}
+              className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] text-[color:var(--cd-ink)] shadow-sm hover:bg-[color:var(--cd-bg-sunken)]"
+            >
+              <Rows3 className="h-5 w-5" strokeWidth={2} aria-hidden />
+              {decodeDocTotalCount > 0 ? (
+                <span className="absolute -end-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[color:var(--axis-clients)] px-1 text-[10px] font-black text-white tabular-nums">
+                  {decodeDocTotalCount > 99 ? "99+" : decodeDocTotalCount}
+                </span>
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewModalOpen(true)}
+              title={t("workspaceAiHub.previewModalTitle")}
+              aria-label={t("workspaceAiHub.toolbarPreviewAria")}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] text-[color:var(--cd-ink)] shadow-sm hover:bg-[color:var(--cd-bg-sunken)]"
+            >
+              <Eye className="h-5 w-5" strokeWidth={2} aria-hidden />
+            </button>
+          </div>
+        </div>
+
+          {hubTab === "scan" ? (
+            <section className="scroll-mt-24 space-y-2" aria-labelledby="ai-hub-scan-heading">
+              <SectionHeader id="ai-hub-scan-heading" title={t("workspaceAiHub.sectionScanTitle")} />
+              <div className="w-full min-w-0 rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)]">
+                <ErpMultiEngineScannerLazy
+                  industry={industryProfile.id}
+                  compactHeader
+                  hubPreviewMode
+                  onScanHubPreviewUpdate={onScanHubPreviewUpdate}
+                  onHubPreviewFocusRequest={onHubPreviewFocusRequest}
+                />
               </div>
-            ))}
-          </div>
-        </div>
-      </Tile>
+            </section>
+          ) : null}
 
-      {/* ── Filters bar — 2026 clean style ── */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-sm">
-        <div className="relative flex flex-1 min-w-[280px] items-center">
-          <Filter className="absolute start-3 h-4 w-4 text-[color:var(--ink-400)]" aria-hidden />
-          <input
-            id="documents-search"
-            value={search}
-            onChange={(event) => {
-              const nextValue = event.target.value;
-              startFilterTransition(() => setSearch(nextValue));
-            }}
-            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-2.5 pe-4 ps-10 text-sm font-medium outline-none transition focus:border-[color:var(--axis-finance)] focus:ring-2 focus:ring-[color:var(--axis-finance-soft)]"
-            placeholder={t("workspaceDocuments.searchPlaceholder")}
-          />
-          {isPending && (
-            <div className="absolute end-3">
-              <Loader2 className="h-4 w-4 animate-spin text-[color:var(--axis-finance)]" aria-hidden />
-            </div>
-          )}
-        </div>
+          {hubTab === "notebook" ? (
+            <section id="ai-hub-notebook" className="scroll-mt-24 space-y-2" aria-labelledby="ai-hub-notebook-heading">
+              <SectionHeader id="ai-hub-notebook-heading" title={t("workspaceAiHub.sectionNotebookTitle")} />
+              <ErpProjectNotebook
+                geminiConfigured={geminiConfigured}
+                embedInHub
+                embedCompact
+                onAssistantReply={setNotebookLastReply}
+                onSourcesChange={setNotebookSourceNames}
+              />
+            </section>
+          ) : null}
 
-        <select
-          id="documents-status-filter"
-          value={statusFilter}
-          onChange={(event) => startFilterTransition(() => setStatusFilter(event.target.value))}
-          className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2.5 text-sm font-bold text-[color:var(--ink-800)] outline-none transition hover:border-[color:var(--ink-400)] focus:border-[color:var(--axis-finance)]"
-        >
-          <option value="ALL">{t("workspaceDocuments.statusAll")}</option>
-          <option value="PROCESSED">{statusLabel(t, "scanned", "PROCESSED")}</option>
-          <option value="REVIEW">{statusLabel(t, "scanned", "REVIEW")}</option>
-          <option value="FAILED">{statusLabel(t, "scanned", "FAILED")}</option>
-          <option value="PENDING">{statusLabel(t, "issued", "PENDING")}</option>
-          <option value="PAID">{statusLabel(t, "issued", "PAID")}</option>
-          <option value="CANCELLED">{statusLabel(t, "issued", "CANCELLED")}</option>
-        </select>
 
-        <div className="h-8 w-px bg-[color:var(--line)] hidden sm:block" />
-
-        <div className="flex items-center gap-1 rounded-xl bg-[color:var(--canvas-sunken)] p-1">
-          <button
-            type="button"
-            onClick={() => startTransition(() => setActiveTab("scanned"))}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[12px] font-black transition ${
-              activeTab === "scanned"
-                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
-                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
-            }`}
-          >
-            <LayoutGrid className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-            {t("workspaceDocuments.tabScanned")}
-          </button>
-          <button
-            type="button"
-            onClick={() => startTransition(() => setActiveTab("issued"))}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[12px] font-black transition ${
-              activeTab === "issued"
-                ? "bg-white text-[color:var(--ink-900)] shadow-sm"
-                : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
-            }`}
-          >
-            <ListFilter className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-            {t("workspaceDocuments.tabIssued")}
-          </button>
-        </div>
+          {hubTab === "generate" ? (
+            <section className="space-y-4" aria-labelledby="ai-hub-generators-heading">
+              <DocumentGeneratorsStrip
+                industryProfile={industryProfile}
+                onDraftIssued={appendIssuedFromGenerator}
+                variant="aiHub"
+              />
+              <AiDocDraftPanel />
+            </section>
+          ) : null}
       </div>
 
-      <DocumentGeneratorsStrip industryProfile={industryProfile} onDraftIssued={appendIssuedFromGenerator} />
-
-      {actionMessage ? (
-        <div
-          className={`rounded-[24px] border px-5 py-4 text-sm font-semibold ${
-            actionMessage.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-rose-200 bg-rose-50 text-rose-700"
-          }`}
-        >
-          {actionMessage.text}
-        </div>
+      {previewModalOpen ? (
+        <PortalToBody>
+          <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-slate-950/40 px-3 py-6`}>
+            <button
+              type="button"
+              className="absolute inset-0"
+              aria-label={t("workspaceAiHub.mobilePreviewClose")}
+              onClick={() => setPreviewModalOpen(false)}
+            />
+            <div
+              className="relative z-10 flex h-[min(88vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] shadow-2xl"
+              dir={dir}
+            >
+              <AiHubUnifiedPreview
+                variant="mobile"
+                className="min-h-0 flex-1 border-0 shadow-none"
+                onClose={() => setPreviewModalOpen(false)}
+                onExpandLibrary={expandLibrarySelection}
+              />
+            </div>
+          </div>
+        </PortalToBody>
       ) : null}
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        <div className="grid gap-4">
-
-
-          {activeTab === "scanned" ? (
-            <div className="grid gap-4 xl:grid-cols-2">
-              {filteredScanned.length === 0 ? (
-                <div className="tile col-span-full flex min-h-[14rem] flex-col items-center justify-center p-8 text-center shadow-xl">
-                  <p className="text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">{t("workspaceDocuments.emptyScannedTitle")}</p>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyScannedBody")}</p>
-                </div>
-              ) : null}
-              {filteredScanned.map((document) => (
-                <ScannedCard
-                  key={document.id}
-                  document={document}
-                  onOpen={openScanned}
-                  onDelete={deleteScannedDocument}
-                  onLinkClient={contacts.length > 0 ? setLinkingDoc : undefined}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-4 xl:grid-cols-2">
-              {filteredIssued.length === 0 ? (
-                <div className="tile col-span-full flex min-h-[14rem] flex-col items-center justify-center p-8 text-center shadow-xl">
-                  <p className="text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">{t("workspaceDocuments.emptyIssuedTitle")}</p>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-[color:var(--ink-500)]">{t("workspaceDocuments.emptyIssuedBody")}</p>
-                </div>
-              ) : null}
-              {filteredIssued.map((document) => (
-                <IssuedCard
-                  key={document.id}
-                  document={document}
-                  onOpen={openIssued}
-                  onDelete={deleteIssuedDocument}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <aside className="grid gap-4">
-          <div className="tile tile--lavender p-6">
-            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarTemplatesTitle")}</p>
-            <div className="mt-4 grid gap-3">
-              {industryProfile.templates.map((template) => (
-                <div key={template.id} className="rounded-2xl bg-white/78 px-4 py-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-[color:var(--ink-900)]">{template.label}</p>
-                    <span className="rounded-full bg-[color:var(--canvas-sunken)] px-3 py-1 text-[11px] font-black text-[color:var(--ink-500)]">
-                      {template.kind}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--ink-500)]">{template.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="tile p-6">
-            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarVendorsTitle")}</p>
-            <div className="mt-4 grid gap-3">
-              {vendors.length === 0 ? (
-                <div className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm text-[color:var(--ink-500)]">
-                  {t("workspaceDocuments.sidebarVendorsEmpty")}
-                </div>
-              ) : null}
-              {vendors.map((vendor) => (
-                <div
-                  key={vendor}
-                  className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-semibold text-[color:var(--ink-900)]"
+      {decodeModalOpen ? (
+        <PortalToBody>
+          <div className={`fixed inset-0 ${WORKSPACE_OVERLAY_Z_CLASS} flex items-center justify-center bg-slate-950/40 px-3 py-6`}>
+            <button
+              type="button"
+              className="absolute inset-0"
+              aria-label={t("workspaceDocuments.closeAria")}
+              onClick={() => setDecodeModalOpen(false)}
+            />
+            <div
+              className="relative z-10 flex max-h-[min(88vh,900px)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] shadow-2xl"
+              dir={dir}
+            >
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[color:var(--line)] px-4 py-3">
+                <p className="text-sm font-black text-[color:var(--ink-900)]">{t("workspaceAiHub.decodeModalTitle")}</p>
+                <button
+                  type="button"
+                  onClick={() => setDecodeModalOpen(false)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--line)] bg-white"
+                  aria-label={t("workspaceDocuments.closeAria")}
                 >
-                  {translateFallback(vendor, DOC_UI_FALLBACK.unknownVendor, "workspaceDocuments.fallbacks.unknownVendor", t)}
-                </div>
-              ))}
+                  <X className="h-4 w-4" aria-hidden />
+                </button>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                <ScanHubDecodePanel
+                  t={t}
+                  industryProfile={industryProfile}
+                  search={search}
+                  setSearch={setSearch}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  isPending={isPending}
+                  startFilterTransition={startFilterTransition}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  startTransition={startTransition}
+                  filteredScanned={filteredScanned}
+                  filteredIssued={filteredIssued}
+                  contacts={contacts}
+                  actionMessage={actionMessage}
+                  vendors={vendors}
+                  libraryInsightsOpen={libraryInsightsOpen}
+                  setLibraryInsightsOpen={setLibraryInsightsOpen}
+                  scannedReviewCount={scannedReviewCount}
+                  issuedPendingCount={issuedPendingCount}
+                  translateFallback={translateFallback}
+                  issuedTypeLabel={issuedTypeLabel}
+                  statusLabel={statusLabel}
+                  badgeClass={badgeClass}
+                  peekScannedDocument={(document) => {
+                    peekScannedDocument(document);
+                    setDecodeModalOpen(false);
+                  }}
+                  peekIssuedDocument={(document) => {
+                    peekIssuedDocument(document);
+                    setDecodeModalOpen(false);
+                  }}
+                  openScanned={(document) => {
+                    openScanned(document);
+                    setDecodeModalOpen(false);
+                  }}
+                  openIssued={(document) => {
+                    openIssued(document);
+                    setDecodeModalOpen(false);
+                  }}
+                  deleteScannedDocument={deleteScannedDocument}
+                  deleteIssuedDocument={deleteIssuedDocument}
+                  setLinkingDoc={setLinkingDoc}
+                />
+              </div>
             </div>
           </div>
-
-          <div className="tile p-6">
-            <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceDocuments.sidebarSnapshotTitle")}</p>
-            <div className="mt-4 grid gap-3">
-              {[
-                t("workspaceDocuments.snapshotLine1", { count: String(scannedReviewCount) }),
-                t("workspaceDocuments.snapshotLine2", { count: String(issuedPendingCount) }),
-                t("workspaceDocuments.snapshotLine3", { count: String(filteredIssued.length) }),
-              ].map((item) => (
-                <div key={item} className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4">
-                  <p className="text-sm leading-7 text-[color:var(--ink-900)]">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </aside>
-      </section>
+        </PortalToBody>
+      ) : null}
 
       {scannedDraft || issuedDraft ? (
         <PortalToBody>
@@ -1028,7 +953,9 @@ export default function DocumentsWorkspaceV2({
 
               <ul className="mt-2 max-h-52 divide-y divide-[color:var(--line)] overflow-y-auto rounded-xl border border-[color:var(--line)]">
                 {filteredContacts.length === 0 ? (
-                  <li className="px-4 py-3 text-center text-sm text-[color:var(--ink-400)]">אין לקוחות תואמים</li>
+                  <li className="px-4 py-4 text-center text-sm leading-relaxed text-[color:var(--ink-500)]">
+                    לא מצאנו לקוחות לפי החיפוש. נסו מילה אחרת או סגרו והוסיפו לקוח ב-CRM תחילה.
+                  </li>
                 ) : (
                   filteredContacts.slice(0, 40).map((contact) => (
                     <li key={contact.id}>
@@ -1048,5 +975,13 @@ export default function DocumentsWorkspaceV2({
         </PortalToBody>
       ) : null}
     </div>
+  );
+}
+
+export default function DocumentsWorkspaceV2(props: Props) {
+  return (
+    <AiHubPreviewProvider>
+      <DocumentsWorkspaceV2Inner {...props} />
+    </AiHubPreviewProvider>
   );
 }

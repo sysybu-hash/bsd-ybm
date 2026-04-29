@@ -324,12 +324,12 @@ export default function AppShellV2({ children, user }: Props) {
       sublinks: {},
     },
     {
-      title: "לקוחות ופרויקטים",
+      title: "פרויקטים",
       items: pickDesktopItems(["crm"]),
       sublinks: {},
     },
     {
-      title: "מסמכים וכספים",
+      title: "כספים",
       items: pickDesktopItems(["erp"]),
       sublinks: {
         erp: [

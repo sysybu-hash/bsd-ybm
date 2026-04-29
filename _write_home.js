@@ -20,15 +20,15 @@ export default async function DashboardHomePage() {
     hour < 21 ? "ערב טוב"  : "לילה טוב";
 
   const stats = [
-    { icon: Users,       label: "לקוחות",     value: "—",  href: "/dashboard/business",    bg: "bg-indigo-50",  icon2: "text-indigo-600",  border: "border-indigo-100" },
-    { icon: ReceiptText, label: "חשבוניות",   value: "—",  href: "/dashboard/erp/invoice", bg: "bg-rose-50",    icon2: "text-rose-600",    border: "border-rose-100"   },
-    { icon: FileStack,   label: "מסמכים",     value: "—",  href: "/dashboard/business",    bg: "bg-emerald-50", icon2: "text-emerald-600", border: "border-emerald-100"},
-    { icon: TrendingUp,  label: "הכנסות",     value: "₪—", href: "/dashboard/erp/invoice", bg: "bg-amber-50",   icon2: "text-amber-600",   border: "border-amber-100"  },
+    { icon: Users,       label: "לקוחות",     value: "—",  href: "/app/business",    bg: "bg-indigo-50",  icon2: "text-indigo-600",  border: "border-indigo-100" },
+    { icon: ReceiptText, label: "חשבוניות",   value: "—",  href: "/app/erp", bg: "bg-rose-50",    icon2: "text-rose-600",    border: "border-rose-100"   },
+    { icon: FileStack,   label: "מסמכים",     value: "—",  href: "/app/business",    bg: "bg-emerald-50", icon2: "text-emerald-600", border: "border-emerald-100"},
+    { icon: TrendingUp,  label: "הכנסות",     value: "₪—", href: "/app/erp", bg: "bg-amber-50",   icon2: "text-amber-600",   border: "border-amber-100"  },
   ];
 
   const quickActions = [
     {
-      href: "/dashboard/business",
+      href: "/app/business",
       icon: <Layers size={20} />,
       title: "מרכז עסקי",
       desc: "ERP + CRM — לקוחות, עסקאות, חשבוניות",
@@ -38,7 +38,7 @@ export default async function DashboardHomePage() {
       ring: "hover:ring-emerald-200",
     },
     {
-      href: "/dashboard/erp/invoice",
+      href: "/app/erp",
       icon: <ReceiptText size={20} />,
       title: "הנפק חשבונית",
       desc: "חשבונית מס, קבלה או הצעת מחיר",
@@ -48,7 +48,7 @@ export default async function DashboardHomePage() {
       ring: "hover:ring-rose-200",
     },
     {
-      href: "/dashboard/ai",
+      href: "/app",
       icon: <Zap size={20} />,
       title: "AI וסריקה",
       desc: "סריקת מסמכים וחילוץ נתונים בינה מלאכותית",
@@ -58,7 +58,7 @@ export default async function DashboardHomePage() {
       ring: "hover:ring-violet-200",
     },
     {
-      href: "/dashboard/control-center",
+      href: "/app",
       icon: <Compass size={20} />,
       title: "מרכז בקרה",
       desc: "צ'קליסט, ניתוחי משפך ותהליכי עבודה",
@@ -70,10 +70,10 @@ export default async function DashboardHomePage() {
   ];
 
   const shortcuts = [
-    { href: "/dashboard/operator",  icon: <Bot size={13} />,        label: "עוזר AI"  },
-    { href: "/dashboard/billing",   icon: <CreditCard size={13} />, label: "מנוי"     },
-    { href: "/dashboard/meckano",   icon: <Clock size={13} />,      label: "נוכחות"   },
-    { href: "/dashboard/settings",  icon: <Settings size={13} />,   label: "הגדרות"   },
+    { href: "/app",  icon: <Bot size={13} />,        label: "עוזר AI"  },
+    { href: "/app/settings/billing",   icon: <CreditCard size={13} />, label: "מנוי"     },
+    { href: "/app/operations/meckano",   icon: <Clock size={13} />,      label: "נוכחות"   },
+    { href: "/app/settings/overview",  icon: <Settings size={13} />,   label: "הגדרות"   },
   ];
 
   return (
@@ -97,7 +97,7 @@ export default async function DashboardHomePage() {
             </p>
           </div>
           <Link
-            href="/dashboard/business"
+            href="/app/business"
             className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-black text-indigo-700 shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
           >
             פתח מרכז עסקי
@@ -173,7 +173,7 @@ export default async function DashboardHomePage() {
           </Link>
         ))}
         <Link
-          href="/dashboard/erp/invoice"
+          href="/app/erp"
           className="ms-auto flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-[12px] font-bold text-white shadow-sm transition-all hover:bg-indigo-700"
         >
           <Plus size={13} />
@@ -186,5 +186,7 @@ export default async function DashboardHomePage() {
 }
 `;
 
-fs.writeFileSync('C:/Users/User/Desktop/BSD-YBM/app/dashboard/(protected)/page.tsx', content, 'utf8');
+const out = require("path").join(__dirname, "scratch", "_write_home_preview.tsx");
+fs.mkdirSync(require("path").dirname(out), { recursive: true });
+fs.writeFileSync(out, content, "utf8");
 console.log('Done. Lines:', content.split('\n').length);

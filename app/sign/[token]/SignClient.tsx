@@ -61,10 +61,16 @@ export default function SignClient({
 
   if (quote.status === "CLOSED_WON") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 flex items-center justify-center p-6" dir="rtl">
-        <div className="max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-emerald-700 font-bold">ההצעה כבר אושרה וחתומה.</p>
-          <Link href="/" className="text-teal-600 font-bold underline underline-offset-2 hover:text-teal-800">
+      <div
+        className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[color:var(--canvas-sunken)] to-[color:var(--canvas-raised)] p-6 text-[color:var(--ink-900)]"
+        dir="rtl"
+      >
+        <div className="max-w-md space-y-4 rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-8 text-center shadow-[var(--cd-shadow-sm)]">
+          <p className="font-bold text-[color:var(--cd-positive)]">ההצעה כבר אושרה וחתומה.</p>
+          <Link
+            href="/"
+            className="font-bold text-[color:var(--cd-accent)] underline underline-offset-2 hover:text-[color:var(--cd-accent-ink)]"
+          >
             חזרה לאתר
           </Link>
         </div>
@@ -73,17 +79,20 @@ export default function SignClient({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 p-6" dir="rtl">
-      <div className="max-w-lg mx-auto space-y-6">
-        <h1 className="text-2xl font-black text-teal-600">חתימה דיגיטלית – BSD-YBM</h1>
-        <p className="text-gray-600 text-sm">
-          הצעת מחיר עבור <strong className="text-gray-900">{quote.contact.name}</strong>
+    <div
+      className="min-h-screen bg-gradient-to-b from-[color:var(--canvas-sunken)] to-[color:var(--canvas-raised)] p-6 text-[color:var(--ink-900)]"
+      dir="rtl"
+    >
+      <div className="mx-auto max-w-lg space-y-6">
+        <h1 className="text-2xl font-black text-[color:var(--cd-accent)]">חתימה דיגיטלית – BSD-YBM</h1>
+        <p className="text-sm text-[color:var(--ink-600)]">
+          הצעת מחיר עבור <strong className="text-[color:var(--ink-900)]">{quote.contact.name}</strong>
         </p>
-        <p className="text-3xl font-black text-gray-900">₪{quote.amount.toLocaleString()}</p>
+        <p className="text-3xl font-black text-[color:var(--ink-900)]">₪{quote.amount.toLocaleString()}</p>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-md shadow-gray-200/40">
-          <p className="text-sm text-gray-500 mb-2">חתם כאן:</p>
-          <div className="bg-gray-50 rounded-lg overflow-hidden min-h-[160px] border border-gray-100">
+        <div className="rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--cd-shadow)]">
+          <p className="mb-2 text-sm text-[color:var(--ink-500)]">חתם כאן:</p>
+          <div className="min-h-[160px] overflow-hidden rounded-lg border border-[color:var(--line-subtle)] bg-[color:var(--canvas-sunken)]">
             {canvasReady ? (
               <SignatureCanvas
                 ref={sigRef}
@@ -94,14 +103,14 @@ export default function SignClient({
                 }}
               />
             ) : (
-              <div className="w-full h-40 bg-gray-100 animate-pulse rounded-lg" aria-hidden />
+              <div className="h-40 w-full animate-pulse rounded-lg bg-[color:var(--canvas-sunken)]" aria-hidden />
             )}
           </div>
           <div className="flex gap-2 mt-3">
             <button
               type="button"
               onClick={clear}
-              className="px-4 py-2 rounded-xl bg-gray-100 text-gray-800 text-sm font-bold border border-gray-200 hover:bg-gray-200"
+              className="rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] px-4 py-2 text-sm font-bold text-[color:var(--ink-800)] hover:bg-[color:var(--canvas)]"
             >
               נקה
             </button>
@@ -109,7 +118,7 @@ export default function SignClient({
               type="button"
               onClick={submit}
               disabled={loading}
-              className="flex-1 px-4 py-2 rounded-xl bg-teal-600 text-white font-bold disabled:opacity-50 hover:bg-teal-700 shadow-sm"
+              className="flex-1 rounded-xl bg-[color:var(--cd-accent)] px-4 py-2 font-bold text-white shadow-[var(--cd-shadow-sm)] hover:bg-[color:var(--cd-accent-ink)] disabled:opacity-50"
             >
               {loading ? "שומר..." : "חתום ואשר"}
             </button>
@@ -118,7 +127,7 @@ export default function SignClient({
 
         {msg && (
           <p
-            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-emerald-700" : "text-teal-700"}`}
+            className={`text-sm font-medium ${msg.includes("הצלחה") ? "text-[color:var(--cd-positive)]" : "text-[color:var(--cd-accent-ink)]"}`}
           >
             {msg}
           </p>

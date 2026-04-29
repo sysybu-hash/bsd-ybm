@@ -98,7 +98,7 @@ function resolveSectionMeta(
   const nav = buildAppNavCollection(industryProfile, t, { hiddenPrimaryRouteIds });
   const current = resolveActiveAppNavItem(pathname, nav);
 
-  if (current.href === "/app/clients") {
+  if (current.href === "/app/crm") {
     return {
       ...current,
       label: industryProfile.clientsLabel,
@@ -109,10 +109,11 @@ function resolveSectionMeta(
     };
   }
 
-  if (current.href === "/app/documents") {
+  if (current.href === "/app/erp") {
+    const erpLabel = industryProfile.financeNavLabel ?? industryProfile.documentsLabel;
     return {
       ...current,
-      label: industryProfile.documentsLabel,
+      label: erpLabel,
       summary: t("workspaceDock.sectionMeta.documentsSummary", {
         records: industryProfile.recordsLabel.toLowerCase(),
         industry: industryProfile.industryLabel.toLowerCase(),
@@ -190,15 +191,15 @@ export default function WorkspaceUtilityDock({
     const professionTemplate = industryProfile.templates[0]?.label;
 
     switch (currentSection.href) {
-      case "/app/inbox":
+      case "/app":
         return readStringArray(localeMessages, "workspaceDock.quickPrompts.inbox");
-      case "/app/clients":
+      case "/app/crm":
         return [
           t("workspaceDock.quickPrompts.clients.0", { clients: industryProfile.clientsLabel }),
           t("workspaceDock.quickPrompts.clients.1"),
           t("workspaceDock.quickPrompts.clients.2"),
         ];
-      case "/app/documents":
+      case "/app/erp":
         return [
           t("workspaceDock.quickPrompts.documents.0", { records: industryProfile.recordsLabel }),
           professionTemplate

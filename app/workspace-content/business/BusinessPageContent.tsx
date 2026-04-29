@@ -17,9 +17,10 @@ import type { Document } from "@prisma/client";
 import { tierAllowance } from "@/lib/subscription-tier-config";
 import { formatCreditsForDisplay } from "@/lib/org-credits-display";
 import type { ErpStatCard } from "@/components/ERPDashboard";
-import { dedupeOrganizationsForCrmDisplay } from "@/app/dashboard/(protected)/crm/dedupe-organizations";
-import type { CrmAdminOrganizationRow } from "@/app/dashboard/(protected)/crm/CrmOrganizationsAdminTable";
-import BusinessHubClient from "@/app/dashboard/(protected)/business/BusinessHubClient";
+import { dedupeOrganizationsForCrmDisplay } from "@/lib/crm/dedupe-organizations";
+import type { CrmAdminOrganizationRow } from "@/components/crm/CrmOrganizationsAdminTable";
+import BusinessHubClient from "@/components/business/BusinessHubClient";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export const metadata = { title: "מרכז עסקי — BSD-YBM" };
 
@@ -296,6 +297,7 @@ export async function BusinessPageContent() {
   }
 
   return (
+    <AppPageChrome>
     <BusinessHubClient
       geminiConfigured={geminiConfigured}
       scanQuotaSummary={scanQuotaSummary}
@@ -312,5 +314,6 @@ export async function BusinessPageContent() {
       showUnifiedBillingLinks={platformDev}
       orgBilling={orgBilling}
     />
+    </AppPageChrome>
   );
 }

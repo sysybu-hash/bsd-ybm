@@ -7,6 +7,7 @@ import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import { formatCurrencyILS } from "@/lib/ui-formatters";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 import { PageHeader } from "@/components/ui/claude";
 
 export const dynamic = "force-dynamic";
@@ -138,11 +139,17 @@ export default async function CrmPage({
     clientIdParam && contacts.some((c) => c.id === clientIdParam) ? clientIdParam : undefined;
 
   return (
+    <AppPageChrome>
     <WorkspaceEngineeringShell>
       <PageHeader
         eyebrow="CRM"
         title={industryProfile.clientsLabel}
-        subtitle={`${contacts.length} ${industryProfile.clientsLabel.toLowerCase()} · ${projects.length} פרויקטים`}
+        subtitle={`${projects.length} פרויקטים · ${contacts.length} לקוחות במערכת`}
+        actions={
+          <a href="/app/erp#erp-wizard" className="cd-btn border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-800)] hover:bg-[color:var(--canvas-sunken)]">
+            כספים
+          </a>
+        }
       />
       <ClientsWorkspaceV2
         contacts={contacts}
@@ -152,7 +159,9 @@ export default async function CrmPage({
         userFirstName={userFirstName}
         initialProjectFilter={initialProjectFilter}
         initialClientId={initialClientId}
+        hideWorkspaceHero
       />
     </WorkspaceEngineeringShell>
+    </AppPageChrome>
   );
 }

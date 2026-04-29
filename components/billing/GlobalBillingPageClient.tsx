@@ -31,7 +31,7 @@ import EditIssuedDocumentModal from "@/components/billing/EditIssuedDocumentModa
 import DocumentPreviewModal from "@/components/billing/DocumentPreviewModal";
 import ReportingCenter from "@/components/billing/ReportingCenter";
 import type { PayPalInvoiceRow } from "@/components/billing/PayPalInvoicesSection";
-import { exportAccountantMonthCsvAction } from "@/app/dashboard/billing/export-accountant-csv";
+import { exportAccountantMonthCsvAction } from "@/app/actions/export-accountant-csv";
 import { paypalMeUrlWithAmount } from "@/lib/paypal-me-payment";
 import { useI18n } from "@/components/I18nProvider";
 

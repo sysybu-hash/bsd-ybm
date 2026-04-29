@@ -148,13 +148,13 @@ export default function CloudBackupPanel() {
     <div className="space-y-6">
       <div className="flex items-start gap-3 p-4 rounded-2xl bg-teal-500/15 border border-teal-500/20">
         <Cloud className="text-teal-400 shrink-0 mt-0.5" size={22} />
-        <div className="text-sm text-gray-600 leading-relaxed">
-          <p className="font-bold text-gray-900">גיבוי וסריקה אוטונומית מול ענן</p>
+        <div className="text-sm leading-relaxed text-[color:var(--ink-600)]">
+          <p className="font-bold text-[color:var(--ink-900)]">גיבוי וסריקה אוטונומית מול ענן</p>
           <p className="mt-1">
             כפתור ראשי: שמירת &quot;רשומת הכנה&quot; למסלול. כפתור משני: פתיחת רשימת צעדים (מה להגדיר
             בשרת ובפורטל הספק) — Drive, OneDrive, Dropbox, iCloud/S3.
           </p>
-          <p className="mt-2 text-gray-500 border-t border-teal-500/30/60 pt-2">
+          <p className="mt-2 border-t border-teal-500/30 pt-2 text-[color:var(--ink-500)]">
             <strong>מסמכים ישנים מהמחשב:</strong> העלאה ופענוח אצלנו ב־ERP דרך &quot;סורק ה־AI&quot;
             (גרירה של כמה קבצים). חיבור ענן כאן מתאים בעיקר לגיבוי וסנכרון שוטפים אחרי שכבר עובדים
             במערכת.
@@ -183,20 +183,20 @@ export default function CloudBackupPanel() {
             return (
               <li
                 key={p.id}
-                className="rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden"
+                className="overflow-hidden rounded-2xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-sunken)]"
               >
                 <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-bold text-gray-900">{p.label}</p>
-                    <p className="text-xs text-gray-400">{p.hint}</p>
+                    <p className="font-bold text-[color:var(--ink-900)]">{p.label}</p>
+                    <p className="text-xs text-[color:var(--ink-400)]">{p.hint}</p>
                     {rec?.lastSyncAt && (
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="mt-1 text-xs text-[color:var(--ink-400)]">
                         סנכרון אחרון: {new Date(rec.lastSyncAt).toLocaleString("he-IL")}
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row flex-wrap gap-2 shrink-0">
-                    <div className="inline-flex rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+                    <div className="inline-flex overflow-hidden rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] shadow-[var(--cd-shadow-sm)]">
                       {!active || !rec ? (
                         <button
                           type="button"
@@ -214,7 +214,7 @@ export default function CloudBackupPanel() {
                         </button>
                       ) : (
                         <>
-                          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer px-3 py-2 border-l border-gray-100">
+                          <label className="flex cursor-pointer items-center gap-2 border-l border-[color:var(--line-subtle)] px-3 py-2 text-xs font-medium">
                             <input
                               type="checkbox"
                               checked={rec.autoScan}
@@ -239,7 +239,7 @@ export default function CloudBackupPanel() {
                       <button
                         type="button"
                         onClick={() => setOpenGuide(guideOpen ? null : p.id)}
-                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 border-gray-100 border-l"
+                        className="flex items-center gap-1 border-l border-[color:var(--line-subtle)] bg-[color:var(--canvas-sunken)] px-3 py-2 text-xs font-bold text-[color:var(--ink-600)] hover:bg-[color:var(--canvas)]"
                       >
                         איך מחברים?
                         <ChevronDown
@@ -251,8 +251,8 @@ export default function CloudBackupPanel() {
                   </div>
                 </div>
                 {guideOpen ? (
-                  <div className="border-t border-gray-200 bg-white px-4 py-4 text-sm text-gray-600 space-y-3">
-                    <p className="font-black text-gray-900">{guide.title} — רשימת הכנה</p>
+                  <div className="space-y-3 border-t border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-4 text-sm text-[color:var(--ink-600)]">
+                    <p className="font-black text-[color:var(--ink-900)]">{guide.title} — רשימת הכנה</p>
                     <div>
                       <p className="text-xs font-bold text-teal-300 mb-1">בשרת (Vercel / .env)</p>
                       <ul className="list-disc list-inside space-y-0.5 text-xs">
@@ -280,7 +280,7 @@ export default function CloudBackupPanel() {
       <button
         type="button"
         onClick={() => void load()}
-        className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-teal-400"
+        className="flex items-center gap-2 text-sm font-bold text-[color:var(--ink-500)] hover:text-teal-400"
       >
         <RefreshCw size={16} />
         רענון רשימה

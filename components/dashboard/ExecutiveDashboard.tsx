@@ -174,7 +174,7 @@ export function ExecutiveDashboard({
           <TileHeader
             eyebrow="ERP · מסמכים"
             title="הופקו לאחרונה"
-            action={<TileLink href="/app/documents" label="הכל" tone="finance" />}
+            action={<TileLink href="/app/erp" label="הכל" tone="finance" />}
           />
           <ul className="mt-4 space-y-2">
             {recentDocuments.length === 0 && (
@@ -213,7 +213,7 @@ export function ExecutiveDashboard({
               </p>
               <ProgressBar value={scanPct} axis="ai" height={6} />
             </div>
-            <TileLink href="/app/ai" label="מעבר ל-AI Assistant" tone="ai" />
+            <TileLink href="/app" label="מעבר ל-AI Assistant" tone="ai" />
           </div>
         </Tile>
       </BentoGrid>
@@ -226,7 +226,7 @@ export function ExecutiveDashboard({
           <TileHeader
             eyebrow="כספים · ERP"
             title="מגמת הכנסות חודשית"
-            action={<TileLink href="/app/finance" label="לפיננסים" tone="finance" />}
+            action={<TileLink href="/app/erp" label="לפיננסים" tone="finance" />}
           />
           <div className="mt-4 flex items-end gap-4">
             <div>
@@ -257,7 +257,7 @@ export function ExecutiveDashboard({
           <TileHeader
             eyebrow="CRM · עסקאות"
             title="פייפליין"
-            action={<TileLink href="/app/clients" label="לCRM" tone="clients" />}
+            action={<TileLink href="/app/crm" label="לCRM" tone="clients" />}
           />
           <div className="mt-4 space-y-3">
             {[

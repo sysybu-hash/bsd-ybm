@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
 import { getIndustryProfile } from "@/lib/professions/runtime";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export const dynamic = "force-dynamic";
 
@@ -135,14 +136,22 @@ export default async function ScanPage() {
 
   const contacts = contactsRaw.map((c) => ({ id: c.id, name: c.name }));
 
+  const geminiConfigured = !!(
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
+    process.env.GEMINI_API_KEY?.trim()
+  );
+
   return (
+    <AppPageChrome>
     <WorkspaceEngineeringShell>
       <DocumentsWorkspaceV2
         industryProfile={industryProfile}
         scannedDocuments={scannedDocuments}
         issuedDocuments={issuedDocuments}
         contacts={contacts}
+        geminiConfigured={geminiConfigured}
       />
     </WorkspaceEngineeringShell>
+    </AppPageChrome>
   );
 }

@@ -110,30 +110,28 @@ We keep the stable backend and migrate front-end surfaces in controlled phases.
 - `/login`
 - `/register`
 
-### Authenticated routes
+### Authenticated routes (implemented navigation model)
 - `/app`
-  New default authenticated home
-- `/app/inbox`
-  Urgent items, approvals, reminders, system signals
-- `/app/clients`
-  CRM
-- `/app/documents`
-  Scanned and generated documents
-- `/app/billing`
-  invoices, payments, subscriptions, reporting
+  Default home — KPI summary, recent documents/clients, light AI insight
+- `/app/scan`
+  Document scanning
+- `/app/crm`
+  CRM (legacy URLs `/app/clients`, `/app/projects` redirect here)
+- `/app/erp`
+  ERP / documents / core money flows (legacy `/app/documents`, `/app/finance`, `/app/insights` redirect here)
 - `/app/operations`
-  team execution, workflows, automations
-- `/app/insights`
-  executive and AI insights
-- `/app/settings`
-  organization, AI, integrations, billing configuration
+  Operations, attendance hooks, Meckano sub-routes
+- `/app/settings/*`
+  Organization, stack, billing (`/app/settings/billing`), automations, etc.
 - `/app/admin`
-  internal platform controls
+  Platform controls
+- `/app/business`
+  Combined business hub (CRM × ERP UI); `WORKSPACE_ROUTES.business`
+- Legacy aliases (`/app/ai`, `/app/inbox`, `/dashboard/*`, …) are **redirected** via `next.config.js` / middleware to the canonical routes above.
 
 ### Mapping from current structure
-- current `/dashboard` becomes `/app`
-- current CRM, ERP, invoices, settings, intelligence, control-center become subareas inside a single app navigation model
-- current “AI page” should stop being its own conceptual island and become embedded in all major surfaces
+- `/dashboard/*` and legacy `/app/*` paths funnel into `/app`, `/app/business`, `/app/crm`, `/app/erp`, `/app/scan`, `/app/operations`, `/app/settings/*`
+- AI is embedded in the home surface and ERP context instead of a separate primary island
 
 ---
 

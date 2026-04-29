@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
+import { useI18n } from "@/components/I18nProvider";
+import { PageHeader } from "@/components/ui/claude";
 import { CreditCard, Server, ShieldCheck, Zap } from "lucide-react";
 import type { BillingWorkspacePlan } from "@/lib/billing-workspace-plan";
 
@@ -42,19 +44,19 @@ export function BillingWorkspaceUI({
   upgradeHref = "/app/settings/billing",
   addOnHref = "/app/settings/billing",
 }: BillingWorkspaceUIProps) {
+  const { t, dir } = useI18n();
   const safeTotal = Math.max(1, scanQuotaTotal);
   const usagePercentage = Math.min(100, Math.round((scanQuotaUsed / safeTotal) * 100)) || 0;
   const isNearLimit = usagePercentage > 85;
   const { title: planTitle } = planLabel(subscriptionPlan);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-8">
-      <div>
-        <h1 className="text-3xl font-bold text-text-primary">חיוב ומנויים (Billing)</h1>
-        <p className="mt-1 text-text-secondary">
-          ניהול חבילות סריקה, רישוי ופרטי תשלום עבור {organizationName}
-        </p>
-      </div>
+    <div className="cd-canvas w-full min-w-0 space-y-10 py-4 md:py-6" dir={dir}>
+      <PageHeader
+        eyebrow={t("workspaceBilling.eyebrow")}
+        title={t("workspaceBilling.heroTitle")}
+        subtitle={t("workspaceBilling.heroSubtitle", { organizationName })}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <DashboardCard className="relative overflow-hidden lg:col-span-2" title="התוכנית הנוכחית">
@@ -85,7 +87,7 @@ export function BillingWorkspaceUI({
                     {scanQuotaUsed} / {scanQuotaTotal}
                   </span>
                 </div>
-                <div className="h-2.5 w-full rounded-full bg-gray-100">
+                <div className="h-2.5 w-full rounded-full bg-[color:var(--canvas-sunken)]">
                   <div
                     className={`h-2.5 rounded-full transition-all duration-500 ${
                       isNearLimit ? "bg-red-500" : "bg-brand"
@@ -114,12 +116,12 @@ export function BillingWorkspaceUI({
             </Link>
             <Link
               href={addOnHref}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3 font-medium text-text-primary transition-all hover:bg-gray-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-3 font-medium text-text-primary transition-all hover:bg-[color:var(--canvas-sunken)]"
             >
               <Server size={18} />
               מסלול חיוב / תוספות
             </Link>
-            <div className="mt-4 border-t border-gray-100 pt-4">
+            <div className="mt-4 border-t border-[color:var(--line-subtle)] pt-4">
               <div className="flex items-center gap-3 text-sm text-text-secondary">
                 <CreditCard size={16} aria-hidden />
                 <span>תשלומי פלטפורמה: PayPal (בהגדרות)</span>

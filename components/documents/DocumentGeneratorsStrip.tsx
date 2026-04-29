@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Download, FileStack, Loader2, PenLine } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import { SectionHeader, Surface } from "@/components/ui/claude";
 import { createDraftFromProfessionalTemplateAction } from "@/app/actions/professional-documents";
 import type { IndustryProfile, ProfessionalTemplateKind } from "@/lib/professions/runtime";
 import { templateDraftMode } from "@/lib/professional-template-draft";
@@ -26,6 +27,8 @@ type IssuedPayload = {
 type Props = {
   industryProfile: IndustryProfile;
   onDraftIssued: (issued: IssuedPayload) => void;
+  /** כותרת מותאמת למרכז AI ב־/app/scan */
+  variant?: "default" | "aiHub";
 };
 
 function kindGroup(kind: ProfessionalTemplateKind, t: (k: string) => string): string {
@@ -39,7 +42,11 @@ function kindGroup(kind: ProfessionalTemplateKind, t: (k: string) => string): st
   }
 }
 
-export default function DocumentGeneratorsStrip({ industryProfile, onDraftIssued }: Props) {
+export default function DocumentGeneratorsStrip({
+  industryProfile,
+  onDraftIssued,
+  variant = "default",
+}: Props) {
   const { t } = useI18n();
   const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -65,49 +72,47 @@ export default function DocumentGeneratorsStrip({ industryProfile, onDraftIssued
 
   const templates = industryProfile.templates;
 
+  const headingId = variant === "aiHub" ? "ai-hub-generators-heading" : "doc-generators-heading";
+
+  const sectionTitle =
+    variant === "aiHub" ? t("workspaceAiHub.hubGeneratorsAiTitle") : t("workspaceDocuments.generatorsTitle");
+  const sectionSubtitle =
+    variant === "aiHub" ? t("workspaceAiHub.hubGeneratorsAiSubtitle") : t("workspaceDocuments.generatorsSubtitle");
+
   return (
-    <section className="tile tile--soft overflow-hidden p-6 sm:p-8" aria-labelledby="doc-generators-heading">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <span className="bento-eyebrow inline-flex items-center gap-2">
-            <FileStack className="h-4 w-4 text-[color:var(--axis-clients)]" aria-hidden />
-            {industryProfile.documentsLabel}
-          </span>
-          <h2 id="doc-generators-heading" className="mt-3 text-xl font-black text-[color:var(--ink-900)] sm:text-2xl">
-            {t("workspaceDocuments.generatorsTitle")}
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-7 text-[color:var(--ink-500)]">{t("workspaceDocuments.generatorsSubtitle")}</p>
-        </div>
-      </div>
+    <Surface className="overflow-hidden !p-6 sm:!p-8" aria-labelledby={headingId}>
+      <p className="cd-eyebrow mb-3 inline-flex items-center gap-2 normal-case tracking-normal">
+        <FileStack className="h-4 w-4 text-[color:var(--cd-accent)]" aria-hidden />
+        {variant === "aiHub" ? t("workspaceAiHub.eyebrow") : industryProfile.documentsLabel}
+      </p>
+      <SectionHeader id={headingId} title={sectionTitle} subtitle={sectionSubtitle} />
 
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {templates.map((template) => {
           const issueMode = templateDraftMode(template) === "issue";
           const busy = isPending && pendingId === template.id;
           return (
-            <div key={template.id} className="rounded-2xl border border-[color:var(--line)] bg-white/88 px-4 py-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-500)]">
+            <div
+              key={template.id}
+              className="rounded-[var(--cd-radius)] border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] px-4 py-4"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--cd-ink-mute)]">
                 {kindGroup(template.kind, t)}
               </p>
-              <p className="mt-2 font-black text-[color:var(--ink-900)]">{template.label}</p>
-              <p className="mt-2 text-sm leading-6 text-[color:var(--ink-500)]">{template.description}</p>
+              <p className="mt-2 text-sm font-semibold text-[color:var(--cd-ink)]">{template.label}</p>
+              <p className="cd-mute mt-2 text-sm leading-relaxed">{template.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a
                   href={`/api/professional-template/pdf?templateId=${encodeURIComponent(template.id)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-2xl border border-[color:var(--line)] bg-white/90 px-4 py-2 text-sm font-black text-[color:var(--ink-900)] transition hover:border-[color:var(--axis-clients)]"
+                  className="cd-btn cd-btn-secondary"
                 >
-                  <Download className="h-4 w-4 text-[color:var(--axis-clients)]" aria-hidden />
+                  <Download className="h-3.5 w-3.5" aria-hidden />
                   {t("workspaceDocuments.generatorsCtaPdf")}
                 </a>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => handleTemplate(template.id)}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--axis-clients-soft)] px-4 py-2 text-sm font-black text-[color:var(--axis-clients-strong)] transition hover:bg-[color:var(--axis-clients)]/20 disabled:opacity-60"
-                >
-                  {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <PenLine className="h-4 w-4" aria-hidden />}
+                <button type="button" disabled={busy} onClick={() => handleTemplate(template.id)} className="cd-btn cd-btn-primary">
+                  {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : <PenLine className="h-3.5 w-3.5" aria-hidden />}
                   {issueMode ? t("workspaceDocuments.generatorsCtaIssue") : t("workspaceDocuments.generatorsCtaDraft")}
                 </button>
               </div>
@@ -115,6 +120,6 @@ export default function DocumentGeneratorsStrip({ industryProfile, onDraftIssued
           );
         })}
       </div>
-    </section>
+    </Surface>
   );
 }

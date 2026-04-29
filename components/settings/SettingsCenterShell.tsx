@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, Search } from "lucide-react";
 import { SETTINGS_HUB_NAV_GROUPS, type SettingsHubNavItem } from "@/lib/settings-hub-nav";
@@ -15,27 +16,37 @@ function isActive(pathname: string, item: SettingsHubNavItem) {
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
 }
 
+function dashboardHref(item: SettingsHubNavItem) {
+  if (item.id === "overview") return "/app/settings";
+  if (["profile", "organization", "profession", "presence", "stack"].includes(item.id)) {
+    return `/app/settings#${item.id}`;
+  }
+  return item.href;
+}
+
 export default function SettingsCenterShell({ children, includePlatformNav }: Props) {
   const pathname = usePathname() ?? "";
-  const { dir } = useI18n();
+  const [hash, setHash] = useState("");
+  const { dir, t } = useI18n();
+
+  useEffect(() => {
+    const readHash = () => setHash(window.location.hash.replace(/^#/, ""));
+    readHash();
+    window.addEventListener("hashchange", readHash);
+    return () => window.removeEventListener("hashchange", readHash);
+  }, [pathname]);
 
   return (
-    <div className="grid min-w-0 gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]" dir={dir}>
+    <div className="cd-canvas grid min-w-0 gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]" dir={dir}>
       <aside className="xl:sticky xl:top-4 xl:self-start">
-        <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--shadow-sm)]">
-          <div className="border-b border-[color:var(--line-subtle)] p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[color:var(--ops-indigo)]">
-              Settings OS
-            </p>
-            <h1 className="mt-1 text-xl font-black tracking-tight text-[color:var(--ink-900)]">
-              מרכז הגדרות
-            </h1>
-            <p className="mt-1 text-[12px] leading-5 text-[color:var(--ink-500)]">
-              כל ההגדרות מחולקות לפי אחריות: ארגון, תחום בניה, מנועים, תפעול ומנוי.
-            </p>
-            <div className="mt-3 flex items-center gap-2 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-3 py-2 text-[12px] font-semibold text-[color:var(--ink-500)]">
-              <Search className="h-4 w-4" aria-hidden />
-              <span>בחר אזור בתפריט</span>
+        <div className="cd-surface overflow-hidden shadow-[var(--cd-shadow)]">
+          <div className="border-b border-[color:var(--cd-line)] p-4">
+            <p className="cd-eyebrow">{t("workspaceSettings.centerAsideEyebrow")}</p>
+            <h1 className="cd-h2 mt-2">{t("workspaceSettings.centerAsideTitle")}</h1>
+            <p className="cd-mute mt-1 text-xs leading-5">{t("workspaceSettings.centerAsideSubtitle")}</p>
+            <div className="mt-3 flex items-center gap-2 rounded-[var(--cd-radius-sm)] border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-sunken)] px-3 py-2 text-xs font-medium text-[color:var(--cd-ink-mute)]">
+              <Search className="h-4 w-4 shrink-0" aria-hidden />
+              <span>{t("workspaceSettings.centerNavHint")}</span>
             </div>
           </div>
 
@@ -51,11 +62,16 @@ export default function SettingsCenterShell({ children, includePlatformNav }: Pr
                     </h2>
                     <ul className="space-y-1">
                       {items.map((item) => {
-                        const on = isActive(pathname, item);
+                        const on =
+                          pathname === "/app/settings"
+                            ? hash
+                              ? item.id === hash
+                              : item.id === "overview"
+                            : isActive(pathname, item);
                         return (
                           <li key={item.id}>
                             <Link
-                              href={item.href}
+                              href={dashboardHref(item)}
                               className={`group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-start transition ${
                                 on
                                   ? "border-[color:var(--ops-indigo)] bg-[color:var(--ops-indigo)] text-white shadow-[var(--shadow-sm)]"
@@ -74,9 +90,6 @@ export default function SettingsCenterShell({ children, includePlatformNav }: Pr
                               </span>
                               <span className="min-w-0 flex-1">
                                 <span className="block truncate text-[13px] font-black">{item.label}</span>
-                                <span className={`mt-0.5 block line-clamp-1 text-[11px] ${on ? "text-white/76" : "text-[color:var(--ink-500)]"}`}>
-                                  {item.description}
-                                </span>
                               </span>
                               <ChevronLeft className={`h-4 w-4 shrink-0 ${on ? "text-white/80" : "text-[color:var(--ink-400)]"}`} aria-hidden />
                             </Link>

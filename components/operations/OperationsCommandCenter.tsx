@@ -139,7 +139,7 @@ export default function OperationsCommandCenter({
                 <MiniStat label="הכנסות ממתינות" value={`₪${data.revenuePending30d.toLocaleString()}`} />
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <QuickLink href="/app/inbox" label="מרכז עבודה" tone="primary" />
+                <QuickLink href="/app" label="מרכז עבודה" tone="primary" />
                 <QuickLink href="/app/settings/billing" label="מנוי ותשלום" />
               </div>
             </Panel>
@@ -213,10 +213,10 @@ export default function OperationsCommandCenter({
               <p className="mt-1 text-xs text-gray-500">פחות קיצורים, רק מה שמקדם פעולה אמיתית.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <QuickLink href="/app/help" label="מדריך" />
-               <QuickLink href="/app/inbox" label="משפך Wizard" />
-              <QuickLink href="/app/documents/issue" label="חשבוניות" />
-               <QuickLink href="/app/clients" label="CRM" />
+              <QuickLink href="/app/settings/overview" label="מדריך" />
+               <QuickLink href="/app" label="משפך Wizard" />
+              <QuickLink href="/app/erp" label="חשבוניות" />
+               <QuickLink href="/app/crm" label="CRM" />
               {ownerMode ? <QuickLink href="/api/admin/system-health" label="בדיקת מערכת" tone="primary" /> : null}
             </div>
           </div>

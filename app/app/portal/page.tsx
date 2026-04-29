@@ -8,6 +8,8 @@ import { formatShortDate } from "@/lib/ui-formatters";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { createTranslator } from "@/lib/i18n/translate";
 import { BentoGrid, ProgressBar, Tile, TileHeader, TileLink } from "@/components/ui/bento";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +76,7 @@ export default async function AppPortalPage() {
       .filter(Boolean).length * 25;
 
   return (
+    <AppPageChrome>
     <div className="w-full min-w-0 space-y-8" dir="rtl">
       <header className="flex flex-col gap-1 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
@@ -122,7 +125,11 @@ export default async function AppPortalPage() {
                 להגדיר פורטל ומיתוג
               </Link>
               {publicUrl ? (
-                <Link href={publicUrl} className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line-strong)] bg-white px-3 py-2 text-[12px] font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white" target="_blank">
+                <Link
+                  href={publicUrl}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2 text-[12px] font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white"
+                  target="_blank"
+                >
                   פתיחת הפורטל
                   <ExternalLink className="h-4 w-4" aria-hidden />
                 </Link>
@@ -159,9 +166,13 @@ export default async function AppPortalPage() {
           <TileHeader eyebrow="מסמכים ללקוח" />
           <div className="mt-4 grid gap-3">
             {issuedDocuments.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[color:var(--line-strong)] px-4 py-6 text-center text-sm text-[color:var(--ink-500)]">
-                עדיין אין מסמכים מונפקים להצגה ללקוחות.
-              </div>
+              <EmptyState
+                variant="bare"
+                icon={FileText}
+                title="אין מסמכים מונפקים"
+                description="מסמכים מונפקים יופיעו כאן לחשיפה ללקוחות."
+                className="rounded-lg border border-dashed border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)]/60 py-8"
+              />
             ) : (
               issuedDocuments.map((document) => (
                 <div key={document.id} className="rounded-lg bg-[color:var(--canvas-sunken)] px-4 py-4">
@@ -179,9 +190,13 @@ export default async function AppPortalPage() {
           <TileHeader eyebrow="קליטת מסמכים אחרונה" />
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {recentScanned.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[color:var(--line-strong)] px-4 py-6 text-center text-sm text-[color:var(--ink-500)]">
-                עדיין לא נקלטו מסמכים לפורטל או לארגון.
-              </div>
+              <EmptyState
+                variant="bare"
+                icon={Globe}
+                title="אין מסמכים שנקלטו"
+                description="מסמכים שנסרקו יופיעו כאן לאחר הקליטה."
+                className="rounded-lg border border-dashed border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)]/60 py-8 md:col-span-2 xl:col-span-3"
+              />
             ) : (
               recentScanned.map((document) => (
                 <div key={document.id} className="rounded-lg bg-[color:var(--canvas-sunken)] px-4 py-4">
@@ -194,5 +209,6 @@ export default async function AppPortalPage() {
         </Tile>
       </BentoGrid>
     </div>
+    </AppPageChrome>
   );
 }

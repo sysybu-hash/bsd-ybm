@@ -36,7 +36,10 @@ export default function CookiesLegalPage() {
           </li>
           <li>
             <strong>אנליטיקה:</strong> אם הוגדר{" "}
-            <code className="rounded bg-gray-100 px-1">NEXT_PUBLIC_GA_MEASUREMENT_ID</code> — Google Analytics 4
+            <code className="rounded bg-[color:var(--canvas-sunken)] px-1 text-[color:var(--ink-800)]">
+              NEXT_PUBLIC_GA_MEASUREMENT_ID
+            </code>{" "}
+            — Google Analytics 4
             נטען רק לאחר שאישרת &quot;אנליטיקה&quot; בבאנר. נתונים מעובדים לפי מדיניות Google.
           </li>
           <li>
@@ -47,16 +50,16 @@ export default function CookiesLegalPage() {
 
       <section>
         <h2 className={h2Class}>3. טבלת דוגמה (לעדכון שמות מדויקים)</h2>
-        <div className="overflow-x-auto rounded-2xl border border-gray-200">
+        <div className="overflow-x-auto rounded-2xl border border-[color:var(--line-strong)]">
           <table className="min-w-full text-right text-sm">
-            <thead className="bg-gray-50 text-gray-700">
+            <thead className="bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)]">
               <tr>
                 <th className="px-3 py-2 font-bold">שם / מקור</th>
                 <th className="px-3 py-2 font-bold">מטרה</th>
                 <th className="px-3 py-2 font-bold">סוג</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[color:var(--line-subtle)]">
               <tr>
                 <td className="px-3 py-2">session / next-auth.*</td>
                 <td className="px-3 py-2">התחברות מאובטחת</td>
@@ -95,7 +98,7 @@ export default function CookiesLegalPage() {
         <h2 className={h2Class}>5. שינויים ופניות</h2>
         <p>
           מדיניות זו עשויה להתעדכן. תאריך מוצג במסמכים המשפטיים. פניות:{" "}
-          <a href={`mailto:${legalSite.contactEmail}`} className="text-[var(--primary-color)] font-medium">
+          <a href={`mailto:${legalSite.contactEmail}`} className="font-medium text-[color:var(--cd-accent)]">
             {legalSite.contactEmail}
           </a>
           .

@@ -38,6 +38,18 @@ enum DocStatus {
   CANCELLED
 }
 
+/// שיוך הוצאה — משרד כללי, פרויקט או לקוח
+enum ExpenseAllocation {
+  OFFICE
+  PROJECT
+  CLIENT
+}
+
+enum ExpenseRecordStatus {
+  DRAFT
+  POSTED
+}
+
 /// תפקידים במערכת — אין כאן USER/ADMIN גנרי:
 /// CLIENT = משתמש קצה (ברירת מחדל), EMPLOYEE/PROJECT_MGR = צוות,
 /// ORG_ADMIN = מנהל ארגון, SUPER_ADMIN = מנהל פלטפורמה בלבד.
@@ -108,6 +120,8 @@ model Organization {
   productPriceObservations ProductPriceObservation[]
   invoices         Invoice[]
   issuedDocuments  IssuedDocument[]
+  expenseRecords   ExpenseRecord[]
+  automations      Automation[]
   createdAt        DateTime       @default(now())
   /// סיום ניסיון לתוכנית FREE — null = ארגונים ישנים לפני השדה (ללא הגבלת ניסיון)
   trialEndsAt      DateTime?
@@ -235,6 +249,7 @@ model Project {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contacts       Contact[]
+  expenseRecords ExpenseRecord[]
   /// פרויקט פעיל — מופיע בברירות מחדל; כבוי = ארכיון / לא ממשיך
   isActive       Boolean      @default(true)
   /// תחילת תקופת עבודה / זמינות (אופציונלי)
@@ -357,6 +372,7 @@ model Contact {
   project        Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
   quotes         Quote[]
   issuedDocuments IssuedDocument[]
+  expenseRecords  ExpenseRecord[]
   createdAt      DateTime     @default(now())
 
   @@index([organizationId])
@@ -401,6 +417,36 @@ model IssuedDocument {
   /// מספר מסמך ייחודי לכל סוג בתוך הארגון (למשל חשבונית #1001 וקבלה #1001 — שניהם חוקיים)
   @@unique([organizationId, type, number])
   @@index([organizationId])
+  @@index([contactId])
+}
+
+/// הוצאה / חשבונית ספק — משרד, פרויקט או לקוח; ניתן לקליטה מסריקה ו-AI
+model ExpenseRecord {
+  id               String               @id @default(cuid())
+  organizationId   String
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vendorName       String
+  invoiceNumber    String?
+  expenseDate      DateTime             @default(now())
+  description      String?              @db.Text
+  amountNet        Float
+  vat              Float                @default(0)
+  total            Float
+  allocation       ExpenseAllocation    @default(OFFICE)
+  projectId        String?
+  project          Project?             @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  contactId        String?
+  contact          Contact?             @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  status           ExpenseRecordStatus  @default(POSTED)
+  sourceDocumentId String?
+  sourceDocument   Document?            @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  aiExtractedJson  Json?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([organizationId, expenseDate])
+  @@index([organizationId, allocation])
+  @@index([projectId])
   @@index([contactId])
 }
 
@@ -485,6 +531,7 @@ model Document {
   createdAt      DateTime     @default(now())
   lineItems              DocumentLineItem[]
   productPriceObservations ProductPriceObservation[]
+  expenseRecords         ExpenseRecord[]
 
   @@index([organizationId, createdAt])
 }
@@ -570,4 +617,60 @@ model RateLimit {
   updatedAt DateTime @updatedAt
 
   @@index([resetAt])
+}
+
+/// חוקי אוטומציה — תשתית לעורך ה-workflow (מסך /app/settings/automations)
+model Automation {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  enabled     Boolean @default(true)
+
+  /// לדוגמה: STATUS_CHANGE | CONTACT_CREATED | INVOICE_SENT
+  triggerType  String
+  triggerValue String?
+
+  /// לדוגמה: SEND_EMAIL | WEBHOOK | ADD_NOTE
+  actionType   String
+  actionConfig Json   @default("{}")
+
+  runCount  Int       @default(0)
+  lastRunAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  runs AutomationRun[]
+
+  @@index([organizationId, enabled])
+  @@index([organizationId, triggerType])
+}
+
+model AutomationRun {
+  id           String     @id @default(cuid())
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  entityId   String?
+  entityType String?
+
+  status       String  @default("OK")
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  @@index([automationId, createdAt])
+}
+
+/// הגדרות מפתח־ערך גלובליות לשרת (אופציונלי)
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

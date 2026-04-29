@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
 import { prisma } from "@/lib/prisma";
 import { SuperAdminWorkspace } from "@/components/admin/SuperAdminWorkspace";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 import type { SuperAdminLogRow, SystemHealthKpis } from "@/components/admin/SuperAdminWorkspace";
 
 export const dynamic = "force-dynamic";
@@ -65,8 +66,10 @@ export default async function AdminSteelLockPage() {
   }));
 
   return (
+    <AppPageChrome>
     <div className="w-full min-w-0" dir="rtl">
       <SuperAdminWorkspace health={health} recentLogs={recentLogs} />
     </div>
+    </AppPageChrome>
   );
 }

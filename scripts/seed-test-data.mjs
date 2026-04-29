@@ -581,8 +581,9 @@ async function main() {
         lastSyncAt: daysAgo(1),
       },
     }),
-    prisma.organizationInvite.create({
-      data: {
+    prisma.organizationInvite.upsert({
+      where: { token: "demo-invite-site-manager-2026" },
+      create: {
         organizationId: organization.id,
         token: "demo-invite-site-manager-2026",
         email: "site-manager@bsd-demo.test",
@@ -590,10 +591,24 @@ async function main() {
         expiresAt: daysFromNow(14),
         createdByEmail: "owner@bsd-demo.test",
       },
+      update: {
+        organizationId: organization.id,
+        email: "site-manager@bsd-demo.test",
+        role: "PROJECT_MGR",
+        expiresAt: daysFromNow(14),
+        createdByEmail: "owner@bsd-demo.test",
+      },
     }),
-    prisma.subscriptionInvitation.create({
-      data: {
+    prisma.subscriptionInvitation.upsert({
+      where: { token: "demo-subscription-corporate-2026" },
+      create: {
         token: "demo-subscription-corporate-2026",
+        email: "new-corporate@bsd-demo.test",
+        subscriptionTier: "CORPORATE",
+        expiresAt: daysFromNow(30),
+        createdByEmail: "owner@bsd-demo.test",
+      },
+      update: {
         email: "new-corporate@bsd-demo.test",
         subscriptionTier: "CORPORATE",
         expiresAt: daysFromNow(30),

@@ -17,7 +17,7 @@ import { CompanyType, DocStatus, DocType } from "@prisma/client";
 import {
   updateIssuedDocument,
   deleteIssuedDocument,
-} from "@/app/dashboard/billing/actions";
+} from "@/app/actions/issued-documents";
 import { calculateIssuedDocumentTotals, VAT_RATE } from "@/lib/billing-calculations";
 import type { IssuedDocRow } from "@/components/billing/GlobalBillingPageClient";
 import PortalToBody, { WORKSPACE_OVERLAY_Z_CLASS } from "@/components/portal/PortalToBody";

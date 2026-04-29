@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { createContactAction } from "@/app/actions/crm";
-import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { toastClientActionFeedback } from "@/lib/polish/action-response-toast";
 import { clientCreateFormSchema } from "@/lib/validation/schemas/client";
 import { FieldError } from "@/components/forms/FormWrapper";
 import { inputClass } from "@/components/settings/settings-form-primitives";
@@ -15,7 +15,7 @@ type Project = { id: string; name: string };
 export default function QuickClientForm({ projects }: { projects: Project[] }) {
   const { t } = useI18n();
   const router = useRouter();
-  const { pending, run } = useAsyncAction();
+  const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   return (
@@ -44,8 +44,9 @@ export default function QuickClientForm({ projects }: { projects: Project[] }) {
           return;
         }
         setErrors({});
-        void run(
-          async () => {
+        void (async () => {
+          setPending(true);
+          try {
             const f = new FormData();
             f.set("name", parsed.data.name);
             f.set("email", parsed.data.email ?? "");
@@ -54,15 +55,18 @@ export default function QuickClientForm({ projects }: { projects: Project[] }) {
             f.set("projectId", parsed.data.projectId ?? "");
             f.set("value", parsed.data.value ?? "");
             f.set("notes", parsed.data.notes ?? "");
-            return createContactAction(f);
-          },
-          { successToast: "הלקוח נוסף", errorToast: "שמירת לקוח נכשלה" },
-        ).then((r) => {
-          if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
-            (e.target as HTMLFormElement).reset();
-            router.refresh();
+            const r = await toastClientActionFeedback(() => createContactAction(f), {
+              successMessage: "הלקוח נוצר בהצלחה ונוסף לצנרת",
+              loadingMessage: "יוצר לקוח…",
+            });
+            if (r && typeof r === "object" && "ok" in r && (r as { ok: boolean }).ok) {
+              (e.target as HTMLFormElement).reset();
+              router.refresh();
+            }
+          } finally {
+            setPending(false);
           }
-        });
+        })();
       }}
     >
       <div className="md:col-span-2">

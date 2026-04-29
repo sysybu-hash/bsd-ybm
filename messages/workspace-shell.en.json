@@ -14,8 +14,8 @@
         "summary": "Quick overview — KPIs, recent activity, and quick actions."
       },
       "scan": {
-        "label": "AI Scanner",
-        "summary": "Scan invoices and documents — auto-link to clients and expenses."
+        "label": "AI hub",
+        "summary": "Scanning, source notebook, in-org document decode, and issuance generators in one screen."
       },
       "crm": {
         "label": "Clients",
@@ -169,7 +169,7 @@
       "addProject": "Project",
       "askAi": "Ask AI",
       "erp": "ERP",
-      "scan": "Scan",
+      "scan": "AI hub",
       "billing": "Billing",
       "admin": "Admin"
     },

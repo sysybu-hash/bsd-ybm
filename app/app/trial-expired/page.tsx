@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { isFreeTrialExpired } from "@/lib/trial";
 import { Lock, Rocket, LogOut } from "lucide-react";
 import { BentoGrid, ProgressBar, Tile, TileHeader } from "@/components/ui/bento";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export default async function AppTrialExpiredPage() {
   const session = await getServerSession(authOptions);
@@ -32,6 +33,7 @@ export default async function AppTrialExpiredPage() {
   }
 
   return (
+    <AppPageChrome>
     <div className="mx-auto w-full min-w-0 max-w-[980px] space-y-8 py-10" dir="rtl">
       <header className="flex flex-col items-center text-center gap-3 px-2">
         <div className="flex h-18 w-18 items-center justify-center rounded-[22px] bg-[color:var(--state-danger-soft)] text-[color:var(--state-danger)] shadow-[var(--tile-shadow)]">
@@ -64,7 +66,7 @@ export default async function AppTrialExpiredPage() {
             </Link>
             <Link
               href="/api/auth/signout"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white"
             >
               <LogOut size={18} /> התנתקות מהמערכת
             </Link>
@@ -72,5 +74,6 @@ export default async function AppTrialExpiredPage() {
         </Tile>
       </BentoGrid>
     </div>
+    </AppPageChrome>
   );
 }

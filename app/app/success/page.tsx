@@ -5,6 +5,7 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 import { ArrowUpRight, CheckCircle2, Sparkles } from "lucide-react";
 import { BentoGrid, Tile, TileHeader } from "@/components/ui/bento";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export default function AppSuccessPage() {
   useEffect(() => {
@@ -17,6 +18,7 @@ export default function AppSuccessPage() {
   }, []);
 
   return (
+    <AppPageChrome>
     <div className="mx-auto w-full min-w-0 max-w-[1200px] space-y-8 py-8" dir="rtl">
       <header className="flex flex-col items-center text-center gap-2 px-2">
         <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-[color:var(--axis-clients-soft)] text-[color:var(--state-success)] shadow-[var(--tile-shadow-raised)]">
@@ -45,11 +47,11 @@ export default function AppSuccessPage() {
 
         <Tile tone="neutral" span={12}>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/app/documents" className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
+            <Link href="/app/erp" className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
               פתח מסמכים
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
-          <Link href="/app/settings/billing" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-white px-4 py-2 text-sm font-black text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
+          <Link href="/app/settings/billing" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-black text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
               פתח חיוב
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -61,5 +63,6 @@ export default function AppSuccessPage() {
         </Tile>
       </BentoGrid>
     </div>
+    </AppPageChrome>
   );
 }

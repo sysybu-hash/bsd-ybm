@@ -96,8 +96,8 @@ export default function OperatorOnboardingPanel() {
       <div className="mt-4 flex flex-wrap gap-2">
         <Link href="/app/settings/billing" className="rounded-xl bg-teal-700 px-3 py-2 text-xs font-bold text-white hover:bg-teal-800">מנויים</Link>
         <Link href="/app/settings/overview" className="rounded-xl border border-teal-500/40 bg-white px-3 py-2 text-xs font-bold text-white hover:bg-teal-500/25">הגדרות</Link>
-        <Link href="/app/clients#quick-client-form" className="rounded-xl border border-teal-500/40 bg-white px-3 py-2 text-xs font-bold text-white hover:bg-teal-500/25">CRM Wizard</Link>
-        <Link href="/app/documents/erp#erp-wizard" className="rounded-xl border border-teal-500/40 bg-white px-3 py-2 text-xs font-bold text-white hover:bg-teal-500/25">ERP Wizard</Link>
+        <Link href="/app/crm#quick-client-form" className="rounded-xl border border-teal-500/40 bg-white px-3 py-2 text-xs font-bold text-white hover:bg-teal-500/25">CRM Wizard</Link>
+        <Link href="/app/erp#erp-wizard" className="rounded-xl border border-teal-500/40 bg-white px-3 py-2 text-xs font-bold text-white hover:bg-teal-500/25">ERP Wizard</Link>
       </div>
     </section>
   );

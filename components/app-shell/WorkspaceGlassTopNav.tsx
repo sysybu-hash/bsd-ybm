@@ -70,7 +70,7 @@ export default function WorkspaceGlassTopNav({
         <div className="flex shrink-0 items-center gap-1.5">
           <WorkspaceLocaleSwitcher ariaLabel={t("workspaceShell.topBar.localeAria")} />
           <Link
-            href="/app/help"
+            href="/app/settings/overview"
             className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--ink-500)] transition hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)]"
             aria-label={t("workspaceNav.utility.help.label")}
           >

@@ -16,14 +16,14 @@ export default function ProjectProfitability() {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 p-8 font-sans text-gray-900"
+      className="min-h-screen bg-[color:var(--canvas)] p-8 font-sans text-[color:var(--ink-900)]"
       dir="rtl"
     >
       <header className="mb-12">
-        <h1 className="text-4xl font-black italic tracking-tighter text-teal-400">
+        <h1 className="text-4xl font-black italic tracking-tighter text-[color:var(--cd-accent)]">
           {project.name}
         </h1>
-        <p className="text-gray-400 font-medium">סטטוס רווחיות ופיננסים חי</p>
+        <p className="font-medium text-[color:var(--ink-400)]">סטטוס רווחיות ופיננסים חי</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
@@ -54,10 +54,10 @@ export default function ProjectProfitability() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+            className="rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow-sm)]"
           >
-            <stat.icon className="text-gray-400 mb-4" size={24} />
-            <p className="text-gray-400 text-sm mb-1 font-bold">{stat.label}</p>
+            <stat.icon className="mb-4 text-[color:var(--ink-400)]" size={24} />
+            <p className="mb-1 text-sm font-bold text-[color:var(--ink-400)]">{stat.label}</p>
             <p className={`text-3xl font-black ${stat.color ?? "text-white"}`}>
               {stat.value}
             </p>
@@ -65,12 +65,12 @@ export default function ProjectProfitability() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="rounded-2xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] p-8 shadow-[var(--cd-shadow-sm)]">
         <h3 className="text-xl font-black mb-6 flex items-center gap-2 italic">
           מד רווחיות פרויקט
         </h3>
-        <div className="w-full bg-gray-50 h-6 rounded-full overflow-hidden border border-gray-200 p-1 flex items-center relative">
-          <div className="absolute top-0 left-1/2 w-0.5 h-full bg-gray-300" />
+        <div className="relative flex h-6 w-full items-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] p-1">
+          <div className="absolute left-1/2 top-0 h-full w-0.5 bg-[color:var(--ink-300)]" />
           <motion.div
             initial={{ width: 0 }}
             animate={{
@@ -81,7 +81,7 @@ export default function ProjectProfitability() {
             }`}
           />
         </div>
-        <p className="text-xs font-bold text-gray-400 mt-3 text-center">
+        <p className="mt-3 text-center text-xs font-bold text-[color:var(--ink-400)]">
           מחושב לפי יחס הכנסות CRM מול הוצאות ERP ששויכו לפרויקט
         </p>
       </div>

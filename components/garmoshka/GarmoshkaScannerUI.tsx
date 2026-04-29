@@ -53,7 +53,7 @@ export function GarmoshkaScannerUI({
                 <p className="mt-2 text-text-secondary">ה-AI מזהה מידות, חומרים וסעיפי חריגה</p>
               </div>
               <div className="mx-auto w-2/3">
-                <div className="h-2 w-full rounded-full bg-gray-100">
+                <div className="h-2 w-full rounded-full bg-[color:var(--canvas-sunken)]">
                   <div
                     className="h-2 rounded-full bg-brand transition-all duration-300"
                     style={{ width: `${progress}%` }}
@@ -65,7 +65,7 @@ export function GarmoshkaScannerUI({
             <button
               type="button"
               onClick={onUpload}
-              className="group cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 p-12 text-center transition-all hover:border-brand hover:bg-brand-background/50"
+              className="group cursor-pointer rounded-2xl border-2 border-dashed border-[color:var(--line-strong)] p-12 text-center transition-all hover:border-brand hover:bg-brand-background/50"
             >
               <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-brand-surface shadow-sm transition-transform group-hover:scale-110">
                 <UploadCloud className="text-brand" size={32} aria-hidden />
@@ -93,7 +93,7 @@ export function GarmoshkaScannerUI({
                 recentScans.map((scan) => (
                   <div
                     key={scan.id}
-                    className="flex items-center justify-between rounded-lg border border-transparent p-3 transition-colors hover:border-gray-100 hover:bg-gray-50"
+                    className="flex items-center justify-between rounded-lg border border-transparent p-3 transition-colors hover:border-[color:var(--line-subtle)] hover:bg-[color:var(--canvas-sunken)]"
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="shrink-0 rounded-lg bg-blue-50 p-2 text-blue-600">

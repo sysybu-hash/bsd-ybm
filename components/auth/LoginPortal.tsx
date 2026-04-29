@@ -71,15 +71,7 @@ export default function LoginPortal() {
     void refreshLocalSession();
   }, [refreshLocalSession]);
 
-  const handleGoogle = useCallback(async () => {
-    setLoadingGoogle(true);
-    try {
-      await signOut({ redirect: false });
-    } catch {
-      /* no active session — continue anyway */
-    }
-    void signIn("google", { callbackUrl, redirect: true });
-  }, [callbackUrl]);
+  const googleStartUrl = `/api/auth/google-start?callbackUrl=${encodeURIComponent(callbackUrl)}`;
 
   const handleSwitchAccount = useCallback(async () => {
     try {
@@ -98,8 +90,8 @@ export default function LoginPortal() {
     <AuthPageShell secondaryNav={{ href: "/register", label: t("auth.login.registerLink") }}>
       <AuthProfessionalCard
         icon={
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100">
-            <ShieldCheck className="h-6 w-6 text-teal-600" aria-hidden />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--axis-clients-soft)]">
+            <ShieldCheck className="h-6 w-6 text-[color:var(--axis-clients)]" aria-hidden />
           </div>
         }
         title={t("auth.login.title")}
@@ -108,32 +100,32 @@ export default function LoginPortal() {
         {/* Session probe */}
         {sessionProbe === "loading" && (
           <div className="mt-4 flex justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-400" aria-hidden />
+            <Loader2 className="h-5 w-5 animate-spin text-[color:var(--ink-400)]" aria-hidden />
           </div>
         )}
 
         {/* Already connected banner */}
         {showActiveBanner ? (
-          <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-start">
+          <div className="mt-5 rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 py-3 text-start">
             <div className="flex items-center gap-3">
-              <UserCircle className="h-5 w-5 shrink-0 text-teal-600" aria-hidden />
+              <UserCircle className="h-5 w-5 shrink-0 text-[color:var(--axis-clients)]" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-gray-800">{t("auth.login.connectedAs")}{sessionName || sessionEmail}</p>
-                {sessionName ? <p className="text-xs text-gray-400 break-all">{sessionEmail}</p> : null}
+                <p className="text-sm font-bold text-[color:var(--ink-900)]">{t("auth.login.connectedAs")}{sessionName || sessionEmail}</p>
+                {sessionName ? <p className="text-xs text-[color:var(--ink-500)] break-all">{sessionEmail}</p> : null}
               </div>
             </div>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <button
                 type="button"
                 onClick={() => navigateHard(callbackUrl)}
-                className="flex-1 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white hover:bg-teal-700 transition"
+                className="flex-1 rounded-xl bg-[color:var(--axis-clients)] px-3 py-2.5 text-xs font-bold text-white transition hover:bg-[color:var(--axis-clients-strong)]"
               >
                 {t("auth.login.continueToDashboard")}
               </button>
               <button
                 type="button"
                 onClick={() => handleSwitchAccount()}
-                className="flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 transition"
+                className="flex items-center justify-center gap-1.5 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-3 py-2.5 text-xs font-bold text-[color:var(--ink-700)] transition hover:bg-[color:var(--canvas-sunken)]"
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden />
                 {t("auth.login.switchAccount")}
@@ -150,27 +142,26 @@ export default function LoginPortal() {
         )}
 
         {/* Google button */}
-        <button
-          type="button"
-          disabled={loadingGoogle}
-          onClick={handleGoogle}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-800 hover:bg-gray-50 transition disabled:opacity-60 shadow-sm"
+        <Link
+          href={googleStartUrl}
+          onClick={() => setLoadingGoogle(true)}
+          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-3.5 text-sm font-bold text-[color:var(--ink-900)] transition hover:bg-[color:var(--canvas-sunken)] disabled:opacity-60"
         >
           {loadingGoogle ? (
-            <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+            <Loader2 className="h-5 w-5 animate-spin text-[color:var(--ink-500)]" />
           ) : (
             <>
               <GoogleMark className="h-5 w-5 shrink-0" />
               {t("auth.login.google")}
             </>
           )}
-        </button>
+        </Link>
 
         {/* Divider */}
         <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-200" />
-          <span className="text-xs font-medium text-gray-400">{t("auth.login.or")}</span>
-          <div className="h-px flex-1 bg-gray-200" />
+          <div className="h-px flex-1 bg-[color:var(--line)]" />
+          <span className="text-xs font-medium text-[color:var(--ink-400)]">{t("auth.login.or")}</span>
+          <div className="h-px flex-1 bg-[color:var(--line)]" />
         </div>
 
         {/* Credentials form */}
@@ -215,8 +206,8 @@ export default function LoginPortal() {
             navigateHard(dest);
           }}
         >
-          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-gray-500 text-start">
-            <KeyRound size={14} className="text-teal-600" aria-hidden />
+          <div className="flex items-center gap-2 pb-1 text-xs font-bold text-[color:var(--ink-500)] text-start">
+            <KeyRound size={14} className="text-[color:var(--axis-clients)]" aria-hidden />
             {t("auth.login.credsLabel")}
           </div>
           <input
@@ -225,7 +216,7 @@ export default function LoginPortal() {
             required
             autoComplete="email"
             placeholder={t("auth.login.emailPlaceholder")}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 text-start"
+            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-3 text-sm text-[color:var(--ink-900)] placeholder:text-[color:var(--ink-400)] outline-none transition focus:border-[color:var(--axis-clients)] focus:ring-2 focus:ring-[color:var(--axis-clients-soft)] text-start"
           />
           <input
             name="password"
@@ -233,13 +224,13 @@ export default function LoginPortal() {
             required
             autoComplete="current-password"
             placeholder={t("auth.login.passwordPlaceholder")}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 text-start"
+            className="w-full rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-3 text-sm text-[color:var(--ink-900)] placeholder:text-[color:var(--ink-400)] outline-none transition focus:border-[color:var(--axis-clients)] focus:ring-2 focus:ring-[color:var(--axis-clients-soft)] text-start"
           />
           {credError ? <p className="text-center text-sm text-rose-600">{credError}</p> : null}
           <button
             type="submit"
             disabled={loadingCreds}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 py-3.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60 shadow-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[color:var(--axis-clients)] py-3.5 text-sm font-bold text-white transition hover:bg-[color:var(--axis-clients-strong)] disabled:opacity-60"
           >
             {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
             {t("auth.login.submit")}
@@ -248,15 +239,15 @@ export default function LoginPortal() {
 
         {/* Footer links */}
         <div className="mt-5 flex flex-col items-center gap-3">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[color:var(--ink-500)]">
             {t("auth.login.noAccount")}{" "}
-            <Link href="/register" className="font-bold text-teal-600 hover:underline">
+            <Link href="/register" className="font-bold text-[color:var(--axis-clients)] hover:underline">
               {t("auth.login.registerLink")}
             </Link>
           </p>
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition"
+            className="flex items-center gap-1.5 text-xs font-medium text-[color:var(--ink-400)] transition hover:text-[color:var(--ink-900)]"
           >
             <ArrowRight size={13} aria-hidden />
             {t("auth.login.backToSite")}

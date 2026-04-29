@@ -87,17 +87,17 @@ export default function BillingUnifiedTabsClient({
   const visibleTabs = tabs.filter((x) => !x.adminOnly || isSteelAdmin);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900" dir={dir}>
+    <div className="min-h-0 bg-transparent font-sans text-[color:var(--ink-900)]" dir={dir}>
       <div className="mx-auto max-w-[1600px] px-4 pt-6 sm:px-8">
-        <h1 className="mb-1 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="mb-1 text-2xl font-black tracking-tight text-[color:var(--ink-900)] sm:text-3xl">
           מנויים ותשלומים
         </h1>
-        <p className="mb-6 text-sm font-medium text-gray-400">
+        <p className="mb-6 text-sm font-medium text-[color:var(--ink-400)]">
           סקירה עם גרפים — או מרכז שליטה לניהול כל המנויים (למפעילי פלטפורמה בלבד).
         </p>
 
         <div
-          className="mb-8 rounded-2xl border border-gray-100 bg-gray-50 p-2"
+          className="mb-8 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-2"
           role="tablist"
           aria-label="מקטעי מנויים"
         >
@@ -113,22 +113,34 @@ export default function BillingUnifiedTabsClient({
                   onClick={() => setTabAndUrl(id)}
                   className={`inline-flex min-w-0 flex-1 flex-col items-stretch gap-0.5 rounded-xl px-4 py-3 text-start transition-all sm:min-w-[10rem] sm:flex-none ${
                     active
-                      ? "bg-teal-600 text-white shadow-sm ring-1 ring-teal-200"
-                      : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                      ? "bg-[color:var(--cd-accent)] text-white shadow-[var(--cd-shadow-sm)] ring-1 ring-[color:var(--cd-accent-soft)]"
+                      : "text-[color:var(--ink-400)] hover:bg-[color:var(--canvas-raised)] hover:text-[color:var(--ink-600)]"
                   }`}
                 >
                   <span className="flex items-center gap-2 text-xs font-black">
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
-                        active ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-400"
+                        active
+                          ? "bg-[color:var(--cd-accent-ink)] text-white"
+                          : "bg-[color:var(--canvas-raised)] text-[color:var(--ink-400)]"
                       }`}
                     >
                       {step}
                     </span>
-                    <Icon size={16} className={active ? "text-teal-400" : "text-gray-400"} strokeWidth={2} />
-                    <span className={`font-black ${active ? "text-white" : "text-gray-600"}`}>{label}</span>
+                    <Icon
+                      size={16}
+                      className={active ? "text-[color:var(--cd-accent-soft)]" : "text-[color:var(--ink-400)]"}
+                      strokeWidth={2}
+                    />
+                    <span className={`font-black ${active ? "text-white" : "text-[color:var(--ink-700)]"}`}>
+                      {label}
+                    </span>
                   </span>
-                  <span className="pe-8 text-[11px] font-medium text-gray-400">{hint}</span>
+                  <span
+                    className={`pe-8 text-[11px] font-medium ${active ? "text-[color:var(--cd-accent-soft)]" : "text-[color:var(--ink-400)]"}`}
+                  >
+                    {hint}
+                  </span>
                 </button>
               );
             })}

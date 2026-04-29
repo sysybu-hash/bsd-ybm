@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-
-const MAX = "max-w-[1360px]";
+import { WORKSPACE_CONTENT_MAX_CLASS } from "@/lib/workspace-layout";
 
 /** ריווח אופקי ואנכי אחיד לכל מסכי /app */
 export const WORKSPACE_SECTION_GAP = "gap-6";
@@ -21,7 +20,7 @@ export default function MainContainer({
   className?: string;
 }) {
   return (
-    <div className={`mx-auto w-full min-w-0 ${MAX} ${className}`}>
+    <div className={`mx-auto w-full min-w-0 ${WORKSPACE_CONTENT_MAX_CLASS} ${className}`}>
       {children}
     </div>
   );

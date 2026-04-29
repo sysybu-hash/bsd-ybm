@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import TradePickerClient from "@/components/onboarding/TradePickerClient";
+import AppPageChrome from "@/components/workspace/AppPageChrome";
 import { CONSTRUCTION_TRADE_IDS } from "@/lib/construction-trades";
 
 export const dynamic = "force-dynamic";
@@ -51,9 +52,11 @@ export default async function OnboardingPage() {
   }));
 
   return (
+    <AppPageChrome>
     <TradePickerClient
       trades={trades}
       currentTrade={org?.constructionTrade ?? null}
     />
+    </AppPageChrome>
   );
 }

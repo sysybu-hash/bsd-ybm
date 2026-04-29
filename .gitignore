@@ -1,5 +1,6 @@
 .env.vercel.pull
 .env.vercel.production
+.env.vprod
 
 # תלות ובנייה
 node_modules/
@@ -42,5 +43,15 @@ tsconfig.tsbuildinfo
 /Gemini_Generated_Image_*.png
 
 .vercel
+
+# עותקי עבודה מקומיים של כלי AI (לא חלק מהריפו)
+.claude/
+
+# תוכניות Cursor מקומיות
+.cursor/plans/
+
+# Playwright
+test-results/
+playwright-report/
 
 .env*.local

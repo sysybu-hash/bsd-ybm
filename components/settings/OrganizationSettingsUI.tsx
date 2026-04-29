@@ -42,7 +42,7 @@ const ROLE_UI: Record<
 > = {
   ORG_ADMIN: { text: "מנהל ארגון", css: "bg-purple-50 text-purple-700 border-purple-200" },
   PROJECT_MGR: { text: "מנהל פרויקט", css: "bg-blue-50 text-blue-700 border-blue-200" },
-  EMPLOYEE: { text: "עובד", css: "bg-gray-100 text-gray-700 border-gray-200" },
+  EMPLOYEE: { text: "עובד", css: "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)] border-[color:var(--line-strong)]" },
   CLIENT: { text: "לקוח", css: "bg-amber-50 text-amber-800 border-amber-200" },
   SUPER_ADMIN: { text: "אדמין פלטפורמה", css: "bg-rose-50 text-rose-800 border-rose-200" },
 };
@@ -50,7 +50,7 @@ const ROLE_UI: Record<
 function roleBadge(role: string) {
   const r = ROLE_UI[role] ?? {
     text: role,
-    css: "bg-gray-100 text-gray-700 border-gray-200",
+    css: "bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)] border-[color:var(--line-strong)]",
   };
   return (
     <span className={`rounded-md border px-2.5 py-1 text-xs font-medium ${r.css}`}>{r.text}</span>
@@ -137,7 +137,7 @@ export function OrganizationSettingsUI({
                         className={`flex w-full items-center gap-3 rounded-xl border p-3 text-start text-sm transition-all ${
                           selectedTrade === id
                             ? "border-brand bg-brand/5 font-bold text-brand shadow-sm"
-                            : "border-gray-100 bg-white text-text-secondary hover:border-gray-200"
+                            : "border-[color:var(--line-subtle)] bg-[color:var(--canvas-raised)] text-text-secondary hover:border-[color:var(--line-strong)]"
                         }`}
                       >
                         <span aria-hidden>{emoji}</span>
@@ -187,7 +187,7 @@ export function OrganizationSettingsUI({
                       className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
                         row.id === currentTrade
                           ? "border-brand/40 bg-brand/5 font-semibold text-brand"
-                          : "border-gray-100"
+                          : "border-[color:var(--line-subtle)]"
                       }`}
                     >
                       {row.id === currentTrade ? <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden /> : null}
@@ -213,7 +213,7 @@ export function OrganizationSettingsUI({
                   type="text"
                   defaultValue={orgName}
                   readOnly={readOnly}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-sm outline-none focus:ring-1 focus:ring-brand"
+                  className="w-full rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] p-2.5 text-sm outline-none focus:ring-1 focus:ring-brand"
                 />
               </div>
               <div>
@@ -222,7 +222,7 @@ export function OrganizationSettingsUI({
                   type="text"
                   defaultValue={taxId}
                   readOnly={readOnly}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-sm outline-none focus:ring-1 focus:ring-brand"
+                  className="w-full rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] p-2.5 text-sm outline-none focus:ring-1 focus:ring-brand"
                 />
               </div>
               <p className="text-xs text-text-secondary">
@@ -233,7 +233,7 @@ export function OrganizationSettingsUI({
 
           <DashboardCard title="אינטגרציות" actionIcon={<Key size={20} />}>
             <div className="space-y-4">
-              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+              <div className="rounded-xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-sunken)]/50 p-4">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-text-primary">Meckano</span>
                   {meckanoKeyExists ? (
@@ -265,7 +265,7 @@ export function OrganizationSettingsUI({
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-start">
               <thead>
-                <tr className="border-b border-gray-100 text-sm text-text-secondary">
+                <tr className="border-b border-[color:var(--line-subtle)] text-sm text-text-secondary">
                   <th className="pb-3 pe-4 font-medium">שם</th>
                   <th className="pb-3 font-medium">דוא״ל</th>
                   <th className="pb-3 font-medium">הרשאה</th>
@@ -282,7 +282,7 @@ export function OrganizationSettingsUI({
                   </tr>
                 ) : (
                   teamMembers.map((member) => (
-                    <tr key={member.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                    <tr key={member.id} className="border-b border-[color:var(--line-subtle)] hover:bg-[color:var(--canvas-sunken)]/50">
                       <td className="py-3 pe-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-light/20 text-xs font-bold text-brand">

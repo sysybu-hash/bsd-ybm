@@ -1,7 +1,7 @@
 import sys
 import os
 
-p = r'c:\Users\User\Desktop\BSD-YBM\app\dashboard\(protected)\crm\CrmClient.tsx'
+p = r'c:\Users\User\Desktop\BSD-YBM\components\crm\CrmClient.tsx'
 
 with open(p, 'r', encoding='utf-8') as f:
     lines = f.readlines()

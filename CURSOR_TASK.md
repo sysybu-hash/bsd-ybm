@@ -52,8 +52,8 @@ These files received color fixes only and still need proper layout/UX redesign t
 - **`components/DashboardAiHub.tsx`** — AI hub page. Blue-accented cards for each AI feature, usage stats, scan credits display.
 
 #### Priority 2 — CRM
-- **`app/dashboard/(protected)/crm/CrmClient.tsx`** — Full CRM client view. Tabs for contacts, organizations, pipeline. Clean table + card hybrid.
-- **`app/dashboard/(protected)/crm/CrmOrganizationsAdminTable.tsx`** — Admin table for organizations. Sortable columns, expandable rows, blue action buttons.
+- **`components/crm/CrmClient.tsx`** — Full CRM client view. Tabs for contacts, organizations, pipeline. Clean table + card hybrid.
+- **`components/crm/CrmOrganizationsAdminTable.tsx`** — Admin table for organizations. Sortable columns, expandable rows, blue action buttons.
 
 #### Priority 3 — Billing
 - **`components/billing/GlobalBillingPageClient.tsx`** — Main billing page wrapper. Tab navigation: Subscriptions, Invoices, Payments, Usage. Blue tab strip.
@@ -67,7 +67,7 @@ These files received color fixes only and still need proper layout/UX redesign t
 #### Priority 4 — Intelligence / Executive
 - **`components/intelligence/IntelligenceHub.tsx`** — AI intelligence dashboard. Data cards, charts, insights. Blue gradient accents.
 - **`components/intelligence/ExecutiveSuite.tsx`** — Executive overview. KPI cards, financial summary, trend indicators.
-- **`app/dashboard/(protected)/executive/page.tsx`** — Executive page shell. Clean layout with financial KPIs, charts area.
+- **`app/app/erp/page.tsx`** / דפי workspace תחת `app/app/**` — מעטפת הפעילות העסקית (כולל ERP ומסמכים).
 - **`components/executive/AdminSubscriptionControlCenter.tsx`** — Admin subscription management tool. Table of users/organizations, subscription controls, action buttons. Professional admin UI.
 
 #### Priority 5 — Other Modules
