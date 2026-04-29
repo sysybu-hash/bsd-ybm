@@ -62,20 +62,29 @@ const LEGACY_REDIRECTS = [
   { source: "/app/help", destination: "/app/settings/overview", permanent: true },
 ];
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  outputFileTracingRoot: path.resolve(__dirname),
-  allowedDevOrigins: [
+/** מקורות dev מורשים — מרחיב פורטים נפוצים כדי למנוע אזהרות cross-origin ב־next dev */
+function buildAllowedDevOrigins() {
+  const set = new Set([
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "127.0.0.1:3000",
     "localhost:3000",
-    /** פורט ייעודי ל־Playwright — ראה `playwright.config.ts` */
-    "http://127.0.0.1:3330",
-    "http://localhost:3330",
-    "127.0.0.1:3330",
-    "localhost:3330",
-  ],
+  ]);
+  const hosts = ["127.0.0.1", "localhost"];
+  const extraPorts = [3001, 3002, 3003, 3004, 3005, 3330, 3331, 3332, 3333, 4173, 5173, 5321];
+  for (const h of hosts) {
+    for (const p of extraPorts) {
+      set.add(`http://${h}:${p}`);
+      set.add(`${h}:${p}`);
+    }
+  }
+  return Array.from(set);
+}
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  outputFileTracingRoot: path.resolve(__dirname),
+  allowedDevOrigins: buildAllowedDevOrigins(),
   /** כותרות אבטחה ופרטיות (תאימות מומלצת לאיחוד האירופי / מצב best-practice) */
   async headers() {
     const isProd = process.env.NODE_ENV === "production";

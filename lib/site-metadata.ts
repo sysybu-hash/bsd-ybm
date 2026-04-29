@@ -32,6 +32,21 @@ export function buildRootMetadata(): Metadata {
   if (bingVerification) other["msvalidate.01"] = bingVerification;
   if (customMetaName && customMetaContent) other[customMetaName] = customMetaContent;
 
+  const robots: Metadata["robots"] =
+    process.env.VERCEL_ENV === "preview"
+      ? { index: false, follow: false, nocache: true }
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+            "max-video-preview": -1,
+          },
+        };
+
   return {
     metadataBase: base,
     applicationName: "BSD-YBM",
@@ -79,6 +94,7 @@ export function buildRootMetadata(): Metadata {
     alternates: {
       canonical: "/",
     },
+    robots,
     formatDetection: {
       email: false,
       address: false,

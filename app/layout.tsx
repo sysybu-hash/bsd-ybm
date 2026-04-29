@@ -13,6 +13,7 @@ import { I18nProvider } from "@/components/I18nProvider";
 import { AccessibilitySettingsBootstrap } from "@/components/AccessibilityMenu";
 import { COOKIE_LOCALE, normalizeLocale, isRtlLocale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/load-messages";
+import { skipToMainLabel } from "@/lib/skip-to-main-label";
 import { buildRootMetadata } from "@/lib/site-metadata";
 import GlobalFloatingChrome from "@/components/GlobalFloatingChrome";
 import SiteWizardChrome from "@/components/wizard/SiteWizardChrome";
@@ -71,6 +72,7 @@ export default async function RootLayout({
   const messages = getMessages(locale);
   const dir = isRtlLocale(locale) ? "rtl" : "ltr";
   const htmlLang = locale;
+  const mainSkipLabel = skipToMainLabel(messages, locale);
 
   return (
     <html
@@ -84,11 +86,22 @@ export default async function RootLayout({
       >
         <SessionProvider session={session} sessionKey={session?.user?.id ?? session?.user?.email ?? null}>
           <I18nProvider locale={locale} messages={messages}>
+            <a
+              href="#site-main"
+              className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100000] focus:rounded-xl focus:bg-[#1f2937] focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-white"
+            >
+              {mainSkipLabel}
+            </a>
             {/*
               עטיפת אפקטים ויזואליים (ניגודיות/אפור) — לא על body:
               filter על body יוצר containing block ל-fixed וגורם לדוק הצף "לגלול" עם העמוד.
+              id=site-main — יעד לדילוג לתוכן (נגישות) בכל דפי האתר.
             */}
-            <div className="app-visual-effects-root min-h-app">
+            <div
+              id="site-main"
+              tabIndex={-1}
+              className="app-visual-effects-root min-h-app outline-none focus:outline-none"
+            >
               <Themer />
               <AccessibilitySettingsBootstrap />
               <SiteWizardChrome>{children}</SiteWizardChrome>
