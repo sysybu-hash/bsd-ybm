@@ -37,14 +37,15 @@ export type WorkspaceHomeRecentIssued = {
   clientName: string;
   total: number;
   status: string;
-  date: Date;
+  /** ISO — נשמר כמחרוזת כדי לא להיכשל בסריאליזציה של RSC מעל גבולות Client */
+  date: string;
 };
 
 export type WorkspaceHomeRecentClient = {
   id: string;
   name: string;
   status: string;
-  createdAt: Date;
+  createdAt: string;
   value: number | null;
 };
 
@@ -176,11 +177,19 @@ export async function loadWorkspaceHomeData(organizationId: string): Promise<Wor
     activeProjects,
     scannedDocsCount,
     recentIssued: recentIssued.map((row) => ({
-      ...row,
+      id: row.id,
+      type: row.type,
+      number: row.number,
+      clientName: row.clientName,
+      status: row.status,
       total: toPlainNumber(row.total),
+      date: row.date instanceof Date ? row.date.toISOString() : String(row.date ?? ""),
     })),
     recentClients: recentClients.map((row) => ({
-      ...row,
+      id: row.id,
+      name: row.name,
+      status: row.status,
+      createdAt: row.createdAt instanceof Date ? row.createdAt.toISOString() : String(row.createdAt ?? ""),
       value: row.value == null ? null : toPlainNumber(row.value),
     })),
   };

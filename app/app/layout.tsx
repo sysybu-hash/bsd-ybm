@@ -46,7 +46,12 @@ function safeIndustryProfile(
     return getIndustryProfile(industry, industryConfigJson, constructionTrade, messages);
   } catch (e) {
     console.error("[app/layout] getIndustryProfile failed", e);
-    return getIndustryProfile("CONSTRUCTION", undefined, null, getMessages("he"));
+    try {
+      return getIndustryProfile("CONSTRUCTION", undefined, null, getMessages("he"));
+    } catch (e2) {
+      console.error("[app/layout] getIndustryProfile fallback (CONSTRUCTION+he) failed", e2);
+      return getIndustryProfile("GENERAL", undefined, null, null);
+    }
   }
 }
 
