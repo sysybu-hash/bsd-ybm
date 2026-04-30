@@ -1,23 +1,12 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { jsonForbidden } from "@/lib/api-json";
-import { isAdmin } from "@/lib/is-admin";
+import { withPlatformAdmin } from "@/lib/api-handler";
 
-/**
- * שלד לריפוי עצמי (ניתוח שגיאות + PR). לא מופעל אוטומטית — דורש הגדרת GitHub ומפתחות.
- */
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!isAdmin(session?.user?.email)) {
-    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
-  }
-
+export const POST = withPlatformAdmin(async (req) => {
   const body = await req.json().catch(() => ({}));
   void body;
 
   return NextResponse.json({
-    message: "Self-healing stub: אין ביצוע אוטומטי מוגדר בסביבה זו.",
+    message: "Self-healing is configured as a manual-only stub in this environment.",
     status: "skipped",
   });
-}
+});

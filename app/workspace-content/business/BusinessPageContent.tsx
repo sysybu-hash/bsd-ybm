@@ -216,6 +216,13 @@ export async function BusinessPageContent() {
       prisma.project.findMany({
         where: { organizationId: orgId },
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          isActive: true,
+          activeFrom: true,
+          activeTo: true,
+        },
       }),
     ]);
 

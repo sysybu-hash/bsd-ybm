@@ -1,8 +1,8 @@
 const path = require("path");
 
 /**
- * הפניות מאוחדות — סדר חשוב: Next מעריך מהראשון למטה; נתיבים ספציפיים לפני כלליים.
- * יעדים תואמים ל־Workspace under app/app (crm, erp, scan, …).
+ * Legacy redirects. Order matters: Next evaluates from top to bottom, so specific
+ * routes should appear before broader catch-all patterns.
  */
 const LEGACY_REDIRECTS = [
   {
@@ -62,11 +62,15 @@ const LEGACY_REDIRECTS = [
   { source: "/app/help", destination: "/app/settings/overview", permanent: true },
 ];
 
-/** מקורות dev מורשים — מרחיב פורטים נפוצים כדי למנוע אזהרות cross-origin ב־next dev */
+/** Allow common local dev ports to avoid Next dev cross-origin warnings. */
 function buildAllowedDevOrigins() {
   const set = new Set([
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "http://127.0.0.1",
+    "http://localhost",
+    "127.0.0.1",
+    "localhost",
     "127.0.0.1:3000",
     "localhost:3000",
   ]);
@@ -85,7 +89,6 @@ function buildAllowedDevOrigins() {
 const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname),
   allowedDevOrigins: buildAllowedDevOrigins(),
-  /** כותרות אבטחה ופרטיות (תאימות מומלצת לאיחוד האירופי / מצב best-practice) */
   async headers() {
     const isProd = process.env.NODE_ENV === "production";
     const security = [

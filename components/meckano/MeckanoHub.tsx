@@ -15,7 +15,6 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
   Loader2,
   CheckCircle2,
   UserPlus,
@@ -36,154 +35,19 @@ import {
   Trash2,
 } from "lucide-react";
 import { updateMeckanoApiKeyAction } from "@/app/actions/org-settings";
+import { meckanoFetch, tsToDate, tsToTime } from "./api";
+import { CheckStateBadge, LoadingSpinner, MeckanoEmptyHint, StatusBadge } from "./ui";
+import type {
+  MeckanoAttendance,
+  MeckanoDepartment,
+  MeckanoEmployee,
+  MeckanoTask,
+  MeckanoTaskEntry,
+  MeckanoZone,
+} from "./types";
 
 // Dynamic import for Leaflet map (no SSR)
 const MeckanoMap = dynamic(() => import("./MeckanoMap"), { ssr: false, loading: () => <LoadingSpinner /> });
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type MeckanoEmployee = {
-  id: number;
-  email?: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-  workerTag?: string | null;
-  role?: string | null;
-  departmentId?: number;
-  department?: { id: number; name: string; number: number } | null;
-  activeState?: number;
-  lastCheckState?: number;
-  lastCheckTime?: number | null;
-  userType?: number;
-  city?: string | null;
-  idNum?: string | null;
-  hasCar?: boolean;
-  employedFrom_dt?: string | null;
-  employedUntil_dt?: string | null;
-};
-
-type MeckanoDepartment = {
-  id: number;
-  name: string;
-  number?: number;
-  parentId?: number | null;
-  usersCount?: number;
-};
-
-type MeckanoAttendance = {
-  id: number;
-  userId: number;
-  uts: number;
-  ts: number;
-  mts: number | null;
-  isOut: boolean;
-  flag: number;
-  disabled: boolean;
-  companyId: number;
-  userName?: string;
-  workerTag?: string;
-  dateStr?: string;
-  timeStr?: string;
-};
-
-type MeckanoTask = {
-  id: number;
-  name: string;
-  code?: string | null;
-  isActive?: number;
-  parentId?: number | null;
-};
-
-type MeckanoTaskEntry = {
-  id: number;
-  userId: number;
-  taskId: number;
-  ts: number;
-  duration?: number;
-  note?: string | null;
-  dateStr?: string;
-  taskName?: string;
-  userName?: string;
-};
-
-type MeckanoZone = {
-  id: string;
-  name: string;
-  address: string;
-  description?: string | null;
-  lat?: number | null;
-  lng?: number | null;
-  radius: number;
-  isActive: boolean;
-  syncedToCrm: boolean;
-  managerName?: string | null;
-  startDate?: string | null;
-  endDate?: string | null;
-  budgetHours?: number | null;
-  hourlyRate?: number | null;
-  projectNotes?: string | null;
-  assignedEmployeeIds?: number[];
-};
-
-type ApiResult<T> = { status: boolean; data?: T; error?: string };
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-async function meckanoFetch<T>(path: string, params?: Record<string, string>): Promise<ApiResult<T>> {
-  const url = new URL(`/api/meckano/${path}`, window.location.origin);
-  if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  const res = await fetch(url.toString());
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({})) as { error?: string };
-    return { status: false, error: err.error ?? `שגיאה ${res.status}` };
-  }
-  return res.json() as Promise<ApiResult<T>>;
-}
-
-function tsToDate(ts: number): string {
-  return new Date(ts * 1000).toLocaleDateString("he-IL");
-}
-function tsToTime(ts: number): string {
-  return new Date(ts * 1000).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function StatusBadge({ active }: { active: boolean }) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold ${active ? "bg-emerald-500/20 text-emerald-400" : "bg-gray-100 text-gray-400"}`}>
-      {active ? "פעיל" : "לא פעיל"}
-    </span>
-  );
-}
-
-function CheckStateBadge({ state }: { state: number }) {
-  const map: Record<number, { label: string; cls: string }> = {
-    0: { label: "לא נרשם", cls: "bg-gray-100 text-gray-400" },
-    1: { label: "כניסה", cls: "bg-teal-500/15 text-teal-300" },
-    2: { label: "יציאה", cls: "bg-orange-500/20 text-orange-400" },
-  };
-  const info = map[state] ?? map[0];
-  return <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${info.cls}`}>{info.label}</span>;
-}
-
-function MeckanoEmptyHint({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-      <AlertCircle size={36} className="mb-3 opacity-40" />
-      <p className="text-sm">{message}</p>
-    </div>
-  );
-}
-
-function LoadingSpinner() {
-  return (
-    <div className="flex items-center justify-center py-16">
-      <Loader2 size={32} className="animate-spin text-teal-500" />
-    </div>
-  );
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 

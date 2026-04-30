@@ -4,11 +4,17 @@ import { NextResponse } from "next/server";
 import type { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { jsonBadRequest, jsonForbidden, jsonUnauthorized, jsonValidationFailed } from "@/lib/api-json";
+import { isAdmin } from "@/lib/is-admin";
 
 export type WorkspaceAuthContext = {
   orgId: string;
   userId: string;
   role: UserRole;
+};
+
+export type PlatformAdminContext = {
+  email: string;
+  userId: string | null;
 };
 
 type WorkspaceAuthOptionsBase = {
@@ -91,6 +97,39 @@ export async function requireWorkspaceAuth(
     return jsonForbidden("אין הרשאת תפקיד לפעולה זו.");
   }
   return { orgId, userId, role };
+}
+
+export async function requirePlatformAdmin(): Promise<PlatformAdminContext | NextResponse> {
+  const session = await getServerSession(authOptions);
+  const email = session?.user?.email?.trim().toLowerCase();
+  if (!email || !isAdmin(email)) {
+    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
+  }
+  return {
+    email,
+    userId: typeof session?.user?.id === "string" ? session.user.id : null,
+  };
+}
+
+function isPlatformAdminContext(
+  gate: PlatformAdminContext | NextResponse,
+): gate is PlatformAdminContext {
+  return (
+    typeof gate === "object" &&
+    gate !== null &&
+    "email" in gate &&
+    typeof (gate as PlatformAdminContext).email === "string"
+  );
+}
+
+export function withPlatformAdmin(
+  handler: (req: Request, ctx: PlatformAdminContext) => Promise<NextResponse>,
+): (req: Request) => Promise<NextResponse> {
+  return async (req: Request) => {
+    const gate = await requirePlatformAdmin();
+    if (!isPlatformAdminContext(gate)) return gate;
+    return handler(req, gate);
+  };
 }
 
 type WorkspaceAuthOptionsNoSchema = WorkspaceAuthOptionsBase &

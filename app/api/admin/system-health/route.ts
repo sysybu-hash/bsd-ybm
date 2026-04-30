@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { jsonForbidden } from "@/lib/api-json";
-import { prisma } from "@/lib/prisma";
-import { isAdmin } from "@/lib/is-admin";
+import { withPlatformAdmin } from "@/lib/api-handler";
 import { hasPlatformPayPalConfigured } from "@/lib/platform-paypal";
+import { prisma } from "@/lib/prisma";
 
 type ServiceStatus = {
   name: string;
@@ -12,12 +9,7 @@ type ServiceStatus = {
   detail: string;
 };
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!isAdmin(session?.user?.email)) {
-    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
-  }
-
+export const GET = withPlatformAdmin(async () => {
   const statuses: ServiceStatus[] = [];
 
   try {
@@ -45,12 +37,12 @@ export async function GET() {
   );
   const platformPaypal = hasPlatformPayPalConfigured();
   statuses.push({
-    name: "תשלומים (PayPal)",
+    name: "תשלומים",
     ok: true,
     detail: [
       "ארגונים: PayPal לפי הגדרות DB",
-      platformPaypal ? "פלטפורמה: ENV מוגדר" : "פלטפורמה: ENV לא מוגדר",
-      payplusOk ? "PayPlus API ברקע" : "ללא PayPlus API",
+      platformPaypal ? "פלטפורמה: PayPal ENV מוגדר" : "פלטפורמה: PayPal ENV לא מוגדר",
+      payplusOk ? "PayPlus API זמין" : "ללא PayPlus API",
     ].join(" · "),
   });
 
@@ -58,4 +50,4 @@ export async function GET() {
     checkedAt: new Date().toISOString(),
     statuses,
   });
-}
+});

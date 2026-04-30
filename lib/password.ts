@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 
 const ROUNDS = 12;
+const MIN_PASSWORD_LENGTH = 12;
 
 export async function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, ROUNDS);
@@ -8,6 +9,19 @@ export async function hashPassword(plain: string): Promise<string> {
 
 export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
   return bcrypt.compare(plain, hash);
+}
+
+export function validatePasswordStrength(plain: string): { ok: true } | { ok: false; message: string } {
+  if (plain.length < MIN_PASSWORD_LENGTH) {
+    return { ok: false, message: `הסיסמה חייבת להכיל לפחות ${MIN_PASSWORD_LENGTH} תווים.` };
+  }
+  if (!/[a-z]/.test(plain) || !/[A-Z]/.test(plain) || !/\d/.test(plain)) {
+    return { ok: false, message: "הסיסמה חייבת לכלול אות גדולה, אות קטנה וספרה." };
+  }
+  if (/\s/.test(plain)) {
+    return { ok: false, message: "הסיסמה לא יכולה לכלול רווחים." };
+  }
+  return { ok: true };
 }
 
 /** סיסמה אקראית קריאה חלקית (למשל לשליחה באימייל) */

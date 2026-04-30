@@ -1,25 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { jsonForbidden } from "@/lib/api-json";
+import { withPlatformAdmin } from "@/lib/api-handler";
 import { prisma } from "@/lib/prisma";
-import { isAdmin } from "@/lib/is-admin";
 
-/**
- * POST /api/admin/fix-roles
- *
- * תיקון חד-פעמי: מוריד כל משתמש שאינו Steel Admin שיש לו SUPER_ADMIN ב-DB → ORG_ADMIN.
- * זמין רק לבעל הפלטפורמה (isAdmin).
- */
-export async function POST() {
-  const session = await getServerSession(authOptions);
-  if (!isAdmin(session?.user?.email)) {
-    return jsonForbidden("נדרשת הרשאת מנהל פלטפורמה.");
-  }
-
-  const adminEmail = session!.user!.email!.trim().toLowerCase();
-
-  // מוצא את כל המשתמשים עם SUPER_ADMIN שהם לא Steel Admin
+export const POST = withPlatformAdmin(async (_req, { email: adminEmail }) => {
   const wrongSuperAdmins = await prisma.user.findMany({
     where: {
       role: "SUPER_ADMIN",
@@ -29,10 +12,9 @@ export async function POST() {
   });
 
   if (wrongSuperAdmins.length === 0) {
-    return NextResponse.json({ fixed: 0, message: "הכל תקין — אין משתמשים עם role שגוי" });
+    return NextResponse.json({ fixed: 0, message: "כל התפקידים תקינים." });
   }
 
-  // מתקן את כולם ל-ORG_ADMIN
   const ids = wrongSuperAdmins.map((u) => u.id);
   await prisma.user.updateMany({
     where: { id: { in: ids } },
@@ -42,6 +24,6 @@ export async function POST() {
   return NextResponse.json({
     fixed: wrongSuperAdmins.length,
     users: wrongSuperAdmins.map((u) => ({ email: u.email, wasRole: u.role, nowRole: "ORG_ADMIN" })),
-    message: `תוקנו ${wrongSuperAdmins.length} משתמשים`,
+    message: `תוקנו ${wrongSuperAdmins.length} משתמשים.`,
   });
-}
+});
