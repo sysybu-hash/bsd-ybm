@@ -121,6 +121,7 @@ export default function MultiEngineScanner({
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedContactId, setSelectedContactId] = useState("");
   const [lookupSearch, setLookupSearch] = useState("");
+  const [engineInstruction, setEngineInstruction] = useState("");
   const [debouncedLookup, setDebouncedLookup] = useState("");
   const [lookupsLoading, setLookupsLoading] = useState(false);
   const [openAiModel, setOpenAiModel] = useState("");
@@ -411,6 +412,7 @@ export default function MultiEngineScanner({
     formData.append("engineRunMode", engineRunMode);
     formData.append("persist", "false");
     formData.append("openAiModel", resolvedOpenAiModel);
+    if (engineInstruction.trim()) formData.append("userInstruction", engineInstruction.trim());
     if (projectLabel.trim()) formData.append("project", projectLabel.trim());
     if (clientLabel.trim()) formData.append("client", clientLabel.trim());
 
@@ -595,6 +597,7 @@ export default function MultiEngineScanner({
       className={shellClass}
     >
       <div className="flex h-full min-h-0 flex-col">
+        {!dockWizard ? (
         <header className="shrink-0 border-b border-[color:var(--line)] bg-[color:var(--canvas-raised)]/95 px-3 py-3 backdrop-blur xl:px-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -656,6 +659,7 @@ export default function MultiEngineScanner({
             </div>
           </div>
         </header>
+        ) : null}
 
         {dockWizard ? (
           <DockWizardScanLayout
@@ -681,6 +685,8 @@ export default function MultiEngineScanner({
             authStatus={authStatus}
             lookupSearch={lookupSearch}
             setLookupSearch={setLookupSearch}
+            engineInstruction={engineInstruction}
+            setEngineInstruction={setEngineInstruction}
             lookupsLoading={lookupsLoading}
             selectedProjectId={selectedProjectId}
             setSelectedProjectId={setSelectedProjectId}

@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       gate.userId,
       parsed.openAiModel,
       parsed.engineRunMode,
+      parsed.userInstruction,
     );
 
     const { v5, telemetry } = await runTriEngineExtraction({

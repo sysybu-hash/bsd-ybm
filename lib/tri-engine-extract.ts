@@ -190,6 +190,7 @@ export async function runTriEngineExtraction(params: {
   messages: MessageTree;
   openAiModel?: string;
   engineRunMode?: TriEngineRunMode;
+  userInstruction?: string | null;
   /** עדכוני ביניים לסטרימינג (טלמטריה + V5 חלקי) */
   onProgress?: (e: TriEngineProgressEvent) => void | Promise<void>;
 }): Promise<TriEngineResult> {
@@ -204,6 +205,7 @@ export async function runTriEngineExtraction(params: {
     messages,
     openAiModel,
     engineRunMode = "AUTO",
+    userInstruction,
     onProgress,
   } = params;
 
@@ -217,7 +219,10 @@ export async function runTriEngineExtraction(params: {
   const lang = localeLang(locale);
   const v5Instruction = buildV5JsonInstruction(lang, scanMode);
   const extra = industryInstructionExtras(industry, orgTrade, messages);
-  const fullInstruction = `${v5Instruction}\n\n${extra}`;
+  const userInstructionBlock = userInstruction?.trim()
+    ? `\n\n### USER REQUEST\nThe user added these extra instructions. Follow them when they do not conflict with the required JSON schema or safety constraints:\n${userInstruction.trim().slice(0, 1200)}`
+    : "";
+  const fullInstruction = `${v5Instruction}\n\n${extra}${userInstructionBlock}`;
 
   const telemetry: TriEngineTelemetry = {
     documentAI: { phase: "idle" },

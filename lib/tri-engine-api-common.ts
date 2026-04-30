@@ -94,6 +94,7 @@ export type ParsedTriEngineForm = {
   persist: boolean;
   projectLabel: string | null;
   clientLabel: string | null;
+  userInstruction: string | null;
   openAiModel?: string;
   engineRunMode: TriEngineRunMode;
 };
@@ -111,6 +112,10 @@ export function parseTriEngineFormData(formData: FormData): ParsedTriEngineForm 
     typeof formData.get("project") === "string" ? (formData.get("project") as string).trim() || null : null;
   const clientLabel =
     typeof formData.get("client") === "string" ? (formData.get("client") as string).trim() || null : null;
+  const userInstruction =
+    typeof formData.get("userInstruction") === "string"
+      ? (formData.get("userInstruction") as string).trim().slice(0, 1200) || null
+      : null;
   const openAiModel =
     typeof formData.get("openAiModel") === "string"
       ? (formData.get("openAiModel") as string).trim() || undefined
@@ -119,7 +124,7 @@ export function parseTriEngineFormData(formData: FormData): ParsedTriEngineForm 
     typeof formData.get("engineRunMode") === "string" ? (formData.get("engineRunMode") as string) : null,
   );
 
-  return { file, scanMode, persist, projectLabel, clientLabel, openAiModel, engineRunMode };
+  return { file, scanMode, persist, projectLabel, clientLabel, userInstruction, openAiModel, engineRunMode };
 }
 
 export function validateTriEngineRequest(parsed: ParsedTriEngineForm):
@@ -243,6 +248,7 @@ export type TriEngineExtractionInput = {
   messages: MessageTree;
   openAiModel?: string;
   engineRunMode: TriEngineRunMode;
+  userInstruction?: string | null;
 };
 
 export async function loadTriEngineExtractionInput(
@@ -251,6 +257,7 @@ export async function loadTriEngineExtractionInput(
   userId: string,
   openAiModel?: string,
   engineRunMode: TriEngineRunMode = "AUTO",
+  userInstruction?: string | null,
 ): Promise<TriEngineExtractionInput> {
   const bytes = await file.arrayBuffer();
   const base64 = Buffer.from(bytes).toString("base64");
@@ -281,6 +288,7 @@ export async function loadTriEngineExtractionInput(
     messages,
     openAiModel,
     engineRunMode,
+    userInstruction,
   };
 }
 

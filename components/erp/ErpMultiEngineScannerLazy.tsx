@@ -9,6 +9,7 @@ const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner
 type Props = {
   industry: IndustryType;
   compactHeader?: boolean;
+  dockWizard?: boolean;
   onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
   hubPreviewMode?: boolean;
   onHubPreviewFocusRequest?: () => void;
@@ -17,6 +18,7 @@ type Props = {
 export default function ErpMultiEngineScannerLazy({
   industry,
   compactHeader,
+  dockWizard,
   onScanHubPreviewUpdate,
   hubPreviewMode,
   onHubPreviewFocusRequest,
@@ -25,6 +27,7 @@ export default function ErpMultiEngineScannerLazy({
     <MultiEngineScanner
       industry={industry}
       compactHeader={compactHeader}
+      dockWizard={dockWizard}
       onScanHubPreviewUpdate={onScanHubPreviewUpdate}
       hubPreviewMode={hubPreviewMode}
       onHubPreviewFocusRequest={onHubPreviewFocusRequest}

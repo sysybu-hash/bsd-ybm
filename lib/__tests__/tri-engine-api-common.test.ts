@@ -18,6 +18,7 @@ function parsed(overrides: Partial<ParsedTriEngineForm> = {}): ParsedTriEngineFo
     persist: false,
     projectLabel: null,
     clientLabel: null,
+    userInstruction: null,
     engineRunMode: "SINGLE_GEMINI",
     ...overrides,
   };

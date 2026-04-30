@@ -80,6 +80,8 @@ export type DockWizardScanLayoutProps = {
   authStatus: string;
   lookupSearch: string;
   setLookupSearch: (value: string) => void;
+  engineInstruction: string;
+  setEngineInstruction: (value: string) => void;
   lookupsLoading: boolean;
   selectedProjectId: string;
   setSelectedProjectId: (id: string) => void;
@@ -134,6 +136,8 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
     authStatus,
     lookupSearch,
     setLookupSearch,
+    engineInstruction,
+    setEngineInstruction,
     lookupsLoading,
     selectedProjectId,
     setSelectedProjectId,
@@ -232,11 +236,12 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
       </nav>
 
       <div
-        className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 shadow-[var(--cd-shadow-sm)]"
+        className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 shadow-[var(--cd-shadow-sm)]"
         aria-label={stepAria(dockWizardStep - 1)}
       >
         {dockWizardStep === 1 ? (
-          <div className="space-y-3">
+          <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="space-y-3">
             <SectionTitle eyebrow="קלט" title="קבצים" icon={UploadCloud} />
             <CardShell>
               <div
@@ -300,13 +305,43 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
                 </div>
               </div>
             </CardShell>
+            </div>
+
+            <CardShell className="flex min-h-0 flex-col">
+              <div className="mb-2 flex items-center gap-2">
+                <FileSearch className="h-4 w-4 text-blue-600" aria-hidden />
+                <h2 className="text-sm font-black text-[color:var(--ink-900)]">הנחיה למנועים</h2>
+              </div>
+              <p className="mb-2 text-[11px] font-semibold leading-5 text-[color:var(--ink-500)]">
+                אחרי העלאת הקובץ אפשר לכתוב למנועים מה לפענח, מה חשוב לך במיוחד, ואילו בדיקות להוסיף מעבר לסוגי הפענוח הקיימים.
+              </p>
+              <textarea
+                value={engineInstruction}
+                onChange={(event) => setEngineInstruction(event.target.value)}
+                disabled={!activeFile || scanning}
+                maxLength={1200}
+                placeholder="לדוגמה: התמקד בכמויות בטון וברזל, חלץ מספרי חשבונית, בדוק כפילויות, וסמן סעיפים שחסרים מחיר."
+                className="min-h-0 flex-1 resize-none rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-3 text-sm font-semibold leading-6 text-[color:var(--ink-900)] outline-none placeholder:text-[color:var(--ink-400)] focus:border-blue-300 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
+              />
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-bold text-[color:var(--ink-400)]">{engineInstruction.length}/1200</span>
+                <button
+                  type="button"
+                  onClick={() => setEngineInstruction("")}
+                  disabled={!engineInstruction.trim()}
+                  className="rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] px-3 py-1.5 text-xs font-black text-[color:var(--ink-700)] hover:bg-[color:var(--canvas-sunken)] disabled:opacity-45"
+                >
+                  נקה
+                </button>
+              </div>
+            </CardShell>
           </div>
         ) : null}
 
         {dockWizardStep === 2 ? (
-          <div className="space-y-3">
+          <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-2">
             <SectionTitle eyebrow="מנועים" title="תכנון הסריקה" icon={Network} />
-            <div className="space-y-2.5">
+            <div className="grid min-h-0 gap-2 lg:grid-cols-3">
               <CardShell>
                 <div className="mb-2 flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-blue-600" aria-hidden />

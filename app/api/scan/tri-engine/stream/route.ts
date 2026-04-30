@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
     gate.userId,
     parsed.openAiModel,
     parsed.engineRunMode,
+    parsed.userInstruction,
   );
 
   const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
