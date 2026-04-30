@@ -142,7 +142,7 @@ export default function LoginPortal() {
         )}
 
         {/* Google button */}
-        <Link
+        <a
           href={googleStartUrl}
           onClick={() => setLoadingGoogle(true)}
           className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] py-3.5 text-sm font-bold text-[color:var(--ink-900)] transition hover:bg-[color:var(--canvas-sunken)] disabled:opacity-60"
@@ -155,7 +155,7 @@ export default function LoginPortal() {
               {t("auth.login.google")}
             </>
           )}
-        </Link>
+        </a>
 
         {/* Divider */}
         <div className="my-5 flex items-center gap-3">
