@@ -1,9 +1,33 @@
 import { GoogleGenerativeAI, type Content, type Part } from "@google/generative-ai";
-import { GEMINI_FLAGSHIP_MODEL } from "@/lib/gemini-model";
+import { isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 
 /** מודל לצ'אט מחברת פרויקטים — ברירת מחדל: Gemini 3.1 Pro Stable (ניתן לעקוף ב־GEMINI_NOTEBOOK_MODEL). */
-const NOTEBOOK_MODEL =
-  process.env.GEMINI_NOTEBOOK_MODEL?.trim() || GEMINI_FLAGSHIP_MODEL;
+const NOTEBOOK_DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const NOTEBOOK_FALLBACK_MODELS = [
+  NOTEBOOK_DEFAULT_MODEL,
+  "gemini-2.5-pro",
+  "gemini-2.0-flash",
+  "gemini-2.5-flash",
+] as const;
+
+function dedupeModels(models: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const model of models) {
+    const trimmed = model.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    out.push(trimmed);
+  }
+  return out;
+}
+
+function getNotebookModelChain(): string[] {
+  return dedupeModels([
+    process.env.GEMINI_NOTEBOOK_MODEL?.trim() || NOTEBOOK_DEFAULT_MODEL,
+    ...NOTEBOOK_FALLBACK_MODELS,
+  ]);
+}
 
 function getGeminiKey(): string | undefined {
   return process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
@@ -114,25 +138,37 @@ export async function runErpProjectNotebookChat(params: {
     throw new Error("תוכן ההודעה ריק");
   }
 
-  const genAI = new GoogleGenerativeAI(key);
-  const model = genAI.getGenerativeModel({
-    model: NOTEBOOK_MODEL,
-    systemInstruction: buildSystemInstruction(billOfQuantitiesContext),
-  });
-
   const prior = messages.slice(0, -1);
   const history = buildHistoryWithSourcesInFirstTurn(prior, sources);
-  const chat = model.startChat({ history });
+  const genAI = new GoogleGenerativeAI(key);
+  let lastError: unknown = null;
 
-  if (prior.length === 0 && sources.length > 0) {
-    const parts: Part[] = [
-      ...sources.flatMap(sourceToParts),
-      { text: `${last.content.trim()}${buildSourceIntro(sources)}` },
-    ];
-    const result = await chat.sendMessage(parts);
-    return { text: result.response.text(), model: NOTEBOOK_MODEL };
+  for (const modelId of getNotebookModelChain()) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelId,
+        systemInstruction: buildSystemInstruction(billOfQuantitiesContext),
+      });
+      const chat = model.startChat({ history });
+
+      if (prior.length === 0 && sources.length > 0) {
+        const parts: Part[] = [
+          ...sources.flatMap(sourceToParts),
+          { text: `${last.content.trim()}${buildSourceIntro(sources)}` },
+        ];
+        const result = await chat.sendMessage(parts);
+        return { text: result.response.text(), model: modelId };
+      }
+
+      const result = await chat.sendMessage(last.content.trim());
+      return { text: result.response.text(), model: modelId };
+    } catch (error) {
+      lastError = error;
+      if (!isLikelyGeminiModelUnavailable(error)) {
+        break;
+      }
+    }
   }
 
-  const result = await chat.sendMessage(last.content.trim());
-  return { text: result.response.text(), model: NOTEBOOK_MODEL };
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }

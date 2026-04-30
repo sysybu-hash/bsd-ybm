@@ -15,13 +15,12 @@ import { isGeminiConfigured } from "@/lib/ai-providers";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { loadRecentBillOfQuantitiesContext } from "@/lib/load-recent-bill-of-quantities-context";
-import { GEMINI_FLAGSHIP_MODEL } from "@/lib/gemini-model";
 import { getTradeSpecializedPrompt } from "@/lib/trade-specialized-prompt";
 
 export const maxDuration = 120;
 
 const NOTEBOOK_MODEL =
-  process.env.GEMINI_NOTEBOOK_MODEL?.trim() || GEMINI_FLAGSHIP_MODEL;
+  process.env.GEMINI_NOTEBOOK_MODEL?.trim() || "gemini-2.5-flash-lite";
 const REQUESTS_PER_HOUR = 40;
 
 type ChatStreamBody = {
