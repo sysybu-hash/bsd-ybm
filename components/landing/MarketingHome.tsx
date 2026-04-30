@@ -104,10 +104,10 @@ export default function MarketingHome() {
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-62"
+            className="object-cover opacity-[0.88]"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,6,13,0.98)_0%,rgba(5,6,13,0.86)_38%,rgba(5,6,13,0.54)_72%,rgba(5,6,13,0.88)_100%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] opacity-40" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,6,13,0.76)_0%,rgba(5,6,13,0.50)_34%,rgba(5,6,13,0.22)_68%,rgba(5,6,13,0.54)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_22%,rgba(34,211,238,0.16),transparent_30%),linear-gradient(rgba(255,255,255,0.028)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.028)_1px,transparent_1px)] bg-[size:100%_100%,64px_64px,64px_64px] opacity-55" />
 
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:min-h-[720px] lg:grid-cols-[0.96fr_1.04fr] lg:px-8 lg:py-16">
             <div className="max-w-2xl">
@@ -135,7 +135,7 @@ export default function MarketingHome() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-[#0b1020]/78 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur lg:max-w-xl">
+            <div className="rounded-xl border border-white/14 bg-[#0b1020]/66 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.34)] backdrop-blur-[6px] lg:max-w-xl">
               <div className="grid gap-3">
                 {home.features.map((feature, index) => {
                   const Icon = featureIcons[index] ?? Layers3;
