@@ -168,7 +168,7 @@ export default async function AppPortalPage() {
             {issuedDocuments.length === 0 ? (
               <EmptyState
                 variant="bare"
-                icon={FileText}
+                iconName="file"
                 title="אין מסמכים מונפקים"
                 description="מסמכים מונפקים יופיעו כאן לחשיפה ללקוחות."
                 className="rounded-lg border border-dashed border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)]/60 py-8"
@@ -192,7 +192,7 @@ export default async function AppPortalPage() {
             {recentScanned.length === 0 ? (
               <EmptyState
                 variant="bare"
-                icon={Globe}
+                iconName="globe"
                 title="אין מסמכים שנקלטו"
                 description="מסמכים שנסרקו יופיעו כאן לאחר הקליטה."
                 className="rounded-lg border border-dashed border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)]/60 py-8 md:col-span-2 xl:col-span-3"

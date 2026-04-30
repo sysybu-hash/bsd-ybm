@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { FileText, Globe, ImageIcon, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import {
@@ -10,10 +11,19 @@ import {
 } from "@/lib/polish/premium-tokens";
 
 export type EmptyStateVariant = "default" | "card" | "bare";
+export type EmptyStateIconName = "file" | "globe" | "image" | "users";
+
+const ICONS: Record<EmptyStateIconName, LucideIcon> = {
+  file: FileText,
+  globe: Globe,
+  image: ImageIcon,
+  users: Users,
+};
 
 export type EmptyStateProps = {
   variant?: EmptyStateVariant;
   icon?: LucideIcon;
+  iconName?: EmptyStateIconName;
   title: string;
   description?: string;
   /** @deprecated — השתמשו ב־`description` */
@@ -40,6 +50,7 @@ function shellClass(variant: EmptyStateVariant): string {
 export function EmptyState({
   variant = "default",
   icon: Icon,
+  iconName,
   title,
   description,
   body,
@@ -47,6 +58,7 @@ export function EmptyState({
   className = "",
 }: EmptyStateProps) {
   const desc = description ?? body;
+  const ResolvedIcon = Icon ?? (iconName ? ICONS[iconName] : undefined);
 
   return (
     <motion.div
@@ -55,13 +67,13 @@ export function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
-      {Icon ? (
+      {ResolvedIcon ? (
         <span
           className={`flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 ${
             variant === "bare" ? "h-12 w-12" : "h-14 w-14"
           }`}
         >
-          <Icon className={variant === "bare" ? "h-6 w-6" : "h-7 w-7"} strokeWidth={1.5} aria-hidden />
+          <ResolvedIcon className={variant === "bare" ? "h-6 w-6" : "h-7 w-7"} strokeWidth={1.5} aria-hidden />
         </span>
       ) : null}
       <p className={`${POLISH_EMPTY_TITLE} max-w-md`}>{title}</p>

@@ -175,7 +175,7 @@ export default function WorkspaceHomeView({ userFirst, todayLabel, data }: Props
               <div className="p-6">
                 <EmptyState
                   variant="default"
-                  icon={FileText}
+                  iconName="file"
                   title="עדיין לא הונפקו מסמכים"
                   description="המסמכים שתנפיק יופיעו כאן."
                   action={
@@ -219,7 +219,7 @@ export default function WorkspaceHomeView({ userFirst, todayLabel, data }: Props
               <div className="p-6">
                 <EmptyState
                   variant="default"
-                  icon={Users}
+                  iconName="users"
                   title="עדיין אין לקוחות"
                   description="הוסף את הלקוח הראשון שלך כדי להתחיל."
                 />
