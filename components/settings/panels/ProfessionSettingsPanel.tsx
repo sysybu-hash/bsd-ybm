@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { BriefcaseBusiness } from "lucide-react";
@@ -8,7 +8,12 @@ import { updateIndustryProfileAction } from "@/app/actions/org-settings";
 import { useWorkspaceShellTransition } from "@/components/app-shell/WorkspaceShellTransition";
 import { useI18n } from "@/components/I18nProvider";
 import { mergeConstructionTradeLabel } from "@/lib/construction-trades-i18n";
-import { CONSTRUCTION_TRADE_IDS, constructionTradeLabelHe } from "@/lib/construction-trades";
+import {
+  CONSTRUCTION_TRADE_IDS,
+  constructionTradeLabelHe,
+  normalizeConstructionTrade,
+  type ConstructionTradeId,
+} from "@/lib/construction-trades";
 import { getIndustryProfile } from "@/lib/professions/runtime";
 import type { SettingsHubOrganizationRecord, SettingsHubViewer } from "@/lib/settings-hub-server";
 import {
@@ -34,20 +39,24 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
   const runWithShellTransition = useWorkspaceShellTransition();
   const [busySection, setBusySection] = useState<Busy>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const savedTrade = normalizeConstructionTrade(organization.constructionTrade);
+  const [selectedTrade, setSelectedTrade] = useState<ConstructionTradeId>(savedTrade);
   const canManage = viewer.canManageOrganization;
 
   const industryConfig = asRecord(organization.industryConfigJson);
   const customLabels = asRecord(industryConfig.customLabels);
+  const activeCustomLabels = selectedTrade === savedTrade ? customLabels : {};
+  const previewConfig = selectedTrade === savedTrade ? organization.industryConfigJson : undefined;
 
   const profile = useMemo(
     () =>
       getIndustryProfile(
         organization.industry,
-        organization.industryConfigJson,
-        organization.constructionTrade,
+        previewConfig,
+        selectedTrade,
         messages,
       ),
-    [organization.industry, organization.industryConfigJson, organization.constructionTrade, messages],
+    [organization.industry, previewConfig, selectedTrade, messages],
   );
 
   const tradeSelectOptions = useMemo(
@@ -58,6 +67,10 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
       })),
     [messages],
   );
+
+  useEffect(() => {
+    setSelectedTrade(savedTrade);
+  }, [savedTrade]);
 
   function submitWith(section: Exclude<Busy, null>, action: (fd: FormData) => Promise<ActionResult>) {
     return (event: FormEvent<HTMLFormElement>) => {
@@ -118,7 +131,16 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
               </div>
               <label className="grid gap-2">
                 <span className="text-xs font-black text-[color:var(--ink-500)]">התמחות</span>
-                <select name="constructionTrade" defaultValue={organization.constructionTrade} className={inputClass} required>
+                <select
+                  name="constructionTrade"
+                  value={selectedTrade}
+                  onChange={(event) => {
+                    setSelectedTrade(normalizeConstructionTrade(event.target.value));
+                    setMessage(null);
+                  }}
+                  className={inputClass}
+                  required
+                >
                   {tradeSelectOptions.map(({ id, label: optLabel }) => (
                     <option key={id} value={id}>
                       {optLabel}
@@ -130,15 +152,20 @@ export default function ProfessionSettingsPanel({ organization, viewer }: Props)
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--ink-500)]">פרופיל</p>
                 <p className="mt-2 font-black text-[color:var(--ink-900)]">{profile.industryLabel}</p>
                 <p className="mt-2 text-sm text-[color:var(--ink-500)]">{profile.homeDescription}</p>
+                {selectedTrade !== savedTrade ? (
+                  <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black text-amber-800">
+                    התצוגה עודכנה לפי ההתמחות שנבחרה. לחץ שמירה כדי להחיל את השינוי בכל המערכת.
+                  </p>
+                ) : null}
               </div>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              <input name="customClientsLabel" defaultValue={asString(customLabels.clients, profile.clientsLabel)} className={inputClass} placeholder="כותרת ללקוחות" />
-              <input name="customDocumentsLabel" defaultValue={asString(customLabels.documents, profile.documentsLabel)} className={inputClass} placeholder="כותרת למסמכים" />
-              <input name="customRecordsLabel" defaultValue={asString(customLabels.records, profile.recordsLabel)} className={inputClass} placeholder="כותרת לרשומות" />
-              <input name="customClientWord" defaultValue={asString(customLabels.client, profile.vocabulary.client)} className={inputClass} placeholder="מילה ללקוח" />
-              <input name="customProjectWord" defaultValue={asString(customLabels.project, profile.vocabulary.project)} className={inputClass} placeholder="מילה לפרויקט" />
-              <input name="customDocumentWord" defaultValue={asString(customLabels.document, profile.vocabulary.document)} className={inputClass} placeholder="מילה למסמך" />
+            <div key={selectedTrade} className="grid gap-4 md:grid-cols-3">
+              <input name="customClientsLabel" defaultValue={asString(activeCustomLabels.clients, profile.clientsLabel)} className={inputClass} placeholder="כותרת ללקוחות" />
+              <input name="customDocumentsLabel" defaultValue={asString(activeCustomLabels.documents, profile.documentsLabel)} className={inputClass} placeholder="כותרת למסמכים" />
+              <input name="customRecordsLabel" defaultValue={asString(activeCustomLabels.records, profile.recordsLabel)} className={inputClass} placeholder="כותרת לרשומות" />
+              <input name="customClientWord" defaultValue={asString(activeCustomLabels.client, profile.vocabulary.client)} className={inputClass} placeholder="מילה ללקוח" />
+              <input name="customProjectWord" defaultValue={asString(activeCustomLabels.project, profile.vocabulary.project)} className={inputClass} placeholder="מילה לפרויקט" />
+              <input name="customDocumentWord" defaultValue={asString(activeCustomLabels.document, profile.vocabulary.document)} className={inputClass} placeholder="מילה למסמך" />
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-3xl border border-[color:var(--line)] bg-white/88 p-4">
