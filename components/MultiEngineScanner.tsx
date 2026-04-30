@@ -15,8 +15,11 @@ import {
   CheckCircle2,
   CircleDollarSign,
   DatabaseZap,
+  Download,
   Eye,
+  FileJson,
   FileSearch,
+  FileSpreadsheet,
   FileText,
   Gauge,
   Layers3,
@@ -24,6 +27,7 @@ import {
   Network,
   PanelTopOpen,
   Play,
+  Printer,
   ReceiptText,
   RotateCcw,
   ScanSearch,
@@ -91,6 +95,439 @@ import {
 import { DockWizardScanLayout } from "./multi-engine-scanner/DockWizardScanLayout";
 
 export type { ScanHubPreviewPayload } from "./multi-engine-scanner/types";
+
+type ResultExportFormat = "json" | "html" | "txt" | "xls" | "erp-csv" | "boq-csv";
+type ResultPrintScope = "full" | "summary" | "erp" | "boq";
+
+type ResultExportContext = {
+  sourceFileName: string;
+  projectLabel: string;
+  clientLabel: string;
+  scanModeLabel: string;
+  runModeLabel: string;
+  generatedAt: string;
+};
+
+const EMPTY_VALUE = "-";
+
+function textValue(value: unknown, fallback = EMPTY_VALUE): string {
+  if (value == null) return fallback;
+  if (Array.isArray(value)) return value.length ? value.map((item) => textValue(item, "")).filter(Boolean).join(", ") : fallback;
+  const text = String(value).trim();
+  return text || fallback;
+}
+
+function numberValue(value: unknown): string {
+  return typeof value === "number" && Number.isFinite(value) ? new Intl.NumberFormat("he-IL").format(value) : EMPTY_VALUE;
+}
+
+function currencyValue(value: unknown, currency = "ILS"): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return EMPTY_VALUE;
+  try {
+    return new Intl.NumberFormat("he-IL", { style: "currency", currency }).format(value);
+  } catch {
+    return numberValue(value);
+  }
+}
+
+function escapeHtml(value: unknown): string {
+  return textValue(value, "").replace(/[&<>"']/g, (char) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[char] ?? char;
+  });
+}
+
+function escapeCsv(value: unknown): string {
+  const text = textValue(value, "");
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function sanitizeFileBaseName(name: string): string {
+  const cleaned = name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+  return cleaned || "scan-result";
+}
+
+function rowsToCsv(headers: string[], rows: Array<Array<unknown>>): string {
+  return [headers, ...rows].map((row) => row.map(escapeCsv).join(",")).join("\n");
+}
+
+function downloadTextFile(fileName: string, content: string, mimeType: string): void {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function buildResultContext(
+  v5: ScanExtractionV5,
+  sourceFileName: string,
+  projectLabel: string,
+  clientLabel: string,
+  scanModeLabel: string,
+  runModeLabel: string,
+): ResultExportContext {
+  return {
+    sourceFileName: sourceFileName || v5.documentMetadata.sourceFileName || "scan-result",
+    projectLabel: v5.documentMetadata.project || projectLabel || EMPTY_VALUE,
+    clientLabel: v5.documentMetadata.client || clientLabel || EMPTY_VALUE,
+    scanModeLabel,
+    runModeLabel,
+    generatedAt: new Intl.DateTimeFormat("he-IL", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date()),
+  };
+}
+
+function buildLineItemsCsv(v5: ScanExtractionV5): string {
+  return rowsToCsv(
+    ["תיאור", "מק״ט", "כמות", "מחיר יחידה", "סה״כ שורה", "מע״מ", "מטבע"],
+    v5.lineItems.map((row) => [
+      row.description,
+      row.sku,
+      row.quantity,
+      row.unitPrice,
+      row.lineTotal,
+      row.vatAmount,
+      row.currency,
+    ]),
+  );
+}
+
+function buildBoqCsv(v5: ScanExtractionV5): string {
+  return rowsToCsv(
+    ["מספר סעיף", "תיאור", "חומר", "מידות", "נקודות MEP", "כמות", "יחידה", "הערות"],
+    v5.billOfQuantities.map((row) => [
+      row.itemRef,
+      row.description,
+      row.material,
+      row.dimensions,
+      row.mepPoints?.join(", "),
+      row.quantity,
+      row.unit,
+      row.notes,
+    ]),
+  );
+}
+
+function buildResultTextReport(v5: ScanExtractionV5, context: ResultExportContext): string {
+  const lines = [
+    "BSD-YBM - דוח פענוח סריקה",
+    `נוצר: ${context.generatedAt}`,
+    `קובץ מקור: ${context.sourceFileName}`,
+    `פרויקט: ${context.projectLabel}`,
+    `לקוח: ${context.clientLabel}`,
+    `סוג סריקה: ${context.scanModeLabel}`,
+    `מצב מנועים: ${context.runModeLabel}`,
+    `סוג מסמך: ${textValue(v5.docType)}`,
+    `תאריך מסמך: ${textValue(v5.date)}`,
+    `סה״כ: ${currencyValue(v5.total)}`,
+    "",
+    "סיכום",
+    textValue(v5.summary, "אין סיכום."),
+    "",
+    "שורות ERP",
+    ...v5.lineItems.map(
+      (row, index) =>
+        `${index + 1}. ${row.description} | כמות: ${numberValue(row.quantity)} | יחידה: ${currencyValue(row.unitPrice, row.currency ?? "ILS")} | שורה: ${currencyValue(row.lineTotal, row.currency ?? "ILS")}`,
+    ),
+    "",
+    "BOQ",
+    ...v5.billOfQuantities.map(
+      (row, index) =>
+        `${index + 1}. ${row.itemRef ?? ""} ${row.description} | חומר: ${textValue(row.material)} | כמות: ${numberValue(row.quantity)} ${textValue(row.unit, "")} | הערות: ${textValue(row.notes)}`,
+    ),
+  ];
+  return lines.join("\n");
+}
+
+function metricHtml(label: string, value: unknown): string {
+  return `<div class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+}
+
+function buildLineItemsTable(v5: ScanExtractionV5): string {
+  if (!v5.lineItems.length) return `<p class="empty">לא נמצאו שורות ERP.</p>`;
+  const rows = v5.lineItems
+    .map(
+      (row, index) => `<tr>
+        <td>${index + 1}</td>
+        <td class="wide">${escapeHtml(row.description)}</td>
+        <td>${escapeHtml(row.sku)}</td>
+        <td>${escapeHtml(numberValue(row.quantity))}</td>
+        <td>${escapeHtml(currencyValue(row.unitPrice, row.currency ?? "ILS"))}</td>
+        <td>${escapeHtml(currencyValue(row.lineTotal, row.currency ?? "ILS"))}</td>
+        <td>${escapeHtml(currencyValue(row.vatAmount, row.currency ?? "ILS"))}</td>
+        <td>${escapeHtml(row.currency ?? "ILS")}</td>
+      </tr>`,
+    )
+    .join("");
+  return `<table>
+    <thead><tr><th>#</th><th>תיאור</th><th>מק״ט</th><th>כמות</th><th>מחיר יחידה</th><th>סה״כ</th><th>מע״מ</th><th>מטבע</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function buildBoqTable(v5: ScanExtractionV5): string {
+  if (!v5.billOfQuantities.length) return `<p class="empty">לא נמצאו שורות BOQ.</p>`;
+  const rows = v5.billOfQuantities
+    .map(
+      (row, index) => `<tr>
+        <td>${index + 1}</td>
+        <td>${escapeHtml(row.itemRef)}</td>
+        <td class="wide">${escapeHtml(row.description)}</td>
+        <td>${escapeHtml(row.material)}</td>
+        <td>${escapeHtml(row.dimensions)}</td>
+        <td>${escapeHtml(row.mepPoints?.join(", "))}</td>
+        <td>${escapeHtml(numberValue(row.quantity))}</td>
+        <td>${escapeHtml(row.unit)}</td>
+        <td class="wide">${escapeHtml(row.notes)}</td>
+      </tr>`,
+    )
+    .join("");
+  return `<table>
+    <thead><tr><th>#</th><th>סעיף</th><th>תיאור</th><th>חומר</th><th>מידות</th><th>MEP</th><th>כמות</th><th>יחידה</th><th>הערות</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function reportStyles(): string {
+  return `<style>
+    @page { size: A4; margin: 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      direction: rtl;
+      background: #f6f3ec;
+      color: #111827;
+      font-family: Arial, "Noto Sans Hebrew", "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    .report {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 24px auto;
+      background: #fff;
+      border: 1px solid #e7dece;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(31, 41, 55, 0.14);
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 28px 32px;
+      background: linear-gradient(135deg, #101827, #162033 48%, #24124a);
+      color: #fff;
+    }
+    .eyebrow { color: #8dfcf4; font-size: 12px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin: 6px 0 8px; font-size: 30px; line-height: 1.15; }
+    .subtitle { margin: 0; color: #d7e3f1; font-weight: 700; }
+    .brand {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      padding: 12px 16px;
+      text-align: left;
+      color: #8dfcf4;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .section { padding: 24px 32px; border-top: 1px solid #eee7da; }
+    h2 { margin: 0 0 14px; color: #f90f45; font-size: 20px; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 20px 32px;
+      background: #fbfaf7;
+      border-top: 1px solid #eee7da;
+    }
+    .metric {
+      min-height: 76px;
+      border: 1px solid #eadfce;
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+    }
+    .metric span { display: block; color: #64748b; font-size: 12px; font-weight: 900; }
+    .metric strong { display: block; margin-top: 5px; font-size: 15px; overflow-wrap: anywhere; }
+    .summary {
+      border: 1px solid #eadfce;
+      border-radius: 18px;
+      background: #fffaf1;
+      padding: 16px 18px;
+      font-weight: 700;
+      color: #334155;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid #e5dccf;
+      border-radius: 16px;
+      background: #fff;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ece6dc;
+      text-align: right;
+      vertical-align: top;
+      font-size: 12px;
+    }
+    th {
+      background: #efe6d6;
+      color: #26344f;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    tbody tr:nth-child(even) td { background: #fbfaf7; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .wide { min-width: 180px; }
+    .empty {
+      border: 1px dashed #d8ccb8;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 0;
+      color: #64748b;
+      font-weight: 800;
+      background: #fbfaf7;
+    }
+    .alert {
+      margin-top: 14px;
+      border: 1px solid #f6c453;
+      background: #fff8db;
+      color: #7c4a03;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 900;
+    }
+    .footer {
+      padding: 16px 32px 24px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    @media print {
+      body { background: #fff; }
+      .report { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+      header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      thead { display: table-header-group; }
+      tr, .metric, .summary { break-inside: avoid; page-break-inside: avoid; }
+      .section { break-inside: auto; }
+    }
+    @media (max-width: 820px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 16px; }
+      header, .section, .footer { padding-inline: 18px; }
+      h1 { font-size: 24px; }
+    }
+  </style>`;
+}
+
+function buildResultHtmlReport(v5: ScanExtractionV5, context: ResultExportContext, scope: ResultPrintScope = "full"): string {
+  const showSummary = scope === "full" || scope === "summary";
+  const showErp = scope === "full" || scope === "erp";
+  const showBoq = scope === "full" || scope === "boq";
+  const scopeTitle =
+    scope === "summary" ? "תקציר פענוח" : scope === "erp" ? "שורות ERP" : scope === "boq" ? "כתב כמויות BOQ" : "דוח פענוח מלא";
+
+  return `<!doctype html>
+  <html lang="he" dir="rtl">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>${escapeHtml(scopeTitle)} - ${escapeHtml(context.sourceFileName)}</title>
+      ${reportStyles()}
+    </head>
+    <body>
+      <main class="report">
+        <header>
+          <div>
+            <div class="eyebrow">BSD-YBM Scan Result</div>
+            <h1>${escapeHtml(scopeTitle)}</h1>
+            <p class="subtitle">${escapeHtml(context.sourceFileName)} · ${escapeHtml(context.generatedAt)}</p>
+          </div>
+          <div class="brand">BSD-YBM</div>
+        </header>
+        <section class="metrics">
+          ${metricHtml("פרויקט", context.projectLabel)}
+          ${metricHtml("לקוח", context.clientLabel)}
+          ${metricHtml("סוג מסמך", v5.docType)}
+          ${metricHtml("תאריך", v5.date)}
+          ${metricHtml("סה״כ", currencyValue(v5.total))}
+          ${metricHtml("סוג סריקה", context.scanModeLabel)}
+          ${metricHtml("מצב מנועים", context.runModeLabel)}
+          ${metricHtml("מנועים", v5.enginesUsed?.join(" / "))}
+        </section>
+        ${
+          showSummary
+            ? `<section class="section">
+                <h2>סיכום מנהלים</h2>
+                <div class="summary">${escapeHtml(v5.summary || "אין סיכום זמין.")}</div>
+                ${v5.priceAlertPending ? `<div class="alert">שים לב: קיימות שורות חסרות מחיר או נתוני מחיר חלקיים.</div>` : ""}
+              </section>`
+            : ""
+        }
+        ${showErp ? `<section class="section"><h2>שורות ERP</h2>${buildLineItemsTable(v5)}</section>` : ""}
+        ${showBoq ? `<section class="section"><h2>כתב כמויות BOQ</h2>${buildBoqTable(v5)}</section>` : ""}
+        <section class="footer">
+          דוח זה נוצר אוטומטית מלוח הסריקה של BSD-YBM. יש לאמת נתונים כספיים, כמויות ומחירים לפני שימוש מחייב.
+        </section>
+      </main>
+    </body>
+  </html>`;
+}
+
+function buildExcelHtmlReport(v5: ScanExtractionV5, context: ResultExportContext): string {
+  return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8" />${reportStyles()}</head><body>
+    <main class="report">
+      <header><div><div class="eyebrow">BSD-YBM Excel Export</div><h1>ייצוא תוצאות סריקה</h1><p class="subtitle">${escapeHtml(context.sourceFileName)}</p></div><div class="brand">BSD-YBM</div></header>
+      <section class="metrics">
+        ${metricHtml("פרויקט", context.projectLabel)}
+        ${metricHtml("לקוח", context.clientLabel)}
+        ${metricHtml("נוצר", context.generatedAt)}
+        ${metricHtml("סה״כ", currencyValue(v5.total))}
+      </section>
+      <section class="section"><h2>שורות ERP</h2>${buildLineItemsTable(v5)}</section>
+      <section class="section"><h2>כתב כמויות BOQ</h2>${buildBoqTable(v5)}</section>
+    </main>
+  </body></html>`;
+}
+
+function printResultHtml(html: string, fallbackFileName: string): void {
+  if (typeof window === "undefined") return;
+  const printWindow = window.open("", "_blank", "width=1280,height=900");
+  if (!printWindow) {
+    downloadTextFile(fallbackFileName, html, "text/html");
+    toast.message("הדפדפן חסם חלון הדפסה", { description: "הורדתי במקום זה דוח HTML מעוצב." });
+    return;
+  }
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  window.setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+  }, 450);
+}
 
 export default function MultiEngineScanner({
   industry: industryOverride,
@@ -541,6 +978,66 @@ export default function MultiEngineScanner({
     } finally {
       setSavingTarget(null);
     }
+  };
+
+  const resultExportContext = useMemo(
+    () =>
+      v5
+        ? buildResultContext(
+            v5,
+            activeFile?.name ?? v5.documentMetadata.sourceFileName ?? "scan-result",
+            projectLabel,
+            clientLabel,
+            selectedScanMode.label,
+            selectedRunMode.label,
+          )
+        : null,
+    [activeFile?.name, clientLabel, projectLabel, selectedRunMode.label, selectedScanMode.label, v5],
+  );
+
+  const resultFileBaseName = useMemo(
+    () => sanitizeFileBaseName(resultExportContext?.sourceFileName ?? activeFile?.name ?? "scan-result"),
+    [activeFile?.name, resultExportContext?.sourceFileName],
+  );
+
+  const handleExportResult = (format: ResultExportFormat) => {
+    if (!v5 || !resultExportContext) {
+      toast.error("אין תוצאות פענוח לייצוא.");
+      return;
+    }
+
+    const exportName = `${resultFileBaseName}-bsd-ybm`;
+    if (format === "json") {
+      downloadTextFile(
+        `${exportName}.json`,
+        JSON.stringify({ ...v5, exportMetadata: resultExportContext }, null, 2),
+        "application/json",
+      );
+    } else if (format === "html") {
+      downloadTextFile(`${exportName}.html`, buildResultHtmlReport(v5, resultExportContext), "text/html");
+    } else if (format === "txt") {
+      downloadTextFile(`${exportName}.txt`, buildResultTextReport(v5, resultExportContext), "text/plain");
+    } else if (format === "xls") {
+      downloadTextFile(`${exportName}.xls`, buildExcelHtmlReport(v5, resultExportContext), "application/vnd.ms-excel");
+    } else if (format === "erp-csv") {
+      downloadTextFile(`${exportName}-erp.csv`, `\uFEFF${buildLineItemsCsv(v5)}`, "text/csv");
+    } else {
+      downloadTextFile(`${exportName}-boq.csv`, `\uFEFF${buildBoqCsv(v5)}`, "text/csv");
+    }
+
+    toast.success("הקובץ נוצר ונשמר להורדות.");
+  };
+
+  const handlePrintResult = (scope: ResultPrintScope) => {
+    if (!v5 || !resultExportContext) {
+      toast.error("אין תוצאות פענוח להדפסה.");
+      return;
+    }
+    const scopeName = scope === "summary" ? "summary" : scope === "erp" ? "erp" : scope === "boq" ? "boq" : "full";
+    printResultHtml(
+      buildResultHtmlReport(v5, resultExportContext, scope),
+      `${resultFileBaseName}-bsd-ybm-${scopeName}.html`,
+    );
   };
 
   const docAiProcessorSummary = useMemo(() => {
@@ -1287,6 +1784,118 @@ export default function MultiEngineScanner({
                       <MetaLine label="שרטוטים" value={v5.documentMetadata.drawingRefs?.join(", ") || "-"} />
                       <MetaLine label="מנועים" value={v5.enginesUsed?.join(" / ") || selectedRunMode.engines.join(" / ")} />
                     </div>
+                  </CardShell>
+                  <CardShell>
+                    <div className="mb-3 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Download className="h-4 w-4 text-emerald-600" aria-hidden />
+                        <h3 className="text-sm font-black text-[color:var(--ink-900)]">ייצוא ושמירה</h3>
+                      </div>
+                      <span className="rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
+                        Files
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("json")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <FileJson className="h-4 w-4" aria-hidden />
+                        JSON
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("xls")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <FileSpreadsheet className="h-4 w-4" aria-hidden />
+                        Excel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("erp-csv")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <TableProperties className="h-4 w-4" aria-hidden />
+                        CSV ERP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("boq-csv")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <ReceiptText className="h-4 w-4" aria-hidden />
+                        CSV BOQ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("html")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <FileSearch className="h-4 w-4" aria-hidden />
+                        HTML
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportResult("txt")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-emerald-300 hover:text-emerald-700"
+                      >
+                        <FileText className="h-4 w-4" aria-hidden />
+                        TXT
+                      </button>
+                    </div>
+                    <p className="mt-3 text-xs font-semibold leading-6 text-[color:var(--ink-500)]">
+                      קובצי HTML ו-Excel יוצאים עם עיצוב דוח מלא, כותרת, נתוני פרויקט וטבלאות נקיות להמשך עבודה.
+                    </p>
+                  </CardShell>
+                  <CardShell>
+                    <div className="mb-3 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Printer className="h-4 w-4 text-violet-600" aria-hidden />
+                        <h3 className="text-sm font-black text-[color:var(--ink-900)]">הדפסה / PDF</h3>
+                      </div>
+                      <span className="rounded-full border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--ink-400)]">
+                        A4
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handlePrintResult("full")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--ink-900)] text-xs font-black text-white transition hover:bg-[color:var(--dash-purple)]"
+                      >
+                        <Printer className="h-4 w-4" aria-hidden />
+                        דוח מלא
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePrintResult("summary")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-violet-300 hover:text-violet-700"
+                      >
+                        <FileText className="h-4 w-4" aria-hidden />
+                        תקציר
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePrintResult("erp")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-violet-300 hover:text-violet-700"
+                      >
+                        <CircleDollarSign className="h-4 w-4" aria-hidden />
+                        ERP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePrintResult("boq")}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[color:var(--dash-line)] bg-[color:var(--canvas-raised)] text-xs font-black text-[color:var(--ink-800)] transition hover:border-violet-300 hover:text-violet-700"
+                      >
+                        <ReceiptText className="h-4 w-4" aria-hidden />
+                        BOQ
+                      </button>
+                    </div>
+                    <p className="mt-3 text-xs font-semibold leading-6 text-[color:var(--ink-500)]">
+                      חלון ההדפסה נפתח כדוח לבן ומעוצב. משם אפשר להדפיס למדפסת או לבחור שמירה כ-PDF.
+                    </p>
                   </CardShell>
                   <CardShell>
                     <div className="grid gap-2">
