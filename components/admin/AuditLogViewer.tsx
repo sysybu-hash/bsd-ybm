@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-  History, 
-  User as UserIcon, 
-  Activity, 
-  Calendar, 
+import { useCallback, useState, useEffect } from "react";
+import {
+  User as UserIcon,
+  Activity,
+  Calendar,
   Search,
-  ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Trash2,
+  Loader2,
+  RotateCcw,
+  AlertTriangle,
 } from "lucide-react";
 const formatDate = (d: string) =>
   new Date(d).toLocaleString("he-IL", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -27,22 +29,57 @@ type LogEntry = {
 export default function AuditLogViewer() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    async function fetchLogs() {
-      try {
-        const res = await fetch("/api/admin/logs");
-        const data = await res.json();
-        setLogs(data.logs || []);
-      } catch (e) {
-        console.error("Failed to fetch logs", e);
-      } finally {
-        setLoading(false);
-      }
+  const fetchLogs = useCallback(async (clearNotice = true) => {
+    setLoading(true);
+    if (clearNotice) setNotice(null);
+    try {
+      const res = await fetch("/api/admin/logs");
+      const data = await res.json();
+      setLogs(data.logs || []);
+    } catch (e) {
+      console.error("Failed to fetch logs", e);
+      setNotice("לא הצלחתי לטעון את יומן הפעולות.");
+    } finally {
+      setLoading(false);
     }
-    fetchLogs();
   }, []);
+
+  useEffect(() => {
+    void fetchLogs();
+  }, [fetchLogs]);
+
+  const clearLogs = async () => {
+    if (!confirmClear) {
+      setConfirmClear(true);
+      setNotice("לחץ שוב על ניקוי לוג כדי לאשר מחיקה.");
+      return;
+    }
+
+    setClearing(true);
+    setNotice(null);
+    try {
+      const res = await fetch("/api/admin/logs", { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data?.ok === false) {
+        setNotice(data?.error || "ניקוי הלוג נכשל.");
+        return;
+      }
+      setFilter("");
+      setConfirmClear(false);
+      await fetchLogs(false);
+      setNotice(`הלוג נוקה. נמחקו ${data.deleted ?? 0} רשומות, ונשמרה רשומת ביקורת חדשה.`);
+    } catch (error) {
+      console.error("Failed to clear logs", error);
+      setNotice("ניקוי הלוג נכשל בגלל שגיאת רשת.");
+    } finally {
+      setClearing(false);
+    }
+  };
 
   const filteredLogs = logs.filter(log => 
     log.action.toLowerCase().includes(filter.toLowerCase()) ||
@@ -64,17 +101,48 @@ export default function AuditLogViewer() {
           </div>
         </div>
         
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text"
-            placeholder="חפש לפי פעולה, משתמש או אימייל..."
-            className="w-full pr-12 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
+        <div className="flex w-full flex-col gap-2 md:max-w-2xl md:flex-row">
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="חפש לפי פעולה, משתמש או אימייל..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-12 text-sm outline-none transition-all focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={clearLogs}
+            disabled={loading || clearing || logs.length === 0}
+            className={`inline-flex h-12 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-45 ${
+              confirmClear
+                ? "bg-rose-600 text-white hover:bg-rose-700"
+                : "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
+            }`}
+          >
+            {clearing ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Trash2 className="h-4 w-4" aria-hidden />}
+            {confirmClear ? "אישור ניקוי" : "נקה לוג"}
+          </button>
+          <button
+            type="button"
+            onClick={() => void fetchLogs()}
+            disabled={loading || clearing}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <RotateCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} aria-hidden />
+            רענן
+          </button>
         </div>
       </div>
+
+      {notice ? (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-800">
+          <AlertTriangle className="mt-1 h-4 w-4 shrink-0" aria-hidden />
+          <span>{notice}</span>
+        </div>
+      ) : null}
 
       {/* Table Area */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
