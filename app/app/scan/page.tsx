@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import ScanWizardWorkspace from "@/components/documents/ScanWizardWorkspace";
 import { authOptions } from "@/lib/auth";
+import { isGeminiConfigured } from "@/lib/ai-providers";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
@@ -36,7 +37,7 @@ export default async function ScanPage() {
 
   return (
     <AppPageChrome>
-      <ScanWizardWorkspace industryProfile={industryProfile} />
+      <ScanWizardWorkspace industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
     </AppPageChrome>
   );
 }

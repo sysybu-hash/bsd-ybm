@@ -5,7 +5,6 @@ import {
   jsonBadRequest,
   jsonServerError,
   jsonServiceUnavailable,
-  jsonTooManyRequests,
   jsonUnauthorized,
 } from "@/lib/api-json";
 import { isGeminiConfigured } from "@/lib/ai-providers";
@@ -13,14 +12,34 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import {
   runErpProjectNotebookChat,
   type NotebookChatMessage,
-  type NotebookPdfPart,
+  type NotebookSourcePart,
 } from "@/lib/erp-project-notebook";
 import { loadRecentBillOfQuantitiesContext } from "@/lib/load-recent-bill-of-quantities-context";
 
-const MAX_PDFS = 8;
+const MAX_SOURCES = 8;
 const MAX_RAW_BYTES_PER_FILE = 6 * 1024 * 1024;
 const MAX_TOTAL_RAW_BYTES = 18 * 1024 * 1024;
 const REQUESTS_PER_HOUR = 40;
+
+const ALLOWED_SOURCE_MIME_TYPES = new Set([
+  "application/pdf",
+  "text/plain",
+  "text/markdown",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/wav",
+  "audio/x-wav",
+]);
+
+type RawNotebookSource = {
+  fileName?: string;
+  base64?: string;
+  mimeType?: string;
+  text?: string;
+};
 
 function estimateRawBytesFromBase64(b64: string): number {
   const len = b64.length;
@@ -60,53 +79,69 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as {
       messages?: NotebookChatMessage[];
       pdfs?: Array<{ fileName?: string; base64?: string; mimeType?: string }>;
+      sources?: Array<{ fileName?: string; base64?: string; mimeType?: string; text?: string }>;
     };
 
     const messages = Array.isArray(body.messages) ? body.messages : [];
-    const rawPdfs = Array.isArray(body.pdfs) ? body.pdfs : [];
+    const rawSources: RawNotebookSource[] = Array.isArray(body.sources)
+      ? body.sources
+      : Array.isArray(body.pdfs)
+        ? body.pdfs
+        : [];
 
-    if (rawPdfs.length > MAX_PDFS) {
-      return jsonBadRequest(`ניתן להעלות לכל היותר ${MAX_PDFS} קבצי PDF.`, "too_many_pdfs");
+    if (rawSources.length > MAX_SOURCES) {
+      return jsonBadRequest(`ניתן לצרף עד ${MAX_SOURCES} מקורות למחברת.`, "too_many_sources");
     }
 
     let totalRaw = 0;
-    const pdfs: NotebookPdfPart[] = [];
-    for (const p of rawPdfs) {
-      const fileName = (p.fileName ?? "document.pdf").trim() || "document.pdf";
-      const base64 = p.base64?.trim();
-      const mimeType = (p.mimeType ?? "application/pdf").trim();
-      if (!base64) continue;
-      if (mimeType !== "application/pdf") {
-        return jsonBadRequest("נתמך רק application/pdf.", "invalid_mime");
+    const sources: NotebookSourcePart[] = [];
+    for (const source of rawSources) {
+      const fileName = (source.fileName ?? "source").trim() || "source";
+      const base64 = source.base64?.trim();
+      const text = source.text?.trim();
+      const mimeType = (source.mimeType ?? (text ? "text/plain" : "application/pdf")).trim();
+
+      if (!base64 && !text) continue;
+      if (!ALLOWED_SOURCE_MIME_TYPES.has(mimeType)) {
+        return jsonBadRequest(`סוג מקור לא נתמך: ${mimeType}`, "invalid_mime");
       }
-      const rawSize = estimateRawBytesFromBase64(base64);
-      if (rawSize > MAX_RAW_BYTES_PER_FILE) {
-        return jsonBadRequest(
-          `הקובץ "${fileName}" חורג ממגבלת ${MAX_RAW_BYTES_PER_FILE / 1024 / 1024}MB.`,
-          "file_too_large",
-        );
+
+      if (base64) {
+        const rawSize = estimateRawBytesFromBase64(base64);
+        if (rawSize > MAX_RAW_BYTES_PER_FILE) {
+          return jsonBadRequest(
+            `המקור "${fileName}" חורג ממגבלת ${MAX_RAW_BYTES_PER_FILE / 1024 / 1024}MB.`,
+            "file_too_large",
+          );
+        }
+        totalRaw += rawSize;
       }
-      totalRaw += rawSize;
-      pdfs.push({ fileName, base64, mimeType });
+
+      sources.push({
+        fileName,
+        base64: base64 ?? "",
+        mimeType,
+        text: text?.slice(0, 120_000),
+      });
     }
 
     if (totalRaw > MAX_TOTAL_RAW_BYTES) {
       return jsonBadRequest(
-        `סה״כ גודל ה-PDF חורג מ-${MAX_TOTAL_RAW_BYTES / 1024 / 1024}MB. הסירו או דחסו קבצים.`,
+        `סך גודל המקורות חורג מ-${MAX_TOTAL_RAW_BYTES / 1024 / 1024}MB. הסירו או דחסו קבצים.`,
         "total_size_exceeded",
       );
     }
 
     const normalizedMessages: NotebookChatMessage[] = messages
       .filter(
-        (m) =>
-          m &&
-          (m.role === "user" || m.role === "model") &&
-          typeof m.content === "string",
+        (message) =>
+          message &&
+          (message.role === "user" || message.role === "model") &&
+          typeof message.content === "string",
       )
-      .map((m) => ({
-        role: m.role,
-        content: m.content.slice(0, 120_000),
+      .map((message) => ({
+        role: message.role,
+        content: message.content.slice(0, 120_000),
       }));
 
     if (!normalizedMessages.length) {
@@ -118,15 +153,14 @@ export async function POST(req: NextRequest) {
 
     const { text, model } = await runErpProjectNotebookChat({
       messages: normalizedMessages,
-      pdfs,
+      sources,
       billOfQuantitiesContext: boqContext,
     });
 
     return NextResponse.json({ answer: text, model });
   } catch (error) {
     console.error("project-notebook chat:", error);
-    const msg =
-      error instanceof Error ? error.message : "Notebook chat failed.";
+    const msg = error instanceof Error ? error.message : "Notebook chat failed.";
     return jsonServerError(msg.slice(0, 500));
   }
 }

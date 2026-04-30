@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
+import { GoogleGenerativeAI, type Content, type Part } from "@google/generative-ai";
 import { GEMINI_FLAGSHIP_MODEL } from "@/lib/gemini-model";
 
 /** מודל לצ'אט מחברת פרויקטים — ברירת מחדל: Gemini 3.1 Pro Stable (ניתן לעקוף ב־GEMINI_NOTEBOOK_MODEL). */
@@ -15,6 +15,10 @@ export type NotebookPdfPart = {
   fileName: string;
   base64: string;
   mimeType: string;
+};
+
+export type NotebookSourcePart = NotebookPdfPart & {
+  text?: string;
 };
 
 const SYSTEM_NOTEBOOK_BASE = `You are an expert construction and civil engineering assistant embedded in an ERP.
@@ -37,24 +41,38 @@ function buildSystemInstruction(billOfQuantitiesContext: string | null | undefin
 ${trimmed.slice(0, 48_000)}`;
 }
 
-function buildHistoryWithPdfsInFirstTurn(
+function buildSourceIntro(sources: NotebookSourcePart[]): string {
+  if (!sources.length) return "";
+  return `\n\nAttached source inventory:\n${sources
+    .map((source, index) => `${index + 1}. ${source.fileName} (${source.mimeType})`)
+    .join("\n")}`;
+}
+
+function sourceToParts(source: NotebookSourcePart): Part[] {
+  if (source.text?.trim()) {
+    return [{ text: `Source: ${source.fileName}\n\n${source.text.slice(0, 80_000)}` }];
+  }
+  return [{
+    inlineData: {
+      mimeType: source.mimeType || "application/pdf",
+      data: source.base64,
+    },
+  }];
+}
+
+function buildHistoryWithSourcesInFirstTurn(
   prior: NotebookChatMessage[],
-  pdfs: NotebookPdfPart[],
+  sources: NotebookSourcePart[],
 ): Content[] {
   const history: Content[] = [];
   for (let i = 0; i < prior.length; i++) {
     const m = prior[i];
-    if (m.role === "user" && i === 0 && pdfs.length > 0) {
+    if (m.role === "user" && i === 0 && sources.length > 0) {
       history.push({
         role: "user",
         parts: [
-          ...pdfs.map((p) => ({
-            inlineData: {
-              mimeType: p.mimeType || "application/pdf",
-              data: p.base64,
-            },
-          })),
-          { text: m.content },
+          ...sources.flatMap(sourceToParts),
+          { text: `${m.content}${buildSourceIntro(sources)}` },
         ],
       });
     } else {
@@ -73,7 +91,8 @@ function buildHistoryWithPdfsInFirstTurn(
  */
 export async function runErpProjectNotebookChat(params: {
   messages: NotebookChatMessage[];
-  pdfs: NotebookPdfPart[];
+  pdfs?: NotebookPdfPart[];
+  sources?: NotebookSourcePart[];
   /** הקשר כמותי מהמסמכים הסרוקים בארגון */
   billOfQuantitiesContext?: string | null;
 }): Promise<{ text: string; model: string }> {
@@ -82,7 +101,8 @@ export async function runErpProjectNotebookChat(params: {
     throw new Error("חסר GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY");
   }
 
-  const { messages, pdfs, billOfQuantitiesContext } = params;
+  const { messages, billOfQuantitiesContext } = params;
+  const sources: NotebookSourcePart[] = params.sources ?? params.pdfs ?? [];
   if (!messages.length) {
     throw new Error("חסרות הודעות");
   }
@@ -101,18 +121,13 @@ export async function runErpProjectNotebookChat(params: {
   });
 
   const prior = messages.slice(0, -1);
-  const history = buildHistoryWithPdfsInFirstTurn(prior, pdfs);
+  const history = buildHistoryWithSourcesInFirstTurn(prior, sources);
   const chat = model.startChat({ history });
 
-  if (prior.length === 0 && pdfs.length > 0) {
-    const parts = [
-      ...pdfs.map((p) => ({
-        inlineData: {
-          mimeType: p.mimeType || "application/pdf",
-          data: p.base64,
-        },
-      })),
-      { text: last.content.trim() },
+  if (prior.length === 0 && sources.length > 0) {
+    const parts: Part[] = [
+      ...sources.flatMap(sourceToParts),
+      { text: `${last.content.trim()}${buildSourceIntro(sources)}` },
     ];
     const result = await chat.sendMessage(parts);
     return { text: result.response.text(), model: NOTEBOOK_MODEL };
