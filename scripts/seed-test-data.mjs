@@ -2,8 +2,11 @@
 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import fs from "node:fs";
+import path from "node:path";
 
 const prisma = new PrismaClient();
+const seedMarkerPath = path.resolve(process.cwd(), ".e2e-demo-seeded.json");
 
 const DEMO_DOMAIN = "demo.bsd-ybm.test";
 const PASSWORD = "Demo!2026";
@@ -68,6 +71,8 @@ async function upsertUser({ email, name, role, organizationId, passwordHash }) {
 }
 
 async function main() {
+  fs.rmSync(seedMarkerPath, { force: true });
+
   if (process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production") {
     throw new Error("Refusing to seed test data in production mode.");
   }
@@ -658,6 +663,18 @@ async function main() {
   }
   console.log(`Quote token: ${quote.token}`);
   console.log(`Issued documents: ${issuedDocs.map((d) => `${d.type} #${d.number}`).join(", ")}`);
+  fs.writeFileSync(
+    seedMarkerPath,
+    JSON.stringify(
+      {
+        seededAt: new Date().toISOString(),
+        organizationId: organization.id,
+        email: "owner@bsd-demo.test",
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 main()

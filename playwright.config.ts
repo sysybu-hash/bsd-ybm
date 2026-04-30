@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { config as loadEnv } from "dotenv";
 import { defineConfig, devices } from "@playwright/test";
 
@@ -17,7 +18,12 @@ const e2eHost = (() => {
     return "";
   }
 })();
-if ((e2eHost === "127.0.0.1" || e2eHost === "localhost") && !process.env.E2E_EMAIL?.trim()) {
+const demoSeedMarker = path.resolve(process.cwd(), ".e2e-demo-seeded.json");
+if (
+  (e2eHost === "127.0.0.1" || e2eHost === "localhost") &&
+  !process.env.E2E_EMAIL?.trim() &&
+  fs.existsSync(demoSeedMarker)
+) {
   process.env.PLAYWRIGHT_USE_DEMO_LOGIN = "1";
 }
 
