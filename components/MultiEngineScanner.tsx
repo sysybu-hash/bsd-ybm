@@ -712,6 +712,8 @@ export default function MultiEngineScanner({
             runScan={runScan}
             setResultsOpen={setResultsOpen}
             handleSave={handleSave}
+            resetResult={resetResult}
+            clearWorkspace={clearWorkspace}
             aiData={aiData}
             savingTarget={savingTarget}
             docAiProcessorSummary={docAiProcessorSummary}

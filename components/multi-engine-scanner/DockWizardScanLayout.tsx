@@ -15,6 +15,8 @@ import {
   Network,
   PanelTopOpen,
   Play,
+  RotateCcw,
+  Save,
   Search,
   Settings2,
   ShieldCheck,
@@ -107,6 +109,8 @@ export type DockWizardScanLayoutProps = {
   runScan: () => void | Promise<void>;
   setResultsOpen: (open: boolean) => void;
   handleSave: (target: "ERP" | "CRM") => void | Promise<void>;
+  resetResult: () => void;
+  clearWorkspace: () => void;
   aiData: Record<string, unknown> | null;
   savingTarget: "ERP" | "CRM" | null;
   docAiProcessorSummary: string;
@@ -163,10 +167,20 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
     runScan,
     setResultsOpen,
     handleSave,
+    resetResult,
+    clearWorkspace,
     aiData,
     savingTarget,
     docAiProcessorSummary,
   } = props;
+
+  const canRunScan = Boolean(activeFile) && !scanning && authStatus === "authenticated";
+
+  const startScan = () => {
+    if (!canRunScan) return;
+    setDockWizardStep(4);
+    void runScan();
+  };
 
   const canAdvance =
     dockWizardStep === 1
@@ -234,6 +248,96 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
           })}
         </ol>
       </nav>
+
+      <div className="grid shrink-0 grid-cols-2 gap-2 rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-2 shadow-[var(--cd-shadow-sm)] md:grid-cols-5 xl:grid-cols-10">
+        <button
+          type="button"
+          onClick={() => setDockWizardStep(1)}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700"
+        >
+          <UploadCloud className="h-4 w-4" aria-hidden />
+          קבצים
+        </button>
+        <button
+          type="button"
+          onClick={() => setDockWizardStep(2)}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700"
+        >
+          <Network className="h-4 w-4" aria-hidden />
+          מנועים
+        </button>
+        <button
+          type="button"
+          onClick={() => setDockWizardStep(3)}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700"
+        >
+          <Building2 className="h-4 w-4" aria-hidden />
+          שיוך
+        </button>
+        <button
+          type="button"
+          onClick={triggerFilePreview}
+          disabled={!activeFile || !activePreviewUrl}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <Eye className="h-4 w-4" aria-hidden />
+          תצוגה
+        </button>
+        <button
+          type="button"
+          onClick={startScan}
+          disabled={!canRunScan}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 text-xs font-black text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <Play className="h-4 w-4" aria-hidden />
+          סרוק עכשיו
+        </button>
+        <button
+          type="button"
+          onClick={() => setResultsOpen(true)}
+          disabled={!v5}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <TableProperties className="h-4 w-4" aria-hidden />
+          תוצאות
+        </button>
+        <button
+          type="button"
+          onClick={resetResult}
+          disabled={scanning}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--canvas-sunken)] px-3 text-xs font-black text-[color:var(--ink-800)] transition hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <RotateCcw className="h-4 w-4" aria-hidden />
+          איפוס
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSave("ERP")}
+          disabled={!aiData || !activeFile || savingTarget !== null}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-3 text-xs font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <CircleDollarSign className="h-4 w-4" aria-hidden />
+          ERP
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSave("CRM")}
+          disabled={!aiData || !activeFile || savingTarget !== null}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-violet-600 px-3 text-xs font-black text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <UserRound className="h-4 w-4" aria-hidden />
+          CRM
+        </button>
+        <button
+          type="button"
+          onClick={clearWorkspace}
+          disabled={scanning}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--ink-900)] px-3 text-xs font-black text-white transition hover:bg-[color:var(--ink-800)] disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <Save className="h-4 w-4" aria-hidden />
+          לוח חדש
+        </button>
+      </div>
 
       <div
         className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-3 shadow-[var(--cd-shadow-sm)]"
@@ -532,6 +636,17 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
           <div className="space-y-3">
             <SectionTitle eyebrow="הרצה" title="סריקה והתקדמות" icon={Play} />
 
+            <button
+              type="button"
+              onClick={startScan}
+              disabled={!canRunScan}
+              className="flex w-full min-h-[64px] items-center justify-center gap-3 rounded-2xl bg-blue-600 px-5 py-4 text-lg font-black text-white shadow-xl shadow-blue-600/25 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+              aria-label={scanning ? "סריקה פעילה" : "הפעל סריקה עכשיו"}
+            >
+              {scanning ? <Loader2 className="h-6 w-6 shrink-0 animate-spin" aria-hidden /> : <Play className="h-6 w-6 shrink-0" aria-hidden />}
+              <span>{scanning ? "סורק עכשיו..." : activeFile ? "סרוק עכשיו" : "בחר קובץ כדי לסרוק"}</span>
+            </button>
+
             <CardShell className="min-h-[190px]">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-black text-[color:var(--ink-900)]">התקדמות מנועים</h2>
@@ -633,8 +748,8 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
 
                 <button
                   type="button"
-                  onClick={() => void runScan()}
-                  disabled={scanning || !activeFile || authStatus !== "authenticated"}
+                  onClick={startScan}
+                  disabled={!canRunScan}
                   className="mb-4 flex w-full min-h-[52px] shrink-0 items-center justify-center gap-3 rounded-2xl bg-blue-600 px-4 py-3.5 text-base font-black text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-[56px] sm:text-lg"
                   aria-label={scanning ? "סריקה פעילה" : "הפעל סריקה"}
                 >
@@ -799,7 +914,18 @@ export function DockWizardScanLayout(props: DockWizardScanLayoutProps) {
         >
           {t("workspaceDock.scannerWizard.back")}
         </button>
-        {dockWizardStep < 5 ? (
+        {dockWizardStep === 4 ? (
+          <button
+            type="button"
+            onClick={startScan}
+            disabled={!canRunScan}
+            aria-label="סרוק עכשיו"
+            className="inline-flex h-12 min-w-[220px] items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 text-base font-black text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            {scanning ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : <Play className="h-5 w-5" aria-hidden />}
+            {scanning ? "סורק..." : "סרוק עכשיו"}
+          </button>
+        ) : dockWizardStep < 5 ? (
           <button
             type="button"
             onClick={goNext}
