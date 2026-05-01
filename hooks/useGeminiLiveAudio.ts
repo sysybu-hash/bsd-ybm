@@ -4,9 +4,30 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type GeminiLiveState = "idle" | "connecting" | "ready" | "streaming" | "fallback" | "error";
 
+export type GeminiLiveVoiceSettings = {
+  voiceName: "Puck" | "Charon" | "Kore" | "Fenrir" | "Aoede";
+  temperature: number;
+  silenceDurationMs: number;
+  prefixPaddingMs: number;
+  inputTranscription: boolean;
+  outputTranscription: boolean;
+  responseMode: "audio" | "audio_text";
+};
+
+export const DEFAULT_GEMINI_LIVE_VOICE_SETTINGS: GeminiLiveVoiceSettings = {
+  voiceName: "Kore",
+  temperature: 0.7,
+  silenceDurationMs: 1100,
+  prefixPaddingMs: 350,
+  inputTranscription: true,
+  outputTranscription: true,
+  responseMode: "audio",
+};
+
 type GeminiLiveOptions = {
   enabled: boolean;
   systemInstruction: string;
+  settings?: GeminiLiveVoiceSettings;
   onUserTranscript?: (text: string, finished: boolean) => void;
   onModelTranscript?: (text: string, finished: boolean) => void;
   onError?: (message: string) => void;
@@ -81,6 +102,7 @@ function getAudioContextCtor(): typeof AudioContext | null {
 export function useGeminiLiveAudio({
   enabled,
   systemInstruction,
+  settings = DEFAULT_GEMINI_LIVE_VOICE_SETTINGS,
   onUserTranscript,
   onModelTranscript,
   onError,
@@ -281,22 +303,22 @@ export function useGeminiLiveAudio({
           setup: {
             model: `models/${resolvedModel}`,
             generationConfig: {
-              responseModalities: ["AUDIO"],
-              temperature: 0.7,
+              responseModalities: settings.responseMode === "audio_text" ? ["AUDIO", "TEXT"] : ["AUDIO"],
+              temperature: settings.temperature,
               speechConfig: {
                 voiceConfig: {
-                  prebuiltVoiceConfig: { voiceName: "Kore" },
+                  prebuiltVoiceConfig: { voiceName: settings.voiceName },
                 },
               },
             },
             systemInstruction: { parts: [{ text: systemInstruction }] },
-            inputAudioTranscription: {},
-            outputAudioTranscription: {},
+            ...(settings.inputTranscription ? { inputAudioTranscription: {} } : {}),
+            ...(settings.outputTranscription ? { outputAudioTranscription: {} } : {}),
             realtimeInputConfig: {
               automaticActivityDetection: {
                 disabled: false,
-                silenceDurationMs: 1100,
-                prefixPaddingMs: 350,
+                silenceDurationMs: settings.silenceDurationMs,
+                prefixPaddingMs: settings.prefixPaddingMs,
               },
               turnCoverage: "TURN_INCLUDES_ONLY_ACTIVITY",
             },
@@ -348,7 +370,7 @@ export function useGeminiLiveAudio({
       onError?.(message);
       return false;
     }
-  }, [cleanup, enabled, handleLiveMessage, model, onError, state, systemInstruction]);
+  }, [cleanup, enabled, handleLiveMessage, model, onError, settings, state, systemInstruction]);
 
   const stop = useCallback(() => {
     cleanup();

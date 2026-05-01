@@ -12,6 +12,7 @@ import {
   Loader2,
   Mic,
   MicOff,
+  Settings2,
   ScanSearch,
   Volume2,
   WandSparkles,
@@ -20,7 +21,11 @@ import {
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import { useI18n } from "@/components/I18nProvider";
-import { useGeminiLiveAudio } from "@/hooks/useGeminiLiveAudio";
+import {
+  DEFAULT_GEMINI_LIVE_VOICE_SETTINGS,
+  useGeminiLiveAudio,
+  type GeminiLiveVoiceSettings,
+} from "@/hooks/useGeminiLiveAudio";
 import { useSpeechServices } from "@/hooks/useSpeechServices";
 import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
@@ -63,6 +68,48 @@ type AssistantMessage = {
   content: string;
   source: AssistantSource;
 };
+
+const GEMINI_LIVE_VOICE_SETTINGS_STORAGE_KEY = "bsd-ybm-gemini-live-voice-settings-v1";
+
+const GEMINI_LIVE_VOICES: Array<{ id: GeminiLiveVoiceSettings["voiceName"]; label: string; description: string }> = [
+  { id: "Kore", label: "Kore", description: "מאוזן וברור" },
+  { id: "Puck", label: "Puck", description: "קליל ומהיר" },
+  { id: "Charon", label: "Charon", description: "עמוק וסמכותי" },
+  { id: "Fenrir", label: "Fenrir", description: "חד ואנרגטי" },
+  { id: "Aoede", label: "Aoede", description: "רך ונעים" },
+];
+
+function normalizeVoiceSettings(value: unknown): GeminiLiveVoiceSettings {
+  const raw = value && typeof value === "object" ? (value as Partial<GeminiLiveVoiceSettings>) : {};
+  const voiceName = GEMINI_LIVE_VOICES.some((voice) => voice.id === raw.voiceName)
+    ? raw.voiceName!
+    : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.voiceName;
+
+  return {
+    voiceName,
+    temperature:
+      typeof raw.temperature === "number"
+        ? Math.min(1.4, Math.max(0.2, raw.temperature))
+        : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.temperature,
+    silenceDurationMs:
+      typeof raw.silenceDurationMs === "number"
+        ? Math.min(3000, Math.max(500, raw.silenceDurationMs))
+        : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.silenceDurationMs,
+    prefixPaddingMs:
+      typeof raw.prefixPaddingMs === "number"
+        ? Math.min(1000, Math.max(100, raw.prefixPaddingMs))
+        : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.prefixPaddingMs,
+    inputTranscription:
+      typeof raw.inputTranscription === "boolean"
+        ? raw.inputTranscription
+        : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.inputTranscription,
+    outputTranscription:
+      typeof raw.outputTranscription === "boolean"
+        ? raw.outputTranscription
+        : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.outputTranscription,
+    responseMode: raw.responseMode === "audio_text" ? "audio_text" : DEFAULT_GEMINI_LIVE_VOICE_SETTINGS.responseMode,
+  };
+}
 
 type WorkspaceUtilityDockProps = {
   orgId?: string | null;
@@ -230,7 +277,28 @@ export default function WorkspaceUtilityDock({
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
+  const [voiceSettings, setVoiceSettings] = useState<GeminiLiveVoiceSettings>(DEFAULT_GEMINI_LIVE_VOICE_SETTINGS);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(GEMINI_LIVE_VOICE_SETTINGS_STORAGE_KEY);
+      if (saved) {
+        setVoiceSettings(normalizeVoiceSettings(JSON.parse(saved)));
+      }
+    } catch {
+      setVoiceSettings(DEFAULT_GEMINI_LIVE_VOICE_SETTINGS);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(GEMINI_LIVE_VOICE_SETTINGS_STORAGE_KEY, JSON.stringify(voiceSettings));
+    } catch {
+      /* localStorage can be unavailable in private contexts */
+    }
+  }, [voiceSettings]);
 
   useEffect(() => {
     setChatMessages((current) => {
@@ -361,6 +429,7 @@ export default function WorkspaceUtilityDock({
   const geminiLive = useGeminiLiveAudio({
     enabled: Boolean(orgId),
     systemInstruction: liveSystemInstruction,
+    settings: voiceSettings,
     onUserTranscript: (text, finished) => {
       setOpenPanel("assistant");
       if (!finished) return;
@@ -422,6 +491,10 @@ export default function WorkspaceUtilityDock({
       });
     }
   }, [geminiLive, isListening, startListening, stopListening]);
+
+  const updateVoiceSettings = useCallback((patch: Partial<GeminiLiveVoiceSettings>) => {
+    setVoiceSettings((current) => normalizeVoiceSettings({ ...current, ...patch }));
+  }, []);
 
   const scannerButtonDisabled = !orgId;
 
@@ -539,7 +612,22 @@ export default function WorkspaceUtilityDock({
           <div className="shrink-0 space-y-3 border-b border-slate-200/70 bg-gradient-to-b from-slate-50 to-white px-4 py-3 sm:px-5">
             <div className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50/90 p-3">
               <div className="min-w-0">
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-600">Gemini Live Voice</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[11px] font-black uppercase tracking-[0.22em] text-violet-600">Gemini Live Voice</p>
+                  <button
+                    type="button"
+                    onClick={() => setVoiceSettingsOpen((current) => !current)}
+                    className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-violet-700 transition ${
+                      voiceSettingsOpen
+                        ? "border-violet-300 bg-white shadow-sm"
+                        : "border-transparent bg-violet-100 hover:border-violet-200 hover:bg-white"
+                    }`}
+                    aria-label="הגדרות קול"
+                    title="הגדרות קול"
+                  >
+                    <Settings2 className="h-3.5 w-3.5" aria-hidden />
+                  </button>
+                </div>
                 <p className="mt-1 truncate text-sm font-black text-slate-900">
                   {geminiLive.isLiveActive
                     ? geminiLive.lastTranscript || geminiLive.statusText
@@ -579,6 +667,133 @@ export default function WorkspaceUtilityDock({
                 </button>
               </div>
             </div>
+
+            {voiceSettingsOpen ? (
+              <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-black text-slate-950">הגדרות דיבור</p>
+                    <p className="text-xs font-semibold text-slate-500">סגנון, קול, רגישות ותמלול</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setVoiceSettings(DEFAULT_GEMINI_LIVE_VOICE_SETTINGS)}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-black text-slate-600 transition hover:bg-white"
+                  >
+                    איפוס
+                  </button>
+                </div>
+
+                <div className="mt-3 grid grid-cols-5 gap-1.5">
+                  {GEMINI_LIVE_VOICES.map((voice) => (
+                    <button
+                      key={voice.id}
+                      type="button"
+                      onClick={() => updateVoiceSettings({ voiceName: voice.id })}
+                      className={`min-w-0 rounded-xl border px-2 py-2 text-center transition ${
+                        voiceSettings.voiceName === voice.id
+                          ? "border-violet-400 bg-violet-50 text-violet-800"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-violet-200"
+                      }`}
+                      title={voice.description}
+                    >
+                      <span className="block truncate text-xs font-black">{voice.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <span className="flex items-center justify-between gap-3 text-xs font-black text-slate-600">
+                      יצירתיות
+                      <span className="text-violet-700">{voiceSettings.temperature.toFixed(1)}</span>
+                    </span>
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="1.4"
+                      step="0.1"
+                      value={voiceSettings.temperature}
+                      onChange={(event) => updateVoiceSettings({ temperature: Number(event.target.value) })}
+                      className="mt-2 w-full accent-violet-600"
+                    />
+                  </label>
+
+                  <label className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <span className="flex items-center justify-between gap-3 text-xs font-black text-slate-600">
+                      עצירת דיבור
+                      <span className="text-violet-700">{(voiceSettings.silenceDurationMs / 1000).toFixed(1)}s</span>
+                    </span>
+                    <input
+                      type="range"
+                      min="500"
+                      max="3000"
+                      step="100"
+                      value={voiceSettings.silenceDurationMs}
+                      onChange={(event) => updateVoiceSettings({ silenceDurationMs: Number(event.target.value) })}
+                      className="mt-2 w-full accent-violet-600"
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => updateVoiceSettings({ responseMode: voiceSettings.responseMode === "audio" ? "audio_text" : "audio" })}
+                    className={`rounded-xl border px-3 py-2 text-xs font-black transition ${
+                      voiceSettings.responseMode === "audio_text"
+                        ? "border-violet-300 bg-violet-50 text-violet-800"
+                        : "border-slate-200 bg-slate-50 text-slate-600"
+                    }`}
+                  >
+                    קול + טקסט
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateVoiceSettings({ outputTranscription: !voiceSettings.outputTranscription })}
+                    className={`rounded-xl border px-3 py-2 text-xs font-black transition ${
+                      voiceSettings.outputTranscription
+                        ? "border-violet-300 bg-violet-50 text-violet-800"
+                        : "border-slate-200 bg-slate-50 text-slate-600"
+                    }`}
+                  >
+                    תמלול תשובה
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateVoiceSettings({ inputTranscription: !voiceSettings.inputTranscription })}
+                    className={`rounded-xl border px-3 py-2 text-xs font-black transition ${
+                      voiceSettings.inputTranscription
+                        ? "border-violet-300 bg-violet-50 text-violet-800"
+                        : "border-slate-200 bg-slate-50 text-slate-600"
+                    }`}
+                  >
+                    תמלול משתמש
+                  </button>
+                  <label className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <span className="flex items-center justify-between gap-3 text-xs font-black text-slate-600">
+                      מקדים
+                      <span className="text-violet-700">{voiceSettings.prefixPaddingMs}ms</span>
+                    </span>
+                    <input
+                      type="range"
+                      min="100"
+                      max="1000"
+                      step="50"
+                      value={voiceSettings.prefixPaddingMs}
+                      onChange={(event) => updateVoiceSettings({ prefixPaddingMs: Number(event.target.value) })}
+                      className="mt-2 w-full accent-violet-600"
+                    />
+                  </label>
+                </div>
+
+                {geminiLive.isLiveActive ? (
+                  <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
+                    שינוי ההגדרות יחול מהחיבור הקולי הבא.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             <div className="flex gap-2 overflow-x-auto pb-1">
               {quickPrompts.map((prompt) => (
