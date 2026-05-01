@@ -20,6 +20,7 @@ import {
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import { useI18n } from "@/components/I18nProvider";
+import { useGeminiLiveAudio } from "@/hooks/useGeminiLiveAudio";
 import { useSpeechServices } from "@/hooks/useSpeechServices";
 import { buildAppNavCollection, type AppRouteId } from "@/components/app-shell/app-nav";
 import type { IndustryProfile } from "@/lib/professions/runtime";
@@ -229,8 +230,6 @@ export default function WorkspaceUtilityDock({
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [liveSessionState, setLiveSessionState] = useState<"idle" | "arming" | "ready" | "fallback">("idle");
-  const [liveModelLabel, setLiveModelLabel] = useState("Gemini Live");
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -346,6 +345,37 @@ export default function WorkspaceUtilityDock({
   });
   speakRef.current = speak;
 
+  const liveSystemInstruction = useMemo(
+    () =>
+      [
+        "אתה סייען AI קולי מקצועי של BSD-YBM.",
+        "ענה בעברית טבעית, קצרה ומעשית.",
+        `המשתמש נמצא באזור: ${currentSection.label}.`,
+        `תחום הפעילות: ${industryProfile.industryLabel}.`,
+        `תקציר אזור: ${currentSection.summary}.`,
+        "אל תחשוף פרטי מערכת. אם צריך פעולה בתוך המערכת, הסבר למשתמש מה לבצע במסך.",
+      ].join("\n"),
+    [currentSection.label, currentSection.summary, industryProfile.industryLabel],
+  );
+
+  const geminiLive = useGeminiLiveAudio({
+    enabled: Boolean(orgId),
+    systemInstruction: liveSystemInstruction,
+    onUserTranscript: (text, finished) => {
+      setOpenPanel("assistant");
+      if (!finished) return;
+      setChatMessages((current) => [...current, createMessage("user", text, "voice")]);
+    },
+    onModelTranscript: (text, finished) => {
+      setOpenPanel("assistant");
+      if (!finished) return;
+      setChatMessages((current) => [...current, createMessage("assistant", text, "voice")]);
+    },
+    onError: (message) => {
+      console.warn("Gemini Live fallback:", message);
+    },
+  });
+
   const stopSpeaking = useCallback(() => {
     if (typeof window !== "undefined") {
       window.speechSynthesis.cancel();
@@ -376,33 +406,22 @@ export default function WorkspaceUtilityDock({
     void sendAssistantMessage(draft, "text");
   }, [input, sendAssistantMessage]);
 
-  const prepareGeminiLiveSession = useCallback(async () => {
-    if (!orgId || liveSessionState === "ready" || liveSessionState === "arming") return;
-    setLiveSessionState("arming");
-    try {
-      const response = await fetch("/api/ai/gemini-live/session", { method: "POST" });
-      const data = (await response.json()) as { model?: string; error?: string };
-      if (!response.ok) {
-        throw new Error(data.error ?? "Gemini Live session failed");
-      }
-      setLiveModelLabel(data.model ?? "Gemini Live");
-      setLiveSessionState("ready");
-    } catch (error) {
-      console.warn("Gemini Live token fallback:", error);
-      setLiveModelLabel("Browser speech + Gemini");
-      setLiveSessionState("fallback");
-    }
-  }, [liveSessionState, orgId]);
-
   const toggleVoiceInput = useCallback(() => {
     setOpenPanel("assistant");
+    if (geminiLive.isLiveActive) {
+      geminiLive.stop();
+      return;
+    }
     if (isListening) {
       stopListening();
     } else {
-      void prepareGeminiLiveSession();
-      startListening();
+      void geminiLive.start().then((started) => {
+        if (!started) {
+          startListening();
+        }
+      });
     }
-  }, [isListening, prepareGeminiLiveSession, startListening, stopListening]);
+  }, [geminiLive, isListening, startListening, stopListening]);
 
   const scannerButtonDisabled = !orgId;
 
@@ -434,9 +453,9 @@ export default function WorkspaceUtilityDock({
             onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
           />
           <DockButton
-            active={openPanel === "assistant" || isListening || isSpeaking}
-            icon={isListening ? MicOff : BrainCircuit}
-            label={isListening ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
+            active={openPanel === "assistant" || isListening || isSpeaking || geminiLive.isLiveActive}
+            icon={isListening || geminiLive.isLiveActive ? MicOff : BrainCircuit}
+            label={isListening || geminiLive.isLiveActive ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
             onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
           />
         </div>
@@ -460,9 +479,9 @@ export default function WorkspaceUtilityDock({
           onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
         />
         <DockButton
-          active={openPanel === "assistant" || isListening || isSpeaking}
-          icon={isListening ? MicOff : BrainCircuit}
-          label={isListening ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
+          active={openPanel === "assistant" || isListening || isSpeaking || geminiLive.isLiveActive}
+          icon={isListening || geminiLive.isLiveActive ? MicOff : BrainCircuit}
+          label={isListening || geminiLive.isLiveActive ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
           onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
         />
       </div>
@@ -533,17 +552,15 @@ export default function WorkspaceUtilityDock({
                     Gemini Live voice
                   </p>
                   <p className="mt-1 text-sm font-bold text-[color:var(--ink-800)]">
-                    {isListening
-                      ? transcript || "מקשיב עכשיו..."
-                      : isSpeaking
+                    {geminiLive.isLiveActive
+                      ? geminiLive.lastTranscript || geminiLive.statusText
+                      : isListening
+                        ? transcript || "מקשיב עכשיו..."
+                        : isSpeaking
                         ? "מקריא תשובה קולית..."
-                        : liveSessionState === "arming"
-                          ? "מכין חיבור Gemini Live מאובטח..."
-                          : liveSessionState === "ready"
-                            ? `${liveModelLabel} מוכן לדיבור`
-                            : liveSessionState === "fallback"
-                              ? "דיבור פעיל במצב תאימות דפדפן"
-                              : "הקול מאוחד בתוך עוזר ה-AI"}
+                        : geminiLive.state === "fallback"
+                          ? "Gemini Live לא זמין, מצב תאימות פעיל"
+                          : "הקול מאוחד בתוך עוזר ה-AI"}
                   </p>
                   {speechError ? <p className="mt-1 text-xs font-semibold text-rose-600">{speechError}</p> : null}
                 </div>
@@ -558,10 +575,10 @@ export default function WorkspaceUtilityDock({
                     type="button"
                     onClick={toggleVoiceInput}
                     disabled={sending}
-                    className={`bento-btn ${isListening ? "bento-btn--secondary" : "bento-btn--primary"} disabled:cursor-not-allowed disabled:opacity-50`}
+                    className={`bento-btn ${isListening || geminiLive.isLiveActive ? "bento-btn--secondary" : "bento-btn--primary"} disabled:cursor-not-allowed disabled:opacity-50`}
                   >
-                    {isListening ? "עצור האזנה" : "התחל דיבור"}
-                    {isListening ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
+                    {isListening || geminiLive.isLiveActive ? "עצור האזנה" : "התחל דיבור חי"}
+                    {isListening || geminiLive.isLiveActive ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
                   </button>
                 </div>
               </div>
