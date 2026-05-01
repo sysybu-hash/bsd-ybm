@@ -47,6 +47,7 @@
     "@ai-sdk/openai": "^3.0.48",
     "@ai-sdk/react": "^3.0.170",
     "@google-cloud/documentai": "^9.6.0",
+    "@google/genai": "^1.51.0",
     "@google/generative-ai": "^0.24.1",
     "@headlessui/react": "^2.2.9",
     "@next-auth/prisma-adapter": "^1.0.7",

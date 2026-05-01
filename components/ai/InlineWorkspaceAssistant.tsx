@@ -282,6 +282,12 @@ export default function InlineWorkspaceAssistant({
               <textarea
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    submitInput();
+                  }
+                }}
                 rows={3}
                 placeholder={t("workspaceDock.assistant.placeholder")}
                 className="min-h-[84px] w-full resize-none rounded-[20px] border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] px-4 py-3 text-sm text-[color:var(--ink-900)] outline-none transition placeholder:text-[color:var(--ink-400)] focus:border-[color:var(--axis-clients)] focus:bg-[color:var(--canvas-raised)]"

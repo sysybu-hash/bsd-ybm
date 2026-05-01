@@ -137,18 +137,23 @@ export function assertProviderConfigured(id: AiProviderId): string | null {
 }
 
 /** April 2026 — flagship ויזואלי/הנדסי */
-export const OPENAI_FLAGSHIP_MODEL = "gpt-5.4-turbo-2026-03";
+export const OPENAI_FLAGSHIP_MODEL = "gpt-5.5";
 
 export const OPENAI_VISION_FALLBACK_CHAIN: readonly string[] = [
-  "gpt-5.4-turbo-2026-03",
+  "gpt-5.5",
+  "gpt-5.5-2026-04-23",
+  "gpt-5.4",
+  "gpt-5.4-mini",
   "gpt-4o-mini",
   "gpt-4o",
 ] as const;
 
-export const ANTHROPIC_FLAGSHIP_MODEL = "claude-4.6-sonnet-latest";
+export const ANTHROPIC_FLAGSHIP_MODEL = "claude-sonnet-4-6";
 
 export const ANTHROPIC_FALLBACK_CHAIN: readonly string[] = [
-  "claude-4.6-sonnet-latest",
+  "claude-sonnet-4-6",
+  "claude-opus-4-7",
+  "claude-haiku-4-5-20251001",
   "claude-3-5-sonnet-20241022",
   "claude-3-5-haiku-20241022",
 ] as const;

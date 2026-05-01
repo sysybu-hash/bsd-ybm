@@ -13,7 +13,6 @@ import {
   Mic,
   MicOff,
   ScanSearch,
-  Sparkles,
   Volume2,
   WandSparkles,
   X,
@@ -230,6 +229,8 @@ export default function WorkspaceUtilityDock({
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [liveSessionState, setLiveSessionState] = useState<"idle" | "arming" | "ready" | "fallback">("idle");
+  const [liveModelLabel, setLiveModelLabel] = useState("Gemini Live");
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -375,14 +376,33 @@ export default function WorkspaceUtilityDock({
     void sendAssistantMessage(draft, "text");
   }, [input, sendAssistantMessage]);
 
+  const prepareGeminiLiveSession = useCallback(async () => {
+    if (!orgId || liveSessionState === "ready" || liveSessionState === "arming") return;
+    setLiveSessionState("arming");
+    try {
+      const response = await fetch("/api/ai/gemini-live/session", { method: "POST" });
+      const data = (await response.json()) as { model?: string; error?: string };
+      if (!response.ok) {
+        throw new Error(data.error ?? "Gemini Live session failed");
+      }
+      setLiveModelLabel(data.model ?? "Gemini Live");
+      setLiveSessionState("ready");
+    } catch (error) {
+      console.warn("Gemini Live token fallback:", error);
+      setLiveModelLabel("Browser speech + Gemini");
+      setLiveSessionState("fallback");
+    }
+  }, [liveSessionState, orgId]);
+
   const toggleVoiceInput = useCallback(() => {
     setOpenPanel("assistant");
     if (isListening) {
       stopListening();
     } else {
+      void prepareGeminiLiveSession();
       startListening();
     }
-  }, [isListening, startListening, stopListening]);
+  }, [isListening, prepareGeminiLiveSession, startListening, stopListening]);
 
   const scannerButtonDisabled = !orgId;
 
@@ -414,16 +434,10 @@ export default function WorkspaceUtilityDock({
             onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
           />
           <DockButton
-            active={openPanel === "assistant"}
-            icon={Sparkles}
-            label={t("workspaceDock.dock.assistant")}
+            active={openPanel === "assistant" || isListening || isSpeaking}
+            icon={isListening ? MicOff : BrainCircuit}
+            label={isListening ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
             onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
-          />
-          <DockButton
-            active={isListening || isSpeaking}
-            icon={isListening ? MicOff : Mic}
-            label={isListening ? "עצור האזנה קולית" : "דבר עם עוזר AI"}
-            onClick={toggleVoiceInput}
           />
         </div>
       </div>
@@ -446,16 +460,10 @@ export default function WorkspaceUtilityDock({
           onClick={() => setOpenPanel((current) => (current === "scanner" ? null : "scanner"))}
         />
         <DockButton
-          active={openPanel === "assistant"}
-          icon={Sparkles}
-          label={t("workspaceDock.dock.assistant")}
+          active={openPanel === "assistant" || isListening || isSpeaking}
+          icon={isListening ? MicOff : BrainCircuit}
+          label={isListening ? "עצור האזנה קולית" : t("workspaceDock.dock.assistant")}
           onClick={() => setOpenPanel((current) => (current === "assistant" ? null : "assistant"))}
-        />
-        <DockButton
-          active={isListening || isSpeaking}
-          icon={isListening ? MicOff : Mic}
-          label={isListening ? "עצור האזנה קולית" : "דבר עם עוזר AI"}
-          onClick={toggleVoiceInput}
         />
       </div>
     </div>
@@ -529,7 +537,13 @@ export default function WorkspaceUtilityDock({
                       ? transcript || "מקשיב עכשיו..."
                       : isSpeaking
                         ? "מקריא תשובה קולית..."
-                        : "הקול מאוחד בתוך עוזר ה-AI"}
+                        : liveSessionState === "arming"
+                          ? "מכין חיבור Gemini Live מאובטח..."
+                          : liveSessionState === "ready"
+                            ? `${liveModelLabel} מוכן לדיבור`
+                            : liveSessionState === "fallback"
+                              ? "דיבור פעיל במצב תאימות דפדפן"
+                              : "הקול מאוחד בתוך עוזר ה-AI"}
                   </p>
                   {speechError ? <p className="mt-1 text-xs font-semibold text-rose-600">{speechError}</p> : null}
                 </div>
@@ -620,6 +634,12 @@ export default function WorkspaceUtilityDock({
                   <textarea
                     value={input}
                     onChange={(event) => setInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        event.preventDefault();
+                        submitInput();
+                      }
+                    }}
                     rows={3}
                     placeholder={t("workspaceDock.assistant.placeholder")}
                     className="min-h-[84px] w-full resize-none rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--v2-accent)] focus:bg-white"
