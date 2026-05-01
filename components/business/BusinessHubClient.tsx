@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   FileText,
   Users,
@@ -14,17 +15,7 @@ import {
   Layers,
   AlertTriangle,
 } from "lucide-react";
-import ERPDashboard, {
-  type ErpStatCard,
-  type ErpFlowSummary,
-} from "@/components/ERPDashboard";
-import ErpDocumentsManager from "@/components/ErpDocumentsManager";
-import SupplierPriceBoard from "@/components/SupplierPriceBoard";
-import FinancialCharts from "@/components/FinancialCharts";
-import PriceComparisonChart from "@/components/PriceComparisonChart";
-import MultiEngineScanner from "@/components/MultiEngineScanner";
-import ErpHistoricalImportCallout from "@/components/ErpHistoricalImportCallout";
-import CrmClient from "@/components/crm/CrmClient";
+import type { ErpStatCard, ErpFlowSummary } from "@/components/ERPDashboard";
 import type { CrmAdminOrganizationRow } from "@/components/crm/CrmOrganizationsAdminTable";
 import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "@/components/crm/CrmClient";
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
@@ -108,6 +99,42 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 /* ─── Inner component ────────────────────────────────────────────────────── */
+function ModuleLoader({ label = "טוען אזור עבודה..." }: { label?: string }) {
+  return (
+    <div className="flex min-h-32 items-center justify-center rounded-2xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-raised)] p-6">
+      <div className="flex items-center gap-3 text-sm font-bold text-[color:var(--ink-500)]">
+        <Loader2 size={18} className="animate-spin text-[color:var(--cd-accent)]" />
+        <span>{label}</span>
+      </div>
+    </div>
+  );
+}
+
+const ERPDashboard = dynamic(() => import("@/components/ERPDashboard"), {
+  loading: () => <ModuleLoader label="טוען לוח ERP..." />,
+});
+const ErpDocumentsManager = dynamic(() => import("@/components/ErpDocumentsManager"), {
+  loading: () => <ModuleLoader label="טוען מסמכים..." />,
+});
+const SupplierPriceBoard = dynamic(() => import("@/components/SupplierPriceBoard"), {
+  loading: () => <ModuleLoader label="טוען מחירי ספקים..." />,
+});
+const FinancialCharts = dynamic(() => import("@/components/FinancialCharts"), {
+  loading: () => <ModuleLoader label="טוען גרפים..." />,
+});
+const PriceComparisonChart = dynamic(() => import("@/components/PriceComparisonChart"), {
+  loading: () => <ModuleLoader label="טוען השוואת מחירים..." />,
+});
+const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
+  loading: () => <ModuleLoader label="טוען סריקה חכמה..." />,
+});
+const ErpHistoricalImportCallout = dynamic(() => import("@/components/ErpHistoricalImportCallout"), {
+  loading: () => null,
+});
+const CrmClient = dynamic(() => import("@/components/crm/CrmClient"), {
+  loading: () => <ModuleLoader label="טוען CRM..." />,
+});
+
 function HubContent(props: Props) {
   const {
     geminiConfigured,
