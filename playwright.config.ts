@@ -38,7 +38,10 @@ export default defineConfig({
     baseURL: e2eBaseUrl,
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+  ],
   webServer: {
     command: `npx next dev -p ${e2eDevPort}`,
     url: e2eBaseUrl,

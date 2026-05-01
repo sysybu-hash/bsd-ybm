@@ -9,6 +9,7 @@
     "start": "next start",
     "test": "jest",
     "test:e2e": "playwright test",
+    "test:e2e:quality": "playwright test e2e/site-quality.spec.ts --project=chromium --project=mobile-chrome",
     "lint": "eslint .",
     "verify": "npm run lint && npx tsc --noEmit && npm test",
     "verify:all": "npm run verify && playwright test",
