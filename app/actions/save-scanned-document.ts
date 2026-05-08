@@ -15,6 +15,38 @@ export type SaveScanResult = {
   documentId?: string;
 };
 
+function extractVendorContactInfo(aiData: Record<string, unknown>): {
+  email: string | null;
+  phone: string | null;
+} {
+  const meta = aiData.metadata;
+  const metaObj =
+    meta && typeof meta === "object" && !Array.isArray(meta)
+      ? (meta as Record<string, unknown>)
+      : null;
+  const vendorObj =
+    aiData.vendorDetails && typeof aiData.vendorDetails === "object" && !Array.isArray(aiData.vendorDetails)
+      ? (aiData.vendorDetails as Record<string, unknown>)
+      : null;
+
+  const pick = (...keys: string[]): string | null => {
+    for (const src of [metaObj, vendorObj, aiData]) {
+      if (!src) continue;
+      for (const k of keys) {
+        const v = src[k];
+        if (typeof v === "string" && v.trim()) return v.trim();
+      }
+    }
+    return null;
+  };
+
+  const emailRaw = pick("vendorEmail", "supplierEmail", "email");
+  const phoneRaw = pick("vendorPhone", "supplierPhone", "phone", "telephone");
+  const email = emailRaw && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailRaw) ? emailRaw : null;
+  const phone = phoneRaw ? phoneRaw.replace(/[^\d+\-\s()]/g, "").trim() || null : null;
+  return { email, phone };
+}
+
 async function resolveCrmContactId(
   orgId: string,
   aiData: Record<string, unknown>,
@@ -39,16 +71,28 @@ async function resolveCrmContactId(
     "";
   if (!nameRaw) return undefined;
 
+  const { email, phone } = extractVendorContactInfo(aiData);
+
   const existing = await prisma.contact.findFirst({
     where: { organizationId: orgId, name: nameRaw },
-    select: { id: true },
+    select: { id: true, email: true, phone: true },
   });
-  if (existing) return existing.id;
+  if (existing) {
+    const patch: { email?: string; phone?: string } = {};
+    if (!existing.email && email) patch.email = email;
+    if (!existing.phone && phone) patch.phone = phone;
+    if (Object.keys(patch).length > 0) {
+      await prisma.contact.update({ where: { id: existing.id }, data: patch });
+    }
+    return existing.id;
+  }
 
   const created = await prisma.contact.create({
     data: {
       organizationId: orgId,
       name: nameRaw,
+      email: email ?? undefined,
+      phone: phone ?? undefined,
       status: "LEAD",
       notes: "נוצר אוטומטית מייצוא סריקה ל-CRM",
     },

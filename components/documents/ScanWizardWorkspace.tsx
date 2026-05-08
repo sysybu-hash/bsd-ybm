@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ArrowRight, BookOpen, Bot, FileUp, ScanLine, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import ErpMultiEngineScannerLazy from "@/components/erp/ErpMultiEngineScannerLazy";
 import ErpProjectNotebook from "@/components/erp/ErpProjectNotebook";
+import ScanBoard from "@/components/scan/ScanBoard";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 
 type Props = Readonly<{
@@ -14,6 +16,8 @@ type Props = Readonly<{
 
 export default function ScanWizardWorkspace({ industryProfile, geminiConfigured }: Props) {
   const [mode, setMode] = useState<"scan" | "notebook">("scan");
+  const searchParams = useSearchParams();
+  const useNewScanBoard = searchParams?.get("scanboard") === "1";
 
   const chips =
     mode === "scan"
@@ -101,7 +105,13 @@ export default function ScanWizardWorkspace({ industryProfile, geminiConfigured 
 
       <div className="min-h-0 flex-1 overflow-hidden p-3">
         {mode === "scan" ? (
-          <ErpMultiEngineScannerLazy industry={industryProfile.id} compactHeader dockWizard />
+          useNewScanBoard ? (
+            <div className="h-full overflow-y-auto p-2">
+              <ScanBoard compact />
+            </div>
+          ) : (
+            <ErpMultiEngineScannerLazy industry={industryProfile.id} compactHeader dockWizard />
+          )
         ) : (
           <ErpProjectNotebook geminiConfigured={geminiConfigured} embedInHub embedCompact />
         )}

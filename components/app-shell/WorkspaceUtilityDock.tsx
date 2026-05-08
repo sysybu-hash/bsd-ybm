@@ -20,6 +20,11 @@ import {
 } from "lucide-react";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
+import ScanResultCardPortal from "@/components/app-shell/ScanResultCardPortal";
+import {
+  transcriptRequestsScanner,
+  useGlobalScanTriggers,
+} from "@/components/scan/hooks/useGlobalScanTriggers";
 import { useI18n } from "@/components/I18nProvider";
 import {
   DEFAULT_GEMINI_LIVE_VOICE_SETTINGS,
@@ -434,6 +439,9 @@ export default function WorkspaceUtilityDock({
       setOpenPanel("assistant");
       if (!finished) return;
       setChatMessages((current) => [...current, createMessage("user", text, "voice")]);
+      if (transcriptRequestsScanner(text)) {
+        setOpenPanel("scanner");
+      }
     },
     onModelTranscript: (text, finished) => {
       setOpenPanel("assistant");
@@ -563,10 +571,36 @@ export default function WorkspaceUtilityDock({
     </div>
   );
 
+  const handleAskAiAboutScan = useCallback(
+    (prompt: string) => {
+      setOpenPanel("assistant");
+      void sendAssistantMessage(prompt, "text");
+    },
+    [sendAssistantMessage],
+  );
+
+  const openScannerPanel = useCallback(() => setOpenPanel("scanner"), []);
+  const { isDraggingOverWindow } = useGlobalScanTriggers({
+    onOpenScanner: openScannerPanel,
+    enabled: Boolean(orgId),
+  });
+
   const dockLayer = (
     <>
       {desktopDock}
       {mobileDock}
+      <ScanResultCardPortal onAskAi={handleAskAiAboutScan} />
+      {isDraggingOverWindow ? (
+        <div
+          className="pointer-events-none fixed inset-0 z-[9990] flex items-center justify-center bg-violet-950/50 backdrop-blur-sm"
+          aria-hidden
+        >
+          <div className="rounded-3xl border-4 border-dashed border-white/80 bg-white/10 px-10 py-8 text-center text-white shadow-2xl">
+            <p className="text-3xl font-black">שחרר כדי לסרוק</p>
+            <p className="mt-2 text-sm font-semibold opacity-90">AI יסנכרן ל-ERP, ל-CRM ויתריע על חריגות מחיר</p>
+          </div>
+        </div>
+      ) : null}
 
       {openPanel && openPanel !== "scanner" ? (
         <div

@@ -12,6 +12,8 @@ import { v5ToPersistableAiData } from "@/lib/scan-schema-v5";
 import type { TriEngineTelemetry } from "@/lib/tri-engine-extract";
 import { persistDocumentLineItemsFromAiData } from "@/lib/persist-document-lines";
 import { sendDocNotification } from "@/app/actions/send-doc-notification";
+import { getPriceSpikeAlerts, type PriceSpikeAlert } from "@/lib/erp-price-spikes";
+import { filterAlertsForScan } from "@/lib/scan-sync-summary";
 import type { MessageTree } from "@/lib/i18n/keys";
 import type { ScanUsageWarningId } from "@/lib/decrement-scan";
 import { API_MSG_UNAUTHORIZED } from "@/lib/api-json";
@@ -324,7 +326,7 @@ export async function persistTriEngineToErp(params: {
   aiData: Record<string, unknown>;
   userId: string;
   organizationId: string;
-}): Promise<{ documentId: string }> {
+}): Promise<{ documentId: string; priceSpikes: PriceSpikeAlert[] }> {
   const { file, aiData, userId, organizationId } = params;
 
   const doc = await prisma.document.create({
@@ -349,6 +351,13 @@ export async function persistTriEngineToErp(params: {
     },
   );
 
+  const priceSpikes = await detectAndNotifyPriceSpikes({
+    organizationId,
+    userId,
+    documentId: doc.id,
+    aiData,
+  });
+
   const emailRow = await prisma.user.findUnique({
     where: { id: userId },
     select: { email: true },
@@ -361,7 +370,42 @@ export async function persistTriEngineToErp(params: {
     );
   }
 
-  return { documentId: doc.id };
+  return { documentId: doc.id, priceSpikes };
+}
+
+async function detectAndNotifyPriceSpikes(params: {
+  organizationId: string;
+  userId: string;
+  documentId: string;
+  aiData: Record<string, unknown>;
+}): Promise<PriceSpikeAlert[]> {
+  const { organizationId, userId, documentId, aiData } = params;
+  try {
+    const allSpikes = await getPriceSpikeAlerts(organizationId, 32);
+    if (allSpikes.length === 0) return [];
+
+    const relevant = filterAlertsForScan(allSpikes, aiData);
+    if (relevant.length === 0) return [];
+
+    const top = relevant[0]!;
+    const moreCount = relevant.length - 1;
+    const title = `⚠️ זוהתה קפיצת מחיר בסריקה`;
+    const bodyLead = `${top.description}: +${top.changePercent.toFixed(1)}% (₪${top.previousPrice.toFixed(2)} → ₪${top.latestPrice.toFixed(2)})`;
+    const body = moreCount > 0 ? `${bodyLead} ועוד ${moreCount} פריטים` : bodyLead;
+
+    await prisma.inAppNotification.create({
+      data: {
+        userId,
+        title,
+        body,
+      },
+    });
+    void documentId;
+
+    return relevant;
+  } catch {
+    return [];
+  }
 }
 
 export function triEngineNdjsonErrorResponse(

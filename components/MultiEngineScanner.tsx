@@ -44,6 +44,7 @@ import {
 import { toast } from "sonner";
 import * as LucideIcons from "lucide-react";
 import { saveScannedDocumentAction } from "@/app/actions/save-scanned-document";
+import { dispatchScanComplete } from "@/components/app-shell/ScanResultCardPortal";
 import { useI18n } from "@/components/I18nProvider";
 import { getMergedIndustryConfig } from "@/lib/construction-trades";
 import { DROPZONE_ACCEPT, MAX_SCAN_FILE_BYTES } from "@/lib/scan-mime";
@@ -974,6 +975,9 @@ export default function MultiEngineScanner({
         return;
       }
       toast.success(target === "ERP" ? "נשמר ל-ERP" : "נשמר ל-CRM");
+      if (saved.documentId) {
+        dispatchScanComplete({ documentId: saved.documentId, target });
+      }
       router.push(target === "ERP" ? "/app/documents/erp" : "/app/clients");
     } finally {
       setSavingTarget(null);
