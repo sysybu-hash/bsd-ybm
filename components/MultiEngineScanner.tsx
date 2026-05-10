@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * @deprecated
+ * רכיב הסריקה הישן — בן 1,980 שורות, מוחלף על ידי components/scan/wizard/ScanWizardShell.
+ * נשמר רק לטובת הנתיב /app/scan?legacy=1 עד שהווידוא של ה-wizard החדש יושלם.
+ * צפוי למחיקה ב-Phase 3 של תוכנית ההשלמה (~3 שבועות מהיום).
+ *
+ * אל תוסיף תכונות חדשות כאן. שינויים — בקומפוננטות תחת components/scan/wizard/.
+ */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

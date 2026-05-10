@@ -55,6 +55,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
 
   const [tab, setTab] = useState<"scan" | "notebook">("scan");
   const [stepIndex, setStepIndex] = useState(0);
+  const [creditsRefreshKey, setCreditsRefreshKey] = useState(0);
 
   // אתחול ברירות מחדל מהפרופיל
   useEffect(() => {
@@ -80,7 +81,10 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
   // קפיצה אוטומטית לסקירה כשמתחיל extraction, וקפיצה ל-done כששמירה הושלמה.
   useEffect(() => {
     if (state.phase === "extracting" && stepIndex !== 3) setStepIndex(3);
-    if (state.phase === "review" && stepIndex !== 3) setStepIndex(3);
+    if (state.phase === "review" && stepIndex !== 3) {
+      setStepIndex(3);
+      setCreditsRefreshKey((k) => k + 1);
+    }
     if (state.phase === "done" && stepIndex !== 4) setStepIndex(4);
   }, [state.phase, stepIndex]);
 
@@ -168,7 +172,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <CreditsChip label={wizardProfile.hintCreditsLabel} />
+          <CreditsChip label={wizardProfile.hintCreditsLabel} refreshKey={creditsRefreshKey} />
           <Link
             href="/app"
             aria-label="חזרה לסביבת העבודה"
