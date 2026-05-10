@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import ScanWizardWorkspace from "@/components/documents/ScanWizardWorkspace";
+import ScanWizardShell from "@/components/scan/wizard/ScanWizardShell";
 import { authOptions } from "@/lib/auth";
 import { isGeminiConfigured } from "@/lib/ai-providers";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +11,11 @@ import AppPageChrome from "@/components/workspace/AppPageChrome";
 
 export const dynamic = "force-dynamic";
 
-export default async function ScanPage() {
+type Props = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function ScanPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   const organizationId = session?.user?.organizationId;
 
@@ -35,9 +40,16 @@ export default async function ScanPage() {
     messages,
   );
 
+  const params = (await searchParams) ?? {};
+  const isLegacy = params.legacy === "1";
+
   return (
     <AppPageChrome>
-      <ScanWizardWorkspace industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
+      {isLegacy ? (
+        <ScanWizardWorkspace industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
+      ) : (
+        <ScanWizardShell industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
+      )}
     </AppPageChrome>
   );
 }
