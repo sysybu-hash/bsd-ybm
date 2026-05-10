@@ -1,0 +1,22 @@
+/* Scan Wizard v2 — design tokens scoped to .scanw-root */
+.scanw-root {
+  --scanw-ink: #0f172a;
+  --scanw-muted: #64748b;
+  --scanw-line: rgba(15, 23, 42, 0.08);
+  --scanw-card-bg: rgba(255, 255, 255, 0.78);
+  --scanw-rail-bg: rgba(241, 245, 249, 0.7);
+  --scanw-hero-bg: linear-gradient(135deg, rgba(238, 242, 255, 0.92), rgba(254, 243, 226, 0.85));
+  --scanw-glow-1: #818cf8;
+  --scanw-glow-2: #fb923c;
+  --scanw-accent: #6366f1;
+  --scanw-accent-muted: #c7d2fe;
+  --scanw-accent-soft: rgba(99, 102, 241, 0.08);
+  --scanw-completed-bg: rgba(16, 185, 129, 0.08);
+  --scanw-completed-fg: #047857;
+
+  background:
+    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.08), transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(251, 146, 60, 0.06), transparent 40%),
+    var(--canvas-raised, #fafafa);
+  border-radius: 28px;
+}

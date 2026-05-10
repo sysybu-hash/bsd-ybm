@@ -88,6 +88,9 @@ function buildAllowedDevOrigins() {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname),
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   allowedDevOrigins: buildAllowedDevOrigins(),
   async headers() {
     const isProd = process.env.NODE_ENV === "production";
