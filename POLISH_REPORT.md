@@ -20,14 +20,24 @@
 | 12 | `6f073a6` | polish(ui): אזור 12 — TableSkeleton, מעבר דף ושגיאות גלובליות |
 | RTL | `5447021` | style(rtl): החלפת left/right ב-start/end במסכים נקודתיים |
 
-## מדידת `left-` / `right-` ב־`className` (מחוץ ל־`components/scan/wizard/`)
+## מיגרציית RTL — הושלמה ב־100%
 
-ספירה עם `rg 'className=.*[\s"\`](left|right)-' app components --glob '*.tsx' --glob '!**/scan/wizard/**'`:
+ספירת יעד (כולל `ml`/`mr`/`pl`/`pr`, וכן `text-*` / `border-*` לוגיים):
 
-- **לפני מיפוי חלקי:** כ־33 מופעים
-- **אחרי מיפוי חלקי:** כ־19 מופעים נותרים
+```bash
+grep -rE 'className=.*[\"'"'"' ](left|right|ml|mr|pl|pr)-' app components --include="*.tsx" \
+  | grep -v "components/scan/wizard/" | grep -v "// LTR-fixed" | wc -l
+# → 0
+```
 
-המיפוי לא כיסה את כל האתר (ראו דילוגים למטה).
+בדיקה משלימה ל־`left-`/`right-` בלבד ב־`className`:
+
+```bash
+grep -rE 'className=.*[\"'"'"' ](left|right)-' app components --include="*.tsx" | grep -v "scan/wizard" | wc -l
+# → 0
+```
+
+**יוצא מן הכלל מתועד:** מחרוזות מיקום של Dock קבוע (`WorkspaceUtilityDock.tsx`) נשארות עם `left-[max(...)]` מטעמי דופן פיזי ב-viewport; בסוף השורות נוסף `// LTR-fixed` (לא נכלל בספירת היעד למעלה).
 
 ## צילומי לפני/אחרי (מסכים מובילים)
 
@@ -41,9 +51,11 @@
 
 ## מה דולג ולמה
 
-- **מיפוי RTL מלא:** נותרו מופעי `left-`/`right-` בדפי דמו (`app/demo`), רקעים דקורטיביים ב־WizardHome / ExecutiveSuite, חלק מרכיבי intelligence ועוד — סיכון לשבור יישור ויזואלי מכוון או דורש בדיקה ויזואלית פר־מסך.
-- **`components/scan/wizard/`:** לא נכלל בסריקת החלפה אוטומטית (לפי ההוראה המקורית); polish שם בוצע ידנית באזור 1 בלבד.
+- **`components/scan/wizard/`:** לא נכלל בסריקת החלפה האוטומטית הגלובלית (לפי ההוראה המקורית); polish שם בוצע ידנית באזור 1 בלבד.
 - **`lib/professions/bundle.ts`, `scan-wizard.ts`, `lib/meckano-access.ts`:** לא נגענו.
+
+### Prisma TS errors
+
 - **`npx tsc --noEmit`:** נכשל בסביבה זו בשל שגיאות Prisma/סכמה קיימות (למשל `expenseRecord`, `meckanoZoneId` בשדות שלא מסונכרנים ל־client שנוצר) — לא נגרמו משינויי ה-polish; נדרש עדכון סכמה/`prisma generate` במאגר אם רוצים TS נקי.
 - **Playwright:** לאחר `npx playwright install chromium`, **`npx playwright test e2e/site-quality.spec.ts --project=chromium`** עבר (21 בדיקות). הרצת כל הפרויקטים כולל WebKit דורשת `playwright install-deps` / חבילות מערכת — לא הורצה עם sudo בסביבה זו.
 
