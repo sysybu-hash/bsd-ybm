@@ -282,7 +282,11 @@ function ContactModal({
               {isEdit && c && <p className="text-xs text-slate-400 font-medium">נוצר ב- {fmtDate(c.createdAt)}</p>}
             </div>
           </div>
-          <button type="button" onClick={onClose} className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 transition">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl p-2 text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 active:scale-[0.97]"
+          >
             <X size={20} />
           </button>
         </div>
@@ -380,7 +384,7 @@ function ContactModal({
                       <p className="text-base font-black text-rose-600 mt-1">{fmtMoney(invoices.filter(i => i.status === "PENDING").reduce((s, i) => s + i.total, 0))}</p>
                     </div>
                   </div>
-                  <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                  <div className="max-h-[160px] space-y-2 overflow-y-auto pe-1">
                     {invoices.map(inv => {
                       const stMeta = DOC_STATUS_LABEL[inv.status] ?? DOC_STATUS_LABEL.PENDING;
                       return (
@@ -538,7 +542,7 @@ function ContactCard({
 
       {menuOpen && (
         <div
-          className="absolute left-2 text-start top-12 z-20 min-w-[180px] rounded-xl border border-slate-200 bg-white shadow-xl shadow-black/10 py-2"
+          className="absolute start-2 top-12 z-20 min-w-[180px] rounded-xl border border-slate-200 bg-white py-2 text-start shadow-xl shadow-black/10"
           onClick={(e) => e.stopPropagation()}
         >
           <p className="px-3 py-1 mb-1 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">שינוי סטטוס</p>

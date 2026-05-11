@@ -41,6 +41,20 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+    {
+      name: "mobile-chrome-rtl-he",
+      use: {
+        ...devices["Pixel 7"],
+        locale: "he-IL",
+      },
+    },
+    {
+      name: "mobile-safari-rtl-he",
+      use: {
+        ...devices["iPhone 14"],
+        locale: "he-IL",
+      },
+    },
   ],
   webServer: {
     command: `npx next dev -p ${e2eDevPort}`,

@@ -24,12 +24,22 @@ import Step3Engine from "./steps/Step3Engine";
 import Step4Review from "./steps/Step4Review";
 import StepDone from "./steps/StepDone";
 import "./scan-wizard.css";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
+import { isImageFile, isPdfFile } from "@/components/multi-engine-scanner/utils";
 
 const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNotebook"), { ssr: false });
+
+export type ScanWizardShellVariant = "page" | "dock" | "embed";
 
 type Props = {
   industryProfile: IndustryProfile;
   geminiConfigured: boolean;
+  /** page — דף /app/scan מלא; dock — דוק צף; embed — מקטע בתוך דף (למשל Business) */
+  variant?: ScanWizardShellVariant;
+  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
+  /** שמור לתאימות מול ממשק ישן — ניתן לחבר מחדש לשלבי תצוגה מקדימה */
+  hubPreviewMode?: boolean;
+  onHubPreviewFocusRequest?: () => void;
 };
 
 const STEP_IDS = ["upload", "context", "engine", "review", "done"] as const;
@@ -43,7 +53,14 @@ const STEP_LABELS: Record<StepId, { label: string; shortLabel: string; icon: Rea
   done: { label: "סיום", shortLabel: "סיום", icon: <Play className="h-4 w-4" aria-hidden /> },
 };
 
-export default function ScanWizardShell({ industryProfile, geminiConfigured }: Props) {
+export default function ScanWizardShell({
+  industryProfile,
+  geminiConfigured,
+  variant = "page",
+  onScanHubPreviewUpdate,
+  hubPreviewMode: _hubPreviewMode,
+  onHubPreviewFocusRequest: _onHubPreviewFocusRequest,
+}: Props) {
   const wizardProfile = useMemo(
     () => getScanWizardProfile(industryProfile.id, industryProfile.constructionTradeId),
     [industryProfile.id, industryProfile.constructionTradeId],
@@ -139,8 +156,61 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
     dispatch({ type: "ENGINE_MODE_CHANGED", mode });
   };
 
+  const activeFile = state.files[state.activeFileIndex] ?? null;
+  const extractionForHub = useMemo(
+    () => state.v5 ?? state.partialV5 ?? state.aiData,
+    [state.v5, state.partialV5, state.aiData],
+  );
+  const scanningActive = state.phase === "uploading" || state.phase === "extracting";
+
+  const previewUrl = useMemo(() => {
+    if (!activeFile || (!isImageFile(activeFile) && !isPdfFile(activeFile))) return null;
+    return URL.createObjectURL(activeFile);
+  }, [activeFile]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (!onScanHubPreviewUpdate) return;
+    let previewKind: ScanHubPreviewPayload["previewKind"] = "none";
+    if (activeFile) {
+      if (isImageFile(activeFile)) previewKind = "image";
+      else if (isPdfFile(activeFile)) previewKind = "pdf";
+    }
+    onScanHubPreviewUpdate({
+      fileName: activeFile?.name ?? null,
+      previewUrl,
+      previewKind,
+      extraction: extractionForHub,
+      streamStage: state.streamStage,
+      scanError: state.errorMessage,
+      scanning: scanningActive,
+    });
+  }, [
+    onScanHubPreviewUpdate,
+    activeFile,
+    previewUrl,
+    extractionForHub,
+    state.streamStage,
+    state.errorMessage,
+    scanningActive,
+  ]);
+
+  const rootClass =
+    variant === "page"
+      ? "scanw-root flex h-[calc(100dvh-112px)] min-h-[640px] w-full flex-col gap-3 overflow-hidden p-3"
+      : variant === "dock"
+        ? "scanw-root flex h-full min-h-[280px] w-full flex-1 flex-col gap-2 overflow-hidden p-2"
+        : "scanw-root flex min-h-[420px] w-full flex-col gap-2 overflow-hidden p-2";
+
+  const showWorkspaceLink = variant === "page";
+
   return (
-    <div className="scanw-root flex h-[calc(100dvh-112px)] min-h-[640px] w-full flex-col gap-3 overflow-hidden p-3" dir="rtl">
+    <div className={rootClass} dir="rtl" data-scan-wizard-variant={variant}>
       {/* סרגל עליון: טאבים, קרדיטים, חזרה */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-1">
         <div className="inline-flex rounded-2xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-rail-bg)] p-1">
@@ -148,7 +218,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
             type="button"
             onClick={() => setTab("scan")}
             className={[
-              "inline-flex h-9 items-center gap-2 rounded-xl px-3 text-xs font-black transition",
+              "inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-xs font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]",
               tab === "scan"
                 ? "bg-[color:var(--scanw-accent)] text-white shadow-sm"
                 : "text-[color:var(--scanw-muted)] hover:text-[color:var(--scanw-ink)]",
@@ -161,7 +231,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
             type="button"
             onClick={() => setTab("notebook")}
             className={[
-              "inline-flex h-9 items-center gap-2 rounded-xl px-3 text-xs font-black transition",
+              "inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-xs font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]",
               tab === "notebook"
                 ? "bg-[color:var(--scanw-accent)] text-white shadow-sm"
                 : "text-[color:var(--scanw-muted)] hover:text-[color:var(--scanw-ink)]",
@@ -173,13 +243,15 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
         </div>
         <div className="flex items-center gap-2">
           <CreditsChip label={wizardProfile.hintCreditsLabel} refreshKey={creditsRefreshKey} />
-          <Link
-            href="/app"
-            aria-label="חזרה לסביבת העבודה"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
-          >
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
+          {showWorkspaceLink ? (
+            <Link
+              href="/app"
+              aria-label="חזרה לסביבת העבודה"
+              className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -197,7 +269,10 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
 
           <div className="relative min-h-0 flex-1 overflow-y-auto rounded-3xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-card-bg)] p-4 sm:p-6">
             {state.errorMessage ? (
-              <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-black text-rose-800">
+              <div
+                role="alert"
+                className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-black text-rose-800"
+              >
                 {state.errorMessage}
               </div>
             ) : null}
@@ -208,7 +283,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -24 }}
-                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
               >
                 {stepIndex === 0 ? (
                   <Step1ModeUpload
@@ -283,7 +358,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
                 type="button"
                 onClick={goBack}
                 disabled={stepIndex === 0}
-                className="inline-flex h-11 items-center gap-1.5 rounded-2xl border border-[color:var(--scanw-line)] bg-white/70 px-4 text-sm font-black text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl border border-[color:var(--scanw-line)] bg-white/70 px-4 text-sm font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
               >
                 <ChevronRight className="h-4 w-4" aria-hidden />
                 חזור
@@ -292,7 +367,7 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
                 type="button"
                 onClick={() => void goNext()}
                 disabled={!canAdvance() || state.phase === "extracting" || state.phase === "uploading"}
-                className="inline-flex h-11 items-center gap-1.5 rounded-2xl bg-[color:var(--scanw-accent)] px-5 text-sm font-black text-white shadow-[0_8px_24px_-12px_var(--scanw-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[color:var(--scanw-accent)] px-5 text-sm font-black text-white shadow-[0_8px_24px_-12px_var(--scanw-accent)] transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]"
               >
                 {state.phase === "extracting" || state.phase === "uploading" ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

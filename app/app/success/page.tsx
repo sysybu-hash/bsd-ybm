@@ -47,15 +47,24 @@ export default function AppSuccessPage() {
 
         <Tile tone="neutral" span={12}>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/app/erp" className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
+            <Link
+              href="/app/erp"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white transition-all duration-200 hover:bg-[color:var(--ink-800)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.98]"
+            >
               פתח מסמכים
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
-          <Link href="/app/settings/billing" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-black text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white">
+          <Link
+            href="/app/settings/billing"
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-black text-[color:var(--ink-700)] transition-all duration-200 hover:bg-[color:var(--ink-900)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ink-900)] active:scale-[0.98]"
+          >
               פתח חיוב
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/app" className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] px-4 py-2 text-sm font-black text-[color:var(--axis-ai-ink)] hover:bg-[color:var(--axis-ai)] hover:text-white">
+            <Link
+              href="/app"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[color:var(--axis-ai-border)] bg-[color:var(--axis-ai-soft)] px-4 py-2 text-sm font-black text-[color:var(--axis-ai-ink)] transition-all duration-200 hover:bg-[color:var(--axis-ai)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-ai)] active:scale-[0.98]"
+            >
               חזרה לבית
               <Sparkles className="h-4 w-4" aria-hidden />
             </Link>

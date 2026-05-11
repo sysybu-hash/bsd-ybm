@@ -25,7 +25,7 @@ export default function ScanResultCard({ summary, onClose, onAskAi }: Props) {
     : `סכם בקצרה את הסריקה האחרונה: ${erp.vendor ?? "ספק"} בסך ${formatCurrency(erp.total, erp.currency)}.`;
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl">
+    <div className="flex flex-col gap-3 rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-4 shadow-[var(--cd-shadow)]">
       <header className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600">סריקה הושלמה</p>
@@ -34,7 +34,7 @@ export default function ScanResultCard({ summary, onClose, onAskAi }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:text-slate-900"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-500)] transition-all duration-200 hover:text-[color:var(--ink-900)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.97]"
           aria-label="סגור סיכום"
         >
           <X className="h-4 w-4" aria-hidden />
@@ -46,7 +46,7 @@ export default function ScanResultCard({ summary, onClose, onAskAi }: Props) {
           <FileText className="h-4 w-4" aria-hidden />
           <span className="text-xs font-black uppercase tracking-wider">ERP</span>
         </div>
-        <p className="mt-1 truncate text-sm font-black text-slate-950">
+        <p className="mt-1 truncate text-sm font-black text-slate-950 tabular-nums">
           {erp.vendor ?? "ספק כללי"} · {formatCurrency(erp.total, erp.currency)}
         </p>
         <p className="text-xs font-semibold text-slate-600">
@@ -96,7 +96,7 @@ export default function ScanResultCard({ summary, onClose, onAskAi }: Props) {
               +{topAlert!.changePercent.toFixed(1)}%
             </span>
           </p>
-          <p className="text-xs font-semibold text-slate-600">
+          <p className="text-xs font-semibold text-slate-600 tabular-nums">
             ₪{topAlert!.previousPrice.toFixed(2)} → ₪{topAlert!.latestPrice.toFixed(2)}
             {alerts.length > 1 ? ` · ועוד ${alerts.length - 1} פריטים` : ""}
           </p>

@@ -23,7 +23,7 @@ export default function CookiesLegalPage() {
 
       <section>
         <h2 className={h2Class}>2. סוגי עוגיות / אחסון</h2>
-        <ul className="list-disc list-inside space-y-2 mr-4">
+        <ul className="list-disc list-inside space-y-2 me-4">
           <li>
             <strong>הכרחיות:</strong> סשן התחברות (NextAuth), אבטחה, ניתוב בקשות — נדרשות לתפקוד השירות.
           </li>
@@ -51,7 +51,7 @@ export default function CookiesLegalPage() {
       <section>
         <h2 className={h2Class}>3. טבלת דוגמה (לעדכון שמות מדויקים)</h2>
         <div className="overflow-x-auto rounded-2xl border border-[color:var(--line-strong)]">
-          <table className="min-w-full text-right text-sm">
+          <table className="min-w-full text-end text-sm">
             <thead className="bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)]">
               <tr>
                 <th className="px-3 py-2 font-bold">שם / מקור</th>

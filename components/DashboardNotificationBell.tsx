@@ -111,7 +111,7 @@ export default function DashboardNotificationBell() {
                   onClick={() => {
                     if (!n.read) void markRead([n.id]);
                   }}
-                  className={`w-full border-b border-[color:var(--line-subtle)] px-3 py-2.5 text-right hover:bg-[color:var(--canvas-sunken)] ${
+                  className={`w-full border-b border-[color:var(--line-subtle)] px-3 py-2.5 text-end hover:bg-[color:var(--canvas-sunken)] ${
                     n.read ? "opacity-70" : "bg-teal-500/15"
                   }`}
                 >

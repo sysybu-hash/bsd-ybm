@@ -15,6 +15,7 @@ import {
   type NotebookSourcePart,
 } from "@/lib/erp-project-notebook";
 import { loadRecentBillOfQuantitiesContext } from "@/lib/load-recent-bill-of-quantities-context";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 const MAX_SOURCES = 8;
 const MAX_RAW_BYTES_PER_FILE = 6 * 1024 * 1024;
@@ -53,6 +54,9 @@ export async function POST(req: NextRequest) {
     if (!session?.user?.id) {
       return jsonUnauthorized();
     }
+
+    const quotaBlock = await requireAiScanCredit(session, "cheap");
+    if (quotaBlock) return quotaBlock;
 
     if (!isGeminiConfigured()) {
       return jsonServiceUnavailable(

@@ -364,7 +364,7 @@ export default function BsdYbmLogo({
       ) : (
         <MarkLight gid={gid} className={`shrink-0 ${s.mark}`} />
       )}
-      <span className="min-w-0 text-right leading-tight">
+      <span className="min-w-0 text-end leading-tight">
         <span
           className={`block whitespace-nowrap font-black tracking-[-0.06em] ${s.text} ${textClass}`}
         >

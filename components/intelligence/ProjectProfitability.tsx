@@ -70,7 +70,7 @@ export default function ProjectProfitability() {
           מד רווחיות פרויקט
         </h3>
         <div className="relative flex h-6 w-full items-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] p-1">
-          <div className="absolute left-1/2 top-0 h-full w-0.5 bg-[color:var(--ink-300)]" />
+          <div className="absolute start-1/2 top-0 h-full w-0.5 bg-[color:var(--ink-300)]" />
           <motion.div
             initial={{ width: 0 }}
             animate={{

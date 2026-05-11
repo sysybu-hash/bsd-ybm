@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { POLISH_PREMIUM_INTERACTIVE, POLISH_PREMIUM_STATIC, POLISH_PAGE_TITLE, POLISH_SECTION_TITLE } from "@/lib/polish/premium-tokens";
 
 /** @deprecated — השתמשו ב־`POLISH_PREMIUM_INTERACTIVE` מ־`premium-tokens` */
@@ -28,7 +29,7 @@ export function PageWrapper({ children, className = "" }: PageWrapperProps) {
       className={className}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
     >
       {children}
     </motion.div>
@@ -49,12 +50,12 @@ export function TableSkeleton({ rows = 6, columns = 4, className = "" }: TableSk
       aria-busy
       aria-live="polite"
     >
-      <div className="mb-4 h-8 max-w-xs animate-pulse rounded-lg bg-slate-100" />
+      <Skeleton className="mb-4 h-8 max-w-xs rounded-lg" />
       <div className="space-y-3">
         {Array.from({ length: rows }).map((_, rowIdx) => (
           <div key={rowIdx} className="flex gap-3">
             {Array.from({ length: columns }).map((_, ci) => (
-              <div key={ci} className="h-10 flex-1 animate-pulse rounded-lg bg-slate-100" />
+              <Skeleton key={ci} className="h-10 flex-1 rounded-lg" />
             ))}
           </div>
         ))}

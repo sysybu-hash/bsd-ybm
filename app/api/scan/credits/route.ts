@@ -32,6 +32,14 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: "ARG_NOT_FOUND" }, { status: 404 });
   }
 
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const recentActivity = await prisma.activityLog.findMany({
+    where: { organizationId: orgId, createdAt: { gte: thirtyDaysAgo } },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+    select: { action: true, details: true, createdAt: true },
+  });
+
   return NextResponse.json({
     ok: true,
     cheap: org.cheapScansRemaining,
@@ -39,5 +47,10 @@ export async function GET() {
     total: org.cheapScansRemaining + org.premiumScansRemaining,
     isVip: org.isVip,
     tier: org.subscriptionTier,
+    recentActivity: recentActivity.map((row) => ({
+      action: row.action,
+      details: row.details,
+      createdAt: row.createdAt.toISOString(),
+    })),
   });
 }

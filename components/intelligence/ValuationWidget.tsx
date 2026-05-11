@@ -10,7 +10,7 @@ export default function ValuationWidget({ value = 1250000 }: { value?: number })
       className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
       dir="rtl"
     >
-      <div className="absolute -top-10 -left-10 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute -start-10 -top-10 h-32 w-32 rounded-full bg-teal-500/10 opacity-50 blur-3xl transition-opacity group-hover:opacity-100" />
 
       <div className="relative z-10 text-start">
         <div className="flex justify-between items-center mb-6">

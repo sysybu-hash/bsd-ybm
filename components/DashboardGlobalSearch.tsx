@@ -22,13 +22,13 @@ export default function DashboardGlobalSearch() {
     <div className="w-full max-w-xl space-y-1">
       <form onSubmit={submit}>
         <div className="relative w-full">
-          <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
+          <Search className="absolute end-3 top-2.5 text-gray-400" size={18} />
           <input
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ארכיון חכם – חפש מסמך, ספק, סיכום AI..."
-            className="w-full bg-white border border-gray-200 rounded-full py-2 pr-10 pl-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/25 focus:border-teal-500 shadow-sm"
+            className="w-full rounded-full border border-gray-200 bg-white py-2 ps-4 pe-10 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/25"
             dir="rtl"
           />
         </div>

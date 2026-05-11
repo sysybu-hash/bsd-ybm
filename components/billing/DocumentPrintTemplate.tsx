@@ -138,7 +138,7 @@ export default function DocumentPrintTemplate({ doc, org }: Props) {
                 <p className="text-sm font-bold text-slate-400 mb-4">{headerMeta.subTitle}</p>
               ) : null}
               
-              <div className="flex flex-col gap-1 text-base border-r-4 border-blue-500 pr-4 mt-4">
+              <div className="flex flex-col gap-1 text-base border-e-4 border-blue-500 pe-4 mt-4">
                  <p className="font-medium text-slate-500">מספר מסמך הסימוכין: <span className="font-black text-slate-900">#{doc.number}</span></p>
                  <p className="font-medium text-slate-500">תאריך הפקה: <span className="font-black text-slate-900">{dateLabel}</span></p>
               </div>

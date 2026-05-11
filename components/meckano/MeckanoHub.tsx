@@ -489,7 +489,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   else setKeyMsg({ ok: false, msg: r.error ?? "שגיאה" });
                 });
               }}
-              className="space-y-3 text-right"
+              className="space-y-3 text-end"
             >
               <input
                 type="text"
@@ -573,12 +573,12 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 <div className="relative flex-1 min-w-[200px]">
-                  <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     value={empSearch}
                     onChange={e => setEmpSearch(e.target.value)}
                     placeholder="חיפוש עובד..."
-                    className={`${inputCls} pr-9 w-full`}
+                    className={`${inputCls} w-full pe-9`}
                   />
                 </div>
                 <div className="flex gap-2">
@@ -612,7 +612,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         <button
                           type="button"
                           onClick={() => setEmpExpanded(isOpen ? null : emp.id)}
-                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-gray-50"
+                          className="flex w-full items-center gap-4 px-5 py-4 text-end transition hover:bg-gray-50"
                         >
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-500/15 text-sm font-black text-teal-300">
                             {name.charAt(0)}
@@ -703,7 +703,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   })}
                 </div>
               )}
-              <p className="text-left text-xs text-gray-400">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
+              <p className="text-start text-xs text-gray-400">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
             </div>
           )}
 
@@ -782,7 +782,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <thead className="border-b border-gray-100 bg-gray-50">
                       <tr>
                         {["עובד", "מספר", "תאריך", "שעה", "כניסה/יציאה"].map(h => (
-                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
+                          <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -806,7 +806,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </table>
                 </div>
               )}
-              <p className="text-left text-xs text-gray-400">
+              <p className="text-start text-xs text-gray-400">
                 {attUserId ? attendance.filter(r => String(r.userId) === attUserId).length : attendance.length} רשומות
               </p>
             </div>
@@ -895,7 +895,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         <button
                           type="button"
                           onClick={() => isExpanded ? setExpandedZoneId(null) : initEditZone(zone)}
-                          className="flex w-full items-center gap-4 px-5 py-4 text-right transition hover:bg-gray-50"
+                          className="flex w-full items-center gap-4 px-5 py-4 text-end transition hover:bg-gray-50"
                         >
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/15">
                             <Globe size={18} className="text-teal-400" />
@@ -928,12 +928,12 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             {zone.budgetHours && (
-                              <div className="text-right">
+                              <div className="text-end">
                                 <p className="text-sm font-black text-teal-400">{zone.budgetHours}ש׳</p>
                                 <p className="text-xs text-gray-400">תקציב</p>
                               </div>
                             )}
-                            <div className="text-right">
+                            <div className="text-end">
                               <p className="text-sm font-bold text-gray-600">{zone.radius}מ׳</p>
                               <p className="text-xs text-gray-400">רדיוס</p>
                             </div>
@@ -1115,7 +1115,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   })}
                 </div>
               )}
-              <p className="text-left text-xs text-gray-400">{zones.filter(z => z.isActive).length} פרויקטים פעילים</p>
+              <p className="text-start text-xs text-gray-400">{zones.filter(z => z.isActive).length} פרויקטים פעילים</p>
             </div>
           )}
 
@@ -1258,7 +1258,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                     <thead className="border-b border-gray-100 bg-gray-50">
                       <tr>
                         {["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => (
-                          <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>
+                          <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -1276,7 +1276,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   </table>
                 </div>
               )}
-              <p className="text-left text-xs text-gray-400">{taskEntries.length} רשומות</p>
+              <p className="text-start text-xs text-gray-400">{taskEntries.length} רשומות</p>
             </div>
           )}
 
@@ -1305,7 +1305,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                         key={id}
                         type="button"
                         onClick={() => { setReportType(id); setReportGenerated(false); }}
-                        className={`flex flex-col items-start gap-0.5 rounded-xl border px-4 py-3 text-right transition ${
+                        className={`flex flex-col items-start gap-0.5 rounded-xl border px-4 py-3 text-end transition ${
                           reportType === id ? "border-teal-500/60 bg-teal-500/15" : "border-gray-200 bg-gray-50 hover:bg-gray-100"
                         }`}
                       >
@@ -1486,7 +1486,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
                       <thead className="border-b border-gray-100 bg-gray-50">
-                        <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
+                        <tr>{["עובד", "מס׳", "תאריך", "שעה", "כניסה/יציאה"].map(h => <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
                         {reportAttendance.map(row => (
@@ -1512,7 +1512,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <div className="overflow-x-auto rounded-2xl border border-gray-200">
                     <table className="w-full text-sm">
                       <thead className="border-b border-gray-100 bg-gray-50">
-                        <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
+                        <tr>{["עובד", "משימה", "תאריך", "משך (דק׳)", "הערה"].map(h => <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>)}</tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
                         {reportTaskEntries.map(entry => (
@@ -1550,7 +1550,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
                           <thead className="border-b border-gray-100 bg-gray-50">
-                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "רשומות"].map(h => <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
                             {summaryRows.map(row => (
@@ -1622,7 +1622,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                       <div className="overflow-x-auto rounded-2xl border border-gray-200">
                         <table className="w-full text-sm">
                           <thead className="border-b border-gray-100 bg-gray-50">
-                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-right text-xs font-bold text-gray-400">{h}</th>)}</tr>
+                            <tr>{["עובד", "מס׳", "ימי עבודה", "שעות", "תעריף (₪)", "עלות (₪)"].map(h => <th key={h} className="px-4 py-3 text-end text-xs font-bold text-gray-400">{h}</th>)}</tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
                             {costRows.map(row => (
@@ -1738,7 +1738,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 </div>
                                 <span className="text-sm font-bold text-gray-900">{emp.name}</span>
                                 {emp.tag && <span className="font-mono text-xs text-gray-400">{emp.tag}</span>}
-                                <span className="mr-auto text-xs text-gray-400">{emp.days.length} ימים · <strong className="text-teal-400">{emp.totalHours.toFixed(1)} ש׳</strong></span>
+                                <span className="ms-auto text-xs text-gray-400">{emp.days.length} ימים · <strong className="text-teal-400">{emp.totalHours.toFixed(1)} ש׳</strong></span>
                               </div>
 
                               {/* Day rows */}
@@ -1746,7 +1746,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 <thead className="border-b border-gray-100 bg-gray-50">
                                   <tr>
                                     {(reportLocationsMode === "monthly" ? ["תאריך", "שעת כניסה", "שעת יציאה", "שעות"] : ["שעת כניסה", "שעת יציאה", "שעות"]).map(h => (
-                                      <th key={h} className="px-5 py-2 text-right text-xs font-bold text-gray-400">{h}</th>
+                                      <th key={h} className="px-5 py-2 text-end text-xs font-bold text-gray-400">{h}</th>
                                     ))}
                                   </tr>
                                 </thead>
@@ -1907,9 +1907,9 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                                 />
                               </div>
                             </div>
-                            <div className="text-right shrink-0">
+                            <div className="text-end shrink-0">
                               <span className="text-lg font-black text-gray-900">{count}</span>
-                              <span className="mr-1 text-xs text-gray-400">עובדים</span>
+                              <span className="me-1 text-xs text-gray-400">עובדים</span>
                               <p className="text-xs text-gray-400">{pct}%</p>
                             </div>
                           </div>

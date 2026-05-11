@@ -1,4 +1,5 @@
 import { CompanyType, DocStatus, DocType, type SubscriptionTier } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import { getExpectedTierOrderAmountIls } from "@/lib/billing-pricing";
@@ -16,6 +17,29 @@ export type ApplyPayPalCaptureOk =
     };
 
 export type ApplyPayPalCaptureErr = { ok: false; status: number; error: string };
+
+async function logPayPalCaptureActivity(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  captureId: string,
+  kind: string,
+  paidTotal: number,
+) {
+  const actor = await tx.user.findFirst({
+    where: { organizationId },
+    orderBy: { createdAt: "asc" },
+    select: { id: true },
+  });
+  if (!actor) return;
+  await tx.activityLog.create({
+    data: {
+      userId: actor.id,
+      organizationId,
+      action: "paypal_capture_completed",
+      details: JSON.stringify({ captureId, kind, paidTotalIls: paidTotal }),
+    },
+  });
+}
 
 /**
  * מיישם תשלום PayPal שהושלם (אחרי capture) — מנוי / חבילת סריקות, מסמך מס, רשומת Invoice לאידמפוטנטיות.
@@ -151,6 +175,8 @@ export async function applyPayPalCaptureResult(params: {
             paidAt: new Date(),
           },
         });
+
+        await logPayPalCaptureActivity(tx, orgIdFromOrder, captureId, kind, paidTotal);
       });
     } else if (kind === "TIER") {
       const tier = parseSubscriptionTier(payload) as SubscriptionTier | null;
@@ -220,6 +246,8 @@ export async function applyPayPalCaptureResult(params: {
             paidAt: new Date(),
           },
         });
+
+        await logPayPalCaptureActivity(tx, orgIdFromOrder, captureId, kind, paidTotal);
       });
     } else {
       return { ok: false, status: 400, error: "סוג הזמנה לא מוכר" };

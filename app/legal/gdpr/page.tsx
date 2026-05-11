@@ -28,7 +28,7 @@ export default function GdprLegalPage() {
 
       <section>
         <h2 className={h2Class}>2. עקרונות ליבה (סיכום)</h2>
-        <ul className="list-disc list-inside space-y-2 mr-4">
+        <ul className="list-disc list-inside space-y-2 me-4">
           <li>
             <strong>חוקיות ושקיפות:</strong> עיבוד מידע על בסיס חוקי מתאים (למשל הסכמה, ביצוע חוזה
             או אינטרס לגיטימי — לפי ניתוח משפטי), ומתן מידע ברור לנושאי המידע.

@@ -9,6 +9,7 @@ import {
   shouldBlockWorkspacePrimaryPath,
   workspaceFeatureInputFromJwtClaims,
 } from "@/lib/workspace-features";
+import { isAdmin } from "@/lib/is-admin";
 
 function hasAuthenticatedToken(token: NextRequestWithAuth["nextauth"]["token"]): boolean {
   if (!token) return false;
@@ -79,6 +80,20 @@ const authMiddleware = withAuth(
       const featureInput = workspaceFeatureInputFromJwtClaims(token);
       if (featureInput && shouldBlockWorkspacePrimaryPath(pathname, featureInput)) {
         return NextResponse.redirect(new URL("/app", req.url));
+      }
+
+      const email = typeof token.email === "string" ? token.email.trim().toLowerCase() : "";
+      const subStatus =
+        typeof (token as { organizationSubscriptionStatus?: string }).organizationSubscriptionStatus === "string"
+          ? (token as { organizationSubscriptionStatus?: string }).organizationSubscriptionStatus
+          : null;
+      if (
+        subStatus === "TRIAL_EXPIRED" &&
+        !isAdmin(email) &&
+        pathname !== "/app/trial-expired" &&
+        !pathname.startsWith("/app/settings/billing")
+      ) {
+        return NextResponse.redirect(new URL("/app/trial-expired", req.url));
       }
     }
 

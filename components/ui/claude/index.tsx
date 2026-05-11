@@ -91,7 +91,7 @@ export function Stat({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="cd-mute text-xs font-medium">{label}</p>
-          <p className="cd-stat-value mt-2">{value}</p>
+          <p className="cd-stat-value mt-2 tabular-nums">{value}</p>
         </div>
         {Icon ? (
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color:var(--cd-bg-tint)] text-[color:var(--cd-ink-soft)]">
@@ -110,13 +110,13 @@ export function Stat({
     return (
       <Link
         href={href}
-        className={`${POLISH_PREMIUM_INTERACTIVE} block p-5 transition-colors hover:bg-slate-50 active:bg-slate-100`}
+        className={`${POLISH_PREMIUM_INTERACTIVE} block rounded-2xl p-5 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 active:bg-slate-100 active:scale-[0.998]`}
       >
         {inner}
       </Link>
     );
   }
-  return <div className={`${POLISH_PREMIUM_INTERACTIVE} p-5`}>{inner}</div>;
+  return <div className={`${POLISH_PREMIUM_INTERACTIVE} rounded-2xl p-5`}>{inner}</div>;
 }
 
 export function ActionTile({
@@ -135,10 +135,10 @@ export function ActionTile({
   return (
     <Link
       href={href}
-      className={`group flex items-center gap-3 rounded-[var(--cd-radius)] border p-4 transition-colors ${
+      className={`group flex items-center gap-3 rounded-[var(--cd-radius)] border p-4 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.99] ${
         accent
-          ? "border-transparent bg-[color:var(--cd-ink)] text-[color:var(--cd-bg)] hover:bg-[#2C2A26]"
-          : "border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] hover:bg-[color:var(--cd-bg-tint)]"
+          ? "border-transparent bg-[color:var(--cd-ink)] text-[color:var(--cd-bg)] hover:bg-[#2C2A26] focus-visible:ring-white/40"
+          : "border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)] hover:bg-[color:var(--cd-bg-tint)] focus-visible:ring-slate-400/50"
       }`}
     >
       <span

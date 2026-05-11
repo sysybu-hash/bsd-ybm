@@ -149,7 +149,7 @@ export function UpgradeCheckoutModal({
           type="button"
           onClick={onClose}
           disabled={isProcessing}
-          className="absolute left-4 top-4 z-20 rounded-xl border border-[color:var(--dash-line)] bg-white p-2 text-[color:var(--dash-muted)] transition-colors hover:text-[color:var(--dash-purple)] disabled:opacity-50"
+          className="absolute start-4 top-4 z-20 rounded-xl border border-[color:var(--dash-line)] bg-white p-2 text-[color:var(--dash-muted)] transition-colors hover:text-[color:var(--dash-purple)] disabled:opacity-50"
           aria-label="סגור"
         >
           <X size={18} aria-hidden />

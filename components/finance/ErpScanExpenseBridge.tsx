@@ -5,14 +5,15 @@ import { createExpenseDraftFromAiAction } from "@/app/actions/expenses";
 import { toastClientActionFeedback } from "@/lib/polish/action-response-toast";
 import { isExpenseLikeScanV5, scanV5ToExpenseAmounts } from "@/lib/expense-from-scan-v5";
 import { SCAN_SCHEMA_V5, type ScanExtractionV5 } from "@/lib/scan-schema-v5";
-import type { IndustryType } from "@/lib/professions/config";
-import type { ScanHubPreviewPayload } from "@/components/MultiEngineScanner";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
+import type { IndustryProfile } from "@/lib/professions/runtime";
 import ErpMultiEngineScannerLazy from "@/components/erp/ErpMultiEngineScannerLazy";
 import { FileText, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  industry: IndustryType;
+  industryProfile: IndustryProfile;
+  geminiConfigured: boolean;
 };
 
 function isV5Extraction(x: unknown): x is ScanExtractionV5 {
@@ -21,7 +22,7 @@ function isV5Extraction(x: unknown): x is ScanExtractionV5 {
   );
 }
 
-export default function ErpScanExpenseBridge({ industry }: Props) {
+export default function ErpScanExpenseBridge({ industryProfile, geminiConfigured }: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [preview, setPreview] = useState<{
@@ -110,7 +111,11 @@ export default function ErpScanExpenseBridge({ industry }: Props) {
           </div>
         </div>
       ) : null}
-      <ErpMultiEngineScannerLazy industry={industry} onScanHubPreviewUpdate={onScanHubPreviewUpdate} />
+      <ErpMultiEngineScannerLazy
+        industryProfile={industryProfile}
+        geminiConfigured={geminiConfigured}
+        onScanHubPreviewUpdate={onScanHubPreviewUpdate}
+      />
     </div>
   );
 }

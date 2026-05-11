@@ -33,7 +33,7 @@ export function ActivityTimeline({
   return (
     <div className="relative">
       {/* horizontal line */}
-      <div className="absolute left-0 right-0 top-[11px] h-[2px] bg-[color:var(--line)] rounded-full" />
+      <div className="absolute start-0 end-0 top-[11px] h-[2px] rounded-full bg-[color:var(--line)]" />
       {/* events */}
       <ol className="relative flex flex-wrap gap-x-6 gap-y-4">
         {events.map((event) => (

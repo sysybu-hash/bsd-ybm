@@ -103,11 +103,11 @@ export default function AuditLogViewer() {
         
         <div className="flex w-full flex-col gap-2 md:max-w-2xl md:flex-row">
           <div className="relative min-w-0 flex-1">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute end-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder="חפש לפי פעולה, משתמש או אימייל..."
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-12 text-sm outline-none transition-all focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 ps-4 pe-12 text-sm outline-none transition-all focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
@@ -156,7 +156,7 @@ export default function AuditLogViewer() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-right border-collapse">
+            <table className="w-full text-end border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100">
                   <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-500">משתמש</th>

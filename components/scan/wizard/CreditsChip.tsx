@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Gauge, Infinity as InfinityIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type CreditsResponse = {
   ok: boolean;
@@ -46,7 +47,7 @@ export default function CreditsChip({ label = "סריקות", refreshKey = 0 }: 
 
   const isVip = data?.ok && data.isVip;
   const total = data?.ok ? data.total ?? 0 : null;
-  const display = loading ? "…" : isVip ? "∞" : total !== null ? total.toLocaleString("he-IL") : "—";
+  const display = loading ? null : isVip ? "∞" : total !== null ? total.toLocaleString("he-IL") : "—";
 
   return (
     <div
@@ -58,7 +59,11 @@ export default function CreditsChip({ label = "סריקות", refreshKey = 0 }: 
       ) : (
         <Gauge className="h-3.5 w-3.5 text-[color:var(--scanw-accent)]" aria-hidden />
       )}
-      <span className="tabular-nums">{display}</span>
+      {loading ? (
+        <Skeleton className="h-3 w-10 rounded-full" aria-label="טוען יתרת סריקות" role="status" />
+      ) : (
+        <span className="tabular-nums">{display}</span>
+      )}
       <span className="text-[color:var(--scanw-muted)]">{label}</span>
     </div>
   );

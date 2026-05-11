@@ -142,7 +142,7 @@ export default function CrmOrganizationsAdminTable({
     <div className="card-avenue relative overflow-hidden" dir={dir}>
       <div className="overflow-x-auto">
       <table className="w-full min-w-[800px] text-start">
-        <thead className="bg-teal-500/[0.12] text-xs font-bold text-teal-300">
+        <thead className="sticky top-0 z-10 bg-teal-500/[0.12] text-xs font-bold text-teal-300 shadow-[0_1px_0_rgba(45,212,191,0.2)]">
           <tr>
             <th className="px-6 py-4 sm:px-8">שם הלקוח</th>
             <th className="px-6 py-4 sm:px-8 text-center sm:px-8">תוכנית</th>
@@ -386,7 +386,7 @@ export default function CrmOrganizationsAdminTable({
                       </p>
                     </div>
                     <div className="rounded-xl border border-gray-100 bg-white overflow-hidden overflow-x-auto">
-                      <table className="w-full text-sm text-right min-w-[560px]">
+                      <table className="w-full text-sm text-end min-w-[560px]">
                         <thead>
                           <tr className="bg-teal-500/[0.10] text-[11px] font-black uppercase tracking-wider text-teal-300">
                             <th className="px-4 py-3.5 font-semibold">תאריך</th>

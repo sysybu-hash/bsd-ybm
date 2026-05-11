@@ -253,19 +253,19 @@ export default function OperationsWorkspaceV2({
               <p className="text-lg font-black text-[color:var(--ink-900)]">{t("workspaceOperations.shortcutsTitle")}</p>
             </div>
             <div className="mt-4 grid gap-3">
-              <Link href="/app/settings/billing" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/settings/billing" className="inline-flex min-h-11 items-center rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)] transition-all duration-200 hover:brightness-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.99]">
                 {t("workspaceOperations.shortcutBilling")}
               </Link>
-              <Link href="/app/erp" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/erp" className="inline-flex min-h-11 items-center rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)] transition-all duration-200 hover:brightness-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.99]">
                 {t("workspaceOperations.shortcutDocuments")}
               </Link>
-              <Link href="/app/automations" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/automations" className="inline-flex min-h-11 items-center rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)] transition-all duration-200 hover:brightness-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.99]">
                 {t("workspaceOperations.shortcutAutomation")}
               </Link>
-              <Link href="/app/onboarding" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/onboarding" className="inline-flex min-h-11 items-center rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)] transition-all duration-200 hover:brightness-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.99]">
                 {t("workspaceOperations.shortcutOnboarding")}
               </Link>
-              <Link href="/app/settings/operations" className="rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)]">
+              <Link href="/app/settings/operations" className="inline-flex min-h-11 items-center rounded-2xl bg-[color:var(--canvas-sunken)] px-4 py-4 text-sm font-black text-[color:var(--ink-900)] transition-all duration-200 hover:brightness-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.99]">
                 {t("workspaceOperations.shortcutAdvanced")}
               </Link>
             </div>

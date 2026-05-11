@@ -97,7 +97,7 @@ export default function SemanticSearchBar({ onResults, placeholder }: SemanticSe
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 right-0 mt-3 p-4 bg-white/95 backdrop-blur-md rounded-2xl border border-teal-100 shadow-xl z-20"
+            className="absolute start-0 end-0 top-full z-20 mt-3 rounded-2xl border border-teal-100 bg-white/95 p-4 shadow-xl backdrop-blur-md"
           >
              <p className="text-[10px] font-black text-teal-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Zap size={10} /> הצעות לחיפוש חכם

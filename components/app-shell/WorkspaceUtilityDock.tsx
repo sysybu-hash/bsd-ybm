@@ -18,6 +18,7 @@ import {
   WandSparkles,
   X,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import ScanResultCardPortal from "@/components/app-shell/ScanResultCardPortal";
@@ -51,16 +52,21 @@ function readStringArray(messages: MessageTree, path: string): string[] {
 function ScannerLoadingFallback() {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-slate-200/10 bg-white/80">
-      <div className="flex items-center gap-3 text-sm font-black text-slate-600">
-        <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-        {t("workspaceDock.loadingScanner")}
+    <div className="flex min-h-[320px] flex-col justify-center gap-4 rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow)]">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-12 w-12 shrink-0 rounded-2xl" aria-hidden />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-3 w-full max-w-[14rem]" aria-hidden />
+          <Skeleton className="h-3 w-full max-w-[11rem]" aria-hidden />
+        </div>
       </div>
+      <Skeleton className="h-24 w-full rounded-2xl" aria-hidden />
+      <p className="text-center text-sm font-black text-[color:var(--ink-700)]">{t("workspaceDock.loadingScanner")}</p>
     </div>
   );
 }
 
-const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
+const ScanWizardShell = dynamic(() => import("@/components/scan/wizard/ScanWizardShell"), {
   ssr: false,
   loading: () => <ScannerLoadingFallback />,
 });
@@ -121,6 +127,7 @@ type WorkspaceUtilityDockProps = {
   industryProfile: IndustryProfile;
   userName: string;
   hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>;
+  geminiConfigured?: boolean;
 };
 
 function createMessage(
@@ -224,6 +231,7 @@ export default function WorkspaceUtilityDock({
   industryProfile,
   userName,
   hiddenPrimaryRouteIds,
+  geminiConfigured = false,
 }: WorkspaceUtilityDockProps) {
   const [portalReady, setPortalReady] = useState(false);
   useEffect(() => {
@@ -511,13 +519,13 @@ export default function WorkspaceUtilityDock({
    * כדי שלא יזוזו עם מיכלי תוכן ולא יישארו “באמצע” המסך. אינן גוללות — position: fixed על document.body.
    */
   const workspaceDockFabPosition =
-    "fixed z-[9900] top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))] lg:left-[max(1rem,env(safe-area-inset-left,0px))]";
+    "fixed z-[9900] top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))] lg:left-[max(1rem,env(safe-area-inset-left,0px))]"; // LTR-fixed
 
   /** פאנלים קומפקטיים: ממוקמים משמאל לעמודת הבועות (~3.5rem) */
   const compactPanelClassName =
-    "fixed z-[9800] inset-x-3 bottom-[calc(7.1rem+env(safe-area-inset-bottom,0px))] flex max-h-[min(72dvh,calc(100dvh-8rem))] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/94 shadow-xl backdrop-blur-xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:w-[min(100vw-2rem,26rem)] lg:max-w-[calc(100%-2rem)] lg:-translate-y-1/2 lg:bg-white/88 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]";
+    "fixed z-[9800] inset-x-3 bottom-[calc(7.1rem+env(safe-area-inset-bottom,0px))] flex max-h-[min(72dvh,calc(100dvh-8rem))] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/94 shadow-xl backdrop-blur-xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:w-[min(100vw-2rem,26rem)] lg:max-w-[calc(100%-2rem)] lg:-translate-y-1/2 lg:bg-white/88 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]"; // LTR-fixed
   const assistantPanelClassName =
-    "fixed z-[9920] inset-x-3 top-[max(0.75rem,env(safe-area-inset-top,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))] flex flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/96 shadow-[0_28px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))] lg:h-[min(86dvh,46rem)] lg:w-[min(100vw-2rem,31rem)] lg:-translate-y-1/2";
+    "fixed z-[9920] inset-x-3 top-[max(0.75rem,env(safe-area-inset-top,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))] flex flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/96 shadow-[0_28px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))] lg:h-[min(86dvh,46rem)] lg:w-[min(100vw-2rem,31rem)] lg:-translate-y-1/2"; // LTR-fixed
 
   const desktopDock = (
     <div className={`${workspaceDockFabPosition} hidden flex-col gap-2 lg:flex`}>
@@ -547,7 +555,7 @@ export default function WorkspaceUtilityDock({
   );
 
   const mobileDock = (
-    <div className="fixed z-[9900] lg:hidden bottom-[calc(4.85rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2">
+    <div className="fixed start-1/2 bottom-[calc(4.85rem+env(safe-area-inset-bottom,0px))] z-[9900] -translate-x-1/2 lg:hidden">
       <div className="flex gap-1 rounded-2xl border border-slate-200/10 bg-white/94 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <DockButton
           active={openPanel === "accessibility"}
@@ -959,7 +967,11 @@ export default function WorkspaceUtilityDock({
                 </div>
               </div>
             ) : (
-              <MultiEngineScanner industry={industryProfile.id} compactHeader dockWizard />
+              <ScanWizardShell
+                industryProfile={industryProfile}
+                geminiConfigured={geminiConfigured}
+                variant="dock"
+              />
             )}
           </div>
         </section>

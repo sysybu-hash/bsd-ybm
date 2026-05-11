@@ -42,7 +42,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className={h2Class}>2. אילו נתונים נאספים</h2>
-        <ul className="list-disc list-inside space-y-2 mr-4">
+        <ul className="list-disc list-inside space-y-2 me-4">
           <li>
             <strong>זהות והתחברות:</strong> שם, כתובת אימייל, מזהה מספק OAuth (למשל Google), תמונת פרופיל
             אופציונלית.

@@ -1,36 +1,39 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { IndustryType } from "@/lib/professions/config";
-import type { ScanHubPreviewPayload } from "@/components/MultiEngineScanner";
+import type { IndustryProfile } from "@/lib/professions/runtime";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
+import type { ScanWizardShellVariant } from "@/components/scan/wizard/ScanWizardShell";
 
-const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), { ssr: false });
+const ScanWizardShell = dynamic(() => import("@/components/scan/wizard/ScanWizardShell"), { ssr: false });
 
 type Props = {
-  industry: IndustryType;
+  industryProfile: IndustryProfile;
+  geminiConfigured: boolean;
   compactHeader?: boolean;
   dockWizard?: boolean;
-  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
   hubPreviewMode?: boolean;
+  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
   onHubPreviewFocusRequest?: () => void;
 };
 
-export default function ErpMultiEngineScannerLazy({
-  industry,
-  compactHeader,
-  dockWizard,
-  onScanHubPreviewUpdate,
-  hubPreviewMode,
-  onHubPreviewFocusRequest,
-}: Props) {
+function resolveVariant(props: Props): ScanWizardShellVariant {
+  if (props.dockWizard) return "dock";
+  if (props.compactHeader) return "embed";
+  return "page";
+}
+
+/** עטיפה דינמית סביב ScanWizardShell — תאימות ל-importים קיימים ב-ERP ובמסמכים */
+export default function ErpMultiEngineScannerLazy(props: Props) {
+  const variant = resolveVariant(props);
   return (
-    <MultiEngineScanner
-      industry={industry}
-      compactHeader={compactHeader}
-      dockWizard={dockWizard}
-      onScanHubPreviewUpdate={onScanHubPreviewUpdate}
-      hubPreviewMode={hubPreviewMode}
-      onHubPreviewFocusRequest={onHubPreviewFocusRequest}
+    <ScanWizardShell
+      industryProfile={props.industryProfile}
+      geminiConfigured={props.geminiConfigured}
+      variant={variant}
+      hubPreviewMode={props.hubPreviewMode}
+      onScanHubPreviewUpdate={props.onScanHubPreviewUpdate}
+      onHubPreviewFocusRequest={props.onHubPreviewFocusRequest}
     />
   );
 }

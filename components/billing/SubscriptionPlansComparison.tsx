@@ -163,7 +163,7 @@ function SubscriptionPlansComparisonInner({
             }`}
           >
             {plan.badge ? (
-              <div className="absolute -top-4 left-1/2 z-20 -translate-x-1/2 rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold text-white shadow-md">
+              <div className="absolute -top-4 start-1/2 z-20 -translate-x-1/2 rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold text-white shadow-md">
                 {plan.badge}
               </div>
             ) : null}

@@ -222,7 +222,7 @@ export default function IntelligenceHub() {
                 {isRecording ? "מקשיב לך..." : "לחץ ודבר עם המערכת"}
               </button>
             </div>
-            <div className="absolute bottom-0 right-0 p-4 opacity-5 pointer-events-none">
+            <div className="pointer-events-none absolute bottom-0 end-0 p-4 opacity-5">
               <BrainCircuit size={120} />
             </div>
           </div>

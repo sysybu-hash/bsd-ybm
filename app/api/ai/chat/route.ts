@@ -6,6 +6,7 @@ import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { getServerLocale } from "@/lib/i18n/server";
 import { subscriptionTiersPromptBlockHe } from "@/lib/subscription-tier-config";
 import { prisma } from "@/lib/prisma";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LEN = 8000;
@@ -42,6 +43,9 @@ export async function POST(req: Request) {
     }
 
     const session = await getServerSession(authOptions);
+    const quotaBlock = await requireAiScanCredit(session, "cheap");
+    if (quotaBlock) return quotaBlock;
+
     const displayName =
       session?.user?.name?.trim() || session?.user?.email?.trim() || "משתמש";
     const tiersHe = subscriptionTiersPromptBlockHe();

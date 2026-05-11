@@ -733,7 +733,7 @@ export default function AdminSubscriptionControlCenter({
                 </p>
               </div>
               <label className="relative w-full md:max-w-md">
-                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-teal-400/60" />
+                <Search className="pointer-events-none absolute end-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-teal-400/60" />
                 <input
                   type="search"
                   value={query}
@@ -745,7 +745,7 @@ export default function AdminSubscriptionControlCenter({
             </div>
 
             <div className="overflow-x-auto rounded-xl ring-1 ring-gray-200">
-              <table className="w-full min-w-[920px] border-collapse text-right text-sm">
+              <table className="w-full min-w-[920px] border-collapse text-end text-sm">
                 <thead>
                   <tr className="bg-teal-500/[0.10] text-white">
                     <th className="border-b border-gray-100 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-500">

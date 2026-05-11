@@ -144,6 +144,8 @@ export const authOptions: NextAuthOptions = {
           (token.organizationIndustry as string | null) ?? "CONSTRUCTION";
         session.user.organizationConstructionTrade =
           (token.organizationConstructionTrade as string | null) ?? "GENERAL_CONTRACTOR";
+        session.user.organizationSubscriptionStatus =
+          (token.organizationSubscriptionStatus as string | null) ?? null;
         /** הגנה כפולה: SUPER_ADMIN ב-UI/API רק ל־steelPlatformOwnerEmail() — לא דרך באג ב-JWT */
         const em = typeof session.user.email === "string" ? session.user.email : "";
         if (session.user.role === "SUPER_ADMIN" && !isAdmin(em)) {
@@ -237,6 +239,7 @@ export const authOptions: NextAuthOptions = {
         token.id = "";
         token.role = "";
         token.organizationId = null;
+        token.organizationSubscriptionStatus = null;
         return token;
       }
 
@@ -246,6 +249,7 @@ export const authOptions: NextAuthOptions = {
         token.id = "";
         token.role = "";
         token.organizationId = null;
+        token.organizationSubscriptionStatus = null;
         return token;
       }
 
@@ -255,6 +259,7 @@ export const authOptions: NextAuthOptions = {
           token.id = dev.id;
           token.role = dev.role;
           token.organizationId = dev.organizationId;
+          token.organizationSubscriptionStatus = "ACTIVE";
           return token;
         }
 
@@ -268,7 +273,7 @@ export const authOptions: NextAuthOptions = {
             name: true,
             image: true,
             organization: {
-              select: { industry: true, constructionTrade: true },
+              select: { industry: true, constructionTrade: true, subscriptionStatus: true },
             },
           },
         });
@@ -277,6 +282,7 @@ export const authOptions: NextAuthOptions = {
           token.id = "";
           token.role = "";
           token.organizationId = null;
+          token.organizationSubscriptionStatus = null;
           return token;
         }
 
@@ -285,6 +291,7 @@ export const authOptions: NextAuthOptions = {
         token.organizationIndustry = dbUser.organization?.industry ?? "CONSTRUCTION";
         token.organizationConstructionTrade =
           dbUser.organization?.constructionTrade ?? "GENERAL_CONTRACTOR";
+        token.organizationSubscriptionStatus = dbUser.organization?.subscriptionStatus ?? null;
 
         /**
          * הגנה כפולה: אם משתמש שאינו Steel Admin קיבל SUPER_ADMIN ב-DB (באג עבר) —

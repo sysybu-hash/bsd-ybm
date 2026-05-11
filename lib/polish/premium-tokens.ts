@@ -2,7 +2,7 @@
  * קבועי „פרימיום” — ללא React, לייבוא מ־Server ו־Client כאחת.
  */
 export const POLISH_PREMIUM_INTERACTIVE =
-  "bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300";
+  "bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden hover:shadow-md transition-all duration-200";
 
 /** לסקלטונים / מצבים סטטיים — בלי hover */
 export const POLISH_PREMIUM_STATIC =

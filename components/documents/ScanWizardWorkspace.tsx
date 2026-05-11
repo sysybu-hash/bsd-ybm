@@ -110,7 +110,12 @@ export default function ScanWizardWorkspace({ industryProfile, geminiConfigured 
               <ScanBoard compact />
             </div>
           ) : (
-            <ErpMultiEngineScannerLazy industry={industryProfile.id} compactHeader dockWizard />
+            <ErpMultiEngineScannerLazy
+              industryProfile={industryProfile}
+              geminiConfigured={geminiConfigured}
+              compactHeader
+              dockWizard
+            />
           )
         ) : (
           <ErpProjectNotebook geminiConfigured={geminiConfigured} embedInHub embedCompact />

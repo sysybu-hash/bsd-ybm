@@ -61,7 +61,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
               }`}
             >
               {highlight ? (
-                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-[2]">
+                 <div className="absolute -top-4 start-1/2 z-[2] -translate-x-1/2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 px-4 py-1 text-[11px] font-black text-white shadow-lg shadow-blue-500/30 tracking-widest">
                       <Star size={12} className="fill-white"/> הפופולרי ביותר
                     </span>
@@ -84,7 +84,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
                 {price != null ? (
                   <div className="flex items-end">
                     <span className="text-3xl font-black tabular-nums text-slate-900 tracking-tight">₪{price.toFixed(0)}</span>
-                    <span className="text-xs font-bold text-slate-400 mb-1 ml-1 leading-none ms-1"> / ללא מע״מ</span>
+                    <span className="mb-1 text-xs font-bold leading-none text-slate-400 ms-1"> / ללא מע״מ</span>
                   </div>
                 ) : (
                   <p className="text-2xl font-black text-slate-900">Custom</p>

@@ -71,14 +71,14 @@ export default function WorkspaceGlassTopNav({
           <WorkspaceLocaleSwitcher ariaLabel={t("workspaceShell.topBar.localeAria")} />
           <Link
             href="/app/settings/overview"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--ink-500)] transition hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-[color:var(--ink-500)] transition-all duration-200 hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.97]"
             aria-label={t("workspaceNav.utility.help.label")}
           >
             <CircleHelp className="h-[18px] w-[18px]" aria-hidden />
           </Link>
           <button
             type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--ink-500)] transition hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)]"
+            className="relative flex min-h-11 min-w-11 items-center justify-center rounded-lg text-[color:var(--ink-500)] transition-all duration-200 hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.97]"
             aria-label={t("workspaceShell.topBar.notificationsAria")}
           >
             <BellRing className="h-[18px] w-[18px]" aria-hidden />
@@ -87,7 +87,7 @@ export default function WorkspaceGlassTopNav({
           <div className="mx-1 hidden h-6 w-px bg-[color:var(--line)] sm:block" aria-hidden />
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--ink-900)] text-[11px] font-bold text-white transition hover:bg-[color:var(--ink-800)]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full bg-[color:var(--ink-900)] text-[11px] font-bold text-white transition-all duration-200 hover:bg-[color:var(--ink-800)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.97]"
             aria-label={t("workspaceShell.topBar.profileAria")}
           >
             {userInitials}

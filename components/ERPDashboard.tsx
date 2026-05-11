@@ -98,14 +98,14 @@ export default function ERPDashboard({
                 <TrendingDown size={16} className="text-rose-500 shrink-0" />
               )}
               <span className="text-slate-600">{t("erpDash.netFlowIntro")}</span>{" "}
-              <span className={`font-black ${netFlow >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+              <span className={`font-black tabular-nums ${netFlow >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                 ₪{netFlow.toLocaleString(intlTag)}
               </span>
             </div>
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 self-start shadow-sm">
+        <div className="flex shrink-0 items-center justify-between gap-3 self-start rounded-3xl border border-blue-200 bg-blue-50 px-5 py-3 shadow-sm transition-all duration-200">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100/50">
              <ScanLine size={18} className="text-blue-600" aria-hidden />
           </div>
@@ -118,9 +118,12 @@ export default function ERPDashboard({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+          <div
+            key={stat.label}
+            className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow)] transition-all duration-200 hover:shadow-md"
+          >
             <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{stat.label}</p>
-            <p className={`mt-2 text-3xl font-black text-slate-800`}>{stat.value}</p>
+            <p className={`mt-2 text-3xl font-black tabular-nums text-slate-800`}>{stat.value}</p>
             <div className="mt-4 inline-block rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-500">
               {stat.trend}
             </div>

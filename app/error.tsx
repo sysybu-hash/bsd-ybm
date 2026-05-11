@@ -25,19 +25,19 @@ export default function RootError({ error, reset }: Props) {
         <button
           type="button"
           onClick={() => reset()}
-          className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+          className="min-h-11 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 active:scale-[0.98]"
         >
           {t("siteErrors.retry")}
         </button>
         <Link
           href="/"
-          className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-50"
+          className="min-h-11 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition-all duration-200 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 active:scale-[0.98]"
         >
           {t("siteErrors.home")}
         </Link>
         <Link
           href="/login"
-          className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-50"
+          className="min-h-11 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition-all duration-200 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 active:scale-[0.98]"
         >
           {t("siteErrors.login")}
         </Link>
