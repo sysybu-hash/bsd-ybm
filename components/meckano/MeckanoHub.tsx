@@ -573,7 +573,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 <div className="relative flex-1 min-w-[200px]">
-                  <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     value={empSearch}
                     onChange={e => setEmpSearch(e.target.value)}

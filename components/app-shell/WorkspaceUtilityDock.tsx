@@ -555,7 +555,7 @@ export default function WorkspaceUtilityDock({
   );
 
   const mobileDock = (
-    <div className="fixed z-[9900] lg:hidden bottom-[calc(4.85rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2">
+    <div className="fixed start-1/2 bottom-[calc(4.85rem+env(safe-area-inset-bottom,0px))] z-[9900] -translate-x-1/2 lg:hidden">
       <div className="flex gap-1 rounded-2xl border border-slate-200/10 bg-white/94 p-1.5 shadow-xl backdrop-blur-xl backdrop-saturate-150 ring-1 ring-black/5">
         <DockButton
           active={openPanel === "accessibility"}

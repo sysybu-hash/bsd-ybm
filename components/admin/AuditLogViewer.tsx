@@ -103,7 +103,7 @@ export default function AuditLogViewer() {
         
         <div className="flex w-full flex-col gap-2 md:max-w-2xl md:flex-row">
           <div className="relative min-w-0 flex-1">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute end-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder="חפש לפי פעולה, משתמש או אימייל..."

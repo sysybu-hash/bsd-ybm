@@ -371,7 +371,7 @@ export default function AccessibilityMenu({
         </button>
 
         {isOpen ? (
-          <div className="absolute left-16 top-0 z-[350]">{panel}</div>
+          <div className="absolute start-16 top-0 z-[350]">{panel}</div>
         ) : null}
       </div>
     );

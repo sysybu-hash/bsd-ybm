@@ -542,7 +542,7 @@ function ContactCard({
 
       {menuOpen && (
         <div
-          className="absolute left-2 text-start top-12 z-20 min-w-[180px] rounded-xl border border-slate-200 bg-white shadow-xl shadow-black/10 py-2"
+          className="absolute start-2 top-12 z-20 min-w-[180px] rounded-xl border border-slate-200 bg-white py-2 text-start shadow-xl shadow-black/10"
           onClick={(e) => e.stopPropagation()}
         >
           <p className="px-3 py-1 mb-1 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">שינוי סטטוס</p>

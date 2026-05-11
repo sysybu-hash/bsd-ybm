@@ -733,7 +733,7 @@ export default function AdminSubscriptionControlCenter({
                 </p>
               </div>
               <label className="relative w-full md:max-w-md">
-                <Search className="pointer-events-none absolute right-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-teal-400/60" />
+                <Search className="pointer-events-none absolute end-4 top-1/2 size-[1.15rem] -translate-y-1/2 text-teal-400/60" />
                 <input
                   type="search"
                   value={query}

@@ -22,7 +22,7 @@ export default function DashboardGlobalSearch() {
     <div className="w-full max-w-xl space-y-1">
       <form onSubmit={submit}>
         <div className="relative w-full">
-          <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
+          <Search className="absolute end-3 top-2.5 text-gray-400" size={18} />
           <input
             type="search"
             value={q}

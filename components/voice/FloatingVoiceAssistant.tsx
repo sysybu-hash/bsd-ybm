@@ -129,7 +129,7 @@ export default function FloatingVoiceAssistant() {
           </div>
 
           {(isListening || isSpeaking) && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-indigo-400 to-violet-400 opacity-90 blur-[1px]" />
+            <div className="absolute bottom-0 start-0 end-0 h-1 bg-gradient-to-r from-violet-400 via-indigo-400 to-violet-400 opacity-90 blur-[1px]" />
           )}
         </div>
       ) : null}

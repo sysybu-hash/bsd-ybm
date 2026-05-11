@@ -72,7 +72,7 @@ export default function LandingNavDrawer({ open, onClose }: Props) {
 
       <div className="fixed inset-0 z-[202] overflow-hidden" dir={dir}>
         <div className="absolute inset-0 overflow-hidden">
-          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+          <div className="pointer-events-none fixed inset-y-0 end-0 flex max-w-full ps-10">
             <DialogPanel
               transition
               className={`workspace-window pointer-events-auto relative flex h-full w-[min(100vw,22rem)] max-w-[100vw] flex-col border-l border-[color:var(--dash-line)] bg-white shadow-[0_35px_90px_-30px_rgba(36,30,80,0.34)] transition duration-300 ease-out data-[closed]:translate-x-full data-[closed]:opacity-0 sm:w-[min(100vw,24rem)] ${marketingSans.className}`}
