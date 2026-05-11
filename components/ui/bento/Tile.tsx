@@ -126,7 +126,7 @@ export function TileLink({
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1 text-[12px] font-bold transition hover:underline"
+      className="inline-flex items-center gap-1 rounded-md text-[12px] font-bold transition-all duration-200 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] focus-visible:ring-offset-2"
       style={{ color }}
     >
       {label}

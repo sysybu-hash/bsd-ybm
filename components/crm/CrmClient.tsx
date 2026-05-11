@@ -282,7 +282,11 @@ function ContactModal({
               {isEdit && c && <p className="text-xs text-slate-400 font-medium">נוצר ב- {fmtDate(c.createdAt)}</p>}
             </div>
           </div>
-          <button type="button" onClick={onClose} className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 transition">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl p-2 text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 active:scale-[0.97]"
+          >
             <X size={20} />
           </button>
         </div>
