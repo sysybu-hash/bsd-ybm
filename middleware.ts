@@ -5,10 +5,6 @@ import { API_MSG_UNAUTHORIZED } from "@/lib/api-json";
 import { COOKIE_LOCALE } from "@/lib/i18n/config";
 import { negotiateLocale } from "@/lib/i18n/negotiate";
 import { mapDashboardPathToApp } from "@/lib/dashboard-to-app-redirect";
-import {
-  shouldBlockWorkspacePrimaryPath,
-  workspaceFeatureInputFromJwtClaims,
-} from "@/lib/workspace-features";
 import { isAdmin } from "@/lib/is-admin";
 
 function hasAuthenticatedToken(token: NextRequestWithAuth["nextauth"]["token"]): boolean {
@@ -64,7 +60,7 @@ const publicPrefixes = [
 ] as const;
 
 const authMiddleware = withAuth(
-  function middleware(req) {
+  async function middleware(req) {
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
     const protectedApi = protectedApiPrefixes.some((p) => pathname.startsWith(p));
@@ -77,6 +73,9 @@ const authMiddleware = withAuth(
     }
 
     if (token && pathname.startsWith("/app") && !pathname.startsWith("/api/")) {
+      const { workspaceFeatureInputFromJwtClaims, shouldBlockWorkspacePrimaryPath } = await import(
+        "@/lib/workspace-features",
+      );
       const featureInput = workspaceFeatureInputFromJwtClaims(token);
       if (featureInput && shouldBlockWorkspacePrimaryPath(pathname, featureInput)) {
         return NextResponse.redirect(new URL("/app", req.url));
