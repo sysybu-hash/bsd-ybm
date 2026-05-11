@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import type { ErpStatCard, ErpFlowSummary } from "@/components/ERPDashboard";
 import type { CrmAdminOrganizationRow } from "@/components/crm/CrmOrganizationsAdminTable";
-import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "@/components/crm/CrmClient";
+import type { ErpSummary, InvoiceRow, OrgBillingInfo } from "@/components/crm/crm-client-types";
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 import type { PriceChartRow } from "@/lib/erp-price-comparison-data";
 import { Skeleton } from "@/components/ui/Skeleton";

@@ -44,6 +44,15 @@ export default function MeckanoMap({ zones, activeEmployees }: MeckanoMapProps) 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
+    const leafletCssId = "leaflet-css-meckano-map";
+    if (typeof document !== "undefined" && !document.getElementById(leafletCssId)) {
+      const link = document.createElement("link");
+      link.id = leafletCssId;
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+
     // Dynamically import leaflet (SSR-safe)
     import("leaflet").then((L) => {
       // Fix default icon URLs (webpack breaks them)
