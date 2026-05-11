@@ -27,7 +27,7 @@ export default async function AppAdminPage({ searchParams }: { searchParams: Sea
           </p>
           <Link
             href="/app"
-            className="mt-6 inline-flex rounded-xl bg-[color:var(--ink-900)] px-4 py-2.5 text-sm font-black text-white hover:bg-[color:var(--ink-800)]"
+            className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-[color:var(--ink-900)] px-4 py-2.5 text-sm font-black text-white transition-all duration-200 hover:bg-[color:var(--ink-800)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.98]"
           >
             חזרה למרכז העבודה
           </Link>

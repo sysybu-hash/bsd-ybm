@@ -26,7 +26,7 @@ export default function AdminSupportLinks() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="inline-flex min-h-11 w-full items-center rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-sunken)] px-4 py-2 text-sm font-bold text-[color:var(--ink-800)] hover:bg-[color:var(--ink-900)] hover:text-white"
+              className="inline-flex min-h-11 w-full items-center rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-sunken)] px-4 py-2 text-sm font-bold text-[color:var(--ink-800)] transition-all duration-200 hover:bg-[color:var(--ink-900)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ops-indigo)] active:scale-[0.99]"
             >
               {item.label}
             </Link>

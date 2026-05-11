@@ -52,7 +52,7 @@ function AdminStat({
         </span>
         <p className="text-xs font-black text-[color:var(--ink-500)]">{label}</p>
       </div>
-      <p className="mt-4 text-3xl font-black tracking-tight text-[color:var(--ink-900)]">{value}</p>
+      <p className="mt-4 text-3xl font-black tracking-tight tabular-nums text-[color:var(--ink-900)]">{value}</p>
       <p className="mt-1 text-xs font-semibold leading-5 text-[color:var(--ink-500)]">{hint}</p>
     </article>
   );
@@ -74,7 +74,7 @@ function AdminAction({
   return (
     <Link
       href={href}
-      className={`group flex items-start gap-3 rounded-2xl border p-4 transition hover:-translate-y-0.5 ${
+      className={`group flex items-start gap-3 rounded-2xl border p-4 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--dash-purple)] focus-visible:ring-offset-2 active:scale-[0.99] ${
         strong
           ? "border-[color:var(--ink-900)] bg-[color:var(--ink-900)] text-white shadow-[0_20px_46px_-30px_rgba(15,23,42,0.8)]"
           : "border-[color:var(--line)] bg-[color:var(--canvas-raised)] text-[color:var(--ink-900)] hover:border-[color:var(--line-strong)]"
