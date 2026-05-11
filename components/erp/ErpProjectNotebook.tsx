@@ -11,7 +11,6 @@ import {
   HelpCircle,
   Layers3,
   LayoutList,
-  Loader2,
   Map,
   MessageSquareText,
   Mic2,
@@ -24,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type ChatTurn = { role: "user" | "model"; content: string };
 
@@ -424,9 +424,10 @@ export default function ErpProjectNotebook({
               ))
             )}
             {sending ? (
-              <div className="inline-flex items-center gap-2 rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-bold text-[color:var(--ink-500)]">
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                מעבד את המקורות...
+              <div className="inline-flex max-w-md flex-col gap-2 rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-bold text-[color:var(--ink-500)]">
+                <Skeleton className="h-3 w-full" aria-hidden />
+                <Skeleton className="h-3 w-4/5" aria-hidden />
+                <span className="text-xs font-semibold text-[color:var(--ink-500)]">מעבד את המקורות...</span>
               </div>
             ) : null}
             <div ref={bottomRef} />
@@ -452,13 +453,13 @@ export default function ErpProjectNotebook({
                 }}
                 placeholder="שאל שאלה על המקורות, בקש השוואה, חילוץ נתונים, סתירות או החלטות לביצוע..."
                 disabled={sending || !geminiConfigured}
-                className="min-h-[52px] flex-1 resize-none rounded-xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-violet-400 disabled:opacity-50"
+                className="min-h-[52px] flex-1 resize-none rounded-xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm outline-none transition-all duration-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/35 disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => void sendPrompt(input)}
                 disabled={sending || !input.trim() || !geminiConfigured}
-                className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm transition hover:bg-violet-700 disabled:opacity-40"
+                className="inline-flex h-[52px] min-h-[52px] w-[52px] min-w-[52px] shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm transition-all duration-200 hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 disabled:opacity-40 active:scale-[0.97]"
                 aria-label="שלח"
               >
                 <Send className="h-5 w-5" aria-hidden />
@@ -477,18 +478,18 @@ export default function ErpProjectNotebook({
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
               placeholder="כתוב לעצמך הערות, החלטות, משימות או נקודות לבדיקה..."
-              className="h-40 w-full resize-none rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-3 text-xs font-semibold outline-none focus:border-violet-300"
+              className="h-40 w-full resize-none rounded-xl border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] p-3 text-xs font-semibold outline-none transition-all duration-200 focus:border-violet-300 focus:ring-2 focus:ring-violet-300/40"
             />
           </div>
 
           <div className="grid gap-2 rounded-2xl border border-[color:var(--line)] bg-white p-3 text-xs font-semibold text-[color:var(--ink-600)]">
             <div className="flex items-center justify-between">
               <span>מקורות</span>
-              <strong className="text-[color:var(--ink-900)]">{sources.length}/8</strong>
+              <strong className="tabular-nums text-[color:var(--ink-900)]">{sources.length}/8</strong>
             </div>
             <div className="flex items-center justify-between">
               <span>שיחות</span>
-              <strong className="text-[color:var(--ink-900)]">{messages.filter((m) => m.role === "user").length}</strong>
+              <strong className="tabular-nums text-[color:var(--ink-900)]">{messages.filter((m) => m.role === "user").length}</strong>
             </div>
             <div className="flex items-center justify-between">
               <span>Studio</span>

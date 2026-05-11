@@ -129,7 +129,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
               <h3 className="text-lg font-black text-slate-900 truncate">
                 {ai.vendor || "ספק כללי"}
               </h3>
-              <p className="text-2xl font-black text-blue-700 mt-1">₪{ai.total ?? 0}</p>
+              <p className="mt-1 text-2xl font-black tabular-nums text-blue-700">₪{ai.total ?? 0}</p>
               
               <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 mt-3">
                 <p className="truncate text-xs font-bold text-slate-500 mb-1" title={doc.fileName}>
@@ -163,7 +163,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
       </div>
 
       {/* דסקטופ — טבלה */}
-      <div className="hidden w-full min-w-0 overflow-x-auto rounded-2xl border border-slate-200/10 bg-surface-white shadow-xl ring-1 ring-slate-100/80 md:block">
+      <div className="hidden w-full min-w-0 overflow-x-auto rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] shadow-[var(--cd-shadow)] md:block">
         <table className="w-full min-w-[640px] table-fixed border-collapse text-sm">
           <colgroup>
             <col className="workspace-table-col-1" />
@@ -173,7 +173,7 @@ export default function ErpDocumentsManager({ initialDocs }: { initialDocs: Doc[
             <col className="w-[11%]" />
             <col className="w-[10%]" />
           </colgroup>
-          <thead>
+          <thead className="sticky top-0 z-10 shadow-[0_1px_0_rgba(59,130,246,0.15)]">
             <tr className="border-b border-blue-200 bg-blue-50 text-start">
               <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">תאריך סריקה</th>
               <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-blue-900 border-e border-blue-100/50">קובץ</th>
