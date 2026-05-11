@@ -54,7 +54,7 @@ export default function LandingMarketing() {
           id="ai-solutions"
           className="text-center mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center scroll-mt-28"
         >
-          <div className="text-right">
+          <div className="text-end">
             <p className="mb-4 inline-flex items-center gap-2 py-2 px-4 rounded-full bg-gray-50 border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest">
               <Brain size={14} className="text-blue-500" /> AI-Powered Business Intelligence
             </p>

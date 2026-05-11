@@ -201,7 +201,7 @@ function AccessibilityPanel({
                       fontScale: option.id,
                     }))
                   }
-                  className={`tile px-3 py-3 text-right transition ${active ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)]" : ""}`}
+                  className={`tile px-3 py-3 text-end transition ${active ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)]" : ""}`}
                 >
                   <span className="block text-sm font-black text-[color:var(--ink-900)]">
                     {option.label}
@@ -234,7 +234,7 @@ function AccessibilityPanel({
                       [card.id]: !current[card.id],
                     }))
                   }
-                  className={`tile px-3 py-3 text-right transition ${active ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : ""}`}
+                  className={`tile px-3 py-3 text-end transition ${active ? "border-[color:var(--axis-clients)] bg-[color:var(--axis-clients-soft)]" : ""}`}
                 >
                   <div className="flex items-start gap-3">
                     <span
@@ -380,7 +380,7 @@ export default function AccessibilityMenu({
   return (
     <div
       className={`fixed z-[2147483000] ${
-        compactFab ? "bottom-4 left-4 sm:bottom-5 sm:left-5" : "bottom-6 left-6"
+        compactFab ? "bottom-4 start-4 sm:bottom-5 sm:start-5" : "bottom-6 start-6"
       }`}
       dir="rtl"
     >

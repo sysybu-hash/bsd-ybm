@@ -165,7 +165,7 @@ export default function WizardHome() {
           <div className="flex items-center gap-2.5 shrink-0">
             <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 font-black text-sm shadow-lg shadow-teal-500/30">
               <span>B</span>
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#050508]" />
+              <span className="absolute -end-0.5 -top-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#050508]" />
             </div>
             <span className="font-black text-gray-900 text-[15px] tracking-tight">
               BSD<span className="text-teal-500">-YBM</span>
@@ -210,9 +210,9 @@ export default function WizardHome() {
 
         {/* Mesh gradient */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 right-1/4 h-[700px] w-[700px] rounded-full bg-teal-600/[0.18] blur-[140px]" />
-          <div className="absolute top-1/2 left-0 h-[400px] w-[400px] rounded-full bg-teal-700/[0.12] blur-[100px]" />
-          <div className="absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-sky-600/[0.08] blur-[80px]" />
+          <div className="absolute end-1/4 top-0 h-[700px] w-[700px] rounded-full bg-teal-600/[0.18] blur-[140px]" />
+          <div className="absolute start-0 top-1/2 h-[400px] w-[400px] rounded-full bg-teal-700/[0.12] blur-[100px]" />
+          <div className="absolute bottom-0 end-0 h-[300px] w-[300px] rounded-full bg-sky-600/[0.08] blur-[80px]" />
           {/* Grid */}
           <div className="absolute inset-0 opacity-[0.025]"
             style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "56px 56px" }} />
@@ -387,7 +387,7 @@ export default function WizardHome() {
                           {idx + 1}
                         </div>
                         <span className="text-[12px] text-gray-600">{p}</span>
-                        <CheckCircle2 size={13} className="mr-auto text-teal-400 shrink-0" />
+                        <CheckCircle2 size={13} className="ms-auto shrink-0 text-teal-400" />
                       </div>
                     ))}
                   </div>
@@ -403,7 +403,7 @@ export default function WizardHome() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
           <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-teal-500">איך מתחילים</p>
           <h2 className="text-3xl font-black text-gray-900 sm:text-4xl">מ-0 לפעיל תוך 3 דקות</h2>
-          <div className="mt-12 grid gap-4 sm:grid-cols-3 text-right">
+          <div className="mt-12 grid gap-4 sm:grid-cols-3 text-end">
             {[
               { n: "01", title: "הרשמה חינם", desc: "ללא כרטיס אשראי. הגדרת פרטי הארגון וסוג העוסק.", icon: Users },
               { n: "02", title: "חבר ויבא", desc: "ייבא לקוחות, סרוק מסמך ראשון, הנפק חשבונית ראשונה.", icon: FileText },
@@ -411,7 +411,7 @@ export default function WizardHome() {
             ].map(({ n, title, desc, icon: Icon }, idx) => (
               <div key={n} className="relative rounded-2xl border border-gray-200 bg-gray-50 p-7">
                 {idx < 2 && (
-                  <ArrowLeft size={14} className="absolute -left-3 top-1/2 hidden -translate-y-1/2 text-gray-200 sm:block" />
+                  <ArrowLeft size={14} className="absolute -start-3 top-1/2 hidden -translate-y-1/2 text-gray-200 sm:block" />
                 )}
                 <div className="mb-3 flex items-center gap-3">
                   <span className="text-4xl font-black text-gray-100">{n}</span>
@@ -445,10 +445,10 @@ export default function WizardHome() {
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="py-4 px-5 text-right text-[11px] font-bold text-gray-400 uppercase tracking-widest w-1/3">יכולת</th>
+                  <th className="py-4 px-5 text-end text-[11px] font-bold text-gray-400 uppercase tracking-widest w-1/3">יכולת</th>
                   {COMPARE_COLS.map((col) => (
                     <th key={col.name} className={`py-4 px-4 text-center text-[13px] font-black ${col.highlight ? "text-teal-600" : "text-gray-400"}`}>
-                      {col.highlight && <span className="mr-1 text-[9px] text-teal-500">★</span>}
+                      {col.highlight && <span className="me-1 text-[9px] text-teal-500">★</span>}
                       {col.name}
                     </th>
                   ))}

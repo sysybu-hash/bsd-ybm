@@ -48,7 +48,7 @@ export default function ReportingCenter() {
         <div className="bg-teal-500/15 p-5 rounded-2xl text-teal-400 border border-teal-500/20 group-hover:scale-110 transition-transform shrink-0">
           <FileSpreadsheet size={32} />
         </div>
-        <div className="flex-1 text-center md:text-right min-w-0">
+        <div className="flex-1 text-center md:text-end min-w-0">
           <h3 className="text-xl font-black italic tracking-tighter">מרכז דיווחים BSD-YBM</h3>
           <p className="mt-1 text-sm font-bold text-[color:var(--ink-500)]">
             ייצוא נתוני מס לרואה חשבון בפורמט CSV

@@ -57,7 +57,7 @@ export default function PricingSection() {
                 }
               >
                 {popular ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[color:var(--canvas-raised)] px-4 py-1 text-[10px] font-black text-[color:var(--primary-color)] shadow-md ring-1 ring-orange-200">
+                  <span className="absolute -top-3 start-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[color:var(--canvas-raised)] px-4 py-1 text-[10px] font-black text-[color:var(--primary-color)] shadow-md ring-1 ring-orange-200">
                     ⭐ מומלץ
                   </span>
                 ) : null}

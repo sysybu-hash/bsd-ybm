@@ -519,13 +519,13 @@ export default function WorkspaceUtilityDock({
    * כדי שלא יזוזו עם מיכלי תוכן ולא יישארו “באמצע” המסך. אינן גוללות — position: fixed על document.body.
    */
   const workspaceDockFabPosition =
-    "fixed z-[9900] top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))] lg:left-[max(1rem,env(safe-area-inset-left,0px))]";
+    "fixed z-[9900] top-1/2 -translate-y-1/2 left-[max(0.75rem,env(safe-area-inset-left,0px))] lg:left-[max(1rem,env(safe-area-inset-left,0px))]"; // LTR-fixed
 
   /** פאנלים קומפקטיים: ממוקמים משמאל לעמודת הבועות (~3.5rem) */
   const compactPanelClassName =
-    "fixed z-[9800] inset-x-3 bottom-[calc(7.1rem+env(safe-area-inset-bottom,0px))] flex max-h-[min(72dvh,calc(100dvh-8rem))] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/94 shadow-xl backdrop-blur-xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:w-[min(100vw-2rem,26rem)] lg:max-w-[calc(100%-2rem)] lg:-translate-y-1/2 lg:bg-white/88 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]";
+    "fixed z-[9800] inset-x-3 bottom-[calc(7.1rem+env(safe-area-inset-bottom,0px))] flex max-h-[min(72dvh,calc(100dvh-8rem))] flex-col overflow-hidden rounded-2xl border border-slate-200/10 bg-white/94 shadow-xl backdrop-blur-xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:w-[min(100vw-2rem,26rem)] lg:max-w-[calc(100%-2rem)] lg:-translate-y-1/2 lg:bg-white/88 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))]"; // LTR-fixed
   const assistantPanelClassName =
-    "fixed z-[9920] inset-x-3 top-[max(0.75rem,env(safe-area-inset-top,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))] flex flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/96 shadow-[0_28px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))] lg:h-[min(86dvh,46rem)] lg:w-[min(100vw-2rem,31rem)] lg:-translate-y-1/2";
+    "fixed z-[9920] inset-x-3 top-[max(0.75rem,env(safe-area-inset-top,0px))] bottom-[max(0.75rem,env(safe-area-inset-bottom,0px))] flex flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/96 shadow-[0_28px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl backdrop-saturate-150 lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:left-[max(1rem,calc(env(safe-area-inset-left,0px)+1rem+3.5rem))] lg:h-[min(86dvh,46rem)] lg:w-[min(100vw-2rem,31rem)] lg:-translate-y-1/2"; // LTR-fixed
 
   const desktopDock = (
     <div className={`${workspaceDockFabPosition} hidden flex-col gap-2 lg:flex`}>

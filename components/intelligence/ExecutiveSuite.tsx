@@ -53,7 +53,7 @@ export default function ExecutiveSuite() {
             { title: "ציון בריאות אוטומטי", amt: stats?.healthScore || "0/100", up: true, diff: "סנכרון פעיל", icon: <PieChart />, color: "bg-teal-50 text-teal-600" }
           ].map((s, i) => (
             <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
-               <div className="absolute -right-6 -top-6 rounded-full w-24 h-24 bg-slate-50/50 scale-100 group-hover:scale-150 transition-transform duration-700" />
+               <div className="absolute -end-6 -top-6 h-24 w-24 scale-100 rounded-full bg-slate-50/50 transition-transform duration-700 group-hover:scale-150" />
                <div className="relative z-10 flex flex-col h-full justify-between">
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-2xl ${s.color}`}>
@@ -77,8 +77,8 @@ export default function ExecutiveSuite() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
          
          <div className="xl:col-span-2 bg-slate-900 p-8 rounded-3xl shadow-xl relative overflow-hidden">
-            <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/20 blur-3xl rounded-full" />
-            <div className="absolute left-0 bottom-0 w-64 h-64 bg-purple-500/20 blur-3xl rounded-full" />
+            <div className="absolute end-0 top-0 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+            <div className="absolute bottom-0 start-0 h-64 w-64 rounded-full bg-purple-500/20 blur-3xl" />
             
             <div className="relative z-10">
                <h3 className="text-white text-xl font-black tracking-tight mb-6 flex items-center gap-3">
@@ -89,10 +89,10 @@ export default function ExecutiveSuite() {
                <div className="h-64 w-full flex items-end justify-between gap-2 border-b border-slate-700/50 pb-4 mb-6">
                   {[40, 60, 45, 80, 55, 90, 75, 110, 85, 120, 100, 130].map((h, i) => (
                     <div key={i} className="w-full bg-blue-500/20 hover:bg-blue-400/50 transition-colors rounded-t-lg relative group cursor-pointer" style={{ height: `${h}%` }}>
-                       <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-xs font-bold text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                       <div className="absolute -top-10 start-1/2 -translate-x-1/2 rounded bg-slate-800 px-2 py-1 text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
                          ₪{h * 1500}
                        </div>
-                       {i > 8 && <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                       {i > 8 && <div className="absolute -top-3 start-1/2 h-1.5 w-1.5 -translate-x-1/2 animate-pulse rounded-full bg-emerald-400" />}
                     </div>
                   ))}
                </div>

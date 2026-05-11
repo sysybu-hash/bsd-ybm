@@ -343,7 +343,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
             </span>
             <button
               onClick={() => setSuccess(null)}
-              className="mr-auto text-xs font-bold text-emerald-400 hover:underline"
+              className="ms-auto text-xs font-bold text-emerald-400 hover:underline"
             >
               סגור
             </button>
@@ -416,7 +416,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                         key={c.id}
                         type="button"
                         onMouseDown={() => selectCrmContact(c)}
-                        className="flex items-center justify-between w-full px-3 py-2 text-sm text-right hover:bg-teal-500/15 transition"
+                        className="flex items-center justify-between w-full px-3 py-2 text-sm text-end hover:bg-teal-500/15 transition"
                       >
                         <span className="font-bold text-gray-900">{c.name}</span>
                         {c.value != null && <span className="text-xs text-emerald-400 font-black">₪{c.value.toLocaleString()}</span>}
@@ -503,7 +503,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                     />
                     <FieldError message={fieldErrors[`items.${idx}.price`]} />
                   </div>
-                  <div className="w-24 text-left">
+                  <div className="w-24 text-start">
                     <label className="mb-1 block text-xs font-semibold text-gray-400">{t("erp.total")}</label>
                     <span className="block py-2 text-sm font-bold text-gray-600">
                       ₪{(item.qty * item.price).toLocaleString()}
@@ -565,7 +565,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
               <p className="text-gray-500">פריטים: {items.length}</p>
             </div>
 
-            <div className="mt-6 space-y-1 border-t border-gray-100 pt-4 text-left">
+            <div className="mt-6 space-y-1 border-t border-gray-100 pt-4 text-start">
               <div className="flex justify-between text-sm text-gray-400">
                 <span>{t("erp.amount")}</span>
                 <span className="font-semibold text-gray-600">₪{subtotal.toLocaleString()}</span>
@@ -665,7 +665,7 @@ export default function InvoiceIssuance({ orgId, prefillClientName, prefillConta
                         </p>
                         <p className="text-xs text-gray-400">{doc.clientName}</p>
                       </div>
-                      <div className="text-left">
+                      <div className="text-start">
                         <p className="text-sm font-bold text-gray-600">
                           ₪{doc.total.toLocaleString()}
                         </p>

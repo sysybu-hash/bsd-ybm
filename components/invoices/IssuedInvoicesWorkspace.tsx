@@ -80,7 +80,7 @@ export function IssuedInvoicesWorkspace({
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <DashboardCard className="border-l-4 border-l-brand" title="חויב/הופק החודש">
+        <DashboardCard className="border-s-4 border-s-brand" title="חויב/הופק החודש">
           <div className="flex items-center justify-between">
             <div className="text-3xl font-semibold text-text-primary tabular-nums">
               ₪{totalBilledThisMonth.toLocaleString("he-IL", { maximumFractionDigits: 0 })}
@@ -89,7 +89,7 @@ export function IssuedInvoicesWorkspace({
           </div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-blue-500" title="צפי הכנסות (ממתין)">
+        <DashboardCard className="border-s-4 border-s-blue-500" title="צפי הכנסות (ממתין)">
           <div className="flex items-center justify-between">
             <div className="text-3xl font-semibold text-text-primary tabular-nums">
               ₪{pendingAmount.toLocaleString("he-IL", { maximumFractionDigits: 0 })}
@@ -98,7 +98,7 @@ export function IssuedInvoicesWorkspace({
           </div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-red-500 bg-red-50/30" title="חובות בפיגור">
+        <DashboardCard className="border-s-4 border-s-red-500 bg-red-50/30" title="חובות בפיגור">
           <div className="flex items-center justify-between">
             <div className="text-3xl font-semibold text-red-600 tabular-nums">
               ₪{overdueAmount.toLocaleString("he-IL", { maximumFractionDigits: 0 })}

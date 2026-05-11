@@ -24,7 +24,7 @@ export default function WorkspaceLocaleSwitcher({ ariaLabel }: Props) {
         id={id}
         value={locale}
         onChange={(event) => void setLocale(event.target.value as AppLocale)}
-        className="max-w-[11rem] cursor-pointer appearance-none rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] py-2 pe-8 ps-3 text-left text-[12px] font-bold text-[color:var(--ink-900)] shadow-sm outline-none transition hover:border-[color:var(--line-strong)] focus-visible:ring-2 focus-visible:ring-[color:var(--v2-accent)]"
+        className="max-w-[11rem] cursor-pointer appearance-none rounded-xl border border-[color:var(--line-strong)] bg-[color:var(--canvas-sunken)] py-2 pe-8 ps-3 text-start text-[12px] font-bold text-[color:var(--ink-900)] shadow-sm outline-none transition hover:border-[color:var(--line-strong)] focus-visible:ring-2 focus-visible:ring-[color:var(--v2-accent)]"
         aria-label={ariaLabel}
       >
         {SELECTABLE_LOCALES.map((code) => (

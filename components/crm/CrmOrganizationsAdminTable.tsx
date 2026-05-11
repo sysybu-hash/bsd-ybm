@@ -386,7 +386,7 @@ export default function CrmOrganizationsAdminTable({
                       </p>
                     </div>
                     <div className="rounded-xl border border-gray-100 bg-white overflow-hidden overflow-x-auto">
-                      <table className="w-full text-sm text-right min-w-[560px]">
+                      <table className="w-full text-sm text-end min-w-[560px]">
                         <thead>
                           <tr className="bg-teal-500/[0.10] text-[11px] font-black uppercase tracking-wider text-teal-300">
                             <th className="px-4 py-3.5 font-semibold">תאריך</th>

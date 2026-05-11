@@ -130,7 +130,7 @@ export default function LandingPage() {
         }}
       >
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24 lg:py-28">
-          <div className="order-2 text-center md:order-1 md:text-right">
+          <div className="order-2 text-center md:order-1 md:text-end">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--marketing-hero-accent)]/40 bg-[color:var(--marketing-hero-accent)]/10 px-4 py-2 text-xs font-bold text-[color:var(--marketing-accent-soft)]">
               <CheckCircle2 size={14} className="shrink-0" />
               {t("landing.heroKicker")}
@@ -174,7 +174,7 @@ export default function LandingPage() {
               <div className="mt-3 h-24 rounded-xl bg-gradient-to-t from-[#14b8a6]/20 to-transparent p-3">
                 <div className="h-full rounded-lg bg-white/5" />
               </div>
-              <Sparkles className="absolute -left-2 -top-2 h-8 w-8 text-[color:var(--marketing-accent-soft)] opacity-80" aria-hidden />
+              <Sparkles className="absolute -start-2 -top-2 h-8 w-8 text-[color:var(--marketing-accent-soft)] opacity-80" aria-hidden />
             </div>
           </div>
         </div>

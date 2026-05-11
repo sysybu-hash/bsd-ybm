@@ -199,7 +199,7 @@ export default function MissionControl() {
 
           <div className="group relative overflow-hidden rounded-2xl bg-teal-600 p-8 text-white shadow-sm">
             <ShieldCheck
-              className="absolute top-[-10px] left-[-10px] text-white/10 pointer-events-none"
+              className="absolute start-[-10px] top-[-10px] text-white/10 pointer-events-none"
               size={150}
               aria-hidden
             />

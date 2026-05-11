@@ -23,8 +23,8 @@ export default function DesignPreviewPage() {
             A — Aurora Dark
           </div>
           <div className="flex h-[400px]">
-            <div className="w-[155px] bg-[#0d0d1a] border-l border-white/5 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-600/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-[155px] bg-[#0d0d1a] border-s border-white/5 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
+              <div className="absolute end-0 top-0 w-24 h-24 bg-teal-600/20 rounded-full blur-2xl pointer-events-none" />
               <div className="flex items-center gap-2 mb-7 px-1 relative">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-sky-500 flex items-center justify-center text-white text-xs font-black shadow-lg shadow-teal-500/40">B</div>
                 <span className="text-xs font-black text-white tracking-wider">BSD-YBM</span>
@@ -39,7 +39,7 @@ export default function DesignPreviewPage() {
               ))}
             </div>
             <div className="flex-1 bg-[#10101f] p-4 overflow-hidden relative">
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 start-0 w-40 h-40 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
               <div className="text-[10px] text-gray-400 mb-1">בוקר טוב ✦</div>
               <h2 className="text-sm font-black text-white mb-4">לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">
@@ -71,8 +71,8 @@ export default function DesignPreviewPage() {
             B — Neon Glass
           </div>
           <div className="flex h-[400px] bg-[#050d1a]">
-            <div className="w-[155px] bg-black/40 border-l border-cyan-500/10 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
-              <div className="absolute top-10 right-5 w-16 h-16 bg-cyan-400/20 rounded-full blur-xl" />
+            <div className="w-[155px] bg-black/40 border-s border-cyan-500/10 flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
+              <div className="absolute end-5 top-10 w-16 h-16 bg-cyan-400/20 rounded-full blur-xl" />
               <div className="flex items-center gap-2 mb-7 px-1 relative">
                 <div className="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-xs font-black">B</div>
                 <span className="text-xs font-black text-cyan-100">BSD-YBM</span>
@@ -87,7 +87,7 @@ export default function DesignPreviewPage() {
               ))}
             </div>
             <div className="flex-1 p-4 overflow-hidden relative">
-              <div className="absolute top-10 left-10 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl" />
+              <div className="absolute start-10 top-10 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl" />
               <div className="text-[10px] text-cyan-400/40 mb-1 font-mono">/ dashboard</div>
               <h2 className="text-sm font-black text-white mb-4">לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">
@@ -119,7 +119,7 @@ export default function DesignPreviewPage() {
             C — מינימלי לבן (Notion / Linear)
           </div>
           <div className="flex h-[400px]">
-            <div className="w-[155px] bg-white border-l border-gray-100 flex flex-col py-5 px-3 shrink-0">
+            <div className="w-[155px] bg-white border-s border-gray-100 flex flex-col py-5 px-3 shrink-0">
               <div className="flex items-center gap-2 mb-7 px-1">
                 <div className="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center text-white text-xs font-black">B</div>
                 <span className="text-xs font-black text-gray-900">BSD-YBM</span>
@@ -168,7 +168,7 @@ export default function DesignPreviewPage() {
             D — Obsidian Pro (Vercel / Raycast)
           </div>
           <div className="flex h-[400px]">
-            <div className="w-[155px] bg-black border-l border-white/6 flex flex-col py-5 px-3 shrink-0">
+            <div className="w-[155px] bg-black border-s border-white/6 flex flex-col py-5 px-3 shrink-0">
               <div className="flex items-center gap-2 mb-7 px-1">
                 <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-black text-xs font-black">B</div>
                 <span className="text-xs font-black text-white">BSD-YBM</span>
@@ -226,7 +226,7 @@ export default function DesignPreviewPage() {
               <div className="text-[9px] text-teal-400/40 uppercase tracking-widest px-2 mb-2 font-semibold">ניווט</div>
               {NAV.map((item, i) => (
                 <div key={item} className={`flex items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] mb-0.5 font-medium ${
-                  i === 0 ? "bg-teal-500/25 text-teal-100 border-r-2 border-teal-400" : "text-teal-300/40 hover:bg-teal-500/10"
+                  i === 0 ? "bg-teal-500/25 text-teal-100 border-e-2 border-teal-400" : "text-teal-300/40 hover:bg-teal-500/10"
                 }`}>
                   <div className={`w-4 h-4 rounded-md shrink-0 ${i === 0 ? "bg-teal-400/30" : "bg-teal-500/15"}`} />
                   {item}
@@ -271,7 +271,7 @@ export default function DesignPreviewPage() {
           </div>
           <div className="flex h-[400px]">
             <div className="w-[155px] bg-[#120a0e] flex flex-col py-5 px-3 shrink-0 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/15 rounded-full blur-2xl" />
+              <div className="absolute end-0 top-0 w-20 h-20 bg-rose-500/15 rounded-full blur-2xl" />
               <div className="flex items-center gap-2 mb-7 px-1 relative">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black shadow-lg shadow-rose-500/40">B</div>
                 <span className="text-xs font-black text-white">BSD-YBM</span>
@@ -286,7 +286,7 @@ export default function DesignPreviewPage() {
               ))}
             </div>
             <div className="flex-1 bg-[#0e0810] p-4 overflow-hidden relative">
-              <div className="absolute bottom-5 right-5 w-32 h-32 bg-rose-500/8 rounded-full blur-3xl" />
+              <div className="absolute bottom-5 end-5 w-32 h-32 bg-rose-500/8 rounded-full blur-3xl" />
               <div className="text-[10px] text-gray-400 mb-1">ברוך הבא ✦</div>
               <h2 className="text-sm font-black text-white mb-4" style={{background:"linear-gradient(to left, #fb923c, #f43f5e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent"}}>לוח הבקרה</h2>
               <div className="grid grid-cols-2 gap-2 mb-3">

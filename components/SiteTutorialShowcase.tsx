@@ -27,7 +27,7 @@ type Scene = {
 
 function BrowserChrome({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm text-right">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm text-end">
       <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-200">
         <div className="flex gap-1.5">
           <span className="w-3 h-3 rounded-full bg-red-400/90" />
@@ -205,7 +205,7 @@ function SceneAI() {
         <motion.div
           animate={{ y: [0, -4, 0] }}
           transition={{ repeat: Infinity, duration: 2.5 }}
-          className="absolute bottom-0 left-0 w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center shadow-lg"
+          className="absolute bottom-0 start-0 flex h-12 w-12 items-center justify-center rounded-full bg-teal-600 shadow-lg"
         >
           <Bot className="text-white" size={22} />
         </motion.div>

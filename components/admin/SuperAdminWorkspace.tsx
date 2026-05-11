@@ -80,7 +80,7 @@ export function SuperAdminWorkspace({ health, recentLogs }: SuperAdminWorkspaceP
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-        <DashboardCard className="border-l-4 border-l-slate-800" title="מסד נתונים (Prisma)">
+        <DashboardCard className="border-s-4 border-s-slate-800" title="מסד נתונים (Prisma)">
           <div className="flex items-center justify-between">
             <div
               className={`text-2xl font-bold ${
@@ -93,7 +93,7 @@ export function SuperAdminWorkspace({ health, recentLogs }: SuperAdminWorkspaceP
           </div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-brand" title="מנועי AI (Tri-Engine)">
+        <DashboardCard className="border-s-4 border-s-brand" title="מנועי AI (Tri-Engine)">
           <div className="flex items-center justify-between">
             <div
               className={`text-2xl font-bold ${
@@ -106,7 +106,7 @@ export function SuperAdminWorkspace({ health, recentLogs }: SuperAdminWorkspaceP
           </div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-blue-500" title="סשנים פעילים">
+        <DashboardCard className="border-s-4 border-s-blue-500" title="סשנים פעילים">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-slate-900">
               {health.activeSessions} <span className="text-sm font-normal text-slate-500">סשנים</span>

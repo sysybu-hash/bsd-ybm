@@ -50,7 +50,7 @@ function AnimErpCrm({ step }: { step: number }) {
   );
 
   return (
-    <div className="h-full flex flex-col gap-2.5 text-right" dir="rtl">
+    <div className="h-full flex flex-col gap-2.5 text-end" dir="rtl">
       {/* Step 0 / Step 1: Contact list */}
       {(step === 0 || step === 1) && (
         <div className="flex-1 space-y-2">
@@ -152,7 +152,7 @@ function AnimErpCrm({ step }: { step: number }) {
 /* ══════ ANIMATION 2: Subscription Registration ══════ */
 function AnimRegistration({ step }: { step: number }) {
   return (
-    <div className="h-full flex flex-col gap-2.5 text-right" dir="rtl">
+    <div className="h-full flex flex-col gap-2.5 text-end" dir="rtl">
 
       {/* Step 0: Register form */}
       {step === 0 && (
@@ -270,7 +270,7 @@ function AnimRegistration({ step }: { step: number }) {
 /* ══════ ANIMATION 3: Scanner + AI Decoder ══════ */
 function AnimScanner({ step }: { step: number }) {
   return (
-    <div className="h-full flex flex-col gap-2.5 text-right" dir="rtl">
+    <div className="h-full flex flex-col gap-2.5 text-end" dir="rtl">
 
       {/* Step 0: Upload document */}
       {step === 0 && (

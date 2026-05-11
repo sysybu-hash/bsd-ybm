@@ -56,18 +56,18 @@ export function DocumentsWorkspace({
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <DashboardCard className="border-l-4 border-l-brand" title="סך מסמכים החודש">
+        <DashboardCard className="border-s-4 border-s-brand" title="סך מסמכים החודש">
           <div className="text-3xl font-semibold text-text-primary">{documentsThisMonth}</div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-amber-500" title="חריגות מחיר (לטיפול)">
+        <DashboardCard className="border-s-4 border-s-amber-500" title="חריגות מחיר (לטיפול)">
           <div className="flex items-center gap-3">
             <div className="text-3xl font-semibold text-text-primary">{anomaliesCount}</div>
             {anomaliesCount > 0 && <AlertTriangle className="text-amber-500" size={24} aria-hidden />}
           </div>
         </DashboardCard>
 
-        <DashboardCard className="border-l-4 border-l-emerald-500" title="אמינות חילוץ AI (הערכה)">
+        <DashboardCard className="border-s-4 border-s-emerald-500" title="אמינות חילוץ AI (הערכה)">
           <div className="flex items-center gap-3">
             <div className="text-3xl font-semibold text-text-primary">{aiPctLabel}%</div>
             <CheckCircle className="text-emerald-500" size={24} aria-hidden />

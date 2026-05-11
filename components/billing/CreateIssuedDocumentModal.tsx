@@ -220,7 +220,7 @@ export default function CreateIssuedDocumentModal({
                     placeholder="מחיר יח׳"
                     value={item.price}
                     onChange={(e) => updateItem(index, "price", Number(e.target.value))}
-                    className="w-full bg-gray-50 p-3 rounded-xl border border-gray-200 text-left font-black"
+                    className="w-full bg-gray-50 p-3 rounded-xl border border-gray-200 text-start font-black"
                   />
                 </div>
                 <div className="md:col-span-1 flex justify-center">

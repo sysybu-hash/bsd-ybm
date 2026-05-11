@@ -289,7 +289,7 @@ function ToggleCard({
     <button
       type="button"
       onClick={onToggle}
-      className="flex w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-right hover:bg-gray-50 transition-colors"
+      className="flex w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-end hover:bg-gray-50 transition-colors"
     >
       <div>
         <p className="text-sm font-bold text-gray-900">{label}</p>

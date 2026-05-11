@@ -98,7 +98,7 @@ export default function SupplierPriceBoard() {
 
       {!loading && rows.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-gray-100">
-          <table className="min-w-full text-sm text-right">
+          <table className="min-w-full text-sm text-end">
             <thead className="bg-gray-50 text-gray-500 font-bold">
               <tr>
                 <th className="px-4 py-3">תיאור</th>

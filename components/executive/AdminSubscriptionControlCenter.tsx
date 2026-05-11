@@ -745,7 +745,7 @@ export default function AdminSubscriptionControlCenter({
             </div>
 
             <div className="overflow-x-auto rounded-xl ring-1 ring-gray-200">
-              <table className="w-full min-w-[920px] border-collapse text-right text-sm">
+              <table className="w-full min-w-[920px] border-collapse text-end text-sm">
                 <thead>
                   <tr className="bg-teal-500/[0.10] text-white">
                     <th className="border-b border-gray-100 px-4 py-4 text-xs font-black uppercase tracking-wider text-gray-500">

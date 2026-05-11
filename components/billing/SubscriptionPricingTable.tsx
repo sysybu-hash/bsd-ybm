@@ -84,7 +84,7 @@ export default function SubscriptionPricingTable({ tierPricesIls }: Props) {
                 {price != null ? (
                   <div className="flex items-end">
                     <span className="text-3xl font-black tabular-nums text-slate-900 tracking-tight">₪{price.toFixed(0)}</span>
-                    <span className="text-xs font-bold text-slate-400 mb-1 ml-1 leading-none ms-1"> / ללא מע״מ</span>
+                    <span className="mb-1 text-xs font-bold leading-none text-slate-400 ms-1"> / ללא מע״מ</span>
                   </div>
                 ) : (
                   <p className="text-2xl font-black text-slate-900">Custom</p>

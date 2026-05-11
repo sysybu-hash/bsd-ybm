@@ -139,7 +139,7 @@ function VideoFrame({ item, index }: { item: VideoTutorialItem; index: number })
         ) : (
           <div className="absolute inset-0">
             <AnimatedClip id={item.id} />
-            <div className="absolute bottom-2 left-2 rounded-full border border-gray-200/90 bg-white/95 text-[10px] px-2 py-1 text-gray-500 shadow-sm">
+            <div className="absolute bottom-2 start-2 rounded-full border border-gray-200/90 bg-white/95 px-2 py-1 text-[10px] text-gray-500 shadow-sm">
               אנימציה מובנית
             </div>
           </div>

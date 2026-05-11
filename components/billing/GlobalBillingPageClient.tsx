@@ -429,7 +429,7 @@ export default function GlobalBillingPageClient({
                             </a>
                           ) : null}
                           {row.inv.status !== "PAID" && paypalMerchantEmail?.trim() && !paypalMeSlug?.trim() ? (
-                            <span className="max-w-[140px] text-right text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded" dir="ltr">{paypalMerchantEmail.trim()}</span>
+                            <span className="max-w-[140px] text-end text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded" dir="ltr">{paypalMerchantEmail.trim()}</span>
                           ) : null}
                           {!paypalMeSlug?.trim() && !paypalMerchantEmail?.trim() ? (
                             <Link href="/app/settings/billing" className="text-[10px] font-bold text-teal-500 underline underline-offset-2">קנפג קבלת תשלומים (PayPal)</Link>

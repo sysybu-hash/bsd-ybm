@@ -384,7 +384,7 @@ function ContactModal({
                       <p className="text-base font-black text-rose-600 mt-1">{fmtMoney(invoices.filter(i => i.status === "PENDING").reduce((s, i) => s + i.total, 0))}</p>
                     </div>
                   </div>
-                  <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                  <div className="max-h-[160px] space-y-2 overflow-y-auto pe-1">
                     {invoices.map(inv => {
                       const stMeta = DOC_STATUS_LABEL[inv.status] ?? DOC_STATUS_LABEL.PENDING;
                       return (
