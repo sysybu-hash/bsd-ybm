@@ -54,7 +54,7 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
+    <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-5 shadow-[var(--cd-shadow)] sm:p-6">
       <div className="mb-4 flex items-start gap-3 border-b border-[color:var(--line-subtle)] pb-4">
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"

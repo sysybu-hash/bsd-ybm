@@ -117,7 +117,7 @@ export default function UnifiedSettingsWorkspace({
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:w-[28rem]">
             <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
               <p className="text-[11px] font-black text-white/60">מוכנות</p>
-              <p className="mt-1 text-xl font-black">{completion}%</p>
+              <p className="mt-1 text-xl font-black tabular-nums">{completion}%</p>
             </div>
             <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
               <p className="text-[11px] font-black text-white/60">מנוי</p>
@@ -125,7 +125,7 @@ export default function UnifiedSettingsWorkspace({
             </div>
             <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
               <p className="text-[11px] font-black text-white/60">צוות</p>
-              <p className="mt-1 text-xl font-black">{activeUsers}/{usersTotal}</p>
+              <p className="mt-1 text-xl font-black tabular-nums">{activeUsers}/{usersTotal}</p>
             </div>
             <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
               <p className="text-[11px] font-black text-white/60">הרשאה</p>
@@ -141,7 +141,7 @@ export default function UnifiedSettingsWorkspace({
             <a
               key={id}
               href={`#${id}`}
-              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-transparent px-3 text-sm font-black text-[color:var(--ink-700)] transition hover:border-[color:var(--cd-line)] hover:bg-[color:var(--cd-bg-sunken)]"
+              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-transparent px-3 text-sm font-black text-[color:var(--ink-700)] transition-all duration-200 hover:border-[color:var(--cd-line)] hover:bg-[color:var(--cd-bg-sunken)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ops-indigo)] active:scale-[0.99]"
             >
               <Icon className="h-4 w-4" aria-hidden />
               {label}
@@ -152,7 +152,7 @@ export default function UnifiedSettingsWorkspace({
             <Link
               key={href}
               href={href}
-              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl bg-[color:var(--cd-bg-sunken)] px-3 text-sm font-black text-[color:var(--ink-700)] transition hover:bg-[color:var(--ink-900)] hover:text-white"
+              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl bg-[color:var(--cd-bg-sunken)] px-3 text-sm font-black text-[color:var(--ink-700)] transition-all duration-200 hover:bg-[color:var(--ink-900)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ops-indigo)] active:scale-[0.99]"
             >
               <Icon className="h-4 w-4" aria-hidden />
               {label}
