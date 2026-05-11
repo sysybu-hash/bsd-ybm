@@ -61,12 +61,15 @@ export default async function AppTrialExpiredPage() {
         <Tile tone="neutral" span={4}>
           <TileHeader eyebrow="Next Step" />
           <div className="mt-3 flex flex-col gap-3">
-          <Link href="/app/settings/billing" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white">
+          <Link
+            href="/app/settings/billing"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[color:var(--ink-900)] px-4 py-2 text-sm font-black text-white transition-all duration-200 hover:bg-[color:var(--ink-800)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.98]"
+          >
               <Rocket size={18} /> שדרגו מנוי או רכשו בנדל סריקות
             </Link>
             <Link
               href="/api/auth/signout"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-bold text-[color:var(--ink-700)] hover:bg-[color:var(--ink-900)] hover:text-white"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[color:var(--line-strong)] bg-[color:var(--canvas-raised)] px-4 py-2 text-sm font-bold text-[color:var(--ink-700)] transition-all duration-200 hover:bg-[color:var(--ink-900)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ink-900)] active:scale-[0.98]"
             >
               <LogOut size={18} /> התנתקות מהמערכת
             </Link>
