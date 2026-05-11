@@ -118,14 +118,14 @@ export default function LoginPortal() {
               <button
                 type="button"
                 onClick={() => navigateHard(callbackUrl)}
-                className="flex-1 rounded-xl bg-[#f9134d] px-3 py-2.5 text-xs font-black text-white transition hover:bg-[#d90d3f]"
+                className="flex-1 rounded-xl bg-[#f9134d] px-3 py-2.5 text-xs font-black text-white transition-all duration-200 hover:bg-[#d90d3f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f9134d]/50 active:scale-[0.98]"
               >
                 {t("auth.login.continueToDashboard")}
               </button>
               <button
                 type="button"
                 onClick={() => handleSwitchAccount()}
-                className="flex items-center justify-center gap-1.5 rounded-xl border border-[#d8c9b4] bg-white px-3 py-2.5 text-xs font-black text-[#334155] transition hover:bg-[#fbf6ee]"
+                className="flex items-center justify-center gap-1.5 rounded-xl border border-[#d8c9b4] bg-white px-3 py-2.5 text-xs font-black text-[#334155] transition-all duration-200 hover:bg-[#fbf6ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d8c9b4] active:scale-[0.98]"
               >
                 <LogOut className="h-3.5 w-3.5" aria-hidden />
                 {t("auth.login.switchAccount")}
@@ -145,7 +145,7 @@ export default function LoginPortal() {
         <a
           href={googleStartUrl}
           onClick={() => setLoadingGoogle(true)}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-[#d8c9b4] bg-white py-3.5 text-sm font-black text-[#111827] shadow-[0_14px_36px_-32px_rgba(17,24,39,0.6)] transition hover:bg-[#fbf6ee] disabled:opacity-60"
+          className="mt-6 flex w-full min-h-11 items-center justify-center gap-3 rounded-2xl border border-[#d8c9b4] bg-white py-3.5 text-sm font-black text-[#111827] shadow-[0_14px_36px_-32px_rgba(17,24,39,0.6)] transition-all duration-200 hover:bg-[#fbf6ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f9134d]/35 disabled:opacity-60 active:scale-[0.99]"
         >
           {loadingGoogle ? (
             <Loader2 className="h-5 w-5 animate-spin text-[color:var(--ink-500)]" />
@@ -216,7 +216,7 @@ export default function LoginPortal() {
             required
             autoComplete="email"
             placeholder={t("auth.login.emailPlaceholder")}
-            className="w-full rounded-2xl border border-[#d8c9b4] bg-white px-4 py-3.5 text-start text-sm font-semibold text-[#111827] outline-none transition placeholder:text-[#8a98ad] focus:border-[#f9134d] focus:ring-2 focus:ring-[#ffd7e1]"
+            className="w-full rounded-2xl border border-[#d8c9b4] bg-white px-4 py-3.5 text-start text-sm font-semibold text-[#111827] outline-none transition-all duration-200 placeholder:text-[#8a98ad] focus:border-[#f9134d] focus:ring-2 focus:ring-[#ffd7e1]"
           />
           <input
             name="password"
@@ -224,13 +224,13 @@ export default function LoginPortal() {
             required
             autoComplete="current-password"
             placeholder={t("auth.login.passwordPlaceholder")}
-            className="w-full rounded-2xl border border-[#d8c9b4] bg-white px-4 py-3.5 text-start text-sm font-semibold text-[#111827] outline-none transition placeholder:text-[#8a98ad] focus:border-[#f9134d] focus:ring-2 focus:ring-[#ffd7e1]"
+            className="w-full rounded-2xl border border-[#d8c9b4] bg-white px-4 py-3.5 text-start text-sm font-semibold text-[#111827] outline-none transition-all duration-200 placeholder:text-[#8a98ad] focus:border-[#f9134d] focus:ring-2 focus:ring-[#ffd7e1]"
           />
           {credError ? <p className="text-center text-sm text-rose-600">{credError}</p> : null}
           <button
             type="submit"
             disabled={loadingCreds}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#f9134d] py-3.5 text-sm font-black text-white shadow-[0_18px_44px_-28px_rgba(249,19,77,0.9)] transition hover:bg-[#d90d3f] disabled:opacity-60"
+            className="flex w-full min-h-11 items-center justify-center gap-2 rounded-2xl bg-[#f9134d] py-3.5 text-sm font-black text-white shadow-[0_18px_44px_-28px_rgba(249,19,77,0.9)] transition-all duration-200 hover:bg-[#d90d3f] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:opacity-60 active:scale-[0.99]"
           >
             {loadingCreds ? <Loader2 className="animate-spin" size={17} /> : null}
             {t("auth.login.submit")}
@@ -241,13 +241,13 @@ export default function LoginPortal() {
         <div className="mt-5 flex flex-col items-center gap-3">
           <p className="text-xs font-semibold text-[#607089]">
             {t("auth.login.noAccount")}{" "}
-            <Link href="/register" className="font-black text-[#f9134d] hover:underline">
+            <Link href="/register" className="rounded font-black text-[#f9134d] transition-colors duration-200 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f9134d]/40">
               {t("auth.login.registerLink")}
             </Link>
           </p>
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-xs font-black text-[#8a98ad] transition hover:text-[#111827]"
+            className="flex items-center gap-1.5 rounded-md text-xs font-black text-[#8a98ad] transition-all duration-200 hover:text-[#111827] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8a98ad]/40"
           >
             <ArrowRight size={13} aria-hidden />
             {t("auth.login.backToSite")}
