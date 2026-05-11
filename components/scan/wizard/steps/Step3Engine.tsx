@@ -32,7 +32,7 @@ export default function Step3Engine({ profile, selectedEngineRunMode, onSelect }
               type="button"
               onClick={() => onSelect(card.engineRunMode, card.id)}
               className={[
-                "group flex flex-col items-start gap-3 rounded-3xl border p-5 text-start transition-all",
+                "group flex flex-col items-start gap-3 rounded-3xl border p-5 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.99]",
                 active
                   ? "border-[color:var(--scanw-accent)] bg-[color:var(--scanw-accent-soft)] shadow-[0_12px_32px_-20px_var(--scanw-accent)]"
                   : "border-[color:var(--scanw-line)] bg-white/70 hover:border-[color:var(--scanw-accent-muted)] hover:bg-white",

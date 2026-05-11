@@ -218,7 +218,7 @@ export default function ScanWizardShell({
             type="button"
             onClick={() => setTab("scan")}
             className={[
-              "inline-flex h-9 items-center gap-2 rounded-xl px-3 text-xs font-black transition",
+              "inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-xs font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]",
               tab === "scan"
                 ? "bg-[color:var(--scanw-accent)] text-white shadow-sm"
                 : "text-[color:var(--scanw-muted)] hover:text-[color:var(--scanw-ink)]",
@@ -231,7 +231,7 @@ export default function ScanWizardShell({
             type="button"
             onClick={() => setTab("notebook")}
             className={[
-              "inline-flex h-9 items-center gap-2 rounded-xl px-3 text-xs font-black transition",
+              "inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-xs font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]",
               tab === "notebook"
                 ? "bg-[color:var(--scanw-accent)] text-white shadow-sm"
                 : "text-[color:var(--scanw-muted)] hover:text-[color:var(--scanw-ink)]",
@@ -247,7 +247,7 @@ export default function ScanWizardShell({
             <Link
               href="/app"
               aria-label="חזרה לסביבת העבודה"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
+              className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
             >
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -269,7 +269,10 @@ export default function ScanWizardShell({
 
           <div className="relative min-h-0 flex-1 overflow-y-auto rounded-3xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-card-bg)] p-4 sm:p-6">
             {state.errorMessage ? (
-              <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-black text-rose-800">
+              <div
+                role="alert"
+                className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-black text-rose-800"
+              >
                 {state.errorMessage}
               </div>
             ) : null}
@@ -280,7 +283,7 @@ export default function ScanWizardShell({
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -24 }}
-                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
               >
                 {stepIndex === 0 ? (
                   <Step1ModeUpload
@@ -355,7 +358,7 @@ export default function ScanWizardShell({
                 type="button"
                 onClick={goBack}
                 disabled={stepIndex === 0}
-                className="inline-flex h-11 items-center gap-1.5 rounded-2xl border border-[color:var(--scanw-line)] bg-white/70 px-4 text-sm font-black text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl border border-[color:var(--scanw-line)] bg-white/70 px-4 text-sm font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
               >
                 <ChevronRight className="h-4 w-4" aria-hidden />
                 חזור
@@ -364,7 +367,7 @@ export default function ScanWizardShell({
                 type="button"
                 onClick={() => void goNext()}
                 disabled={!canAdvance() || state.phase === "extracting" || state.phase === "uploading"}
-                className="inline-flex h-11 items-center gap-1.5 rounded-2xl bg-[color:var(--scanw-accent)] px-5 text-sm font-black text-white shadow-[0_8px_24px_-12px_var(--scanw-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[color:var(--scanw-accent)] px-5 text-sm font-black text-white shadow-[0_8px_24px_-12px_var(--scanw-accent)] transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]"
               >
                 {state.phase === "extracting" || state.phase === "uploading" ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

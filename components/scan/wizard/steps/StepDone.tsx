@@ -51,7 +51,7 @@ export default function StepDone({ profile, saveTarget, savedDocumentId, onAnoth
       <div className="grid gap-2 sm:grid-cols-3">
         <a
           href={targetHref}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition hover:border-[color:var(--scanw-accent-muted)]"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
         >
           <FileText className="h-4 w-4 text-[color:var(--scanw-accent)]" aria-hidden />
           פתח את הרשומה
@@ -60,7 +60,7 @@ export default function StepDone({ profile, saveTarget, savedDocumentId, onAnoth
           <button
             type="button"
             onClick={onOpenNotebook}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition hover:border-[color:var(--scanw-accent-muted)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
           >
             <FileText className="h-4 w-4 text-[color:var(--scanw-accent)]" aria-hidden />
             המשך ב-NotebookLM
@@ -69,7 +69,7 @@ export default function StepDone({ profile, saveTarget, savedDocumentId, onAnoth
         <button
           type="button"
           onClick={onAnother}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[color:var(--scanw-accent)] px-4 py-3 text-sm font-black text-white transition hover:brightness-110"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[color:var(--scanw-accent)] px-4 py-3 text-sm font-black text-white transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 active:scale-[0.98]"
         >
           <RotateCcw className="h-4 w-4" aria-hidden />
           סרוק מסמך נוסף

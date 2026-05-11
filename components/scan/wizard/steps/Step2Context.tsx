@@ -77,7 +77,7 @@ export default function Step2Context({
                 value={projectLabel}
                 onChange={(e) => onProject(e.target.value)}
                 placeholder={projectField.placeholder}
-                className="rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition focus:border-[color:var(--scanw-accent)] focus:bg-white"
+                className="rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition-all duration-200 focus:border-[color:var(--scanw-accent)] focus:bg-white focus:ring-2 focus:ring-[color:var(--scanw-accent-muted)]"
               />
             </label>
           ) : null}
@@ -89,7 +89,7 @@ export default function Step2Context({
                 value={clientLabel}
                 onChange={(e) => onClient(e.target.value)}
                 placeholder={clientField.placeholder}
-                className="rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition focus:border-[color:var(--scanw-accent)] focus:bg-white"
+                className="rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition-all duration-200 focus:border-[color:var(--scanw-accent)] focus:bg-white focus:ring-2 focus:ring-[color:var(--scanw-accent-muted)]"
               />
             </label>
           ) : null}
@@ -108,7 +108,7 @@ export default function Step2Context({
                 onClick={startVoice}
                 disabled={voiceState === "listening"}
                 className={[
-                  "inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-black transition",
+                  "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-[11px] font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]",
                   voiceState === "listening"
                     ? "bg-rose-500 text-white"
                     : "bg-[color:var(--scanw-accent)] text-white hover:brightness-110",
@@ -125,7 +125,7 @@ export default function Step2Context({
             onChange={(e) => onInstruction(e.target.value)}
             placeholder={instructionField.placeholder}
             rows={3}
-            className="w-full resize-none rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition focus:border-[color:var(--scanw-accent)] focus:bg-white"
+            className="w-full resize-none rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-3 py-2.5 text-sm font-semibold text-[color:var(--scanw-ink)] outline-none transition-all duration-200 focus:border-[color:var(--scanw-accent)] focus:bg-white focus:ring-2 focus:ring-[color:var(--scanw-accent-muted)]"
           />
           {profile.instructionExamples.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -136,7 +136,7 @@ export default function Step2Context({
                   onClick={() =>
                     onInstruction(userInstruction ? `${userInstruction} ${example.text}`.trim() : example.text)
                   }
-                  className="rounded-full border border-[color:var(--scanw-line)] bg-white/80 px-3 py-1 text-[11px] font-black text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
+                  className="rounded-full border border-[color:var(--scanw-line)] bg-white/80 px-3 py-1 text-[11px] font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
                 >
                   + {example.text}
                 </button>

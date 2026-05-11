@@ -61,7 +61,7 @@ export default function Step1ModeUpload({
                 type="button"
                 onClick={() => onMode(mode.id)}
                 className={[
-                  "group flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all",
+                  "group flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.99]",
                   active
                     ? "border-[color:var(--scanw-accent)] bg-[color:var(--scanw-accent-soft)] text-[color:var(--scanw-ink)] shadow-[0_8px_24px_-16px_var(--scanw-accent)]"
                     : "border-[color:var(--scanw-line)] bg-white/60 text-[color:var(--scanw-ink)] hover:border-[color:var(--scanw-accent-muted)] hover:bg-white",

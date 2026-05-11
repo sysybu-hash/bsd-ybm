@@ -1,6 +1,7 @@
 "use client";
 
 import { Database, Loader2, RotateCcw, Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { ScanExtractionV5 } from "@/lib/scan-schema-v5";
 import type { SaveTarget } from "@/components/scan/state/scan-machine";
 import type { ResultColumnConfig, ScanWizardProfile } from "@/lib/professions/scan-wizard";
@@ -72,6 +73,11 @@ export default function Step4Review({
           <p className="mt-1 text-xs font-semibold text-[color:var(--scanw-muted)] tabular-nums">
             {elapsedSeconds} שנ׳ · {partialVendor ? `${profile.vendorLabel}: ${partialVendor}` : "ממתין לתוצאה ראשונה"} · {partialItems} {profile.lineItemsLabel}
           </p>
+          <div className="mx-auto mt-5 grid max-w-md gap-2" aria-hidden>
+            <Skeleton className="h-3 w-full max-w-[280px]" />
+            <Skeleton className="mx-auto h-3 w-full max-w-[220px]" />
+            <Skeleton className="mx-auto h-3 w-full max-w-[180px]" />
+          </div>
         </div>
       </div>
     );
@@ -110,7 +116,7 @@ export default function Step4Review({
         <button
           type="button"
           onClick={onRescan}
-          className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 text-xs font-black text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 text-xs font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden />
           סרוק שוב
