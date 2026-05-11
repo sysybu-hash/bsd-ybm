@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { CheckCircle2, FileText, RotateCcw } from "lucide-react";
 import type { SaveTarget } from "@/components/scan/state/scan-machine";
 import type { ScanWizardProfile } from "@/lib/professions/scan-wizard";
@@ -10,11 +11,17 @@ type Props = {
   saveTarget: SaveTarget | null;
   savedDocumentId: string | null;
   onAnother: () => void;
-  onOpenNotebook?: () => void;
+  /** קישור למסך מסמכים/מחברת מחוץ לאשף הסריקה (ברירת מחדל: ERP) */
+  notebookHref?: string;
 };
 
-export default function StepDone({ profile, saveTarget, savedDocumentId, onAnother, onOpenNotebook }: Props) {
-  // אנימציית קונפטי קטנה בעת כניסה לשלב done.
+export default function StepDone({
+  profile,
+  saveTarget,
+  savedDocumentId,
+  onAnother,
+  notebookHref = "/app/erp",
+}: Props) {
   useEffect(() => {
     let cancelled = false;
     void import("canvas-confetti").then((mod) => {
@@ -56,16 +63,13 @@ export default function StepDone({ profile, saveTarget, savedDocumentId, onAnoth
           <FileText className="h-4 w-4 text-[color:var(--scanw-accent)]" aria-hidden />
           פתח את הרשומה
         </a>
-        {onOpenNotebook ? (
-          <button
-            type="button"
-            onClick={onOpenNotebook}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
-          >
-            <FileText className="h-4 w-4 text-[color:var(--scanw-accent)]" aria-hidden />
-            המשך ב-NotebookLM
-          </button>
-        ) : null}
+        <Link
+          href={notebookHref}
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-[color:var(--scanw-line)] bg-white/80 px-4 py-3 text-sm font-black text-[color:var(--scanw-ink)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
+        >
+          <FileText className="h-4 w-4 text-[color:var(--scanw-accent)]" aria-hidden />
+          המשך ב-NotebookLM
+        </Link>
         <button
           type="button"
           onClick={onAnother}
