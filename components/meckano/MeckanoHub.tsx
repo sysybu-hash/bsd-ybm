@@ -4,26 +4,18 @@ import { useState, useEffect, useCallback, useTransition } from "react";
 import dynamic from "next/dynamic";
 import {
   Users,
-  Building2,
   Clock,
-  CheckSquare,
   BarChart2,
   Settings,
   RefreshCw,
   Download,
-  Search,
   ChevronDown,
   ChevronUp,
   Loader2,
   CheckCircle2,
   UserPlus,
-  ArrowRight,
   Key,
-  CalendarDays,
-  Phone,
-  Mail,
   Hash,
-  Car,
   Globe,
   Briefcase,
   Activity,
@@ -37,6 +29,9 @@ import { updateMeckanoApiKeyAction } from "@/app/actions/org-settings";
 import { meckanoFetch, tsToDate, tsToTime } from "./api";
 import { CheckStateBadge, LoadingSpinner, MeckanoEmptyHint, StatusBadge } from "./ui";
 import MeckanoHubDisconnectedCard from "./MeckanoHubDisconnectedCard";
+import MeckanoHubTabNav from "./MeckanoHubTabNav";
+import MeckanoEmployeesPanel from "./MeckanoEmployeesPanel";
+import type { MeckanoReportType, MeckanoHubTabId } from "./meckano-hub-constants";
 import type {
   MeckanoAttendance,
   MeckanoDepartment,
@@ -51,22 +46,8 @@ const MeckanoMap = dynamic(() => import("./MeckanoMap"), { ssr: false, loading: 
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-const TABS = [
-  { id: "employees", label: "עובדים", Icon: Users },
-  { id: "departments", label: "מחלקות", Icon: Building2 },
-  { id: "attendance", label: "נוכחות", Icon: Clock },
-  { id: "locations", label: "אזורי דיווח", Icon: Globe },
-  { id: "live-map", label: "מפה חיה", Icon: Activity },
-  { id: "tasks", label: "משימות", Icon: CheckSquare },
-  { id: "task-entries", label: "דיווח משימות", Icon: BarChart2 },
-  { id: "reports", label: "דוחות", Icon: FileText },
-  { id: "settings", label: "הגדרות", Icon: Settings },
-] as const;
-type TabId = (typeof TABS)[number]["id"];
-type ReportType = "attendance" | "task-entries" | "summary" | "project-cost" | "locations";
-
 export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }) {
-  const [activeTab, setActiveTab] = useState<TabId>("employees");
+  const [activeTab, setActiveTab] = useState<MeckanoHubTabId>("employees");
   const [connected, setConnected] = useState(hasMeckanoKey);
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [keyMsg, setKeyMsg] = useState<{ ok: boolean; msg: string } | null>(null);
@@ -131,7 +112,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
   const [savingZoneId, setSavingZoneId] = useState<string | null>(null);
 
   // ── Reports ──
-  const [reportType, setReportType] = useState<ReportType>("attendance");
+  const [reportType, setReportType] = useState<MeckanoReportType>("attendance");
   const [reportFrom, setReportFrom] = useState<string>(() => {
     const d = new Date(); d.setDate(d.getDate() - 30); return d.toISOString().slice(0, 10);
   });
@@ -457,12 +438,7 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
   const inputCls = "rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-teal-500/50 focus:ring-2 focus:ring-teal-500/20";
   // Only show active employees (activeState === 1)
-  const activeEmployees = employees.filter(e => e.activeState === 1);
-  const filtered = activeEmployees.filter(e => {
-    const q = empSearch.toLowerCase();
-    const name = `${e.firstName ?? ""} ${e.lastName ?? ""} ${e.email ?? ""} ${e.workerTag ?? ""}`.toLowerCase();
-    return name.includes(q);
-  });
+  const activeEmployees = employees.filter((e) => e.activeState === 1);
 
   if (!connected) {
     return (
@@ -501,163 +477,25 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
 
       {/* Tabs panel */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <nav className="flex gap-0 overflow-x-auto border-b border-gray-200 px-2">
-          {TABS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-2 whitespace-nowrap px-4 py-3.5 text-sm font-bold border-b-2 transition-colors ${
-                activeTab === id
-                  ? "border-teal-600 text-teal-400"
-                  : "border-transparent text-gray-400 hover:border-white/35 hover:text-gray-700"
-              }`}
-            >
-              <Icon size={15} />
-              {label}
-            </button>
-          ))}
-        </nav>
+        <MeckanoHubTabNav activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div className="p-6">
 
-          {/* ── EMPLOYEES ── */}
           {activeTab === "employees" && (
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3 justify-between">
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    value={empSearch}
-                    onChange={e => setEmpSearch(e.target.value)}
-                    placeholder="חיפוש עובד..."
-                    className={`${inputCls} w-full pe-9`}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={loadEmployees} disabled={empLoading} className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-100 disabled:opacity-50">
-                    <RefreshCw size={14} className={empLoading ? "animate-spin" : ""} /> רענון
-                  </button>
-                  <button onClick={syncToCrm} disabled={syncPending || !employees.length} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700 disabled:opacity-50">
-                    {syncPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                    סנכרן עובדים ל-CRM
-                  </button>
-                </div>
-              </div>
-
-              {syncMsg && (
-                <p className={`rounded-xl border px-4 py-2.5 text-sm font-medium ${syncMsg.startsWith("✓") ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-400" : "bg-rose-500/[0.08] border-rose-500/25 text-rose-300"}`}>
-                  {syncMsg}
-                </p>
-              )}
-
-              {empLoading ? <LoadingSpinner /> : empError ? (
-                <div className="rounded-xl border border-red-100 bg-rose-500/[0.08] px-4 py-3 text-sm text-rose-300">{empError}</div>
-              ) : filtered.length === 0 ? (
-                <MeckanoEmptyHint message="לא נמצאו עובדים" />
-              ) : (
-                <div className="overflow-hidden rounded-2xl border border-gray-200 divide-y divide-white/[0.05]">
-                  {filtered.map(emp => {
-                    const name = [emp.firstName, emp.lastName].filter(Boolean).join(" ") || emp.workerTag || `#${emp.id}`;
-                    const isOpen = empExpanded === emp.id;
-                    return (
-                      <div key={emp.id}>
-                        <button
-                          type="button"
-                          onClick={() => setEmpExpanded(isOpen ? null : emp.id)}
-                          className="flex w-full items-center gap-4 px-5 py-4 text-end transition hover:bg-gray-50"
-                        >
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-500/15 text-sm font-black text-teal-300">
-                            {name.charAt(0)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900">{name}</p>
-                            <p className="truncate text-xs text-gray-400">{emp.email ?? "—"}</p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            {emp.department && (
-                              <span className="hidden rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-400 sm:inline">
-                                {emp.department.name}
-                              </span>
-                            )}
-                            {/* Real-time status: green dot if checked in within last 24h */}
-                            {(() => {
-                              const now = Date.now() / 1000;
-                              const isIn = emp.lastCheckState === 1 && emp.lastCheckTime && now - emp.lastCheckTime < 86400;
-                              const isOut = emp.lastCheckState === 2;
-                              return (
-                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
-                                  isIn ? "bg-emerald-500/20 text-emerald-400" : isOut ? "bg-orange-500/20 text-orange-400" : "bg-gray-100 text-gray-400"
-                                }`}>
-                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isIn ? "bg-emerald-500/15 animate-pulse" : isOut ? "bg-orange-400" : "bg-gray-200"}`} />
-                                  {isIn ? "בעבודה" : isOut ? "יצא" : "לא פעיל"}
-                                </span>
-                              );
-                            })()}
-                            {isOpen ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
-                          </div>
-                        </button>
-                        {isOpen && (
-                          <div className="border-t border-gray-100 bg-gray-50 px-5 py-4">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 text-sm">
-                              {emp.email && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Mail size={13} className="text-teal-400 shrink-0" />
-                                  <span className="truncate" dir="ltr">{emp.email}</span>
-                                </div>
-                              )}
-                              {emp.phone && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Phone size={13} className="text-emerald-400 shrink-0" />
-                                  {emp.phone}
-                                </div>
-                              )}
-                              {emp.idNum && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Hash size={13} className="text-gray-400 shrink-0" />
-                                  ת.ז: {emp.idNum}
-                                </div>
-                              )}
-                              {emp.city && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <ArrowRight size={13} className="text-gray-400 shrink-0" />
-                                  עיר: {emp.city}
-                                </div>
-                              )}
-                              {emp.role && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Users size={13} className="text-gray-400 shrink-0" />
-                                  תפקיד: {emp.role}
-                                </div>
-                              )}
-                              {emp.employedFrom_dt && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <CalendarDays size={13} className="text-gray-400 shrink-0" />
-                                  תחילת עבודה: {emp.employedFrom_dt}
-                                </div>
-                              )}
-                              {emp.hasCar && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Car size={13} className="text-gray-400 shrink-0" />
-                                  יש רכב
-                                </div>
-                              )}
-                              {emp.lastCheckTime && (
-                                <div className="flex items-center gap-2 text-gray-500">
-                                  <Clock size={13} className="text-gray-400 shrink-0" />
-                                  נוכחות אחרונה: {tsToDate(emp.lastCheckTime)} {tsToTime(emp.lastCheckTime)}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              <p className="text-start text-xs text-gray-400">{filtered.length} עובדים פעילים מוצגים (מתוך {employees.length} סה״כ)</p>
-            </div>
+            <MeckanoEmployeesPanel
+              inputCls={inputCls}
+              employees={employees}
+              empSearch={empSearch}
+              setEmpSearch={setEmpSearch}
+              empLoading={empLoading}
+              empError={empError}
+              loadEmployees={loadEmployees}
+              syncToCrm={syncToCrm}
+              syncPending={syncPending}
+              syncMsg={syncMsg}
+              empExpanded={empExpanded}
+              setEmpExpanded={setEmpExpanded}
+            />
           )}
 
           {/* ── DEPARTMENTS ── */}
@@ -1245,11 +1083,11 @@ export default function MeckanoHub({ hasMeckanoKey }: { hasMeckanoKey: boolean }
                   <p className="mb-2 text-xs font-black text-gray-500">סוג דוח</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {([
-                      { id: "attendance" as ReportType, label: "נוכחות", desc: "כניסות ויציאות לפי יום" },
-                      { id: "summary" as ReportType, label: "סיכום שעות", desc: "שעות מחושבות לפי עובד" },
-                      { id: "task-entries" as ReportType, label: "דיווח משימות", desc: "דיווח שעות לפי משימה" },
-                      { id: "project-cost" as ReportType, label: "עלויות פרויקט", desc: "שעות × תעריף לפי עובד" },
-                      { id: "locations" as ReportType, label: "דוח מיקומים", desc: "נוכחות מקובצת לפי אזור" },
+                      { id: "attendance" as MeckanoReportType, label: "נוכחות", desc: "כניסות ויציאות לפי יום" },
+                      { id: "summary" as MeckanoReportType, label: "סיכום שעות", desc: "שעות מחושבות לפי עובד" },
+                      { id: "task-entries" as MeckanoReportType, label: "דיווח משימות", desc: "דיווח שעות לפי משימה" },
+                      { id: "project-cost" as MeckanoReportType, label: "עלויות פרויקט", desc: "שעות × תעריף לפי עובד" },
+                      { id: "locations" as MeckanoReportType, label: "דוח מיקומים", desc: "נוכחות מקובצת לפי אזור" },
                     ]).map(({ id, label, desc }) => (
                       <button
                         key={id}

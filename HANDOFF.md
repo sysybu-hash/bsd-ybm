@@ -340,3 +340,20 @@ API endpoints קיימים ב-`app/api/admin/*` — חסר UI. רק לחבר.
 3. `git tag -l "backup/*"` — לראות גיבויים
 4. `git diff master..HEAD --stat` — מה השתנה
 5. תמיד: `git checkout -b fix/something` לפני שמנסים לתקן
+
+---
+
+## המשך לאחר Phases 1–5 (2026)
+
+**בוצע:** אכיפת `requireAiScanCredit`, נעילת `debug-session` לפיתוח, אידמפוטנטיות PayPal, אשף Express, פיצול CRM חלקי, ניקוי `multi-engine-scanner`, `middleware` עם `import()` ל־workspace-features, סנכרון `AUDIT_REPORT.md`, יישור 402 ל־`/api/ai` במכסה, טסטים ל־`ai-upload-error-map` ו־`paypal-capture-apply` (זרימות מוקדמות), פיצול ראשון של Meckano (`meckano-hub-constants`, `MeckanoHubTabNav`, `MeckanoEmployeesPanel`), `verify` + CI עם `prisma generate` לפני `tsc`.
+
+**נשאר לפי עדיפות מוצר/טכנולוגיה:**
+
+1. **Meckano** — להמשיך לחלץ פאנלים (מחלקות, נוכחות, אזורים, דוחות, הגדרות) ו־hooks לטעינה; לשקול `dynamic` לפאנלים כבדים אחרי מדידת bundle.
+2. **Prisma/TS** — אם `tsc` נכשל בסביבה נקייה: לוודא `prisma generate` ב־CI (מוגדר ב־Quality Gate) וליישר ייבואי `@prisma/client` לפי הצורך.
+3. **i18n ל־`/app/*`** — מפתחות ב־`messages`, החלפת מחרוזות קשיחות ב־CRM/ERP/Settings (פרויקט נפרד).
+4. **IA** — `/app/insights` כבר מפנה ל־`/app/ai`; לבחון איחוד hubs ב־CRM ודפי Billing כפולים.
+5. **תלויות** — `npx depcheck` + `npm audit` מבוקדים (לא מחיקה אגרסיבית בלי אימות import דינמי).
+   - **depcheck (סיכום):** unused deps כוללים בין השאר `@ai-sdk/openai`, `@tanstack/react-query`, `firebase-admin`, `react-hook-form`, `tailwind-merge`; unused dev כולל `@testing-library/react`, `jest-environment-jsdom`, `postcss`, `autoprefixer`, `eslint-config-next`. **Missing (false positives אפשריים):** `@eslint/eslintrc` (eslint.config), `chrome-launcher` (סקריפט lighthouse), `playwright` (סקריפטים) — לוודא בשימוש לפני הוספה ל־`package.json`.
+   - **npm audit:** יש ממצאים בתלויות עקיפות של `firebase-admin` ו־`@lhci/cli`; תיקון עם `npm audit fix --force` מציע גרסאות שבורות — להעריך ידנית או overrides ממוקדים, לא fix כפוי בלי בדיקות.
+6. **בדיקות** — הרחבת Playwright לזרימות עסקיות; טסטים נוספים ל־PayPal happy path עם mock מלא של `$transaction`.

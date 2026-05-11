@@ -10,6 +10,7 @@ import {
 } from "@/lib/api-json";
 import type { ProcessDocumentResult } from "@/app/actions/process-document";
 import { processDocumentAction } from "@/app/actions/process-document";
+import { mapProcessDocumentFailureToHttp } from "@/lib/ai-upload-error-map";
 import { isAdmin } from "@/lib/is-admin";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -57,15 +58,8 @@ export async function POST(req: NextRequest) {
     );
 
     if (!result.success) {
-      const status = result.code === "QUOTA_EXCEEDED" ? 403 : 500;
-      return NextResponse.json(
-        {
-          error: result.error ?? "אירעה שגיאה בפענוח המסמך",
-          code: result.code,
-          billingUrl: result.code === "QUOTA_EXCEEDED" ? "/app/settings/billing" : undefined,
-        },
-        { status },
-      );
+      const { status, body } = mapProcessDocumentFailureToHttp(result);
+      return NextResponse.json(body, { status });
     }
 
     return NextResponse.json(result.data);
