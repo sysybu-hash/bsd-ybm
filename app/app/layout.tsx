@@ -16,6 +16,7 @@ import MainContainer from "@/components/layout/MainContainer";
 import { WorkspaceContextProvider } from "@/components/workspace/WorkspaceContext";
 import { needsIndustryConfigPolish } from "@/lib/polish/industry-config";
 import { polishOrganizationIndustryConfigFromRsc } from "@/lib/polish/polish-organization-industry-rsc";
+import { isGeminiConfigured } from "@/lib/ai-providers";
 
 const workspaceOrgSelect = {
   industry: true,
@@ -147,6 +148,7 @@ export default async function AppWorkspaceLayout({ children }: { children: React
             subscriptionStatus: organization?.subscriptionStatus ?? "INACTIVE",
             hasMeckanoAccess,
             industryProfile,
+            geminiConfigured: isGeminiConfigured(),
           }}
         >
           <WorkspacePageMotion>

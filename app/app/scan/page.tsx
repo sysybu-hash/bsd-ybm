@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import ScanWizardWorkspace from "@/components/documents/ScanWizardWorkspace";
 import ScanWizardShell from "@/components/scan/wizard/ScanWizardShell";
 import { authOptions } from "@/lib/auth";
 import { isGeminiConfigured } from "@/lib/ai-providers";
@@ -41,15 +40,13 @@ export default async function ScanPage({ searchParams }: Props) {
   );
 
   const params = (await searchParams) ?? {};
-  const isLegacy = params.legacy === "1";
+  if (params.legacy === "1") {
+    redirect("/app/scan");
+  }
 
   return (
     <AppPageChrome>
-      {isLegacy ? (
-        <ScanWizardWorkspace industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
-      ) : (
-        <ScanWizardShell industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
-      )}
+      <ScanWizardShell industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
     </AppPageChrome>
   );
 }

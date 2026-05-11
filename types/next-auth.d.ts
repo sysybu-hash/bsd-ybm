@@ -9,6 +9,7 @@ declare module "next-auth" {
       organizationId: string | null;
       organizationIndustry?: string | null;
       organizationConstructionTrade?: string | null;
+      organizationSubscriptionStatus?: string | null;
     };
   }
 }
@@ -21,6 +22,7 @@ declare module "next-auth/jwt" {
     organizationId?: string | null;
     organizationIndustry?: string | null;
     organizationConstructionTrade?: string | null;
+    organizationSubscriptionStatus?: string | null;
     name?: string | null;
     picture?: string | null;
   }

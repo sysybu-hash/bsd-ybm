@@ -11,6 +11,7 @@ import {
 import { isGeminiConfigured } from "@/lib/ai-providers";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { GEMINI_LIVE_NATIVE_AUDIO_MODEL } from "@/lib/gemini-model";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -34,6 +35,10 @@ export async function POST() {
     if (!session.user.organizationId) {
       return jsonForbidden("Gemini Live זמין רק למשתמשים המשויכים לארגון.");
     }
+
+    const quotaBlock = await requireAiScanCredit(session, "premium");
+    if (quotaBlock) return quotaBlock;
+
     if (!isGeminiConfigured()) {
       return jsonServiceUnavailable(
         "Gemini לא מוגדר. הגדירו GOOGLE_GENERATIVE_AI_API_KEY או GEMINI_API_KEY.",

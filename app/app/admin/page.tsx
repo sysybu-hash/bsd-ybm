@@ -1,4 +1,5 @@
 import AdminPlatformDashboard from "@/components/admin/AdminPlatformDashboard";
+import AdminSupportLinks from "@/components/admin/AdminSupportLinks";
 import AppPageChrome from "@/components/workspace/AppPageChrome";
 import { authOptions } from "@/lib/auth";
 import { isAdmin } from "@/lib/is-admin";
@@ -37,7 +38,10 @@ export default async function AppAdminPage({ searchParams }: { searchParams: Sea
 
   return (
     <AppPageChrome>
-      <AdminPlatformDashboard searchParams={searchParams} platformBasePath="/app/admin" />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+        <AdminSupportLinks />
+        <AdminPlatformDashboard searchParams={searchParams} platformBasePath="/app/admin" />
+      </div>
     </AppPageChrome>
   );
 }

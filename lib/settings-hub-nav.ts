@@ -68,7 +68,7 @@ export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
       },
       {
         id: "profile",
-        href: `${BASE}/profile`,
+        href: `${BASE}#profile`,
         label: "פרופיל משתמש",
         description: "זהות, תפקיד והרשאות גישה",
         icon: User,
@@ -82,7 +82,7 @@ export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
       },
       {
         id: "profession",
-        href: `${BASE}/profession`,
+        href: `${BASE}#profession`,
         label: "תחום בניה",
         description: "התמחות, שפה מקצועית ותבניות",
         icon: BriefcaseBusiness,
@@ -95,14 +95,14 @@ export const SETTINGS_HUB_NAV_GROUPS: readonly SettingsHubNavGroup[] = [
     items: [
       {
         id: "presence",
-        href: `${BASE}/presence`,
+        href: `${BASE}#presence`,
         label: "פורטל וגבייה",
         description: "מיתוג, דומיין וחיבורי לקוחות",
         icon: Globe,
       },
       {
         id: "stack",
-        href: `${BASE}/stack`,
+        href: `${BASE}#stack`,
         label: "מנועי AI וחיבורים",
         description: "Document AI, Gemini, OpenAI, ענן וגיבוי",
         icon: Bot,

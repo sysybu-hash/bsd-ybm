@@ -56,7 +56,7 @@ describe("IndustryBundle — מקור אמת מאוחד", () => {
     expect(bundle.industryId).toBe("CONSTRUCTION");
     expect(bundle.tradeId).toBe("ELECTRICAL");
     expect(bundle.tradeLabel).toBeTruthy();
-    expect(bundle.documentsLabel ?? bundle.labels.documents).toContain("חשמל");
+    expect(bundle.labels.documents).toContain("חשמל");
     expect(bundle.scan.industryId).toBe("CONSTRUCTION");
   });
 

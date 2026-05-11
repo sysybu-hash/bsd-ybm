@@ -27,7 +27,7 @@ import ScanHubDecodePanel from "@/components/documents/ScanHubDecodePanel";
 import { AiHubPreviewProvider, useAiHubPreview, type AiHubTab } from "@/components/documents/AiHubPreviewContext";
 import ErpMultiEngineScannerLazy from "@/components/erp/ErpMultiEngineScannerLazy";
 import ErpProjectNotebook from "@/components/erp/ErpProjectNotebook";
-import type { ScanHubPreviewPayload } from "@/components/MultiEngineScanner";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
 import { PageHeader, SectionHeader, Surface } from "@/components/ui/claude";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DOC_UI_FALLBACK } from "@/lib/documents-ui-constants";
@@ -614,7 +614,8 @@ function DocumentsWorkspaceV2Inner({
               <SectionHeader id="ai-hub-scan-heading" title={t("workspaceAiHub.sectionScanTitle")} />
               <div className="w-full min-w-0 rounded-2xl border border-[color:var(--cd-line)] bg-[color:var(--cd-bg-raised)]">
                 <ErpMultiEngineScannerLazy
-                  industry={industryProfile.id}
+                  industryProfile={industryProfile}
+                  geminiConfigured={geminiConfigured}
                   compactHeader
                   hubPreviewMode
                   onScanHubPreviewUpdate={onScanHubPreviewUpdate}

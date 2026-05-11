@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-log";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 type Body = {
   message?: string;
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
   if (!userId || !orgId) {
     return jsonUnauthorized();
   }
+
+  const quotaBlock = await requireAiScanCredit(session, "cheap");
+  if (quotaBlock) return quotaBlock;
 
   const body = (await req.json().catch(() => ({}))) as Body;
   const msg = typeof body.message === "string" ? body.message.trim() : "";

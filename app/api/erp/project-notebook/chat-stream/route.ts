@@ -16,6 +16,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { loadRecentBillOfQuantitiesContext } from "@/lib/load-recent-bill-of-quantities-context";
 import { getTradeSpecializedPrompt } from "@/lib/trade-specialized-prompt";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export const maxDuration = 120;
 
@@ -37,6 +38,9 @@ export async function POST(req: NextRequest) {
     if (!session?.user?.id) {
       return jsonUnauthorized();
     }
+
+    const quotaBlock = await requireAiScanCredit(session, "cheap");
+    if (quotaBlock) return quotaBlock;
 
     if (!isGeminiConfigured()) {
       return jsonServiceUnavailable(

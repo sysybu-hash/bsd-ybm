@@ -1,4 +1,7 @@
 const path = require("path");
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
 /**
  * Legacy redirects. Order matters: Next evaluates from top to bottom, so specific
@@ -43,7 +46,7 @@ const LEGACY_REDIRECTS = [
   { source: "/dashboard/legacy", destination: "/app", permanent: true },
   { source: "/app/billing", destination: "/app/settings/billing", permanent: true },
   { source: "/app/automations", destination: "/app/settings/automations", permanent: true },
-  { source: "/app/settings/advanced", destination: "/app/settings/overview", permanent: true },
+  { source: "/app/settings/advanced", destination: "/app/settings/platform?tab=advanced", permanent: true },
   { source: "/app/insights", destination: "/app/erp", permanent: true },
   { source: "/app/insights/advanced", destination: "/app/erp", permanent: true },
   { source: "/app/intelligence", destination: "/app", permanent: true },
@@ -137,4 +140,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

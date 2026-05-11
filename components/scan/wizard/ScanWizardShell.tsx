@@ -24,12 +24,22 @@ import Step3Engine from "./steps/Step3Engine";
 import Step4Review from "./steps/Step4Review";
 import StepDone from "./steps/StepDone";
 import "./scan-wizard.css";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
+import { isImageFile, isPdfFile } from "@/components/multi-engine-scanner/utils";
 
 const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNotebook"), { ssr: false });
+
+export type ScanWizardShellVariant = "page" | "dock" | "embed";
 
 type Props = {
   industryProfile: IndustryProfile;
   geminiConfigured: boolean;
+  /** page — דף /app/scan מלא; dock — דוק צף; embed — מקטע בתוך דף (למשל Business) */
+  variant?: ScanWizardShellVariant;
+  onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
+  /** שמור לתאימות מול ממשק ישן — ניתן לחבר מחדש לשלבי תצוגה מקדימה */
+  hubPreviewMode?: boolean;
+  onHubPreviewFocusRequest?: () => void;
 };
 
 const STEP_IDS = ["upload", "context", "engine", "review", "done"] as const;
@@ -43,7 +53,14 @@ const STEP_LABELS: Record<StepId, { label: string; shortLabel: string; icon: Rea
   done: { label: "סיום", shortLabel: "סיום", icon: <Play className="h-4 w-4" aria-hidden /> },
 };
 
-export default function ScanWizardShell({ industryProfile, geminiConfigured }: Props) {
+export default function ScanWizardShell({
+  industryProfile,
+  geminiConfigured,
+  variant = "page",
+  onScanHubPreviewUpdate,
+  hubPreviewMode: _hubPreviewMode,
+  onHubPreviewFocusRequest: _onHubPreviewFocusRequest,
+}: Props) {
   const wizardProfile = useMemo(
     () => getScanWizardProfile(industryProfile.id, industryProfile.constructionTradeId),
     [industryProfile.id, industryProfile.constructionTradeId],
@@ -139,8 +156,61 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
     dispatch({ type: "ENGINE_MODE_CHANGED", mode });
   };
 
+  const activeFile = state.files[state.activeFileIndex] ?? null;
+  const extractionForHub = useMemo(
+    () => state.v5 ?? state.partialV5 ?? state.aiData,
+    [state.v5, state.partialV5, state.aiData],
+  );
+  const scanningActive = state.phase === "uploading" || state.phase === "extracting";
+
+  const previewUrl = useMemo(() => {
+    if (!activeFile || (!isImageFile(activeFile) && !isPdfFile(activeFile))) return null;
+    return URL.createObjectURL(activeFile);
+  }, [activeFile]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (!onScanHubPreviewUpdate) return;
+    let previewKind: ScanHubPreviewPayload["previewKind"] = "none";
+    if (activeFile) {
+      if (isImageFile(activeFile)) previewKind = "image";
+      else if (isPdfFile(activeFile)) previewKind = "pdf";
+    }
+    onScanHubPreviewUpdate({
+      fileName: activeFile?.name ?? null,
+      previewUrl,
+      previewKind,
+      extraction: extractionForHub,
+      streamStage: state.streamStage,
+      scanError: state.errorMessage,
+      scanning: scanningActive,
+    });
+  }, [
+    onScanHubPreviewUpdate,
+    activeFile,
+    previewUrl,
+    extractionForHub,
+    state.streamStage,
+    state.errorMessage,
+    scanningActive,
+  ]);
+
+  const rootClass =
+    variant === "page"
+      ? "scanw-root flex h-[calc(100dvh-112px)] min-h-[640px] w-full flex-col gap-3 overflow-hidden p-3"
+      : variant === "dock"
+        ? "scanw-root flex h-full min-h-[280px] w-full flex-1 flex-col gap-2 overflow-hidden p-2"
+        : "scanw-root flex min-h-[420px] w-full flex-col gap-2 overflow-hidden p-2";
+
+  const showWorkspaceLink = variant === "page";
+
   return (
-    <div className="scanw-root flex h-[calc(100dvh-112px)] min-h-[640px] w-full flex-col gap-3 overflow-hidden p-3" dir="rtl">
+    <div className={rootClass} dir="rtl" data-scan-wizard-variant={variant}>
       {/* סרגל עליון: טאבים, קרדיטים, חזרה */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-1">
         <div className="inline-flex rounded-2xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-rail-bg)] p-1">
@@ -173,13 +243,15 @@ export default function ScanWizardShell({ industryProfile, geminiConfigured }: P
         </div>
         <div className="flex items-center gap-2">
           <CreditsChip label={wizardProfile.hintCreditsLabel} refreshKey={creditsRefreshKey} />
-          <Link
-            href="/app"
-            aria-label="חזרה לסביבת העבודה"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
-          >
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
+          {showWorkspaceLink ? (
+            <Link
+              href="/app"
+              aria-label="חזרה לסביבת העבודה"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--scanw-line)] bg-white/70 text-[color:var(--scanw-muted)] transition hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)]"
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          ) : null}
         </div>
       </div>
 

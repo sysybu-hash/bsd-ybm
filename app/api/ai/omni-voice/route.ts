@@ -13,6 +13,7 @@ import {
 import { isGeminiConfigured } from "@/lib/ai-providers";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { GEMINI_FLAGSHIP_MODEL } from "@/lib/gemini-model";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export const maxDuration = 90;
 
@@ -53,6 +54,9 @@ export async function POST(req: Request) {
     if (!session.user.organizationId) {
       return jsonForbidden("העוזר הקולי זמין רק למשתמשים המשויכים לארגון.");
     }
+
+    const quotaBlock = await requireAiScanCredit(session, "premium");
+    if (quotaBlock) return quotaBlock;
 
     if (!isGeminiConfigured()) {
       return jsonServiceUnavailable(

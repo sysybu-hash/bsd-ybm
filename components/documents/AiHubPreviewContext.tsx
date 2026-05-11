@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
-import type { ScanHubPreviewPayload } from "@/components/MultiEngineScanner";
+import type { ScanHubPreviewPayload } from "@/components/multi-engine-scanner/types";
 
 export type AiHubTab = "scan" | "notebook" | "generate";
 

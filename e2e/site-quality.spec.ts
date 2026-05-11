@@ -23,8 +23,7 @@ const protectedRoutes = [
   "/app/crm",
   "/app/erp",
   "/app/settings/overview",
-  "/app/settings/profile",
-  "/app/settings/profession",
+  "/app/settings",
   "/app/settings/billing",
 ];
 

@@ -41,6 +41,7 @@ type Props = Readonly<{
     subscriptionStatus?: string | null;
     hasMeckanoAccess?: boolean;
     industryProfile: IndustryProfile;
+    geminiConfigured?: boolean;
   };
 }>;
 
@@ -599,6 +600,7 @@ export default function AppShellV2({ children, user }: Props) {
           industryProfile={user.industryProfile}
           userName={user.name}
           hiddenPrimaryRouteIds={hiddenPrimaryRouteIds}
+          geminiConfigured={user.geminiConfigured ?? false}
         />
       </div>
     </WorkspaceShellTransitionProvider>

@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { readRequestMessages } from "@/lib/i18n/server-messages";
 import { getIndustryProfile } from "@/lib/professions/runtime";
-import type { IndustryType } from "@/lib/professions/config";
+import { isGeminiConfigured } from "@/lib/ai-providers";
 import type { FinanceExpenseRow, FinanceIssuedRow } from "@/lib/finance-workspace-types";
 import { loadCommercialHubSnapshot } from "@/lib/workspace/load-commercial-hub";
 import WorkspaceEngineeringShell from "@/components/workspace/WorkspaceEngineeringShell";
@@ -145,7 +145,7 @@ export default async function ErpPage({
     session.user?.email?.split("@")[0] ||
     "";
 
-  const industryForScan = (organization?.industry ?? "CONSTRUCTION") as IndustryType;
+  const geminiConfigured = isGeminiConfigured();
 
   const projectOptions = projectPick.map((p) => ({ id: p.id, name: p.name }));
   const contactOptions = contactPick.map((c) => ({ id: c.id, name: c.name }));
@@ -168,7 +168,7 @@ export default async function ErpPage({
         initialFinanceTab={initialFinanceTab}
       />
       <section className="mt-10 w-full min-w-0 scroll-mt-24" aria-label="סריקת מסמכים">
-        <ErpScanExpenseBridge industry={industryForScan} />
+        <ErpScanExpenseBridge industryProfile={industryProfile} geminiConfigured={geminiConfigured} />
       </section>
     </WorkspaceEngineeringShell>
     </AppPageChrome>

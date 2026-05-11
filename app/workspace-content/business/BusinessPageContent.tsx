@@ -21,6 +21,8 @@ import { dedupeOrganizationsForCrmDisplay } from "@/lib/crm/dedupe-organizations
 import type { CrmAdminOrganizationRow } from "@/components/crm/CrmOrganizationsAdminTable";
 import BusinessHubClient from "@/components/business/BusinessHubClient";
 import AppPageChrome from "@/components/workspace/AppPageChrome";
+import { readRequestMessages } from "@/lib/i18n/server-messages";
+import { getIndustryProfile } from "@/lib/professions/runtime";
 
 export const metadata = { title: "מרכז עסקי — BSD-YBM" };
 
@@ -123,9 +125,20 @@ export async function BusinessPageContent() {
           cheapScansRemaining: true,
           premiumScansRemaining: true,
           subscriptionTier: true,
+          industry: true,
+          constructionTrade: true,
+          industryConfigJson: true,
         },
       })
     : null;
+
+  const messagesForProfile = await readRequestMessages();
+  const industryProfile = getIndustryProfile(
+    orgQuota?.industry ?? "CONSTRUCTION",
+    orgQuota?.industryConfigJson,
+    orgQuota?.constructionTrade,
+    messagesForProfile,
+  );
 
   const scanQuotaSummary =
     orgQuota != null
@@ -306,6 +319,7 @@ export async function BusinessPageContent() {
   return (
     <AppPageChrome>
     <BusinessHubClient
+      industryProfile={industryProfile}
       geminiConfigured={geminiConfigured}
       scanQuotaSummary={scanQuotaSummary}
       stats={stats}

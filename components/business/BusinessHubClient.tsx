@@ -21,6 +21,7 @@ import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "@/components/crm/Cr
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 import type { PriceChartRow } from "@/lib/erp-price-comparison-data";
 import { useIndustryConfig } from "@/hooks/use-industry-config";
+import type { IndustryProfile } from "@/lib/professions/runtime";
 
 /* ─── Types ───────────────────────────────────────────────────────────────── */
 type ContactRow = {
@@ -55,6 +56,7 @@ type ErpDocRow = {
 };
 
 type Props = {
+  industryProfile: IndustryProfile;
   geminiConfigured: boolean;
   scanQuotaSummary: string | null;
   stats: ErpStatCard[];
@@ -125,7 +127,7 @@ const FinancialCharts = dynamic(() => import("@/components/FinancialCharts"), {
 const PriceComparisonChart = dynamic(() => import("@/components/PriceComparisonChart"), {
   loading: () => <ModuleLoader label="טוען השוואת מחירים..." />,
 });
-const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
+const ScanWizardShell = dynamic(() => import("@/components/scan/wizard/ScanWizardShell"), {
   loading: () => <ModuleLoader label="טוען סריקה חכמה..." />,
 });
 const ErpHistoricalImportCallout = dynamic(() => import("@/components/ErpHistoricalImportCallout"), {
@@ -137,6 +139,7 @@ const CrmClient = dynamic(() => import("@/components/crm/CrmClient"), {
 
 function HubContent(props: Props) {
   const {
+    industryProfile,
     geminiConfigured,
     scanQuotaSummary,
     stats,
@@ -343,7 +346,7 @@ function HubContent(props: Props) {
                 priceSpikes={priceSpikes}
               />
               <ErpHistoricalImportCallout />
-              <MultiEngineScanner />
+              <ScanWizardShell industryProfile={industryProfile} geminiConfigured={geminiConfigured} variant="embed" />
               <SupplierPriceBoard />
               {priceComparison && (
                 <PriceComparisonChart

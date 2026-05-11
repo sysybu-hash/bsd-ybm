@@ -5,11 +5,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prisma } from "@/lib/prisma";
 import { getGeminiModelFallbackChain, isLikelyGeminiModelUnavailable } from "@/lib/gemini-model";
 import { jsonBadRequest, jsonUnauthorized } from "@/lib/api-json";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return jsonUnauthorized();
+
+    const quotaBlock = await requireAiScanCredit(session, "cheap");
+    if (quotaBlock) return quotaBlock;
 
     const { query } = await req.json();
     const orgId = session.user.organizationId;

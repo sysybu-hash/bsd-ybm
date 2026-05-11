@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { jsonUnauthorized } from "@/lib/api-json";
 import { prisma } from "@/lib/prisma";
 import type { PriceCompareRow } from "@/lib/price-compare-types";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -11,6 +12,9 @@ export async function GET() {
   if (!session?.user?.id || !orgId) {
     return jsonUnauthorized();
   }
+
+  const quotaBlock = await requireAiScanCredit(session, "cheap");
+  if (quotaBlock) return quotaBlock;
 
   const observations = await prisma.productPriceObservation.findMany({
     where: { organizationId: orgId },

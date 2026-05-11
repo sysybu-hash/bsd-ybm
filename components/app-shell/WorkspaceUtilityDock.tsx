@@ -60,7 +60,7 @@ function ScannerLoadingFallback() {
   );
 }
 
-const MultiEngineScanner = dynamic(() => import("@/components/MultiEngineScanner"), {
+const ScanWizardShell = dynamic(() => import("@/components/scan/wizard/ScanWizardShell"), {
   ssr: false,
   loading: () => <ScannerLoadingFallback />,
 });
@@ -121,6 +121,7 @@ type WorkspaceUtilityDockProps = {
   industryProfile: IndustryProfile;
   userName: string;
   hiddenPrimaryRouteIds?: ReadonlySet<AppRouteId>;
+  geminiConfigured?: boolean;
 };
 
 function createMessage(
@@ -224,6 +225,7 @@ export default function WorkspaceUtilityDock({
   industryProfile,
   userName,
   hiddenPrimaryRouteIds,
+  geminiConfigured = false,
 }: WorkspaceUtilityDockProps) {
   const [portalReady, setPortalReady] = useState(false);
   useEffect(() => {
@@ -959,7 +961,11 @@ export default function WorkspaceUtilityDock({
                 </div>
               </div>
             ) : (
-              <MultiEngineScanner industry={industryProfile.id} compactHeader dockWizard />
+              <ScanWizardShell
+                industryProfile={industryProfile}
+                geminiConfigured={geminiConfigured}
+                variant="dock"
+              />
             )}
           </div>
         </section>
