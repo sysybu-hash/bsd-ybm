@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { jsonBadRequest, jsonUnauthorized, jsonServerError } from "@/lib/api-json";
+import { jsonBadRequest, jsonServerError } from "@/lib/api-json";
 import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { getServerLocale } from "@/lib/i18n/server";
 import { requireAiScanCredit } from "@/lib/ai-quota-gate";
@@ -11,10 +11,6 @@ const MAX_BRIEF = 4000;
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return jsonUnauthorized();
-    }
-
     const quotaBlock = await requireAiScanCredit(session, "cheap");
     if (quotaBlock) return quotaBlock;
 

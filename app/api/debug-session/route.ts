@@ -7,22 +7,20 @@ import { getToken } from "next-auth/jwt";
 import { isAdmin } from "@/lib/is-admin";
 
 /**
- * GET /api/auth/debug-session
- * מחזיר את מצב הסשן הנוכחי — לצורך דיבאג בלבד.
+ * GET /api/debug-session
+ * מחזיר את מצב הסשן הנוכחי — **רק בסביבת development**.
  * לא חושף סיסמאות או מפתחות — רק email, role, id, orgId.
  */
 export async function GET(req: NextRequest) {
+  if (process.env.NODE_ENV !== "development") {
+    return jsonNotFound("לא זמין", "debug_disabled");
+  }
+
   const session = await getServerSession(authOptions);
   if (!isAdmin(session?.user?.email)) {
     return jsonForbidden("נדרשת הרשאת מנהל.");
   }
 
-  // In production, debug endpoint is disabled unless explicitly enabled.
-  if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEBUG_SESSION !== "true") {
-    return jsonNotFound("לא זמין", "debug_disabled");
-  }
-
-  /* Read JWT directly for comparison */
   let jwtEmail: string | null = null;
   let jwtRole: string | null = null;
   let jwtId: string | null = null;

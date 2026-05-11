@@ -1,5 +1,10 @@
-import { CompanyType, DocStatus, DocType, type SubscriptionTier } from "@prisma/client";
-import type { Prisma } from "@prisma/client";
+import {
+  CompanyType,
+  DocStatus,
+  DocType,
+  Prisma,
+  type SubscriptionTier,
+} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { VAT_RATE } from "@/lib/billing-calculations";
 import { getExpectedTierOrderAmountIls } from "@/lib/billing-pricing";
@@ -41,9 +46,19 @@ async function logPayPalCaptureActivity(
   });
 }
 
+function isUniqueViolationOnPayPalCapture(e: unknown): boolean {
+  if (!(e instanceof Prisma.PrismaClientKnownRequestError) || e.code !== "P2002") {
+    return false;
+  }
+  const target = e.meta?.target;
+  const targetStr = Array.isArray(target) ? target.join(",") : String(target ?? "");
+  return targetStr.includes("payplusTransactionId");
+}
+
 /**
  * מיישם תשלום PayPal שהושלם (אחרי capture) — מנוי / חבילת סריקות, מסמך מס, רשומת Invoice לאידמפוטנטיות.
  * נקרא מ־capture-order (אחרי אימות סשן) ומ־webhook PAYMENT.CAPTURE.COMPLETED.
+ * אידמפוטנטיות: בדיקה לפני טרנזקציה, בדיקה בתוך טרנזקציה, וטיפול ב־P2002 (מרוצים בין webhook ל-capture).
  */
 export async function applyPayPalCaptureResult(params: {
   customIdFull: string;
@@ -125,7 +140,17 @@ export async function applyPayPalCaptureResult(params: {
       planLabel = bundle.name;
       descriptionLine = `חבילת סריקות BSD-YBM — ${bundle.name} (PayPal)`;
 
+      let txDuplicate = false;
       await prisma.$transaction(async (tx) => {
+        const dupInv = await tx.invoice.findUnique({
+          where: { payplusTransactionId: captureId },
+          select: { id: true },
+        });
+        if (dupInv) {
+          txDuplicate = true;
+          return;
+        }
+
         await tx.organization.update({
           where: { id: orgIdFromOrder },
           data: {
@@ -178,6 +203,9 @@ export async function applyPayPalCaptureResult(params: {
 
         await logPayPalCaptureActivity(tx, orgIdFromOrder, captureId, kind, paidTotal);
       });
+      if (txDuplicate) {
+        return { ok: true, duplicate: true };
+      }
     } else if (kind === "TIER") {
       const tier = parseSubscriptionTier(payload) as SubscriptionTier | null;
       if (!tier || tier === "FREE") {
@@ -193,7 +221,17 @@ export async function applyPayPalCaptureResult(params: {
       planLabel = tierLabelHe(tier);
       descriptionLine = `מנוי BSD-YBM — ${planLabel} (תשלום PayPal)`;
 
+      let txDuplicateTier = false;
       await prisma.$transaction(async (tx) => {
+        const dupInv = await tx.invoice.findUnique({
+          where: { payplusTransactionId: captureId },
+          select: { id: true },
+        });
+        if (dupInv) {
+          txDuplicateTier = true;
+          return;
+        }
+
         await tx.organization.update({
           where: { id: orgIdFromOrder },
           data: {
@@ -249,11 +287,17 @@ export async function applyPayPalCaptureResult(params: {
 
         await logPayPalCaptureActivity(tx, orgIdFromOrder, captureId, kind, paidTotal);
       });
+      if (txDuplicateTier) {
+        return { ok: true, duplicate: true };
+      }
     } else {
       return { ok: false, status: 400, error: "סוג הזמנה לא מוכר" };
     }
   } catch (e) {
     console.error("[applyPayPalCaptureResult]", e);
+    if (isUniqueViolationOnPayPalCapture(e)) {
+      return { ok: true, duplicate: true };
+    }
     return {
       ok: false,
       status: 500,

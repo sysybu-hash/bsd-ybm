@@ -14,6 +14,7 @@ import {
 } from "@/lib/ai/workspace-assistant";
 import { isAnyAiChatProviderConfigured } from "@/lib/ai-providers";
 import { prisma } from "@/lib/prisma";
+import { requireAiScanCredit } from "@/lib/ai-quota-gate";
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,6 +41,13 @@ export async function POST(req: NextRequest) {
     if (effectiveOrgId && effectiveOrgId !== session.user.organizationId) {
       return jsonForbidden("אין גישה לארגון זה.");
     }
+
+    if (!session.user.organizationId) {
+      return jsonForbidden("נדרש שיוך לארגון לשימוש בעוזר ה-AI.");
+    }
+
+    const quotaBlock = await requireAiScanCredit(session, "cheap");
+    if (quotaBlock) return quotaBlock;
 
     if (!isAnyAiChatProviderConfigured()) {
       return jsonServiceUnavailable(

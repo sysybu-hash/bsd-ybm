@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { jsonBadRequest, jsonServerError } from "@/lib/api-json";
+import { jsonBadRequest, jsonForbidden, jsonServerError, jsonUnauthorized } from "@/lib/api-json";
 import { getUserFacingAiErrorMessage, runAiChat } from "@/lib/ai-chat";
 import { getServerLocale } from "@/lib/i18n/server";
 import { subscriptionTiersPromptBlockHe } from "@/lib/subscription-tier-config";
@@ -43,48 +43,47 @@ export async function POST(req: Request) {
     }
 
     const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return jsonUnauthorized();
+    }
+    if (!session.user.organizationId) {
+      return jsonForbidden("נדרש שיוך לארגון לשימוש בצ'אט AI.");
+    }
+
     const quotaBlock = await requireAiScanCredit(session, "cheap");
     if (quotaBlock) return quotaBlock;
 
     const displayName =
-      session?.user?.name?.trim() || session?.user?.email?.trim() || "משתמש";
+      session.user.name?.trim() || session.user.email?.trim() || "משתמש";
     const tiersHe = subscriptionTiersPromptBlockHe();
 
-    let orgContext: { industry: string; constructionTrade: string } | null = null;
-    if (session?.user?.organizationId) {
-      const org = await prisma.organization.findUnique({
-        where: { id: session.user.organizationId },
-        select: { industry: true, constructionTrade: true },
-      });
-      if (org) {
-        orgContext = {
+    const org = await prisma.organization.findUnique({
+      where: { id: session.user.organizationId },
+      select: { industry: true, constructionTrade: true },
+    });
+
+    const orgContext = org
+      ? {
           industry: org.industry || "CONSTRUCTION",
           constructionTrade: org.constructionTrade || "GENERAL_CONTRACTOR",
-        };
-      }
-    }
+        }
+      : null;
 
-    const contextJson = !session
-      ? [
-          "אתה העוזר החכם של BSD-YBM.",
-          "התפקיד שלך להסביר למבקרים על המערכת, המנויים והיכולות.",
+    const contextJson = orgContext
+      ? JSON.stringify({
+          audience: "logged_in_org_member",
+          displayName,
+          industry: orgContext.industry,
+          constructionTrade: orgContext.constructionTrade,
+          hint:
+            "הארגון בענף הבנייה והמקצועות הנלווים — התאם דוגמאות (אתרים, ספקים, מסמכי שטח) לפי constructionTrade.",
           tiersHe,
-        ].join("\n\n")
-      : orgContext
-        ? JSON.stringify({
-            audience: "logged_in_org_member",
-            displayName,
-            industry: orgContext.industry,
-            constructionTrade: orgContext.constructionTrade,
-            hint:
-              "הארגון בענף הבנייה והמקצועות הנלווים — התאם דוגמאות (אתרים, ספקים, מסמכי שטח) לפי constructionTrade.",
-            tiersHe,
-          })
-        : [
-            `אתה העוזר האישי של ${displayName} במערכת BSD-YBM.`,
-            "עזור לו לנהל את העסק ביעילות בלי להמציא נתונים שלא נמסרו.",
-            tiersHe,
-          ].join("\n\n");
+        })
+      : [
+          `אתה העוזר האישי של ${displayName} במערכת BSD-YBM.`,
+          "עזור לו לנהל את העסק ביעילות בלי להמציא נתונים שלא נמסרו.",
+          tiersHe,
+        ].join("\n\n");
 
     const locale = await getServerLocale();
     const { text, provider } = await runAiChat(body.provider, prompt, contextJson, locale);
