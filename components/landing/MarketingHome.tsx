@@ -88,7 +88,7 @@ export default function MarketingHome() {
             </Link>
             <Link
               href="/register"
-              className="inline-flex items-center justify-center rounded-lg bg-[#7c57ff] px-4 py-2 text-sm font-black text-white shadow-[0_16px_36px_rgba(124,87,255,0.28)] transition hover:bg-[#6d48f2]"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#7c57ff] px-4 py-2 text-sm font-black text-white shadow-[0_16px_36px_rgba(124,87,255,0.28)] transition-all duration-200 hover:bg-[#6d48f2] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 active:scale-[0.98]"
             >
               {t("publicShell.ctaStart")}
             </Link>
@@ -103,6 +103,7 @@ export default function MarketingHome() {
             alt=""
             fill
             priority
+            fetchPriority="high"
             sizes="100vw"
             className="object-cover opacity-[0.88]"
           />
@@ -121,7 +122,7 @@ export default function MarketingHome() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/register"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#7c57ff] px-6 py-3.5 text-base font-black text-white shadow-[0_18px_42px_rgba(124,87,255,0.32)] transition hover:bg-[#6d48f2]"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#7c57ff] px-6 py-3.5 text-base font-black text-white shadow-[0_18px_42px_rgba(124,87,255,0.32)] transition-all duration-200 hover:bg-[#6d48f2] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 active:scale-[0.98]"
                 >
                   {home.hero.ctaRegister}
                   <ArrowLeft className="h-5 w-5" aria-hidden />
