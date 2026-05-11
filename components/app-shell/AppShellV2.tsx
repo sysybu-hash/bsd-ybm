@@ -66,7 +66,7 @@ function SidebarIconLink({
       href={href}
       title={label}
       aria-label={label}
-      className={`group/navitem relative flex h-10 w-full shrink-0 items-center gap-3 rounded-lg px-3 text-sm font-bold transition ${
+      className={`group/navitem relative flex min-h-11 w-full shrink-0 items-center gap-3 rounded-lg px-3 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--sidebar-accent-line)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--sidebar-bg)] active:scale-[0.99] ${
         active
           ? "bg-[color:var(--sidebar-active-bg)] text-[color:var(--sidebar-text-active)] shadow-[0_12px_30px_rgba(124,87,255,0.18)]"
           : "text-[color:var(--sidebar-muted)] hover:bg-[color:var(--sidebar-hover-bg)] hover:text-[color:var(--sidebar-text-active)]"
@@ -119,7 +119,7 @@ function SidebarSubLink({
   return (
     <Link
       href={href}
-      className={`ms-11 block rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+      className={`ms-11 block rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--sidebar-accent-line)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--sidebar-bg)] ${
         active
           ? "bg-[color:var(--sidebar-active-bg)] text-[color:var(--sidebar-text-active)]"
           : "text-[color:var(--sidebar-muted)] hover:bg-[color:var(--sidebar-hover-bg)] hover:text-[color:var(--sidebar-text-active)]"
@@ -204,7 +204,7 @@ function MobileNavLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`flex min-h-12 w-full items-center gap-3 rounded-lg border px-3 text-sm font-bold transition ${
+      className={`flex min-h-12 w-full items-center gap-3 rounded-lg border px-3 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-ai)] focus-visible:ring-offset-2 active:scale-[0.99] ${
         active
           ? "border-[color:var(--axis-ai)] bg-[color:var(--axis-ai-soft)] text-[color:var(--axis-ai-ink)]"
           : "border-[color:var(--line)] bg-white text-[color:var(--ink-700)] hover:border-[color:var(--line-strong)] hover:text-[color:var(--ink-900)]"
@@ -244,7 +244,7 @@ function MobileBottomTab({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-[11px] font-black transition ${
+      className={`relative flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-[11px] font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-ai)] focus-visible:ring-offset-2 active:scale-[0.98] ${
         active
           ? "bg-[color:var(--axis-ai)] text-white shadow-[0_10px_22px_rgba(79,70,229,0.22)]"
           : "text-[color:var(--ink-600)] hover:bg-[color:var(--canvas-sunken)] hover:text-[color:var(--ink-900)]"
@@ -370,7 +370,7 @@ export default function AppShellV2({ children, user }: Props) {
       >
         <a
           href="#app-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[color:var(--ink-900)] focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:end-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[color:var(--ink-900)] focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white focus:outline-none focus:ring-2 focus:ring-white/90"
         >
           {t("workspaceNav.skipToMain")}
         </a>
@@ -394,7 +394,7 @@ export default function AppShellV2({ children, user }: Props) {
                       <Link
                         key={item.id}
                         href={item.href}
-                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold transition-colors ${
+                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] focus-visible:ring-offset-2 ${
                           active
                             ? "text-[color:var(--ink-900)]"
                             : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
@@ -420,7 +420,7 @@ export default function AppShellV2({ children, user }: Props) {
                       <Link
                         key={item.id}
                         href={item.href}
-                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap px-3 text-sm font-semibold transition-colors ${
+                        className={`group relative flex h-full items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] focus-visible:ring-offset-2 ${
                           active
                             ? "text-[color:var(--ink-900)]"
                             : "text-[color:var(--ink-500)] hover:text-[color:var(--ink-800)]"
@@ -465,7 +465,7 @@ export default function AppShellV2({ children, user }: Props) {
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen((current) => !current)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--line)] bg-white text-[color:var(--ink-800)] shadow-sm"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-[color:var(--line)] bg-white text-[color:var(--ink-800)] shadow-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--axis-clients)] active:scale-[0.97]"
                   aria-label={mobileMenuOpen ? "סגור תפריט" : "פתח תפריט"}
                   aria-expanded={mobileMenuOpen}
                 >
@@ -494,7 +494,7 @@ export default function AppShellV2({ children, user }: Props) {
                   <button
                     type="button"
                     onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 text-sm font-black text-[color:var(--ink-800)]"
+                    className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-[color:var(--line)] bg-[color:var(--canvas-sunken)] px-4 text-sm font-black text-[color:var(--ink-800)] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ink-800)] active:scale-[0.99]"
                   >
                     <LogOut className="h-4 w-4" aria-hidden />
                     {t("workspaceNav.signOutAria")}
@@ -546,7 +546,7 @@ export default function AppShellV2({ children, user }: Props) {
                 <button
                   type="button"
                   onClick={() => setDesktopMenuPinned((current) => !current)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)] ring-1 ring-[color:var(--line)] transition hover:bg-white hover:text-[color:var(--sidebar-accent-line)]"
+                  className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg bg-[color:var(--canvas-sunken)] text-[color:var(--ink-700)] ring-1 ring-[color:var(--line)] transition-all duration-200 hover:bg-white hover:text-[color:var(--sidebar-accent-line)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--sidebar-accent-line)] active:scale-[0.97]"
                   aria-label={desktopMenuPinned ? "סגור תפריט צד" : "פתח תפריט צד"}
                   aria-expanded={desktopMenuExpanded}
                 >
@@ -562,7 +562,7 @@ export default function AppShellV2({ children, user }: Props) {
                 <AppCommandPalette items={commandItems} />
               </div>
               <nav
-                className="flex min-h-0 w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden pr-1"
+                className="flex min-h-0 w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden pe-1"
                 aria-label="תפריט סביבת העבודה"
               >
                 {desktopNavGroups.map((group) => (
@@ -580,7 +580,7 @@ export default function AppShellV2({ children, user }: Props) {
                   href="/app/settings/overview"
                   title={`${user.name} · ${user.email}`}
                   aria-label={user.name}
-                  className="flex h-11 w-full items-center gap-3 rounded-lg bg-[color:var(--sidebar-accent-line)] px-3 text-white shadow-[0_12px_26px_rgba(79,70,229,0.22)] transition hover:brightness-105"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-lg bg-[color:var(--sidebar-accent-line)] px-3 text-white shadow-[0_12px_26px_rgba(79,70,229,0.22)] transition-all duration-200 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 active:scale-[0.99]"
                 >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-[11px] font-bold">
                     {initials}

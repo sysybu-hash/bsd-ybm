@@ -18,6 +18,7 @@ import {
   WandSparkles,
   X,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import AccessibilityMenu from "@/components/AccessibilityMenu";
 import AssistantMessageBubble from "@/components/ai/AssistantMessageBubble";
 import ScanResultCardPortal from "@/components/app-shell/ScanResultCardPortal";
@@ -51,11 +52,16 @@ function readStringArray(messages: MessageTree, path: string): string[] {
 function ScannerLoadingFallback() {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-slate-200/10 bg-white/80">
-      <div className="flex items-center gap-3 text-sm font-black text-slate-600">
-        <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-        {t("workspaceDock.loadingScanner")}
+    <div className="flex min-h-[320px] flex-col justify-center gap-4 rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow)]">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-12 w-12 shrink-0 rounded-2xl" aria-hidden />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-3 w-full max-w-[14rem]" aria-hidden />
+          <Skeleton className="h-3 w-full max-w-[11rem]" aria-hidden />
+        </div>
       </div>
+      <Skeleton className="h-24 w-full rounded-2xl" aria-hidden />
+      <p className="text-center text-sm font-black text-[color:var(--ink-700)]">{t("workspaceDock.loadingScanner")}</p>
     </div>
   );
 }
