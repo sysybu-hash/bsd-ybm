@@ -20,6 +20,7 @@ import type { CrmAdminOrganizationRow } from "@/components/crm/CrmOrganizationsA
 import type { InvoiceRow, ErpSummary, OrgBillingInfo } from "@/components/crm/CrmClient";
 import { PriceSpikeAlert } from "@/lib/erp-price-spikes";
 import type { PriceChartRow } from "@/lib/erp-price-comparison-data";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useIndustryConfig } from "@/hooks/use-industry-config";
 import type { IndustryProfile } from "@/lib/professions/runtime";
 
@@ -103,11 +104,16 @@ const STATUS_BADGE: Record<string, string> = {
 /* ─── Inner component ────────────────────────────────────────────────────── */
 function ModuleLoader({ label = "טוען אזור עבודה..." }: { label?: string }) {
   return (
-    <div className="flex min-h-32 items-center justify-center rounded-2xl border border-[color:var(--line-subtle)] bg-[color:var(--canvas-raised)] p-6">
-      <div className="flex items-center gap-3 text-sm font-bold text-[color:var(--ink-500)]">
-        <Loader2 size={18} className="animate-spin text-[color:var(--cd-accent)]" />
-        <span>{label}</span>
+    <div className="grid min-h-32 gap-4 rounded-3xl border border-[color:var(--line)] bg-[color:var(--canvas-raised)] p-6 shadow-[var(--cd-shadow)]">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-10 w-10 shrink-0 rounded-xl" aria-hidden />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-3 w-full max-w-[14rem]" aria-hidden />
+          <Skeleton className="h-3 w-full max-w-[10rem]" aria-hidden />
+        </div>
       </div>
+      <Skeleton className="h-16 w-full rounded-2xl" aria-hidden />
+      <p className="text-center text-sm font-bold text-[color:var(--ink-600)]">{label}</p>
     </div>
   );
 }
