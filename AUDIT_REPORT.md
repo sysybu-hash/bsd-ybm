@@ -1,8 +1,42 @@
 # דוח ביקורת מלא — BSD-YBM
 
-**תאריך:** 2026-05-11 · **מאגר:** `sysybu-hash/bsd-ybm` · **ענף בסיס:** `master` (אחרי מיזוג PR סריקה/polish).
+**תאריך מקורי:** 2026-05-11 · **מאגר:** `sysybu-hash/bsd-ybm` · **ענף בסיס:** `master` (אחרי מיזוג PR סריקה/polish).
+
+**סנכרון תיעוד (Phase 5):** 2026-05-11 — הדוח עודכן כדי לשקף את מצב הקוד **אחרי** רפקטור אוטונומי ב־Phases 1–4 (אבטחה/מכסות, אשף סריקה, פיצול CRM, dead code + middleware). הביקורת המוצרית המקורית נשמרת היכן שעדיין רלוונטית; פסקאות שהפכו ללא מדויקות טכנית תוקנו או סומנו כהיסטוריה.
 
 הדוח נכתב לפי דרישת הבעלים: ביקורת מוצרית וטכנית **לא** מרוככת. אין כאן ניסיון לאזן שבחים. כל מקום שבו המידע מבוסס על היסק מהקוד בלבד ולא על שימוש ידני בפרודקשן — מסומן **✋**.
+
+---
+
+## 0. מצב ארכיטקטורה אחרי Phases 1–4 (עובדות קוד)
+
+הסעיף הזה **אינו** מחליף את הביקורת למטה; הוא מתעד מה השתנה בפועל בקוד כדי שהדוח לא יטעה קורא שבודק את המאגר היום.
+
+### 0.1. אבטחה, AI ומכסות (Phase 1)
+
+- **`requireAiScanCredit`** (`lib/ai-quota-gate.ts`): מחזירה **401** (`jsonUnauthorized`) כשאין `session.user.id`, **403** (`jsonForbidden`) כשאין `session.user.organizationId`, ואז ממשיכה ל־`checkAndDeductScanCredit` — **402** כשהמכסה נגמרה. אין יותר מסלול "שקט" של `null` בלי סשן/ארגון בנקודה הזו.
+- **נתיבי AI** (`app/api/ai/**`, `app/api/ai-assistant/route.ts`): אוכפים את ה־gate לפני עבודה יקרה; יש לוודא בכל הוספת route חדש שממשיכים באותו דפוס.
+- **`app/api/debug-session/route.ts`**: נגוע ל־**`NODE_ENV === "development"`** בלבד; מחוץ לפיתוח מוחזר **404** (`jsonNotFound`) — לא נשענים על דגל env ייעודי נוסף.
+- **PayPal / `lib/paypal-capture-apply.ts`**: נוספה אידמפוטנטיות בתוך טרנזקציה — בדיקה מוקדמת לפי `payplusTransactionId` (מזהה ה־capture), וטיפול ב־`P2002` ייעודי — כדי למנוע כפל חיוב בכפל webhook.
+
+### 0.2. אשף הסריקה — מצב Express (Phase 2)
+
+- **`ScanWizardShell.tsx`**: זרימה של **שלושה שלבים** בלבד — `upload` → `review` → `done` (מערכים `STEP_IDS` / `STEP_LABELS` בקובץ). אין טאב `scan | notebook` בתוך האשף.
+- **ביטול קפיצות אוטומטיות לפי `phase`:** הוסרו `useEffect`-ים שדחפו `setStepIndex` לפי מצב המכונה; נשארו אפקטים לגיטימיים (ברירת מצב מנוע לפי פרופיל תעשייה, האזנה ל־`PRELOAD_SCAN_FILES_EVENT`, רענון מונה זיכויים בסיום פענוח).
+- **הפרדת מחברת ERP:** `ErpProjectNotebook` **אינו** נטען בתוך האשף. ב־`StepDone.tsx` יש קישור (`Link`) חיצוני עם `notebookHref` (ברירת מחדל `/app/erp`) — המשתמש יוצא מהאשף במפורש.
+
+### 0.3. CRM — פיצול מונוליתים וביצועים (Phase 3)
+
+- **`CrmClient.tsx`** (~750 שורות נכון לסנכרון זה): פוצל לקבצי עזר ורכיבים — `crm-client-types.ts`, `crm-client-constants.ts`, `crm-client-utils.ts`, `CrmContactModal.tsx`, `CrmContactCard.tsx`; מודלי בילינג כבדים דרך **`CrmLazyBilling.tsx`** עם `next/dynamic` ו־`ssr: false` (`ProjectDocumentBox`, `EditIssuedDocumentModal`, `DocumentPreviewModal`).
+- **`ClientsWorkspaceV2.tsx`** (~828 שורות): פוצל ל־`clients-workspace-types.ts`, `clients-workspace-constants.ts`, `clients-workspace-utils.ts`, `ClientsWorkspaceEditContactModal.tsx`, `ClientsProjectsHubPanel.tsx`.
+- **`BusinessHubClient.tsx`**: ייבוא טיפוסים מ־`crm-client-types.ts` במקום מ־`CrmClient.tsx`.
+- **Meckano:** `MeckanoHubDisconnectedCard.tsx` מחוץ ל־hub; `MeckanoMap` כבר `dynamic(..., { ssr: false })`; הזרקת CSS של Leaflet ב־`MeckanoMap.tsx` (לא ב־hub). **`MeckanoHub.tsx` עדיין ~1,960 שורות** — מונולית תפעולי שדורש המשך פיצול אם תרצו יעד "קובץ <400 שורות".
+
+### 0.4. Dead code ו־middleware (Phase 4)
+
+- **נמחקו לצמיתות** מתוך `components/multi-engine-scanner/`: `DockWizardScanLayout.tsx`, `ui-blocks.tsx`, `constants.ts` (לא היו בשימוש בעץ הייבוא).
+- **נשארו בשימוש:** `types.ts` (למשל `ScanHubPreviewPayload`), `utils.ts` (`isPdfFile`, `isImageFile`, וכו') — מיובאים מ־`ScanWizardShell`, `ErpMultiEngineScannerLazy`, מסמכים וגשרים.
+- **`middleware.ts`:** הוסר ייבוא סטטי של `@/lib/workspace-features`; המודול נטען ב־**`import()` דינמי** רק כשיש טוקן והנתיב מתחיל ב־`/app` ואינו תחת `/app/api` — הפחתת עבודת Edge בבקשות שאינן דורשות מפת תכונות.
 
 ---
 
@@ -60,23 +94,21 @@
 
 ### 1.4. `/app/scan` — אשף (`app/app/scan/page.tsx`, `components/scan/wizard/ScanWizardShell.tsx`)
 
-זה הלב של המוצר החדש. הקוד מכריח **חמישה שלבים** (`ScanWizardShell.tsx:45-54`) + טאב `scan | notebook` (`ScanWizardShell.tsx:73-74`) + `dynamic` ל־`ErpProjectNotebook` (`ScanWizardShell.tsx:30`). משתמש ראשון: נכנס, רואה מסלול ארוך, שדות הקשר, מנועים, סקירה — **לפני שיש לו מסמך שמור**. זה מרגיש כמו מערכת הפעלה בתוך מערכת הפעלה.
+**עדכון מול הדוח המקורי:** האשף עבר ל־**מצב Express** — **שלושה שלבים** בלבד (`upload` → `review` → `done`) ב־`ScanWizardShell.tsx` (`STEP_IDS`), בלי טאב notebook משולב וללא טעינה של `ErpProjectNotebook` בתוך זרימת הסריקה. קפיצות שלב אוטומטיות לפי `phase` הוסרו; המחברת מופיעה כ־**קישור יציאה** מ־`StepDone.tsx` (`notebookHref`, ברירת מחדל `/app/erp`).
 
-**לחיצות עד ערך משמעותי (מסמך מפוענח):** העלאה (1) + מילוי הקשר (שדות מרובים) (2+) + בחירת מנוע (3) + הרצה (4) + אישור (5+) — **בין 6 ל־12 לחיצות** תלוי בבחירות. זה הרבה מדי ל"סרוק חשבונית".
+זה עדיין הלב של המוצר, אבל כבר לא "חמישה שלבים + טאבים". עדיין יש **אורקסטרציה** מתחת למכסה: `useScanState`, `useScanEngine`, `useScanSave`, בחירת מצב סריקה ומנוע לפי פרופיל תעשייה — משתמש עלול עדיין לפגוש מונחים טכניים אם הם בולטים ב־UI.
 
-**איפה זה נראה זול:** שילוב של `Loader2` עדיין בייבוא (`ScanWizardShell.tsx:4`) לצד polish — סימן שמצבי טעינה לא אחידים. הטאב notebook ליד סריקה — **מבלבל** למי שבא רק לסרוק.
+**לחיצות עד ערך משמעותי (מסמך מפוענח):** טרם נמדד מחדש אחרי ה-Express; בכוונה המספרים הקודמים (6–12) **אינם** תקפים כפי שהם. עדיין צפויות לחיצות על העלאה, אישור/הרצה, וסיום — פחות "מסלול קבלן" מלפני, אבל לא אפס חיכוך.
 
-**היררכיה:** כל השלבים עם `font-black` דומים בקומפוננטות המשנה — קשה לדעת מה "השלב שחייבים עכשיו".
+**איפה זה עדיין חלש:** `Loader2` עדיין מיובא ב־`ScanWizardShell.tsx` — סימן שמצבי טעינה לא בהכרח אחידים מול `Skeleton` בשאר האפליקציה. הכפתור "המשך ב-NotebookLM" בשלב הסיום הוא **ניסוח שיווקי/מוצרי** שדורש בדיקה אם הוא תואם למה שהמשתמש באמת מקבל ב־`/app/erp`.
 
-**הקומפוננטה הכי מבלבלת:** `ScanWizardShell.tsx` עצמו — **393+ שורות** (קובץ ארוך; הלוגיקה של `useEffect` לקפיצת שלב בשורות 98-106 שולטת ב־UI בלי שהמשתמש לחץ — **מפתיע ומתסכל**).
+**דירוג (מעודכן):** **C- עד C** — שיפור מהותי ביחס ל־**D+** הקודם על אותו מסך, עדיין לא "מושלם" בלי מדידת משתמשים (**✋**).
 
-**דירוג:** **D+** — חזק טכנית, חלש כמוצר "מהיר".
+**שיפורים שנותרו:** (1) לקצר עוד את השפה ב־UI סביב מנועים/מצבים; (2) הודעות שגיאה אנושיות קבועות ל"אין זיכוי", "קובץ גדול", "מפתח חסר"; (3) למדוד מחדש "לחיצות עד מסמך שמור" אחרי Express.
 
-**שיפורים:** (1) מצב "מהיר": העלאה → פענוח אוטומטי עם מנוע ברירת מחדל → תיקון ידני; (2) להוציא notebook לדף נפרד או ל־drawer עם כניסה מפורשת; (3) לבטל קפיצות אוטומטיות של שלב או להסביר בטוסט למה קפצת.
+**הרחבה קשוחה (עדיין נכונה):** כל עוד המשתמש רואה "מנוע" במקום "תוצאה", המוצר מדבר אל מהנדסים. ה-Express מקצר את המסלול — לא מבטל את הבעיה התרבותית.
 
-**הרחבה קשוחה:** הקומפוננטה `ScanWizardShell` מייבאת עשרות סמלים מ־`lucide-react` בשורה 4, מפעילה `framer-motion` לכל מעבר (`AnimatePresence`/`motion` — ראו המשך הקובץ אחרי שורה 120), ומחזיקה state מקביל ל־`useScanState` + `useScanEngine` + `useScanSave`. זה לא "טופס"; זה **אורקסטרציה**. משתמש לא אמור להבין מה זה "מנוע פענוח" — הוא רוצה "זה הופך לחשבונית". כל מילה טכנית ב־UI כאן היא כישלון מוצרי, גם אם המהנדס גאה במודל הנתונים.
-
-**מה קורה בפועל בשלב review:** המשתמש מגיע לשלב שבו כבר השקיע זמן; אם יש שגיאת רשת או מנוע לא זמין, הוא חוזר אחורה בלי תחושת שליטה — כי ה־`dispatch` וה־`phase` לא תמיד משקפים בשפה אנושית מה לתקן. צריך טקסטים שאומרים במפורש: "הקובץ גדול מדי", "אין מפתח AI", "אין זיכוי סריקה" — לא רק קוד שגיאה.
+**מה קורה בפועל בשלב review:** אותו סיכון: כשל רשת או מנוע — צריך טקסטים שמסבירים מה לתקן, לא רק קוד שגיאה.
 
 ---
 
@@ -96,13 +128,15 @@
 
 ### 1.6. `/app/crm` (`app/app/crm/page.tsx`, `ClientsWorkspaceV2.tsx`)
 
-**213 kB First Load JS** — הכבד ביותר ביחד ל־scan. שני מונוליטים: `ClientsWorkspaceV2` (~1182 שורות) ו־`CrmClient` (~1176 שורות) לפי `wc -l`. זה לא "מסך CRM"; זה **IDE בתוך דפדפן**.
+**213 kB First Load JS** (מדידת build היסטורית — **✋** לא נמדד מחדש בסנכרון זה) — עדיין כבד. **עדכון קוד:** `ClientsWorkspaceV2.tsx` ו־`CrmClient.tsx` **פוצלו** למודולים (`crm-client-*`, `CrmContactModal`, `CrmContactCard`, `CrmLazyBilling`, `clients-workspace-*`, `ClientsWorkspaceEditContactModal`, `ClientsProjectsHubPanel`). גודל קבצי האם כיום: **~828** ו־**~750** שורות (`wc -l`) — עדיין גדולים, אבל לא ~2300 שורות בשני קבצים בלבד.
+
+**ביצועים:** מודלי בילינג כבדים ב־CRM נטענים ב־`next/dynamic` עם `ssr: false` דרך `CrmLazyBilling.tsx` — צעד נכון; ה־First Load הכולל עדיין תלוי בגרף ובשאר העץ.
 
 **לחיצות עד ערך:** בחירת לקוח / פרויקט — לפחות **4-6** לפני שיש "תובנה".
 
-**דירוג:** **D** — פונקציונליות עשירה שלא נלמדת לבד.
+**דירוג:** **D+** (מעלה קלה מ־**D** בגלל תחזוקה) — פונקציונליות עשירה שלא נלמדת לבד; המורכבות המוצרית לא נעלמה.
 
-**שיפורים:** (1) לפצל `ClientsWorkspaceV2.tsx` לרשימה + פאנל; (2) מצב "לקוח חדש" בולט בראש; (3) להסיר כפילות טפסים בין hubs.
+**שיפורים:** (1) מצב "לקוח חדש" בולט בראש; (2) להסיר כפילות טפסים בין hubs; (3) להמשיך פיצול לוגיקה מתוך קבצי האם אם היעד הוא <400 שורות לקובץ UI.
 
 **הרחבה:** ב־`CrmPage` יש לוגיקה של `resolveInitialHub` (`crm/page.tsx:28-37`) שמחליטה אם להתחיל בפרויקטים או בלקוחות לפי query params. זה אומר שכבר **הכרתם** שהמשתמשים לא יודעים איפה הם; הפתרון שלכם הוא פרמטרים ב־URL, לא פישוט המסך. זה תיקון לתסמין, לא לבעיה. המשך הנכון: **מסך אחד** עם חיפוש אחד שמחפה גם לקוח וגם פרויקט, ורק אז פיצול.
 
@@ -146,7 +180,7 @@
 
 ### 1.10. `/app/operations` + Meckano (`app/app/operations/page.tsx`, `operations/meckano`)
 
-`OperationsWorkspaceV2` עם כותרת כללית (`AppOperationsPage.tsx:14-19`). Meckano הוא **מונסטר** — `MeckanoHub.tsx` מעל **2000 שורות**. זה לא מסך תפעול; זה **מוצר בתוך מוצר** שלא ניתן ללמוד בלי הדרכה.
+`OperationsWorkspaceV2` עם כותרת כללית (`AppOperationsPage.tsx:14-19`). Meckano הוא **מונסטר** — `MeckanoHub.tsx` **~1960 שורות** (ספירה בעת סנכרון). חלק מה־UI המנותק כבר הוצא ל־`MeckanoHubDisconnectedCard.tsx` והמפה ל־`dynamic` + CSS ב־`MeckanoMap.tsx`, אבל **רוב הטאבים והטבלאות עדיין בקובץ אחד**. זה לא מסך תפעול; זה **מוצר בתוך מוצר** שלא ניתן ללמוד בלי הדרכה.
 
 **דירוג:** **D** (Meckano), **C** (operations כללי).
 
@@ -166,7 +200,7 @@
 
 ### 2.0. ראיה מהיסטוריית Git ו־`HANDOFF.md`
 
-ב־`git log --oneline -30` רואים שרשרת ארוכה של **רידיזיין ואיחודים** — לדוגמה: `1574d22` "Redesign scan page as wizard", `760c9a7` "Redesign login experience", `6e68d1a` "Redesign settings overview and admin dashboard", `eedec53` "Redesign AI chat window", `480798b` "Unify scan flow into ERP+CRM with single AI surface". זה לא ארבעה רידיזיין בלבד — זה **תרבות של שכתוב ממשק שוב ושוב** בלי מחיקה אגרסיבית של הקוד הישן. התוצאה: שכבות `Billing*` שונות, תיקיית `multi-engine-scanner` שעדיין קיימת, ודפי `/app/*` עם First Load שונה ב־30kB בין דף לדף.
+ב־`git log --oneline -30` רואים שרשרת ארוכה של **רידיזיין ואיחודים** — לדוגמה: `1574d22` "Redesign scan page as wizard", `760c9a7` "Redesign login experience", `6e68d1a` "Redesign settings overview and admin dashboard", `eedec53` "Redesign AI chat window", `480798b` "Unify scan flow into ERP+CRM with single AI surface". זה לא ארבעה רידיזיין בלבד — זה **תרבות של שכתוב ממשק שוב ושוב** בלי מחיקה אגרסיבית של הקוד הישן. התוצאה: שכבות `Billing*` שונות, ודפי `/app/*` עם First Load שונה ב־~30kB בין דף לדף. **עדכון:** תיקיית `components/multi-engine-scanner/` **צומצמה** — נשארו בעיקר `types.ts` ו־`utils.ts` לשימוש באשף וב־hub preview; פריסת האשף הישנה (`DockWizardScanLayout` וכו') **נמחקה**.
 
 `HANDOFF.md` (שורות 1-19) מודה במפורש על **בעיות תשתית** (jest מתעלם מ־`.claude/`, שגיאות Prisma ב-master). כלומר: גם המפתחים הפנימיים ידעו שהמאגר נשא **חוב טכני** תוך כדי בניית פיצ'רים — והמשתמש הקצה משלם על זה ביציבות ובזמן טעינה.
 
@@ -176,20 +210,19 @@
 
 מה **כן** נראה בעייתי:
 
-- `components/multi-engine-scanner/DockWizardScanLayout.tsx` — **~944 שורות** אחרי שמחקתם `MultiEngineScanner` הישן; השם והנתיב מרמזים על **שכבת תאימות** שלא נוקתה עד הסוף.
+- **`DockWizardScanLayout.tsx` הוסר** (Phase 4) — לא עוד dead file; אם מישהו חיפש אותו בדוח ישן, זה סגור.
 - `components/documents/DocumentsWorkspaceV2.tsx` — **~988 שורות** — מרכז מסמכים שמנסה לעשות הכל.
 
 ### 2.2. קבצים מעל 500 שורות (דגימה מדויקת מ־`wc -l`)
 
 | קובץ | שורות | למה זה ענק |
 |------|--------|-------------|
-| `components/meckano/MeckanoHub.tsx` | ~2010 | כל ישויות Meckano, טבלאות, סינכרון, UI — בלי גבולות דומיין |
+| `components/meckano/MeckanoHub.tsx` | ~1960 | כל ישויות Meckano, טבלאות, סינכרון, UI — בלי גבולות דומיין (חלק הוצא ל־`MeckanoHubDisconnectedCard` + מפה דינמית) |
 | `components/executive/AdminSubscriptionControlCenter.tsx` | ~1207 | בקרת מנויים + טבלאות + לוגיקה |
-| `components/crm/ClientsWorkspaceV2.tsx` | ~1182 | שני hubs + טפסים + רשימות |
-| `components/crm/CrmClient.tsx` | ~1176 | כרטיס לקוח מלא |
+| `components/crm/ClientsWorkspaceV2.tsx` | ~828 | אחרי פיצול למודולים; עדיין hub כבד |
+| `components/crm/CrmClient.tsx` | ~750 | אחרי פיצול + `CrmLazyBilling` |
 | `components/app-shell/WorkspaceUtilityDock.tsx` | ~991 | Dock, פאנלים, voice, scanner |
 | `components/documents/DocumentsWorkspaceV2.tsx` | ~988 | מסמכים + AI hub |
-| `components/multi-engine-scanner/DockWizardScanLayout.tsx` | ~944 | פריסת אשף ישנה/מעבר |
 
 זה לא "ארכיטקטורה"; זה **חוב של פיצול** שמייצר באגים ומאט onboarding למפתחים חדשים.
 
@@ -228,7 +261,7 @@ const TIER_META: Record<SubscriptionTierKey, { icon: any; color: string; bg: str
 
 ### 2.6. TODO / FIXME
 
-חיפוש רחב (`TODO|FIXME|HACK`) כמעט ריק; יש הערת סטייל ב־`CrmClient.tsx:839` ("Fake border hack"). אין תרבות TODO מסודרת — **זה לא טוב**: משמעותו שבעיות נבלעות בקוד בלי תווית.
+חיפוש רחב (`TODO|FIXME|HACK`) כמעט ריק; הערות סטייל נקודתיות ב־CRM עשויות להשתנות אחרי הפיצול — **✋** לחפש מחדש ב־`components/crm/**` אם צריך רשימה מדויקת. אין תרבות TODO מסודרת — **זה לא טוב**: משמעותו שבעיות נבלעות בקוד בלי תווית.
 
 ### 2.7. `@deprecated` בשימוש
 
@@ -250,7 +283,9 @@ const TIER_META: Record<SubscriptionTierKey, { icon: any; color: string; bg: str
 
 ### 2.9. מיפוי קצר של `middleware.ts` ומסלולים מתים
 
-ה־middleware (כ־63kB ב-build) מכסה auth, מנויים, וכו'. זה חיובי. מצד שני, דפים כמו `/app/insights` שמופיעים ב-build עם **323 B** גודל דף ו־**103 kB** First Load — זה אומר שיש **שלד ריק** או redirect שמבזבז את אותו shared bundle כמו דף מלא. מבחינת מוצר: משתמש שלוחץ על "תובנות" ומקבל **אוויר** — זה גרוע יותר מדף שאומר בפירוש "בקרוב".
+ה־middleware מכסה auth, TRIAL_EXPIRED, מפת תכונות workspace, וכו'. **עדכון (Phase 4):** קובץ המקור קצר יחסית (**~150 שורות**); `@/lib/workspace-features` נטען ב־**dynamic `import()`** רק לנתיבי `/app` שאינם API — כדי שלא לגרור את גרף התכונות בכל בקשה ציבורית. **✋** גודל ה־Middleware ב־build (kB) לא נמדד מחדש כאן; אם צריך מספר מדויק — להריץ `npm run build` ולהשוות לפלט קודם.
+
+דפים כמו `/app/insights` שמופיעים ב-build עם **323 B** גודל דף ו־**103 kB** First Load — זה אומר שיש **שלד ריק** או redirect שמבזבז את אותו shared bundle כמו דף מלא. מבחינת מוצר: משתמש שלוחץ על "תובנות" ומקבל **אוויר** — זה גרוע יותר מדף שאומר בפירוש "בקרוב".
 
 ### 2.10. שמות מסלולים וכפילות ניווט
 
@@ -283,15 +318,13 @@ Shared chunk: **103 kB** לכל הנתיבים.
 - **recharts** (~112KB stat) — גרפים.
 - **framer-motion**, **zod**, **@paypal/react-paypal-js** — כולם בטופ.
 
-### 3.3. `dynamic()` — דוגמה
+### 3.3. `dynamic()` — דוגמאות עדכניות
 
-`ScanWizardShell.tsx:30`:
+- **אשף סריקה:** `ErpProjectNotebook` **לא** נטען יותר מתוך `ScanWizardShell` — הכבדות הוזזה החוצה (קישור ל־`/app/erp` וכו' מ־`StepDone`). עדיין יש תלות ב־`framer-motion`, שלבי `steps/*`, וטיפוסים מ־`multi-engine-scanner/types` — ה־First Load של `/app/scan` נשאר גבוה עד למדידה מחודשת (**✋**).
+- **CRM:** `CrmLazyBilling.tsx` — `ProjectDocumentBox`, `EditIssuedDocumentModal`, `DocumentPreviewModal` עם `next/dynamic` ו־`ssr: false`.
+- **Meckano:** `MeckanoMap` נטען ב־`dynamic(..., { ssr: false })` מתוך `MeckanoHub.tsx`.
 
-```30:30:components/scan/wizard/ScanWizardShell.tsx
-const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNotebook"), { ssr: false });
-```
-
-זה **נכון** לכבדות, אבל אותו אשף עדיין טוען את רוב השלבים סינכרונית — ה-dynamic לא פותר את עומס ה-UX.
+המסקנה נשארת: `dynamic` פותר **חתכי bundle נקודתיים**; הוא לא מחליף צורך בפישוט UX או בפיצול מונוליתים גדולים.
 
 ### 3.4. `ANALYZE=true npm run build` — עשר החיבורים הכבדים (לפי `statSize` מ־`.next/analyze/client.html`)
 
@@ -324,10 +357,10 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 הוראת ה־`grep` החזירה בעיקר משתנים בשם `token`/`password` שמגיעים מ-body או מטופס — **לא** מפתחות API קשיחים. דוגמאות:
 
-- `app/api/debug-session/route.ts` — חושף מידע session — **סיכון אם נשאר בפרודקשן פתוח**.
+- `app/api/debug-session/route.ts` — **מוגבל ל־`NODE_ENV === "development"`**; בפרודקשן מחזיר 404. עדיין: בפיתוח הוא חושף מידע session/JWT למנהלים (`isAdmin`) — לא להפעיל בדומיין ציבורי בלי VPN.
 - `app/api/admin/set-password/route.ts` — מקבל `password` מה-body — צריך לוודא שכבת admin אמיתית ולא רק "מסלול קיים".
 
-**✋** לא בוצעה בדיקה סופית אם `/api/debug-session` חסום בסביבת prod.
+**✋** לא בוצעה כאן בדיקת חדירה מלאה לסביבת prod; המדיניות בקוד עודכנה (Phase 1).
 
 ### 4.2. Server Actions ו-session
 
@@ -339,17 +372,15 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ### 4.3. AI ומכסות
 
-`requireAiScanCredit` מיושם ב־`app/api/ai/chat`, `doc-draft`, `operator`, `omni-voice`, `gemini-live/session` ובנתיבי ERP/CRM נקודתיים (grep בפרויקט).
+**עדכון (Phase 1):** נתיבי יצירה/עיבוד AI באחריות המוצר אמורים לעבור דרך **`requireAiScanCredit`** עם החזרות **401** / **403** / **402** לפי `lib/ai-quota-gate.ts`. בפרט **`app/api/ai-assistant/route.ts`** משלב את ה-gate לפני `runWorkspaceAssistant`.
 
-**לא** מיושם ב־:
+**חריג עיצובי שנשאר:** `app/api/ai/route.ts` עדיין עשוי להשתמש ב־`processDocumentAction` עם ניכוי פנימי — **דפוס שני** לעומת ה-gate הישיר. זה לא בהכרח חור אבטחה אם ה-session נבדק והניכוי קורה פעם אחת, אבל זה **שני מקורות אמת** לבאגים ולסטיות הודעות.
 
-- `app/api/ai/route.ts` — משתמש ב־`processDocumentAction` שמטפל בניכוי דרך `checkAndDeductScanCredit` פנימית — **שונה** ממסלול ה-gate המאוחד.
-- `app/api/ai/providers/route.ts` — רק GET metadata.
-- **`app/api/ai-assistant/route.ts`** — אין `requireAiScanCredit` בשורות 1-50 שנקראו; יש בדיקת ספק AI ו־`runWorkspaceAssistant` — **✋** לוודא אם יש ניכוי במקום אחר; אם לא — זה **חור עלות**.
+- `app/api/ai/providers/route.ts` — metadata בלבד; לא נדרש ניכוי נקודות בדרך כלל.
 
 ### 4.4. Audit log
 
-קריאות `activityLog.create` נמצאו ב־**3** מוקדים: `lib/paypal-capture-apply.ts:34`, `lib/activity-log.ts:9`, `app/api/admin/logs/route.ts:39`. זה **מעט מדי** ל"מערכת עם audit מלא". רוב הפעולות ב-CRM/ERP לא נרשמות כאן — אל תמכור audit כפיצ'ר מלא.
+קריאות `activityLog.create` נמצאו ב־**3** מוקדים (מיקומי שורה השתנו אחרי הרפקטור — להריץ `grep -R "activityLog.create" lib app`): `lib/paypal-capture-apply.ts`, `lib/activity-log.ts`, `app/api/admin/logs/route.ts`. זה **מעט מדי** ל"מערכת עם audit מלא". רוב הפעולות ב-CRM/ERP לא נרשמות כאן — אל תמכור audit כפיצ'ר מלא.
 
 ### 4.5. פרמטרים ב-URL
 
@@ -361,7 +392,7 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ### 4.7. התאמה ל־`lib/ai-quota-gate.ts`
 
-הפונקציה `requireAiScanCredit` (`lib/ai-quota-gate.ts:10-33`) מחזירה `null` כשאין `userId`/`orgId` — כלומר **לא חוסמת** קריאות "ציבוריות" אם מישהו שוכח לבדוק לפני. זה עיצוב מסוכן אם route מניח ש-session קיים אבל בפועל לא. כל endpoint חייב לבדוק סשן **לפני** הקריאה ל-gate, או שה-gate צריך להחזיר 401 במקום null.
+**עדכון:** `requireAiScanCredit` **אינה** מחזירה `null` בשקט כשחסרים מזהה משתמש או ארגון — היא מחזירה **`jsonUnauthorized` / `jsonForbidden`** בהתאמה, ורק אחרי מעבר מסנן זה ממשיכה לניכוי ומחזירה `null` כשהבקשה מותרת. סיכון נשאר רק אם מפתח **לא** קורא לפונקציה בכלל ב-route חדש.
 
 ---
 
@@ -371,7 +402,7 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 | פיצ'ר מוצהר | בקוד | E2E אוטומטי | UX מלוטש |
 |-------------|------|-------------|-----------|
-| סריקת מסמכים / AI | כן (`ScanWizardShell`) | חלקי (redirect בלבד ב-playwright) | בינוני (עמוס) |
+| סריקת מסמכים / AI | כן (`ScanWizardShell` — Express 3 שלבים) | חלקי (redirect בלבד ב-playwright) | בינוני→טוב יחסית (פחות שלבים מלפני; עדיין כבד ב-JS) |
 | ERP / חשבוניות | כן | חלקי | בינוני |
 | CRM | כן | חלקי | חלש (מורכבות) |
 | תפעול / Meckano | כן | ✋ | חלש |
@@ -386,44 +417,39 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ## 6. שלושת הדברים הכי גרועים (אם משתנים מחר — המוצר נראה אחר)
 
-### 6.1. עומס אשף הסריקה + טאב Notebook
+### 6.1. עומס אשף הסריקה + טאב Notebook — **חלק גדול טופל (Phase 2)**
 
-- **הבעיה:** יותר מדי שלבים וקפיצות אוטומטיות (`ScanWizardShell.tsx:98-106`).
-- **למה כואב:** משתמש קטן עסק נוטש לפני ערך; אתה מפסיד את הליבה של המוצר.
-- **פתרון:** מצב "מהיר" ברירת מחדל + העברת notebook ל־`/app/erp?tab=...` או דף נפרד; ביטול `setStepIndex` אוטומטי או הסכמה מפורשת.
-- **זמן:** **18-28 שעות** עבודה ממוקדת (כולל בדיקות).
+- **היה:** חמישה שלבים, טאב notebook משולב, קפיצות `setStepIndex` אוטומטיות, טעינת `ErpProjectNotebook` בתוך האשף.
+- **היום:** שלושת שלבים (Express), אין טאב notebook בתוך האשף, קישור יציאה ל־`/app/erp` מ־`StepDone`, ללא אפקטי קפיצת שלב לפי `phase`.
+- **נשאר כואב:** שפה טכנית ב־UI, טעינת JS גבוהה ב־`/app/scan`, והבטחת טקסט "NotebookLM" מול המציאות ב־ERP — עדיין דורשים מוצר ולא רק קוד.
 
-### 6.2. CRM כמונוליט כפול
+### 6.2. CRM כמונוליט כפול — **צעד ביניים (Phase 3)**
 
-- **הבעיה:** `ClientsWorkspaceV2.tsx` + `CrmClient.tsx` (~2300 שורות יחד).
-- **למה כואב:** תחזוקה, באגים, ביצועים — ומשתמש מרגיש מוצר "לא גמור".
-- **פתרון:** פיצול ל־`CrmListLayout` + `CrmClientPanel` + hooks; איחוד שפה ויזואלית אחת (אותו `Surface`/spacing).
-- **זמן:** **40-60 שעות** (לא refactor "כשיהיה זמן" — זה פרויקט).
+- **היה:** ~2300 שורות בשני קבצים ללא מודולים ייעודיים.
+- **היום:** פיצול לקבצי types/constants/utils + מודלים/פאנלים נפרדים + `CrmLazyBilling` ל־`next/dynamic` על מודלי בילינג כבדים; קבצי האם ~750–828 שורות.
+- **נשאר:** שני hubs מוצריים חופפים, מורכבות למשתמש, ו־First Load CRM עדיין בכיוון ~200kB+ — צריך החלטת IA ופיצול נוסף אם רוצים "מסך אחד".
 
-### 6.3. Meckano + Leaflet בתוך מסלול עבודה רגיל
+### 6.3. Meckano + Leaflet בתוך מסלול עבודה רגיל — **חלקית טופל**
 
-- **הבעיה:** `MeckanoHub.tsx` דוחף מאות KB ל-client.
-- **למה כואב:** משתמש שלא נוגע ב-Meckano עדיין משלם בזמן טעינה אם נכנס לתפעול.
-- **פתרון:** `dynamic` עם `ssr: false` + טעינה רק מ־`/app/operations/meckano`; הסרת Leaflet מכל chunk משותף.
-- **זמן:** **12-20 שעות**.
+- **הבעיה:** `MeckanoHub.tsx` עדיין **~1960 שורות** ומושך stat גדול ב-analyzer.
+- **מה כבר נעשה:** `MeckanoMap` ב־`dynamic` + `ssr: false`, CSS Leaflet נטען מהמפה, כרטיס "לא מחובר" ב־`MeckanoHubDisconnectedCard`.
+- **נשאר:** לפצל טאבים/טבלאות לקבצים, ולשקול code-splitting נוסף כדי שלא ישלמו משתמשים שלא נוגעים במפה — **עדיין פרויקט**, לא "סגור".
 
 ---
 
 ## 7. שלושת סיכוני הפרודקשן הקרובים לשבירה
 
-### 7.1. מסלולי AI ללא אכיפת מכסה אחידה
+### 7.1. מסלולי AI ללא אכיפת מכסה אחידה — **סיכון ירד; לא אפס**
 
-- **תרחיש:** משתמש או בוט מציף את `ai-assistant` או מסלול מקביל בלי ניכוי נקודות.
-- **הסתברות:** בינונית עד גבוהה אם יש חור אחד שזוהה.
+- **תרחיש:** route חדש ללא `requireAiScanCredit`, או דרך צדדית (Server Action) שמדלגת על הניכוי.
+- **הסתברות:** נמוכה-בינונית אם שומרים על דפוס PR review; עדיין אנושי לשכוח.
 - **אימפקט:** עלות API + חוויית "פתאום נגמר".
-- **עכשיו:** לעבור רשימת `app/api/**` שמכילה `runWorkspace` / `generate` ולוודא ניכוי או rate limit; לוג לכל דחייה.
+- **עכשיו:** סריקה תקופתית של `app/api/**` + `grep` ל־`generate` / `streamText` / ספקי AI בלי gate; לאחד את `app/api/ai/route.ts` עם דפוס ה-gate אם רוצים מקור אמת אחד.
 
 ### 7.2. `debug-session` ונתיבי admin
 
-- **תרחיש:** חשיפת מידע session / פעולות admin בלי hardening.
-- **הסתברות:** נמוכה אם חסום ב-env, גבוהה אם נשכח.
-- **אימפקט:** דליפת נתונים.
-- **עכשיו:** למחוק או לנעול ל־`NODE_ENV===development` + IP לבן.
+- **`debug-session`:** ננעל ל־**פיתוח בלבד** (404 בפרודקשן) — סיכון הדלפת session דרך נתיב זה **ירד משמעותית**.
+- **נתיבי admin אחרים:** עדיין דורשים hardening קבוע (RBAC, audit, rate limit) — **לא בוצע כאן סקר מלא**.
 
 ### 7.3. תלות npm מתה + חבילות לא בשימוש
 
@@ -438,7 +464,9 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ### 7.5. Webhooks PayPal ומזהי idempotency
 
-יש לוגיקה ב־`lib/paypal-capture-apply.ts` עם `activityLog.create` — טוב. **תרחיש:** כפל webhook גורע כפל חיוב אם אין מפתח idempotency חזק. **✋** לא נבדק כאן end-to-end. **עכשיו:** טסט אינטגרציה (כבר הוצע ב-issue) — לא דיבור.
+**עדכון (Phase 1):** ב־`lib/paypal-capture-apply.ts` נוספה בדיקת כפילות **לפני** עדכון (לפי `payplusTransactionId` / מזהה capture) בתוך `prisma.$transaction`, וטיפול ב־`P2002` ייחודי לשדה זה — כדי שכפל webhook יחזיר מצב `duplicate` במקום לכפול חיוב.
+
+עדיין: **✋** אין כאן אימות E2E מול PayPal; טסט אינטגרציה (כבר הוצע ב-issue) נשאר ה-DoD האמיתי.
 
 ---
 
@@ -474,12 +502,12 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ## 9. סיכום מנהלים (בלי סוכר)
 
-1. **המוצר עמוס מדי לפני שהוכח ערך צר.** האשף יפה, CRM ו-ERP ענקיים, Meckano ענק — אבל אין סיפור משתמש אחד חלק מקצה לקצה שמרגיש "קל".
-2. **הביצועים נפגעים ממונוליטים**, לא מרזולוציית CSS. Meckano + CRM דוחפים מאות KB — זה לא ייפתר ב־`rounded-3xl`.
-3. **האבטחה/עלות תלויים באכיפה עקבית** על AI ועל ניקוי נתיבי debug. זה לא "טכני" — זה כסף ומוניטין.
-4. **ה-polish** שיפר את הרושם; הוא **לא** החליף IA, לא צמצם קבצים, ולא הוסיף בדיקות לזרימות כסף.
+1. **המוצר עמוס מדי לפני שהוכח ערך צר.** האשף צומצם (Express), CRM פוצל חלקית, אבל ERP + Meckano + מורכבות IA עדיין יוצרים תחושת "פלטפורמה" לפני סיפור משתמש אחד חלק.
+2. **הביצועים נפגעים ממונוליטים ומ-shared bundle**, לא מרזולוציית CSS. Meckano עדיין כבד; CRM קיבל `dynamic` נקודתי — לא פתרון סופי.
+3. **אבטחה/עלות:** אכיפת מכסות AI הוחמרה, `debug-session` ננעל לפיתוח, PayPal קיבל אידמפוטנטיות חזקה יותר — **עדיין** חייבים מנהל שינויים בלי route חדש "בטעות" בלי gate.
+4. **ה-polish** שיפר את הרושם; **הרפקטור Phases 1–4** צמצם חוב טכני אמיתי — אבל **לא** החליף IA מלא, מדידות משתמש, או כיסוי טסטים לזרימות כסף.
 
-אם בעל המוצר רוצה תוצאה אחת מהשבוע הקרוב: **קחו משתמש אמיתי, צלמו מסך, תספרו לחיצות עד חשבונית שמורה** — המספר יהיה מביך, ואז תדעו למה להתחיל.
+אם בעל המוצר רוצה תוצאה אחת מהירה: **קחו משתמש אמיתי, צלמו מסך, תספרו לחיצות עד חשבונית שמורה אחרי Express** — המספר עדיין כנראה גבוה מדי בלי תכנון מוצר נוסף.
 
 ---
 
@@ -488,10 +516,11 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 - `npm run build`, `ANALYZE=true npm run build`
 - `npx depcheck`
 - `npm test -- --coverage --coverageReporters=text-summary`
-- `grep` ל־`: any`, TODO, `activityLog.create`, `requireAiScanCredit`
+- `grep` ל־`: any`, TODO, `activityLog.create`, `requireAiScanCredit`, נתיבי `app/api/ai`
 - פרסור `window.chartData` מ־`.next/analyze/client.html` בסקריפט Node קטן
 - `git log --oneline -30` לצורך הוכחת רצף רידיזיין
 - קריאה חלקית של `HANDOFF.md` לצורך הקשר פנימי
+- **Phase 5:** `wc -l` על `CrmClient.tsx`, `ClientsWorkspaceV2.tsx`, `MeckanoHub.tsx`, `middleware.ts` לעדכון טבלאות
 
 ---
 
@@ -527,7 +556,7 @@ const ErpProjectNotebook = dynamic(() => import("@/components/erp/ErpProjectNote
 
 ---
 
-**סיכום לבעל המוצר:** יש כאן מנועים חזקים וריבוי פיצ'רים, אבל המוצר **מרגיש כבד, מפוצל, ומכוון למפתחים ולא לבעל עסק שרוצה לסיים משימה**. ה-polish שיפר קוסמטיקה לא פתר את בעיית ה-IA ולא צמצם מונוליטים. אם לא מכווצים CRM/Meckano/אשף סריקה — תמשיכו להיראות כמו פרויקט קורס טוב, לא כמו מוצר שמוכרים ללקוח משלם.
+**סיכום לבעל המוצר:** יש כאן מנועים חזקים וריבוי פיצ'רים. **אשף הסריקה כבר מכווץ**, **CRM פוצל חלקית**, **אבטחת AI/debug/PayPal התחזקה**, ו**קוד מת מתוך `multi-engine-scanner` הוסר** — אבל המוצר עדיין **מרגיש כבד** בגלל ERP/Meckano/IA, ו־**MeckanoHub** עדיין מונולית. ה-polish שיפר קוסמטיקה; הרפקטור האחרון הוריד סיכון ותחזוקה — לא החליף מדידת שוק או פישוט נרטיב מוצרי.
 
 **אורך:** המסמך נכתב כדי לכסות את כל הסעיפים המבוקשים; אם נדרש דיוק מילולי של 4,500–6,000 מילים מדויקות לצורכי חוזה — יש להרחיב עוד בדיקות שטח ומשתמשים אמיתיים (**✋**) ולעדכן גרסה 1.1 של הדוח עם מדגם משתמשים.
 
