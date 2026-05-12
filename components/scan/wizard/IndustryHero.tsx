@@ -12,7 +12,7 @@ type Props = {
 export default function IndustryHero({ profile, modeLabel = "סריקה" }: Props) {
   const tradeChip = profile.tradeLabel ?? profile.industryLabel;
   return (
-    <header className="relative overflow-hidden rounded-3xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-hero-bg)] p-5 sm:p-7">
+    <header className="relative shrink-0 overflow-hidden rounded-3xl border border-[color:var(--scanw-line)] bg-[color:var(--scanw-hero-bg)] p-5 shadow-sm sm:p-7">
       {/* רקע אורקטיבי */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.18]">
         <div className="absolute -top-12 -end-12 h-44 w-44 rounded-full bg-[color:var(--scanw-glow-1)] blur-3xl" />

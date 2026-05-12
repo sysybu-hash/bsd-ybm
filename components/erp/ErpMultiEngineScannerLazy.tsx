@@ -12,6 +12,8 @@ type Props = {
   geminiConfigured: boolean;
   compactHeader?: boolean;
   dockWizard?: boolean;
+  /** כפיית מצב מהיר (3 שלבים) גם בדף מלא — ברירת מחדל: false, וב־dock/embed נכפה אוטומטית ב־Shell */
+  expressMode?: boolean;
   hubPreviewMode?: boolean;
   onScanHubPreviewUpdate?: (snapshot: ScanHubPreviewPayload) => void;
   onHubPreviewFocusRequest?: () => void;
@@ -31,6 +33,7 @@ export default function ErpMultiEngineScannerLazy(props: Props) {
       industryProfile={props.industryProfile}
       geminiConfigured={props.geminiConfigured}
       variant={variant}
+      expressMode={props.expressMode}
       hubPreviewMode={props.hubPreviewMode}
       onScanHubPreviewUpdate={props.onScanHubPreviewUpdate}
       onHubPreviewFocusRequest={props.onHubPreviewFocusRequest}
