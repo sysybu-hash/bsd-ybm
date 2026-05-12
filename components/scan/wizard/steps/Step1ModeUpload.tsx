@@ -61,7 +61,7 @@ export default function Step1ModeUpload({
                 type="button"
                 onClick={() => onMode(mode.id)}
                 className={[
-                  "group flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.99]",
+                  "group flex min-h-11 flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2 active:scale-[0.99]",
                   active
                     ? "border-[color:var(--scanw-accent)] bg-[color:var(--scanw-accent-soft)] text-[color:var(--scanw-ink)] shadow-[0_8px_24px_-16px_var(--scanw-accent)]"
                     : "border-[color:var(--scanw-line)] bg-white/60 text-[color:var(--scanw-ink)] hover:border-[color:var(--scanw-accent-muted)] hover:bg-white",
@@ -94,7 +94,7 @@ export default function Step1ModeUpload({
           <div
             {...dropzone.getRootProps()}
             className={[
-              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed bg-white/60 px-6 py-10 text-center transition-all",
+              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed bg-white/60 px-6 py-10 text-center transition-all focus:outline-none focus-visible:border-[color:var(--scanw-accent)] focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2",
               dropzone.isDragActive
                 ? "border-[color:var(--scanw-accent)] bg-[color:var(--scanw-accent-soft)]"
                 : "border-[color:var(--scanw-line)] hover:border-[color:var(--scanw-accent-muted)]",
@@ -115,7 +115,7 @@ export default function Step1ModeUpload({
           <div className="grid gap-2">
             <div
               {...dropzone.getRootProps()}
-              className="flex cursor-pointer items-center justify-between rounded-2xl border border-dashed border-[color:var(--scanw-line)] bg-white/60 px-4 py-2.5 text-sm font-black text-[color:var(--scanw-muted)] hover:border-[color:var(--scanw-accent-muted)]"
+              className="flex cursor-pointer items-center justify-between rounded-2xl border border-dashed border-[color:var(--scanw-line)] bg-white/60 px-4 py-2.5 text-sm font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2"
             >
               <input {...dropzone.getInputProps()} />
               <span className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export default function Step1ModeUpload({
                       <button
                         type="button"
                         onClick={() => onActiveFileChange(index)}
-                        className="flex min-w-0 flex-1 items-center gap-3 text-start"
+                        className="flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-xl text-start outline-none transition focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2"
                       >
                         <span
                           className={[
@@ -165,7 +165,7 @@ export default function Step1ModeUpload({
                       <button
                         type="button"
                         onClick={() => onFileRemove(index)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-[color:var(--scanw-muted)] hover:bg-rose-50 hover:text-rose-600"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[color:var(--scanw-muted)] outline-none transition hover:bg-rose-50 hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-300"
                         aria-label="הסר קובץ"
                       >
                         <X className="h-4 w-4" aria-hidden />

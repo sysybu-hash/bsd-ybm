@@ -116,7 +116,8 @@ export default function Step4Review({
         <button
           type="button"
           onClick={onRescan}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 text-xs font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] active:scale-[0.98]"
+          disabled={saving}
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[color:var(--scanw-line)] bg-white/80 px-3 text-xs font-black text-[color:var(--scanw-muted)] transition-all duration-200 hover:border-[color:var(--scanw-accent-muted)] hover:text-[color:var(--scanw-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]"
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden />
           סרוק שוב
@@ -170,7 +171,7 @@ export default function Step4Review({
           onClick={() => onSave("ERP")}
           disabled={saving}
           className={[
-            "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white shadow-sm transition",
+            "inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2",
             profile.defaultSaveTarget === "ERP"
               ? "bg-[color:var(--scanw-accent)] hover:brightness-110"
               : "bg-emerald-600 hover:bg-emerald-700",
@@ -189,7 +190,7 @@ export default function Step4Review({
           onClick={() => onSave("CRM")}
           disabled={saving}
           className={[
-            "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white shadow-sm transition",
+            "inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2",
             profile.defaultSaveTarget === "CRM"
               ? "bg-[color:var(--scanw-accent)] hover:brightness-110"
               : "bg-sky-600 hover:bg-sky-700",

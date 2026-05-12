@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 /**
  * Scan Wizard v2 — בדיקות עשן.
  * אין כאן זרימת סריקה אמיתית (דורשת התחברות + מנוע AI חי), רק בדיקות
- * שה-route חי ושה-?legacy=1 escape hatch עובד.
+ * שה-route חי ושפרמטרים כמו ‎?legacy=1‎ לא שוברים את הניתוב.
  */
 test.describe("אשף סריקה v2", () => {
   test("‎/app/scan דורש התחברות", async ({ page }) => {

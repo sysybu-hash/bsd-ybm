@@ -40,13 +40,19 @@ export default async function ScanPage({ searchParams }: Props) {
   );
 
   const params = (await searchParams) ?? {};
-  if (params.legacy === "1") {
-    redirect("/app/scan");
-  }
+  const expressParam = params.express;
+  const expressMode =
+    expressParam === "1" ||
+    expressParam === "true" ||
+    expressParam === "yes";
 
   return (
     <AppPageChrome>
-      <ScanWizardShell industryProfile={industryProfile} geminiConfigured={isGeminiConfigured()} />
+      <ScanWizardShell
+        industryProfile={industryProfile}
+        geminiConfigured={isGeminiConfigured()}
+        expressMode={expressMode}
+      />
     </AppPageChrome>
   );
 }

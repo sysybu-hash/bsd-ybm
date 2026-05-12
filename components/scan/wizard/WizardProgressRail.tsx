@@ -35,7 +35,7 @@ export default function WizardProgressRail({ steps, currentIndex, completedFlags
               disabled={!isReachable}
               aria-current={isCurrent ? "step" : undefined}
               className={[
-                "group relative flex min-h-11 w-full min-w-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2 active:scale-[0.99]",
+                "group relative flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-2 rounded-2xl px-3 py-2.5 text-start transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2 active:scale-[0.99]",
                 isCurrent
                   ? "bg-[color:var(--scanw-accent)] text-white shadow-[0_8px_24px_-12px_var(--scanw-accent)]"
                   : isCompleted

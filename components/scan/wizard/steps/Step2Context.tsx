@@ -107,8 +107,9 @@ export default function Step2Context({
                 type="button"
                 onClick={startVoice}
                 disabled={voiceState === "listening"}
+                aria-pressed={voiceState === "listening"}
                 className={[
-                  "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-[11px] font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]",
+                  "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-[11px] font-black transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--scanw-accent-muted)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]",
                   voiceState === "listening"
                     ? "bg-rose-500 text-white"
                     : "bg-[color:var(--scanw-accent)] text-white hover:brightness-110",
